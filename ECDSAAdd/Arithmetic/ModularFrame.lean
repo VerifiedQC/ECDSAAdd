@@ -60,6 +60,21 @@ theorem ModLayout.preserve_nonoutput (L : ModLayout) (s t : BasisState)
     · exact (regValue_eq_iff L.work t s).mp hw w h
   · exact he w h
 
+theorem modAdd_bounded_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
+    (hXY : regValue L.x s.basis + regValue L.y s.basis < 2*q)
+    (hwork : regValue L.work s.basis = 0) :
+    (run (modAdd L q) m s).phase = s.phase ∧
+    (∀ w, w ∉ L.out → (run (modAdd L q) m s).basis w = s.basis w) ∧
+    regValue L.out (run (modAdd L q) m s).basis = regValue L.out s.basis ^^^
+      ((regValue L.x s.basis + regValue L.y s.basis)%q) := by
+  obtain ⟨hp, h⟩ := modAdd_bounded_spec L hnd q hq0 hq _ _ _ hXY s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
+  refine ⟨hp, L.preserve_nonoutput s.basis _ h.1.1.1 h.1.1.2 (h.2.trans hwork.symm) ?_, h.1.2⟩
+  intro w hw
+  apply run_preserves_outside
+  rw [modAdd_wires]
+  exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
+
 theorem modAdd_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
     (hX : regValue L.x s.basis < q) (hY : regValue L.y s.basis < q)
@@ -75,6 +90,21 @@ theorem modAdd_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   rw [modAdd_wires]
   exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
 
+theorem modSub_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
+    (hX : regValue L.x s.basis < q) (hY : regValue L.y s.basis < q)
+    (hwork : regValue L.work s.basis = 0) :
+    (run (modSub L q) m s).phase = s.phase ∧
+    (∀ w, w ∉ L.out → (run (modSub L q) m s).basis w = s.basis w) ∧
+    regValue L.out (run (modSub L q) m s).basis = regValue L.out s.basis ^^^
+      ((regValue L.x s.basis + q - regValue L.y s.basis)%q) := by
+  obtain ⟨hp, h⟩ := modSub_spec L hnd q hq0 hq _ _ _ hX hY s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
+  refine ⟨hp, L.preserve_nonoutput s.basis _ h.1.1.1 h.1.1.2 (h.2.trans hwork.symm) ?_, h.1.2⟩
+  intro w hw
+  apply run_preserves_outside
+  rw [modSub_wires]
+  exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
+
 theorem ModValues.congr (L : ModLayout) (v : ModField → Nat) (s t : BasisState)
     (he : ∀ w ∈ L.wires, t w = s w) (hv : ModValues L v s) : ModValues L v t := by
   refine ⟨fun f => (regValue_congr _ _ _ ?_).trans (hv.1 f), ?_, ?_⟩
@@ -82,5 +112,12 @@ theorem ModValues.congr (L : ModLayout) (v : ModField → Nat) (s t : BasisState
     exact he w (List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (L.reg_mem f hw)))
   · exact (he L.cinSum (by simp [ModLayout.wires])).trans hv.2.1
   · exact (he L.cinDiff (by simp [ModLayout.wires])).trans hv.2.2
+
+theorem modActive_output (L : ModLayout) :
+    L.activeWires.toFinset ∪ L.out.toFinset = L.wires.toFinset := by
+  ext w
+  simp [ModLayout.activeWires, ModLayout.out, ModLayout.reg, ModLayout.wires, ModLayout.bits,
+    ModBit.all, ModBit.get, List.mem_flatMap, List.mem_map, exists_or, and_or_left, eq_comm]
+  simp [or_left_comm, or_comm]
 
 end ECDSAAdd.Arithmetic

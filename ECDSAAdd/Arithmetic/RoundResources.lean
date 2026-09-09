@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.BorrowFrame
 import ECDSAAdd.Arithmetic.KaliskiRoundProof
 
 namespace ECDSAAdd.Arithmetic
@@ -69,14 +70,6 @@ private theorem record_counts (L : KaliskiRoundLayout) :
   simp only [recordRound,toffoliCount_append,measurementCount_append,hc.1,hc.2,hd.1,hd.2,hr.1,hr.2]
   simp; omega
 
-private theorem activity_counts (L : AdderLayout) (high target : Wire) (i : Nat) :
-    toffoliCount (counterActiveXor L high target i)=2*L.width ∧
-    measurementCount (counterActiveXor L high target i)=2*L.width := by
-  have hc := xorConstant_counts L.y (i+1)
-  have hd : toffoliCount (sub L)=L.width ∧ measurementCount (sub L)=L.width := rippleSubtractor_counts _ _
-  simp only [counterActiveXor,constantBorrowXor,borrowXor,toffoliCount_append,measurementCount_append,hc.1,hc.2,hd.1,hd.2]
-  simp [toffoliCount,measurementCount]; omega
-
 /-- 正逆轮使用相同次数的 CCX 与测量；每轮复用数据宽度 w 的算术工作区。 -/
 theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw : L.counter.width=10) (i : Nat) :
     toffoliCount (kaliskiRound L i)=18*L.data.width+43 ∧
@@ -89,7 +82,7 @@ theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw :
   have hc := counter_resources L.counter (L.counter_nodup hnd) hw
   have hci := counter_resources L.counter.swapCounter (L.counter.swapCounter_perm.nodup_iff.mpr (L.counter_nodup hnd))
     (L.counter.swapCounter_fields.2.2.2.2.2.trans hw)
-  have ha := activity_counts L.comparator L.counterHigh.x L.active i
+  have ha := counterActiveXor_counts L.comparator L.counterHigh.x L.active i
   rw [L.comparator_fields.2.2.2.2.2,hw] at ha
   have hl : toffoliCount (loadActive L)=0 ∧ measurementCount (loadActive L)=0 := ⟨rfl,rfl⟩
   simp only [kaliskiRound,kaliskiUnround,toffoliCount_append,measurementCount_append,hl.1,hl.2,hr.1,hr.2,

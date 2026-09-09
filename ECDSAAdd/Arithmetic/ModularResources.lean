@@ -2,7 +2,7 @@ import ECDSAAdd.Arithmetic.Modular
 
 namespace ECDSAAdd.Arithmetic
 
-private theorem add_mem (L : ModLayout) (a b t c : ModField) (cin w : Wire) :
+theorem modAdder_mem (L : ModLayout) (a b t c : ModField) (cin w : Wire) :
     w ∈ wires (add (L.adder a b t c cin)) ↔
       w = cin ∨ w ∈ L.reg a ∨ w ∈ L.reg b ∨ w ∈ L.reg t ∨ w ∈ L.reg c := by
   have hn : (L.adder a b t c cin).bits ≠ [] := by
@@ -70,7 +70,7 @@ theorem modAdd_wires (L : ModLayout) (q : Nat) :
   have ht := L.lowReg_subset .total (a := w)
   have hf : w = L.high.diff → w ∈ L.reg .diff := by
     rintro rfl; exact L.high_diff_mem
-  simp only [modAdd, wires_append, Finset.mem_union, add_mem, sub_mem, select_mem,
+  simp only [modAdd, wires_append, Finset.mem_union, modAdder_mem, sub_mem, select_mem,
     List.mem_toFinset, layout_mem]
   aesop
 
@@ -83,7 +83,7 @@ theorem modSub_wires (L : ModLayout) (q : Nat) :
   have ht := L.lowReg_subset .total (a := w)
   have hf : w = L.high.diff → w ∈ L.reg .diff := by
     rintro rfl; exact L.high_diff_mem
-  simp only [modSub, wires_append, Finset.mem_union, add_mem, sub_mem, select_mem,
+  simp only [modSub, wires_append, Finset.mem_union, modAdder_mem, sub_mem, select_mem,
     List.mem_toFinset, layout_mem]
   aesop
 

@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法、模 p 加减和模乘已合并。EEA 求逆数学证明 I1 也已合并，当前分支新增 I2 移位和计数原语；具体求逆电路和点加电路尚未实现，求逆电路仍仅有契约。
+M1、加减法、模 p 加减、模乘及 EEA 的 I1–I3 已合并。当前分支新增并证明 I4 两阶段固定循环与反计算；I5 外部输入装载/卸载和完整求逆契约实例、点加电路仍未实现。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -126,7 +126,7 @@ theorem modMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
 
 [MultiplyResources](../ECDSAAdd/Arithmetic/MultiplyResources.lean) 证明循环的门数和精确线路集合；`modMul_resources` 再由布局互异求支持集基数。每轮两次加倍各用 10n+8 个 Toffoli，两次受控累加/撤销各用 12n+10 个 Toffoli；末尾无控制复制不使用 Toffoli。每轮测量共 32(n+1) 次。静态线路来自两个外部 n+1 位寄存器、n 位乘数、n 个 n+1 位倍数寄存器和两份模加布局，各工作区为 8(n+1)+2 根。全部门控制/目标互异由统一布局的 `Nodup` 经子布局推导；受控复制的控制位与源和目标分离。没有通过添加虚门凑线路数，静态线路数也不是最大同时存活数。
 
-[求逆契约](../ECDSAAdd/Arithmetic/InverseContract.lean) 仅声明 256 位寄存器、非零输入、逆元输出、清理/相位和资源要求；没有完整求逆程序或契约满足定理。
+[求逆契约](../ECDSAAdd/Arithmetic/InverseContract.lean) 仅声明 256 位寄存器、非零输入、逆元输出、清理/相位和资源要求；尚无面向外部输入的完整求逆程序或契约满足定理；I4 已初始化输入内核见下节。
 
 ## I1：EEA 求逆的数学证明
 
@@ -157,7 +157,7 @@ theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
   kaliskiInverse p a 256 = ((a : Fp)⁻¹).val
 ```
 
-以上都是数学函数与等式，没有定义求逆 `Program`，没有声明求逆电路的 Triple、相位恢复、工作位清理或资源计数。I2 原语及 I3 单轮如下；I4 循环与第二阶段、I5 契约实例仍需实现和证明。该边界与 README 状态表一致；不把 I1 写成完整求逆交付。
+以上都是数学函数与等式，没有定义求逆 `Program`，没有声明求逆电路的 Triple、相位恢复、工作位清理或资源计数。I2 原语及 I3 单轮如下；I4 循环与第二阶段的程序证明另见下节；I5 契约实例仍需实现和证明。该边界与 README 状态表一致；不把 I1 写成完整求逆交付。
 
 ## I2：受控移位与 10 位计数
 
@@ -211,7 +211,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
    L.swap=(kaliskiCode z).1, L.subtract=(kaliskiCode z).2, L.scratch=0 }}
 ```
 
-`kaliskiUnround_spec` 以此后置条件为前置条件，恢复全部旧值，清除两位记录与 scratch。两者要求 i<512、十位计数器、I1 的 KInvariant，以及 u/v/p 小于 `2^L.low.length`、r 小于 `2^L.data.width`。数据宽度 w 等于低位数加一；这些范围保证比较借位、受控减法和移位有正确整数含义。`KRoundCount i z` 表示 k≤i，且 v≠0 时 k=i，保证计数不回绕，并给出本轮活动当且仅当 i<更新后的 k。
+`kaliskiUnround_spec` 以此后置条件为前置条件，恢复全部旧值，清除两位记录与 scratch。两者要求 i<512、十位计数器、I1 的 KInvariant，以及 u/v/p 小于 `2^L.low.length`。I4 去掉了冗余的公开 r 范围参数：正轮从输入寄存器读值导出；逆轮活动时由不变量导出旧 r<p，空转时由输入的新 r 等于旧 r 导出。数据宽度 w 等于低位数加一；这些范围保证比较借位、受控减法和移位有正确整数含义。`KRoundCount i z` 表示 k≤i，且 v≠0 时 k=i，保证计数不回绕，并给出本轮活动当且仅当 i<更新后的 k。
 
 [Math/KaliskiRound](../ECDSAAdd/Math/KaliskiRound.lean) 给四分支编码 `(swap,subtract)`：u 偶为 00、v 偶为 10、都奇且 v<u 为 01、其余为 11；终止后也是 00，是否活动另外由计数关系确定。电路先由原 u/v 的奇偶和 v−u 的借位生成记录，随后立即清除比较差。归一化算术体交换两组数据、按记录减/加、按活动位移位，再交换回来；临时加法输出每次都移回固定目标并清空。
 
@@ -225,11 +225,49 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 [RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 2w+5 / 2w，算术体为 14w−2 / 4w，计数移动为 20 / 20，零检测为 2w / 0，活动比较为 20 / 20。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和四份工作寄存器共 8w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
 
-实现中的 RoundDataLayout 与字段值表用于同一组工作线的局部组合；RoundAuxValues 专门保留计数与控制位，公开 API 仍直接写寄存器断言。辅助模块分别处理比较、零检测、受控加减、分支记录和算术体，均用于上述两条程序；没有新增通用编译器、测试框架或全环境审计。尚未实现 I4 固定循环/第二阶段与 I5 完整逆元契约，也没有点加电路。
+实现中的 RoundDataLayout 与字段值表用于同一组工作线的局部组合；RoundAuxValues 专门保留计数与控制位，公开 API 仍直接写寄存器断言。辅助模块分别处理比较、零检测、受控加减、分支记录和算术体，均用于上述两条程序；没有新增通用编译器、测试框架或全环境审计。I4 固定循环/第二阶段见下节；I5 外部输入装载与完整逆元契约、点加电路仍待实现。
+
+## I4：固定循环、第二阶段与反计算
+
+[InverseLoopSpec](../ECDSAAdd/Arithmetic/InverseLoopSpec.lean) 先给出已初始化寄存器的常用零输出形式：
+
+```lean
+{{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1,
+   L.first.k=0, L.first.done=false, L.work=0, L.out=0 }}
+  inverseLoop L q
+{{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1,
+   L.first.k=0, L.first.done=false, L.work=0,
+   L.out=kaliskiInverse q a 256 }}
+```
+
+`inverseLoop_spec` 要求一个全布局 `L.wires.Nodup`、512 对记录位、十位计数器、256 个低位和 257 位第二阶段/输出寄存器，以及奇模数 q<2^256、0<a<q、q 与 a 互素。`inverseLoop_xor_spec` 支持任意输出 O，结果为 `O ^^^ kaliskiInverse q a 256`。`L.work` 包含空计数银行、第一阶段 scratch、整个记录带及第二阶段全部寄存器和算术区；输入的 u/v/r/s/k/done 恢复，工作区归零，相位对所有测量记录保持。输出的数学函数已经由 I1 证明为逆元；此处仍要求第一阶段输入已装载，尚未实现 I5 的外部 256 位求逆契约。
+
+电路固定执行以下顺序：[InverseCompute](../ECDSAAdd/Arithmetic/InverseCompute.lean) 的第一阶段记录循环、规范化取负、第二阶段减半循环、复制输出，再依次恢复第二阶段、清空取负结果和恢复第一阶段。没有逆序执行测量指令。
+
+- [KaliskiLoopProof](../ECDSAAdd/Arithmetic/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
+- [NegativeInit](../ECDSAAdd/Arithmetic/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
+- [Halve](../ECDSAAdd/Arithmetic/Halve.lean) 在原值为奇数时加 q，然后右移；输出复制后以左移和同一加法清理。已载入奇模数的最低位提供移位控制，无需额外常一线路。[HalvingBijection](../ECDSAAdd/Math/HalvingBijection.lean) 证明模减半与模加倍在规范代表元上互逆。
+- [HalvingLoopProof](../ECDSAAdd/Arithmetic/HalvingLoopProof.lean) 每轮比较 i<k，活动时减半，否则保持数值；两组数据寄存器交换角色。k 不递减，比较工作区和活动位每轮清零。固定 512 轮等于 I1 的 `halveFixed`，正逆循环均已证明。
+- [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 让第二阶段使用第一阶段终点的当前 k 银行、空银行、比较工作区及活动位；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
+
+`ExternalMod` 的字段框架由已有倍增实现提取，约减、取负、倍增和减半实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
+
+令 N=512、w 为带额外高位的内部数据宽度。以下计数来自规格里的同一字面门列：
+
+| 程序段 | Toffoli | 测量 |
+| --- | ---: | ---: |
+| 第一阶段正向或逆向 N 轮 | N(18w+43) | N(6w+40) |
+| 一次规范化取负及临时值清理 | 30w−6 | 24w |
+| 第二阶段正向或逆向 N 轮，含比较装入/清理 | N(36w+32) | N(20w+40) |
+| 完整 `inverseLoop`，含复制后反计算 | 2N(54w+75)+60w−12 | 2N(26w+80)+48w |
+
+第一阶段实际静态支持为 8w+46+2N：包含交替计数银行和全部 2N 根记录线。第二阶段新增三组 w 位数据/临时寄存器及 8w+2 位模算术区，共 11w+2；比较和计数线路已包含在第一阶段支持中。输出为 w 位，合计 **20w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
+
+[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.wires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **14,303,280 Toffoli、6,936,624 次测量、6,212 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；首版反复复用既有模算术核，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含尚未实现的 I5 装载/卸载。
 
 ## 公理披露
 
-`lake --wfail build` 与以下公开定理的传递公理白名单检查通过；没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2014 项构建，以下 75 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -286,6 +324,17 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 'ECDSAAdd.Arithmetic.kaliskiRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.kaliskiRound_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.kaliskiRound_257_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseLoop_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseLoop_xor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseLoop_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseLoop_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseLoop_257_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.kaliskiLoop_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.kaliskiLoop_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halvingLoop_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halvingLoop_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.negativeInit_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_register_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]

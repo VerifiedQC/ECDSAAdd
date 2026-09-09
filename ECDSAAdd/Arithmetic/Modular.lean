@@ -50,8 +50,8 @@ theorem ModValues.clean_iff (L : ModLayout) (X Y O : Nat) (st : BasisState) :
     · apply (regValue_zero _ _).mpr; intro w hw; exact hz w (by simp [ModLayout.work, hw])
     · apply (regValue_zero _ _).mpr; intro w hw; exact hz w (by simp [ModLayout.work, hw])
 
-private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
-    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
+private theorem modAdd_bounded_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X + Y < 2*q) :
     Triple (ModValues L (ModValues.clean X Y O)) (modAdd L q)
       (ModValues L (ModValues.clean X Y (O ^^^ ((X+Y)%q)))) := by
   let S := X+Y
@@ -100,13 +100,19 @@ private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
 
 /-- 模 q 加法：任意初值输出按位 XOR 更新，输入、相位和全部工作线恢复。
 q 是编译期常量，X、Y 是寄存器中的变量；额外高位只属于实现布局。 -/
+theorem modAdd_bounded_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X + Y < 2*q) :
+    {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }} modAdd L q
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} :=
+  Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
+    (modAdd_bounded_values L hnd q hq0 hq X Y O hXY)
+    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ((X+Y)%q)) st).mp h)
+
 theorem modAdd_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }} modAdd L q
     {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} :=
-  Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
-    (modAdd_values L hnd q hq0 hq X Y O hX hY)
-    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ((X+Y)%q)) st).mp h)
+  modAdd_bounded_spec L hnd q hq0 hq X Y O (by omega)
 
 private theorem modSub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :

@@ -46,4 +46,12 @@ theorem counterActiveXor_frame (L : AdderLayout) (low : List Wire) (high target 
     rw [counterActiveXor_wires L high target i hhigh]
     simpa using (show w≠target ∧ w∉L.wires from ⟨hwt,hm⟩)
 
+theorem counterActiveXor_counts (L : AdderLayout) (high target : Wire) (i : Nat) :
+    toffoliCount (counterActiveXor L high target i)=2*L.width ∧
+    measurementCount (counterActiveXor L high target i)=2*L.width := by
+  have hc := xorConstant_counts L.y (i+1)
+  have hd : toffoliCount (sub L)=L.width ∧ measurementCount (sub L)=L.width := rippleSubtractor_counts _ _
+  simp only [counterActiveXor,constantBorrowXor,borrowXor,toffoliCount_append,measurementCount_append,hc.1,hc.2,hd.1,hd.2]
+  simp [toffoliCount,measurementCount]; omega
+
 end ECDSAAdd.Arithmetic
