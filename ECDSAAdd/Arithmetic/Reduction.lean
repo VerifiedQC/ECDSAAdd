@@ -21,6 +21,24 @@ theorem regValue_highBit (lo : List Wire) (high : Wire) (s : BasisState) :
   change s high = true ↔ 2^lo.length ≤ regValue lo s + 2^lo.length * (if s high then 1 else 0)
   cases s high <;> simp [Nat.not_le.mpr h]
 
+theorem regValue_low (lo : List Wire) (hi : Wire) (s : BasisState) :
+    regValue lo s = regValue (lo ++ [hi]) s % 2^lo.length := by
+  rw [regValue_append, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt (regValue_lt lo s)]
+
+/-- XOR 一个低 n 位的值不会改变更高位。 -/
+theorem xor_low_add (n a h r : Nat) (ha : a < 2^n) (hr : r < 2^n) :
+    (a ^^^ r) + 2^n*h = (a + 2^n*h) ^^^ r := by
+  have hd : ((a + 2^n*h) ^^^ r) / 2^n = h := by
+    have hx := @Nat.shiftRight_xor_distrib n (a + 2^n*h) r
+    simp only [Nat.shiftRight_eq_div_pow] at hx
+    rw [hx, Nat.add_mul_div_left _ _ (by positivity), Nat.div_eq_of_lt ha,
+      Nat.div_eq_of_lt hr, Nat.zero_add, Nat.xor_zero]
+  have hm : ((a + 2^n*h) ^^^ r) % 2^n = a ^^^ r := by
+    rw [Nat.xor_mod_two_pow, Nat.add_mul_mod_self_left,
+      Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hr]
+  have he := Nat.mod_add_div ((a + 2^n*h) ^^^ r) (2^n)
+  simpa only [hd, hm] using he
+
 /-- t<2q 时，一次减 q 加上候选选择就得到 t mod q。
 额外高位为 1 表示减法发生借位，应保留原和 t。 -/
 theorem addReduction (t q n : Nat) (hq0 : 0 < q) (hq : q < 2^n) (ht : t < 2*q) :

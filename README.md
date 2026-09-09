@@ -20,9 +20,20 @@
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
-n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 6(n+1) 个 Toffoli、4(n+1) 次测量、8(n+1)+2 根线路；secp256k1 实例分别为 1542、1028、2058。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
+n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
 
 ## 程序与规格
+
+常用的零输出模加直接写成：
+
+```lean
+theorem fieldAdd_zero_spec (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256)
+    (X Y : Nat) (hX : X < p) (hY : Y < p) :
+  {{ L.x = X, L.y = Y, L.out = 0, L.work = 0 }} fieldAdd L
+  {{ L.x = X, L.y = Y, L.out = ((X+Y)%p), L.work = 0 }}
+```
+
+`fieldSub_zero_spec` 同样给出模 p 的差；组合证明需要时，`fieldAdd_spec` / `fieldSub_spec` 支持任意输出初值的 XOR 更新。
 
 ```lean
 def andComputeErase (a b anc : Wire) : Program := prog {

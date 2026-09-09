@@ -12,12 +12,12 @@ def selectWires : List SelectBit → List Wire
   | [] => []
   | b :: bs => b.no :: b.yes :: b.out :: selectWires bs
 
-/-- 输出异或 (if flag then yes else no)，选择位可与只读输入重合。
-不翻转 flag，因此也适用于 flag 就是候选结果最高位的情形。 -/
+/-- 输出异或 (if flag then yes else no)。暂时将 yes XOR 到 no，
+用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。 -/
 def selectXor : List SelectBit → Wire → Program
   | [], _ => []
   | b :: bs, flag => prog { Instr.CX b.no b.out;
-      Instr.CCX flag b.no b.out; Instr.CCX flag b.yes b.out } ++ selectXor bs flag
+      Instr.CX b.yes b.no; Instr.CCX flag b.no b.out; Instr.CX b.yes b.no } ++ selectXor bs flag
 
 private theorem mem_selectWires {bs : List SelectBit} {b : SelectBit} (hb : b ∈ bs) :
     b.no ∈ selectWires bs ∧ b.yes ∈ selectWires bs ∧ b.out ∈ selectWires bs := by
@@ -30,8 +30,9 @@ private theorem mem_selectWires {bs : List SelectBit} {b : SelectBit} (hb : b �
       simp [selectWires, hn, hy, ho]
 
 private theorem selectStep_correct (a b out flag : Wire)
-    (ha : a ≠ out) (hb : b ≠ out) (hf : flag ≠ out) (s : State) (m : List Bool) :
-    run (prog { Instr.CX a out; Instr.CCX flag a out; Instr.CCX flag b out }) m s =
+    (ha : a ≠ out) (hb : b ≠ out) (hab : a ≠ b) (hf : flag ≠ out) (hfa : flag ≠ a)
+    (s : State) (m : List Bool) :
+    run (prog { Instr.CX a out; Instr.CX b a; Instr.CCX flag a out; Instr.CX b a }) m s =
       ⟨s.phase, writeBit s.basis out (s.basis out ^^ (if s.basis flag then s.basis b else s.basis a))⟩ := by
   simp only [run]
   apply congrArg (State.mk s.phase)
@@ -39,13 +40,19 @@ private theorem selectStep_correct (a b out flag : Wire)
   by_cases hw : w = out
   · subst w
     simp only [writeBit, Function.update_self, Function.update_of_ne ha,
-      Function.update_of_ne hb, Function.update_of_ne hf]
+      Function.update_of_ne hb, Function.update_of_ne hf, Function.update_of_ne hfa,
+      Function.update_of_ne (Ne.symm ha), Function.update_of_ne (Ne.symm hab)]
     cases s.basis flag <;> cases s.basis a <;> cases s.basis b <;> cases s.basis out <;> rfl
-  · simp [writeBit, hw]
+  · by_cases hw' : w = a
+    · subst w
+      simp only [writeBit, Function.update_self, Function.update_of_ne ha,
+        Function.update_of_ne hb, Function.update_of_ne (Ne.symm hab)]
+      cases s.basis a <;> cases s.basis b <;> rfl
+    · simp [writeBit, hw, hw']
 
 /-- 两个输入寄存器和选择位保持，任意输出初值按选择结果 XOR 更新。 -/
 theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
-    (hnd : (selectWires bs).Nodup) (hflag : flag ∉ bs.map SelectBit.out)
+    (hnd : (selectWires bs).Nodup) (hflag : flag ∉ selectWires bs)
     (s : State) (m : List Bool) :
     (run (selectXor bs flag) m s).phase = s.phase ∧
     (∀ w, w ∉ bs.map SelectBit.out → (run (selectXor bs flag) m s).basis w = s.basis w) ∧
@@ -58,22 +65,22 @@ theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
   | cons b bs ih =>
     simp only [selectWires, List.nodup_cons, List.mem_cons, not_or] at hnd
     obtain ⟨⟨hny, hno, hnr⟩, ⟨hyo, hyr⟩, hor, hr⟩ := hnd
-    have hf : flag ≠ b.out ∧ flag ∉ bs.map SelectBit.out := by
-      simpa only [List.map_cons, List.mem_cons, not_or] using hflag
+    have hf : flag ≠ b.no ∧ flag ≠ b.yes ∧ flag ≠ b.out ∧ flag ∉ selectWires bs := by
+      simpa only [selectWires, List.mem_cons, not_or] using hflag
     let s1 : State := ⟨s.phase, writeBit s.basis b.out
       (s.basis b.out ^^ (if s.basis flag then s.basis b.yes else s.basis b.no))⟩
     have hs1 (w : Wire) (hw : w ∈ selectWires bs) : s1.basis w = s.basis w := by
       have hn : w ≠ b.out := by intro h; apply hor; simpa [h] using hw
       simp [s1, writeBit, hn]
     let t := run (selectXor bs flag) m s1
-    obtain ⟨hp, he, hv⟩ := ih hr hf.2 s1
+    obtain ⟨hp, he, hv⟩ := ih hr hf.2.2.2 s1
     have ho : b.out ∉ bs.map SelectBit.out := by
       intro hw
       obtain ⟨d, hd, heq⟩ := List.mem_map.mp hw
       exact hor (heq ▸ (mem_selectWires hd).2.2)
     have htO : t.basis b.out = s1.basis b.out := he _ ho
     simp only [selectXor, run_append, run_take]
-    rw [selectStep_correct _ _ _ _ hno hyo hf.1]
+    rw [selectStep_correct _ _ _ _ hno hyo hny hf.2.2.1 hf.1]
     change (run (selectXor bs flag) (m.drop 0) s1).phase = _ ∧ _
     rw [List.drop_zero]
     refine ⟨hp, ?_, ?_⟩
@@ -93,7 +100,7 @@ theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
       have hn' := hread SelectBit.no (fun d hd => (mem_selectWires hd).1)
       have hy' := hread SelectBit.yes (fun d hd => (mem_selectWires hd).2.1)
       have ho' := hread SelectBit.out (fun d hd => (mem_selectWires hd).2.2)
-      have hf' : s1.basis flag = s.basis flag := by simp [s1, writeBit, hf.1]
+      have hf' : s1.basis flag = s.basis flag := by simp [s1, writeBit, hf.2.2.1]
       change (if t.basis b.out then 1 else 0) + 2 * regValue (bs.map SelectBit.out) t.basis = _
       rw [htO, hv, hn', hy', ho', hf']
       simp only [s1, writeBit, Function.update_self, List.map_cons]
@@ -105,9 +112,9 @@ theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
       · simpa only [h, if_true, regValue, List.foldr_cons,
           Bool.toNat, Bool.cond_eq_ite] using hx (s.basis b.yes) (regValue (bs.map SelectBit.yes) s.basis)
 
-/-- 每位两次 Toffoli，整个选择没有测量。 -/
+/-- 每位一次 Toffoli，整个选择没有测量。 -/
 theorem selectXor_counts (bs : List SelectBit) (flag : Wire) :
-    toffoliCount (selectXor bs flag) = 2 * bs.length ∧
+    toffoliCount (selectXor bs flag) = bs.length ∧
     measurementCount (selectXor bs flag) = 0 := by
   induction bs with
   | nil => exact ⟨rfl, rfl⟩

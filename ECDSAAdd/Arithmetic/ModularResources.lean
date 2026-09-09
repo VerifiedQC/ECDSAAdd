@@ -22,69 +22,86 @@ private theorem sub_mem (L : ModLayout) (a b t c : ModField) (cin w : Wire) :
   simp [ModLayout.adder, addWires_map, ModLayout.reg, List.mem_flatMap,
     List.mem_map, exists_or, and_or_left, eq_comm]
 
+/-- 实际支持集不含永远不触碰的输出高位。 -/
+def ModLayout.activeWires (L : ModLayout) : List Wire :=
+  L.cinSum :: L.cinDiff :: (L.low.flatMap ModBit.all ++
+    [L.high.x, L.high.y, L.high.total, L.high.modulus, L.high.diff, L.high.carrySum, L.high.carryDiff])
+
 private theorem select_mem (L : ModLayout) (w : Wire) :
     w ∈ wires (selectXor L.selector L.high.diff) ↔
-      w ∈ L.reg .diff ∨ w ∈ L.reg .total ∨ w ∈ L.reg .out := by
-  have hn : L.selector ≠ [] := by simp [ModLayout.selector, ModLayout.bits]
-  have he : wires (selectXor L.selector L.high.diff) =
-      insert L.high.diff (selectWires L.selector).toFinset := by
-    cases h : L.selector with
-    | nil => exact False.elim (hn h)
-    | cons b bs => exact selectXor_wires b bs L.high.diff
-  rw [he]
-  have hh := L.high_diff_mem
-  simp only [Finset.mem_insert, List.mem_toFinset]
-  have hs : w ∈ selectWires L.selector ↔
-      w ∈ L.reg .diff ∨ w ∈ L.reg .total ∨ w ∈ L.reg .out := by
-    simp [ModLayout.selector, selectWires_map, ModLayout.reg, ModBit.get,
-      List.mem_flatMap, List.mem_map, exists_or, and_or_left, eq_comm]
-  rw [hs]
-  constructor
-  · rintro (rfl | h)
-    · exact Or.inl hh
-    · exact h
-  · exact Or.inr
+      (L.low ≠ [] ∧ w = L.high.diff) ∨
+      w ∈ L.lowReg .diff ∨ w ∈ L.lowReg .total ∨ w ∈ L.lowReg .out := by
+  cases hb : L.low with
+  | nil => simp [ModLayout.selector, ModLayout.lowReg, hb, selectXor, wires]
+  | cons b bs =>
+    simp only [ModLayout.selector, hb, List.map_cons, selectXor_wires]
+    simp [selectWires_map, ModLayout.lowReg, hb, selectWires,
+      ModBit.get, List.mem_flatMap, List.mem_map, exists_or, and_or_left, eq_comm]
+    simp only [or_assoc, or_left_comm]
 
 private theorem layout_mem (L : ModLayout) (w : Wire) :
-    w ∈ L.wires ↔ w = L.cinSum ∨ w = L.cinDiff ∨
+    w ∈ L.activeWires ↔ w = L.cinSum ∨ w = L.cinDiff ∨
       w ∈ L.reg .x ∨ w ∈ L.reg .y ∨ w ∈ L.reg .total ∨ w ∈ L.reg .modulus ∨
-      w ∈ L.reg .diff ∨ w ∈ L.reg .out ∨ w ∈ L.reg .carrySum ∨ w ∈ L.reg .carryDiff := by
-  simp [ModLayout.wires, ModLayout.reg, ModBit.all, ModBit.get,
+      w ∈ L.reg .diff ∨ w ∈ L.lowReg .out ∨ w ∈ L.reg .carrySum ∨ w ∈ L.reg .carryDiff := by
+  simp [ModLayout.activeWires, ModLayout.reg, ModLayout.lowReg, ModLayout.bits, ModBit.all, ModBit.get,
     List.mem_flatMap, List.mem_map, exists_or, and_or_left, eq_comm]
+  simp only [or_assoc, or_left_comm, or_comm]
+
+private theorem active_nodup (L : ModLayout) (hnd : L.wires.Nodup) : L.activeWires.Nodup := by
+  have hs : [L.high.x, L.high.y, L.high.total, L.high.modulus, L.high.diff,
+      L.high.carrySum, L.high.carryDiff].Sublist L.high.all := by
+    apply List.Sublist.cons₂
+    apply List.Sublist.cons₂
+    apply List.Sublist.cons₂
+    apply List.Sublist.cons₂
+    apply List.Sublist.cons₂
+    exact List.Sublist.cons _ (List.Sublist.refl _)
+  have h := (hs.append_left (L.low.flatMap ModBit.all)).cons₂ L.cinDiff |>.cons₂ L.cinSum
+  have hh : L.activeWires.Sublist L.wires := by
+    simpa [ModLayout.activeWires, ModLayout.wires, ModLayout.bits] using h
+  exact hh.nodup hnd
 
 theorem modAdd_wires (L : ModLayout) (q : Nat) :
-    wires (modAdd L q) = L.wires.toFinset := by
+    wires (modAdd L q) = L.activeWires.toFinset := by
   ext w
   have hk : w ∈ wires (xorConstant (L.reg .modulus) q) → w ∈ L.reg .modulus :=
     fun h => List.mem_toFinset.mp (xorConstant_wires_subset _ _ h)
+  have hd := L.lowReg_subset .diff (a := w)
+  have ht := L.lowReg_subset .total (a := w)
+  have hf : w = L.high.diff → w ∈ L.reg .diff := by
+    rintro rfl; exact L.high_diff_mem
   simp only [modAdd, wires_append, Finset.mem_union, add_mem, sub_mem, select_mem,
     List.mem_toFinset, layout_mem]
-  tauto
+  aesop
 
 theorem modSub_wires (L : ModLayout) (q : Nat) :
-    wires (modSub L q) = L.wires.toFinset := by
+    wires (modSub L q) = L.activeWires.toFinset := by
   ext w
   have hk : w ∈ wires (xorConstant (L.reg .modulus) q) → w ∈ L.reg .modulus :=
     fun h => List.mem_toFinset.mp (xorConstant_wires_subset _ _ h)
+  have hd := L.lowReg_subset .diff (a := w)
+  have ht := L.lowReg_subset .total (a := w)
+  have hf : w = L.high.diff → w ∈ L.reg .diff := by
+    rintro rfl; exact L.high_diff_mem
   simp only [modSub, wires_append, Finset.mem_union, add_mem, sub_mem, select_mem,
     List.mem_toFinset, layout_mem]
-  tauto
+  aesop
 
-private theorem layout_length (L : ModLayout) : L.wires.length = 8 * (L.width + 1) + 2 := by
+private theorem layout_length (L : ModLayout) : L.activeWires.length = 8 * L.width + 9 := by
   have h (bs : List ModBit) : (bs.flatMap ModBit.all).length = 8 * bs.length := by
     induction bs with
     | nil => rfl
     | cons b bs ih => simp [ModBit.all, ih]; omega
-  simp [ModLayout.wires, h, ModLayout.bits, ModLayout.width, ModBit.all]
-  omega
+  simp [ModLayout.activeWires, h, ModLayout.width]
 
-/-- W = n+1：四次进位算术与一次选择，共 6W Toffoli、4W 测量、8W+2 根线路。 -/
+
+/-- 四次 (n+1) 位算术和 n 位单 Toffoli 选择；输出高位不施门。 -/
 theorem modAdd_resources (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat) :
-    toffoliCount (modAdd L q) = 6 * (L.width + 1) ∧
+    toffoliCount (modAdd L q) = 5 * L.width + 4 ∧
     measurementCount (modAdd L q) = 4 * (L.width + 1) ∧
-    qubitCount (modAdd L q) = 8 * (L.width + 1) + 2 := by
-  have hq : qubitCount (modAdd L q) = 8 * (L.width + 1) + 2 := by
-    rw [qubitCount, modAdd_wires, List.toFinset_card_of_nodup hnd, layout_length]
+    qubitCount (modAdd L q) = 8 * L.width + 9 := by
+  have hq : qubitCount (modAdd L q) = 8 * L.width + 9 := by
+    rw [qubitCount, modAdd_wires, List.toFinset_card_of_nodup (active_nodup L hnd), layout_length]
   refine ⟨?_, ?_, hq⟩ <;>
     simp [modAdd, toffoliCount_append, measurementCount_append, (xorConstant_counts _ _).1,
       (xorConstant_counts _ _).2, add, sub, rippleAdder_toffoliCount, rippleAdder_measurementCount,
@@ -93,11 +110,11 @@ theorem modAdd_resources (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat) :
       ModLayout.adder, ModLayout.selector, ModLayout.bits, ModLayout.width] <;> omega
 
 theorem modSub_resources (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat) :
-    toffoliCount (modSub L q) = 6 * (L.width + 1) ∧
+    toffoliCount (modSub L q) = 5 * L.width + 4 ∧
     measurementCount (modSub L q) = 4 * (L.width + 1) ∧
-    qubitCount (modSub L q) = 8 * (L.width + 1) + 2 := by
-  have hq : qubitCount (modSub L q) = 8 * (L.width + 1) + 2 := by
-    rw [qubitCount, modSub_wires, List.toFinset_card_of_nodup hnd, layout_length]
+    qubitCount (modSub L q) = 8 * L.width + 9 := by
+  have hq : qubitCount (modSub L q) = 8 * L.width + 9 := by
+    rw [qubitCount, modSub_wires, List.toFinset_card_of_nodup (active_nodup L hnd), layout_length]
   refine ⟨?_, ?_, hq⟩ <;>
     simp [modSub, toffoliCount_append, measurementCount_append, (xorConstant_counts _ _).1,
       (xorConstant_counts _ _).2, add, sub, rippleAdder_toffoliCount, rippleAdder_measurementCount,

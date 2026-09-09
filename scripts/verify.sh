@@ -24,11 +24,12 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.add_twice_spec
 #print axioms ECDSAAdd.Arithmetic.add_resources
 #print axioms ECDSAAdd.Arithmetic.sub_resources
-#print axioms ECDSAAdd.Arithmetic.rippleAdder_wide_spec
 #print axioms ECDSAAdd.Arithmetic.modAdd_spec
 #print axioms ECDSAAdd.Arithmetic.modSub_spec
 #print axioms ECDSAAdd.Arithmetic.modAdd_resources
 #print axioms ECDSAAdd.Arithmetic.modSub_resources
+#print axioms ECDSAAdd.Arithmetic.fieldAdd_zero_spec
+#print axioms ECDSAAdd.Arithmetic.fieldSub_zero_spec
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_spec
 #print axioms ECDSAAdd.Arithmetic.fieldSub_spec
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_resources

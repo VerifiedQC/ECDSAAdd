@@ -38,6 +38,7 @@ namespace ModLayout
 def bits (L : ModLayout) : List ModBit := L.low ++ [L.high]
 def width (L : ModLayout) : Nat := L.low.length
 def reg (L : ModLayout) (f : ModField) : List Wire := L.bits.map (fun b => b.get f)
+def lowReg (L : ModLayout) (f : ModField) : List Wire := L.low.map (fun b => b.get f)
 def x (L : ModLayout) : List Wire := L.reg .x
 def y (L : ModLayout) : List Wire := L.reg .y
 def out (L : ModLayout) : List Wire := L.reg .out
@@ -50,7 +51,7 @@ def adder (L : ModLayout) (a b target carry : ModField) (cin : Wire) : AdderLayo
   ⟨L.bits.map (fun bit => ⟨bit.get a, bit.get b, bit.get target, bit.get carry⟩), cin⟩
 
 def selector (L : ModLayout) : List SelectBit :=
-  L.bits.map (fun b => ⟨b.diff, b.total, b.out⟩)
+  L.low.map (fun b => ⟨b.diff, b.total, b.out⟩)
 
 end ModLayout
 
@@ -188,16 +189,16 @@ theorem ModLayout.adder_nodup (L : ModLayout) (hnd : L.wires.Nodup)
   simp [ModLayout.adder, AdderLayout.width, ModLayout.bits, ModLayout.width]
 
 @[simp] theorem ModLayout.selector_no (L : ModLayout) :
-    L.selector.map SelectBit.no = L.reg .diff := by
-  simp [ModLayout.selector, ModLayout.reg, ModBit.get, List.map_map]
+    L.selector.map SelectBit.no = L.lowReg .diff := by
+  simp [ModLayout.selector, ModLayout.lowReg, ModBit.get, List.map_map]
 
 @[simp] theorem ModLayout.selector_yes (L : ModLayout) :
-    L.selector.map SelectBit.yes = L.reg .total := by
-  simp [ModLayout.selector, ModLayout.reg, ModBit.get, List.map_map]
+    L.selector.map SelectBit.yes = L.lowReg .total := by
+  simp [ModLayout.selector, ModLayout.lowReg, ModBit.get, List.map_map]
 
 @[simp] theorem ModLayout.selector_out (L : ModLayout) :
-    L.selector.map SelectBit.out = L.reg .out := by
-  simp [ModLayout.selector, ModLayout.reg, ModBit.get, List.map_map]
+    L.selector.map SelectBit.out = L.lowReg .out := by
+  simp [ModLayout.selector, ModLayout.lowReg, ModBit.get, List.map_map]
 
 theorem selectWires_map (bs : List ModBit) :
     selectWires (bs.map (fun b => SelectBit.mk b.diff b.total b.out)) =
@@ -209,7 +210,10 @@ theorem selectWires_map (bs : List ModBit) :
 theorem ModLayout.selector_nodup (L : ModLayout) (hnd : L.wires.Nodup) :
     (selectWires L.selector).Nodup := by
   rw [ModLayout.selector, selectWires_map]
-  apply select_blocks_nodup L.bits (List.nodup_cons.mp (List.nodup_cons.mp hnd).2).2
+  have hall := (List.nodup_cons.mp (List.nodup_cons.mp hnd).2).2
+  simp only [ModLayout.bits, List.flatMap_append] at hall
+  have hlo : (L.low.flatMap ModBit.all).Nodup := (List.nodup_append'.mp hall).1
+  apply select_blocks_nodup L.low hlo
   · intro b w hw
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hw
     rcases hw with rfl | rfl | rfl <;> simp [ModBit.all]
@@ -225,6 +229,31 @@ theorem ModLayout.high_diff_mem (L : ModLayout) : L.high.diff ∈ L.reg .diff :=
 theorem ModLayout.flag_not_output (L : ModLayout) (hnd : L.wires.Nodup) :
     L.high.diff ∉ L.selector.map SelectBit.out := by
   rw [ModLayout.selector_out]
-  exact List.disjoint_left.mp (L.reg_disjoint hnd .diff .out (by decide)) L.high_diff_mem
+  intro hw
+  apply List.disjoint_left.mp (L.reg_disjoint hnd .diff .out (by decide)) L.high_diff_mem
+  simpa [ModLayout.reg, ModLayout.bits, ModLayout.lowReg] using Or.inl (b := L.high.diff = L.high.get .out) hw
+
+theorem ModLayout.reg_eq (L : ModLayout) (f : ModField) :
+    L.reg f = L.lowReg f ++ [L.high.get f] := by
+  simp [ModLayout.reg, ModLayout.lowReg, ModLayout.bits]
+
+theorem ModLayout.lowReg_subset (L : ModLayout) (f : ModField) : L.lowReg f ⊆ L.reg f := by
+  rw [L.reg_eq]
+  exact List.subset_append_left _ _
+
+/-- 选择位来自额外高位，不与任何低位门的输入或输出重合。 -/
+theorem ModLayout.flag_not_selector (L : ModLayout) (hnd : L.wires.Nodup) :
+    L.high.diff ∉ selectWires L.selector := by
+  intro hw
+  rw [ModLayout.selector, selectWires_map] at hw
+  obtain ⟨b, hb, hm⟩ := List.mem_flatMap.mp hw
+  have hlow : L.high.diff ∈ L.low.flatMap ModBit.all := by
+    apply List.mem_flatMap.mpr
+    refine ⟨b, hb, ?_⟩
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hm
+    rcases hm with hm | hm | hm <;> simp [ModBit.all, hm]
+  have hn := (List.nodup_cons.mp (List.nodup_cons.mp hnd).2).2
+  simp only [ModLayout.bits, List.flatMap_append] at hn
+  exact List.disjoint_left.mp (List.nodup_append'.mp hn).2.2 hlow (by simp [ModBit.all])
 
 end ECDSAAdd.Arithmetic

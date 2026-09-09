@@ -22,14 +22,27 @@ theorem fieldSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256)
     {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+p-Y)%p)), L.work = 0 }} :=
   modSub_spec L hnd p modulus_pos (hw ▸ modulus_bound) X Y O hX hY
 
+/-- 零输出的常用形式：直接得到模 p 的和。 -/
+theorem fieldAdd_zero_spec (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256)
+    (X Y : Nat) (hX : X < p) (hY : Y < p) :
+    {{ L.x = X, L.y = Y, L.out = 0, L.work = 0 }} fieldAdd L
+    {{ L.x = X, L.y = Y, L.out = ((X+Y)%p), L.work = 0 }} := by
+  simpa only [Nat.zero_xor] using fieldAdd_spec L hnd hw X Y 0 hX hY
+
+theorem fieldSub_zero_spec (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256)
+    (X Y : Nat) (hX : X < p) (hY : Y < p) :
+    {{ L.x = X, L.y = Y, L.out = 0, L.work = 0 }} fieldSub L
+    {{ L.x = X, L.y = Y, L.out = ((X+p-Y)%p), L.work = 0 }} := by
+  simpa only [Nat.zero_xor] using fieldSub_spec L hnd hw X Y 0 hX hY
+
 theorem fieldAdd_resources (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256) :
-    toffoliCount (fieldAdd L) = 1542 ∧ measurementCount (fieldAdd L) = 1028 ∧
-    qubitCount (fieldAdd L) = 2058 := by
+    toffoliCount (fieldAdd L) = 1284 ∧ measurementCount (fieldAdd L) = 1028 ∧
+    qubitCount (fieldAdd L) = 2057 := by
   simpa only [hw, fieldAdd] using modAdd_resources L hnd p
 
 theorem fieldSub_resources (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width = 256) :
-    toffoliCount (fieldSub L) = 1542 ∧ measurementCount (fieldSub L) = 1028 ∧
-    qubitCount (fieldSub L) = 2058 := by
+    toffoliCount (fieldSub L) = 1284 ∧ measurementCount (fieldSub L) = 1028 ∧
+    qubitCount (fieldSub L) = 2057 := by
   simpa only [hw, fieldSub] using modSub_resources L hnd p
 
 end ECDSAAdd.Arithmetic

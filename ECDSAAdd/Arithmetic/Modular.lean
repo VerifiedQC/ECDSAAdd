@@ -80,7 +80,9 @@ private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
       sub_modValues L hnd v2 .total .modulus .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
         (by simp [v2, v1, v0, baseValues])
   have h3 : Triple (ModValues L v3) (selectXor L.selector L.high.diff) (ModValues L v4) := by
-    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3
+    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3 (by
+      simpa [v3, v2, v1, v0, baseValues, hchoose] using
+        (lt_trans (Nat.mod_lt _ hq0) hq : R < 2^L.width))
   have h4 : Triple (ModValues L v4) (sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)) (ModValues L v5) := by
     simpa [v5, v4, v3, v2, v1, v0, baseValues, D] using
       sub_modValues L hnd v4 .total .modulus .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
@@ -135,7 +137,9 @@ private theorem modSub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
       add_modValues L hnd v2 .diff .modulus .total .carrySum (by decide) L.cinSum (Or.inl rfl)
         (by simp [v2, v1, v0, baseValues])
   have h3 : Triple (ModValues L v3) (selectXor L.selector L.high.diff) (ModValues L v4) := by
-    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3
+    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3 (by
+      simpa [v3, v2, v1, v0, baseValues, hchoose] using
+        (lt_trans (Nat.mod_lt _ hq0) hq : R < 2^L.width))
   have h4 : Triple (ModValues L v4) (add (L.adder .diff .modulus .total .carrySum L.cinSum)) (ModValues L v5) := by
     simpa [v5, v4, v3, v2, v1, v0, baseValues, S] using
       add_modValues L hnd v4 .diff .modulus .total .carrySum (by decide) L.cinSum (Or.inl rfl)

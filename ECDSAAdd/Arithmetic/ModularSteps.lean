@@ -81,21 +81,47 @@ theorem sub_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Na
   simpa only [A, ModLayout.adder_out, ModLayout.adder_x, ModLayout.adder_y,
     ModLayout.adder_width, hv.1 a, hv.1 b, hv.1 target] using hz
 
-theorem select_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Nat) :
+theorem select_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Nat)
+    (hbound : (if 2^L.width ≤ v .diff then v .total else v .diff) < 2^L.width) :
     Triple (ModValues L v) (selectXor L.selector L.high.diff)
       (ModValues L (Function.update v .out
         (v .out ^^^ (if 2^L.width ≤ v .diff then v .total else v .diff)))) := by
   intro s m hv
   obtain ⟨hp, he, hz⟩ := selectXor_correct L.selector L.high.diff
-    (L.selector_nodup hnd) (L.flag_not_output hnd) s m
+    (L.selector_nodup hnd) (L.flag_not_selector hnd) s m
   have hhi : s.basis L.high.diff = true ↔ 2^L.width ≤ v .diff := by
     have h := regValue_highBit (L.low.map ModBit.diff) L.high.diff s.basis
     have hd : regValue (L.low.map ModBit.diff ++ [L.high.diff]) s.basis = v .diff := by
       simpa [ModLayout.reg, ModLayout.bits, ModBit.get] using hv.1 .diff
     simpa only [hd, List.length_map, ModLayout.width] using h
-  simp only [ModLayout.selector_out] at he
-  refine ⟨hp, values_update L hnd v .out _ s.basis _ hv he ?_⟩
-  simpa only [ModLayout.selector_out, ModLayout.selector_no, ModLayout.selector_yes,
-    hv.1 .out, hv.1 .diff, hv.1 .total, hhi] using hz
+  simp only [ModLayout.selector_out, ModLayout.selector_no, ModLayout.selector_yes] at he hz
+  have hlo (f : ModField) : regValue (L.lowReg f) s.basis = v f % 2^L.width := by
+    have h := regValue_low (L.lowReg f) (L.high.get f) s.basis
+    rw [← L.reg_eq, hv.1 f] at h
+    simpa only [ModLayout.lowReg, List.length_map, ModLayout.width] using h
+  let R := if 2^L.width ≤ v .diff then v .total else v .diff
+  have hchoice : (if s.basis L.high.diff then regValue (L.lowReg .total) s.basis
+      else regValue (L.lowReg .diff) s.basis) = R := by
+    rw [hlo, hlo]
+    have h : (if 2^L.width ≤ v .diff then v .total % 2^L.width else v .diff % 2^L.width) =
+        R % 2^L.width := by unfold R; split_ifs <;> rfl
+    simp only [hhi, h]
+    exact Nat.mod_eq_of_lt hbound
+  have hhigh : L.high.out ∉ L.lowReg .out := by
+    have hn := L.reg_nodup hnd .out
+    rw [L.reg_eq] at hn
+    exact fun h => List.disjoint_left.mp (List.nodup_append'.mp hn).2.2 h (by simp [ModBit.get])
+  have hfull : regValue (L.reg .out) (run (selectXor L.selector L.high.diff) m s).basis =
+      regValue (L.reg .out) s.basis ^^^ R := by
+    rw [L.reg_eq, regValue_append, regValue_append, hz, hchoice]
+    have hh := he L.high.out hhigh
+    simp only [ModBit.get, regValue, List.foldr_cons, List.foldr_nil, Nat.mul_zero, Nat.add_zero] at hh ⊢
+    rw [hh]
+    exact xor_low_add (L.lowReg .out).length _ _ R (regValue_lt _ _) (by
+      simpa [ModLayout.lowReg, ModLayout.width] using hbound)
+  refine ⟨hp, values_update L hnd v .out _ s.basis _ hv ?_ ?_⟩
+  · intro w hw
+    exact he w (fun h => hw (L.lowReg_subset .out h))
+  · simpa only [hv.1 .out, R] using hfull
 
 end ECDSAAdd.Arithmetic
