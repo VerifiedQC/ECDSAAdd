@@ -52,6 +52,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.counterInc_spec
 #print axioms ECDSAAdd.Arithmetic.counterDec_spec
 #print axioms ECDSAAdd.Arithmetic.counter_resources
+#print axioms ECDSAAdd.kaliski_unstep_step
+#print axioms ECDSAAdd.kaliski_round_active
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_spec
+#print axioms ECDSAAdd.Arithmetic.kaliskiUnround_spec
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_counts
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_wires
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_qubits
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_257_resources
 #print axioms ECDSAAdd.kaliski_invariant
 #print axioms ECDSAAdd.kaliski_terminates
 #print axioms ECDSAAdd.kaliski_register_bounds

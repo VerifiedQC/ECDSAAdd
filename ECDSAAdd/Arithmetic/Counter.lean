@@ -111,13 +111,13 @@ theorem counterXor_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.wid
 def AdderLayout.swapCounter (L : AdderLayout) : AdderLayout :=
   { L with bits := L.bits.map (fun b => { b with x := b.out, out := b.x }) }
 
-private theorem swap_counter_fields (L : AdderLayout) :
+theorem AdderLayout.swapCounter_fields (L : AdderLayout) :
     L.swapCounter.x = L.out ∧ L.swapCounter.out = L.x ∧ L.swapCounter.y = L.y ∧
     L.swapCounter.carry = L.carry ∧ L.swapCounter.cin = L.cin ∧ L.swapCounter.width = L.width := by
   simp [AdderLayout.swapCounter, AdderLayout.x, AdderLayout.y, AdderLayout.out,
     AdderLayout.carry, AdderLayout.width, List.map_map, Function.comp_def]
 
-private theorem swap_counter_perm (L : AdderLayout) : L.swapCounter.wires.Perm L.wires := by
+theorem AdderLayout.swapCounter_perm (L : AdderLayout) : L.swapCounter.wires.Perm L.wires := by
   apply List.perm_iff_count.mpr
   intro w
   rcases L with ⟨bs, cin⟩
@@ -145,9 +145,9 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
     simpa only [AdderLayout.x, List.length_map, show L.bits.length=10 from hw] using hh
   have hc : (((K+C.toNat)%1024)+1024-C.toNat)%1024=K := by
     cases C <;> simp [Bool.toNat] <;> omega
-  obtain ⟨sx, so, sy, sc, si, sw⟩ := swap_counter_fields L
+  obtain ⟨sx, so, sy, sc, si, sw⟩ := AdderLayout.swapCounter_fields L
   have h1 := counterIncXor_spec L hnd hw K 0 C
-  have h2 := counterDecXor_spec L.swapCounter ((swap_counter_perm L).nodup_iff.mpr hnd)
+  have h2 := counterDecXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
     (sw.trans hw) ((K+C.toNat)%1024) K C
   simp only [Nat.zero_xor] at h1
   simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at h2
@@ -171,9 +171,9 @@ theorem counterDec_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
     simpa only [AdderLayout.x, List.length_map, show L.bits.length=10 from hw] using hh
   have hc : (((K+1024-C.toNat)%1024)+C.toNat)%1024=K := by
     cases C <;> simp [Bool.toNat] <;> omega
-  obtain ⟨sx, so, sy, sc, si, sw⟩ := swap_counter_fields L
+  obtain ⟨sx, so, sy, sc, si, sw⟩ := AdderLayout.swapCounter_fields L
   have h1 := counterDecXor_spec L hnd hw K 0 C
-  have h2 := counterIncXor_spec L.swapCounter ((swap_counter_perm L).nodup_iff.mpr hnd)
+  have h2 := counterIncXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
     (sw.trans hw) ((K+1024-C.toNat)%1024) K C
   simp only [Nat.zero_xor] at h1
   simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at h2
@@ -191,13 +191,13 @@ theorem counter_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=
     toffoliCount (counterDec L) = 20 ∧ measurementCount (counterDec L) = 20 ∧
     qubitCount (counterDec L) = 41 := by
   have h := counterXor_resources L hnd hw
-  have hs := counterXor_resources L.swapCounter ((swap_counter_perm L).nodup_iff.mpr hnd)
-    ((swap_counter_fields L).2.2.2.2.2.trans hw)
+  have hs := counterXor_resources L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
+    ((AdderLayout.swapCounter_fields L).2.2.2.2.2.trans hw)
   have hwires : L.swapCounter.wires.toFinset = L.wires.toFinset := by
     ext w
-    simpa only [List.mem_toFinset] using (swap_counter_perm L).mem_iff
+    simpa only [List.mem_toFinset] using (AdderLayout.swapCounter_perm L).mem_iff
   have hc := counter_wires L hw
-  have hcs := counter_wires L.swapCounter ((swap_counter_fields L).2.2.2.2.2.trans hw)
+  have hcs := counter_wires L.swapCounter ((AdderLayout.swapCounter_fields L).2.2.2.2.2.trans hw)
   have hi : qubitCount (counterInc L) = 41 := by
     rw [qubitCount, counterInc, wires_append, hc.1, hcs.2, hwires, Finset.union_self]
     simpa only [qubitCount, hc.1] using h.2.2.1
@@ -208,5 +208,15 @@ theorem counter_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=
     by simp only [counterInc, measurementCount_append, h.2.1, hs.2.2.2.2.1], hi,
     by simp only [counterDec, toffoliCount_append, h.2.2.2.1, hs.1],
     by simp only [counterDec, measurementCount_append, h.2.2.2.2.1, hs.2.1], hd⟩
+
+/-- 移动计数器仍只使用同一布局的线路。 -/
+theorem counterMove_wires (L : AdderLayout) (hw : L.width=10) :
+    wires (counterInc L)=L.wires.toFinset ∧ wires (counterDec L)=L.wires.toFinset := by
+  have hc := counter_wires L hw
+  have hs := counter_wires L.swapCounter ((AdderLayout.swapCounter_fields L).2.2.2.2.2.trans hw)
+  have he : L.swapCounter.wires.toFinset=L.wires.toFinset := by
+    ext w
+    simpa only [List.mem_toFinset] using (AdderLayout.swapCounter_perm L).mem_iff
+  simp only [counterInc,counterDec,wires_append,hc.1,hc.2,hs.1,hs.2,he,Finset.union_self,and_self]
 
 end ECDSAAdd.Arithmetic

@@ -65,7 +65,7 @@ theorem shift_counts (c : Wire) (r : List Wire) :
     | cons b bs => simp [shiftRight, shiftLeft, toffoliCount_append, measurementCount_append,
         cswap, toffoliCount, measurementCount, ih]; omega
 
-private theorem shift_frame (c : Wire) (r : List Wire) (s : State) (m : List Bool) :
+theorem shift_frame (c : Wire) (r : List Wire) (s : State) (m : List Bool) :
     (run (shiftRight c r) m s).phase = s.phase ∧
     (∀ w, w ∉ r → (run (shiftRight c r) m s).basis w = s.basis w) ∧
     (run (shiftLeft c r) m s).phase = s.phase ∧
