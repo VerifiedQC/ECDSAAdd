@@ -4,7 +4,7 @@ Copyright 2026 ECDSAAdd contributors
 The mathematical declarations in ECDSAAdd/Math are adapted from VerifiedQC/ShorECDLP,
 commit 15d2a336743304e069f8a8a468c6ab1da334577b.
 Original project: https://github.com/VerifiedQC/ShorECDLP
-See docs/PROVENANCE.md for the declaration-level extraction manifest and changes.
+See docs/PROVENANCE.md for the extraction scope and changes.
 
 Apache License 2.0 was selected for this repository, including this requested
 extraction, by Runzhou Tao on 2026-09-08 in the project channel.

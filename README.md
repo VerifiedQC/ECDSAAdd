@@ -1,24 +1,28 @@
 # ECDSAAdd
 
-在 Lean 中证明 Bitcoin/secp256k1 点加程序的 monomial 行为、Toffoli count 和静态 qubit count。
+在 Lean 中证明 Bitcoin/secp256k1 点加程序的 monomial 行为与资源计数。当前完成 M1：数学基础、执行语义、Hoare 组合规则和 AND 测量反计算；**点加电路尚未实现**。
 
-当前实现到 **M1**：Bitcoin 群与生成元的数学基础；带即时测量修正的程序语言；直接 basis/phase 语义；组合与线路保持定理；AND 计算及测量反计算的完整恢复证明。**点加电路尚未实现。**
+```lean
+def andComputeErase (a b anc : Wire) : Program := prog {
+  CCX a b anc;
+  if meas anc = 1 then CZ a b else skip
+}
 
-程序是指令列表。`measureX target onZero onOne` 测量并清零后，立即执行结果对应的 Z/CZ 修正列表。测量结果不改变后续算术或测量流程。
+theorem andComputeErase_spec (a b anc : Wire) (hnd : [a, b, anc].Nodup) (A B : Bool) :
+  {{ a = A, b = B, anc = false }} andComputeErase a b anc
+  {{ a = A, b = B, anc = false }}
+```
+
+三线互异、辅助位初始为零时，数据与相位恢复；同一程序使用 1 个 Toffoli、1 次测量、3 根静态线路。测量结果只能选择即时 Z/CZ 修正，不能改变后续算术或测量流程。结论限于 monomial 模型。
 
 ```sh
 lake exe cache get
 scripts/verify.sh
 ```
 
-Lean 固定为 `v4.28.0`，Mathlib 固定为 `fadcf92bfcfe7575bbdf04c6f83ab3ada53e3d42`。验证为 Lean 构建、公理审计与源码依赖检查，不包含测试。
+验证包含 Lean 构建和公开定理的公理白名单检查，不包含测试。Lean 固定为 `v4.28.0`，Mathlib 固定为 `fadcf92bfcfe7575bbdf04c6f83ab3ada53e3d42`。
 
 - [公开定理与证明状态](docs/PROOF_STATUS.md)
-- [M1 可读证明说明](docs/witness/M1/WITNESS.md)
-- [模型规格](docs/SPEC.md)
-- [来源与构建环境](docs/PROVENANCE.md)
-- [完整计划](docs/PLAN.md)
-
-当前结论限于 monomial 模型，不包含量子语义对应，也不把静态线路数称为最大同时存活数。
+- [来源与复现](docs/PROVENANCE.md)
 
 Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
