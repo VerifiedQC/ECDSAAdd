@@ -3,7 +3,7 @@ import ECDSAAdd.Math.BitcoinPrimes
 
 namespace ECDSAAdd.Arithmetic
 
-/-- secp256k1 求逆的接口要求，尚无具体实现或存在性证明。
+/-- secp256k1 求逆的接口要求；具体实现及满足证明见 fieldInverse_contract。
 输入明确排除零，两个数值寄存器均为 256 位；工作位清零、相位恢复。
 资源等式和线路包含关系约束同一个程序。 -/
 def inverseContract (x out work : List Wire) (c : Program)

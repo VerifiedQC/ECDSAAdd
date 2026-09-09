@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘及 EEA 的 I1–I3 已合并。当前分支实现并证明 I4：512 轮记录循环、保留计数的第二阶段、复制输出与完整反计算。I4 从已初始化的 EEA 寄存器开始；外部 256 位输入的装载、卸载和完整求逆契约实例（I5）仍未实现。CI、独立复审与合并状态以相应 PR 记录为准。
+本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘及 EEA 的 I1–I4 已合并。当前分支实现并证明 I5：外部 256 位输入的装载、完整求逆内核、卸载和求逆契约实例；输入保留、输出为域逆元，全部工作位清零。点加电路仍未实现。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -19,7 +19,7 @@
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
 | EEA 固定循环与反计算 | 已证明两个 512 轮阶段、规范化取负、XOR 输出及恢复已初始化输入；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/InverseLoopResources.lean) |
-| 完整求逆电路 | 已定义非零输入、相位/清理及资源契约；外部输入装载/卸载及契约满足证明尚未实现 | [InverseContract.lean](ECDSAAdd/Arithmetic/InverseContract.lean) |
+| 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/InverseResources.lean) |
 | 点加电路 | 尚未实现，包括受控点加与角落情形的电路证明 | — |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
@@ -31,6 +31,8 @@ I2 的 w 位受控移位使用 max(w−1,0) 个 Toffoli、零测量；w≥2 时�
 I3 正轮与逆轮各使用 18w+43 个 Toffoli、6w+40 次测量；w≥2 时精确静态线路数为 8w+48。w=257 时分别为 4669、1582、2104。这是单轮成本，不能写成完整逆元成本；轮内共享工作区为 O(w)，只保留两位分支记录，计数器两份银行的角色按固定轮号交换。
 
 I4 在两个阶段各执行 N=512 轮。第一阶段保存 2N 根记录线；第二阶段按 i<k 减半，复用计数银行并保留 k。复制结果后以正向算术恢复两阶段和所有历史。内部数据宽度 w=257 时，同一 `inverseLoop` 程序使用 **14,303,280 个 Toffoli、6,936,624 次测量、6,212 根静态线路**；这包括两次完整计算/清理及 257 位输出，不包括 I5 的外部输入装载与卸载。空间为 O(w+N)，没有保留第二阶段数值链，也未声称资源最优。完整公式和公开规格见 [证明状态](docs/PROOF_STATUS.md#i4固定循环第二阶段与反计算)。
+
+I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli 和测量数保持 **14,303,280 / 6,936,624**，完整静态线路为 **6,468**。外部输入增加 256 根线路；内核的 257 位输出被拆成 256 位公开输出与一根工作高位，后者由逆元范围证明为零。
 
 ## 每次交付的检查
 
@@ -70,6 +72,18 @@ theorem fieldMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
 ```
 
 `L.Widths` 要求 x、out、倍数寄存器为 n+1 位，两份模算术工作区同宽，乘数 y 为 n 位；全布局用一个 `Nodup` 要求互异。X 必须小于 p，Y 只受寄存器位宽限制，不必另加 `Y < p`。组合用 `fieldMul_spec` 将输出写为 `O ^^^ ((X*Y)%p)`。两个累加器交替复用，只保留倍数链；测量顺序固定，乘数位只控制 CCX 复制。
+
+
+非零输入求逆的零输出接口：
+
+```lean
+theorem fieldInverse_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (X : Nat) (hX0 : 0<X) (hX : X<p) :
+  {{ L.x=X, L.out=0, L.work=0 }} fieldInverse L
+  {{ L.x=X, L.out=((X : Fp)⁻¹).val, L.work=0 }}
+```
+
+`L.Widths` 列出外部 256 位输入/输出及 I4 内部位宽、512 对记录、十位计数器要求；`fieldInverse_xor_spec` 支持任意初值输出的 XOR 更新。`fieldInverse_contract` 证明这个具体程序满足 `inverseContract`，包括同一门列的三个资源数和线路包含关系。输入零明确排除。
 
 
 ```lean

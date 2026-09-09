@@ -61,7 +61,7 @@ theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   · intro s h
     exact ⟨(InverseInitial.iff L q a hx0 s).mp h.1,by simpa only [kaliskiInverse] using h.2⟩
 
-/-- 常用零输出形式。I5 将另行把外部输入装入这里要求的已初始化寄存器。 -/
+/-- 常用零输出形式。fieldInverse 负责把外部输入装入这里要求的已初始化寄存器。 -/
 theorem inverseLoop_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)

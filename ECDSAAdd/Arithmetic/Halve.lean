@@ -4,7 +4,8 @@ import ECDSAAdd.Math.KaliskiInverse
 namespace ECDSAAdd.Arithmetic
 open ExternalMod
 
-/-- 加上奇偶性决定的模数后右移；复制结果后用正向加法和左移清理。 -/
+/-- 加上奇偶性决定的模数后右移；复制结果后用正向加法和左移清理。
+左右移位均以已载入的奇模数最低位为控制：该位为真，移位实际执行，且不额外分配控制线。 -/
 def halveXor (L : ModLayout) (q : Nat) (src dst : List Wire) : Program :=
   xorConstant (L.reg .modulus) q ++ copyRegister none src L.x ++
   copyRegister (some src.head!) (L.reg .modulus) L.y ++
