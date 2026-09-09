@@ -34,6 +34,12 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.fieldSub_spec
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_resources
 #print axioms ECDSAAdd.Arithmetic.fieldSub_resources
+#print axioms ECDSAAdd.Arithmetic.modMul_zero_spec
+#print axioms ECDSAAdd.Arithmetic.modMul_spec
+#print axioms ECDSAAdd.Arithmetic.modMul_resources
+#print axioms ECDSAAdd.Arithmetic.fieldMul_zero_spec
+#print axioms ECDSAAdd.Arithmetic.fieldMul_spec
+#print axioms ECDSAAdd.Arithmetic.fieldMul_resources
 #print axioms ECDSAAdd.Secp256k1.p_prime
 #print axioms ECDSAAdd.Secp256k1.G_ne_zero
 #print axioms ECDSAAdd.Secp256k1.affineAdd_correct

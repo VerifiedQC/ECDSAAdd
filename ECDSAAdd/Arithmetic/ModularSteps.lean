@@ -7,7 +7,7 @@ namespace ECDSAAdd.Arithmetic
 def ModValues (L : ModLayout) (v : ModField → Nat) (st : BasisState) : Prop :=
   (∀ f, regValue (L.reg f) st = v f) ∧ st L.cinSum = false ∧ st L.cinDiff = false
 
-private theorem values_update (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Nat)
+theorem ModValues.update (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Nat)
     (target : ModField) (z : Nat) (s t : BasisState) (hv : ModValues L v s)
     (he : ∀ w, w ∉ L.reg target → t w = s w) (hz : regValue (L.reg target) t = z) :
     ModValues L (Function.update v target z) t := by
@@ -28,7 +28,7 @@ theorem constant_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField �
   intro s m hv
   obtain ⟨hp, he, hz⟩ := xorConstant_correct (L.reg target) (L.reg_nodup hnd target) k
     (by simpa only [ModLayout.reg_length] using hk) s m
-  refine ⟨hp, values_update L hnd v target _ s.basis _ hv he ?_⟩
+  refine ⟨hp, ModValues.update L hnd v target _ s.basis _ hv he ?_⟩
   simpa only [hv.1 target] using hz
 
 theorem add_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Nat)
@@ -51,7 +51,7 @@ theorem add_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Na
   change regValue A.out (run (add A) m s).basis = regValue A.out s.basis ^^^
     ((regValue A.x s.basis + regValue A.y s.basis + (s.basis cin).toNat) % 2^A.width) at hz
   simp only [A, ModLayout.adder_out] at he
-  refine ⟨hp, values_update L hnd v target _ s.basis _ hv he ?_⟩
+  refine ⟨hp, ModValues.update L hnd v target _ s.basis _ hv he ?_⟩
   simpa only [A, ModLayout.adder_out, ModLayout.adder_x, ModLayout.adder_y,
     ModLayout.adder_width, hv.1 a, hv.1 b, hv.1 target, hc, Bool.toNat_false, Nat.add_zero] using hz
 
@@ -77,7 +77,7 @@ theorem sub_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField → Na
   change regValue A.out (run (sub A) m s).basis = regValue A.out s.basis ^^^
     ((regValue A.x s.basis + 2^A.width - regValue A.y s.basis) % 2^A.width) at hz
   simp only [A, ModLayout.adder_out] at he
-  refine ⟨hp, values_update L hnd v target _ s.basis _ hv he ?_⟩
+  refine ⟨hp, ModValues.update L hnd v target _ s.basis _ hv he ?_⟩
   simpa only [A, ModLayout.adder_out, ModLayout.adder_x, ModLayout.adder_y,
     ModLayout.adder_width, hv.1 a, hv.1 b, hv.1 target] using hz
 
@@ -119,7 +119,7 @@ theorem select_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField →
     rw [hh]
     exact xor_low_add (L.lowReg .out).length _ _ R (regValue_lt _ _) (by
       simpa [ModLayout.lowReg, ModLayout.width] using hbound)
-  refine ⟨hp, values_update L hnd v .out _ s.basis _ hv ?_ ?_⟩
+  refine ⟨hp, ModValues.update L hnd v .out _ s.basis _ hv ?_ ?_⟩
   · intro w hw
     exact he w (fun h => hw (L.lowReg_subset .out h))
   · simpa only [hv.1 .out, R] using hfull

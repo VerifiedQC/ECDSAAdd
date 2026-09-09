@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1 与 M2 加减法基础已经合并；当前分支新增任意输出 XOR 接口、命名布局，以及编译期常量模数的模加减（含 secp256k1 模 p 实例）。CI、独立复审与合并状态以相应 PR 记录为准。
+本节描述当前分支实际包含的代码。M1、加减法与模 p 加减已经合并；当前分支新增保留输入的模乘及 secp256k1 实例，包含任意输出 XOR、工作位清理与同程序资源证明。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -14,13 +14,13 @@
 | AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/And.lean) |
 | M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Layout.lean) |
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
-| 模乘 | 尚未实现 | — |
+| 模乘 | 已证明保留输入、输出 XOR、完整清理及资源公式；首版保留倍数链，空间 O(n²) | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
 | 求逆 | 已定义非零输入、相位/清理及资源契约；具体程序与契约满足证明尚未实现 | [InverseContract.lean](ECDSAAdd/Arithmetic/InverseContract.lean) |
 | 点加电路 | 尚未实现，包括受控点加与角落情形的电路证明 | — |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
-n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
+n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。模乘使用 n(44n+36) 个 Toffoli、32n(n+1) 次测量、(n+18)(n+1)+n+4 根静态线路；p 实例为 2,892,800、2,105,344、70,678。模乘空间为 O(n²)，是复用模加减的正确性基线，未声称资源最优。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
 
 ## 每次交付的检查
 
@@ -49,6 +49,18 @@ theorem fieldAdd_zero_spec (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width =
 ```
 
 `fieldSub_zero_spec` 同样给出模 p 的差；组合证明需要时，`fieldAdd_spec` / `fieldSub_spec` 支持任意输出初值的 XOR 更新。
+
+模乘也先使用零输出形式：
+
+```lean
+theorem fieldMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (hn : L.width = 256) (X Y : Nat) (hX : X < p) :
+  {{ L.x = X, L.y = Y, L.out = 0, L.work = 0 }} fieldMul L
+  {{ L.x = X, L.y = Y, L.out = ((X*Y)%p), L.work = 0 }}
+```
+
+`L.Widths` 要求 x、out、倍数寄存器为 n+1 位，两份模算术工作区同宽，乘数 y 为 n 位；全布局用一个 `Nodup` 要求互异。X 必须小于 p，Y 只受寄存器位宽限制，不必另加 `Y < p`。组合用 `fieldMul_spec` 将输出写为 `O ^^^ ((X*Y)%p)`。两个累加器交替复用，只保留倍数链；测量顺序固定，乘数位只控制 CCX 复制。
+
 
 ```lean
 def andComputeErase (a b anc : Wire) : Program := prog {
