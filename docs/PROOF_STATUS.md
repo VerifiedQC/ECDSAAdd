@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法与模 p 加减已合并。当前分支新增保留输入的模乘、完整清理及同程序资源证明，包含 secp256k1 实例。具体求逆和点加电路尚未实现；求逆仅有契约。
+M1、加减法、模 p 加减和模乘已合并。当前分支新增 EEA 求逆的数学证明 I1；具体求逆电路和点加电路尚未实现，求逆电路仍仅有契约。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -128,6 +128,37 @@ theorem modMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
 
 [求逆契约](../ECDSAAdd/Arithmetic/InverseContract.lean) 仅声明 256 位寄存器、非零输入、逆元输出、清理/相位和资源要求；没有实现或存在性定理。
 
+## I1：EEA 求逆的数学证明
+
+[Kaliski](../ECDSAAdd/Math/Kaliski.lean) 定义自然数状态 `u,v,r,s,k`，初值为 `p,a,0,1,0`。`v=0` 后状态恒等，否则依次选择 u 偶、v 偶、都奇且 u>v、其余情形；活动轮更新系数并增加 k，终止轮本身也计数。`kaliski_invariant` 证明每轮保持：
+
+- `u*s + v*r = p`，且 u、s 为正；
+- `gcd(u,v)=1`；
+- 在 ZMod p 中，`a*r = -u*2^k`、`a*s = v*2^k`。
+
+`kaliski_product_halves` 给出 `2*(u'*v') ≤ u*v`。归纳得到 `2^t*(u_t*v_t) ≤ p*a`，由 p、a 都小于 `2^n` 可知 2n 轮后的乘积为零；u 始终为正且互素，因此 v=0、u=1。无需输入相关的循环长度。
+
+```lean
+theorem kaliski_terminates (p a n : Nat) (hp0 : 0 < p) (ha0 : 0 < a)
+    (hp : p < 2^n) (ha : a < 2^n) (hcop : p.Coprime a) :
+  (kaliskiStep^[2*n] (kaliskiInit p a)).v = 0 ∧
+  (kaliskiStep^[2*n] (kaliskiInit p a)).u = 1 ∧
+  (kaliskiStep^[2*n] (kaliskiInit p a)).k ≤ 2*n
+```
+
+`kaliski_register_bounds` 还证明任意 t 轮后的 u≤p、v≤a、r<2p、s≤p、k≤t。对 n=256，本次按已经证明的 k≤512 上界采用 10 位计数器规划；没有声称 512 必然可达。终态 r 不一定小于 p，第二阶段从 ZMod p 中 `-r` 的标准自然数代表元开始，不能直接使用自然数的截断减法 p−r。
+
+[ModularHalving](../ECDSAAdd/Math/ModularHalving.lean) 将偶数 r 减半、奇数 r 先加 p 再减半。对奇 p，证明两倍结果等于原值（模 p），且输入 r<p 时输出仍小于 p。`halveFixed` 保留 k，用固定索引 i<k 选择减半或恒等；固定轮数不少于 k 时，证明它等于恰好 k 次减半，避免耗尽计数器后丢失逆过程的信息。
+
+[KaliskiInverse](../ECDSAAdd/Math/KaliskiInverse.lean) 组合两个阶段，证明任意奇模数与互素非零输入的逆元等式，并实例化到 secp256k1：
+
+```lean
+theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
+  kaliskiInverse p a 256 = ((a : Fp)⁻¹).val
+```
+
+以上都是数学函数与等式，没有定义求逆 `Program`，没有声明求逆电路的 Triple、相位恢复、工作位清理或资源计数。I2 原语、I3 单轮及逆轮、I4 循环、I5 契约实例仍需实现和证明。该边界与 README 状态表一致；不把 I1 写成完整求逆交付。
+
 ## 公理披露
 
 `lake --wfail build` 与以下公开定理的传递公理白名单检查通过；没有运行测试，也没有全环境审计。
@@ -167,6 +198,13 @@ theorem modMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
 'ECDSAAdd.Arithmetic.fieldMul_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_register_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.halve_mod_correct' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.halveFixed_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_inverse_p' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.p_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]

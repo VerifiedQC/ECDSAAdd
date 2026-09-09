@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1、加减法与模 p 加减已经合并；当前分支新增保留输入的模乘及 secp256k1 实例，包含任意输出 XOR、工作位清理与同程序资源证明。CI、独立复审与合并状态以相应 PR 记录为准。
+本节描述当前分支实际包含的代码。M1、加减法、模 p 加减及模乘已经合并；当前分支新增 EEA 求逆的数学证明（I1），包括固定轮数终止、寄存器范围和 secp256k1 逆元等式。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -15,7 +15,8 @@
 | M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Layout.lean) |
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
 | 模乘 | 已证明保留输入、输出 XOR、完整清理及资源公式；首版保留倍数链，空间 O(n²) | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
-| 求逆 | 已定义非零输入、相位/清理及资源契约；具体程序与契约满足证明尚未实现 | [InverseContract.lean](ECDSAAdd/Arithmetic/InverseContract.lean) |
+| EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
+| 求逆电路 | 已定义非零输入、相位/清理及资源契约；具体程序与契约满足证明尚未实现 | [InverseContract.lean](ECDSAAdd/Arithmetic/InverseContract.lean) |
 | 点加电路 | 尚未实现，包括受控点加与角落情形的电路证明 | — |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
