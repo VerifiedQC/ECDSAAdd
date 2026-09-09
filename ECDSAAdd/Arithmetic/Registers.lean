@@ -1,6 +1,13 @@
 import ECDSAAdd.Framework.Hoare
+import Mathlib.Data.Nat.Bitwise
 
 namespace ECDSAAdd.Arithmetic
+
+/-- XOR 按小端的最低位与高位分解。 -/
+theorem xor_value_step (a b : Bool) (x y : Nat) :
+    (a ^^ b).toNat + 2 * (x ^^^ y) = (a.toNat + 2 * x) ^^^ (b.toNat + 2 * y) := by
+  have h := (Nat.xor_bit a x b y).symm
+  cases a <;> cases b <;> simpa [Nat.bit, Bool.toNat, Nat.add_comm] using h
 
 /-- 小端寄存器读取只依赖其自身线路。 -/
 theorem regValue_congr (r : List Wire) (s t : BasisState)

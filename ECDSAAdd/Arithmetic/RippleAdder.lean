@@ -48,15 +48,16 @@ private theorem sum_value_step (A B C : Bool) (X Y n : Nat) :
   conv_rhs => rw [Nat.add_mod, Nat.mul_mod_mul_left,
     Nat.mod_eq_of_lt hsmod, Nat.mod_eq_of_lt hsmall]
 
-/-- 所有进位和输出位初始为零时，进位链计算低 n 位的和，其他线路恢复。 -/
-theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
+/-- 进位工作线初始为零时，向任意输出初值异或写入低 n 位的和，其他线路恢复。 -/
+theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
     (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
-    (hclean : ∀ b ∈ bs, s.basis b.out = false ∧ s.basis b.carry = false) :
+    (hclean : ∀ b ∈ bs, s.basis b.carry = false) :
     (run (rippleAdder bs cin) m s).phase = s.phase ∧
     (∀ w, w ∉ bs.map AddBit.out → (run (rippleAdder bs cin) m s).basis w = s.basis w) ∧
     regValue (bs.map AddBit.out) (run (rippleAdder bs cin) m s).basis =
-      (regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
-        (s.basis cin).toNat) % 2^bs.length := by
+      regValue (bs.map AddBit.out) s.basis ^^^
+      ((regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
+        (s.basis cin).toNat) % 2^bs.length) := by
   induction bs generalizing cin s m with
   | nil => simp [rippleAdder, run, regValue, Nat.mod_one]
   | cons b bs ih =>
@@ -71,7 +72,7 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
     let B := s.basis b.y
     let C := s.basis cin
     let s1 : State := ⟨s.phase,
-      writeBit (writeBit s.basis b.carry (carryBit A B C)) b.out (sumBit A B C)⟩
+      writeBit (writeBit s.basis b.carry (carryBit A B C)) b.out (s.basis b.out ^^ sumBit A B C)⟩
     have hfirst (record : List Bool) : run (fullAdder b.x b.y cin b.out b.carry) record s = s1 := by
       rw [fullAdder_correct _ _ _ _ _ h5]
       simp [s1, hzero, A, B, C]
@@ -80,10 +81,9 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
       have ho : w ≠ b.out := by intro h; apply hor; simpa [h] using hw
       have hk : w ≠ b.carry := by intro h; apply hkr; simpa [h] using hw
       simp [s1, writeBit, ho, hk]
-    have hclean' : ∀ d ∈ bs, s1.basis d.out = false ∧ s1.basis d.carry = false := by
+    have hclean' : ∀ d ∈ bs, s1.basis d.carry = false := by
       intro d hd
-      obtain ⟨_, _, ho, hk⟩ := mem_addWires hd
-      rw [htail _ ho, htail _ hk]
+      rw [htail _ (mem_addWires hd).2.2.2]
       exact hclean d (by simp [hd])
     let t := run (rippleAdder bs b.carry) m s1
     obtain ⟨hphase, hsame, hsum⟩ := ih b.carry (List.nodup_cons.mpr ⟨hkr, hrest⟩) s1 m hclean'
@@ -99,7 +99,7 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
     have htC : t.basis cin = C := by rw [heq _ hcr]; simp [s1, writeBit, hco, hck, C]
     have htK : t.basis b.carry = carryBit A B C := by
       rw [heq _ hkr]; simp [s1, writeBit, Ne.symm hok]
-    have htO : t.basis b.out = sumBit A B C := by rw [heq _ hor]; simp [s1, writeBit]
+    have htO : t.basis b.out = (s.basis b.out ^^ sumBit A B C) := by rw [heq _ hor]; simp [s1, writeBit]
     have herase (record : List Bool) : run (eraseCarry b.x b.y cin b.carry) record t =
         ⟨t.phase, writeBit t.basis b.carry false⟩ :=
       eraseCarry_correct _ _ _ _ hxk hyk hck t (by rw [htX, htY, htC, htK]) record
@@ -115,7 +115,7 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
       have ht := hsame w hw'.2
       change t.basis w = s1.basis w at ht
       by_cases hk : w = b.carry
-      · subst w; simp [writeBit, hzero.2]
+      · subst w; simp [writeBit, hzero]
       · simp [writeBit, hk, ht, s1, hw'.1]
     · have hx := regValue_congr (bs.map AddBit.x) s1.basis s.basis (by
         intro w hw
@@ -125,6 +125,10 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
         intro w hw
         obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hw
         exact htail _ (mem_addWires hd).2.1)
+      have hz := regValue_congr (bs.map AddBit.out) s1.basis s.basis (by
+        intro w hw
+        obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hw
+        exact htail _ (mem_addWires hd).2.2.1)
       have ho := regValue_congr (bs.map AddBit.out)
         (writeBit t.basis b.carry false) t.basis (by
           intro w hw
@@ -133,11 +137,32 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
       have hc1 : s1.basis b.carry = carryBit A B C := by simp [s1, writeBit, Ne.symm hok]
       change (if (writeBit t.basis b.carry false) b.out then 1 else 0) +
           2 * regValue (bs.map AddBit.out) (writeBit t.basis b.carry false) = _
-      rw [ho, hsum, hx, hy, hc1]
+      rw [ho, hsum, hx, hy, hz, hc1]
       simp only [writeBit, Function.update_of_ne hok, htO, List.map_cons, List.length_cons]
-      simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using
-        sum_value_step A B C (regValue (bs.map AddBit.x) s.basis)
-          (regValue (bs.map AddBit.y) s.basis) bs.length
+      have hnum := sum_value_step A B C (regValue (bs.map AddBit.x) s.basis)
+        (regValue (bs.map AddBit.y) s.basis) bs.length
+      have hxor := xor_value_step (s.basis b.out) (sumBit A B C)
+        (regValue (bs.map AddBit.out) s.basis)
+        ((regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
+          (carryBit A B C).toNat) % 2^bs.length)
+      rw [hnum] at hxor
+      simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hxor
+
+/-- 零输出的加法是 XOR 接口的特例。 -/
+theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
+    (hclean : ∀ b ∈ bs, s.basis b.out = false ∧ s.basis b.carry = false) :
+    (run (rippleAdder bs cin) m s).phase = s.phase ∧
+    (∀ w, w ∉ bs.map AddBit.out → (run (rippleAdder bs cin) m s).basis w = s.basis w) ∧
+    regValue (bs.map AddBit.out) (run (rippleAdder bs cin) m s).basis =
+      (regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
+        (s.basis cin).toNat) % 2^bs.length := by
+  have hz : regValue (bs.map AddBit.out) s.basis = 0 := (regValue_zero _ _).mpr (by
+    intro w hw
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
+    exact (hclean b hb).1)
+  simpa only [hz, Nat.zero_xor] using
+    rippleAdder_xor_correct bs cin hnd s m (fun b hb => (hclean b hb).2)
 
 
 theorem inputs_not_output (bs : List AddBit) (hnd : (addWires bs).Nodup) :
@@ -162,22 +187,21 @@ theorem inputs_not_output (bs : List AddBit) (hnd : (addWires bs).Nodup) :
       have hko' : b.carry ≠ a.out := by intro h; apply hor; simpa [h] using hk'
       simp [hx, hy, hk, hxo', hyo', hko']
 
-/-- n 位加法：保持输入和输入进位，输出低 n 位的和，全部进位工作位归零。 -/
-theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) (C : Bool) :
+/-- n 位 XOR 加法：保持输入和输入进位，向任意输出初值异或低 n 位的和，工作位归零。 -/
+theorem rippleAdder_xor_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat) (C : Bool) :
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
-       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
+       bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
-       bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
+       bs.map AddBit.out = (O ^^^ ((X + Y + C.toNat) % 2^bs.length)),
        bs.map AddBit.carry = (0 : Nat) }} := by
   intro s m hP
   simp only [Holds.holds] at hP ⊢
   obtain ⟨⟨⟨⟨hx, hy⟩, hc⟩, ho⟩, hk⟩ := hP
-  have hclean : ∀ b ∈ bs, s.basis b.out = false ∧ s.basis b.carry = false := by
+  have hclean : ∀ b ∈ bs, s.basis b.carry = false := by
     intro b hb
-    exact ⟨(regValue_zero _ _).mp ho _ (List.mem_map.mpr ⟨b, hb, rfl⟩),
-      (regValue_zero _ _).mp hk _ (List.mem_map.mpr ⟨b, hb, rfl⟩)⟩
-  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_correct bs cin hnd s m hclean
+    exact (regValue_zero _ _).mp hk _ (List.mem_map.mpr ⟨b, hb, rfl⟩)
+  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_xor_correct bs cin hnd s m hclean
   have hn := inputs_not_output bs (List.nodup_cons.mp hnd).2
   have hr (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ bs.map AddBit.out) :
       regValue (bs.map f) (run (rippleAdder bs cin) m s).basis = regValue (bs.map f) s.basis :=
@@ -194,7 +218,17 @@ theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
     obtain ⟨b, hb, he⟩ := List.mem_map.mp h
     exact (List.nodup_cons.mp hnd).1 (he ▸ (mem_addWires hb).2.2.1)
   exact ⟨hp, ⟨⟨⟨hx'.trans hx, hy'.trans hy⟩, hc'.trans hc⟩,
-    by simpa only [hx, hy, hc] using hsum⟩, hk'.trans hk⟩
+    by simpa only [hx, hy, hc, ho] using hsum⟩, hk'.trans hk⟩
+
+/-- 输出初始为零时，XOR 写入就是普通加法。 -/
+theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) (C : Bool) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+       bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
+       bs.map AddBit.carry = (0 : Nat) }} := by
+  simpa only [Nat.zero_xor] using rippleAdder_xor_spec bs cin hnd X Y 0 C
 
 /-- 加一个高位后，n 位输入的和完整保留在 n+1 位输出中。
 高位是输出的一部分；只清理进位工作线，不清理最高输出位。 -/

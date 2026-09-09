@@ -32,17 +32,26 @@ private theorem not_y (bs : List AddBit) (hnd : (addWires bs).Nodup) :
       have hky' : b.carry ≠ a.y := by intro h; apply hyr; simpa [h] using hk'
       simp [hx, ho, hk, hxy', hoy', hky']
 
-/-- 模 2^n 的减法；输入、相位和全部进位工作位恢复。 -/
-theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) :
-    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
-       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
-    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
-       bs.map AddBit.out = ((X + 2^bs.length - Y) % 2^bs.length),
-       bs.map AddBit.carry = (0 : Nat) }} := by
-  intro s m hP
-  simp only [Holds.holds] at hP ⊢
-  obtain ⟨⟨⟨⟨hx, hy⟩, hc⟩, ho⟩, hk⟩ := hP
+/-- 任意输出初值的 XOR 减法，所有非输出线路均恢复。 -/
+theorem rippleSubtractor_xor_correct (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
+    (hc : s.basis cin = false) (hclean0 : ∀ b ∈ bs, s.basis b.carry = false) :
+    (run (rippleSubtractor bs cin) m s).phase = s.phase ∧
+    (∀ w, w ∉ bs.map AddBit.out → (run (rippleSubtractor bs cin) m s).basis w = s.basis w) ∧
+    regValue (bs.map AddBit.out) (run (rippleSubtractor bs cin) m s).basis =
+      regValue (bs.map AddBit.out) s.basis ^^^
+      ((regValue (bs.map AddBit.x) s.basis + 2^bs.length - regValue (bs.map AddBit.y) s.basis) %
+        2^bs.length) := by
+  let X := regValue (bs.map AddBit.x) s.basis
+  let Y := regValue (bs.map AddBit.y) s.basis
+  let O := regValue (bs.map AddBit.out) s.basis
+  have hx : regValue (bs.map AddBit.x) s.basis = X := rfl
+  have hy : regValue (bs.map AddBit.y) s.basis = Y := rfl
+  have ho : regValue (bs.map AddBit.out) s.basis = O := rfl
+  have hk : regValue (bs.map AddBit.carry) s.basis = 0 := (regValue_zero _ _).mpr (by
+    intro w hw
+    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
+    exact hclean0 b hb)
   obtain ⟨hcw, hn⟩ := List.nodup_cons.mp hnd
   let r := bs.map AddBit.y ++ [cin]
   have hcy : cin ∉ bs.map AddBit.y := fun h => hcw ((y_sublist bs).subset h)
@@ -76,12 +85,11 @@ theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
     rw [regValue_congr _ _ (fun w => !s.basis w) (by
       intro w hw
       simp [s1, r, hw]), regValue_complement, List.length_map, hy]
-  have hclean : ∀ b ∈ bs, s1.basis b.out = false ∧ s1.basis b.carry = false := by
+  have hclean : ∀ b ∈ bs, s1.basis b.carry = false := by
     intro b hb
-    exact ⟨(regValue_zero _ _).mp ho1 _ (List.mem_map.mpr ⟨b, hb, rfl⟩),
-      (regValue_zero _ _).mp hk1 _ (List.mem_map.mpr ⟨b, hb, rfl⟩)⟩
+    exact (regValue_zero _ _).mp hk1 _ (List.mem_map.mpr ⟨b, hb, rfl⟩)
   let t := run (rippleAdder bs cin) m s1
-  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_correct bs cin hnd s1 m hclean
+  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_xor_correct bs cin hnd s1 m hclean
   have hrout : ∀ w ∈ r, w ∉ bs.map AddBit.out := by
     intro w hw
     rcases List.mem_append.mp hw with hw | hw
@@ -103,18 +111,7 @@ theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
   simp only [(notRegister_counts (bs.map AddBit.y ++ [cin])).2, zero_add, measurementCount_append, List.drop_zero]
   change (run (notRegister r) _ t).phase = _ ∧ _
   rw [notRegister_correct r hr]
-  refine ⟨hp, ?_⟩
-  have hread' (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ bs.map AddBit.out) :
-      regValue (bs.map f) (fun w => if w ∈ r then !t.basis w else t.basis w) =
-        regValue (bs.map f) s.basis :=
-    regValue_congr _ _ _ (by
-      intro w hw
-      obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
-      exact hfinal _ (h b hb))
-  have hx' := hread' AddBit.x (fun b hb => (inputs_not_output bs hn b hb).1)
-  have hy' := hread' AddBit.y (fun b hb => (inputs_not_output bs hn b hb).2.1)
-  have hk' := hread' AddBit.carry (fun b hb => (inputs_not_output bs hn b hb).2.2)
-  have hc' := hfinal cin (hrout cin (by simp [r]))
+  refine ⟨hp, hfinal, ?_⟩
   have hout := regValue_congr (bs.map AddBit.out)
     (fun w => if w ∈ r then !t.basis w else t.basis w) t.basis (by
       intro w hw
@@ -122,8 +119,47 @@ theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
       simp [hwr])
   have hbound : Y < 2^bs.length := by simpa [hy] using regValue_lt (bs.map AddBit.y) s.basis
   have he : X + (2^bs.length - 1 - Y) + 1 = X + 2^bs.length - Y := by omega
-  refine ⟨⟨⟨⟨hx'.trans hx, hy'.trans hy⟩, hc'.trans hc⟩, ?_⟩, hk'.trans hk⟩
-  rw [hout, hsum, hx1, hy1, hc1, Bool.toNat_true, he]
+  rw [hout, hsum, ho1, hx1, hy1, hc1, Bool.toNat_true, he]
+
+/-- 任意初值输出的减法规格，输入和工作位保持。 -/
+theorem rippleSubtractor_xor_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = (O ^^^ ((X + 2^bs.length - Y) % 2^bs.length)),
+       bs.map AddBit.carry = (0 : Nat) }} := by
+  intro s m hP
+  simp only [Holds.holds] at hP ⊢
+  obtain ⟨⟨⟨⟨hx, hy⟩, hc⟩, ho⟩, hk⟩ := hP
+  obtain ⟨hp, he, hv⟩ := rippleSubtractor_xor_correct bs cin hnd s m hc (by
+    intro b hb
+    exact (regValue_zero _ _).mp hk _ (List.mem_map.mpr ⟨b, hb, rfl⟩))
+  have hn := inputs_not_output bs (List.nodup_cons.mp hnd).2
+  have hreg (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ bs.map AddBit.out) :
+      regValue (bs.map f) (run (rippleSubtractor bs cin) m s).basis = regValue (bs.map f) s.basis :=
+    regValue_congr _ _ _ (by
+      intro w hw
+      obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
+      exact he _ (h b hb))
+  have hc' : (run (rippleSubtractor bs cin) m s).basis cin = s.basis cin := by
+    apply he
+    intro h
+    obtain ⟨b, hb, hb'⟩ := List.mem_map.mp h
+    exact (List.nodup_cons.mp hnd).1 (hb' ▸ (mem_addWires hb).2.2.1)
+  exact ⟨hp, ⟨⟨⟨(hreg _ (fun b hb => (hn b hb).1)).trans hx,
+      (hreg _ (fun b hb => (hn b hb).2.1)).trans hy⟩, hc'.trans hc⟩,
+      by simpa only [hx, hy, ho] using hv⟩, (hreg _ (fun b hb => (hn b hb).2.2)).trans hk⟩
+
+/-- 零输出时，XOR 写入得到模 2^n 的差。 -/
+theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = ((X + 2^bs.length - Y) % 2^bs.length),
+       bs.map AddBit.carry = (0 : Nat) }} := by
+  simpa only [Nat.zero_xor] using rippleSubtractor_xor_spec bs cin hnd X Y 0
 
 /-- 减法的两层 X 不增加 Toffoli 或测量。 -/
 theorem rippleSubtractor_counts (bs : List AddBit) (cin : Wire) :
