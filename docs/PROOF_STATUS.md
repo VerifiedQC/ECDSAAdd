@@ -2,7 +2,7 @@
 
 M1 精简版已通过本地 `scripts/verify.sh`；独立复审与 CI 以最终提交记录为准。M2 算术与点加电路尚未实现。
 
-受检源码提交：本页随后的提交记录将填入源码哈希。
+受检源码提交：`bcd08a0c3c0d4dce3c06b4a29e63315d32e65385`。本页随后仅补入此哈希；最终交付提交的 Lean 源码与验证脚本相同。
 
 ```lean
 theorem andComputeErase_spec (a b anc : Wire) (hnd : [a, b, anc].Nodup) (A B : Bool) :
