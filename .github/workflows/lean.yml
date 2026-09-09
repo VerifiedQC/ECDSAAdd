@@ -16,5 +16,5 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Fetch pinned Mathlib cache
         run: lake exe cache get
-      - name: Check Lean proofs, source closure and axioms
+      - name: Check Lean proofs and public theorem axioms
         run: scripts/verify.sh

@@ -1,61 +1,55 @@
 # 公开定理与证明状态
 
-M1 的本地机械检查已通过；独立审阅和 hosted CI 状态以对应提交的记录为准。M2–M4 尚未实现，当前不能宣称点加电路已经完成。
+M1 精简版已通过本地 `scripts/verify.sh`；独立复审与 CI 以最终提交记录为准。M2 算术与点加电路尚未实现。
 
-受检源码提交：`e042a90f46ab2cc6c26541fdee8d0235286a9048`。本页及证据文件随后以文档提交加入，不改变受检 Lean 程序或证明。审阅时仍以最终交付提交为准。
+受检源码提交：`bcd08a0c3c0d4dce3c06b4a29e63315d32e65385`。本页随后仅补入此哈希；最终交付提交的 Lean 源码与验证脚本相同。
 
-## M1 主要定理（Lean `#check` 原文）
-
-```text
-ECDSAAdd.andComputeErase_correct (a b anc : ECDSAAdd.Wire) (_hab : a ≠ b) (ha : a ≠ anc) (hb : b ≠ anc)
-  (s : ECDSAAdd.State) (hclean : s.basis anc = false) (m : ECDSAAdd.Outcomes (ECDSAAdd.andComputeErase a b anc)) :
-  ECDSAAdd.run (ECDSAAdd.andComputeErase a b anc) m s = s
-ECDSAAdd.andComputeErase_toffoliCount (a b anc : ECDSAAdd.Wire) :
-  ECDSAAdd.toffoliCount (ECDSAAdd.andComputeErase a b anc) = 1
-ECDSAAdd.andComputeErase_measurementCount (a b anc : ECDSAAdd.Wire) :
-  ECDSAAdd.measurementCount (ECDSAAdd.andComputeErase a b anc) = 1
-ECDSAAdd.andComputeErase_qubitCount (a b anc : ECDSAAdd.Wire) (hab : a ≠ b) (ha : a ≠ anc) (hb : b ≠ anc) :
-  ECDSAAdd.qubitCount (ECDSAAdd.andComputeErase a b anc) = 3
+```lean
+theorem andComputeErase_spec (a b anc : Wire) (hnd : [a, b, anc].Nodup) (A B : Bool) :
+  {{ a = A, b = B, anc = false }} andComputeErase a b anc
+  {{ a = A, b = B, anc = false }}
 ```
 
-[源码与中文 docstring](../ECDSAAdd/Circuit/And.lean) · [逐项假设说明与符号推导](witness/M1/WITNESS.md)
+三线互异、辅助位为零时，AND 计算与测量反计算恢复整个状态；`andComputeErase_correct` 保留完整状态等式。
+同一个程序的 Toffoli 数为 1、测量数为 1、静态线路数为 3；静态线路数不是最大同时存活数。
+结论仅涉及 monomial 模型；数学层的 `affineAdd_correct` 是群律规格，不是点加电路实现证明。
 
-正确性定理量化任意 `State` 和任意测量结果。只要求三线互异、辅助位初始为零；结论是整个状态恢复。资源定理引用同一个 `andComputeErase` 程序。`qubitCount` 是静态支持集基数。
+## 判断的含义
 
-## 其他已检查结论
+```lean
+def Triple (P : BasisState → Prop) (c : Program) (Q : BasisState → Prop) : Prop :=
+  ∀ (s : State) (m : List Bool), P s.basis →
+    (run c m s).phase = s.phase ∧ Q (run c m s).basis
+```
 
-- `measurementCount_append`、`toffoliCount_append`：静态计数对顺序连接相加。
-- `run_append`：正确拆分测量记录后的执行组合。
-- `correct_basis`：相位修正不改变任何 basis 位。
-- `wires_append`：顺序组合的线路集合取并集。
-- `run_preserves_outside`：任意记录下，集合外线路不变。
-- `andComputeErase_wellFormed`：M1 的门及修正线路合法。
-- `Secp256k1.p_prime`、`G_ne_zero`、`affineAdd_correct`：Bitcoin 数学基础与完整群律规格；不是点加电路的实现证明。
+测量记录不足时补 false，多余时忽略；全称量化覆盖所有记录。相位恢复需要证明，不由即时修正的语法自动保证。`Triple.seq`、`conseq`、`frame` 分别证明顺序组合、前后置条件推导、外部线路断言保持。
 
-## 公理披露原文
+断言里的顶层 `r = v` 经 `Holds` 读取寄存器：Wire 读 Bool、线路列表按小端读 Nat、PointReg 读有限点标志与坐标（无穷远点全零）。其他命题原样保留，必要时可用隐式状态名 `st`。[判断与表示定义](../ECDSAAdd/Framework/Hoare.lean) · [程序和定理源码](../ECDSAAdd/Circuit/And.lean)
+
+## `#check` 原文
 
 ```text
+ECDSAAdd.andComputeErase_spec (a b anc : ECDSAAdd.Wire) (hnd : [a, b, anc].Nodup) (A B : Bool) :
+  ECDSAAdd.Triple
+    (fun st => (ECDSAAdd.Holds.holds st a A ∧ ECDSAAdd.Holds.holds st b B) ∧ ECDSAAdd.Holds.holds st anc false)
+    (ECDSAAdd.andComputeErase a b anc) fun st =>
+    (ECDSAAdd.Holds.holds st a A ∧ ECDSAAdd.Holds.holds st b B) ∧ ECDSAAdd.Holds.holds st anc false
+```
+
+## 公理披露
+
+`lake --wfail build` 与以下公开定理的传递公理白名单检查通过；没有运行测试，也没有全环境审计。
+
+```text
+'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.andComputeErase_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.andComputeErase_wellFormed' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.andComputeErase_toffoliCount' depends on axioms: [propext]
-'ECDSAAdd.andComputeErase_measurementCount' does not depend on any axioms
+'ECDSAAdd.andComputeErase_measurementCount' depends on axioms: [propext]
 'ECDSAAdd.andComputeErase_qubitCount' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.run_append' depends on axioms: [propext, Quot.sound]
-'ECDSAAdd.run_preserves_outside' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Triple.seq' depends on axioms: [propext]
+'ECDSAAdd.Triple.conseq' does not depend on any axioms
+'ECDSAAdd.Triple.frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.p_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
-
-另运行独立的全量 `axiom-audit`，固定工具提交 `46024e005996495c65ef609368e11ab39c4222e3`，检查 ECDSAAdd 所属全部 **477 个声明**；均只依赖允许集合 `propext`、`Classical.choice`、`Quot.sound`。源码闭包和分层检查覆盖 **8/8 模块**。未添加测试。
-
-## 复现与耗时
-
-```sh
-lake exe cache get
-scripts/verify.sh
-```
-
-Lean `v4.28.0`；Mathlib `fadcf92bfcfe7575bbdf04c6f83ab3ada53e3d42`。在 Mac-mini-Office 上移走本项目 `.lake/build` 后，完整验证耗时 **21.91 秒**；保留相同版本的依赖构建缓存和审计工具缓存。这不是包含下载的完全冷启动耗时。
-
-[验证输出](witness/M1/verification.txt) · [计时记录](witness/M1/timing.json) · [来源说明](PROVENANCE.md)
