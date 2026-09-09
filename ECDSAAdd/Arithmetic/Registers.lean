@@ -3,6 +3,36 @@ import Mathlib.Data.Nat.Bitwise
 
 namespace ECDSAAdd.Arithmetic
 
+/-- 小端读值相等恰好表示寄存器中的每一位相等。 -/
+theorem regValue_eq_iff (r : List Wire) (s t : BasisState) :
+    regValue r s = regValue r t ↔ ∀ w ∈ r, s w = t w := by
+  constructor
+  · intro h
+    induction r with
+    | nil => simp
+    | cons a r ih =>
+      have hb : s a = t a := by
+        change (if s a then 1 else 0) + 2 * regValue r s =
+          (if t a then 1 else 0) + 2 * regValue r t at h
+        cases hs : s a <;> cases ht : t a <;>
+          simp only [hs, ht, Bool.false_eq_true, if_false, if_true] at h ⊢ <;> omega
+      have hr : regValue r s = regValue r t := by
+        change (if s a then 1 else 0) + 2 * regValue r s =
+          (if t a then 1 else 0) + 2 * regValue r t at h
+        rw [hb] at h
+        omega
+      intro w hw
+      rcases List.mem_cons.mp hw with rfl | hw
+      · exact hb
+      · exact ih hr w hw
+  · intro h
+    induction r with
+    | nil => rfl
+    | cons a r ih =>
+      change (if s a then 1 else 0) + 2 * regValue r s =
+        (if t a then 1 else 0) + 2 * regValue r t
+      rw [h a (by simp), ih (fun w hw => h w (by simp [hw]))]
+
 /-- XOR 按小端的最低位与高位分解。 -/
 theorem xor_value_step (a b : Bool) (x y : Nat) :
     (a ^^ b).toNat + 2 * (x ^^^ y) = (a.toNat + 2 * x) ^^^ (b.toNat + 2 * y) := by

@@ -16,11 +16,11 @@ def modSub (L : ModLayout) (q : Nat) : Program :=
   let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum)
   load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load
 
-private def baseValues (X Y O : Nat) : ModField → Nat
+def ModValues.clean (X Y O : Nat) : ModField → Nat
   | .x => X | .y => Y | .out => O | _ => 0
 
-private theorem baseValues_iff (L : ModLayout) (X Y O : Nat) (st : BasisState) :
-    ModValues L (baseValues X Y O) st ↔
+theorem ModValues.clean_iff (L : ModLayout) (X Y O : Nat) (st : BasisState) :
+    ModValues L (ModValues.clean X Y O) st ↔
       (((regValue L.x st = X ∧ regValue L.y st = Y) ∧ regValue L.out st = O) ∧
         regValue L.work st = 0) := by
   constructor
@@ -52,8 +52,8 @@ private theorem baseValues_iff (L : ModLayout) (X Y O : Nat) (st : BasisState) :
 
 private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
-    Triple (ModValues L (baseValues X Y O)) (modAdd L q)
-      (ModValues L (baseValues X Y (O ^^^ ((X+Y)%q)))) := by
+    Triple (ModValues L (ModValues.clean X Y O)) (modAdd L q)
+      (ModValues L (ModValues.clean X Y (O ^^^ ((X+Y)%q)))) := by
   let S := X+Y
   let D := (S + 2^(L.width+1) - q) % 2^(L.width+1)
   let R := S%q
@@ -61,7 +61,7 @@ private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   have hq' : q < 2^(L.width+1) := by rw [Nat.pow_succ]; omega
   have hchoose : (if 2^L.width ≤ D then S else D) = R :=
     (addReduction S q L.width hq0 hq (by dsimp [S]; omega)).2
-  let v0 := baseValues X Y O
+  let v0 := ModValues.clean X Y O
   let v1 := Function.update v0 .modulus q
   let v2 := Function.update v1 .total S
   let v3 := Function.update v2 .diff D
@@ -70,31 +70,31 @@ private theorem modAdd_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   let v6 := Function.update v5 .total 0
   let v7 := Function.update v6 .modulus 0
   have h0 : Triple (ModValues L v0) (xorConstant (L.reg .modulus) q) (ModValues L v1) := by
-    simpa [v1, v0, baseValues] using constant_modValues L hnd v0 .modulus q hq'
+    simpa [v1, v0, ModValues.clean] using constant_modValues L hnd v0 .modulus q hq'
   have h1 : Triple (ModValues L v1) (add (L.adder .x .y .total .carrySum L.cinSum)) (ModValues L v2) := by
-    simpa [v2, v1, v0, baseValues, S, Nat.mod_eq_of_lt hS] using
+    simpa [v2, v1, v0, ModValues.clean, S, Nat.mod_eq_of_lt hS] using
       add_modValues L hnd v1 .x .y .total .carrySum (by decide) L.cinSum (Or.inl rfl)
-        (by simp [v1, v0, baseValues])
+        (by simp [v1, v0, ModValues.clean])
   have h2 : Triple (ModValues L v2) (sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)) (ModValues L v3) := by
-    simpa [v3, v2, v1, v0, baseValues, D] using
+    simpa [v3, v2, v1, v0, ModValues.clean, D] using
       sub_modValues L hnd v2 .total .modulus .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
-        (by simp [v2, v1, v0, baseValues])
+        (by simp [v2, v1, v0, ModValues.clean])
   have h3 : Triple (ModValues L v3) (selectXor L.selector L.high.diff) (ModValues L v4) := by
-    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3 (by
-      simpa [v3, v2, v1, v0, baseValues, hchoose] using
+    simpa [v4, v3, v2, v1, v0, ModValues.clean, hchoose] using select_modValues L hnd v3 (by
+      simpa [v3, v2, v1, v0, ModValues.clean, hchoose] using
         (lt_trans (Nat.mod_lt _ hq0) hq : R < 2^L.width))
   have h4 : Triple (ModValues L v4) (sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)) (ModValues L v5) := by
-    simpa [v5, v4, v3, v2, v1, v0, baseValues, D] using
+    simpa [v5, v4, v3, v2, v1, v0, ModValues.clean, D] using
       sub_modValues L hnd v4 .total .modulus .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
-        (by simp [v4, v3, v2, v1, v0, baseValues])
+        (by simp [v4, v3, v2, v1, v0, ModValues.clean])
   have h5 : Triple (ModValues L v5) (add (L.adder .x .y .total .carrySum L.cinSum)) (ModValues L v6) := by
-    simpa [v6, v5, v4, v3, v2, v1, v0, baseValues, S, Nat.mod_eq_of_lt hS] using
+    simpa [v6, v5, v4, v3, v2, v1, v0, ModValues.clean, S, Nat.mod_eq_of_lt hS] using
       add_modValues L hnd v5 .x .y .total .carrySum (by decide) L.cinSum (Or.inl rfl)
-        (by simp [v5, v4, v3, v2, v1, v0, baseValues])
+        (by simp [v5, v4, v3, v2, v1, v0, ModValues.clean])
   have h6 : Triple (ModValues L v6) (xorConstant (L.reg .modulus) q) (ModValues L v7) := by
-    simpa [v7, v6, v5, v4, v3, v2, v1, v0, baseValues] using constant_modValues L hnd v6 .modulus q hq'
-  have hv7 : v7 = baseValues X Y (O ^^^ R) := by
-    funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, baseValues]
+    simpa [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean] using constant_modValues L hnd v6 .modulus q hq'
+  have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
+    funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
   have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
   simpa only [modAdd, List.append_assoc, hv7, v0, R, S] using h
 
@@ -104,21 +104,21 @@ theorem modAdd_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }} modAdd L q
     {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} :=
-  Triple.conseq (fun st h => (baseValues_iff L X Y O st).mpr h)
+  Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
     (modAdd_values L hnd q hq0 hq X Y O hX hY)
-    (fun st h => (baseValues_iff L X Y (O ^^^ ((X+Y)%q)) st).mp h)
+    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ((X+Y)%q)) st).mp h)
 
 private theorem modSub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
-    Triple (ModValues L (baseValues X Y O)) (modSub L q)
-      (ModValues L (baseValues X Y (O ^^^ ((X+q-Y)%q)))) := by
+    Triple (ModValues L (ModValues.clean X Y O)) (modSub L q)
+      (ModValues L (ModValues.clean X Y (O ^^^ ((X+q-Y)%q)))) := by
   let D := (X + 2^(L.width+1) - Y) % 2^(L.width+1)
   let S := (D+q) % 2^(L.width+1)
   let R := (X+q-Y)%q
   have hq' : q < 2^(L.width+1) := by rw [Nat.pow_succ]; omega
   have hchoose : (if 2^L.width ≤ D then S else D) = R :=
     (subReduction X Y q L.width hq0 hq hX hY).2
-  let v0 := baseValues X Y O
+  let v0 := ModValues.clean X Y O
   let v1 := Function.update v0 .modulus q
   let v2 := Function.update v1 .diff D
   let v3 := Function.update v2 .total S
@@ -127,31 +127,31 @@ private theorem modSub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   let v6 := Function.update v5 .diff 0
   let v7 := Function.update v6 .modulus 0
   have h0 : Triple (ModValues L v0) (xorConstant (L.reg .modulus) q) (ModValues L v1) := by
-    simpa [v1, v0, baseValues] using constant_modValues L hnd v0 .modulus q hq'
+    simpa [v1, v0, ModValues.clean] using constant_modValues L hnd v0 .modulus q hq'
   have h1 : Triple (ModValues L v1) (sub (L.adder .x .y .diff .carryDiff L.cinDiff)) (ModValues L v2) := by
-    simpa [v2, v1, v0, baseValues, D] using
+    simpa [v2, v1, v0, ModValues.clean, D] using
       sub_modValues L hnd v1 .x .y .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
-        (by simp [v1, v0, baseValues])
+        (by simp [v1, v0, ModValues.clean])
   have h2 : Triple (ModValues L v2) (add (L.adder .diff .modulus .total .carrySum L.cinSum)) (ModValues L v3) := by
-    simpa [v3, v2, v1, v0, baseValues, S] using
+    simpa [v3, v2, v1, v0, ModValues.clean, S] using
       add_modValues L hnd v2 .diff .modulus .total .carrySum (by decide) L.cinSum (Or.inl rfl)
-        (by simp [v2, v1, v0, baseValues])
+        (by simp [v2, v1, v0, ModValues.clean])
   have h3 : Triple (ModValues L v3) (selectXor L.selector L.high.diff) (ModValues L v4) := by
-    simpa [v4, v3, v2, v1, v0, baseValues, hchoose] using select_modValues L hnd v3 (by
-      simpa [v3, v2, v1, v0, baseValues, hchoose] using
+    simpa [v4, v3, v2, v1, v0, ModValues.clean, hchoose] using select_modValues L hnd v3 (by
+      simpa [v3, v2, v1, v0, ModValues.clean, hchoose] using
         (lt_trans (Nat.mod_lt _ hq0) hq : R < 2^L.width))
   have h4 : Triple (ModValues L v4) (add (L.adder .diff .modulus .total .carrySum L.cinSum)) (ModValues L v5) := by
-    simpa [v5, v4, v3, v2, v1, v0, baseValues, S] using
+    simpa [v5, v4, v3, v2, v1, v0, ModValues.clean, S] using
       add_modValues L hnd v4 .diff .modulus .total .carrySum (by decide) L.cinSum (Or.inl rfl)
-        (by simp [v4, v3, v2, v1, v0, baseValues])
+        (by simp [v4, v3, v2, v1, v0, ModValues.clean])
   have h5 : Triple (ModValues L v5) (sub (L.adder .x .y .diff .carryDiff L.cinDiff)) (ModValues L v6) := by
-    simpa [v6, v5, v4, v3, v2, v1, v0, baseValues, D] using
+    simpa [v6, v5, v4, v3, v2, v1, v0, ModValues.clean, D] using
       sub_modValues L hnd v5 .x .y .diff .carryDiff (by decide) L.cinDiff (Or.inr rfl)
-        (by simp [v5, v4, v3, v2, v1, v0, baseValues])
+        (by simp [v5, v4, v3, v2, v1, v0, ModValues.clean])
   have h6 : Triple (ModValues L v6) (xorConstant (L.reg .modulus) q) (ModValues L v7) := by
-    simpa [v7, v6, v5, v4, v3, v2, v1, v0, baseValues] using constant_modValues L hnd v6 .modulus q hq'
-  have hv7 : v7 = baseValues X Y (O ^^^ R) := by
-    funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, baseValues]
+    simpa [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean] using constant_modValues L hnd v6 .modulus q hq'
+  have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
+    funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
   have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
   simpa only [modSub, List.append_assoc, hv7, v0, R] using h
 
@@ -160,8 +160,8 @@ theorem modSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }} modSub L q
     {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+q-Y)%q)), L.work = 0 }} :=
-  Triple.conseq (fun st h => (baseValues_iff L X Y O st).mpr h)
+  Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
     (modSub_values L hnd q hq0 hq X Y O hX hY)
-    (fun st h => (baseValues_iff L X Y (O ^^^ ((X+q-Y)%q)) st).mp h)
+    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ((X+q-Y)%q)) st).mp h)
 
 end ECDSAAdd.Arithmetic
