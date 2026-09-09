@@ -40,6 +40,13 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.fieldMul_zero_spec
 #print axioms ECDSAAdd.Arithmetic.fieldMul_spec
 #print axioms ECDSAAdd.Arithmetic.fieldMul_resources
+#print axioms ECDSAAdd.kaliski_invariant
+#print axioms ECDSAAdd.kaliski_terminates
+#print axioms ECDSAAdd.kaliski_register_bounds
+#print axioms ECDSAAdd.halve_mod_correct
+#print axioms ECDSAAdd.halveFixed_correct
+#print axioms ECDSAAdd.kaliski_correct
+#print axioms ECDSAAdd.kaliski_inverse_p
 #print axioms ECDSAAdd.Secp256k1.p_prime
 #print axioms ECDSAAdd.Secp256k1.G_ne_zero
 #print axioms ECDSAAdd.Secp256k1.affineAdd_correct
