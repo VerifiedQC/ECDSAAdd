@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法、模 p 加减和模乘已合并。当前分支新增 EEA 求逆的数学证明 I1；具体求逆电路和点加电路尚未实现，求逆电路仍仅有契约。
+M1、加减法、模 p 加减和模乘已合并。EEA 求逆数学证明 I1 也已合并，当前分支新增 I2 移位和计数原语；具体求逆电路和点加电路尚未实现，求逆电路仍仅有契约。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -157,7 +157,45 @@ theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
   kaliskiInverse p a 256 = ((a : Fp)⁻¹).val
 ```
 
-以上都是数学函数与等式，没有定义求逆 `Program`，没有声明求逆电路的 Triple、相位恢复、工作位清理或资源计数。I2 原语、I3 单轮及逆轮、I4 循环、I5 契约实例仍需实现和证明。该边界与 README 状态表一致；不把 I1 写成完整求逆交付。
+以上都是数学函数与等式，没有定义求逆 `Program`，没有声明求逆电路的 Triple、相位恢复、工作位清理或资源计数。I2 原语如下；I3 单轮及逆轮、I4 循环、I5 契约实例仍需实现和证明。该边界与 README 状态表一致；不把 I1 写成完整求逆交付。
+
+## I2：受控移位与 10 位计数
+
+[Shift](../ECDSAAdd/Arithmetic/Shift.lean) 将 CSWAP 分解为 `CX b a; CCX c a b; CX b a`。统一的 `(c::r).Nodup` 保证控制与所有目标互异。左右网络是相反顺序的相邻 CSWAP；`shiftRight_left_cancel` 证明先左后右恢复完整状态。只重排无测量的交换门。
+
+```lean
+theorem shiftRight_spec (c : Wire) (r : List Wire) (hnd : (c::r).Nodup)
+    (C : Bool) (X : Nat) (heven : C = true → X%2 = 0) :
+  {{ c=C, r=X }} shiftRight c r {{ c=C, r=(if C then X/2 else X) }}
+
+theorem shiftLeft_spec (c : Wire) (r : List Wire) (hnd : (c::r).Nodup)
+    (C : Bool) (X : Nat) (hfit : C = true → 2*X < 2^r.length) :
+  {{ c=C, r=X }} shiftLeft c r {{ c=C, r=(if C then 2*X else X) }}
+```
+
+网络实际是循环移位；右移的偶数条件保证最低位为零，左移条件保证最高位不溢出。没有丢弃非零位。控制为假时值不变，空/单线寄存器也包含在定理中。
+
+[Counter](../ECDSAAdd/Arithmetic/Counter.lean) 复用 `AdderLayout`，不另建布局类型：cin 是控制，x 是旧值，out 初始为空，y/carry 为零工作区。
+
+```lean
+theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K : Nat) (C : Bool) :
+  {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterInc L
+  {{ L.x=0, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }}
+```
+
+`counterDec_spec` 同形，结果为 `(K+1024-C.toNat)%1024`。两者都将结果移入 out 并清空 x；下轮用 `L.swapCounter` 交换角色。C=false 时逻辑值不变，但物理寄存器仍交换，不声称整个状态恒等。I1 证明 k≤512，所以采用 10 位；当前接口是模 1024 运算，后续循环必须用范围不变量说明不会产生不希望的回绕。
+
+组合用 `counterIncXor_spec` / `counterDecXor_spec` 保留 x、将结果 XOR 到任意初值 O。增量复用 add；减量先翻转 cin/y，再 add，最后恢复 cin/y。常用清理形式由增量写出、对调来源/输出后的减量清除旧值（或反过来）组成；没有反转测量程序。全部 Triple 对任意初始相位和所有记录恢复相位，测量仍仅用于现有加法器的进位清理。
+
+| 同一具体程序 | Toffoli | 测量 | 静态线路数 |
+| --- | ---: | ---: | ---: |
+| `cswap` | 1 | 0 | 3 |
+| `shiftRight` / `shiftLeft`，w 位 | max(w−1,0) | 0 | w≥2 时 w+1，否则 0 |
+| `counterIncXor` / `counterDecXor`，10 位 | 10 | 10 | 41 |
+| `counterInc` / `counterDec`，10 位 | 20 | 20 | 41 |
+
+资源由相同程序的门列表和实际线路集合计算；两次计数调用共享同一 41 根线路。未增加测量分支控制算术，未引入量子态语义，也未声明求逆单轮或完整求逆电路已完成。
 
 ## 公理披露
 
@@ -198,6 +236,18 @@ theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
 'ECDSAAdd.Arithmetic.fieldMul_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.cswap_spec' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.cswap_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.shiftRight_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.shiftLeft_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.shiftRight_left_cancel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.shift_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counterIncXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counterDecXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counterXor_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counterInc_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counterDec_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.counter_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_register_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
