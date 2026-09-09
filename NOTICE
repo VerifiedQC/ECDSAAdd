@@ -11,5 +11,5 @@ extraction, by Runzhou Tao on 2026-09-08 in the project channel.
 The source checkout did not contain a LICENSE file; this notice does not assert
 that the upstream repository independently declared an Apache 2.0 license.
 
-The Framework and M1 circuit proofs were written for ECDSAAdd. Mathlib and other
+The Framework and arithmetic circuit proofs were written for ECDSAAdd. Mathlib and other
 external dependencies retain their own licenses and are not redistributed here.

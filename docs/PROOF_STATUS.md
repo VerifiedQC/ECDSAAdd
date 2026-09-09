@@ -1,8 +1,10 @@
 # 公开定理与证明状态
 
-M1 精简版已通过本地 `scripts/verify.sh`；独立复审与 CI 以最终提交记录为准。M2 算术与点加电路尚未实现。
+M1 已复审并合并。当前分支的 M2 加减法基础已通过本地 `scripts/verify.sh`；M2 的模 p 加减、模乘与具体求逆，以及点加电路尚未实现。求逆仅有接口要求，不存在已证明满足它的程序。
 
-受检源码提交：`bcd08a0c3c0d4dce3c06b4a29e63315d32e65385`。本页随后仅补入此哈希；最终交付提交的 Lean 源码与验证脚本相同。
+受检源码提交：`4dc34517347cf5756edc3247fbe2ae5860a587a0`。本页随后仅补入此哈希；最终交付的 Lean 源码与验证脚本相同。验证包括 Lean 构建与公开定理公理白名单；没有测试。
+
+## M1
 
 ```lean
 theorem andComputeErase_spec (a b anc : Wire) (hnd : [a, b, anc].Nodup) (A B : Bool) :
@@ -36,6 +38,47 @@ ECDSAAdd.andComputeErase_spec (a b anc : ECDSAAdd.Wire) (hnd : [a, b, anc].Nodup
     (ECDSAAdd.Holds.holds st a A ∧ ECDSAAdd.Holds.holds st b B) ∧ ECDSAAdd.Holds.holds st anc false
 ```
 
+## M2：加减法基础
+
+[加法源码](../ECDSAAdd/Arithmetic/RippleAdder.lean) 中 `bs` 按小端排列，每一项含 x、y、out、carry 四根线；`cin :: addWires bs` 的 Nodup 要求全部线路互异。
+
+```lean
+theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) (C : Bool) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+       bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
+       bs.map AddBit.carry = (0 : Nat) }}
+```
+
+每位先计算和位/进位、递归处理高位，最后测量清理当前进位。`rippleAdder_correct` 同时证明所有非输出线路恢复，包含输入、输入进位与工作线。`rippleAdder_wide_spec` 在布局末尾增加一位，要求 X、Y 小于原位宽的容量，直接给出 `out = X + Y + C.toNat`；最高输出位保留。
+
+[减法源码](../ECDSAAdd/Arithmetic/Subtractor.lean) 用两层 X 包住同一加法器，实现补码相加并恢复 Y 和输入进位工作线：
+
+```lean
+theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = ((X + 2^bs.length - Y) % 2^bs.length),
+       bs.map AddBit.carry = (0 : Nat) }}
+```
+
+所有 triple 均量化任意初始相位和测量记录，保证相位恢复；线路集合外保持由 Framework 定理提供。当前加减法的输出要求初始为零；尚未提供任意初值输出的 XOR 寄存器接口。
+
+| 同一具体程序 | Toffoli | 测量 | 静态线路数（布局互异） |
+| --- | ---: | ---: | ---: |
+| `fullAdder` | 1 | 0 | 5 |
+| `eraseCarry` | 0 | 1 | 4 |
+| `notRegister`，n 位 | 0 | 0 | n |
+| `rippleAdder`，n 位 | n | n | n>0 时 4n+1；n=0 时 0 |
+| `rippleAdder`，n+1 位完整结果 | n+1 | n+1 | 4n+5 |
+| `rippleSubtractor`，n 位 | n | n | 4n+1 |
+
+[求逆契约](../ECDSAAdd/Arithmetic/InverseContract.lean) 明确要求两个 256 位寄存器、`0 < X < p`、逆元输出、工作位清零、相位恢复，以及该程序的计数和线路包含关系。它只是待实现程序的命题，不是实现或存在性定理。
+
 ## 公理披露
 
 `lake --wfail build` 与以下公开定理的传递公理白名单检查通过；没有运行测试，也没有全环境审计。
@@ -49,6 +92,17 @@ ECDSAAdd.andComputeErase_spec (a b anc : ECDSAAdd.Wire) (hnd : [a, b, anc].Nodup
 'ECDSAAdd.Triple.seq' depends on axioms: [propext]
 'ECDSAAdd.Triple.conseq' does not depend on any axioms
 'ECDSAAdd.Triple.frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.fullAdder_spec' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseCarry_spec' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.notRegister_spec' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.rippleAdder_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rippleAdder_wide_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rippleAdder_toffoliCount' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.rippleAdder_measurementCount' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.rippleAdder_qubitCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rippleSubtractor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rippleSubtractor_counts' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.rippleSubtractor_qubitCount' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.p_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]

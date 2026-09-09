@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1 精简版已通过本地 Lean 验证，正在 [PR 1](https://github.com/VerifiedQC/ECDSAAdd/pull/1) 接受独立复审；CI 与合并状态以 PR 记录为准。
+本节描述当前分支实际包含的代码。M1 已经通过 [PR 1](https://github.com/VerifiedQC/ECDSAAdd/pull/1) 合并；当前分支新增 M2 的加减法基础。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -12,10 +12,14 @@
 | 程序与语义 | 已实现 X/CX/CCX、测量及即时 Z/CZ 修正、monomial 执行和静态资源计数 | [Framework](ECDSAAdd/Framework) |
 | Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/Hoare.lean) |
 | AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/And.lean) |
-| M2 算术 | 尚未交付寄存器加法、模运算或求逆程序及其正确性证明 | — |
+| M2 加减法基础 | 已证明任意位宽加法、保留最高输出位的加法、模 2^n 减法；输入、相位和工作位恢复 | [Arithmetic](ECDSAAdd/Arithmetic) |
+| 模 p 加减与模乘 | 尚未实现；模 2^n 的加减法不等于模 p 算术 | — |
+| 求逆 | 已定义非零输入、相位/清理及资源契约；具体程序与契约满足证明尚未实现 | [InverseContract.lean](ECDSAAdd/Arithmetic/InverseContract.lean) |
 | 点加电路 | 尚未实现，包括受控点加与角落情形的电路证明 | — |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
+
+n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
 
 ## 程序与规格
 
