@@ -8,3 +8,4 @@ import ECDSAAdd.Arithmetic.Shift
 import ECDSAAdd.Arithmetic.Counter
 import ECDSAAdd.Arithmetic.RoundSpec
 import ECDSAAdd.Arithmetic.InverseLoopResources
+import ECDSAAdd.Arithmetic.InverseResources

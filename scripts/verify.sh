@@ -60,6 +60,11 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.kaliskiRound_wires
 #print axioms ECDSAAdd.Arithmetic.kaliskiRound_qubits
 #print axioms ECDSAAdd.Arithmetic.kaliskiRound_257_resources
+#print axioms ECDSAAdd.Arithmetic.fieldInverse_spec
+#print axioms ECDSAAdd.Arithmetic.fieldInverse_xor_spec
+#print axioms ECDSAAdd.Arithmetic.fieldInverse_wires
+#print axioms ECDSAAdd.Arithmetic.fieldInverse_resources
+#print axioms ECDSAAdd.Arithmetic.fieldInverse_contract
 #print axioms ECDSAAdd.Arithmetic.inverseLoop_spec
 #print axioms ECDSAAdd.Arithmetic.inverseLoop_xor_spec
 #print axioms ECDSAAdd.Arithmetic.inverseLoop_wires

@@ -40,7 +40,7 @@ theorem kaliski_correct (p a n : Nat) (hpodd : p%2 = 1) (hp : p < 2^n)
   rw [ZMod.val_natCast_of_lt hout] at hv
   exact hv
 
-/-- secp256k1 的数学求逆特例；实现电路仍需 I2–I5。 -/
+/-- secp256k1 的数学求逆特例；fieldInverse 的电路规格通过本定理对接域逆元。 -/
 theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
     kaliskiInverse p a 256 = ((a : Fp)⁻¹).val := by
   have hp : p < 2^256 := by norm_num [p]
