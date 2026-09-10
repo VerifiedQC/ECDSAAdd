@@ -9,3 +9,5 @@ import ECDSAAdd.Arithmetic.Counter
 import ECDSAAdd.Arithmetic.RoundSpec
 import ECDSAAdd.Arithmetic.InverseLoopResources
 import ECDSAAdd.Arithmetic.InverseResources
+import ECDSAAdd.Arithmetic.PointCandidateSpec
+import ECDSAAdd.Arithmetic.PointCandidateResources

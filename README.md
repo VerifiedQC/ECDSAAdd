@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘及 EEA 的 I1–I4 已合并。当前分支实现并证明 I5：外部 256 位输入的装载、完整求逆内核、卸载和求逆契约实例；输入保留、输出为域逆元，全部工作位清零。点加电路仍未实现。CI、独立复审与合并状态以相应 PR 记录为准。
+本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘及完整 EEA 求逆 I1–I5 已合并。当前分支实现并证明 M3 的第一部分：命名点加布局、相等检测及分支标志原语、安全除数、共享算术工作池、普通候选计算与清理。完整点输出选择、无穷远/相反点/倍点的总点加规格及受控原地点加仍未实现。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -20,7 +20,8 @@
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
 | EEA 固定循环与反计算 | 已证明两个 512 轮阶段、规范化取负、XOR 输出及恢复已初始化输入；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/InverseLoopResources.lean) |
 | 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/InverseResources.lean) |
-| 点加电路 | 尚未实现，包括受控点加与角落情形的电路证明 | — |
+| M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointCandidateResources.lean) |
+| 完整点加电路 | 输出选择、总点加与受控原地版本尚未实现 | — |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
@@ -33,6 +34,8 @@ I3 正轮与逆轮各使用 18w+43 个 Toffoli、6w+40 次测量；w≥2 时精�
 I4 在两个阶段各执行 N=512 轮。第一阶段保存 2N 根记录线；第二阶段按 i<k 减半，复用计数银行并保留 k。复制结果后以正向算术恢复两阶段和所有历史。内部数据宽度 w=257 时，同一 `inverseLoop` 程序使用 **14,303,280 个 Toffoli、6,936,624 次测量、6,212 根静态线路**；这包括两次完整计算/清理及 257 位输出，不包括 I5 的外部输入装载与卸载。空间为 O(w+N)，没有保留第二阶段数值链，也未声称资源最优。完整公式和公开规格见 [证明状态](docs/PROOF_STATUS.md#i4固定循环第二阶段与反计算)。
 
 I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli 和测量数保持 **14,303,280 / 6,936,624**，完整静态线路为 **6,468**。外部输入增加 256 根线路；内核的 257 位输出被拆成 256 位公开输出与一根工作高位，后者由逆元范围证明为零。
+
+M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 **22,989,640 个 Toffoli、13,258,824 次测量**。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的 69,908、5,956、1,287 位前缀。布局分配数 74,022 包含尚未使用的完整点输出等预留字段，**不是已证明的实际 qubit 数**。完整点加的静态支持集与总资源仍待后续部分证明。
 
 ## 每次交付的检查
 
