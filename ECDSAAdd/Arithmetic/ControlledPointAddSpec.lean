@@ -46,7 +46,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
     intro s m hs
     change s.phase=s.phase ∧ _
     refine ⟨rfl,?_⟩
-    change ((Holds.holds s.basis L.control b ∧ Holds.holds s.basis L.point (if b then R+0 else R)) ∧ _) 
+    change ((Holds.holds s.basis L.control b ∧ Holds.holds s.basis L.point (if b then R+0 else R)) ∧ _)
     simpa only [add_zero,ite_self] using hs
   | some hp =>
     let C : Point := .some hp
