@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法、模 p 加减、模乘及 EEA 的 I1–I4 已合并。当前分支新增并证明 I5 外部输入装载/卸载、完整求逆规格与契约实例；点加电路仍未实现。
+M1、加减法、模 p 加减、模乘及完整 EEA 求逆 I1–I5 已合并。当前分支新增 M3 第一部分：共享布局、标志原语、安全除数、候选计算与清理；完整点输出选择与受控点加尚未实现。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -374,3 +374,46 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
+
+## M3 第一部分：共享工作池与候选计算
+
+公开零工作寄存器规格如下。`candidateResult` 按六减、三乘、一次求逆的次序列出各寄存器的自然数代表元；X/Y 是规范坐标值，G 是预先确定的普通分支标志。本节不是完整点加规格，尚不执行最终点输出选择。
+
+```lean
+theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
+    (G : Bool) (X Y : Nat) (cx cy : Fp) (hX : X<p) (hY : Y<p)
+    (hG : G=true → X≠cx.val) :
+    let V := candidateResult G X Y cx.val cy.val
+    {{ L.extendedX=X, L.extendedY=Y, L.dx=0, L.dy=0,
+       L.slope=0, L.square=0, L.offset=0, L.candidateX=0,
+       L.delta=0, L.product=0, L.candidateY=0, L.constant=0,
+       L.divisor=0, L.inverse=0, L.pool=0, L.generic=G }} pointCandidateCompute L cx cy
+    {{ L.extendedX=X, L.extendedY=Y, L.dx=V .dx, L.dy=V .dy,
+       L.slope=V .slope, L.square=V .square, L.offset=V .offset, L.candidateX=V .x,
+       L.delta=V .delta, L.product=V .product, L.candidateY=V .y, L.constant=0,
+       L.divisor=V .divisor, L.inverse=V .inverse, L.pool=0, L.generic=G }}
+```
+
+`pointCandidate_cleanup_spec` 交换这里的前后状态，使用 `pointCandidateClear` 恢复 dx、dy、斜率、平方、中间差、候选坐标、乘积、常量字、除数和逆元全部为零。输入坐标、G 和共享池保持；两个 Triple 均对所有初始相位和测量记录证明相位恢复。清理复用前向 XOR 模块，不反转含测量的门列。内部 `CandidateValues` 是十四个命名寄存器的值表，支持逐段组合；公开接口仍直接使用 `L.dx=...` 等寄存器断言。
+
+`candidateResult_coordinates` 证明输出代表元等于域上的 `pointCandidateValues` 坐标；`pointCandidateValues_generic` 将 G=true 时的候选与既有 `genericX/genericY` 公式对应。G=true 只要求横坐标不同，以保证普通除法非零；G=false 的除数固定为 1，因此没有对零求逆。完整点加应由角落分类推导这个内部前提，而不是向最终调用者暴露几何排除条件。
+
+| 同一具体程序 | Toffoli | 测量 |
+| --- | ---: | ---: |
+| `pointCandidateCompute` | 22,989,640 | 13,258,824 |
+| `pointCandidateClear` | 22,989,640 | 13,258,824 |
+
+`pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
+
+共享映射是实际布局构造，不是抽象存在前提：
+
+- `poolSub`：输入、输出直接连接调用方，五个 257 位工作字和两根进位使用池前 1,287 位；`poolSub_work` 给出准确工作列表。
+- `poolMul`：两份模算术区与 256 个倍数字使用池前 69,908 位；`poolMul_work` 给出准确工作列表。
+- `poolInverse`：单轮共享区、512 对记录、模算术区及 a/b/temp、输出高位使用池前 5,956 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
+- `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
+
+`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，包含下一部分使用的点输出与其他标志，不能作为此程序的实际 qubit 定理。完整点输出电路及其精确支持集、总资源、受控原地版本留待后续部分；本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
+
+标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。完整点分类和最终选择尚未在此 PR 组合。
+
+验证脚本增加上述公开零工作规格、清理规格、资源、布局映射及数学对应关系的传递公理检查；只允许 `propext`、`Classical.choice`、`Quot.sound`。没有数值测试、真值表或额外公理。

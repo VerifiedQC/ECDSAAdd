@@ -1,0 +1,131 @@
+import ECDSAAdd.Arithmetic.PoolLayout
+import ECDSAAdd.Arithmetic.InverseLayout
+
+namespace ECDSAAdd.Arithmetic
+
+private def poolRoundBit (w : Nat → Wire) (start : Nat) : RoundBit :=
+  ⟨w start,w (start+1),w (start+2),w (start+3),w (start+4),
+    w (start+5),w (start+6),w (start+7)⟩
+
+private def poolAddBit (w : Nat → Wire) (start : Nat) : AddBit :=
+  ⟨w start,w (start+1),w (start+2),w (start+3)⟩
+
+/-- 基础轮的两根记录占位字段不会执行；每轮由 records 中的独立线路替换。 -/
+private def poolFirstRound (w : Nat → Wire) : KaliskiRoundLayout :=
+  ⟨(List.range 256).map (fun i => poolRoundBit w (5+8*i)),poolRoundBit w (5+8*256),w 4,
+    (List.range 9).map (fun i => poolAddBit w (2062+4*i)),poolAddBit w (2062+4*9),
+    w 2061,w 3,w 0,w 2102,w 2103,w 1,w 2⟩
+
+/-- 现有求逆模块的 5956 根工作线映射到同一个模乘工作池的前缀。 -/
+def poolInverse (w : Nat → Wire) (x out : List Wire) : InverseLayout :=
+  ⟨⟨poolFirstRound w,
+     (List.range 512).map (fun i => ⟨w (2102+2*i),w (2102+2*i+1)⟩),
+     poolMod w 3126 256,wireBlock w 5184 257,wireBlock w 5441 257,
+     wireBlock w 5698 257,out++[w 5955]⟩,x⟩
+
+theorem poolInverse_widths (w : Nat → Wire) (x out : List Wire)
+    (hx : x.length=256) (ho : out.length=256) : (poolInverse w x out).Widths := by
+  constructor
+  · exact hx
+  · simp [poolInverse]
+  · simp [poolInverse,poolFirstRound,KaliskiRoundLayout.counter,AdderLayout.width]
+  · simp [poolInverse,poolFirstRound]
+  · exact poolMod_width _ _ _
+  · exact wireBlock_length _ _ _
+  · exact wireBlock_length _ _ _
+  · exact wireBlock_length _ _ _
+  · simp [poolInverse,ho]
+
+theorem poolInverse_inputs (w : Nat → Wire) (x out : List Wire) (ho : out.length=256) :
+    (poolInverse w x out).x=x ∧ (poolInverse w x out).out=out := by
+  refine ⟨rfl,?_⟩
+  change (out++[w 5955]).take 256=out
+  rw [← ho,List.take_left]
+
+private theorem poolRoundBit_wires (w : Nat → Wire) (start : Nat) :
+    (poolRoundBit w start).wires=wireBlock w start 8 := by
+  simp [poolRoundBit,RoundBit.wires,wireBlock,List.range',Nat.add_assoc]
+
+private theorem poolAddBit_wires (w : Nat → Wire) (start : Nat) :
+    addWires [poolAddBit w start]=wireBlock w start 4 := by
+  simp [poolAddBit,addWires,wireBlock,List.range',Nat.add_assoc]
+
+private theorem addWires_flatMap (bs : List AddBit) :
+    addWires bs=bs.flatMap (fun b => addWires [b]) := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simpa [addWires] using ih
+
+private theorem poolFirstRound_shared (w : Nat → Wire) :
+    (poolFirstRound w).sharedWires=wireBlock w 0 2102 := by
+  have hd : (poolFirstRound w).data.wires=wireBlock w 4 2057 := by
+    have hb : (poolFirstRound w).data.bits=
+        (List.range 257).map (fun i => poolRoundBit w (5+8*i)) := by
+      rw [show (257:Nat)=256+1 from rfl,List.range_succ]
+      simp [poolFirstRound,KaliskiRoundLayout.data]
+    rw [RoundDataLayout.wires,hb,List.flatMap_map]
+    simp only [poolRoundBit_wires]
+    rw [wireBlock_flatMap]
+    change w 4::wireBlock w (4+1) 2056=_
+    rw [← wireBlock_append w 4 1 2056]
+    rfl
+  have hc : (poolFirstRound w).counter.wires=wireBlock w 2061 41 := by
+    have hb : (poolFirstRound w).counter.bits=
+        (List.range 10).map (fun i => poolAddBit w (2062+4*i)) := by
+      rw [show (10:Nat)=9+1 from rfl,List.range_succ]
+      simp [poolFirstRound,KaliskiRoundLayout.counter]
+    rw [AdderLayout.wires,hb,addWires_flatMap,List.flatMap_map]
+    simp only [poolAddBit_wires]
+    rw [wireBlock_flatMap]
+    change w 2061::wireBlock w (2061+1) 40=_
+    rw [← wireBlock_append w 2061 1 40]
+    rfl
+  rw [KaliskiRoundLayout.sharedWires,hd,hc]
+  change wireBlock w 0 4++wireBlock w 4 2057++wireBlock w 2061 41=_
+  rw [show (4:Nat)=0+4 from rfl,wireBlock_append]
+  rw [show (2061:Nat)=0+(4+2057) from rfl,wireBlock_append]
+
+private theorem poolInverse_inner_perm (w : Nat → Wire) (x out : List Wire) :
+    (poolInverse w x out).inner.wires.Perm (out++wireBlock w 0 5956) := by
+  have hr : ((poolInverse w x out).inner.records.flatMap RoundRecord.wires)=
+      wireBlock w 2102 1024 := by
+    simp only [poolInverse,List.flatMap_map,RoundRecord.wires]
+    change ((List.range 512).flatMap (fun i => wireBlock w (2102+2*i) 2))=_
+    exact wireBlock_flatMap _ _ _ _
+  have hj : wireBlock w 0 2102++wireBlock w 2102 1024++wireBlock w 3126 2058++
+      wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 5698 257++wireBlock w 5955 1=
+        wireBlock w 0 5956 := by
+    rw [wireBlock_append w 0 2102 1024,wireBlock_append w 0 3126 2058,
+      wireBlock_append w 0 5184 257,wireBlock_append w 0 5441 257,
+      wireBlock_append w 0 5698 257,wireBlock_append w 0 5955 1]
+  rw [InverseLoopLayout.wires,KaliskiRoundLayout.tapeWires,hr]
+  change (wireBlock w 2102 1024++(poolFirstRound w).sharedWires++
+    (wireBlock w 5184 257++wireBlock w 5698 257++wireBlock w 5441 257++
+      (poolMod w 3126 256).wires)++(out++[w 5955])).Perm _
+  rw [poolFirstRound_shared,poolMod_wires,← hj]
+  change (wireBlock w 2102 1024++wireBlock w 0 2102++
+    (wireBlock w 5184 257++wireBlock w 5698 257++wireBlock w 5441 257++wireBlock w 3126 2058)++
+    (out++wireBlock w 5955 1)).Perm _
+  apply List.perm_iff_count.mpr
+  intro v
+  simp only [List.count_append]
+  ac_rfl
+
+theorem poolInverse_work_perm (w : Nat → Wire) (x out : List Wire) (ho : out.length=256) :
+    (poolInverse w x out).work.Perm (wireBlock w 0 5956) := by
+  have hh := (poolInverse w x out).wires_perm
+  unfold InverseLayout.wires at hh
+  rw [(poolInverse_inputs w x out ho).1,(poolInverse_inputs w x out ho).2] at hh
+  have ht := hh.trans (List.Perm.append_left x (poolInverse_inner_perm w x out))
+  apply List.perm_iff_count.mpr
+  intro v
+  have hc := ht.count_eq v
+  simp only [List.count_append] at hc
+  omega
+
+theorem poolInverse_nodup (w : Nat → Wire) (x out : List Wire) (ho : out.length=256)
+    (h : (x++out++wireBlock w 0 5956).Nodup) : (poolInverse w x out).wires.Nodup := by
+  rw [InverseLayout.wires,(poolInverse_inputs w x out ho).1,(poolInverse_inputs w x out ho).2]
+  exact (List.Perm.append_left (x++out) (poolInverse_work_perm w x out ho)).nodup_iff.mpr h
+
+end ECDSAAdd.Arithmetic
