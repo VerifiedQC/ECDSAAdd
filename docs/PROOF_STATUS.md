@@ -412,7 +412,7 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 - `poolInverse`：单轮共享区、512 对记录、模算术区及 a/b/temp、输出高位使用池前 5,956 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
-`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本尚未实现。本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
+`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
 
 标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。这些原语在下一节的完整点分类和最终选择中组合。
 
@@ -457,4 +457,32 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 公开资源入口是 `pointAddOut_finite_resources` 和 `pointAddOut_zero_resources`，正确性和资源指向同一个 `pointAddOut` 定义。互异条件通过原有算术接口及新增输出/标志接口从 L.wires.Nodup 推出，候选乘法保持独立乘数副本，没有重复控制 CCX。
 
-本次完整验证通过：`lake --wfail build` 完成 2,056 项，脚本选定的 109 个公开定理全部通过传递公理检查。新增入口覆盖完整规格、分类、标志清理、输出效果、候选/整段支持集和资源，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。受控原地点加留在下一部分；本节不声称已经交付该程序。
+本次完整验证通过：`lake --wfail build` 完成 2,056 项，脚本选定的 109 个公开定理全部通过传递公理检查。新增入口覆盖完整规格、分类、标志清理、输出效果、候选/整段支持集和资源，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。受控原地点加的后续实现见第三部分。
+
+
+## M3 第三部分：完整受控原地点加
+
+```lean
+theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn : L.wires.Nodup)
+    (b : Bool) (R C : Point) :
+  {{ L.control=b,L.point=R,L.work=0 }} controlledPointAdd L C
+  {{ L.control=b,L.point=(if b then R+C else R),L.work=0 }}
+```
+
+`L.core` 复用完整点加布局；`L.point` 是输入点，`L.temporary` 是临时输出点。`L.work` 包括临时点的 513 位、全部算术工作区及三个输出选择位。唯一全局 `Nodup` 同时约束原布局、外部控制位和三个选择位；宽度条件复用已证完整点加。公开规格没有横坐标不同、非零纵坐标或结果有限等几何前提，覆盖 R/C/结果为 O、互逆点、倍点和控制为假。
+
+有限 C 时，先无条件计算分类与候选，再用三个 CCX 生成 b∧generic、b∧double、b∧¬finite；只用这三个选择位控制最终 XOR 输出，随后重新执行选择位程序清零。选择位计算/清理总计 6 个 CCX，不测量、不修改候选算术。`controlledPointOutput_correct` 证明完整目标 XOR 效果及目标外逐线保持。内部 `controlledPointAddOut_finite_ready` / `controlledPointAddOut_ready` 支持任意目标位串，不假设中间 XOR 结果是曲线点；原地程序只在 C≠O 时调用它们。
+
+原地组合执行 `controlledPointAddOut L C`、513 位受控交换、`controlledPointAddOut L (-C)`。控制为假时两次输出均不写入，交换不改变点；控制为真时临时点先得到 R+C，交换后输入是 R+C、临时点是 R，第二次 XOR 写入 (R+C)+(-C)=R，从而清空临时点。`controlledPointSwap_correct` 证明有限标志和两个坐标均正确交换，其他线路保持。全部 Triple 对任意初始相位和所有测量记录证明相位恢复；清理仍使用前向 XOR 算术，不倒放测量。
+
+| 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
+| --- | ---: | ---: | ---: |
+| 有限 C 的 `controlledPointAddOut` | 45,981,850 | 26,517,648 | 74,024 |
+| 有限 C 的 `controlledPointAdd` | 91,964,213 | 53,035,296 | 74,024 |
+| C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
+
+总成本为 2×(45,981,844+6)+513 个 Toffoli、2×26,517,648 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表仍有 dx/yg 两根未触及的填充最高位，未计入实际支持；空间仍为 O(n²+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
+
+正确性与资源定理指向同一个 `controlledPointAdd`。新增门通过 `selector_nodup`、`selected_nodup`、`swap_nodup` 从全局互异条件证明合法；算术继续复用先前的接口合法性和独立乘数副本。
+
+第三部分完整验证通过：`lake --wfail build` 完成 2,067 项；脚本选定的 118 个公开定理全部通过传递公理检查，白名单仅为 `propext`、`Classical.choice`、`Quot.sound`。新增检查覆盖选择位恢复、受控输出、任意目标 XOR 引理、点交换、最终公开规格、实际支持与两种资源分支。未添加测试、数值对照或证明资源限制放宽。

@@ -106,6 +106,15 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.pointAddOut_support
 #print axioms ECDSAAdd.Arithmetic.pointAddOut_finite_resources
 #print axioms ECDSAAdd.Arithmetic.pointAddOut_zero_resources
+#print axioms ECDSAAdd.Arithmetic.pointSelectors_correct
+#print axioms ECDSAAdd.Arithmetic.controlledPointOutput_correct
+#print axioms ECDSAAdd.Arithmetic.controlledPointAddOut_finite_ready
+#print axioms ECDSAAdd.Arithmetic.controlledPointSwap_correct
+#print axioms ECDSAAdd.Arithmetic.controlledPointAdd_spec
+#print axioms ECDSAAdd.Arithmetic.controlledPointAddOut_support
+#print axioms ECDSAAdd.Arithmetic.controlledPointAddOut_finite_resources
+#print axioms ECDSAAdd.Arithmetic.controlledPointAdd_finite_resources
+#print axioms ECDSAAdd.Arithmetic.controlledPointAdd_zero_resources
 #print axioms ECDSAAdd.kaliski_terminates
 #print axioms ECDSAAdd.kaliski_register_bounds
 #print axioms ECDSAAdd.halve_mod_correct

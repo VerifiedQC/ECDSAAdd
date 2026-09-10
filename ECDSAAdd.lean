@@ -13,3 +13,4 @@ import ECDSAAdd.Arithmetic.PointCandidateSpec
 import ECDSAAdd.Arithmetic.PointCandidateResources
 import ECDSAAdd.Arithmetic.PointAddSpec
 import ECDSAAdd.Arithmetic.PointAddResources
+import ECDSAAdd.Arithmetic.ControlledPointResources
