@@ -396,7 +396,7 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 `pointCandidate_cleanup_spec` 交换这里的前后状态，使用 `pointCandidateClear` 恢复 dx、dy、斜率、平方、中间差、候选坐标、乘积、常量字、除数和逆元全部为零。输入坐标、G 和共享池保持；两个 Triple 均对所有初始相位和测量记录证明相位恢复。清理复用前向 XOR 模块，不反转含测量的门列。内部 `CandidateValues` 是十四个命名寄存器的值表，支持逐段组合；公开接口仍直接使用 `L.dx=...` 等寄存器断言。
 
-`candidateResult_coordinates` 证明输出代表元等于域上的 `pointCandidateValues` 坐标；`pointCandidateValues_generic` 将 G=true 时的候选与既有 `genericX/genericY` 公式对应。G=true 只要求横坐标不同，以保证普通除法非零；G=false 的除数固定为 1，因此没有对零求逆。完整点加应由角落分类推导这个内部前提，而不是向最终调用者暴露几何排除条件。
+`candidateResult_coordinates` 证明输出代表元等于域上的 `pointCandidateValues` 坐标；`pointCandidateValues_generic` 将 G=true 时的候选与既有 `genericX/genericY` 公式对应。G=true 只要求横坐标不同，以保证普通除法非零；G=false 的除数固定为 1，因此没有对零求逆。完整点加现已由角落分类推导这个内部前提，不向最终调用者暴露几何排除条件；见下一节。
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
@@ -412,8 +412,49 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 - `poolInverse`：单轮共享区、512 对记录、模算术区及 a/b/temp、输出高位使用池前 5,956 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
-`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，包含下一部分使用的点输出与其他标志，不能作为此程序的实际 qubit 定理。完整点输出电路及其精确支持集、总资源、受控原地版本留待后续部分；本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
+`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本尚未实现。本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
 
-标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。完整点分类和最终选择尚未在此 PR 组合。
+标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。这些原语在下一节的完整点分类和最终选择中组合。
 
 验证脚本增加上述公开零工作规格、清理规格、资源、布局映射及数学对应关系的传递公理检查；只允许 `propext`、`Classical.choice`、`Quot.sound`。没有数值测试、真值表或额外公理。
+
+
+## M3 第二部分：完整经典常量点加
+
+`pointAddOut` 是具体电路，C 是构造时给定的合法曲线点，R 是寄存器中的变量点。公开常用规格：
+
+```lean
+theorem pointAddOut_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
+    (R C : Point) :
+  {{ L.input=R,L.output=(0 : Point),L.work=0 }} pointAddOut L C
+  {{ L.input=R,L.output=(R+C),L.work=0 }}
+```
+
+组合规格不要求输出位串编码曲线点。有限位 OF 与两个自然数寄存器值 OX/OY 可以是任意初值，位宽由寄存器本身决定：
+
+```lean
+theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
+    (R C : Point) (OF : Bool) (OX OY : Nat) :
+  {{ L.input=R,L.output.finite=OF,L.output.x=OX,L.output.y=OY,L.work=0 }} pointAddOut L C
+  {{ L.input=R,L.output.finite=(OF^^pointFinite (R+C)),
+     L.output.x=(OX^^^pointX (R+C)),L.output.y=(OY^^^pointY (R+C)),L.work=0 }}
+```
+
+`pointFinite/pointX/pointY` 读取规范编码；O 的三者为 false/0/0。所有 Triple 对任意初始相位及测量记录成立，证明相位恢复、输入不变、全部工作位清零。没有 hG、横坐标不同、纵坐标非零或结果有限等额外公开前提。
+
+有限 C=(cx,cy) 时，`zeroPorts` 直接连接输入坐标并借共享池前 256 位作零检测链。ex=finite∧(x=cx)，ey=finite∧(y=−cy)，g=finite∧¬ex，d=ex∧¬ey。`point_classification` 证明输入 O 选 C，g 选普通公式，ex∧ey 选 O，d 选经典 2C。最后一种情形由曲线性质推出 R=C，允许 2C=O，不依赖额外群阶证明。分类推出 g=true 时横坐标不同，因此候选求逆对每条分支都有非零输入。
+
+输出依次异或 g 控制的两个候选低坐标及有限位、d 控制的 2C、¬finite 控制的 C。`PointEffect` 在组合证明中记录三字段 XOR、相位及目标之外的逐线保持；`PointBoundary` 保留候选段外的标志和输出值。候选计算及清理使用同一组前向 XOR 模块；最后重算标志并清空它们，未倒放测量程序。C=O 在构造期直接选择 `pointCopy`。
+
+| 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
+| --- | ---: | ---: | ---: |
+| C 有限 | 45,981,844 | 26,517,648 | 74,020 |
+| C=O | 0 | 0 | 1,026 |
+
+有限分支的计数为两段候选 2×22,989,640，加标志计算/清理 2×1,026，加输出复制 512；测量只有两段候选 2×13,258,824。常量写入和负控制包夹仅使用 X/CX。
+
+`pointAddOut_support` 证明 `wires (pointAddOut L (.some hc)) = L.usedWires.toFinset`。`usedWires` 包括候选实际支持及边界输入有限位、其他标志和完整输出；与分配表相比，恰好没有 dx 和 yg 的填充最高位。模减法不写输出高位，两者也没有后续读取；其他高位通过模乘输入、模减输入或平方副本被真实触及。`PointAddLayout.usedWires_nodup` 与 `usedWires_length` 从同一个全局布局条件给出 74,020，包含全体共享池及测量修正线。空间仍为 O(n²+N)，不是最大同时存活数或最优性结论。
+
+公开资源入口是 `pointAddOut_finite_resources` 和 `pointAddOut_zero_resources`，正确性和资源指向同一个 `pointAddOut` 定义。互异条件通过原有算术接口及新增输出/标志接口从 L.wires.Nodup 推出，候选乘法保持独立乘数副本，没有重复控制 CCX。
+
+本次完整验证通过：`lake --wfail build` 完成 2,056 项，脚本选定的 109 个公开定理全部通过传递公理检查。新增入口覆盖完整规格、分类、标志清理、输出效果、候选/整段支持集和资源，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。受控原地点加留在下一部分；本节不声称已经交付该程序。
