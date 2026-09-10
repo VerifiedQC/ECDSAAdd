@@ -13,15 +13,15 @@
 
 | 编号 | 项目 | 现在（已证） | 目标 | 改动范围 |
 | --- | --- | ---: | ---: | --- |
-| 改 1 | 求逆第二阶段 → 原地模减半、只做一次 | 每次求逆 9,506,816 | ≈ 546,000 | 只动 I4 的 halving 循环；`fieldInverse_spec` 陈述不变 |
-| 改 2 | 模乘 → Horner 原地累加，不存倍数链 | 2,892,800 Toffoli，70,678 线 | ≈ 590,000 Toffoli，≈ 1,500 线 | 新原语 `mulAddInPlace`，旧 `fieldMul` 并存到切换完成 |
+| 改 1 | 求逆第二阶段 → 内部寄存器上原地模减半 + 逆序原地模加倍，XOR 接口不变 | 每次求逆 9,506,816 | ≈ 962,000 | 只动 I4 的 halving 循环；`fieldInverse_spec` / `fieldInverse_xor_spec` 陈述不变 |
+| 改 2 | 模乘 → Horner 零输出内核 + 清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | 内核 ≈ 590,000、清理 ≈ 655,000，XOR 适配器 ≈ 1,245,000；≈ 1,500 线 | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变 |
 | 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（设计） | ≈ 15–17M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"数学引理 |
-| 改 4 | Gidney 比较器（n Toffoli 的测量擦除比较器，替代两次减法的 borrowXor） | 每次比较 2n | n | 原地模加 5n→4n、原地模减半 3n→2n、求逆第二阶段每轮 −n、Kaliski 轮记录比较 −w、计数比较减半；所有接口陈述不变 |
+| 改 4 | Gidney 比较器（n Toffoli 的测量擦除比较器，替代两次减法的 borrowXor） | 每次比较 2n | n | 原地模加 5n→4n、原地模减半 3n→2n、改 1 减半轮 −n、Kaliski 轮记录比较 −w、计数比较减半；所有接口陈述不变 |
 | 改 5 | Kaliski 轮压缩 | 每轮 4,669（18w+43） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
-| 改 6 | Montgomery 4 位窗口模乘 | 改 2 后 ≈ 590,000 | 标准形式两次蒙哥马利乘 ≈ 300,000；全 Montgomery 表示 ≈ 150,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
+| 改 6 | Montgomery 4 位窗口模乘（研究预算） | 改 2 后每个乘积算+清 ≈ 1,245,000 | 6a 标准形式 ≤ 600,000；6b 全 Montgomery 表示 ≈ 300,000–430,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
 | 改 7 | 测量反计算查表所需的 CCZ 修正（条件项） | 语言只有 Z/CZ 修正 | 每个查表的反计算从 2^k 降到 ≈ 2^(k/2) | 只在改 6 选择 MBU 反查表时需要；扩展 Syntax/Semantics/Cost 三处 |
 
-七项做完，受控原地点加目标 ≈ 10–11M，与 Litinski 2023 的精确点加（≈ 8M）同量级；再往下受限于 Kaliski 求逆的 2n 轮 × 正逆两遍，需要不同的求逆算法（本文不覆盖）。Babbush 等 2026 的 2.1–2.7M 电路保密，本文不承诺复现。
+七项做完，受控原地点加目标 ≈ 12–13M，与 Litinski 2023 的精确点加（≈ 8M）同量级；再往下受限于 Kaliski 求逆的 2n 轮 × 正逆两遍和分开计的乘积清理，需要不同的求逆算法或融合乘加模块（本文不覆盖）。Babbush 等 2026 的 2.1–2.7M 电路保密，本文不承诺复现。
 
 **文献锚点**（可公开核对的构造与数字）：
 - Roetteler–Naehrig–Svore–Lauter 2017（arXiv:1706.06752）：Fig. 3 原地模加（加、减 p、条件加回、比较清标志）；Fig. 4 原地模加倍（标志由结果最低位清除）；Fig. 5 Proos–Zalka 加倍–累加模乘；§3.4 Kaliski 可逆求逆（2n 轮 + 计数器）；Algorithm 1 受控原地点加（4 次求逆、4 次乘、2 次平方，因为每个 out-of-place 结果要再算一次清除）。
@@ -37,14 +37,14 @@
 
 接口：`b ← (b + a) mod 2^n`，可选进位输出位 `cout ^= carry`。a 保持。
 
-门列（Gidney 2018 "Halving the cost of quantum addition" 的 AND/MBU 形式，与现有 `rippleAdder` 的进位链相同，只是和写回 b 而不是 out）：
-1. 进位链与现有 `rippleAdder` 完全相同：对 i = 0..n−2 用现有 `fullAdder` 的 AND 步把进位 c_{i+1} = MAJ(a_i, b_i, c_i) 写进干净辅助位（每位 1 个 CCX）；需要时最高位再用 1 个 CCX 把进位写进 cout。
-2. 和位不写 out，而是用 CX 原地写回 b：b_i ← a_i ⊕ b_i ⊕ c_i（零 Toffoli）。
-3. 反向：对 i = n−2..0 用现有 `eraseCarry`（`measureX c_{i+1}`，测得 1 时的 CZ 修正）擦除进位辅助位。修正模式与现有证明相同，只是和位所在寄存器不同。
+门列（Gidney 2018 "Halving the cost of quantum addition"）。要点：**先擦进位辅助位，再写和位**，这样每一步擦除时 a_i、b_i、c_i 仍是原值，现有 `eraseCarry` 的前提（辅助位等于当前 a/b/cin 的 carryBit）成立；若先把 b_i 改写成和位再擦除，前提失效，修正会依赖被覆盖的数据。
 
-资源：n−1（或 n，带 cout）个 Toffoli；n−1 次测量；线路 = 2n + (n−1) 辅助 + cout。
+1. 正向 i = 0..n−2：用现有 `fullAdder` 的 AND 步把 c_{i+1} = MAJ(a_i, b_i, c_i) 写进干净辅助位（每位 1 个 CCX）；需要 cout 时，最高位再用 1 个 CCX 写进位。
+2. 反向 i = n−1..0：先 `eraseCarry` 擦掉 c_{i+1}（`measureX`，测得 1 时的 CZ 修正，此时 a_i、b_i、c_i 未变），再用 `CX a_i b_i; CX c_i b_i` 把和位原地写回 b_i。c₀ 是进位输入线，最后一步用完后保持。
 
-证明义务：`{{ a=A, b=B, carries=0, cout=C }} addInPlace {{ a=A, b=((A+B) % 2^n), carries=0, cout=(C ^^ decide (A+B ≥ 2^n)) }}`，相位对所有测量记录恢复。与 `rippleAdder_spec` 结构相同，可复用 `fullAdder`/`eraseCarry` 的局部引理。
+资源：n−1（或 n，带 cout）个 Toffoli；n−1 次测量；线路 2n + (n−1) 辅助 + c₀ (+ cout)。
+
+证明义务：这是**新的**原地引理 `fullAdderInPlace`，不能把 `out := b` 代入现有 `fullAdder` 的五线 Nodup；需要新的四线互异条件 (a_i, b_i, c_i, c_{i+1}) 和"擦除在写和位之前"的顺序引理。Triple：`{{ a=A, b=B, chain=0, c₀=false, cout=C }} addInPlace {{ a=A, b=((A+B) % 2^n), chain=0, c₀=false, cout=(C ^^ decide (A+B ≥ 2^n)) }}`，相位对所有测量记录恢复。`eraseCarry` 本身可复用，只是应用位置不同。
 
 减法 `subInPlace`：b ← (b − a) mod 2^n：把 b 按位取反、加 a、再取反（X 门，零 Toffoli），借位 = 进位取反。
 
@@ -68,20 +68,22 @@ Lean 侧：`regValue (z :: xs) st = 2 * regValue xs st`（z 为 false）与 `reg
 
 ### 1.5 原地模加 `modAddInPlace` / 受控版 / 原地模减
 
-接口：a, b < p，`b ← (a + b) mod p`，a 保持。b 用 n+1 位（高位 h 初始 0）。
+接口：a < p，b < p，`b ← (a + b) mod p`，a 保持。b 用 n+1 位（高位 h 初始 0）。
 
 | 步 | 操作 | 值 |
 | --- | --- | --- |
 | 1 | `addInPlace a → b`（进位进 h） | b = a+b ∈ [0, 2p) |
 | 2 | `subConstInPlace p` 于 (b,h)（n+1 位） | 若 a+b ≥ p：b = a+b−p，h = 0；否则 h = 1（回绕） |
 | 3 | 受控（控制 h）`addConstInPlace p` 于低 n 位 | h=1 的分支恢复 b = a+b；h 不变 |
-| 4 | `h ^= [b ≥ a]`（比较器） | 分支 1：b = a+b−p < a ⇒ [b ≥ a]=0，h 保持 0；分支 2：b = a+b ≥ a ⇒ 翻回 0 |
+| 4 | `h ^= [b ≥ a]`（比较器，与**实际加数**比较） | 分支 1：b = a+b−p < a ⇒ [b ≥ a]=0，h 保持 0；分支 2：b = a+b ≥ a ⇒ 翻回 0 |
 
 正确性引理（Math）：a,b<p ⇒ (a+b ≥ p ⇔ a+b−p < a) 且 (a+b < p ⇒ a+b ≥ a)。
 
-资源：n + n + n + 2n = 5n Toffoli（比较器用 Gidney 型则 4n，与 Litinski 一致）。受控版（控制 c）：步 1 改为 `t ← c·a`（n 个 CCX）、加 t、清 t（n），其余照常：7n；或者先算无条件结果再用 c 选择——都不需要受控加法器。
+资源：n + n + n + 2n = 5n Toffoli（改 4 的比较器则 4n，与 Litinski 一致）。
 
-原地模减 `b ← (b − a) mod p`（Litinski Fig. 6c）：先对 a 做不带 x=0 检查的取负（按位 X 取反 + `addConstInPlace (p+1)`，n；a=0 时得到 p，后面的模加照样正确约减），再 `modAddInPlace a → b`（5n），最后把 a 取负还原（n）。共 7n（Gidney 比较器则 6n）。受控版只控制中间的模加。
+**受控版**（控制 c）：先 `t ← c·a`（n 个 CCX 到干净寄存器 t），以 t 为加数执行第 1–4 步——第 4 步必须比较 `[b ≥ t]` 而不是 `[b ≥ a]`：c=false 时 t=0，第 2 步一定回绕（h=1），第 3 步加回后 b 不变，`[b ≥ 0]=true` 才能把 h 清零；用 `[b ≥ a]` 会在 b<a 时留下 h=1。比较完成后再用 n 个 CCX 清 t。共 7n（比较器 n 时 6n）。
+
+**原地模减** `b ← (b − a) mod p`（Litinski Fig. 6c）：先对 a 做不带 x=0 检查的取负（按位 X 取反 + `addConstInPlace (p+1)`，n），得到 a' = p − a，a=0 时 a' = p；再 `modAddInPlace a' → b`，最后把 a 取负还原（n）。因为 a' 可能等于 p，模加引理的范围前提要放宽为 a' ≤ p（a'=p 时：第 1 步 b+p ∈ [p,2p)，第 2 步不回绕 h=0，第 4 步 [b ≥ p]=false，h 保持 0，结果 b 正确）——这是模加模块的一条扩展引理，不能直接引用 a<p 的原接口。共 7n（比较器 n 时 6n）。受控版只控制中间的模加。
 
 ### 1.6 原地模加倍 `dblInPlace`
 
@@ -93,15 +95,17 @@ x < p，p 奇。`x ← 2x mod p`。
 
 引理：2x 偶、p 奇 ⇒ (2x−p) 奇。资源：2n Toffoli（两次常数加减），零比较器。与 Roetteler Fig. 4 / Litinski "modular doubling" 相同。
 
-### 1.7 原地模减半 `halfInPlace`
+### 1.7 原地模减半 `halfInPlace` / 受控版
 
 x < p，p 奇。`x ← x·2⁻¹ mod p`。
 1. `c ← x₀`（CX 到干净标志位 c）。
 2. 受控（c）`addConstInPlace p`：x 奇 ⇒ x+p 偶。
 3. 改名右移：丢掉已知为零的最低位。
-4. 清 c：`c ^= [x ≥ (p+1)/2]`（常数比较器，2n）。引理：x 奇 ⇔ (x+p)/2 ≥ (p+1)/2；x 偶 ⇔ x/2 ≤ (p−1)/2。
+4. 清 c：`c ^= [x ≥ (p+1)/2]`（常数比较器，2n；改 4 后 n）。引理：x 奇 ⇔ (x+p)/2 ≥ (p+1)/2；x 偶 ⇔ x/2 ≤ (p−1)/2。
 
-资源：n + 2n = 3n Toffoli（Gidney 比较器则 2n）。受控减半（控制 g）：把 g 并进 c 的生成（`c ← g ∧ x₀`，1 个 CCX）并把步 3 的改名换成受控 CSWAP 链（n）——用于求逆第二阶段时本文选择**不**受控的减半（见第 2 节），所以不需要这条。
+资源：n + 2n = 3n Toffoli（改 4 后 2n）。
+
+**受控版**（控制 g，改 1 的第二阶段和改 2 的清理都用它）：`c ← g ∧ x₀`（1 个 CCX）；受控(c) 加 p（n）；步 3 改为受控 CSWAP 链右移（n，因为 g=false 时不能移）；清 c：`c ^= g ∧ [x ≥ (p+1)/2]`（比较 2n + 1 CCX）。共 4n+2（改 4 后 3n+2）。对应的受控原地模加倍（1.6 的受控版）：受控 CSWAP 链左移（n）、减 p（n）、受控加回（n）、`h ^= g ∧ ¬x₀`（1 CCX）：3n+1。
 
 ### 1.8 原地模负 `negInPlace`
 
@@ -113,45 +117,36 @@ x ← (p − x) mod p，x=0 时保持 0（Litinski Fig. 6b）：按位取反（X
 
 `halvingStep L q i = phaseActive ++ halveRound ++ phaseActive`，`halveRound = conditionalHalve ++ conditionalDouble(swap)`：每轮 14n+10 + 22n+18 + 40 = 9,284 Toffoli；512 轮正向 4,753,408，反计算再一遍，共 9,506,816，占每次 `fieldInverse`（14,303,280）的 66%。
 
-### 2.2 新流程
+### 2.2 新流程（保持 XOR 接口）
 
-记第一阶段结束（`kaliskiLoop` 512 轮后）的状态为 z（u=1，v=0，r，s=p，k≤512）。
+现有 M3 的清理依赖 `fieldInverse` 的 XOR 幂等性：同一输入上再跑一遍，输出寄存器回到零（`InverseLoopSpec.lean` 的 `inverseLoop_xor_spec` 对任意 O 成立）。因此第二阶段**不能**直接在输出寄存器上原地做：那会改变 O、没有规范范围保证，且上层无法清零。做法是在内部干净寄存器 inv 上原地减半，CX 到目标，再用受控原地模加倍把 inv 恢复并清零：
 
 ```
 inverseLoop' L q :=
-  kaliskiLoop L.first 0 L.records          -- 不变：正向 512 轮，记录带
-  ++ negativeInit L.arithmetic q L.middle.r L.temp L.out
-                                           -- 不变的模块，但目标直接是输出寄存器：
-                                           -- out ^= (−r mod q)，r 先约减（r 可能 ≥ q）
-  ++ halvingLoop' L.out q 0 512            -- 新：在 out 上原地做 512 轮受 i<k 控制的模减半
-  ++ kaliskiUnloop L.first 0 L.records     -- 不变：逆向 512 轮，清记录带，恢复 u/v/r/s/k
+  kaliskiLoop L.first 0 L.records                       -- 不变：正向 512 轮，记录带
+  ++ negativeInit L.arithmetic q L.middle.r L.temp inv  -- inv ^= (−r mod q)，r 先约减（r 可能 ≥ q）
+  ++ halvingLoop' inv q 0 512                           -- 新：inv 上 512 轮受 i<k 控制的原地模减半（1.7 受控版）
+  ++ copyRegister none inv L.out                        -- out ^= inv：外部 XOR 语义由此保证
+  ++ doublingLoop' inv q 0 512                          -- 新：逆序 512 轮受 i<k 控制的原地模加倍，inv 回到 (−r mod q)
+  ++ negativeInit L.arithmetic q L.middle.r L.temp inv  -- inv 清零
+  ++ kaliskiUnloop L.first 0 L.records                  -- 不变：逆向 512 轮，清记录带
 ```
 
-`halvingLoop'` 一轮：
-
-| 步 | 操作 | Toffoli |
-| --- | --- | ---: |
-| 1 | `counterActiveXor`：active ^= [i < k]（复用 I3/I4 的比较，k 在 middle 的计数银行里，保持不变） | 20 |
-| 2 | 受控（active）原地模减半 out ← out/2 mod q：`c ← active ∧ out₀`（1 CCX）；受控(c) 加 p（n）；**受控(active) 右移**（CSWAP 链 n，因为这一轮可能不活动）；清 c：`c ^= active ∧ [out ≥ (p+1)/2]`（比较 2n + 1 CCX） | 4n+2 |
-| 3 | `counterActiveXor` 再做一次清 active | 20 |
-
-每轮 4n+42 = 1,066；512 轮 ≈ 545,800。若把"i<k 受控"改成无条件减半并在前面把 out 乘上 2^(512−k)… 不值得；改 4 的 Gidney 比较器把它降到 3n+42（≈ 404,000）。
-
-**不需要反向第二阶段**：原地减半不产生垃圾，out 就是输出；`kaliskiUnloop` 只依赖 u/v/r/s/k 和记录带，与 out 无关。现有 `inverseLoop` 的 `halvingUnloop` 和第二份 `negativeInit` 整段删除。
+每轮：`counterActiveXor`（20）+ 受控原地模减半（4n+2）+ `counterActiveXor`（20）= 4n+42 = 1,066；加倍轮 3n+41 ≈ 812。512 轮各 ≈ 545,800 / ≈ 415,700。第二阶段合计 ≈ 961,500（现 9,506,816）；改 4 的比较器再把减半轮降到 3n+42。
 
 ### 2.3 接口与陈述
 
-- `inverseLoop_spec` / `inverseLoop_xor_spec` 的**陈述不变**（输入寄存器恢复、work=0、out = kaliskiInverse q a 256），因为 `halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致。
-- 任意输出 O 的 XOR 形式：原地减半作用在 out 上会把 O 也一起减半，所以 **XOR 形式不能再由同一程序直接给出**。两种选择：(a) 公开只保留零输出规格，I5 的 `fieldInverse_xor_spec` 改为"算到干净寄存器再 CX 到目标"的组合（多 n 个 CX，零 Toffoli）；(b) 在 `InverseLoopLayout` 里把 out 拆成内部结果寄存器 + 外部 XOR 目标。推荐 (a)：点加用的是"算到干净寄存器、用完再清"，不需要任意 O。
-- 资源：`fieldInverse` 目标 ≈ 2×2,390,528 + 7,704 + 545,800 ≈ **5,334,560**（从 14,303,280 降 63%）。线路：去掉第二阶段的 a/b/temp 三组 257 位和模算术区 1287 → 约 6,468 − 2,058 ≈ 4,400（a/b/temp 中有一组可作 out），以支持集定理为准。
+- `inverseLoop_spec`、`inverseLoop_xor_spec`、`fieldInverse_spec`、`fieldInverse_xor_spec`、`fieldInverse_contract` 的**陈述全部不变**：`halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致；任意 O 的 XOR 语义由 inv + CX 保证，M3 的"同一模块再跑一遍清零"照常成立。加倍循环是减半循环的逆（`HalvingBijection` 的 double∘halve = id），要证 `doublingLoop'` 把 inv 恢复到减半前的值。
+- 资源：`fieldInverse` 目标 = 2×2,390,528 + 2×7,704 + 545,800 + 415,700 ≈ **5,757,000**（改 4 后 ≈ 5.6M；从 14,303,280 降 60%）。
+- 线路：第二阶段去掉 b、temp 两组 257 位和 8n+10 的模算术区，换成 inv、常数临时字 T 和进位链，求逆工作区约 5,956 → ≈ 3.9k。但共享池的大小由模乘决定（69,908），求逆只占它的前缀，所以**改 2 之前总线路数保持 74,024**。
 
 ### 2.4 证明义务与文件
 
 - `Arithmetic/HalveInPlace.lean`：1.7 的 Triple（受控版），含 Math 引理 `odd_iff_half_ge`（x<p 奇 ⇔ (x+p)/2 ≥ (p+1)/2）。
-- `Arithmetic/HalvingLoop.lean` 重写：循环按改名后的布局递归（仿 `halvingEnd`/`swapCounter` 的模式）；`halvingRun_fixed` 不变。
-- `Arithmetic/InverseCompute.lean`：新 `inverseLoop`；`InverseMiddle` 去掉 a/b。
+- `Arithmetic/HalvingLoop.lean` 重写：受控减半循环与逆序受控加倍循环，按改名后的布局递归（仿 `halvingEnd`/`swapCounter` 的模式）；`halvingRun_fixed` 不变，另证加倍循环是其逆。
+- `Arithmetic/InverseCompute.lean`：新 `inverseLoop`；`InverseMiddle` 只保留内部寄存器 inv。
 - `InverseLoopResources.lean`、`InverseResources.lean`、README/PROOF_STATUS 资源表、verify.sh 入口同步。
-- 验收：`fieldInverse_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；80 个公开入口公理白名单通过。
+- 验收：`fieldInverse_spec`、`fieldInverse_xor_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；118 个公开入口公理白名单通过。
 
 ## 3. 改 2：模乘
 
@@ -159,11 +154,9 @@ inverseLoop' L q :=
 
 `multiplyLoop` 每位：`doubleXor`（2 次 modAdd）、`maskedAccumulate`、递归、`maskedUnaccumulate`、`doubleXor`，44n+36 Toffoli；每位保存一个 n+1 位倍数寄存器（65,792 线）。
 
-### 3.2 新原语 `mulAddInPlace`
+### 3.2 新原语：零输出内核 `mulInto` 与其清理 `mulClear`
 
-接口：`acc ← (acc + X·Y) mod p`，X < p（n+1 位寄存器或 n 位），Y < 2^n（n 位乘数），acc < p（n+1 位，高位作约减标志）。X、Y 保持。`mulSubInPlace` 同构造，把每位的受控模加换成受控模减，用于清除。
-
-Horner 展开（Proos–Zalka；Roetteler Fig. 5）：从 Y 的最高位到最低位，
+Horner 循环（Proos–Zalka；Roetteler Fig. 5）从 Y 的最高位到最低位：
 
 ```
 for i = n−1 downto 0:
@@ -171,90 +164,100 @@ for i = n−1 downto 0:
   acc ← acc + Y_i · X mod p    -- 1.5 受控原地模加（控制 Y_i），7n
 ```
 
-逐位寄存器状态：进入第 i 步前 acc ≡ Σ_{j>i} Y_j X 2^{j−i−1}（mod p），结束后 acc = X·Y mod p（加法形式：若进入时 acc = A，则结束 acc = (A + X·Y) mod p，因为每一步都是模 p 的线性操作：2·(A·2^{…})… 注意 A 会被一路加倍——**因此加法形式要求进入时 acc=0，或者把 A 先保存**）。简单起见公开两条规格：零输入 `{{ acc=0 }} … {{ acc = X·Y mod p }}`，以及"先算到干净寄存器，再 `modAddInPlace` 到目标"的组合形式作为加法接口；清除用 `mulSubInPlace` 或对称地先算到干净寄存器再 `modSubInPlace`。
+对一般初值 A 它算出 `2^n·A + X·Y (mod p)`，**不是** `A + X·Y`。因此内核只给零输出接口：
 
-资源（n=256）：每位 2n + 7n = 9n = 2,304；共 ≈ **589,800** Toffoli（9n²）；测量 = 每位 7 次加法器调用（加倍 2 次、受控模加 5 次）× 255 ≈ 1,785 → 约 457,000。线路：acc(n+1) + X(n) + Y(n) + t(n) + 常数临时 T(n) + 进位链(n) + 标志 ≈ 6n+O(1) ≈ 1,540（加法器进位链可与 t/T 复用则更少），对比现在 70,678。
+- `mulInto`：`{{ x=X, y=Y, acc=0, work=0 }} mulInto {{ x=X, y=Y, acc=((X*Y)%p), work=0 }}`，X<p，Y<2^n。
+- `mulClear`：把 acc 从 `(X*Y)%p` 清回 0。把每步换成减法并不是逆（那样得到 `2^n·A − X·Y`）；正确的清理是按反序撤销每一步：
 
-### 3.3 接口
+```
+for i = 0 to n−1:
+  acc ← acc − Y_i · X mod p    -- 受控原地模减（1.5 受控版的减法形式），7n
+  acc ← acc / 2 mod p          -- 1.7 halfInPlace，3n
+```
 
-- 新文件 `Arithmetic/MulInPlace.lean`、`MulInPlaceResources.lean`；旧 `fieldMul`/`modMul` 保留，M3 切换后再删。
-- 公开：`fieldMulInPlace_spec (L) (hnd) (hw) (X Y : Nat) (hX : X<p) : {{ L.x=X, L.y=Y, L.acc=0, L.work=0 }} fieldMulInPlace L {{ L.x=X, L.y=Y, L.acc=((X*Y)%p), L.work=0 }}`，以及 `fieldMulSubInPlace_spec` 把 acc 从 (X·Y)%p 清回 0。
+循环不变量：进入第 i 步前 acc = Σ_{j≥i} Y_j X 2^{j−i} (mod p)。第一步减去 Y_i X 后 acc 为该和的 2 倍，减半后回到 i+1 的形式，最终为 0。
+
+资源（n=256）：`mulInto` 每位 2n + 7n = 9n → ≈ **589,800**；`mulClear` 每位 7n + 3n = 10n → ≈ **655,400**（改 4 后各 8n / 9n）。线路：acc(n+1) + X(n) + Y(n) + t(n) + 常数临时字 T(n) + 进位链(n) + 标志 ≈ 6n+O(1) ≈ 1,540。
+
+### 3.3 任意目标的接口（适配器）
+
+上层需要的三种用法都由内核加干净寄存器 T 组成，成本各自列明：
+
+| 用法 | 门列 | Toffoli |
+| --- | --- | ---: |
+| XOR 形式 `out ^= X·Y`（现有 `fieldMul_spec` 的陈述） | `mulInto T; copyRegister none T out; mulClear T` | 589,800 + 0 + 655,400 ≈ 1,245,000 |
+| 加到寄存器 `acc ← acc + X·Y` | `mulInto T; modAddInPlace T → acc; mulClear T` | ≈ 1,246,300 |
+| 从寄存器减去 `acc ← acc − X·Y` | `mulInto T; modSubInPlace T → acc; mulClear T` | ≈ 1,246,800 |
+
+现有 `fieldMul_spec` 的陈述保留（由 XOR 适配器证明），旧 `MulLayout` 实现在切换后删除。M3 基线里每个乘积"算一次、清一次"是两次 XOR 调用（2×2,892,800）；改 2 后是一次 XOR 适配器（≈ 1,245,000）。
 
 ### 3.4 证明义务
 
-- 1.1、1.2、1.5、1.6 的 Triple（这是新仓库层，最大工作量）。
-- 循环不变量：acc 的模 p 值；加倍与受控加的 Math 引理各一条；改名移位的 `regValue` 引理。
-- 资源：每位 9n 的同程序计数，支持集 = 固定布局。
+- 1.1、1.2、1.5（含受控版和 a' ≤ p 的扩展引理）、1.6、1.7 的 Triple。
+- `mulInto` / `mulClear` 的循环不变量（Math 层各一条）、改名移位的 `regValue` 引理。
+- 三个适配器的 Triple 与资源；`fieldMul_spec` 陈述不变、`fieldMul_resources` 换数字。
 
 ## 4. 改 3：点加组合
 
-### 4.1 目标结构（Häner 2020 Fig. 9 + Litinski 2023 角落标志 + 我们的常数 C）
+### 4.1 目标结构（Roetteler 2017 Algorithm 1 的原地更新 + Litinski 2023 的角落标志 + 我们的常数 C）
 
-点寄存器 (finite, x, y)；C=(cx,cy) 经典常量；记 D = x − cx，E = y − cy（模 p）。普通分支（finite ∧ x≠cx）的原地更新，全部用第 1 节原语：
+点寄存器 (finite, x, y)；C=(cx,cy) 经典常量。普通分支（finite ∧ x≠cx）按 Roetteler Alg. 1 逐行原地更新，乘积全部用 3.3 的加/减适配器（每个乘积"算一次、清一次"）：
 
 | 步 | 操作 | 寄存器值（普通分支） | 成本 |
 | --- | --- | --- | ---: |
-| 1 | x ← x − cx（常数模减，原地） | x = D | 5n |
+| 1 | x ← x − cx | x = D | 5n |
 | 2 | y ← y − cy | y = E | 5n |
-| 3 | 除数选择：Dsafe ← g ? D : 1（受控复制 n + 常数位，见 M3 设计） | Dsafe ≠ 0 | n |
-| 4 | **除法 1**：λ ← E / Dsafe（4.2） | λ = E/D | 1 div |
-| 5 | y ← y − λ·x（mulSubInPlace，pebbling：λ·x 不单独存） | y = 0 | 1 mul |
-| 6 | t ← λ²（mulAddInPlace 到干净 t） | t = λ² | 1 mul |
-| 7 | x ← x − t；x ← x + 3cx … 按 Roetteler Alg.1 第 8–9 行：x ← cx − x₃ 形式 | x = cx − x₃ | 2×5n |
-| 8 | t ← t − λ²（mulSubInPlace 清 t） | t = 0 | 1 mul |
-| 9 | y ← y + λ·x（mulAddInPlace） | y = y₃ + cy | 1 mul |
-| 10 | **除法 2**：λ ← λ − (y)/(x)（用新坐标重算斜率：λ = (y₃+cy)/(cx−x₃)，Roetteler §4.1 等式）并清零 | λ = 0 | 1 div |
-| 11 | x ← −x（常数化：x ← cx − x 即 x ← x₃ − cx 取负）；x ← x + cx | x = x₃ | 5n+2n |
-| 12 | y ← y − cy | y = y₃ | 5n |
-| 13 | 清 Dsafe（同步 3 的逆，用恢复前的 D？——注意此时 D 已被改写） | 见 4.3 | n |
+| 3 | Dsafe ← g ? D : 1（受控复制，见已审 M3 设计） | | n |
+| 4 | **除法 1**（4.2）：λ ← E / Dsafe，写入干净 λ，之后 inv 已清 | λ = E/D | 1 div |
+| 5 | 清 Dsafe（此时 x 仍 = D，同一受控复制再跑一遍） | | n |
+| 6 | y ← y − λ·x（减适配器） | y = 0 | 1 乘积 |
+| 7 | t ← λ·λ（乘适配器写入干净 t） | t = λ² | 1 乘积（计算） |
+| 8 | x ← x − t；x ← x + 3cx | x = cx − x₃ | 2×5n |
+| 9 | 清 t（`mulClear`，λ 仍在） | t = 0 | 1 乘积（清理） |
+| 10 | y ← y + λ·x（加适配器） | y = y₃ + cy | 1 乘积 |
+| 11 | g₂ ← g ∧ [x ≠ 0]（零检测；x = cx − x₃ 是除法 2 的除数） | | 2n |
+| 12 | **除法 2**：λ ← λ − y / (g₂ ? x : 1)；g₂=0 时 λ 用编译期常量 λ* 受控 XOR 清除 | λ = 0 | 1 div |
+| 13 | 清 g₂（重算零检测，x 未变） | | 2n |
+| 14 | x ← −x；x ← x + cx | x = x₃ | 5n+2n |
+| 15 | y ← y − cy | y = y₃ | 5n |
 
-（第 7、11 步的符号安排按 Roetteler Algorithm 1 第 8–17 行逐行核对；实现者应在设计 PR 里给出每一步的精确模 p 等式和 Lean 引理，本文只定结构。）
-
-**除法（4.2）是成本核心**：2 次除法 + 3 次模乘 + 约 9 次原地模加减。
+乘积清单：λ（除法 1 内，计算）、λ·x（第 6 步，算+清）、λ²（第 7、9 步，算+清）、λ·x'（第 10 步，算+清）、除法 2 内的 y/x' 乘积（算+清，用于清 λ）——共 **5 个乘积**，其中 4 个完整算清、1 个只算（λ 由除法 2 清）。Häner 2020 的"2 乘 + 1 平方"是按融合的乘加/乘减模块计的；本文按我们的适配器分开计，不借用未实现的融合模块。
 
 ### 4.2 除法 `divide`：pebbling 的求逆
 
-`λ ^= E · Dsafe⁻¹`，清工作区：
+`λ ← λ ± E · Dsafe⁻¹`，工作区清零：
 
 ```
-kaliskiLoop (fwd, 512 轮)                 2,390,528
-negativeInit → inv 寄存器；halvingLoop' 原地  7,704 + 545,800   (inv = Dsafe⁻¹)
-mulAddInPlace λ ← λ + E·inv              589,800
-（λ 此时可用；要清 inv：）
-halvingLoop'⁻¹ = 512 轮受控原地模加倍（1.6 的受控版，4n/轮）≈ 545,800；negativeInit 再 XOR 一次清 inv  7,704
-kaliskiUnloop (rev)                       2,390,528
+kaliskiLoop (fwd, 512 轮)                          2,390,528
+negativeInit → inv；halvingLoop' 原地（inv = Dsafe⁻¹）  7,704 + 545,800
+mulInto T ← E·inv；modAdd/SubInPlace T → λ；mulClear T   ≈ 1,246,500
+doublingLoop'（inv 回到 −Dsafe⁻¹·2^k 形式）；negativeInit 清 inv   415,700 + 7,704
+kaliskiUnloop (rev)                                2,390,528
 ```
 
-合计 ≈ **6,477,000** Toffoli。对比现在的"λ = E·fieldInverse(D)，再各算一遍清除" = 2×14,303,280 + 2×2,892,800 = 34,392,160：省 5.3 倍。
-
-（如果第二次除法只是为了清 λ，可以把 mulAddInPlace 换成 mulSubInPlace，同成本。）
+合计 ≈ **7,004,000** Toffoli。对比现在的"λ = E·fieldInverse(D)，再各算一遍清除" = 2×14,303,280 + 2×2,892,800 = 34,392,160。
 
 ### 4.3 角落情形与受控
 
-沿用已审 M3 设计的标志：ex = finite ∧ [x=cx]，ey = finite ∧ [y=−cy]，g = finite ∧ ¬ex，d = ex ∧ ¬ey；对应 Litinski 的 f1/f2/f3（f4 = "C=O" 是编译期分支）。受控版把控制位 b 并入：g' = b∧g，d' = b∧d，o' = b∧¬finite。
+沿用已审 M3 设计的标志：ex = finite ∧ [x=cx]，ey = finite ∧ [y=−cy]，g = finite ∧ ¬ex，d = ex ∧ ¬ey；受控版把控制位 b 并入：g' = b∧g，d' = b∧d，o' = b∧¬finite。
 
-- 普通分支的所有原地操作以 g' 为控制（原地模加减受控版 +n，模乘受控版 +n/位；除法内部 Kaliski 轮本来就固定执行，不需要控制，只把除数选择和 λ 的使用受控）。g'=0 时 x、y 完全不动。
+- 普通分支的所有原地操作以 g' 为控制（原地模加减受控版 +n，适配器里的模加/模减受控版 +n；除法内部 Kaliski 轮本来就固定执行，只把除数选择和 λ 的写入受控）。g'=0 时 x、y 完全不动。
 - 非普通分支用受控常量 XOR 直接改写 (finite,x,y)：o'：(0,0,0) ⊕ encode(C)；d'：(1,cx,cy) ⊕ (1,cx,cy) ⊕ encode(2C)；ex∧ey∧b：(1,cx,−cy) ⊕ (1,cx,−cy) = 0 并清 finite。零 Toffoli。
-- **标志清除是原地版最细的点**：输入已被改写为 R+C（或保持 R），标志不能再从"输入"重算。必须用输出侧等价谓词：
-  - o' ⇔ 输出 = C（当 b=1）：用零检测比较输出与常量 C；
-  - d' ⇔ 输出 = 2C；
-  - ex∧ey∧b ⇔ 输出 = O（finite=0）；
-  - g' ⇔ 其余且 b。
-  但输出 = C 也可能来自普通分支（R+C = C ⇔ R = O，已被 o' 覆盖）、输出 = 2C 来自普通分支（R+C = 2C ⇔ R = C，已被 d' 覆盖）、输出 = O 来自普通分支不可能（普通分支 x≠cx ⇒ R+C ≠ O）。所以**输出侧谓词与输入侧标志一一对应**，需要 Math 层引理：对合法点 R 与有限 C，(R=O ⇔ R+C=C)、(R=C ⇔ R+C=2C)、(R=−C ⇔ R+C=O)、(x_R≠cx ⇔ R+C ∉ {C, 2C, O})。这四条都是群论事实，从 Mathlib 的群结构直接得到。
-  - **除法 2 的除数也可能为零**：除数 cx − x₃ = 0 ⇔ R+C = ±C ⇔ R = O（已由 o' 覆盖）或 R = −2C（**普通分支内**，x_R ≠ cx 但 R+C = −C）。R = −2C 时不能用 Roetteler 的重算等式清 λ。处理：在第 10 步前由当前 x 计算第二个标志 g₂ = g' ∧ [x ≠ cx]（零检测，2n），除法 2 的除数用 g₂ ? x : 1 的安全选择；g₂ = 0 且 g' = 1 时 λ 是**编译期常量**（过 −2C 与 C 的直线斜率 λ* = (cy − y_{−2C})/(cx − x_{−2C})），用受控常量 XOR 清除。g₂ 由 x 计算而 λ 的清除不改 x，所以 g₂ 事后重算即可清零。Math 引理：对合法 R（x_R ≠ cx）与有限 C，x_{R+C} = cx ⇔ R = −2C，且此时 (y_R − cy)/(x_R − cx) = λ*。
-  - Dsafe 的清除（4.1 第 13 步）：需要 D = x − cx 的旧值，但 x 已改写。解决：在第 1 步之后、第 3 步把 Dsafe 作为 **λ 计算的临时输入**，并在除法结束（第 4 步末，λ 已得、inv 已清）后立刻清 Dsafe（此时 x 仍 = D 未变），而不是留到最后。重排后第 5 步起才改写 x。
+- **除法 2 的除数**：第 8 步后 x 存的是 cx − x₃，除法 2 的除数就是这个当前值，g₂ = g' ∧ [x ≠ 0] 直接检测它（不是检测 x₃ ≠ cx 的旧坐标）。x = 0 ⇔ x₃ = cx ⇔ R+C = ±C ⇔ R = O（已由 o' 覆盖）或 R = −2C（普通分支内）。R = −2C 时 λ 是编译期常量 λ* = (cy − y_{−2C})/(cx − x_{−2C})，用受控常量 XOR 清除；g₂ 由 x 计算而 λ 的清除不改 x，所以 g₂ 事后重算即可清零。Math 引理：对合法 R（x_R ≠ cx）与有限 C，x_{R+C} = cx ⇔ R = −2C，且此时 (y_R − cy)/(x_R − cx) = λ*。
+- **标志清除**：输入已被改写为 R+C（或保持 R），标志不能再从"输入"重算，要用输出侧等价谓词：o' ⇔ 输出 = C；d' ⇔ 输出 = 2C；ex∧ey∧b ⇔ 输出 = O；g' ⇔ 其余且 b。这需要 Math 引理：对合法点 R 与有限 C，(R=O ⇔ R+C=C)、(R=C ⇔ R+C=2C)、(R=−C ⇔ R+C=O)、(x_R≠cx ⇔ R+C ∉ {C, 2C, O})，都是群论事实。
+- Dsafe 在除法 1 之后、x 改写之前清除（第 5 步），不留到最后。
 
 ### 4.4 成本（目标，n=256，用改 1、改 2 的原语）
 
 | 组件 | 次数 | 单次 | 小计 |
 | --- | ---: | ---: | ---: |
-| 除法 | 2 | 6,477,000 | 12,954,000 |
-| 模乘（mulAdd/mulSub） | 3 | 589,800 | 1,769,400 |
-| 原地模加减（含常数） | ≈ 9 | 1,280–1,800 | ≈ 14,000 |
-| 标志、除数选择、受控开销 | — | — | ≈ 10,000 + 受控模乘/加减各 +n |
-| **受控原地点加** | | | **≈ 14.8–15.5M** |
+| 除法（含各自一个乘积） | 2 | ≈ 7,004,000 | ≈ 14,008,000 |
+| 乘积适配器（λ·x、λ²、λ·x'，各算+清） | 3 | ≈ 1,246,000 | ≈ 3,738,000 |
+| 原地模加减（含常数）与取负 | ≈ 10 | 1,280–1,800 | ≈ 16,000 |
+| 标志、两次除数选择、零检测、受控开销（每个受控模加/减 +n） | — | — | ≈ 30,000 |
+| **受控原地点加** | | | **≈ 17.8M** |
 
-相对 91,964,213：约 6 倍。无控制版基本同价（控制只是标志里多一个与）。
+相对 91,964,213：约 5 倍。无控制版基本同价（控制只是标志里多一个与）。改 4 后（比较器 n）约 16.5M。
 
 ### 4.5 证明义务与 PR 切分
 
@@ -293,11 +296,11 @@ kaliskiUnloop (rev)                       2,390,528
 
 | 调用点 | 现在 | 改后 | 每次求逆 / 每次模乘 / 每次点加的变化 |
 | --- | ---: | ---: | --- |
-| 原地模加（1.5 第 4 步） | 5n | 4n | 模乘每位 −n → 模乘 ≈ 590k → ≈ 524k |
-| 原地模减半（1.7 第 4 步） | 3n | 2n | 改 1 第二阶段每轮 4n+42 → 3n+42 → 每次求逆 −131k |
+| 原地模加/模减（1.5 第 4 步） | 5n | 4n | `mulInto` 每位 −n（≈ 590k → ≈ 524k），`mulClear` 每位 −n |
+| 原地模减半（1.7 第 4 步） | 3n | 2n | 改 1 减半轮 4n+42 → 3n+42 → 每次求逆 −131k |
 | Kaliski 记录段 v<u | 2w | w | 每轮 −257 → 每次求逆（正逆两遍）−263k |
 | 两处 i<k 计数比较 | 20 + 20 | 10 + 10 | 每次求逆 −20k |
-| 合计 | | | 每次求逆 ≈ 5.33M → ≈ 4.9M；模乘 ≈ 0.59M → ≈ 0.52M；改 3 后的受控原地点加 ≈ 15M → ≈ 13.8M |
+| 合计 | | | 每次求逆 ≈ 5.76M → ≈ 5.3M；`mulInto` ≈ 0.59M → ≈ 0.52M、`mulClear` ≈ 0.66M → ≈ 0.59M；改 3 后的受控原地点加 ≈ 18M → ≈ 16.5M |
 
 ## 6. 改 5：Kaliski 轮压缩
 
@@ -323,7 +326,7 @@ kaliskiUnloop (rev)                       2,390,528
 
 ### 6.4 影响与证明义务
 
-- `kaliskiRound_spec` / `kaliskiUnround_spec` 陈述不变，只换内部程序与资源数：kaliskiLoop 512 轮 ≈ 1.85M（现 2.39M）；配合改 1（并用比较器）每次求逆 ≈ 2×1.85M + 0.40M + 7.7k ≈ **4.1M**。
+- `kaliskiRound_spec` / `kaliskiUnround_spec` 陈述不变，只换内部程序与资源数：kaliskiLoop 512 轮 ≈ 1.85M（现 2.39M）；配合改 1（并用比较器）每次求逆 ≈ 2×1.85M + 0.41M + 0.32M + 15k ≈ **4.5M**。
 - 需要：原地受控减法/加法（改 2 的 1.5 受控版）、Gidney 比较器、AND 链的 MBU 擦除版零检测（`zeroControlled` 的 MBU 变体）。I3 的 `RoundBody`/`RecordRound`/`ZeroControl` 各替换一处，`KaliskiRoundProof` 的组合证明按接口不变复用。
 
 ## 7. 改 6：Montgomery 窗口模乘
@@ -338,14 +341,14 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 4. 反查表：重跑同一查表（再 ≈ 15 个 CCX）把临时表值清零；不用 MBU 反查表就不需要 CCZ（见改 7）。
 5. 64 个窗口后：acc < 2p，做一次条件减 p（常数减 + 条件加回 + 比较器 ≈ 3n）。
 
-每窗口：4 次受控加（用 1.2 的方法各 n+4 Toffoli，或 Gidney 受控加法器 2n）+ 查表 2×15 + 加 n+4 ≈ 5n+50（受控加按 n 计）；64 窗口 ≈ 320n + 3,200 ≈ 85k；加末尾约减 ≈ 3n。Litinski 按受控加 2n 计得 2.25n²+9n ≈ 150k；我们用 1.2 的"受控复制到临时寄存器再无控制加"则 ≈ 5n²/4 + … ≈ 85k，两者都远低于 Horner 的 590k。**目标写 ≤ 150k**，以实际证明为准。
+每窗口：4 次**量子变量**的受控加。加数是 y 的移位视图（量子寄存器），不能用 §1.2 常数受控加的 n 成本；每次要么 t ← c·y（n 个 CCX）、原地加（n）、清 t（n）= 3n，要么用 Gidney 型受控加法器（≈ 2n，本项目尚无）。按 3n 计每窗口 ≈ 12n + 查表 30 + 加 n ≈ 13n+30，64 窗口 ≈ 215k，加末尾约减 ≈ 3n；按 Litinski 的 2n 受控加则为 2.25n²+9n ≈ 150k。**目标写 150k–215k**（研究预算，未从本项目已有门列推导），实现前需先交受控加模块的门列与计数。
 
 垃圾：m_i 共 256 位，随乘法的反计算（反序重跑：条件加 p、每窗口反查表、减法）一起清除；因此"算一次、清一次"的成本各 ≈ 150k，与改 2 同用法。
 
 ### 7.2 两种接入方式
 
-- **6a 标准形式，不改其他模块**：xy mod p = MontMul(MontMul(x, y), R² mod p)（第二次乘常数 R²；常数乘数可用经典 4 位窗口，不需要受控加：每窗口 1 次查表 + 1 次加 ≈ n+30，共 ≈ 70k）。每个乘积 ≈ 150k + 70k ≈ 220k，目标写 ≤ 300k。点加中三次乘积各算一次清一次：≈ 1.3M（改 2 后 3.5M）。
-- **6b 全 Montgomery 表示**：点加的输入坐标、常量 C、逆元都用 x̃；求逆输出 Kaliski 的几乎逆 x⁻¹2^k 时改为校正到 x⁻¹R（第二阶段做 2n−k 次加倍而不是 k 次减半，成本同量级）；每个乘积 ≈ 150k。代价是所有公开规格里的坐标改成 Montgomery 表示，或在点加入口/出口各做一次常数乘转换（≈ 70k × 4 坐标）。
+- **6a 标准形式，不改其他模块**：xy mod p = MontMul(MontMul(x, y), R² mod p)（第二次乘常数 R²；常数乘数可用经典 4 位窗口，不需要受控加：每窗口 1 次查表 + 1 次加 ≈ n+30，共 ≈ 70k）。每个乘积计算 ≈ 220k–285k，清理同量级（窗口记录 m_i 与中间积随反计算一起清），算+清 ≈ 450k–570k，目标写 **≤ 600k**（改 2 的适配器为 ≈ 1,245k）。
+- **6b 全 Montgomery 表示**：点加的输入坐标、常量 C、逆元都用 x̃；求逆输出 Kaliski 的几乎逆 x⁻¹2^k 时改为校正到 x⁻¹R（第二阶段做 2n−k 次加倍而不是 k 次减半，成本同量级）；每个乘积算+清 ≈ 300k–430k。代价是所有公开规格里的坐标改成 Montgomery 表示，或在点加入口/出口各做一次常数乘转换（≈ 70k × 4 坐标）。
 
 建议先做 6a，6b 作为可选。
 
@@ -364,35 +367,43 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 
 ## 9. 阶段目标总表
 
+线路数按 `外部寄存器 + max(各模块工作区)` 估算：共享池的大小由所有仍在使用的模块中最大的工作区决定，**只改求逆不缩池**。Toffoli 目标是按本文门列推导的预期值，标"研究预算"的项未从本项目已有门列推导。
+
 | 阶段 | 受控原地点加 Toffoli（目标） | 线路（目标） | 说明 |
 | --- | ---: | ---: | --- |
-| 现设计（M3 基线） | 91,964,213 | 74,024 | 已审，正在实现 |
-| + 改 1（第二阶段原地减半） | ≈ 56M | ≈ 72k | 4 次求逆各省 ≈ 9.0M |
-| + 改 2（Horner 模乘） | ≈ 28M | ≈ 8k | 12 次模乘各省 ≈ 2.3M；倍数链消失，共享区由求逆工作区（≈3.6k）主导 |
-| + 改 3（除法中心原地点加） | ≈ 15M | ≈ 5k | 2 除法 + 3 乘；原地更新不再有独立输出点 |
-| + 改 4（Gidney 比较器） | ≈ 13.8M | ≈ 5k | 每次求逆 ≈ 4.9M，模乘 ≈ 0.52M |
-| + 改 5（Kaliski 轮压缩） | ≈ 13M | ≈ 5k | 每次求逆 ≈ 4.1M |
-| + 改 6a（Montgomery，标准形式） | ≈ 11M | ≈ 5k | 每个乘积 ≤ 300k |
-| + 改 6b（全 Montgomery 表示，可选） | ≈ 10M | ≈ 5k | 每个乘积 ≈ 150k，坐标表示改变 |
+| 基线（PR 11–13，已合并并验收） | 91,964,213 | 74,024 | 已证 |
+| + 改 1（第二阶段原地减半/加倍，XOR 接口不变） | ≈ 58M | 74,024（池仍由模乘 69,908 决定） | 4 次求逆各 14.30M → ≈ 5.76M |
+| + 改 2（Horner 内核 + XOR 适配器） | ≈ 31M | ≈ 10.1k（外部 ≈ 4.1k + 求逆工作区 5,956；与改 1 合计 ≈ 8k） | 6 次 XOR 乘积 2.89M → 1.25M；倍数链消失 |
+| + 改 3（除法中心原地点加） | ≈ 18M | ≈ 5k（点 513 + λ/t/inv/Dsafe ≈ 1k + 求逆工作区 ≈ 3.9k + 标志） | 2 除法 + 3 乘积适配器 |
+| + 改 4（Gidney 比较器） | ≈ 16.5M | ≈ 5k | 每次求逆 ≈ 5.3M，`mulInto`/`mulClear` 各 −n/位 |
+| + 改 5（Kaliski 轮压缩） | ≈ 15M | ≈ 5k | 每次求逆 ≈ 4.5M |
+| + 改 6a（Montgomery，标准形式；研究预算） | ≈ 13M | ≈ 5k | 每个乘积算+清 ≤ 600k |
+| + 改 6b（全 Montgomery 表示，可选；研究预算） | ≈ 12M | ≈ 5k | 每个乘积算+清 ≈ 300k–430k，坐标表示改变 |
 | 改 7（CCZ 修正，条件项） | 影响 < 0.1% | +0 | 仅当采用 MBU 反查表 |
-| 参照：Litinski 2023 精确点加 | ≈ 8M | ≈ 3,000 | 公开构造，Gidney 受控加法器 + 13n 轮 |
+| 参照：Litinski 2023 精确点加 | ≈ 8M | ≈ 3,000 | 公开构造，Gidney 受控加法器 + 13n 轮 + 融合乘加 |
 | 参照：Babbush 等 2026（保密电路，近似正确） | 2.1–2.7M | 1,175–1,425 | 不承诺复现 |
 
-改 1–6 之后剩余成本的约四分之三在两次除法（各含正逆两遍 Kaliski 循环）；再压需要换求逆算法，属于新的研究项，不在本计划内。
+改 1–6 之后剩余成本的大头仍在两次除法（各含正逆两遍 Kaliski 循环）；再压需要换求逆算法或融合的乘加模块，属于新的研究项，不在本计划内。每个模块虽可独立证明同形 Triple，但替换布局后的支持集等式和上层适配器（3.3、2.2 的 CX/清理）都要另证，不是自动完成。
 
-### 建议顺序与 PR 切分
+### 依赖与建议顺序
 
-1. 改 1（1 个 PR：HalveInPlace + 新 halving 循环 + 资源/文档）。
-2. 改 2（2 个 PR：原地加法器/常数加/原地模加与加倍；Horner 循环与资源）。
-3. 改 3（3 个 PR：Math 引理组；divide；原地点加与受控版）。
-4. 改 4（1 个 PR：比较器原语 + 替换 Borrow.lean 调用点 + 资源数更新；公开陈述不变）。
-5. 改 5（2 个 PR：MBU 零检测 + 原地受控加减接入 I3 统一体；轮内替换与资源）。
-6. 改 6a（2 个 PR：查表原语 + Montgomery 约减数学；窗口乘法与资源），6b 视需要。
-7. 改 7 仅在改 6 采用 MBU 反查表时立项。
+依赖图（频道确认版）：基础层（§1，1 个 PR）先做；随后改 1、改 2、改 4、改 5 只通过 Triple 接口相互独立，可并行；改 3 依赖改 1 与改 2；改 6 是改 2 的替代；改 7 依赖改 6 的选择。
+
+1. 基础层（1 个 PR：`addInPlace`、常数加、原地模加/减（含受控版与 a'≤p 引理）、`dblInPlace`、`halfInPlace` 及受控版）。
+2. 改 4（1 个 PR：比较器原语 + 替换 Borrow.lean 调用点 + 资源数更新；公开陈述不变）。
+3. 改 1（1 个 PR：受控减半/加倍循环 + `inverseLoop` 重组 + 资源/文档）。
+4. 改 2（2 个 PR：`mulInto`/`mulClear` 与循环不变量；三个适配器 + `fieldMul_spec` 重证 + 资源）。
+5. 改 3（3 个 PR：Math 引理组（输出侧标志、λ*、x_{R+C}=cx ⇔ R=−2C）；`divide`；原地点加与受控版）。
+6. 改 5（2 个 PR：MBU 零检测 + 原地受控加减接入 I3 统一体；轮内替换与资源）。
+7. 改 6a（先交受控加模块门列与计数，再 2 个 PR：查表原语 + Montgomery 约减数学；窗口乘法与资源），6b 视需要；改 7 仅在改 6 采用 MBU 反查表时立项。
 
 每项先交"构造 + 逐步寄存器表 + 门数推导 + 证明义务"的设计 PR 描述，确认后再写证明；README 的资源表随每次合并更新。
 
-## 10. 验收标准（每一项 PR）
+## 10. 文档约定
+
+本文件是重做计划的唯一来源；README 只保留"下一步计划"摘要表并链接到此处，PROOF_STATUS 只记录已证明的内容，PROVENANCE 记录来源。计划变更在同一 PR 里同时改本文件和 README 摘要，不维护第二份副本；频道里的附件只是快照。
+
+## 11. 验收标准（每一项 PR）
 
 - 公开定理陈述可读，前提只有 Nodup、位宽、数值范围；无坐标前提；输入域不缩小。
 - 正确性、三项资源、支持集指向同一字面程序；资源表在 README 与 PROOF_STATUS 同步替换，旧数字保留在 PROVENANCE 的历史里。
