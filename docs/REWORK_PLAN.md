@@ -40,7 +40,7 @@
 门列（Gidney 2018 "Halving the cost of quantum addition"）。要点：**先擦进位辅助位，再写和位**，这样每一步擦除时 a_i、b_i、c_i 仍是原值，现有 `eraseCarry` 的前提（辅助位等于当前 a/b/cin 的 carryBit）成立；若先把 b_i 改写成和位再擦除，前提失效，修正会依赖被覆盖的数据。
 
 1. 正向 i = 0..n−2：用现有 `fullAdder` 的 AND 步把内部进位 c_{i+1} = MAJ(a_i, b_i, c_i) 写进干净辅助位（共 n−1 个 CCX）。
-2. 最高位（i = n−1）：需要 cout 时用不带辅助位的 MAJ 门列 `CX a b; CX a c; CCX c b cout; CX a c; CX a b` 把进位**异或**进 cout（1 个 CCX；cout 是任意初值 C 的公开输出，不测量、不擦除），然后 `CX a_{n−1} b_{n−1}; CX c_{n−1} b_{n−1}` 写最高和位。
+2. 最高位（i = n−1）：需要 cout 时用不带辅助位的 MAJ 门列 `CX a b; CX a c; CCX c b cout; CX a cout; CX a c; CX a b` 把进位**异或**进 cout（MAJ(a,b,c) = a ⊕ ((a⊕c)∧(a⊕b))，与现有 `fullAdder` 的门序一致）（1 个 CCX；cout 是任意初值 C 的公开输出，不测量、不擦除），然后 `CX a_{n−1} b_{n−1}; CX c_{n−1} b_{n−1}` 写最高和位。
 3. 反向 i = n−2..0：先 `eraseCarry` 擦掉内部进位 c_{i+1}（`measureX`，测得 1 时的 CZ 修正，此时 a_i、b_i、c_i 未变），再用 `CX a_i b_i; CX c_i b_i` 把和位原地写回 b_i。c₀ 是进位输入线，用完后保持。
 
 资源：n−1 个 Toffoli（带 cout 时 n）；n−1 次测量（只擦内部进位）；线路 2n + (n−1) 辅助 + c₀ (+ cout)。
