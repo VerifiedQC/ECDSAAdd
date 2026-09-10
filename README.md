@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 候选计算已合并。当前分支实现并证明完整经典常量点加 `pointAddOut`：覆盖无穷远、互逆点和倍点，对任意初值输出做 XOR，保持输入、恢复相位并清零工作区；同程序的门数、测量数与实际支持集均已证明。受控原地点加仍未实现。CI、独立复审与合并状态以相应 PR 记录为准。
+本节描述当前分支实际包含的代码。M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5、M3 候选计算及完整经典常量点加已合并。`pointAddOut` 覆盖无穷远、互逆点和倍点，对任意初值输出做 XOR，保持输入、恢复相位并清零工作区；同程序的门数、测量数与实际支持集均已证明。当前分支还实现并证明受控原地点加 `controlledPointAdd`：控制为假时保持 R，为真时得到 R+C，两种分支均恢复相位并清空临时点、算术工作区和选择位。CI、独立复审与合并状态以相应 PR 记录为准。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -22,7 +22,7 @@
 | 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/InverseResources.lean) |
 | M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointCandidateResources.lean) |
 | 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddResources.lean) |
-| 受控原地点加 | 尚未实现；后续组合两次受控输出调用与交换 | — |
+| 受控原地点加 | 已证明控制保持、全部点情形、临时点/工作区清零及同程序精确资源 | [ControlledPointAddSpec.lean](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean) · [ControlledPointResources.lean](ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
@@ -39,6 +39,8 @@ I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli �
 M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 **22,989,640 个 Toffoli、13,258,824 次测量**。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的 69,908、5,956、1,287 位前缀。布局分配数为 74,022；完整电路的实际支持集排除 dx 与 yg 两根从未触及的填充最高位。
 
 M3 完整 `pointAddOut` 对有限经典常量使用 **45,981,844 个 Toffoli、26,517,648 次测量、74,020 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。仍复用 O(n²+N) 空间的模乘/求逆基线，不声称资源最优。
+
+M3 受控原地 `controlledPointAdd` 对有限 C 使用 **91,964,213 个 Toffoli、53,035,296 次测量、74,024 根实际静态线路**。三个选择位只控制最终输出，算术和测量程序不加控制；两次前向受控 XOR 调用加 513 位受控交换清空临时点。C=O 在构造期为空程序，三项资源均为零。实际支持比完整点加增加控制位与三个选择位，空间仍为 O(n²+N)。
 
 ## 每次交付的检查
 
