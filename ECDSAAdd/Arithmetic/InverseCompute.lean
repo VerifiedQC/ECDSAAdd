@@ -94,7 +94,6 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   let N := (-(z.r : ZMod q)).val
   have hbnd := kaliski_register_bounds q a 512 hq0 hcop
   have hr : z.r<2*q := hbnd.2.2.1
-  have hk : z.k≤512 := hbnd.2.2.2.2
   have hN : N<q := by
     letI : NeZero q := ⟨by omega⟩
     exact ZMod.val_lt _
@@ -105,7 +104,7 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   have hnegback : Triple (InverseMiddle L z cs N) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
       (InverseMiddle L z cs 0) := by
     simpa only [N,Nat.xor_self] using inverseNegative_values L hnd hwidth ha ht q z cs N hq0 hqa hr
-  have hhalf := inverseHalving_values L hnd ha hw q N z cs hqa ho hN hk
+  have hhalf := inverseHalving_values L hnd ha hw q N z cs hqa ho hN
   exact ⟨(hfirst.1.seq hneg).seq hhalf.1,(hhalf.2.seq hnegback).seq hfirst.2⟩
 
 end ECDSAAdd.Arithmetic

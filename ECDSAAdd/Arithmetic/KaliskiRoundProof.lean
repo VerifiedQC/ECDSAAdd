@@ -66,7 +66,7 @@ theorem kaliskiRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   rw [hmod] at h4
   have h5 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2
   rw [step_done] at h5
-  have h6 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hcount hi A
+  have h6 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hi A
     (decide ((kaliskiStep z).v=0)) code.1 code.2
   rw [hactive,Bool.xor_self] at h6
   exact ((((h1.seq h2).seq h3).seq h4).seq h5).seq h6
@@ -97,7 +97,7 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
       _ = ((decide (z.v=0) ^^ (A && decide ((kaliskiStep z).v=0))) ^^
           (A && decide ((kaliskiStep z).v=0))) := congrArg (fun b => b ^^ (A && decide ((kaliskiStep z).v=0))) h.symm
       _ = _ := by simp
-  have h1 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hcount hi false
+  have h1 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hi false
     (decide ((kaliskiStep z).v=0)) code.1 code.2
   rw [Bool.false_xor,hactive] at h1
   have h2 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide ((kaliskiStep z).v=0)) code.1 code.2

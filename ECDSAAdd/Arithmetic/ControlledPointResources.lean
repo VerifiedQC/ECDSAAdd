@@ -12,8 +12,8 @@ theorem controlledPointOutput_counts (L : ControlledPointLayout) (h : L.Widths) 
 
 theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAddOut L (.some hc))=28629146 ∧
-    measurementCount (controlledPointAddOut L (.some hc))=17041552 ∧
+    toffoliCount (controlledPointAddOut L (.some hc))=28567706 ∧
+    measurementCount (controlledPointAddOut L (.some hc))=16980112 ∧
     qubitCount (controlledPointAddOut L (.some hc))=74024 := by
   have cc := pointCandidate_counts L.core h (L.core_nodup hn) cx cy
   have cf := pointFlags_counts L.core h cx cy
@@ -62,8 +62,8 @@ theorem controlledPointSwap_subset (L : ControlledPointLayout) (h : L.Widths) :
 /-- 有限常量两次前向受控 XOR 调用与 513 位交换的同程序精确成本。 -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=57258805 ∧
-    measurementCount (controlledPointAdd L (.some hc))=34083104 ∧
+    toffoliCount (controlledPointAdd L (.some hc))=57135925 ∧
+    measurementCount (controlledPointAdd L (.some hc))=33960224 ∧
     qubitCount (controlledPointAdd L (.some hc))=74024 := by
   have hfirst := controlledPointAddOut_finite_resources L h hn cx cy hc
   have hnext := controlledPointAddOut_finite_resources L h hn _ _ ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hc)

@@ -108,23 +108,23 @@ theorem zeroDone_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   simp [writeBit,hd]
 
 theorem roundActiveXor_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
-    (hw : L.counter.width=10) (z : KState) (K i : Nat) (hk : K≤512) (hi : i<512) (A D S T : Bool) :
+    (hw : L.counter.width=10) (z : KState) (K i : Nat) (hi : i<512) (A D S T : Bool) :
     Triple (RoundState L z 0 K A D S T) (roundActiveXor L i)
       (RoundState L z 0 K (A ^^ decide (i < K)) D S T) := by
   intro s m h
   have hc := L.comparator_fields
-  have hs := counterActiveXor_spec L.comparator (L.counterLow.map AddBit.x) L.counterHigh.x L.active
-    (L.comparator_nodup hnd) L.comparator_out (hc.2.2.2.2.2.trans hw) K i A hk hi
-  have hf := counterActiveXor_frame L.comparator (L.counterLow.map AddBit.x) L.counterHigh.x L.active
-    (L.comparator_nodup hnd) L.comparator_out (hc.2.2.2.2.2.trans hw) i K hi hk A s m
-  simp only [hc.1,hc.2.1,hc.2.2.1,hc.2.2.2.1,hc.2.2.2.2.1] at hs hf
-  obtain ⟨hp,hv⟩ := hs s m ⟨⟨⟨⟨⟨h.2.active,h.2.next⟩,h.2.y⟩,h.2.cin⟩,h.2.k⟩,h.2.carry⟩
-  have he := hf h.2.active h.2.next h.2.y h.2.cin h.2.k h.2.carry
+  have hs := counterActiveXor_spec L.comparator L.active
+    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) K i A hi
+  have hf := counterActiveXor_frame L.comparator L.active
+    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) i K hi A s m
+  simp only [hc.1,hc.2.2.1,hc.2.2.2.1,hc.2.2.2.2.1] at hs hf
+  obtain ⟨hp,hv⟩ := hs s m ⟨⟨⟨⟨h.2.active,h.2.next⟩,h.2.y⟩,h.2.cin⟩,h.2.carry⟩
+  have he := hf h.2.active h.2.next h.2.y h.2.cin h.2.carry
   have hda : L.done≠L.active := by
     have hh := (List.nodup_append'.mp (L.controls_data_nodup hnd)).1
     simp only [KaliskiRoundLayout.controls,List.nodup_cons,List.mem_cons,List.not_mem_nil,not_or,not_false_eq_true,and_true] at hh
     exact Ne.symm hh.1.1
-  exact ⟨hp,flags_update L hnd z 0 K A D S T _ _ _ _ h hv.1.1.1.1.1
+  exact ⟨hp,flags_update L hnd z 0 K A D S T _ _ _ _ h hv.1.1.1.1
     ((he L.done hda).trans h.2.done) (fun w ha _ => he w ha)⟩
 
 end ECDSAAdd.Arithmetic

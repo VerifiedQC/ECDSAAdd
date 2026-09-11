@@ -1,6 +1,17 @@
 import ECDSAAdd.Arithmetic.KaliskiRound
 
 namespace ECDSAAdd.Arithmetic
+
+/-- 有符号差落在 [-q,q) 时，模 2q 表示的最高位恰好给借位。 -/
+private theorem subtraction_high (X Y q : Nat) (hq : 0<q) (hlo : Y≤X+q) (hhi : X<Y+q) :
+    q ≤ (X+2*q-Y)%(2*q) ↔ X<Y := by
+  by_cases h : X<Y
+  · rw [Nat.mod_eq_of_lt (show X+2*q-Y<2*q by omega)]
+    omega
+  · rw [show X+2*q-Y = (X-Y)+2*q by omega, Nat.add_mod_right,
+      Nat.mod_eq_of_lt (show X-Y<2*q by omega)]
+    omega
+
 namespace KaliskiRoundLayout
 
 theorem head_mem (L : KaliskiRoundLayout) (f : RoundField) :
