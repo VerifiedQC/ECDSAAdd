@@ -72,4 +72,37 @@ theorem modAddCore_counts (L : ModAddCoreLayout) (n p : Nat)
   simp
   omega
 
+/-- 第一阶段只改变扩宽目标；其余寄存器逐线保持。 -/
+private theorem modAddCore_sum (L : ModAddCoreLayout) (n A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) :
+    {{ L.a=A, L.z=Z, L.work=0 }} addInPlace L.a L.z L.carry L.cin
+    {{ L.a=A, L.z=(A+Z)%2^(n+1), L.work=0 }} := by
+  have hcnt := List.nodup_iff_count.mp hnd
+  have hsub : (L.cin :: (L.a ++ L.z ++ L.carry)).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := hcnt q
+    simp only [ModAddCoreLayout.wires, ModAddCoreLayout.work, List.count_append,
+      List.count_cons, List.count_nil] at h ⊢
+    omega
+  have outside (q : Wire) (hq : q ∈ L.a ++ L.work) : q ∉ L.z := by
+    intro hz
+    have h := hcnt q
+    have h1 := List.count_pos_iff.mpr hq
+    have h2 := List.count_pos_iff.mpr hz
+    simp only [ModAddCoreLayout.wires, List.count_append] at h h1
+    omega
+  have hz : L.z.length = n+1 := by simp [ModAddCoreLayout.z, hw.low]
+  intro s m h
+  simp only [Holds.holds] at h ⊢
+  have clean := (regValue_zero L.work s.basis).mp h.2
+  obtain ⟨hp, he, hv⟩ := addInPlace_correct L.a L.z L.carry L.cin hsub
+    (hw.a.trans hz.symm) (by rw [hw.carry, hz]) s m
+    (fun q hq => clean q (by simp [ModAddCoreLayout.work, hq]))
+  refine ⟨hp, ⟨?_, ?_⟩, ?_⟩
+  · exact (regValue_congr _ _ _ (fun q hq => he q (outside q (by simp [hq])))).trans h.1.1
+  · rw [hv, h.1.1, h.1.2, clean L.cin (by simp [ModAddCoreLayout.work]),
+      Bool.toNat_false, Nat.add_zero, hz]
+  · exact (regValue_congr _ _ _ (fun q hq => he q (outside q (by simp [hq])))).trans h.2
+
 end ECDSAAdd.Arithmetic
