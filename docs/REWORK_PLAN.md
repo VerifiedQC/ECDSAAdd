@@ -147,7 +147,7 @@ inverseLoop' L q :=
 - `Arithmetic/HalvingLoop.lean` 重写：受控减半循环与逆序受控加倍循环，固定布局递归，`halvingValue_eq` 连接 `halveFixed`，并证明加倍循环是其逆。
 - `Arithmetic/InverseCompute.lean`：新 `inverseLoop`；`InverseMiddle` 只保留内部寄存器 inv。
 - `InverseLoopResources.lean`、`InverseResources.lean`、README/PROOF_STATUS 资源表、verify.sh 入口同步。
-- 验收：`fieldInverse_spec`、`fieldInverse_xor_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；118 个公开入口公理白名单通过。
+- 验收：`fieldInverse_spec`、`fieldInverse_xor_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；139 个公开入口公理白名单通过。
 
 ## 3. 改 2：模乘
 
