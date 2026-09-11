@@ -17,7 +17,7 @@
 | 改 2 | 模乘 → Horner 零输出内核 + 反序清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | 内核 ≈ 590,000、清理 ≈ 786,000，XOR 适配器 ≈ 1,376,000；≈ 1,500 线 | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变；调用次数不变 |
 | 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（已证） | ≈ 18.5M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"与 λ* 数学引理 |
 | 改 4 | 首批接入计数比较器（§13，已实现） | 十位比较 20 | 10 | 每次求逆 −30,720 Toffoli/测量；记录段见 §14（已实现）；模算术已用比较器的收益不重复扣减 |
-| 改 5 | Kaliski 轮压缩 | 当前每轮 4,402（17w+33，§14 已实现） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
+| 改 5 | Kaliski 轮压缩 | 当前每轮 4,402（17w+33，§14 已实现） | 每轮 3,629（14w+31，§15待证明） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
 | 改 6 | Montgomery 4 位窗口模乘（研究预算） | 改 2 后每个乘积算+清 ≈ 1,376,000 | 6a 标准形式 ≤ 600,000；6b 全 Montgomery 表示 ≈ 300,000–430,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
 | 改 7 | 测量反计算查表所需的 CCZ 修正（条件项） | 语言只有 Z/CZ 修正 | 每个查表的反计算从 2^k 降到 ≈ 2^(k/2) | 只在改 6 选择 MBU 反查表时需要；扩展 Syntax/Semantics/Cost 三处 |
 
@@ -321,17 +321,18 @@ PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C
 | 段 | 现在 | 改后 | 省 |
 | --- | ---: | ---: | ---: |
 | 记录段比较 v<u（由 §14 完成） | 2w（减、读借位、减） | w（见 §14，已实现） | w（计入 §14，不重复计入改 5） |
-| 零检测 v=0（done 更新） | 2w（AND 链正向算、正向清） | w（AND 链算、MBU 擦） | w |
-| 两次 masked 加减 | 各 4w（复制、加、反向减、复制） | 各 3w（t ← c·v，原地加/减，清 t） | 2w |
+| 零检测 v=0（done 更新） | 2w Toffoli / 0测量 | w Toffoli / w测量（§15） | w Toffoli；增加w测量 |
+| 两次 masked 加减 | 各 4w Toffoli /2w测量 | 各3w−1 Toffoli /w−1测量（§15） | 共2w+2 Toffoli与2w+2测量 |
 | 两次数据对交换、两次受控移位 | 4w + (2w−2) | 不变（Litinski 也计 4 次受控 SWAP 和 1 次受控移位） | 0 |
 | 计数移动、活动比较 | 20 + 10（改 4 首批已实现） | 不变 | 0 |
 
-每轮 ≈ 14w+22 ≈ 3,620（w=257），相比当前4,402约省18%；Litinski 的 13n=3,328 是同一结构再用 Gidney 受控加法器（2n）得到的，可作后续微调。
+按§15具体门列，目标每轮14w+31 = 3,629 Toffoli、4w+28 = 1,056测量（w=257），相比当前4,402 Toffoli省773。此前14w+22是未逐门核对的量级估算，由本式替代。更激进的受控加法器不属于本次范围。
 
 ### 6.4 影响与证明义务
 
-- `kaliskiRound_spec` / `kaliskiUnround_spec` 陈述不变，只换内部程序与资源数：kaliskiLoop 512 轮 ≈ 1.85M（现 2.39M）；配合改 1（并用比较器）每次求逆 ≈ 2×1.85M + 0.41M + 0.32M + 15k ≈ **4.5M**。
-- 需要：原地受控减法/加法（改 2 的 1.5 受控版）、Gidney 比较器、AND 链的 MBU 擦除版零检测（`zeroControlled` 的 MBU 变体）。I3 的 `RoundBody`/`RecordRound`/`ZeroControl` 各替换一处，`KaliskiRoundProof` 的组合证明按接口不变复用。
+公开 `kaliskiRound_spec` / `kaliskiUnround_spec`、求逆和点加功能陈述保持。每次求逆的具体目标为4,541,488 Toffoli /1,639,472测量；第一阶段每方向512×3,629=1,858,048 Toffoli，第二阶段仍为2×404,992，加两次negativeInit共15,408。
+
+实现范围、完整门列、寄存器契约和支持集变更见§15。改5可以与Lamport的改2并行；不改变其文件归属，也不把§14已实现的记录比较收益再次计入。
 
 ## 7. 改 6：Montgomery 窗口模乘
 
@@ -774,3 +775,121 @@ compareLt (some b) v u carry cin sw ++
 - RoundResources/RoundWires：更新记录段公式、精确支持及组合证明；顺序传播 inverse/point-add 的资源常数。保持字段布局、求逆与点加功能接口；不动 Lamport 的 Modular/Multiply/Field 门列。
 - README、PROOF_STATUS、PROVENANCE、REWORK_PLAN：实现完成后同步实际状态及公理输出；目标数在证明通过前不写为已实现。§12的 PR D 集成预算由 Lamport 在接入时按最新求逆数重算。
 - 验收逐项检查功能、同一门列、全测量记录相位、全部工作位清理、实际支持集/资源、可读性、无过度抽象、README同步；完整 scripts/verify.sh 新增记录段 Triple、frame 与三项资源入口，共145项公开入口公理白名单检查；无测试、新公理或证明资源放宽。设计复审通过后完成实现。
+
+
+## 15. 改 5 实施设计：测量清零检测与原地受控加减（待复审、未实现）
+
+基线 main 38c8fbba，已证受控点加56,083,253 Toffoli。此处所有新成本为具体门列推导的目标，尚非Lean结果；README Current status保持不变。本次只改变Kaliski单轮的零检测和两次受控算术。原记录段、移位、数据交换、计数、第二阶段减半均保持。
+
+### 15.1 零检测：计算AND链，读结果，再测量清链
+
+新增 `zeroControlledMbu`，继续使用 `ZeroBit` 接线。原 `zeroControlled` 仍服务点加标志等现有调用方；仅Kaliski正逆轮改用新入口，避免扩大本次门列变更范围。
+
+```lean
+-- q = c AND NOT input
+negAnd c input work := [X input, CCX c input work, X input]
+-- work=q，先把input取反，使CZ作用于计算q时的两个因子
+negAndErase c input work :=
+  [X input, measureX work [] [CZ c input], X input]
+
+zeroControlledMbu c target [] := [CX c target]
+zeroControlledMbu c target (b::bs) :=
+  negAnd c b.input b.work ++
+  zeroControlledMbu b.work target bs ++
+  negAndErase c b.input b.work
+```
+
+清理绝不是删除工作位：测量引入的相位为 `m AND c AND NOT input`，m=1时的CZ恰好补偿它；m=0无需修正。两个X让原始input最终恢复。该局部证明可按现有andComputeErase模型直接证明，但不能把“计算后立即擦除”的现成定理直接套到夹有递归读出的一整段。
+
+公开契约（inputs/work为bs逐项的输入/工作线列表）：
+
+```text
+{{ c=C, target=T, inputs=X, work=0 }} zeroControlledMbu c target bs
+{{ c=C, target=T XOR (C AND [X=0]), inputs=X, work=0 }}
+```
+
+前提 `(c::target::bs.flatMap ZeroBit.wires).Nodup`；另有除target之外逐线保持的frame。结果对所有测量记录保持相位，T任意。空列表执行CX，零位整数X=0，资源0/0/2；不为空时n位资源为n Toffoli/n测量/2n+2线，支持与原零检测一致。
+
+| 阶段 | 输入位 | 当前链位 | 目标 | 后续链工作位 |
+| --- | --- | --- | --- | --- |
+| 进入当前层 | I | 0 | T | 全0 |
+| negAnd | I | q=C AND NOT I | T | 全0 |
+| 递归检测完成 | I | q（保持） | T XOR (q AND 尾部全零) | 全0 |
+| negAndErase | I（先反再恢复） | 0 | 保持 | 全0 |
+
+递归frame保证input和当前层控制都未被尾部改变，因此测量擦除前的AND关系仍成立。正轮/逆轮均执行这个前向程序；不倒放测量门。C=false时固定门列照常执行，只是target不变，不能据此折扣门数。
+
+### 15.2 受控加减：复用已有maskedAddInPlace/maskedSubInPlace
+
+保留 `inplaceArithmetic L f g c negative` 的调用形状，内部改为以下组合。f/g为不同的数据字段（u/v/r/s），t使用现有y寄存器，进位链用carry的前w−1位；w≥1。最高carry仍留给记录比较器使用。
+
+```lean
+src := L.reg g
+t   := L.reg .y
+dst := L.reg f
+chain := (L.reg .carry).take (L.width-1)
+if negative then maskedSubInPlace c src t dst chain L.cin
+else maskedAddInPlace c src t dst chain L.cin
+```
+
+每个入口已经定义为“受控复制src到t；原地加/减t到dst；再次受控复制清t”。不再接exchangeRegisters，也不生成out。复用现有maskedAddInPlace_spec / maskedSubInPlace_spec，不新增第二套受控加法器。
+
+公开寄存器契约如下，N=2^w：
+
+```text
+{{ c=C, src=S, dst=D, t=0, chain=0, cin=false }}
+  maskedAddInPlace ...
+{{ c=C, src=S, dst=(D + if C then S else 0) % N,
+   t=0, chain=0, cin=false }}
+
+减法后置：dst=(D + N - (if C then S else 0)) % N；其余相同。
+```
+
+| 阶段 | src | t | dst | chain/cin |
+| --- | --- | --- | --- | --- |
+| 输入 | S | 0 | D | 0/false |
+| 受控复制 | S | C?S:0 | D | 0/false |
+| 原地算术 | S | C?S:0 | D ± (C?S:0) mod N | 0/false |
+| 同一受控复制清t | S | 0 | 保持 | 0/false |
+
+src与控制在中间原地算术完成后仍保持，因而最后的复制能清t。内部进位沿原addInPlace已证顺序，在覆盖对应目标位之前擦除；不新增测量反计算t。两次受控复制各w Toffoli，算术w−1 Toffoli/w−1测量，合计3w−1 /w−1。现有组合支持定理只有subset，实施时补非空同宽情形的精确支持等式，再用于轮内并集。
+
+`RoundFrame.inplace` 仍给出原字段更新和外部frame；删除只因旧out中转而存在的前提/辅助引理，不保留虚假的out=0依赖。out现在逐线保持任意初值。正逆体的数学范围条件仍按原算法保留，不用模算术结果掩盖无溢出/无借位的上层要求。原完整轮工作位清零契约保持。
+
+### 15.3 具体资源与静态支持
+
+| 单轮组成 | Toffoli | 测量 |
+| --- | ---: | ---: |
+| 已实现记录段 | w+5 | w |
+| 算术体：交换4w、算术2(3w−1)、移位2w−2 | 12w−4 | 2w−2 |
+| 计数移动 | 20 | 20 |
+| 新零检测 | w | w |
+| 活动比较 | 10 | 10 |
+| 合计（正逆相同） | 14w+31 | 4w+28 |
+
+相对17w+33 /5w+30，每轮省3w+2 Toffoli及w+2测量；w=257即773/259。512正轮+512逆轮，每次求逆共省791,552/265,216。记录比较的§14收益不重复计算。
+
+| 模块 | Toffoli目标 | 测量目标 | 实际静态线目标 |
+| --- | ---: | ---: | ---: |
+| 单轮（w=257） | 3,629 | 1,056 | 1,847 |
+| inverseLoop | 4,541,488 | 1,639,472 | 5,698 |
+| fieldInverse | 4,541,488 | 1,639,472 | 5,954 |
+| pointCandidateCompute/Clear各 | 13,227,848 | 7,961,672 | 原组合支持保持 |
+| pointAddOut | 26,458,260 | 15,923,344 | 74,020 |
+| controlledPointAddOut | 26,458,266 | 15,923,344 | 74,024 |
+| controlledPointAdd | 52,917,045 | 31,846,688 | 74,024 |
+
+通用inverseLoop目标公式为1024(17w+51)+60w−12 Toffoli、1024(6w+47)+48w测量，线数18w+1072（同宽/固定512轮条件不变）。这不是“与改2/3叠加后的15M”；其它调用结构保持当前实现。
+
+空间减少来自原RoundField.out不再被任何Kaliski门触及：单轮从8w+48变为7w+48。对N>0的循环、求逆准备/恢复和完整逆元，新的usedWires排除这w根线；循环空列表仍保留原空程序分支。布局分配暂不重排，完整功能规格可继续要求原工作区初值为零并恢复为零，但qubitCount必须由实际支持得出。
+
+poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对应偏移10+8i（0≤i≤256）的257根线不执行，实际工作支持5442根。需将原“等于整个5699前缀”的支持引理改为排除这些位置的精确集合；不能声称布局已压紧。点加共享池仍由旧模乘占满，失去的求逆支持仍被模乘覆盖，所以点加静态线数不减少。所有支持等式必须在实现时重证，以上为待验证目标。
+
+### 15.4 文件归属、证明交付与边界
+
+- ZeroControlMbu新文件：复用ZeroBit，局部负AND擦除引理、递归correct、寄存器Triple、frame、计数和精确支持。ZeroControl旧入口保持其余调用方行为，不全局替换。
+- RoundFrame/RoundBody：接入现有原地受控算术、必要的子布局/Nodup/帧证明；保持正逆体数学更新。InPlaceAdder只补确有组合用途的资源/精确支持引理，不改已有原语门列。
+- KaliskiRound与相关Controls/Resources/Wires/Loop：只替换零检测调用，传播算术资源和新usedWires；RecordRound门列不改。可同步加入审阅建议的carry访问器，作为直接字段视图，不另建布局抽象。
+- InverseLoopSupport/Resources、InverseResources/Ports、PointCandidateSupport及点加资源：传播实际支持、公式与精确数；不改求逆/点加数学接口，不重排池编号。
+- 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖尚未实现的Horner或模加核。必要新公开入口加入verify.sh；其余沿用传递公理检查。
+- 实现PR同步README、PROOF_STATUS（实际公理输出）、PROVENANCE与本计划；当前文档PR只同步设计目标。完整scripts/verify.sh、独立八项复审和最终head hosted CI按既有规则执行；无测试、新公理、native_decide或证明资源放宽。设计复审通过后再实施。
