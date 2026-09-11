@@ -23,6 +23,7 @@
 | M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointCandidateResources.lean) |
 | 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddResources.lean) |
 | 受控原地点加 | 已证明控制保持、全部点情形、临时点/工作区清零及同程序精确资源 | [ControlledPointAddSpec.lean](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean) · [ControlledPointResources.lean](ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
+| 原地加减与比较器原语 | 已证明原地加/减（n−1 Toffoli、n−1 测量、3n 线）、受控常数/寄存器加减、Gidney 比较器（n Toffoli）；重做计划的基础层，尚无调用方 | [InPlaceAdder.lean](ECDSAAdd/Arithmetic/InPlaceAdder.lean) · [Compare.lean](ECDSAAdd/Arithmetic/Compare.lean) |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
@@ -41,6 +42,8 @@ M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆�
 M3 完整 `pointAddOut` 对有限经典常量使用 **45,981,844 个 Toffoli、26,517,648 次测量、74,020 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。仍复用 O(n²+N) 空间的模乘/求逆基线，不声称资源最优。
 
 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **91,964,213 个 Toffoli、53,035,296 次测量、74,024 根实际静态线路**。三个选择位只控制最终输出，算术和测量程序不加控制；两次前向受控 XOR 调用加 513 位受控交换清空临时点。C=O 在构造期为空程序，三项资源均为零。实际支持比完整点加增加控制位与三个选择位，空间仍为 O(n²+N)。
+
+基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路（受控版本为 3n+3）。这些原语当前没有调用方，不改变任何已证模块的资源数。
 
 ## 下一步计划（未实现，不计入 Current status）
 

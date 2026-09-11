@@ -32,7 +32,7 @@ theorem mem_addWires {bs : List AddBit} {b : AddBit} (h : b ∈ bs) :
     · obtain ⟨hx, hy, ho, hc⟩ := ih h
       simp [addWires, hx, hy, ho, hc]
 
-private theorem sum_value_step (A B C : Bool) (X Y n : Nat) :
+theorem sum_value_step (A B C : Bool) (X Y n : Nat) :
     (sumBit A B C).toNat + 2 * ((X + Y + (carryBit A B C).toNat) % 2^n) =
       ((A.toNat + 2 * X) + (B.toNat + 2 * Y) + C.toNat) % 2^(n+1) := by
   have hv := fullAdder_bit_value A B C
