@@ -420,3 +420,145 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 - 正确性、三项资源、支持集指向同一字面程序；资源表在 README 与 PROOF_STATUS 同步替换，旧数字保留在 PROVENANCE 的历史里。
 - `lake --wfail build` 与公开入口公理白名单通过；无 sorry / native_decide / 新 axiom。
 - 每项先交"构造 + 逐步寄存器表 + 门数推导 + 证明义务"的设计 PR 描述，确认后再写证明（与 M3 流程一致）。
+
+## 12. 改 2 实施设计（Lamport，待独立复审）
+
+本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**下面的精确数是拟定门列的推导值，尚非 Lean 定理**。不改已实现状态，不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
+
+### 12.1 固定布局、基础接口和旋转
+
+设 `1<p<2^n`、p 奇数、`w=n+1`。模数可参数化，最终实例 n=256。模算术源 a 与目标 z 都用 w 根线；规范输入 `<p` 保证最高位为零。所有输入、目标、工作区及外部控制在同一个线路列表中满足 Nodup；临时借用的子视图不重复加入此列表。
+
+工作区：掩码字 `mask : w`、常数字 `constant : w`、进位链 `carry : n`、`cin : Wire`、`flag : Wire`。初末全部为零。底层 w 位加/减使用 n 根进位，n 位加/减用其前 n−1 根；n 位比较用全部 n 根。`cin=false`。不添加独立 cout，也不复制 PR A 的加法器。
+
+基础接口沿用 Deutsch：`addInPlace` / `subInPlace`、`maskedAddConst` / `maskedSubConst`、`maskedAddInPlace` / `maskedSubInPlace`、带可选控制的 `compareLt` / `compareLtConst`。r 位加减计 r−1 个 CCX、r−1 次测量；r 位比较计 r 个 CCX/r 次测量，带控制多一个 CCX。常数装卸用 X/CX；掩码装卸用已有受控复制门列。需要让 mask 存活到比较结束时，显式展开“复制、调用基础加法、复制清理”，不改基础加法内部。
+
+**旋转使用真实门列，不改变固定布局。** 两线 swap 为 `CX a b; CX b a; CX a b`，零 CCX、零测量。w 位循环左移按相邻交换 `(n−1,n),…,(0,1)`；高位零时等于乘 2。循环右移用反序交换；低位零时等于除 2。每次 n 个 swap，3n 个 CX。受控旋转将 swap 换为已证 `cswap`，计 n 个 CCX。每一步恢复到同一 z 线路列表，因此没有 n 轮布局旋转后输出接线错位的问题。CX 数不计入 Toffoli，但不称“没有门”。
+
+### 12.2 模加与受控模加
+
+先证明略扩展的源范围 `A≤p`，目标 `Z<p`；A=p 专供模减包装，仍能编码在低 n 位。令 `h=z[n]`、`lo=z.take n`。
+
+| 步骤 | 状态/理由 | CCX / 测量 |
+| --- | --- | --- |
+| `addInPlace a z`（w 位） | z=A+Z<2p<2^w | n / n |
+| 常数 p 装入 constant，w 位减 p，再清 constant | z=(A+Z−p) mod 2^w；h=[A+Z<p] | n / n |
+| `maskedAddConst h constant.low lo p`（n 位） | lo=(A+Z) mod p；h 保持 | n−1 / n−1 |
+| `compareLt none lo a.low carry cin h; X h` | h ^= [lo≥A]，清到零 | n / n |
+
+比较只读低 n 位，**不把正待清理的 h 当比较输入**。未约减时 lo=A+Z≥A；约减时 lo=A+Z−p<A（Z<p）。A=p 时必约减且 lo=Z<p，仍成立。总计 `4n−1 / 4n−1`。
+
+受控版先 `mask.low ^= c·a.low`（n CCX），mask 高位保持零；对 mask 和 z 执行上述模加，比较完成后再次受控复制清 mask（n CCX）。必须与实际 mask 比较。总计 `6n−1 / 4n−1`。c=false 时 mask=0，程序仍执行但最终 z 原值且 h/mask 全零。
+
+拟定公开规格（W 是工作区，非代码占位 axiom）：
+
+```text
+{{ a=A,z=Z,W=0 }} modAddInPlace … {{ a=A,z=(Z+A)%p,W=0 }}
+{{ c=B,a=A,z=Z,W=0 }} controlledModAdd …
+{{ c=B,a=A,z=(if B then (Z+A)%p else Z),W=0 }}
+```
+
+### 12.3 模减：保留源、允许临时源等于 p
+
+`negRaw a`：w 位按位取反、加常数 p+1。它将 A 变为 p−A（包括 A=0 时得到 p），并且在模 2^w 上是 involution。加法工作线清零，CCX/测量均 n。
+
+`modSubInPlace a z = negRaw a ; modAddInPlace a z ; negRaw a`。
+受控版只替换中间为 controlledModAdd，源 a 在两个控制分支都临时取负再还原。规格为保留 a、`z=(Z+p−A)%p`（受控为假时 Z）、W=0，要求 A,Z<p。资源分别 `6n−1 / 6n−1` 与 `8n−1 / 6n−1`。这里使用 12.2 的 A≤p 引理，不能把 p 塞进仅允许 `<p` 的接口。
+
+### 12.4 模加倍与减半
+
+无控制加倍（Z<p）：
+
+1. 循环左移 z，因原高位零，得到 2Z。
+2. w 位减 p，h=z[n] 为借位；正分支 2Z−p<p，负分支 h=1。
+3. 按 h 对低 n 位加回 p。低位结果为 2Z mod p。
+4. `X h; CX z[0] h`：结果偶当且仅当未约减，故清 h。
+
+资源：`2n−1 / 2n−1`。不要求额外 n+2 位符号线。
+
+无控制减半：
+
+1. `CX z[0] flag`，记原奇偶。
+2. 按 flag 对 w 位 z 加 p（n/n）；结果偶，且小于 2p<2^w。
+3. 循环右移，原低位零变成新的高位零，得到 halfₚ(Z)。
+4. 对低 n 位运行 `compareLtConst none … flag K; X flag`，`K=(p+1)/2`（n/n）。由原 Z 奇当且仅当 halfₚ(Z)≥K，清 flag。
+
+资源：`2n / 2n`。它是 mulClear 所需版本，不调用求逆的 HalvingLoop。
+
+为后续受控原地算术提供的两个版本也只使用 PR A：
+
+- 受控减半：flag ^= c∧z[0]；按 flag 加 p；按 c 循环右移；受控比较 z.low<K 写 flag，再 `CX c flag`。资源 `3n+2 / 2n`。
+- 受控加倍：受控比较 z.low<K 写 flag，再 `CX c flag`，得到 flag=c∧[Z≥K]；按 c 循环左移；按 flag 对 w 位 z 减 p；`CCX c z[0] flag` 清 flag。资源 `3n+2 / 2n`。
+
+两个控制为假分支都是状态/工作区恒等；控制为真分支满足 doubleₚ∘halfₚ=id 与 halfₚ∘doubleₚ=id。这两个版本与 Deutsch 求逆的内联专用步骤分别接基础接口，不形成跨 PR C/B 依赖。
+
+### 12.5 Horner 正向与清理
+
+x 为 w 位规范数 X<p，y 为 n 位数 Y<2^n，acc 为 w 位。无需保存倍数链。
+
+```text
+mulInto: i=n−1,...,0
+  dblInPlace acc
+  controlledModAdd y[i] x acc
+
+mulClear: i=0,...,n−1
+  controlledModSub y[i] x acc
+  halfInPlace acc
+```
+
+设 `H_i=(X * floor(Y/2^i)) mod p`，则 `H_n=0`，`H_0=XY mod p`，并且
+`H_i=(2*H_(i+1)+X*bit_i(Y)) mod p`。正向从 H_n 到 H_0；清理先减 X·bit_i 再减半，H_i 回到 H_(i+1)。这里 **没有**声称任意初值 A 的 Horner 是 A+XY；它实际会产生 2^n A+XY。
+
+公开零输出/清理规格：
+
+```text
+{{ x=X,y=Y,acc=0,W=0 }} mulInto … {{ x=X,y=Y,acc=(X*Y)%p,W=0 }}
+{{ x=X,y=Y,acc=(X*Y)%p,W=0 }} mulClear … {{ x=X,y=Y,acc=0,W=0 }}
+```
+
+每段对任意测量记录证明相位恢复。mulClear 是用已证前向减法/减半组合成的程序，不是倒放带测量的 mulInto。
+
+### 12.6 任意目标适配器与实际支持集
+
+临时积 product 为 w 位且初始零：
+
+```text
+XOR: mulInto product ; copyRegister none product out ; mulClear product
+add: mulInto product ; modAddInPlace product out ; mulClear product
+sub: mulInto product ; modSubInPlace product out ; mulClear product
+```
+
+XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±XY)%p`。输入、product、W 在后置条件中明确保持/清零。平方调用者必须提供独立乘数副本，以满足 Nodup，不能把 x/y 接同一组线。
+
+拟定 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；总 `6n+6` 根。XOR 包装再加公开 out(w)，原 acc 作为 product，故 `7n+7` 根；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。这组计数包含扩宽最高位，即使值为零，程序仍会触及它们。
+
+支持集证明先给上界，再逐个字段给见证门：x/acc/mask/constant/carry/cin 来自加法与比較，flag 来自减半，y 每一位作为控制，out 每一位有复制门。域 `1<p<2^n` 保证 n≥2。必须得到 `wires(program)=layout.wires.toFinset` 后才定 `qubitCount`，不把分配上界直接冒充已证支持集。
+
+### 12.7 同一门列资源推导
+
+| 程序 | CCX | 测量 | n=256 CCX / 测量 |
+| --- | ---: | ---: | ---: |
+| mulInto 每位 | (2n−1)+(6n−1)=8n−2 | (2n−1)+(4n−1)=6n−2 | — |
+| mulClear 每位 | (8n−1)+2n=10n−1 | (6n−1)+2n=8n−1 | — |
+| mulInto | n(8n−2) | n(6n−2) | 523,776 / 392,704 |
+| mulClear | n(10n−1) | n(8n−1) | 655,104 / 524,032 |
+| XOR 适配器 | 18n²−3n | 14n²−3n | 1,178,880 / 916,736 |
+| 加适配器 | 18n²+n−1 | 14n²+n−1 | 1,179,903 / 917,759 |
+| 减适配器 | 18n²+3n−1 | 14n²+3n−1 | 1,180,415 / 918,271 |
+
+XOR 适配器拟定实际线数 7n+7=1,799；内核 6n+6=1,542。资源下降同时用了 PR A 的 Gidney 比较器，故不是 §9 中“尚未用改 4 比较器”的 ≈1.38M 版本；改 4 仍需将旧 Borrow 的入口替换，不能再重复从这些新模算术里扣一次比较器节省。
+
+PR B 目标 `fieldInverse=5,626,928` 时，保持现有点加组合的累计 Toffoli 公式为
+`4*5,626,928 + 12*1,178,880 + 37,493 = 36,691,765`。
+只有原语和布局证明完成后才替换已证资源表。若 PR B 的实际池前缀为 5,699，新乘法只需 1,029，则重布点加共享池的目标为 `4,116+max(5,699,1,029,其他仍用模块工作区)=9,815`（其他现有前缀不超过两者最大值）。这比 §9 的约 8k 保守：保留 PR B 实际布局，而不假定尚未实现的求逆 3.9k 池。
+
+### 12.8 文件、证明与集成
+
+设计阶段只改本文与 README 的计划说明，不写未证电路。
+
+- PR C：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。证明约减/奇偶/半倍逆关系、上述各 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
+- PR D：`Arithmetic/MulInPlace.lean`、适配器与布局文件、`Math/HornerMultiply.lean`。先证明 `H_i` 关系和各步规范范围，再证明循环、三个适配器和物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
+- 接入：更新 MultiplyPorts/PointCandidate 的工作池视图及 Nodup/frame/support，保留 M3 的 12 次 fieldMul 和4次 fieldInverse 调用结构。PR B 先合并，后续修改基于其真实 main，不覆盖旧常数。
+- 旧倍数链实现待所有引用迁移完再删除；不同时保留两套公开 fieldMul。源码引用检查后列出删文件清单，保护还被求逆/其他模块使用的旧算术。
+- 每个实现 PR 同步 README、PROOF_STATUS、PROVENANCE、总 import 与 verify.sh；新增公开规格和资源进入现有白名单入口。只运行 Lean 构建及公开公理检查，无测试/数值 oracle/新 axiom/sorry，无 heartbeat 放宽。
+- 八项复审包含可读性、设计必要性、状态真实、Lean 验证、相位/清理、同一合法门列、范围完整性和证据；结论单列 README 同步。常规设计选择由本节明确给出，复审需具体指出构造或接口问题。
