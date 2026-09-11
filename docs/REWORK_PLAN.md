@@ -420,3 +420,217 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 - 正确性、三项资源、支持集指向同一字面程序；资源表在 README 与 PROOF_STATUS 同步替换，旧数字保留在 PROVENANCE 的历史里。
 - `lake --wfail build` 与公开入口公理白名单通过；无 sorry / native_decide / 新 axiom。
 - 每项先交"构造 + 逐步寄存器表 + 门数推导 + 证明义务"的设计 PR 描述，确认后再写证明（与 M3 流程一致）。
+
+## 12. 改 2 实施设计（Lamport，待独立复审）
+
+本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**下面的精确数是拟定门列的推导值，尚非 Lean 定理**。不改已实现状态，不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
+
+### 12.1 固定布局、基础接口和旋转
+
+设 `1<p<2^n`、p 奇数、`w=n+1`。模数可参数化，最终实例 n=256。模算术源 a 与目标 z 都用 w 根线；规范输入 `<p` 保证最高位为零。所有输入、目标、工作区及外部控制在同一个线路列表中满足 Nodup；临时借用的子视图不重复加入此列表。
+
+工作区：掩码字 `mask : w`、常数字 `constant : w`、进位链 `carry : n`、`cin : Wire`、`flag : Wire`。初末全部为零。底层 w 位加/减使用 n 根进位，n 位加/减用其前 n−1 根；n 位比较用全部 n 根。`cin=false`。不添加独立 cout，也不复制 PR A 的加法器。
+
+基础接口沿用 Deutsch：`addInPlace` / `subInPlace`、`maskedAddConst` / `maskedSubConst`、`maskedAddInPlace` / `maskedSubInPlace`、带可选控制的 `compareLt` / `compareLtConst`。r 位加减计 r−1 个 CCX、r−1 次测量；r 位比较计 r 个 CCX/r 次测量，带控制多一个 CCX。常数装卸用 X/CX；掩码装卸用已有受控复制门列。需要让 mask 存活到比较结束时，显式展开“复制、调用基础加法、复制清理”，不改基础加法内部。
+
+**旋转使用真实门列，不改变固定布局。** 两线 swap 为 `CX a b; CX b a; CX a b`，零 CCX、零测量。w 位循环左移按相邻交换 `(n−1,n),…,(0,1)`；高位零时等于乘 2。循环右移用反序交换；低位零时等于除 2。每次 n 个 swap，3n 个 CX。受控旋转将 swap 换为已证 `cswap`，计 n 个 CCX。每一步恢复到同一 z 线路列表，因此没有 n 轮布局旋转后输出接线错位的问题。CX 数不计入 Toffoli，但不称“没有门”。
+
+### 12.2 模加与受控模加
+
+先证明略扩展的源范围 `A≤p`，目标 `Z<p`；A=p 专供模减包装，仍能编码在低 n 位。令 `h=z[n]`、`lo=z.take n`。
+
+| 步骤 | 状态/理由 | CCX / 测量 |
+| --- | --- | --- |
+| `addInPlace a z`（w 位） | z=A+Z<2p<2^w | n / n |
+| 常数 p 装入 constant，w 位减 p，再清 constant | z=(A+Z−p) mod 2^w；h=[A+Z<p] | n / n |
+| `maskedAddConst h constant.low lo p`（n 位） | lo=(A+Z) mod p；h 保持 | n−1 / n−1 |
+| `compareLt none lo a.low carry cin h; X h` | h ^= [lo≥A]，清到零 | n / n |
+
+比较只读低 n 位，**不把正待清理的 h 当比较输入**。未约减时 lo=A+Z≥A；约减时 lo=A+Z−p<A（Z<p）。A=p 时必约减且 lo=Z<p，仍成立。总计 `4n−1 / 4n−1`。
+
+受控版先 `mask.low ^= c·a.low`（n CCX），mask 高位保持零；对 mask 和 z 执行上述内部模加核（核工作区只含 constant/carry/cin，不含 mask/flag，接线与中间断言见 §12.9），比较完成后再次受控复制清 mask（n CCX）。必须与实际 mask 比较。总计 `6n−1 / 4n−1`。c=false 时 mask=0，程序仍执行但最终 z 原值且 h/mask 全零。
+
+拟定公开规格（W 是工作区，非代码占位 axiom）：
+
+```text
+{{ a=A,z=Z,W=0 }} modAddInPlace … {{ a=A,z=(Z+A)%p,W=0 }}
+{{ c=B,a=A,z=Z,W=0 }} controlledModAdd …
+{{ c=B,a=A,z=(if B then (Z+A)%p else Z),W=0 }}
+```
+
+### 12.3 模减：保留源、允许临时源等于 p
+
+`negRaw a`：w 位按位取反、加常数 p+1。它将 A 变为 p−A（包括 A=0 时得到 p），并且在模 2^w 上是 involution。加法工作线清零，CCX/测量均 n。
+
+`modSubInPlace a z = negRaw a ; modAddInPlace a z ; negRaw a`。
+受控版只替换中间为 controlledModAdd，源 a 在两个控制分支都临时取负再还原。规格为保留 a、`z=(Z+p−A)%p`（受控为假时 Z）、W=0，要求 A,Z<p。资源分别 `6n−1 / 6n−1` 与 `8n−1 / 6n−1`。这里使用 12.2 的 A≤p 引理，不能把 p 塞进仅允许 `<p` 的接口。
+
+### 12.4 模加倍与减半
+
+无控制加倍（Z<p）：
+
+1. 循环左移 z，因原高位零，得到 2Z。
+2. w 位减 p，h=z[n] 为借位；正分支 2Z−p<p，负分支 h=1。
+3. 按 h 对低 n 位加回 p。低位结果为 2Z mod p。
+4. `X h; CX z[0] h`：结果偶当且仅当未约减，故清 h。
+
+资源：`2n−1 / 2n−1`。不要求额外 n+2 位符号线。
+
+无控制减半：
+
+1. `CX z[0] flag`，记原奇偶。
+2. 按 flag 对 w 位 z 加 p（n/n）；结果偶，且小于 2p<2^w。
+3. 循环右移，原低位零变成新的高位零，得到 halfₚ(Z)。
+4. 对低 n 位运行 `compareLtConst none … flag K; X flag`，`K=(p+1)/2`（n/n）。由原 Z 奇当且仅当 halfₚ(Z)≥K，清 flag。
+
+资源：`2n / 2n`。它是 mulClear 所需版本，不调用求逆的 HalvingLoop。
+
+**后续计划，不进入当前 PR C。** 以下受控半倍未被本次 Horner 或三个适配器调用，Deutsch 求逆也使用独立实现；保留构造供将来出现实际调用需求时另行评审，目前不实现、不新增公开入口：
+
+- 受控减半：flag ^= c∧z[0]；按 flag 加 p；按 c 循环右移；受控比较 z.low<K 写 flag，再 `CX c flag`。资源 `3n+2 / 2n`。
+- 受控加倍：受控比较 z.low<K 写 flag，再 `CX c flag`，得到 flag=c∧[Z≥K]；按 c 循环左移；按 flag 对 w 位 z 减 p；`CCX c z[0] flag` 清 flag。资源 `3n+2 / 2n`。
+
+上述后续构造的两个控制为假分支都是状态/工作区恒等；控制为真分支满足 doubleₚ∘halfₚ=id 与 halfₚ∘doubleₚ=id。这两个版本与 Deutsch 求逆的内联专用步骤分别接基础接口，不形成跨 PR C/B 依赖。
+
+### 12.5 Horner 正向与清理
+
+x 为 w 位规范数 X<p，y 为 n 位数 Y<2^n，acc 为 w 位。无需保存倍数链。
+
+```text
+mulInto: i=n−1,...,0
+  dblInPlace acc
+  controlledModAdd y[i] x acc
+
+mulClear: i=0,...,n−1
+  controlledModSub y[i] x acc
+  halfInPlace acc
+```
+
+设 `H_i=(X * floor(Y/2^i)) mod p`，则 `H_n=0`，`H_0=XY mod p`，并且
+`H_i=(2*H_(i+1)+X*bit_i(Y)) mod p`。正向从 H_n 到 H_0；清理先减 X·bit_i 再减半，H_i 回到 H_(i+1)。这里 **没有**声称任意初值 A 的 Horner 是 A+XY；它实际会产生 2^n A+XY。
+
+公开零输出/清理规格：
+
+```text
+{{ x=X,y=Y,acc=0,W=0 }} mulInto … {{ x=X,y=Y,acc=(X*Y)%p,W=0 }}
+{{ x=X,y=Y,acc=(X*Y)%p,W=0 }} mulClear … {{ x=X,y=Y,acc=0,W=0 }}
+```
+
+每段对任意测量记录证明相位恢复。mulClear 是用已证前向减法/减半组合成的程序，不是倒放带测量的 mulInto。
+
+### 12.6 任意目标适配器与实际支持集
+
+临时积 product 为 w 位且初始零：
+
+```text
+XOR: mulInto product ; copyRegister none product out ; mulClear product
+add: mulInto product ; modAddInPlace product out ; mulClear product
+sub: mulInto product ; modSubInPlace product out ; mulClear product
+```
+
+XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±XY)%p`。输入、product、W 在后置条件中明确保持/清零。平方调用者必须提供独立乘数副本，以满足 Nodup，不能把 x/y 接同一组线。
+
+拟定 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；**布局共分配 `6n+6` 根，不代表每段都触及全部字段**。XOR 包装另加公开 out(w)，原 acc 作为 product；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。
+
+按当前字面门列分别提出支持集证明义务：
+
+| 程序 | 拟证明的实际支持集 | 拟定基数（n=256） |
+| --- | --- | ---: |
+| mulInto | 内核布局去掉 `flag` 和 `x[n]` | `6n+4` = 1,540 |
+| mulClear | 整个内核布局 | `6n+6` = 1,542 |
+| 完整 XOR 包装 | 整个内核布局，加 out(w) | `7n+7` = 1,799 |
+
+mulInto 不调用减半，因此不触及 flag；它只掩码复制 x 的低 n 位，模加读取 mask 而不是 x[n]，所以 x[n] 也不在其支持集。mulClear 的 `negRaw x` 触及源的全部 w 位，减半触及 flag，因此两根线都重新进入完整包装的支持集。其余字段分别从加法/比较与掩码门给出见证：acc/mask/constant/carry/cin 都被触及，y 每一位作为控制，包装 out 每一位有复制门。
+
+域 `1<p<2^n` 保证 n≥2。实现时先证明各自上界和逐线见证，再得到对应集合的等式与 qubitCount；上表仍是设计推导，不是已证资源定理。
+
+### 12.7 同一门列资源推导
+
+| 程序 | CCX | 测量 | n=256 CCX / 测量 |
+| --- | ---: | ---: | ---: |
+| mulInto 每位 | (2n−1)+(6n−1)=8n−2 | (2n−1)+(4n−1)=6n−2 | — |
+| mulClear 每位 | (8n−1)+2n=10n−1 | (6n−1)+2n=8n−1 | — |
+| mulInto | n(8n−2) | n(6n−2) | 523,776 / 392,704 |
+| mulClear | n(10n−1) | n(8n−1) | 655,104 / 524,032 |
+| XOR 适配器 | 18n²−3n | 14n²−3n | 1,178,880 / 916,736 |
+| 加适配器 | 18n²+n−1 | 14n²+n−1 | 1,179,903 / 917,759 |
+| 减适配器 | 18n²+3n−1 | 14n²+3n−1 | 1,180,415 / 918,271 |
+
+XOR 适配器拟定实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mulClear 为 6n+6=1,542。资源下降同时用了 PR A 的 Gidney 比较器，故不是 §9 中“尚未用改 4 比较器”的 ≈1.38M 版本；改 4 仍需将旧 Borrow 的入口替换，不能再重复从这些新模算术里扣一次比较器节省。
+
+PR B 目标 `fieldInverse=5,626,928` 时，保持现有点加组合的累计 Toffoli 公式为
+`4*5,626,928 + 12*1,178,880 + 37,493 = 36,691,765`。
+只有原语和布局证明完成后才替换已证资源表。若 PR B 的实际池前缀为 5,699，新乘法只需 1,029，则重布点加共享池的目标为 `4,116+max(5,699,1,029,其他仍用模块工作区)=9,815`（其他现有前缀不超过两者最大值）。这比 §9 的约 8k 保守：保留 PR B 实际布局，而不假定尚未实现的求逆 3.9k 池。
+
+### 12.8 文件、证明与集成
+
+设计阶段只改本文与 README 的计划说明，不写未证电路。
+
+- PR C：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
+- PR D：`Arithmetic/MulInPlace.lean`、适配器与布局文件、`Math/HornerMultiply.lean`。先证明 `H_i` 关系和各步规范范围，再证明循环、三个适配器和物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
+- 接入：更新 MultiplyPorts/PointCandidate 的工作池视图及 Nodup/frame/support，保留 M3 的 12 次 fieldMul 和4次 fieldInverse 调用结构。PR B 先合并，后续修改基于其真实 main，不覆盖旧常数。
+- 旧倍数链实现待所有引用迁移完再删除；不同时保留两套公开 fieldMul。源码引用检查后列出删文件清单，保护还被求逆/其他模块使用的旧算术。
+- 每个实现 PR 同步 README、PROOF_STATUS、PROVENANCE、总 import 与 verify.sh；新增公开规格和资源进入现有白名单入口。只运行 Lean 构建及公开公理检查，无测试/数值 oracle/新 axiom/sorry，无 heartbeat 放宽。
+- 八项复审包含可读性、设计必要性、状态真实、Lean 验证、相位/清理、同一合法门列、范围完整性和证据；结论单列 README 同步。常规设计选择由本节明确给出，复审需具体指出构造或接口问题。
+
+### 12.9 集中的拟定公开接口（设计，尚未实现）
+
+以下是实现 PR 必须交付的完整陈述形状，不是已有 Lean 定理。统一前提为 `1<p<2^n`、p 为奇数、`w=n+1`；数值变量取 Nat，B 为 Bool。`halfₚ(Z)=(Z+(if Z%2=1 then p else 0))/2`。每一行还须满足该行的数值范围及下述对应布局的 Widths/Nodup 前提。
+
+**命名布局与工作区。** 各布局使用同一组实际工作线 `mask(w)、constant(w)、carry(n)、cin、flag`，记其拼接列表为 `scratch=mask++constant++carry++[cin,flag]`；这里只定义字段和借用视图，不引入第二套状态框架。
+
+| 布局/视图 | 外部字段及 Widths n | work 的确切含义 | wires / Nodup 前提 |
+| --- | --- | --- | --- |
+| `L : ModInPlaceLayout` | `L.a.length=L.z.length=w`，工作字段长度如上 | `L.work=L.scratch` | `L.wires=L.a++L.z++L.work`，要求 `L.wires.Nodup`；受控调用改要求 `(c::L.wires).Nodup` |
+| `U : ModUnaryLayout` | `U.z.length=w`，工作字段长度如上 | `U.work=U.scratch` | `U.wires=U.z++U.work`，要求 `U.wires.Nodup` |
+| `M : MulInPlaceLayout` | `M.x.length=M.acc.length=w`、`M.y.length=n`，工作字段长度如上 | `M.work=M.scratch`，不含 acc | `M.wires=M.x++M.y++M.acc++M.work`，要求 `M.wires.Nodup` |
+| `F : MulAdapterLayout` | `F.x.length=F.out.length=F.product.length=w`、`F.y.length=n`，工作字段长度如上 | `F.work=F.product++F.scratch`，包含临时积 | `F.wires=F.x++F.y++F.out++F.work`，要求 `F.wires.Nodup` |
+
+`U` 可从模加布局借用 z 和同一 scratch；适配器将 product 作为内核 acc 借用。借用不复制线路，也不把同一子视图再次拼入 wires。每个 `Widths n` 同时检查该行全部外部与工作字段长度。`work=0` 表示列表内每根线为零，包括 cin/flag；低位子视图和高位标志均来自上述固定寄存器。
+
+**内部模加核与受控包装的断言边界。** 六个外层接口之外，模加证明使用一个专用内部子视图 `K`：字段为 `a(w)、z(w)、constant(w)、carry(n)、cin`，`K.work=K.constant++K.carry++[K.cin]`，`K.wires=K.a++K.z++K.work`。它不含 mask 或 flag，也不分配新线。`K.Widths n` 检查这些长度，`K.wires.Nodup` 保证接线合法。在共同模数前提与 `A≤p, Z<p` 下，内部引理为：
+
+```text
+{{ K.a=A, K.z=Z, K.work=0 }} modAddCore K p
+{{ K.a=A, K.z=(Z+A)%p, K.work=0 }}
+```
+
+核对任意测量记录恢复相位，并对所有 `q∉K.z` 保持最终位值，既保持作为源的 K.a，也保持未纳入核视图的线路；包装中的 flag 和外部控制由此保持。普通模加取 `K.a=L.a, K.z=L.z`，借用同一 constant/carry/cin；其余 mask/flag 由核的 frame 保持零，从而推出外层 `L.work=0` 的公开规格。
+
+受控模加则取 `K.a=L.mask, K.z=L.z`，constant/carry/cin 仍借用原字段。此时 K.wires 只包含 mask 一次，核工作区不含该源；从外层 `(c::L.wires).Nodup` 推出核 Nodup，而不是将源 mask 再拼进外层 work。令 `V=if B then A else 0`，范围 `A≤p` 给出 `V≤p<2^n`，从而只复制低 n 位已足够，mask 的高位保持零。三个阶段的断言边界为：
+
+| 阶段 | 前置条件 | 后置条件 |
+| --- | --- | --- |
+| 受控复制 a.low 到 mask.low | `c=B, L.a=A, L.z=Z, L.mask=0, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=Z, L.mask=V, K.work=0, L.flag=false` |
+| `modAddCore K p`，以 mask 为源 | `c=B, L.a=A, L.z=Z, L.mask=V, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=V, K.work=0, L.flag=false` |
+| 再次受控复制 a.low 到 mask.low | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=V, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=0, K.work=0, L.flag=false` |
+
+中间两处不声称 `L.work=0`：mask=V 可以非零。核内部的末尾比较读取 `K.a.low=L.mask.low`，直到该比较完成才允许清 mask。核的输入保持与 frame 维持 c、原源 a、flag；最后由 mask=0、K.work=0、flag=false 重新组合出 L.work=0。B=false 时 V=0，利用 Z<p 得到 `(Z+V)%p=Z`。这需要内部核的上述 Triple/frame，不能直接套用要求整个 L.work=0 的外层公开模加 Triple；同样也不额外添加第二份 mask。受控模减包装先将 a 取负，在该扩展范围上调用已证受控模加，再恢复 a。
+
+**PR C：实际被调用的六个公开接口。** 下列每行使用 `L.Widths n` 或 `U.Widths n` 及表中的 Nodup，前后条件列出的寄存器为同一物理布局。
+
+| 接口与额外范围 | 拟定完整 Triple |
+| --- | --- |
+| 模加，`A≤p, Z<p` | `{{ L.a=A, L.z=Z, L.work=0 }} modAddInPlace L p {{ L.a=A, L.z=(Z+A)%p, L.work=0 }}` |
+| 受控模加，`A≤p, Z<p` | `{{ c=B, L.a=A, L.z=Z, L.work=0 }} controlledModAdd c L p {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }}` |
+| 模减，`A<p, Z<p` | `{{ L.a=A, L.z=Z, L.work=0 }} modSubInPlace L p {{ L.a=A, L.z=(Z+p-A)%p, L.work=0 }}` |
+| 受控模减，`A<p, Z<p` | `{{ c=B, L.a=A, L.z=Z, L.work=0 }} controlledModSub c L p {{ c=B, L.a=A, L.z=(if B then (Z+p-A)%p else Z), L.work=0 }}` |
+| 无控制加倍，`Z<p` | `{{ U.z=Z, U.work=0 }} dblInPlace U p {{ U.z=(2*Z)%p, U.work=0 }}` |
+| 无控制减半，`Z<p` | `{{ U.z=Z, U.work=0 }} halfInPlace U p {{ U.z=halfₚ(Z), U.work=0 }}` |
+
+`negRaw` 是模减内部组合引理：在 `A≤p` 下将源 A 变为 p−A，再次调用恢复 A；不作为额外的最终用户接口。受控减半/加倍不在本次公开接口或 PR C 交付范围中。
+
+**PR D：内核与三个适配器。** 统一额外前提为 `X<p, Y<2^n`，对应 `M.Widths n / F.Widths n` 与上述 Nodup；以下直接写出乘积，不以循环状态或内部不变量替代结果。
+
+| 接口与额外范围 | 拟定完整 Triple |
+| --- | --- |
+| 从零计算乘积 | `{{ M.x=X, M.y=Y, M.acc=0, M.work=0 }} mulInto M p {{ M.x=X, M.y=Y, M.acc=(X*Y)%p, M.work=0 }}` |
+| 清理已算乘积 | `{{ M.x=X, M.y=Y, M.acc=(X*Y)%p, M.work=0 }} mulClear M p {{ M.x=X, M.y=Y, M.acc=0, M.work=0 }}` |
+| XOR 包装的零输出形式 | `{{ F.x=X, F.y=Y, F.out=0, F.work=0 }} mulXor F p {{ F.x=X, F.y=Y, F.out=(X*Y)%p, F.work=0 }}` |
+| XOR 包装的一般形式，`O<2^w` | `{{ F.x=X, F.y=Y, F.out=O, F.work=0 }} mulXor F p {{ F.x=X, F.y=Y, F.out=O XOR ((X*Y)%p), F.work=0 }}` |
+| 模加包装，`O<p` | `{{ F.x=X, F.y=Y, F.out=O, F.work=0 }} mulAdd F p {{ F.x=X, F.y=Y, F.out=(O+(X*Y)%p)%p, F.work=0 }}` |
+| 模减包装，`O<p` | `{{ F.x=X, F.y=Y, F.out=O, F.work=0 }} mulSub F p {{ F.x=X, F.y=Y, F.out=(O+p-(X*Y)%p)%p, F.work=0 }}` |
+
+XOR 的 O 只受 w 位寄存器的可表示范围约束，不要求 O<p；fieldMul 接入保持这一语义。每个适配器的 `F.work=0` 都包含 product 清零。
+
+**每一行共同交付的相位与 frame 义务。** Triple 按项目现有定义对所有初态和所有测量记录成立，恢复输入相位。另给同样前提下的逐线保持定理：模算术对 `q∉L.z`（单目为 `q∉U.z`）的每根线保持；内核对 `q∉M.acc` 保持；适配器对 `q∉F.out` 保持。这里的“保持”比较程序最终状态与初态，允许工作线在中间被使用后清零；外部控制与输入因此也逐线保持。资源定理必须针对这些同名程序，不以抽象契约或布局分配数替代字面门列的支持集。
