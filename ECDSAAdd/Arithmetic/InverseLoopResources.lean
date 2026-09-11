@@ -8,8 +8,8 @@ theorem inverseLoop_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hwidth : L.first.data.width=L.arithmetic.width+1)
     (ha : L.a.length=L.arithmetic.width+1)
     (ht : L.temp.length=L.arithmetic.width+1) (hout : L.out.length=L.arithmetic.width+1) (q : Nat) :
-    toffoliCount (inverseLoop L q)=1024*(21*L.first.data.width+53)+60*L.first.data.width-12 ∧
-    measurementCount (inverseLoop L q)=1024*(8*L.first.data.width+49)+48*L.first.data.width ∧
+    toffoliCount (inverseLoop L q)=1024*(20*L.first.data.width+53)+60*L.first.data.width-12 ∧
+    measurementCount (inverseLoop L q)=1024*(7*L.first.data.width+49)+48*L.first.data.width ∧
     qubitCount (inverseLoop L q)=19*L.first.data.width+1072 := by
   have hfirst := kaliskiLoop_counts L.first L.records 0 (L.first_nodup hnd) hw
   have hextra := (List.nodup_append'.mp (List.nodup_append'.mp hnd).1).2.1
@@ -54,7 +54,7 @@ theorem inverseLoop_257_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
     (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257) (q : Nat) :
-    toffoliCount (inverseLoop L q)=5596208 ∧ measurementCount (inverseLoop L q)=2167856 ∧
+    toffoliCount (inverseLoop L q)=5333040 ∧ measurementCount (inverseLoop L q)=1904688 ∧
     qubitCount (inverseLoop L q)=5955 := by
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hlow]
   simpa only [hd] using inverseLoop_resources L hnd hn hw (by omega) (by omega)

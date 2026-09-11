@@ -4,19 +4,19 @@ namespace ECDSAAdd.Arithmetic
 
 theorem kaliskiLoop_counts (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat)
     (hnd : (L.tapeWires rs).Nodup) (hw : L.counter.width=10) :
-    toffoliCount (kaliskiLoop L i rs)=rs.length*(18*L.data.width+33) ∧
-    measurementCount (kaliskiLoop L i rs)=rs.length*(6*L.data.width+30) ∧
-    toffoliCount (kaliskiUnloop L i rs)=rs.length*(18*L.data.width+33) ∧
-    measurementCount (kaliskiUnloop L i rs)=rs.length*(6*L.data.width+30) := by
+    toffoliCount (kaliskiLoop L i rs)=rs.length*(17*L.data.width+33) ∧
+    measurementCount (kaliskiLoop L i rs)=rs.length*(5*L.data.width+30) ∧
+    toffoliCount (kaliskiUnloop L i rs)=rs.length*(17*L.data.width+33) ∧
+    measurementCount (kaliskiUnloop L i rs)=rs.length*(5*L.data.width+30) := by
   induction rs generalizing L i with
   | nil => simp [kaliskiLoop,kaliskiUnloop,toffoliCount,measurementCount]
   | cons r rs ih =>
     have hr := kaliskiRound_counts (L.withRecord r) (L.withRecord_nodup r rs hnd) hw i
     have hnw : L.swapCounter.counter.width=10 := by rw [L.swapCounter_counter,L.counter.swapCounter_fields.2.2.2.2.2,hw]
     have ht := ih L.swapCounter (i+1) (L.tail_nodup r rs hnd) hnw
-    change _=rs.length*(18*L.data.width+33) ∧ _=rs.length*(6*L.data.width+30) ∧
-      _=rs.length*(18*L.data.width+33) ∧ _=rs.length*(6*L.data.width+30) at ht
-    change _=18*L.data.width+33 ∧ _=6*L.data.width+30 ∧ _=18*L.data.width+33 ∧ _=6*L.data.width+30 at hr
+    change _=rs.length*(17*L.data.width+33) ∧ _=rs.length*(5*L.data.width+30) ∧
+      _=rs.length*(17*L.data.width+33) ∧ _=rs.length*(5*L.data.width+30) at ht
+    change _=17*L.data.width+33 ∧ _=5*L.data.width+30 ∧ _=17*L.data.width+33 ∧ _=5*L.data.width+30 at hr
     simp only [kaliskiLoop,kaliskiUnloop,toffoliCount_append,measurementCount_append,hr.1,hr.2.1,
       hr.2.2.1,hr.2.2.2,ht.1,ht.2.1,ht.2.2.1,ht.2.2.2,List.length_cons,Nat.add_mul,Nat.one_mul]
     simp [Nat.add_comm]

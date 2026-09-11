@@ -16,8 +16,8 @@
 | 改 1（已实现） | 求逆第二阶段 → 内部寄存器上原地模减半 + 逆序原地模加倍，XOR 接口不变 | 每次求逆 9,506,816 | 830,464（改 4 前；当前 809,984） | 只动 I4 的 halving 循环；`fieldInverse_spec` / `fieldInverse_xor_spec` 陈述不变 |
 | 改 2 | 模乘 → Horner 零输出内核 + 反序清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | 内核 ≈ 590,000、清理 ≈ 786,000，XOR 适配器 ≈ 1,376,000；≈ 1,500 线 | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变；调用次数不变 |
 | 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（已证） | ≈ 18.5M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"与 λ* 数学引理 |
-| 改 4 | 首批接入计数比较器（§13，已实现） | 十位比较 20 | 10 | 每次求逆 −30,720 Toffoli/测量；记录段见 §14（设计已复审，待实现）；模算术已用比较器的收益不重复扣减 |
-| 改 5 | Kaliski 轮压缩 | 当前每轮 4,659（18w+33）；§14 后基线 4,402（17w+33，待实现） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
+| 改 4 | 首批接入计数比较器（§13，已实现） | 十位比较 20 | 10 | 每次求逆 −30,720 Toffoli/测量；记录段见 §14（已实现）；模算术已用比较器的收益不重复扣减 |
+| 改 5 | Kaliski 轮压缩 | 当前每轮 4,402（17w+33，§14 已实现） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
 | 改 6 | Montgomery 4 位窗口模乘（研究预算） | 改 2 后每个乘积算+清 ≈ 1,376,000 | 6a 标准形式 ≤ 600,000；6b 全 Montgomery 表示 ≈ 300,000–430,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
 | 改 7 | 测量反计算查表所需的 CCZ 修正（条件项） | 语言只有 Z/CZ 修正 | 每个查表的反计算从 2^k 降到 ≈ 2^(k/2) | 只在改 6 选择 MBU 反查表时需要；扩展 Syntax/Semantics/Cost 三处 |
 
@@ -133,12 +133,12 @@ inverseLoop' L q :=
   ++ kaliskiUnloop L.first 0 L.records                  -- 不变：逆向 512 轮，清记录带
 ```
 
-已实现的每轮：`counterActiveXor`（10）+ 受控原地减半或加倍（3w）+ `counterActiveXor`（10）= 3w+20。w=257 时两方向均为 791 Toffoli、533 次测量；512 轮单向 404,992/272,896，第二阶段总计 809,984/545,792。与历史基线相同，仍执行正反两遍；改 4 首批已接入活动比较器，记录段见 §14（设计已复审，待实现）。
+已实现的每轮：`counterActiveXor`（10）+ 受控原地减半或加倍（3w）+ `counterActiveXor`（10）= 3w+20。w=257 时两方向均为 791 Toffoli、533 次测量；512 轮单向 404,992/272,896，第二阶段总计 809,984/545,792。与历史基线相同，仍执行正反两遍；改 4 首批已接入活动比较器，记录段见 §14（已实现）。
 
 ### 2.3 接口与陈述
 
 - `inverseLoop_spec`、`inverseLoop_xor_spec`、`fieldInverse_spec`、`fieldInverse_xor_spec`、`fieldInverse_contract` 的正确性陈述保持不变（`inverseLoop_*` 去掉已删除 b 的长度前提，`fieldInverse_contract` 更新资源常数）：`halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致；任意 O 的 XOR 语义由 inv + CX 保证，M3 的"同一模块再跑一遍清零"照常成立。加倍循环是减半循环的逆（`HalvingBijection` 的 double∘halve = id），要证 `doublingLoop'` 把 inv 恢复到减半前的值。
-- 已证资源：`fieldInverse` = 2×2,385,408 + 2×7,704 + 2×404,992 = **5,596,208** Toffoli，**2,167,856** 次测量。
+- 已证资源：`fieldInverse` = 2×2,253,824 + 2×7,704 + 2×404,992 = **5,333,040** Toffoli，**1,904,688** 次测量。
 - 线路：只删除 b 的 257 根；a、temp 和 ModLayout 仍供 negativeInit 使用，减半所需常数字、进位链与标志借自其中，不新增线路。求逆工作池前缀 5,956 → **5,699**，`fieldInverse` 实际线路 6,468 → **6,211**。模乘仍决定共享池大小，所以**改 2 之前点加总线路保持 74,024**。
 
 ### 2.4 证明义务与文件
@@ -272,7 +272,7 @@ kaliskiUnloop (rev)                                2,390,528
 
 ### 5.1 现状与影响范围
 
-PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C 的模加减/半倍设计也直接采用它，不能再次扣减这些收益。当前旧 Borrow 层唯一外部调用是 `counterActiveXor`，用于 Kaliski 正逆轮与减半/恢复循环；本批 §13 替换这一路，完整求逆省 30,720 Toffoli/测量。Kaliski 记录段直接使用 sub→recordCase→sub，并不调用 borrowXor；见 §14（设计已复审，待实现）。
+PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C 的模加减/半倍设计也直接采用它，不能再次扣减这些收益。§13 实施前旧 Borrow 层唯一外部调用是 `counterActiveXor`，用于 Kaliski 正逆轮与减半/恢复循环；§13 已替换这一路，完整求逆省 30,720 Toffoli/测量。Kaliski 记录段原先直接使用 sub→recordCase→sub，不调用 borrowXor；现已替换为一次受控比较，见 §14（已实现）。
 
 ### 5.2 构造（Gidney 2018 "Halving the cost of quantum addition" 的比较器）
 
@@ -298,9 +298,9 @@ PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C
 | 调用点 | 当前口径 | 本批变化 |
 | --- | --- | --- |
 | 模加减与模半倍 | PR A/改 1/PR C 已在实现或设计中直接采用 Gidney 比较器 | 不额外扣减 |
-| Kaliski 记录段 v<u | 直接两次减法；未通过 Borrow | 见 §14（设计已复审，待实现），不计 §13 收益 |
+| Kaliski 记录段 v<u | 现为一次受控比较；原先两次减法 | 见 §14（已实现），不计 §13 收益 |
 | i<k 计数比较 | 每次20 Toffoli/测量，共3072次/完整求逆 | 每次10，完整求逆各省30,720 |
-| 完整求逆 | 改 4 前5,626,928 Toffoli /2,198,576测量 | 已证5,596,208 /2,167,856 |
+| 完整求逆 | 改 4 前5,626,928 Toffoli /2,198,576测量 | §13 后5,596,208 /2,167,856；§14 后已证5,333,040 /1,904,688 |
 
 早期“记录比较 −263k、计数 −20k、总计约5.32M”的叠加估算不适用于当前实现。更早的跨优化量级表仍是研究预算；本批精确拟定门列以 §13 为准。
 
@@ -308,25 +308,25 @@ PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C
 
 ### 6.1 现状
 
-`kaliskiRound` 每轮 18w+33（w=257 时 4,659），分解：记录段 2w+5（比较 = 两次减法 2w，编码 5）；算术体 14w−2（两次数据对交换 4w、两次 masked 加减各 4w、两次受控移位 2w−2）；计数移动 20；零检测 2w（AND 链正向算、正向清）；活动比较 10。
+`kaliskiRound` 每轮 17w+33（w=257 时 4,402），分解：记录段 w+5（受控比较 w+1，条件计算/清理 4）；算术体 14w−2（两次数据对交换 4w、两次 masked 加减各 4w、两次受控移位 2w−2）；计数移动 20；零检测 2w（AND 链正向算、正向清）；活动比较 10。
 
-§14 实现后，改 5 的轮基线为17w+33（w=257 时4,402），记录段为w+5；以下改 5 的新增收益从此基线扣除，记录段的w已归入§14。当前已证门列仍为上述18w+33。
+§14 已实现，改 5 的轮基线为17w+33（w=257 时4,402），记录段为w+5；以下改 5 的新增收益从此基线扣除，记录段的w已归入§14。当前已证门列即17w+33。
 
 ### 6.2 前提：改 4 的 Gidney 比较器
 
-活动比较 i<k 已直接使用第 5 节比较器；记录段 v<u 见 §14（设计已复审，待实现）。本节其它轮压缩仍未实现。
+活动比较 i<k 已直接使用第 5 节比较器；记录段 v<u 见 §14（已实现）。本节其它轮压缩仍未实现。
 
 ### 6.3 轮内改动
 
 | 段 | 现在 | 改后 | 省 |
 | --- | ---: | ---: | ---: |
-| 记录段比较 v<u（由 §14 完成） | 2w（减、读借位、减） | w（见 §14，设计已复审，待实现） | w（计入 §14，不重复计入改 5） |
+| 记录段比较 v<u（由 §14 完成） | 2w（减、读借位、减） | w（见 §14，已实现） | w（计入 §14，不重复计入改 5） |
 | 零检测 v=0（done 更新） | 2w（AND 链正向算、正向清） | w（AND 链算、MBU 擦） | w |
 | 两次 masked 加减 | 各 4w（复制、加、反向减、复制） | 各 3w（t ← c·v，原地加/减，清 t） | 2w |
 | 两次数据对交换、两次受控移位 | 4w + (2w−2) | 不变（Litinski 也计 4 次受控 SWAP 和 1 次受控移位） | 0 |
 | 计数移动、活动比较 | 20 + 10（改 4 首批已实现） | 不变 | 0 |
 
-每轮 ≈ 14w+22 ≈ 3,620（w=257），相比 4,659 省 22%；Litinski 的 13n=3,328 是同一结构再用 Gidney 受控加法器（2n）得到的，可作后续微调。
+每轮 ≈ 14w+22 ≈ 3,620（w=257），相比当前4,402约省18%；Litinski 的 13n=3,328 是同一结构再用 Gidney 受控加法器（2n）得到的，可作后续微调。
 
 ### 6.4 影响与证明义务
 
@@ -365,7 +365,7 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 
 ## 8. 改 7：CCZ 修正（条件项）
 
-只有当改 6 选择用测量反计算清除查表（Berry 等 2019：测量目标寄存器，再用一个 2^(k/2) 项的相位查表修正）时才需要：修正是对地址位的多控 Z，k=4 时是 CCZ 级别。届时在 `Framework/Syntax.lean` 的 `Correction` 增加 `CCZ a b c`，语义 `phase ^= s a ∧ s b ∧ s c`，`Cost` 把它计入非 Clifford 数（与论文口径一致，单独列出）。相应地 `measureX` 的修正列表可含 CCZ。证明义务：`run` 对新修正的相位规则，`Triple.seq/frame` 不变。
+只有当改 6 选择用测量反计算清除查表（Berry 等 2019：测量寄存器，再用一个 2^(k/2) 项的相位查表修正）时才需要：修正是对地址位的多控 Z，k=4 时是 CCZ 级别。届时在 `Framework/Syntax.lean` 的 `Correction` 增加 `CCZ a b c`，语义 `phase ^= s a ∧ s b ∧ s c`，`Cost` 把它计入非 Clifford 数（与论文口径一致，单独列出）。相应地 `measureX` 的修正列表可含 CCZ。证明义务：`run` 对新修正的相位规则，`Triple.seq/frame` 不变。
 
 若改 6 用"重跑查表"清除（7.1 第 4 步），则不需要改 7；k=4 时差别仅每窗口 ≈ 15 个 Toffoli（每次乘 ≈ 1k），本文默认不做改 7。
 
@@ -373,7 +373,7 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 
 改 1 行已按实现更新。改 2 及后续行仍为早期设计预算，尚未按本次求逆 5,626,928 Toffoli / 工作池 5,699 位重算；应随各自设计复审更新，不能当作本次实现的资源承诺。
 
-线路数按 `外部寄存器 + max(各模块工作区)` 估算：共享池的大小由所有仍在使用的模块中最大的工作区决定，**只改求逆不缩池**。Toffoli 目标是按本文门列推导的预期值，标"研究预算"的项未从本项目已有门列推导。
+线路数按 `外部寄存器 + max(各模块工作区)` 估算：共享池的大小由所有仍在使用的模块中最大的工作区决定，**只改求逆不缩池**。Toffoli是按本文门列推导的预期值，标"研究预算"的项未从本项目已有门列推导。
 
 | 阶段 | 受控原地点加 Toffoli（目标） | 线路（目标） | 说明 |
 | --- | ---: | ---: | --- |
@@ -691,24 +691,24 @@ Kaliski 的 comparator.out 是计数器另一银行 L.k；减半层 counter 也�
 - Kaliski 正轮、逆轮各调用一次，各512轮：十位比较共省10,240/10,240。
 - 减半轮、恢复轮各调用两次，各512轮：共省20,480/20,480。
 
-完整 inverseLoop/fieldInverse 各省30,720：结果 **5,596,208 Toffoli /2,167,856测量**。半倍单轮结果3w+20 /2w+19；Kaliski正逆轮结果18w+33 /6w+30。pointAddOut结果28,567,700（省61,440）；controlledPointAdd结果57,135,925（省122,880）。这些已由 Lean 对同一门列证明，不从 PR C/D 已使用比较器的部分重复扣减。
+§13 阶段完整 inverseLoop/fieldInverse 各省30,720：当时结果 **5,596,208 Toffoli /2,167,856测量**。半倍单轮结果3w+20 /2w+19；Kaliski正逆轮结果18w+33 /6w+30。pointAddOut结果28,567,700（省61,440）；controlledPointAdd结果57,135,925（省122,880）。这些阶段值已由 Lean 对同一门列证明，当前值已由§14进一步降低，不从 PR C/D 已使用比较器的部分重复扣减。
 
 ### 13.4 删除范围与交付证据
 
-删除无外部调用的 borrowXor、constantBorrowXor、私有 BorrowValues 及专用辅助证明、constantBorrowXor_wires；不保留同体转发层。subtraction_high 仍被记录段调用，移为 RecordRound 私有引理，记录段门列不变。Borrow/BorrowFrame 仅保留必要的活动比较入口和规格/frame/资源证明。KaliskiRound 与 HalveInPlace 调用方适配新参数；更新相关 RoundResources、HalvingLoop、inverse/point-add 支持与资源定理，不改 Lamport 的 Modular/Multiply/Field 实现。
+删除无外部调用的 borrowXor、constantBorrowXor、私有 BorrowValues 及专用辅助证明、constantBorrowXor_wires；不保留同体转发层。§13 当时仍被记录段调用的 subtraction_high 移为 RecordRound 私有引理；§14 已删除该引理并替换记录段。Borrow/BorrowFrame 仅保留必要的活动比较入口和规格/frame/资源证明。KaliskiRound 与 HalveInPlace 调用方适配新参数；更新相关 RoundResources、HalvingLoop、inverse/point-add 支持与资源定理，不改 Lamport 的 Modular/Multiply/Field 实现。
 
-recordRound 当前是“复制 u→sub→recordCase→sub→清复制”，需要比较位在 recordCase 期间存活。两次完整 compareLt 仍为2w，不能声称省w；融合比较另行设计，不计入本批完成范围。
+§13 完成时 recordRound 是“复制 u→sub→recordCase→sub→清复制”，需要比较位在 recordCase 期间存活。两次完整 compareLt 仍为2w，不能声称省w；后续构造及实现见§14，收益不计入§13。
 
 verify.sh 当前没有 Borrow 条目，本批不新增三个旧 Borrow 规格入口；沿用完整构建与已有公开入口的传递公理白名单检查。本实现同步 README、PROOF_STATUS（含旧 borrowXor 对照措辞）、PROVENANCE 与本计划。无测试、无新公理、无证明资源放宽，不新增通用状态框架。
 
 
-## 14. 改 4 后续：记录段直接受控比较（设计，尚未实现）
+## 14. 改 4 后续：记录段直接受控比较（已实现）
 
-基线为 main 722a9078（PR 20）。本节仅给后续构造和待证预算；README Current status 仍为已证的 57,135,925 Toffoli。§13.4 所称“融合”可以在现有模块的组合层完成，无需为比较链增加回调接口。
+基线为 main 722a9078（PR 20）。本节构造和资源均已实现并证明；README Current status 为56,083,253 Toffoli。§13.4 所称“融合”可以在现有模块的组合层完成，无需为比较链增加回调接口。
 
 ### 14.1 门列与寄存器契约
 
-令 `u=L.u`、`v=L.v`、`carry=L.data.reg .carry`、`cin=L.cin`，以及 `a=L.active`、`o=L.oddWork`、`b=L.bothWork`、`sw=L.swap`、`su=L.subtract`。采用以下固定门列替换 recordRound：
+令 `u=L.u`、`v=L.v`、`carry=L.data.reg .carry`、`cin=L.cin`，以及 `a=L.active`、`o=L.oddWork`、`b=L.bothWork`、`sw=L.swap`、`su=L.subtract`。recordRound 采用以下固定门列：
 
 ```lean
 [.CCX a u.head! o, .CCX o v.head! b,
@@ -728,7 +728,7 @@ compareLt (some b) v u carry cin sw ++
    oddWork=false, bothWork=false, carry=0, cin=false }}
 ```
 
-前提使用现有 `L.wires.Nodup`。u/v/carry 同宽且非空，由布局构造提供；寄存器断言已经保证 U/V 可表示，不增加有符号差范围条件。S、D 可以为任意初值；除 swap/subtract 外所有线逐线保持。y/out 从未使用，允许任意初值。原 round/unround 的状态契约继续由此实例化，保持公开功能陈述。
+前提使用现有 `L.wires.Nodup`。u/v/carry 同宽且非空，由布局构造提供；寄存器断言已经保证 U/V 可表示，不增加有符号差范围条件。S、D 可以为任意初值；除 swap/subtract 外所有线逐线保持。y/out 从未使用，允许任意初值。原 round/unround 的状态契约由同一逐线正确性结论接回，保持公开功能陈述。
 
 | 阶段 | u,v | o,b | sw,su | carry,cin |
 | --- | --- | --- | --- | --- |
@@ -738,7 +738,7 @@ compareLt (some b) v u carry cin sw ++
 | 受控比较完成 | U,V | O,B | S XOR O XOR (B AND Q),D XOR B | 0,0 |
 | 两个 CCX 清条件 | U,V | 0,0 | 同上 | 0,0 |
 
-比较期间 u 暂时取反；保存条件先于比较，清条件晚于比较完全恢复 u/v，不能跨过这两个边界移动 CCX。复用 `maskedCompareLt_spec` 和 `compareLt_correct` 的逐线保持与全测量记录相位结论。进位只由原 compareChain 内部按已证顺序擦除。o/b 使用普通 CCX 清理，未引入新的测量擦除条件。A=false 时两个记录保持，但比较的固定门列仍执行，不能按活动概率折扣资源。V=U 时 Q=false，严格比较方向与原借位语义一致。
+比较期间 u 暂时取反；保存条件先于比较，清条件晚于比较完全恢复 u/v，不能跨过这两个边界移动 CCX。实现复用 `compareLt_correct` 的逐线保持与全测量记录相位结论，其受控寄存器接口与 `maskedCompareLt_spec` 一致。进位只由原 compareChain 内部按已证顺序擦除。o/b 使用普通 CCX 清理，未引入新的测量擦除条件。A=false 时两个记录保持，但比较的固定门列仍执行，不能按活动概率折扣资源。V=U 时 Q=false，严格比较方向与原借位语义一致。
 
 同一前向 recordRound 在恢复 U/V/A 后再次运行，即对任意 S/D 清除先前 XOR 的记录；不倒放含测量的比较器。
 
@@ -750,17 +750,17 @@ compareLt (some b) v u carry cin sw ++
 {active, swap, subtract, oddWork, bothWork, cin} ∪ u ∪ v ∪ carry
 ```
 
-共3w+6线（全局 Nodup，w≥1）。记录段不再触碰 y/out；完整 round 中这些线仍供算术体使用，分配布局不缩减。实现须重新证明完整轮及逆循环支持，不能由布局容量直接宣称 qubitCount。
+共3w+6线（全局 Nodup，w≥1）。记录段不再触碰 y/out；完整 round 中这些线仍供算术体使用，分配布局不缩减。已重新证明完整轮及逆循环支持，不由布局容量推断 qubitCount。
 
-以下均为本节构造的**待 Lean 证明目标**，只扣记录段的新增节省，不重扣§13收益，不包含改5或 PR C/D：
+以下均为本节同一门列的**Lean 已证资源**，只扣记录段的新增节省，不重扣§13收益，不包含改5或 PR C/D：
 
-| 模块 | Toffoli 目标 | 测量目标 | 静态线目标 |
+| 模块 | Toffoli | 测量 | 静态线 |
 | --- | ---: | ---: | ---: |
 | recordRound（w=257） | 262 | 257 | 777 |
 | Kaliski 正/逆单轮 | 17w+33 = 4,402 | 5w+30 = 1,315 | 2,104 |
 | inverseLoop | 5,333,040 | 1,904,688 | 5,955 |
 | fieldInverse | 5,333,040 | 1,904,688 | 6,211 |
-| pointCandidateCompute/Clear 各 | 14,019,400 | 8,226,888 | 沿用既有布局，证明支持不变 |
+| pointCandidateCompute/Clear 各 | 14,019,400 | 8,226,888 | 沿用既有布局，支持已证明不变 |
 | pointAddOut | 28,041,364 | 16,453,776 | 74,020 |
 | controlledPointAddOut | 28,041,370 | 16,453,776 | 74,024 |
 | controlledPointAdd | 56,083,253 | 32,907,552 | 74,024 |
@@ -770,7 +770,7 @@ compareLt (some b) v u carry cin sw ++
 ### 14.3 实现范围与验收
 
 - KaliskiRound：替换记录门列；删除无调用的 caseLayout 视图及 CaseRecord import。
-- RecordRound：改为上述寄存器 Triple 与 frame，再接原 recordState/轮契约；删除 subtraction_high、差值中间状态以及仅服务旧 caseLayout 的辅助引理。CaseRecord 若全仓库扫描确认无调用，删除文件及显式构建入口，不保留旧包装层。
+- RecordRound：改为上述寄存器 Triple 与 frame，再接原 recordState/轮契约；删除 subtraction_high、差值中间状态以及仅服务旧 caseLayout 的辅助引理。全仓库扫描确认 CaseRecord 无其它调用，已删除文件（无显式构建入口），不保留旧包装层。
 - RoundResources/RoundWires：更新记录段公式、精确支持及组合证明；顺序传播 inverse/point-add 的资源常数。保持字段布局、求逆与点加功能接口；不动 Lamport 的 Modular/Multiply/Field 门列。
 - README、PROOF_STATUS、PROVENANCE、REWORK_PLAN：实现完成后同步实际状态及公理输出；目标数在证明通过前不写为已实现。§12的 PR D 集成预算由 Lamport 在接入时按最新求逆数重算。
-- 验收逐项检查功能、同一门列、全测量记录相位、全部工作位清理、实际支持集/资源、可读性、无过度抽象、README同步；沿用完整 scripts/verify.sh 和公开入口公理白名单，无测试、新公理或证明资源放宽。设计复审通过后才实现。
+- 验收逐项检查功能、同一门列、全测量记录相位、全部工作位清理、实际支持集/资源、可读性、无过度抽象、README同步；完整 scripts/verify.sh 新增记录段 Triple、frame 与三项资源入口，共145项公开入口公理白名单检查；无测试、新公理或证明资源放宽。设计复审通过后完成实现。

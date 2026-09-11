@@ -85,29 +85,58 @@ private theorem zero_interface (L : RoundDataLayout) :
   simp [RoundDataLayout.zeroBits,ZeroBit.wires,RoundDataLayout.v,RoundDataLayout.reg,
     RoundBit.get,and_or_left,exists_or,eq_comm]
 
-set_option maxHeartbeats 2000000 in
-private theorem record_wires (L : KaliskiRoundLayout) :
+/-- 记录段只接触两份输入、进位链及六个控制/记录位。 -/
+theorem recordRound_wires (L : KaliskiRoundLayout) :
     wires (recordRound L)=([L.active,L.swap,L.subtract,L.oddWork,L.bothWork,L.data.cin]++
-      L.u++L.v++L.data.reg .y++L.data.reg .out++L.data.reg .carry).toFinset := by
-  have hpos : 0<L.u.length := by simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data_reg_length]
-  have hc := copyRegister_wires none L.u (L.data.reg .y)
-    (by simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data.reg_length])
-  have hne : L.u.isEmpty=false := by cases hh : L.u <;> simp_all
-  simp only [hne,Bool.false_eq_true,if_false,Option.toList_none,List.nil_append] at hc
-  have hs : wires (sub (L.data.adder .v))=(L.data.adder .v).wires.toFinset := rippleSubtractor_wires _ _
-  have hr : wires (recordCase L.caseLayout)=L.caseLayout.wires.toFinset := by
-    ext w; simp [recordCase,wires,Instr.wires,CaseLayout.wires,or_comm,or_left_comm]
-  rw [recordRound,wires_append,wires_append,wires_append,wires_append,hc,hs,hr,adder_interface]
+      L.u++L.v++L.data.reg .carry).toFinset := by
+  have hc := (compareLt_wires (some L.bothWork) L.v L.u (L.data.reg .carry) L.cin L.swap
+    (by simp [KaliskiRoundLayout.v,KaliskiRoundLayout.u,RoundDataLayout.v,RoundDataLayout.u,L.data.reg_length])
+    (by simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data.reg_length])).1
+  rw [recordRound,wires_append,wires_append,hc]
   ext w
   have hu : w=L.u.head! → w∈L.u := fun he => he ▸ L.head_mem .u
   have hv : w=L.v.head! → w∈L.v := fun he => he ▸ L.head_mem .v
-  have hb : w=L.high.out → w∈L.data.reg .out := fun he => he ▸ L.high_out_mem
-  simp only [Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append,List.mem_nil_iff,
-    KaliskiRoundLayout.caseLayout,CaseLayout.wires]
-  change (w=L.u.head! → w∈L.data.reg .u) at hu
-  change (w=L.v.head! → w∈L.data.reg .v) at hv
-  simp only [KaliskiRoundLayout.u,KaliskiRoundLayout.v,RoundDataLayout.u,RoundDataLayout.v] at *
+  simp only [wires,Instr.wires,Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append,
+    List.mem_nil_iff,Finset.mem_insert,Finset.notMem_empty,
+    Option.toList_some,Finset.mem_singleton]
+  simp only [KaliskiRoundLayout.data] at *
   tauto
+
+theorem recordRound_qubits (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) :
+    qubitCount (recordRound L)=3*L.data.width+6 := by
+  have hc := L.record_compare_nodup hnd
+  have hn := L.record_controls_nodup hnd
+  have hr := List.nodup_reverse.mpr hn
+  have hout (c : Wire) (hm : c ∈ [L.active,L.subtract,L.oddWork]) :
+      c ∉ L.cin :: (L.v ++ L.u ++ L.data.reg .carry) := by
+    have hctrl : c ∈ L.controls := by
+      simp only [List.mem_cons,List.mem_nil_iff,or_false] at hm
+      rcases hm with rfl | rfl | rfl <;> simp [KaliskiRoundLayout.controls]
+    have hd := L.control_not_data hnd c hctrl
+    intro h
+    simp only [List.mem_cons,List.mem_append] at h
+    rcases h with rfl | (h | h) | h
+    · exact hd List.mem_cons_self
+    · exact hd (L.data.reg_mem .v h)
+    · exact hd (L.data.reg_mem .u h)
+    · exact hd (L.data.reg_mem .carry h)
+  have ha := hout L.active (by simp)
+  have hs := hout L.subtract (by simp)
+  have ho := hout L.oddWork (by simp)
+  have hnall : (L.active :: L.subtract :: L.oddWork :: L.bothWork :: L.swap :: L.cin ::
+      (L.v ++ L.u ++ L.data.reg .carry)).Nodup := by
+    simp only [List.reverse_cons,List.reverse_nil,List.nodup_cons,List.mem_cons,List.not_mem_nil,
+      not_or,not_false_eq_true,and_true] at hn hr hc ha hs ho ⊢
+    tauto
+  have hw : wires (recordRound L) = (L.active :: L.subtract :: L.oddWork :: L.bothWork ::
+      L.swap :: L.cin :: (L.v ++ L.u ++ L.data.reg .carry)).toFinset := by
+    rw [recordRound_wires]
+    ext w
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,List.mem_nil_iff,KaliskiRoundLayout.data]
+    tauto
+  rw [qubitCount,hw,List.toFinset_card_of_nodup hnall]
+  simp [KaliskiRoundLayout.v,KaliskiRoundLayout.u,RoundDataLayout.v,RoundDataLayout.u,L.data.reg_length]
+  omega
 
 private theorem activity_wires (L : KaliskiRoundLayout) (i : Nat) :
     wires (roundActiveXor L i)=(L.active::L.compareCin::
@@ -120,7 +149,7 @@ theorem kaliskiRound_wires (L : KaliskiRoundLayout) (hw : L.counter.width=10)
     (hd : 2≤L.data.width) (i : Nat) :
     wires (kaliskiRound L i)=L.wires.toFinset ∧ wires (kaliskiUnround L i)=L.wires.toFinset := by
   have hb := body_wires L.data L.active L.swap L.subtract hd
-  have hr := record_wires L
+  have hr := recordRound_wires L
   have ha := activity_wires L i
   have hz := zeroControlled_wires L.active L.done (L.data.zeroBits .v)
   have hc := (counterMove_wires L.counter hw).1

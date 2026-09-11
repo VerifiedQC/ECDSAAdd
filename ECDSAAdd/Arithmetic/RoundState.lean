@@ -90,11 +90,11 @@ end RoundAuxValues
 
 /-- 记录前后的完整单轮状态，允许任意旧记录以支持逆轮清理。 -/
 theorem recordRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (z : KState)
-    (K N : Nat) (D S T : Bool) (hu : z.u<2^L.low.length) (hv : z.v<2^L.low.length) :
+    (K N : Nat) (D S T : Bool) :
     Triple (RoundState L z K N (decide (z.v≠0)) D S T) (recordRound L)
       (RoundState L z K N (decide (z.v≠0)) D (S ^^ (kaliskiCode z).1) (T ^^ (kaliskiCode z).2)) := by
   intro s m h
-  obtain ⟨hp,hv⟩ := recordRound_frame L hnd z s.basis hu hv h.2.active h.2.odd h.2.both s m ⟨h.1,fun _ _ => rfl⟩
+  obtain ⟨hp,hv⟩ := recordRound_frame L hnd z s.basis h.2.active h.2.odd h.2.both s m ⟨h.1,fun _ _ => rfl⟩
   exact ⟨hp,hv.1,RoundAuxValues.congr L hnd _ _ _ _ _ _ _ _
     (h.2.record L hnd z K N _ D S T s.basis) hv.2⟩
 

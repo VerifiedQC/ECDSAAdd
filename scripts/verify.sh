@@ -69,6 +69,11 @@ import ECDSAAdd
 #print axioms ECDSAAdd.double_flag
 #print axioms ECDSAAdd.kaliski_unstep_step
 #print axioms ECDSAAdd.kaliski_round_active
+#print axioms ECDSAAdd.Arithmetic.recordRound_spec
+#print axioms ECDSAAdd.Arithmetic.recordRound_preserves
+#print axioms ECDSAAdd.Arithmetic.recordRound_counts
+#print axioms ECDSAAdd.Arithmetic.recordRound_qubits
+#print axioms ECDSAAdd.Arithmetic.recordRound_wires
 #print axioms ECDSAAdd.Arithmetic.kaliskiRound_spec
 #print axioms ECDSAAdd.Arithmetic.kaliskiUnround_spec
 #print axioms ECDSAAdd.Arithmetic.kaliskiRound_counts
