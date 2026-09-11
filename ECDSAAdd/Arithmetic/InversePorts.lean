@@ -16,12 +16,12 @@ private def poolFirstRound (w : Nat → Wire) : KaliskiRoundLayout :=
     (List.range 9).map (fun i => poolAddBit w (2062+4*i)),poolAddBit w (2062+4*9),
     w 2061,w 3,w 0,w 2102,w 2103,w 1,w 2⟩
 
-/-- 现有求逆模块的 5956 根工作线映射到同一个模乘工作池的前缀。 -/
+/-- 现有求逆模块的 5699 根工作线映射到同一个模乘工作池的前缀。 -/
 def poolInverse (w : Nat → Wire) (x out : List Wire) : InverseLayout :=
   ⟨⟨poolFirstRound w,
      (List.range 512).map (fun i => ⟨w (2102+2*i),w (2102+2*i+1)⟩),
-     poolMod w 3126 256,wireBlock w 5184 257,wireBlock w 5441 257,
-     wireBlock w 5698 257,out++[w 5955]⟩,x⟩
+     poolMod w 3126 256,wireBlock w 5184 257,
+     wireBlock w 5441 257,out++[w 5698]⟩,x⟩
 
 theorem poolInverse_widths (w : Nat → Wire) (x out : List Wire)
     (hx : x.length=256) (ho : out.length=256) : (poolInverse w x out).Widths := by
@@ -33,13 +33,12 @@ theorem poolInverse_widths (w : Nat → Wire) (x out : List Wire)
   · exact poolMod_width _ _ _
   · exact wireBlock_length _ _ _
   · exact wireBlock_length _ _ _
-  · exact wireBlock_length _ _ _
   · simp [poolInverse,ho]
 
 theorem poolInverse_inputs (w : Nat → Wire) (x out : List Wire) (ho : out.length=256) :
     (poolInverse w x out).x=x ∧ (poolInverse w x out).out=out := by
   refine ⟨rfl,?_⟩
-  change (out++[w 5955]).take 256=out
+  change (out++[w 5698]).take 256=out
   rw [← ho,List.take_left]
 
 private theorem poolRoundBit_wires (w : Nat → Wire) (start : Nat) :
@@ -86,33 +85,33 @@ private theorem poolFirstRound_shared (w : Nat → Wire) :
   rw [show (2061:Nat)=0+(4+2057) from rfl,wireBlock_append]
 
 private theorem poolInverse_inner_perm (w : Nat → Wire) (x out : List Wire) :
-    (poolInverse w x out).inner.wires.Perm (out++wireBlock w 0 5956) := by
+    (poolInverse w x out).inner.wires.Perm (out++wireBlock w 0 5699) := by
   have hr : ((poolInverse w x out).inner.records.flatMap RoundRecord.wires)=
       wireBlock w 2102 1024 := by
     simp only [poolInverse,List.flatMap_map,RoundRecord.wires]
     change ((List.range 512).flatMap (fun i => wireBlock w (2102+2*i) 2))=_
     exact wireBlock_flatMap _ _ _ _
   have hj : wireBlock w 0 2102++wireBlock w 2102 1024++wireBlock w 3126 2058++
-      wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 5698 257++wireBlock w 5955 1=
-        wireBlock w 0 5956 := by
+      wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 5698 1=
+        wireBlock w 0 5699 := by
     rw [wireBlock_append w 0 2102 1024,wireBlock_append w 0 3126 2058,
       wireBlock_append w 0 5184 257,wireBlock_append w 0 5441 257,
-      wireBlock_append w 0 5698 257,wireBlock_append w 0 5955 1]
+      wireBlock_append w 0 5698 1]
   rw [InverseLoopLayout.wires,KaliskiRoundLayout.tapeWires,hr]
   change (wireBlock w 2102 1024++(poolFirstRound w).sharedWires++
-    (wireBlock w 5184 257++wireBlock w 5698 257++wireBlock w 5441 257++
-      (poolMod w 3126 256).wires)++(out++[w 5955])).Perm _
+    (wireBlock w 5184 257++wireBlock w 5441 257++
+      (poolMod w 3126 256).wires)++(out++[w 5698])).Perm _
   rw [poolFirstRound_shared,poolMod_wires,← hj]
   change (wireBlock w 2102 1024++wireBlock w 0 2102++
-    (wireBlock w 5184 257++wireBlock w 5698 257++wireBlock w 5441 257++wireBlock w 3126 2058)++
-    (out++wireBlock w 5955 1)).Perm _
+    (wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 3126 2058)++
+    (out++wireBlock w 5698 1)).Perm _
   apply List.perm_iff_count.mpr
   intro v
   simp only [List.count_append]
   ac_rfl
 
 theorem poolInverse_work_perm (w : Nat → Wire) (x out : List Wire) (ho : out.length=256) :
-    (poolInverse w x out).work.Perm (wireBlock w 0 5956) := by
+    (poolInverse w x out).work.Perm (wireBlock w 0 5699) := by
   have hh := (poolInverse w x out).wires_perm
   unfold InverseLayout.wires at hh
   rw [(poolInverse_inputs w x out ho).1,(poolInverse_inputs w x out ho).2] at hh
@@ -124,7 +123,7 @@ theorem poolInverse_work_perm (w : Nat → Wire) (x out : List Wire) (ho : out.l
   omega
 
 theorem poolInverse_nodup (w : Nat → Wire) (x out : List Wire) (ho : out.length=256)
-    (h : (x++out++wireBlock w 0 5956).Nodup) : (poolInverse w x out).wires.Nodup := by
+    (h : (x++out++wireBlock w 0 5699).Nodup) : (poolInverse w x out).wires.Nodup := by
   rw [InverseLayout.wires,(poolInverse_inputs w x out ho).1,(poolInverse_inputs w x out ho).2]
   exact (List.Perm.append_left (x++out) (poolInverse_work_perm w x out ho)).nodup_iff.mpr h
 

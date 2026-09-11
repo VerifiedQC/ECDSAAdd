@@ -61,7 +61,7 @@ theorem CandidateValues.inverse (L : PointAddLayout) (h : L.Widths) (hnd : L.wir
   have hw : regValue (poolInverse L.poolWire (L.reg a) (L.reg o)).work s.basis=0 := by
     apply (regValue_zero _ _).mpr
     intro w hw
-    exact (regValue_zero _ _).mp (pool_zero L h s.basis hv.2.1 5956 (by omega)) w
+    exact (regValue_zero _ _).mp (pool_zero L h s.basis hv.2.1 5699 (by omega)) w
       ((poolInverse_work_perm _ _ _ ho).mem_iff.mp hw)
   obtain ⟨hp,he,hr⟩ := fieldInverse_correct _ (L.poolInverse_nodup h _ _ ho hn)
     (poolInverse_widths _ _ _ ha ho) s m

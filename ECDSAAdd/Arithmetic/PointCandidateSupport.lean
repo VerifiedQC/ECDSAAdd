@@ -50,7 +50,7 @@ theorem poolMul_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire
 
 theorem poolInverse_support (L : PointAddLayout) (h : L.Widths) (x out : List Wire)
     (hx : x.length=256) (ho : out.length=256) :
-    wires (fieldInverse (poolInverse L.poolWire x out))=(x++out++L.pool.take 5956).toFinset := by
+    wires (fieldInverse (poolInverse L.poolWire x out))=(x++out++L.pool.take 5699).toFinset := by
   rw [fieldInverse_wires _ (poolInverse_widths _ _ _ hx ho)]
   change ((poolInverse L.poolWire x out).x++(poolInverse L.poolWire x out).out++
     (poolInverse L.poolWire x out).work).toFinset=_
@@ -58,7 +58,7 @@ theorem poolInverse_support (L : PointAddLayout) (h : L.Widths) (x out : List Wi
   rw [hX,hO]
   have hp := poolInverse_work_perm L.poolWire x out ho
   rw [List.toFinset_append,List.toFinset_append,List.toFinset_eq_of_perm _ _ hp,
-    L.pool_prefix h 5956 (by decide)]
+    L.pool_prefix h 5699 (by decide)]
   simp
 
 
@@ -137,7 +137,7 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
   constructor <;> ext w
   all_goals
     have hp1 : w∈L.pool.take 1287 → w∈L.pool := List.mem_of_mem_take
-    have hp2 : w∈L.pool.take 5956 → w∈L.pool := List.mem_of_mem_take
+    have hp2 : w∈L.pool.take 5699 → w∈L.pool := List.mem_of_mem_take
     have hs : w∈L.slope.take 256 → w∈L.slope := List.mem_of_mem_take
     have ho : w∈L.offset.take 256 → w∈L.offset := List.mem_of_mem_take
     have hx : w∈L.candidateX.take 256 → w∈L.candidateX := List.mem_of_mem_take

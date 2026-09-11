@@ -1,6 +1,6 @@
 # ECDSAAdd 算术原语与点加重做设计（给实现者）
 
-作者：Dirac。状态：**计划文档，所列各项均未实现**；改 1–4 由 Deutsch 实现，改 5–7 待安排。本文件与频道内 v3 附件同步。所有标注"目标"的数字都是按本文给出的门列推导的预期值，不是已证定理；实现时以 Lean 资源定理为准，并在 README 资源表里替换。
+作者：Dirac。状态：**改 1 已实现，其余为计划**；按已确认的并行分工，Deutsch 负责求逆线（改 1/4/5），Lamport 负责模乘与点加（改 2/3），改 6–7 待安排。本文件为计划唯一来源；改 1 的实际门列与资源已随实现同步。所有标注"目标"的数字都是按本文给出的门列推导的预期值，不是已证定理；实现时以 Lean 资源定理为准，并在 README 资源表里替换。
 
 ## 0. 范围、前提与读法
 
@@ -11,9 +11,9 @@
 
 **重做项目**（改 1–3 为核心，改 4–7 为已纳入计划的后续项，按"省得多、改得少"排序）：
 
-| 编号 | 项目 | 现在（已证） | 目标 | 改动范围 |
+| 编号 | 项目 | 优化前基线（已证） | 目标或实现值 | 改动范围 |
 | --- | --- | ---: | ---: | --- |
-| 改 1 | 求逆第二阶段 → 内部寄存器上原地模减半 + 逆序原地模加倍，XOR 接口不变 | 每次求逆 9,506,816 | ≈ 962,000 | 只动 I4 的 halving 循环；`fieldInverse_spec` / `fieldInverse_xor_spec` 陈述不变 |
+| 改 1（已实现） | 求逆第二阶段 → 内部寄存器上原地模减半 + 逆序原地模加倍，XOR 接口不变 | 每次求逆 9,506,816 | 830,464 | 只动 I4 的 halving 循环；`fieldInverse_spec` / `fieldInverse_xor_spec` 陈述不变 |
 | 改 2 | 模乘 → Horner 零输出内核 + 反序清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | 内核 ≈ 590,000、清理 ≈ 786,000，XOR 适配器 ≈ 1,376,000；≈ 1,500 线 | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变；调用次数不变 |
 | 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（已证） | ≈ 18.5M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"与 λ* 数学引理 |
 | 改 4 | Gidney 比较器（n Toffoli 的测量擦除比较器，替代两次减法的 borrowXor） | 每次比较 2n | n | 原地模加 5n→4n、原地模减半 3n→2n、`mulClear` 每位 −2n、改 1 减半轮 −n、Kaliski 轮记录比较 −w、计数比较减半；所有接口陈述不变 |
@@ -106,7 +106,7 @@ x < p，p 奇。`x ← x·2⁻¹ mod p`。
 
 资源：n + 2n = 3n Toffoli（改 4 后 2n）。
 
-**受控版**（控制 g，改 1 的第二阶段和改 2 的清理都用它）：`c ← g ∧ x₀`（1 个 CCX）；受控(c) 加 p（n）；步 3 改为受控 CSWAP 链右移（n，因为 g=false 时不能移）；清 c：`c ^= g ∧ [x ≥ (p+1)/2]`（比较 2n + 1 CCX）。共 4n+2（改 4 后 3n+2）。对应的受控原地模加倍（1.6 的受控版，控制 g）：受控 CSWAP 链左移（n）；**受控(g) 减 p**（n：按 1.2 把 g·p 装进临时字 T 再 `subInPlace`，借位写入 h）；受控(h) 加回 p（n）；清 h：`h ^= g ∧ ¬x₀`（1 CCX）。两个分支的不变量：g=false 时 T=0、减法不发生、h 恒为 0、x 不变；g=true 时同 1.6（h=1 ⇔ 未约减 ⇔ 结果偶）。共 3n+1。减 p 不能无条件做，否则 g=false 时会留下 h=1。
+**改 1 已实现的受控版**（控制 g，内部字宽 w=n+1）：`c ^= g ∧ x₀`；`maskedAddConst c` 把 c·p 加入 x；受控 CSWAP 链右移；`CX g c` 后受控比较 `x < (p+1)/2` 清 c。恢复使用独立前向加倍门列：先受控比较再 `CX g c`，得到 `c = g ∧ [x ≥ (p+1)/2]`；受控左移；`maskedSubConst c` 减去 c·p；最后 `c ^= g ∧ x₀`。g=false 时两方向都保持 x 且 c=0。两者各为 `3w` Toffoli、`2w−1` 次测量；比较器已用基础层的 Gidney 版（w+1 Toffoli），无需等改 4。临时常数字与进位链均清零；减法不产生额外借位输出。
 
 ### 1.8 原地模负 `negInPlace`
 
@@ -114,7 +114,7 @@ x ← (p − x) mod p，x=0 时保持 0（Litinski Fig. 6b）：按位取反（X
 
 ## 2. 改 1：求逆第二阶段
 
-### 2.1 现状
+### 2.1 历史基线（改 1 前）
 
 `halvingStep L q i = phaseActive ++ halveRound ++ phaseActive`，`halveRound = conditionalHalve ++ conditionalDouble(swap)`：每轮 14n+10 + 22n+18 + 40 = 9,284 Toffoli；512 轮正向 4,753,408，反计算再一遍，共 9,506,816，占每次 `fieldInverse`（14,303,280）的 66%。
 
@@ -133,21 +133,21 @@ inverseLoop' L q :=
   ++ kaliskiUnloop L.first 0 L.records                  -- 不变：逆向 512 轮，清记录带
 ```
 
-每轮：`counterActiveXor`（20）+ 受控原地模减半（4n+2）+ `counterActiveXor`（20）= 4n+42 = 1,066；加倍轮 3n+41 ≈ 812。512 轮各 ≈ 545,800 / ≈ 415,700。第二阶段合计 ≈ 961,500（现 9,506,816）；改 4 的比较器再把减半轮降到 3n+42。
+已实现的每轮：`counterActiveXor`（20）+ 受控原地减半或加倍（3w）+ `counterActiveXor`（20）= 3w+40。w=257 时两方向均为 811 Toffoli、553 次测量；512 轮单向 415,232/283,136，第二阶段总计 830,464/566,272。与历史基线相同，仍执行正反两遍；改 4 后续替换的是既有 Borrow 调用点。
 
 ### 2.3 接口与陈述
 
-- `inverseLoop_spec`、`inverseLoop_xor_spec`、`fieldInverse_spec`、`fieldInverse_xor_spec`、`fieldInverse_contract` 的**陈述全部不变**：`halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致；任意 O 的 XOR 语义由 inv + CX 保证，M3 的"同一模块再跑一遍清零"照常成立。加倍循环是减半循环的逆（`HalvingBijection` 的 double∘halve = id），要证 `doublingLoop'` 把 inv 恢复到减半前的值。
-- 资源：`fieldInverse` 目标 = 2×2,390,528 + 2×7,704 + 545,800 + 415,700 ≈ **5,757,000**（改 4 后 ≈ 5.6M；从 14,303,280 降 60%）。
-- 线路：第二阶段去掉 b、temp 两组 257 位和 8n+10 的模算术区，换成 inv、常数临时字 T 和进位链，求逆工作区约 5,956 → ≈ 3.9k。但共享池的大小由模乘决定（69,908），求逆只占它的前缀，所以**改 2 之前总线路数保持 74,024**。
+- `inverseLoop_spec`、`inverseLoop_xor_spec`、`fieldInverse_spec`、`fieldInverse_xor_spec`、`fieldInverse_contract` 的正确性陈述保持不变（`inverseLoop_*` 去掉已删除 b 的长度前提，`fieldInverse_contract` 更新资源常数）：`halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致；任意 O 的 XOR 语义由 inv + CX 保证，M3 的"同一模块再跑一遍清零"照常成立。加倍循环是减半循环的逆（`HalvingBijection` 的 double∘halve = id），要证 `doublingLoop'` 把 inv 恢复到减半前的值。
+- 已证资源：`fieldInverse` = 2×2,390,528 + 2×7,704 + 2×415,232 = **5,626,928** Toffoli，**2,198,576** 次测量。
+- 线路：只删除 b 的 257 根；a、temp 和 ModLayout 仍供 negativeInit 使用，减半所需常数字、进位链与标志借自其中，不新增线路。求逆工作池前缀 5,956 → **5,699**，`fieldInverse` 实际线路 6,468 → **6,211**。模乘仍决定共享池大小，所以**改 2 之前点加总线路保持 74,024**。
 
 ### 2.4 证明义务与文件
 
 - `Arithmetic/HalveInPlace.lean`：1.7 的 Triple（受控版），含 Math 引理 `odd_iff_half_ge`（x<p 奇 ⇔ (x+p)/2 ≥ (p+1)/2）。
-- `Arithmetic/HalvingLoop.lean` 重写：受控减半循环与逆序受控加倍循环，按改名后的布局递归（仿 `halvingEnd`/`swapCounter` 的模式）；`halvingRun_fixed` 不变，另证加倍循环是其逆。
+- `Arithmetic/HalvingLoop.lean` 重写：受控减半循环与逆序受控加倍循环，固定布局递归，`halvingValue_eq` 连接 `halveFixed`，并证明加倍循环是其逆。
 - `Arithmetic/InverseCompute.lean`：新 `inverseLoop`；`InverseMiddle` 只保留内部寄存器 inv。
 - `InverseLoopResources.lean`、`InverseResources.lean`、README/PROOF_STATUS 资源表、verify.sh 入口同步。
-- 验收：`fieldInverse_spec`、`fieldInverse_xor_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；118 个公开入口公理白名单通过。
+- 验收：`fieldInverse_spec`、`fieldInverse_xor_spec` 与 `fieldInverse_contract` 陈述不变，仅资源数字变化；140 个公开入口公理白名单通过。
 
 ## 3. 改 2：模乘
 
@@ -368,12 +368,14 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 
 ## 9. 阶段目标总表
 
+改 1 行已按实现更新。改 2 及后续行仍为早期设计预算，尚未按本次求逆 5,626,928 Toffoli / 工作池 5,699 位重算；应随各自设计复审更新，不能当作本次实现的资源承诺。
+
 线路数按 `外部寄存器 + max(各模块工作区)` 估算：共享池的大小由所有仍在使用的模块中最大的工作区决定，**只改求逆不缩池**。Toffoli 目标是按本文门列推导的预期值，标"研究预算"的项未从本项目已有门列推导。
 
 | 阶段 | 受控原地点加 Toffoli（目标） | 线路（目标） | 说明 |
 | --- | ---: | ---: | --- |
 | 基线（PR 11–13，已合并并验收） | 91,964,213 | 74,024 | 已证 |
-| + 改 1（第二阶段原地减半/加倍，XOR 接口不变） | ≈ 58M | 74,024（池仍由模乘 69,908 决定） | 4 次求逆各 14.30M → 5.76M：4I + 12M₀ + 37,493 ≈ 57.8M |
+| + 改 1（第二阶段原地减半/加倍，XOR 接口不变，已实现） | 57,258,805（已证） | 74,024（池仍由模乘 69,908 决定） | 4 次求逆各 14,303,280 → 5,626,928；4I + 12M₀ + 37,493 |
 | + 改 2（Horner 内核 + XOR 适配器） | ≈ 40M | ≈ 10.1k（外部 ≈ 4.1k + 求逆工作区 5,956；与改 1 合计 ≈ 8k） | 调用次数不变：12 次 XOR 乘法各 2.89M → 1.38M，4 次求逆 5.76M：4I + 12M + 37,493 ≈ 39.6M；倍数链消失 |
 | + 改 3（除法中心原地点加） | ≈ 18.5M | ≈ 5k（点 513 + λ/t/inv/Dsafe ≈ 1k + 求逆工作区 ≈ 3.9k + 标志） | 2 除法（各含一个乘积）+ 3 个外部乘积 |
 | + 改 4（Gidney 比较器） | ≈ 16.6M | ≈ 5k | 每次求逆 ≈ 5.32M，`mulInto` −n/位、`mulClear` −2n/位 |
