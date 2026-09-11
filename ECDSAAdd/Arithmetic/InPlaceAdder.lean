@@ -579,4 +579,53 @@ theorem maskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
   simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
   simpa only [maskedSubInPlace, List.append_assoc] using h1.seq (h2.seq h3)
 
+
+/-- 受控加减只触及控制位、cin、常数字/临时字、目标与进位链。 -/
+theorem maskedConst_wires_subset (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat)
+    (hT : T.length = y.length) (hc : carry.length + 1 = y.length) :
+    wires (maskedAddConst c T y carry cin K) ⊆ (c :: cin :: (T ++ y ++ carry)).toFinset ∧
+    wires (maskedSubConst c T y carry cin K) ⊆ (c :: cin :: (T ++ y ++ carry)).toFinset := by
+  have hm : wires (maskedConstant c T K) ⊆ (c :: cin :: (T ++ y ++ carry)).toFinset := by
+    intro w hw
+    have := List.mem_toFinset.mp (maskedConstant_wires_subset c T K hw)
+    simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at this ⊢; tauto
+  have ha : wires (addInPlace T y carry cin) ⊆ (c :: cin :: (T ++ y ++ carry)).toFinset := by
+    rw [addInPlace_wires T y carry cin hT hc]
+    intro w hw
+    simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at hw ⊢; tauto
+  have hs : wires (subInPlace T y carry cin) ⊆ (c :: cin :: (T ++ y ++ carry)).toFinset := by
+    rw [subInPlace_wires T y carry cin hT hc]
+    intro w hw
+    simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at hw ⊢; tauto
+  constructor
+  · simp only [maskedAddConst, wires_append]
+    exact Finset.union_subset (Finset.union_subset hm ha) hm
+  · simp only [maskedSubConst, wires_append]
+    exact Finset.union_subset (Finset.union_subset hm hs) hm
+
+theorem maskedInPlace_wires_subset (c : Wire) (src t y carry : List Wire) (cin : Wire)
+    (hs : src.length = t.length) (ht : t.length = y.length) (hc : carry.length + 1 = y.length) :
+    wires (maskedAddInPlace c src t y carry cin) ⊆ (c :: cin :: (src ++ t ++ y ++ carry)).toFinset ∧
+    wires (maskedSubInPlace c src t y carry cin) ⊆ (c :: cin :: (src ++ t ++ y ++ carry)).toFinset := by
+  have hcopy : wires (copyRegister (some c) src t) ⊆ (c :: cin :: (src ++ t ++ y ++ carry)).toFinset := by
+    rw [copyRegister_wires (some c) src t hs]
+    split_ifs
+    · exact Finset.empty_subset _
+    · intro w hw
+      simp only [Option.toList_some, List.mem_toFinset, List.mem_cons, List.mem_append,
+        List.cons_append, List.nil_append] at hw ⊢; tauto
+  have ha : wires (addInPlace t y carry cin) ⊆ (c :: cin :: (src ++ t ++ y ++ carry)).toFinset := by
+    rw [addInPlace_wires t y carry cin ht hc]
+    intro w hw
+    simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at hw ⊢; tauto
+  have hsu : wires (subInPlace t y carry cin) ⊆ (c :: cin :: (src ++ t ++ y ++ carry)).toFinset := by
+    rw [subInPlace_wires t y carry cin ht hc]
+    intro w hw
+    simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at hw ⊢; tauto
+  constructor
+  · simp only [maskedAddInPlace, wires_append]
+    exact Finset.union_subset (Finset.union_subset hcopy ha) hcopy
+  · simp only [maskedSubInPlace, wires_append]
+    exact Finset.union_subset (Finset.union_subset hcopy hsu) hcopy
+
 end ECDSAAdd.Arithmetic
