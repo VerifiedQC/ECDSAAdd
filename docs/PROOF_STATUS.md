@@ -247,7 +247,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 - [KaliskiLoopProof](../ECDSAAdd/Arithmetic/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
 - [NegativeInit](../ECDSAAdd/Arithmetic/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
 - [HalveInPlace](../ECDSAAdd/Arithmetic/HalveInPlace.lean) 在内部 a 上原地受控减半：奇数先加 q，再右移，比较结果大小清奇偶标志。恢复轮先比较 `(q+1)/2`，再左移、受控减 q，并以结果奇偶清标志。两者都是前向门列，对任意测量记录恢复相位；没有倒放含测量的程序。
-- [HalvingLoop](../ECDSAAdd/Arithmetic/HalvingLoop.lean) 每轮比较 i<k，活动时减半，否则保持数值；固定布局、不再交换 a/b。k 不递减，借用工作区和活动位每轮清零。`halveInPlace_spec` 同时证明正向循环与逆序加倍恢复，`halvingValue_eq` 连接 I1 的 `halveFixed`。
+- [HalvingLoop](../ECDSAAdd/Arithmetic/HalvingLoop.lean) 每轮比较 i<k，活动时减半，否则保持数值；固定布局、不再交换 a/b。k 不递减，借用工作区和活动位每轮清零。`halveInPlace_spec` / `restoreInPlace_spec` 分别给出正向循环与逆序加倍恢复的寄存器规格，`halvingValue_eq` 连接 I1 的 `halveFixed`。
 - [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 让第二阶段使用第一阶段终点的当前 k 银行、空银行、比较工作区及活动位；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
 
 `ExternalMod` 的字段框架由已有倍增实现提取，约减、取负与倍增实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
@@ -290,7 +290,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2062 项构建，以下 139 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2062 项构建，以下 140 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -377,12 +377,13 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.halveStep_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.doubleStep_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.halveInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.restoreInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.halveStep_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.halveInPlace_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.halveStep_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.halveInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.inverseCompute_values' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.inverseHalving_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inversePrepare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseRestore_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.negativeInit_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.equalConstant_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -617,10 +618,50 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 
 基础层验证通过：`lake --wfail build` 完成 2,069 项；脚本选定的 133 个公开定理全部通过传递公理检查，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。新增 15 个入口覆盖加减法器规格与资源、四条受控加减规格、四条比较器规格与资源、三条减半/加倍引理。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。
 
-## 改 1 的中间状态接口
+## 改 1 的公开寄存器接口
 
-`inverseCompute_values` 公开一对可组合的 Hoare triple：从 `InverseInitial L q x` 执行 `inverseCompute L q` 得到 `InverseMiddle L z cs R`；从这个状态执行 `inverseUncompute L q` 恢复初始断言。这里 `z = kaliskiStep^[512] (kaliskiInit q x)`，`cs = kaliskiCodes 512 (kaliskiInit q x)`，`R = halveFixed q z.k 512 (-(z.r : ZMod q)).val`。
+下面是源码公开定理的前后条件。省略的共同参数只包括全局 Nodup、位宽与范围：q 为奇数，X<q，2q 能装入 data，K≤512；单轮还要求 i<512。`(halveMod q)^[K] X` 表示对 X 做 K 次模减半。
 
-`InverseMiddle.iff` 将中间断言展开为第一阶段的 u/v/r/s/k 与活动、终止、比较工作位状态、记录带 `cs`、内部 `a=R`、`temp=0` 和整个模算术区为零。后续 divide 可在准备段与恢复段之间组合使用逆元的模块，同时保持这些条件。`inverseCopy_values` 是现有 XOR 包装的实例：只把 a 复制进任意初值的 out，中间断言保持。公开 `fieldInverse_spec` / `fieldInverse_xor_spec` 的输入、输出、范围与清零陈述未改。
+```lean
+-- halveStep_spec
+{{ L.data=X, L.counter.x=K, L.work=0 }} halveStep L q i
+{{ L.data=(if i<K then halveMod q X else X), L.counter.x=K, L.work=0 }}
+
+-- doubleStep_spec
+{{ L.data=X, L.counter.x=K, L.work=0 }} doubleStep L q i
+{{ L.data=(if i<K then (2*X)%q else X), L.counter.x=K, L.work=0 }}
+
+-- halveInPlace_spec
+{{ L.data=X, L.counter.x=K, L.work=0 }} halveInPlace L q 0 512
+{{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }}
+
+-- restoreInPlace_spec
+{{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }} restoreInPlace L q 0 512
+{{ L.data=X, L.counter.x=K, L.work=0 }}
+```
+
+`HalvingLayout.work` 包含 active、flag、cin、constant、整条 carry、计数银行的 y/out/carry 与 compareCin；不包含 data 和计数输入 counter.x。原来的 `HalvingValues` 规格改名为 `_values`，只用于内部组合；公理检查使用上面的寄存器入口。未调用的 `HalvingLayout.count_le` 已删除。
+
+## 改 1 的准备与恢复接口
+
+`inversePrepare_spec` / `inverseRestore_spec` 直接写出 a 中得到数学逆元。共同前提是全局 Nodup、512 轮、10 位计数器、256 位 q、257 位内部数据，以及 q 奇、0<X<q、q 与 X 互素；secp256k1 的 p 自动满足相应模数条件。
+
+```lean
+-- inversePrepare_spec
+{{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
+   L.first.k=0, L.first.done=false, L.work=0 }} inverseCompute L q
+{{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0,
+   InverseHistory L q X st }}
+
+-- inverseRestore_spec
+{{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0,
+   InverseHistory L q X st }} inverseUncompute L q
+{{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
+   L.first.k=0, L.first.done=false, L.work=0 }}
+```
+
+`InverseHistory` 只是既有第一阶段断言的命名组合，不含 a、temp 或模算术区，也没有新增状态框架。它完整保存输入 X 对应的 u/v/r/s、记录带、计数 k、计数工作区清零和 active=false；定义通过原有 `InverseRest` 与 `HalvingCounter` 给出精确状态，恢复段不能仅凭 a 的逆元值忽略历史。`inverseCompute_values` 仍作内部组合依据；新入口再用 `kaliski_correct` 将算法迭代结果改写为数学逆元。
+
+后续 divide 可以在这对准备/恢复接口之间使用逆元，但须保持 `InverseHistory`，归还 a 中的同一逆元，清零 temp 与模算术区后才能恢复。公开 `fieldInverse_spec` / `fieldInverse_xor_spec` 的陈述与资源不变。
 
 原地轮的资源均为 `3w+40` Toffoli、`2w+39` 次测量；w=257 时为 811/553，512 轮单向为 415,232/283,136。`halveStep_wires` 与 `halveInPlace_wires` 从门列给出精确支持集；求逆借用 `ModLayout.reg .modulus`、`.carrySum`、`cinSum/cinDiff`，全局 Nodup 推出所有子程序的互异条件。

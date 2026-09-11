@@ -138,7 +138,7 @@ theorem inverseHalving_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     change 2*q ≤ 2^L.a.length
     rw [ha,pow_succ]; omega
   have hwidth := L.halving_widths ha hw
-  have hh := halveInPlace_spec L.halving (L.halving_nodup hnd) hwidth q z.k 0 512 X ho hx hfit hk (by omega)
+  have hh := halveInPlace_values L.halving (L.halving_nodup hnd) hwidth q z.k 0 512 X ho hx hfit hk (by omega)
   have hval : halvingValue q z.k 0 512 X = halveFixed q z.k 512 X := by
     rw [halvingValue_eq,halveFixed_eq,Nat.sub_zero]
   rw [hval] at hh

@@ -58,23 +58,30 @@ theorem HalvingCounter.congr (L : AdderLayout) (K : Nat) (s t : BasisState)
 /-- 一轮受控原地模减半：active ^= [i<k]；flag ← active ∧ data₀；data += flag·q；
 受控右移；flag ^= active；flag ^= active ∧ [data < (q+1)/2]；active ^= [i<k]。 -/
 def halveStep (L : HalvingLayout) (q i : Nat) : Program :=
+  -- 装入本轮使能 active = [i<k]，计数输入 k 保持。
   counterActiveXor L.counter L.counterHigh.out L.active i ++
+  -- 记录输入奇偶；奇数先加 q，使待右移的数为偶数。
   [.CCX L.active L.data.head! L.flag] ++
   maskedAddConst L.flag L.constant L.data L.chain L.cin q ++
   shiftRight L.active L.data ++
+  -- 减半结果 ≥ (q+1)/2 当且仅当输入为奇数；CX 加“小于”比较清 flag。
   [.CX L.active L.flag] ++
   compareLtConst (some L.active) L.data L.constant L.carry L.cin L.flag ((q+1)/2) ++
+  -- k 未变，再算同一个 [i<k]，将 active 清零。
   counterActiveXor L.counter L.counterHigh.out L.active i
 
-/-- 一轮受控原地模加倍（减半轮的逆）：active ^= [i<k]；flag ← active ∧ [data ≥ (q+1)/2]；
-受控左移；data −= flag·q；flag ^= active ∧ data₀；active ^= [i<k]。 -/
+/-- 一轮受控原地模加倍，以独立前向门列恢复减半前的数据。 -/
 def doubleStep (L : HalvingLayout) (q i : Nat) : Program :=
+  -- 装入本轮使能；比较加 CX 得到 flag = active ∧ [data ≥ (q+1)/2]。
   counterActiveXor L.counter L.counterHigh.out L.active i ++
   compareLtConst (some L.active) L.data L.constant L.carry L.cin L.flag ((q+1)/2) ++
   [.CX L.active L.flag] ++
+  -- 左移加倍；flag 记录是否需要减 q，使结果回到 [0,q)。
   shiftLeft L.active L.data ++
   maskedSubConst L.flag L.constant L.data L.chain L.cin q ++
+  -- q 为奇数，约减后结果的奇偶恰好等于约减标志，故可清 flag。
   [.CCX L.active L.data.head! L.flag] ++
+  -- 同一计数比较清 active；本轮借用工作线全部恢复为零。
   counterActiveXor L.counter L.counterHigh.out L.active i
 
 /-- 轮内各步之间的状态：data 值、flag、active、计数输入 k；其余工作线为零。 -/
@@ -121,10 +128,6 @@ theorem shift_nodup (L : HalvingLayout) (hnd : L.wires.Nodup) : (L.active :: L.d
   have hcnt := List.nodup_iff_count.mp hnd
   apply List.nodup_iff_count.mpr; intro w; have := hcnt w
   simp only [wires, carry, List.count_cons, List.count_append] at this ⊢; omega
-
-/-- 一根线最多出现一次：用于把"不在某些寄存器里"从计数推出。 -/
-theorem count_le (L : HalvingLayout) (hnd : L.wires.Nodup) (w : Wire) :
-    List.count w L.wires ≤ 1 := List.nodup_iff_count.mp hnd w
 
 end HalvingLayout
 
@@ -370,7 +373,7 @@ theorem step_compare (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     HalvingCounter.congr _ _ _ _ h.counter (fun w hw' => hout w (L.counter_outside hnd w hw'))⟩⟩
 
 /-- 完整减半轮：只改写 data，全部借用工作线清零，计数 K 保持。 -/
-theorem halveStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+theorem halveStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
     (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
     Triple (HalvingValues L K X false false) (halveStep L q i)
@@ -417,7 +420,7 @@ theorem halveStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
   exact hall
 
 /-- 完整加倍轮：显式前向门列撤销减半，不倒放测量。 -/
-theorem doubleStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+theorem doubleStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
     (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
     Triple (HalvingValues L K X false false) (doubleStep L q i)
@@ -465,5 +468,45 @@ theorem doubleStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths
   have hall := (((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7
   rw [hz] at hall
   exact hall
+
+/-- 轮边界的内部断言恰好是数据、计数寄存器的值及全部工作线清零。 -/
+theorem HalvingValues.iff (L : HalvingLayout) (K X : Nat) (s : BasisState) :
+    HalvingValues L K X false false s ↔
+      ((regValue L.data s=X ∧ regValue L.counter.x s=K) ∧ regValue L.work s=0) := by
+  have hw : regValue L.work s=0 ↔
+      s L.active=false ∧ s L.flag=false ∧ s L.cin=false ∧
+      regValue L.constant s=0 ∧ regValue L.chain s=0 ∧ s L.top=false ∧
+      regValue L.counter.y s=0 ∧ regValue L.counter.out s=0 ∧
+      regValue L.counter.carry s=0 ∧ s L.compareCin=false := by
+    simp only [HalvingLayout.work,HalvingLayout.carry,regValue_zero,List.mem_cons,List.mem_append,
+      List.not_mem_nil,or_false,or_imp,forall_and,forall_eq]
+    tauto
+  rw [hw]
+  constructor
+  · intro h
+    exact ⟨⟨h.data,h.counter.1⟩,h.active,h.flag,h.cin,h.constant,h.chain,h.top,
+      h.counter.2.1,h.counter.2.2.2.1,h.counter.2.2.2.2,h.counter.2.2.1⟩
+  · rintro ⟨⟨hd,hk⟩,ha,hf,hc,hconst,hchain,ht,hy,ho,hcarry,hcin⟩
+    exact ⟨hd,hf,ha,hc,hconst,hchain,ht,⟨hk,hy,hcin,ho,hcarry⟩⟩
+
+/-- 第 i 轮：i<k 时原地模减半，否则保持；k 不变且全部工作线清零。 -/
+theorem halveStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    {{ L.data=X, L.counter.x=K, L.work=0 }} halveStep L q i
+    {{ L.data=(if i<K then halveMod q X else X), L.counter.x=K, L.work=0 }} :=
+  Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h)
+    (halveStep_values L hnd hw q i K X hq hX hfit hi hK)
+    (fun s h => (HalvingValues.iff L K _ s).mp h)
+
+/-- 第 i 个恢复轮：i<k 时原地模加倍，否则保持；k 不变且全部工作线清零。 -/
+theorem doubleStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    {{ L.data=X, L.counter.x=K, L.work=0 }} doubleStep L q i
+    {{ L.data=(if i<K then (2*X)%q else X), L.counter.x=K, L.work=0 }} :=
+  Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h)
+    (doubleStep_values L hnd hw q i K X hq hX hfit hi hK)
+    (fun s h => (HalvingValues.iff L K _ s).mp h)
 
 end ECDSAAdd.Arithmetic

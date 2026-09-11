@@ -90,12 +90,13 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.halveStep_spec
 #print axioms ECDSAAdd.Arithmetic.doubleStep_spec
 #print axioms ECDSAAdd.Arithmetic.halveInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.restoreInPlace_spec
 #print axioms ECDSAAdd.Arithmetic.halveStep_counts
 #print axioms ECDSAAdd.Arithmetic.halveInPlace_counts
 #print axioms ECDSAAdd.Arithmetic.halveStep_wires
 #print axioms ECDSAAdd.Arithmetic.halveInPlace_wires
-#print axioms ECDSAAdd.Arithmetic.inverseCompute_values
-#print axioms ECDSAAdd.Arithmetic.inverseHalving_values
+#print axioms ECDSAAdd.Arithmetic.inversePrepare_spec
+#print axioms ECDSAAdd.Arithmetic.inverseRestore_spec
 #print axioms ECDSAAdd.Arithmetic.negativeInit_spec
 #print axioms ECDSAAdd.kaliski_invariant
 #print axioms ECDSAAdd.Arithmetic.equalConstant_correct

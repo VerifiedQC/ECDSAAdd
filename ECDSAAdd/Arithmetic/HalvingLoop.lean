@@ -3,10 +3,12 @@ import ECDSAAdd.Arithmetic.HalveInPlace
 namespace ECDSAAdd.Arithmetic
 
 /-- 固定轮数前向减半及逆序加倍恢复；每轮仍执行同一字面门列。 -/
+/-- 从轮号 i 起执行 n 轮；先执行当前轮，再递增轮号。仅 i<k 的轮改变数据。 -/
 def halveInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => halveStep L q i ++ halveInPlace L q (i+1) n
 
+/-- 恢复从 i 起的 n 轮：先恢复后续轮，再恢复当前轮，故轮号顺序与减半相反。 -/
 def restoreInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => restoreInPlace L q (i+1) n ++ doubleStep L q i
@@ -15,7 +17,7 @@ def halvingValue (q K i : Nat) : Nat → Nat → Nat
   | 0, X => X
   | n+1, X => halvingValue q K (i+1) n (if i<K then halveMod q X else X)
 
-theorem halveInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+theorem halveInPlace_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q K i n X : Nat) (hq : q % 2 = 1) (hX : X < q)
     (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) (hn : i+n ≤ 512) :
     Triple (HalvingValues L K X false false) (halveInPlace L q i n)
@@ -28,8 +30,8 @@ theorem halveInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widt
     let Y := if i<K then halveMod q X else X
     have hy : Y < q := by dsimp [Y]; split_ifs; exact halve_mod_bound q X hq hX; exact hX
     obtain ⟨hf,hb⟩ := ih (i+1) Y hy (by omega)
-    have hs := halveStep_spec L hnd hw q i K X hq hX hfit (by omega) hK
-    have hr := doubleStep_spec L hnd hw q i K Y hq hy hfit (by omega) hK
+    have hs := halveStep_values L hnd hw q i K X hq hX hfit (by omega) hK
+    have hr := doubleStep_values L hnd hw q i K Y hq hy hfit (by omega) hK
     have hv : (if i<K then (2*Y)%q else Y) = X := by
       dsimp [Y]; split_ifs <;> simp_all [double_halve_mod q X hq hX]
     rw [hv] at hr
@@ -45,6 +47,28 @@ theorem halvingValue_eq (q K i n X : Nat) :
     · rw [if_pos hi, show min (n+1) (K-i) = min n (K-(i+1))+1 by omega,
         Function.iterate_succ_apply]
     · simp [hi, show K-i=0 by omega, show K-(i+1)=0 by omega]
+
+/-- 固定 512 轮执行恰好 K 次模减半；保留计数，工作区清零。 -/
+theorem halveInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (q K X : Nat) (hq : q % 2 = 1) (hX : X < q)
+    (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) :
+    {{ L.data=X, L.counter.x=K, L.work=0 }} halveInPlace L q 0 512
+    {{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }} := by
+  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit hK (by omega)).1
+  rw [halvingValue_eq,Nat.sub_zero,min_eq_right hK] at h
+  exact Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h) h
+    (fun s h => (HalvingValues.iff L K _ s).mp h)
+
+/-- 显式前向加倍门列撤销 K 次模减半；计数不变，工作区清零。 -/
+theorem restoreInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
+    (q K X : Nat) (hq : q % 2 = 1) (hX : X < q)
+    (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) :
+    {{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }} restoreInPlace L q 0 512
+    {{ L.data=X, L.counter.x=K, L.work=0 }} := by
+  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit hK (by omega)).2
+  rw [halvingValue_eq,Nat.sub_zero,min_eq_right hK] at h
+  exact Triple.conseq (fun s h => (HalvingValues.iff L K _ s).mpr h) h
+    (fun s h => (HalvingValues.iff L K X s).mp h)
 
 /-- 两种轮的门数相同：3n+40 Toffoli、2n+39 次测量。 -/
 theorem halveStep_counts (L : HalvingLayout) (hw : L.Widths) (q i : Nat) :

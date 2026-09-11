@@ -2,13 +2,23 @@ import ECDSAAdd.Arithmetic.InverseMiddle
 
 namespace ECDSAAdd.Arithmetic
 
+/-- 准备逆元；第一阶段的数据与记录带保留，供结果使用后恢复。 -/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  kaliskiLoop L.first 0 L.records ++ negativeInit L.arithmetic q L.middle.r L.temp L.a ++
-    halveInPlace L.halving q 0 512
+  -- 第一阶段：u/v/r/s/k 演化 512 轮，records 保存各轮分支。
+  kaliskiLoop L.first 0 L.records ++
+  -- 将 (−r) mod q 写入初始为零的 a；temp 与模算术工作区恢复为零。
+  negativeInit L.arithmetic q L.middle.r L.temp L.a ++
+  -- 第二阶段：按保存的 k 在 a 中原地减半，得到逆元；借用工作区清零。
+  halveInPlace L.halving q 0 512
 
+/-- 逆元使用后的恢复；各段均执行显式前向门列，不倒放测量。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  restoreInPlace L.halving q 0 512 ++ negativeInit L.arithmetic q L.middle.r L.temp L.a ++
-    kaliskiUnloop L.first 0 L.records
+  -- 逆序加倍，将 a 恢复为 (−r) mod q。
+  restoreInPlace L.halving q 0 512 ++
+  -- negativeInit 是 XOR 模块：再写同一个值，将 a 清零。
+  negativeInit L.arithmetic q L.middle.r L.temp L.a ++
+  -- 利用保存的分支恢复第一阶段初值，同时清 records。
+  kaliskiUnloop L.first 0 L.records
 
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program :=
   inverseCompute L q ++ copyRegister none L.a L.out ++ inverseUncompute L q
