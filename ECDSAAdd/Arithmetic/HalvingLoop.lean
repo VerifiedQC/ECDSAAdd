@@ -2,8 +2,8 @@ import ECDSAAdd.Arithmetic.HalveInPlace
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 固定轮数前向减半及逆序加倍恢复；每轮仍执行同一字面门列。 -/
-/-- 从轮号 i 起执行 n 轮；先执行当前轮，再递增轮号。仅 i<k 的轮改变数据。 -/
+/-- 固定轮数前向减半，每轮仍执行同一字面门列。
+从轮号 i 起执行 n 轮；先执行当前轮，再递增轮号。仅 i<k 的轮改变数据。 -/
 def halveInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => halveStep L q i ++ halveInPlace L q (i+1) n
