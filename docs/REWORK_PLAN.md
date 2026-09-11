@@ -426,9 +426,11 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 - `lake --wfail build` 与公开入口公理白名单通过；无 sorry / native_decide / 新 axiom。
 - 每项先交"构造 + 逐步寄存器表 + 门数推导 + 证明义务"的设计 PR 描述，确认后再写证明（与 M3 流程一致）。
 
-## 12. 改 2 实施设计（Lamport，待独立复审）
+## 12. 改 2 实施设计（已复审，C1 已实现）
 
-本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**下面的精确数是拟定门列的推导值，尚非 Lean 定理**。不改已实现状态，不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
+C1 状态：模加、模减、受控模加、受控模减的 Triple/frame/精确资源已证明，源范围放宽为 A≤p。普通加减实际线路为 4n+4，受控加为 5n+5，受控减为 5n+6。C2 接无控制半倍与 Horner 内核，D 接适配器与域乘法，均尚未实现。
+
+本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**除上述 C1 外，下面的精确数仍是拟定门列推导值，尚非 Lean 定理**。不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
 
 ### 12.1 固定布局、基础接口和旋转
 
@@ -571,14 +573,14 @@ XOR 适配器拟定实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mul
 
 设计阶段只改本文与 README 的计划说明，不写未证电路。
 
-- PR C：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
-- PR D：`Arithmetic/MulInPlace.lean`、适配器与布局文件、`Math/HornerMultiply.lean`。先证明 `H_i` 关系和各步规范范围，再证明循环、三个适配器和物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
+- PR C1（已实现四个模加减接口）、C2（待实现无控制半倍及 Horner 正向/清理）：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
+- PR C2 以 `Math/HornerMultiply.lean` 证明 `H_i` 关系与各步规范范围，再证明 `Arithmetic/MulInPlace.lean` 的正向/清理循环。PR D 追加三个适配器、布局与物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
 - 接入：更新 MultiplyPorts/PointCandidate 的工作池视图及 Nodup/frame/support，保留 M3 的 12 次 fieldMul 和4次 fieldInverse 调用结构。PR B 先合并，后续修改基于其真实 main，不覆盖旧常数。
 - 旧倍数链实现待所有引用迁移完再删除；不同时保留两套公开 fieldMul。源码引用检查后列出删文件清单，保护还被求逆/其他模块使用的旧算术。
 - 每个实现 PR 同步 README、PROOF_STATUS、PROVENANCE、总 import 与 verify.sh；新增公开规格和资源进入现有白名单入口。只运行 Lean 构建及公开公理检查，无测试/数值 oracle/新 axiom/sorry，无 heartbeat 放宽。
 - 八项复审包含可读性、设计必要性、状态真实、Lean 验证、相位/清理、同一合法门列、范围完整性和证据；结论单列 README 同步。常规设计选择由本节明确给出，复审需具体指出构造或接口问题。
 
-### 12.9 集中的拟定公开接口（设计，尚未实现）
+### 12.9 集中的公开接口（C1 模加减已实现，其余为设计）
 
 以下是实现 PR 必须交付的完整陈述形状，不是已有 Lean 定理。统一前提为 `1<p<2^n`、p 为奇数、`w=n+1`；数值变量取 Nat，B 为 Bool。`halfₚ(Z)=(Z+(if Z%2=1 then p else 0))/2`。每一行还须满足该行的数值范围及下述对应布局的 Widths/Nodup 前提。
 
