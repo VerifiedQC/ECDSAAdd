@@ -636,3 +636,59 @@ PR B 目标 `fieldInverse=5,626,928` 时，保持现有点加组合的累计 Tof
 XOR 的 O 只受 w 位寄存器的可表示范围约束，不要求 O<p；fieldMul 接入保持这一语义。每个适配器的 `F.work=0` 都包含 product 清零。
 
 **每一行共同交付的相位与 frame 义务。** Triple 按项目现有定义对所有初态和所有测量记录成立，恢复输入相位。另给同样前提下的逐线保持定理：模算术对 `q∉L.z`（单目为 `q∉U.z`）的每根线保持；内核对 `q∉M.acc` 保持；适配器对 `q∉F.out` 保持。这里的“保持”比较程序最终状态与初态，允许工作线在中间被使用后清零；外部控制与输入因此也逐线保持。资源定理必须针对这些同名程序，不以抽象契约或布局分配数替代字面门列的支持集。
+
+
+## 13. 改 4 首批接入：旧 Borrow 包装（设计待复审，尚未实现）
+
+基线为 main `e565d886`。本批只将 Borrow 的三个既有入口接到 PR A 已证明的比较器，保留公开寄存器 Triple 与 frame。改 1 已完成；这里的目标不能混入 README 的已实现数字。
+
+### 13.1 调用边界与构造
+
+拟保留 `borrowXor L high target` 的函数参数以兼容调用者；`high` 是旧差寄存器的高位，替换后不再访问。不新建布局，直接使用现有字段：
+
+```lean
+-- 拟替换的函数体；不是已实现代码。
+compareLt none L.x L.y L.carry L.cin target
+```
+
+`constantBorrowXor` 保持“装入 K → borrowXor → 卸载 K”；`counterActiveXor` 保持“与 i+1 比较 → X target”。比较器内部依次取反 y/cin、计算进位并读取比较结果、测量擦除进位、还原 y/cin。L.out 不参与，始终保持原值。
+
+| 阶段 | x | y | out | carry/cin | target |
+| --- | --- | --- | --- | --- | --- |
+| 变量比较入口 | X | Y | 0 | 0/false | T |
+| 变量比较结束 | X | Y | 0 | 0/false | T XOR [X<Y] |
+| 常量比较装载后 | X | K | 0 | 0/false | T |
+| 常量比较结束并卸载 | X | 0 | 0 | 0/false | T XOR [X<K] |
+| 活动比较结束 | K | 0 | 0 | 0/false | T XOR [i<K] |
+
+公开规格逐字保留以下形状及现有参数：
+
+```lean
+{{ target=T, L.x=X, L.y=Y, L.cin=false, L.out=0, L.carry=0 }}
+  borrowXor L high target
+{{ target=(T ^^ decide (X<Y)), L.x=X, L.y=Y,
+   L.cin=false, L.out=0, L.carry=0 }}
+```
+
+保留 `(target::L.wires).Nodup`、`L.out=low++[high]` 及旧有差值范围条件；比较器本身不需要该范围，但这次不改变公共接口。常量版本保留 K 的可表示前提，计数版本保留 width=10、K≤512、i<512。尤其不能把 512 改成九位可表示前提。
+
+### 13.2 支持集与证明义务
+
+由 AdderLayout 字段等长与全局 Nodup 推出 compareLt 的前提；用已证明的 compareLt_spec 加 L.out 的逐线保持，恢复原 Triple。现有 constant/counter 组合证明尽量复用，覆盖所有测量记录的相位恢复，不倒放测量。
+
+**原有支持集等式需要修改。** BorrowFrame 当前把实际支持集写成整个 `(target::L.wires).toFinset`；新门列不访问 out，不能继续声称该等式。非空等宽时的目标精确集合为 `(target::L.cin::(L.x++L.y++L.carry)).toFinset`，并单列空宽退化情形。保留对旧完整布局的子集结论供 frame 使用；上层精确静态线路定理须重新按组合支持证明，不能以布局大小替代，也不通过添加无用门来凑原等式。本批不压缩布局分配，不承诺最终 qubitCount 不变或降低固定数目。
+
+### 13.3 可核对的成本推导
+
+每次宽度 n 的三个包装从 2n Toffoli/2n 测量变为 n/n；常量装卸和末尾 X 不增加这两项成本。main 中实际使用 counterActiveXor 的位置：
+
+- 每个 Kaliski 正轮一次、逆轮一次，各 512 轮；每次十位，完整第一阶段省 10,240/10,240。
+- 每个减半轮两次、恢复轮两次，各 512 轮；完整第二阶段省 20,480/20,480。
+
+因此完整 inverseLoop/fieldInverse 目标各省 30,720 Toffoli 和测量：5,626,928 → **5,596,208**；2,198,576 → **2,167,856**。这些仅为拟定门列的设计推导，待 Lean 对同一程序证明。单轮半倍目标 3w+20 / 2w+19；Kaliski 正逆轮目标 18w+33 / 6w+30。其它复合预算由调用次数重算，不从 PR C/D 已使用 Gidney 比较器的部分重复扣减。
+
+### 13.4 未包含的记录段与文件范围
+
+Kaliski 的 `recordRound` 当前直接执行“复制 u → sub → recordCase → sub → 清复制”，并不调用 borrowXor。它需要比较位在 recordCase 执行期间存活；简单把两次 sub 换成两次完整 compareLt 仍是 2w 成本，不能宣称省 w。记录段的融合比较/擦除须另交具体构造，本批不将 §5 的全部收益记为已完成，也不改轮体或 Lamport 的 PR C/D 文件。
+
+实现涉及 Borrow/BorrowFrame、RoundResources、HalveInPlace/HalvingLoop 及相关 inverse/point-add 支持与资源定理；数学语义与最终点加 Triple 保留。完成后运行 scripts/verify.sh，公开入口包含三个 Borrow 规格、frame、成本和最终资源；同步 README、PROOF_STATUS、PROVENANCE 与本计划。无测试、无新公理、无证明资源放宽。删除原实现专用且不再使用的私有辅助证明，不新增通用状态框架。

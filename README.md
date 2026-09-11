@@ -143,3 +143,5 @@ scripts/verify.sh
 - [来源与复现](docs/PROVENANCE.md)
 
 Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
+
+改 4 的首批旧 Borrow 包装接入设计见 [REWORK_PLAN §13](docs/REWORK_PLAN.md#13-改-4-首批接入旧-borrow-包装设计待复审尚未实现)：尚未实现，未计入上述资源；记录段融合比较另列后续工作。
