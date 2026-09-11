@@ -1,6 +1,5 @@
 import ECDSAAdd.Arithmetic.RoundBody
 import ECDSAAdd.Arithmetic.Borrow
-import ECDSAAdd.Arithmetic.CaseRecord
 
 namespace ECDSAAdd.Arithmetic
 
@@ -34,9 +33,6 @@ def r (L : KaliskiRoundLayout) : List Wire := L.data.r
 def s (L : KaliskiRoundLayout) : List Wire := L.data.s
 def k (L : KaliskiRoundLayout) : List Wire := L.counter.x
 def kNext (L : KaliskiRoundLayout) : List Wire := L.counter.out
-
-def caseLayout (L : KaliskiRoundLayout) : CaseLayout :=
-  ⟨L.active,L.u.head!,L.v.head!,L.high.out,L.swap,L.subtract,L.oddWork,L.bothWork⟩
 
 def scratch (L : KaliskiRoundLayout) : List Wire :=
   L.data.work ++ L.counter.y ++ L.counter.carry ++ [L.active,L.compareCin,L.oddWork,L.bothWork]
@@ -101,10 +97,12 @@ theorem regValue_headBit (r : List Wire) (hn : r≠[]) (s : BasisState) :
   | cons a r => cases ha : s a <;> simp [regValue,ha]
 
 
-/-- 用原状态形成两位记录，并在更新数据前清除比较差与临时来源。 -/
+/-- 先保存奇偶条件，直接把受控比较 XOR 到记录位，再清条件；不生成差寄存器。 -/
 def recordRound (L : KaliskiRoundLayout) : Program :=
-  copyRegister none L.u (L.data.reg .y) ++ sub (L.data.adder .v) ++ recordCase L.caseLayout ++
-  sub (L.data.adder .v) ++ copyRegister none L.u (L.data.reg .y)
+  [.CCX L.active L.u.head! L.oddWork, .CCX L.oddWork L.v.head! L.bothWork,
+   .CX L.bothWork L.subtract, .CX L.oddWork L.swap] ++
+  compareLt (some L.bothWork) L.v L.u (L.data.reg .carry) L.cin L.swap ++
+  [.CCX L.oddWork L.v.head! L.bothWork, .CCX L.active L.u.head! L.oddWork]
 
 /-- 只翻转活动辅助位，既用于装入 !done，也用于恢复 done 后的清理。 -/
 def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]

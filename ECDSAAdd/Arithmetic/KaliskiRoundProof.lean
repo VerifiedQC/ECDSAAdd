@@ -56,7 +56,7 @@ theorem kaliskiRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     simp only [A,kaliski_round_active i z hk]
   have h1 := loadActive_state L hnd z z.k 0 false (decide (z.v=0)) false false
   simp only [Bool.false_xor,hA] at h1
-  have h2 := recordRound_state L hnd z z.k 0 (decide (z.v=0)) false false hu hv
+  have h2 := recordRound_state L hnd z z.k 0 (decide (z.v=0)) false false
   simp only [Bool.false_xor] at h2
   obtain ⟨hU,hsub,hR,heven,hfit⟩ := round_body_bounds L p a z hinv hp hu hv hr
   have h3 := kaliskiBodyProgram_state L hnd z z.k 0 A (decide (z.v=0)) code.1 code.2 hU hsub hR heven hfit
@@ -108,7 +108,7 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   rw [kaliski_body_step] at h3
   have h4 := counterDec_state L hnd hw z (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2
   rw [hmod] at h4
-  have h5 := recordRound_state L hnd z z.k 0 (decide (z.v=0)) code.1 code.2 hu hv
+  have h5 := recordRound_state L hnd z z.k 0 (decide (z.v=0)) code.1 code.2
   simp only [code,Bool.xor_self] at h5
   have h6 := loadActive_state L hnd z z.k 0 A (decide (z.v=0)) false false
   have hA : (!decide (z.v=0))=A := by simp [A]
