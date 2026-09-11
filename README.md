@@ -43,7 +43,7 @@ M3 完整 `pointAddOut` 对有限经典常量使用 **45,981,844 个 Toffoli、2
 
 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **91,964,213 个 Toffoli、53,035,296 次测量、74,024 根实际静态线路**。三个选择位只控制最终输出，算术和测量程序不加控制；两次前向受控 XOR 调用加 513 位受控交换清空临时点。C=O 在构造期为空程序，三项资源均为零。实际支持比完整点加增加控制位与三个选择位，空间仍为 O(n²+N)。
 
-基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路。这些原语当前没有调用方，不改变任何已证模块的资源数。
+基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路（受控版本为 3n+3）。这些原语当前没有调用方，不改变任何已证模块的资源数。
 
 ## 下一步计划（未实现，不计入 Current status）
 

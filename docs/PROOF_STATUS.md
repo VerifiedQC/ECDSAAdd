@@ -549,7 +549,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 | --- | ---: | ---: | ---: |
 | `majority` | 1 | 0 | 4 |
 | `addInPlace` / `subInPlace` | n−1 | n−1 | 3n |
-| `maskedAddConst` / `maskedSubConst` | n−1 | n−1 | 3n + 1（含控制位；T 计入） |
+| `maskedAddConst` / `maskedSubConst` | n−1 | n−1 | ≤ 3n + 1（T 计入；K=0 时不触及控制位，实际为 3n） |
 | `maskedAddInPlace` / `maskedSubInPlace` | 3n−1 | n−1 | 4n + 1 |
 | `compareLt` 无控制 / 受控 | n / n+1 | n | 3n+2 / 3n+3 |
 | `compareLtConst` 无控制 / 受控 | n / n+1 | n | 3n+2 / 3n+3 |
