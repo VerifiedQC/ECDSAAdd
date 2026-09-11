@@ -57,9 +57,9 @@ theorem inverseCompute_wires (L : InverseLoopLayout)
   have hneg := negativeInit_wires L.arithmetic q L.middle.r L.temp L.a hrlen ht ha
   have hhalf := halveInPlace_wires L.halving (L.halving_widths ha hw) q 0 512
   simp only [show ¬(512:Nat)=0 by omega,if_false] at hhalf
-  have hs : L.halving.wires.toFinset ⊆ L.coreWires.toFinset := by
+  have hs : L.halving.usedWires.toFinset ⊆ L.coreWires.toFinset := by
     intro w h
-    exact List.mem_toFinset.mpr (L.phase_subset (L.halving_subset (List.mem_toFinset.mp h)))
+    exact List.mem_toFinset.mpr (L.phase_subset (L.halving_subset (L.halving.usedWires_subset (List.mem_toFinset.mp h))))
   simp only [inverseCompute,inverseUncompute,wires_append,hh.1,hh.2,hneg,hhalf.1,hhalf.2]
   have he := L.first_negative_union
   constructor

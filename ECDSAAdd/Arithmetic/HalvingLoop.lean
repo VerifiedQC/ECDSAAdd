@@ -72,11 +72,11 @@ theorem restoreInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Wi
 
 /-- 两种轮的门数相同：3n+40 Toffoli、2n+39 次测量。 -/
 theorem halveStep_counts (L : HalvingLayout) (hw : L.Widths) (q i : Nat) :
-    toffoliCount (halveStep L q i) = 3*L.data.length+40 ∧
-    measurementCount (halveStep L q i) = 2*L.data.length+39 ∧
-    toffoliCount (doubleStep L q i) = 3*L.data.length+40 ∧
-    measurementCount (doubleStep L q i) = 2*L.data.length+39 := by
-  have hc := counterActiveXor_counts L.counter L.counterHigh.out L.active i
+    toffoliCount (halveStep L q i) = 3*L.data.length+20 ∧
+    measurementCount (halveStep L q i) = 2*L.data.length+19 ∧
+    toffoliCount (doubleStep L q i) = 3*L.data.length+20 ∧
+    measurementCount (doubleStep L q i) = 2*L.data.length+19 := by
+  have hc := counterActiveXor_counts L.counter L.active i
   have ha := addInPlace_counts L.constant L.data L.chain L.cin hw.constant hw.chain
   have hs := subInPlace_counts L.constant L.data L.chain L.cin hw.constant hw.chain
   have hm := maskedConstant_counts L.flag L.constant q
@@ -92,10 +92,10 @@ theorem halveStep_counts (L : HalvingLayout) (hw : L.Widths) (q i : Nat) :
   omega
 
 theorem halveInPlace_counts (L : HalvingLayout) (hw : L.Widths) (q i n : Nat) :
-    toffoliCount (halveInPlace L q i n) = n*(3*L.data.length+40) ∧
-    measurementCount (halveInPlace L q i n) = n*(2*L.data.length+39) ∧
-    toffoliCount (restoreInPlace L q i n) = n*(3*L.data.length+40) ∧
-    measurementCount (restoreInPlace L q i n) = n*(2*L.data.length+39) := by
+    toffoliCount (halveInPlace L q i n) = n*(3*L.data.length+20) ∧
+    measurementCount (halveInPlace L q i n) = n*(2*L.data.length+19) ∧
+    toffoliCount (restoreInPlace L q i n) = n*(3*L.data.length+20) ∧
+    measurementCount (restoreInPlace L q i n) = n*(2*L.data.length+19) := by
   induction n generalizing i with
   | zero => simp [halveInPlace,restoreInPlace,toffoliCount,measurementCount]
   | succ n ih =>
@@ -105,44 +105,64 @@ theorem halveInPlace_counts (L : HalvingLayout) (hw : L.Widths) (q i n : Nat) :
       hs.1,hs.2.1,hs.2.2.1,hs.2.2.2,hn.1,hn.2.1,hn.2.2.1,hn.2.2.2,Nat.succ_mul]
     simp only [Nat.add_comm, and_self]
 
+/-- 减半门列使用的线路；计数器另一银行 out 不参与活动比较。 -/
+def HalvingLayout.usedWires (L : HalvingLayout) : List Wire :=
+  L.flag :: L.active :: L.cin :: (L.data ++ L.constant ++ L.carry ++
+    (L.counter.cin :: (L.counter.x ++ L.counter.y ++ L.counter.carry)))
+
+theorem HalvingLayout.usedWires_subset (L : HalvingLayout) : L.usedWires ⊆ L.wires := by
+  intro w h
+  simp only [HalvingLayout.usedWires,List.mem_cons,List.mem_append] at h
+  have hc : (L.counter.cin::(L.counter.x++L.counter.y++L.counter.carry)) ⊆ L.counter.wires := by
+    intro w h
+    simp only [List.mem_cons,List.mem_append] at h
+    rcases h with rfl | (h|h) | h
+    · simp [AdderLayout.wires]
+    · exact L.counter.reg_subset.1 h
+    · exact L.counter.reg_subset.2.1 h
+    · exact L.counter.reg_subset.2.2.2 h
+  simp only [HalvingLayout.wires,List.mem_cons,List.mem_append]
+  have hm : w=L.counter.cin ∨ (w∈L.counter.x ∨ w∈L.counter.y) ∨ w∈L.counter.carry →
+      w∈L.counter.wires := fun h => hc (by simpa only [List.mem_cons,List.mem_append] using h)
+  tauto
+
 theorem halveStep_wires (L : HalvingLayout) (hw : L.Widths) (q i : Nat) :
-    wires (halveStep L q i) = L.wires.toFinset ∧
-    wires (doubleStep L q i) = L.wires.toFinset := by
-  have hc := counterActiveXor_wires L.counter L.counterHigh.out L.active i
-    (by rw [L.counter_out]; simp)
+    wires (halveStep L q i) = L.usedWires.toFinset ∧
+    wires (doubleStep L q i) = L.usedWires.toFinset := by
+  have hc := counterActiveXor_wires L.counter L.active i
   have hl : L.carry.length = L.constant.length := by rw [L.carry_length, hw.chain, hw.constant]
   have hp := (compareLt_wires (some L.active) L.data L.constant L.carry L.cin L.flag
     hw.constant.symm hl).2 ((q+1)/2)
   have ha := maskedConst_wires_subset L.flag L.constant L.data L.chain L.cin q hw.constant hw.chain
   have hh := shift_wires L.active L.data
   have hhead : L.data.head! ∈ L.data := List.head!_mem_self (L.data_ne_nil hw)
-  have hsub : (L.flag :: L.cin :: (L.constant ++ L.data ++ L.chain)).toFinset ⊆ L.wires.toFinset := by
-    intro w; simp [HalvingLayout.wires,HalvingLayout.carry]; tauto
+  have hsub : (L.flag :: L.cin :: (L.constant ++ L.data ++ L.chain)).toFinset ⊆ L.usedWires.toFinset := by
+    intro w; simp [HalvingLayout.usedWires,HalvingLayout.carry]; tauto
   have har := ha.1.trans hsub
   have has := ha.2.trans hsub
-  have hshift : (L.active :: L.data).toFinset ⊆ L.wires.toFinset := by
-    intro w; simp [HalvingLayout.wires]; tauto
-  have hsr : wires (shiftRight L.active L.data) ⊆ L.wires.toFinset := by
+  have hshift : (L.active :: L.data).toFinset ⊆ L.usedWires.toFinset := by
+    intro w; simp [HalvingLayout.usedWires]; tauto
+  have hsr : wires (shiftRight L.active L.data) ⊆ L.usedWires.toFinset := by
     rw [hh.1]; split_ifs; exact Finset.empty_subset _; exact hshift
-  have hsl : wires (shiftLeft L.active L.data) ⊆ L.wires.toFinset := by
+  have hsl : wires (shiftLeft L.active L.data) ⊆ L.usedWires.toFinset := by
     rw [hh.2]; split_ifs; exact Finset.empty_subset _; exact hshift
-  have hcsub : (L.active :: L.counter.wires).toFinset ⊆ L.wires.toFinset := by
-    intro w; simp [HalvingLayout.wires]; tauto
+  have hcsub : (L.active :: L.counter.cin :: (L.counter.x ++ L.counter.y ++ L.counter.carry)).toFinset ⊆ L.usedWires.toFinset := by
+    intro w; simp [HalvingLayout.usedWires]; tauto
   have hpsub : (L.active :: L.flag :: L.cin :: (L.data ++ L.constant ++ L.carry)).toFinset ⊆
-      L.wires.toFinset := by intro w; simp [HalvingLayout.wires]; tauto
-  have hsingle : wires [Instr.CCX L.active L.data.head! L.flag] ⊆ L.wires.toFinset := by
+      L.usedWires.toFinset := by intro w; simp [HalvingLayout.usedWires]; tauto
+  have hsingle : wires [Instr.CCX L.active L.data.head! L.flag] ⊆ L.usedWires.toFinset := by
     intro w
     simp only [wires,Instr.wires,Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,
       Finset.notMem_empty,or_false]
-    rintro (rfl|rfl|rfl) <;> simp [HalvingLayout.wires,hhead]
-  have hflip : wires [Instr.CX L.active L.flag] ⊆ L.wires.toFinset := by
+    rintro (rfl|rfl|rfl) <;> simp [HalvingLayout.usedWires,hhead]
+  have hflip : wires [Instr.CX L.active L.flag] ⊆ L.usedWires.toFinset := by
     intro w
     simp only [wires,Instr.wires,Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,
       Finset.notMem_empty,or_false]
-    rintro (rfl|rfl) <;> simp [HalvingLayout.wires]
-  have hcover : L.wires.toFinset ⊆ (L.active :: L.counter.wires).toFinset ∪
+    rintro (rfl|rfl) <;> simp [HalvingLayout.usedWires]
+  have hcover : L.usedWires.toFinset ⊆ (L.active :: L.counter.cin :: (L.counter.x ++ L.counter.y ++ L.counter.carry)).toFinset ∪
       (L.active :: L.flag :: L.cin :: (L.data ++ L.constant ++ L.carry)).toFinset := by
-    intro w; simp only [HalvingLayout.wires,List.mem_toFinset,List.mem_cons,List.mem_append,Finset.mem_union]
+    intro w; simp only [HalvingLayout.usedWires,List.mem_toFinset,List.mem_cons,List.mem_append,Finset.mem_union]
     tauto
   simp only [Option.toList_some,List.singleton_append] at hp
   constructor
@@ -162,8 +182,8 @@ theorem halveStep_wires (L : HalvingLayout) (hw : L.Widths) (q i : Nat) :
       tauto
 
 theorem halveInPlace_wires (L : HalvingLayout) (hw : L.Widths) (q i n : Nat) :
-    wires (halveInPlace L q i n) = (if n=0 then ∅ else L.wires.toFinset) ∧
-    wires (restoreInPlace L q i n) = (if n=0 then ∅ else L.wires.toFinset) := by
+    wires (halveInPlace L q i n) = (if n=0 then ∅ else L.usedWires.toFinset) ∧
+    wires (restoreInPlace L q i n) = (if n=0 then ∅ else L.usedWires.toFinset) := by
   induction n generalizing i with
   | zero => simp [halveInPlace,restoreInPlace,wires]
   | succ n ih =>

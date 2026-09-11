@@ -110,18 +110,9 @@ private theorem record_wires (L : KaliskiRoundLayout) :
   tauto
 
 private theorem activity_wires (L : KaliskiRoundLayout) (i : Nat) :
-    wires (roundActiveXor L i)=(L.compareCin::L.counter.wires).toFinset := by
-  have hh : L.counterHigh.x∈L.comparator.out := by rw [L.comparator_out]; simp
-  rw [roundActiveXor,counterActiveXor_wires L.comparator L.counterHigh.x L.active i hh]
-  ext w
-  have h := L.counter.swapCounter_perm.mem_iff (a:=w)
-  have hc : L.counter.swapCounter.cin=L.active := L.counter.swapCounter_fields.2.2.2.2.1
-  simp only [AdderLayout.wires,List.mem_cons,hc] at h
-  change (w=L.active ∨ w∈addWires L.counter.swapCounter.bits) ↔ (w=L.active ∨ w∈addWires L.counter.bits) at h
-  simp only [List.mem_toFinset,List.mem_cons,KaliskiRoundLayout.comparator,AdderLayout.wires]
-  change (w=L.active ∨ w=L.compareCin ∨ w∈addWires L.counter.swapCounter.bits) ↔
-    (w=L.compareCin ∨ w=L.active ∨ w∈addWires L.counter.bits)
-  tauto
+    wires (roundActiveXor L i)=(L.active::L.compareCin::
+      (L.comparator.x++L.comparator.y++L.comparator.carry)).toFinset := by
+  exact counterActiveXor_wires L.comparator L.active i
 
 set_option maxHeartbeats 2000000 in
 /-- 静态线路并集恰好等于单轮布局，包括共享工作线而非“最大同时存活”估计。 -/
@@ -149,6 +140,18 @@ theorem kaliskiRound_wires (L : KaliskiRoundLayout) (hw : L.counter.width=10)
     have hD := (congrArg (fun s => w∈s) hdata).to_iff
     have hZ := (congrArg (fun s => w∈s) hzero).to_iff
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at hD hZ
+    have hcomp : ∀ w, w∈L.comparator.x++L.comparator.y++L.comparator.carry → w∈L.counter.wires := by
+      intro w hm
+      have hf := L.counter.swapCounter_perm.mem_iff (a:=w)
+      have ht : w∈L.counter.swapCounter.wires := by
+        simp only [List.mem_append] at hm
+        rcases hm with (h|h)|h
+        · exact L.counter.swapCounter.reg_subset.1 h
+        · exact L.counter.swapCounter.reg_subset.2.1 h
+        · exact L.counter.swapCounter.reg_subset.2.2.2 h
+      exact hf.mp ht
+    have hcm := hcomp w
+    simp only [List.mem_append] at hcm
     have hac : w=L.active → w∈L.counter.wires := fun he => he ▸ List.mem_cons_self
     simp only [bodyWires,KaliskiRoundLayout.wires,Finset.mem_union,List.mem_toFinset,List.mem_cons,
       List.mem_append,List.mem_nil_iff,hD,hZ]

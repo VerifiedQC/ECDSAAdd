@@ -31,10 +31,6 @@ def work (L : HalvingLayout) : List Wire :=
   L.active :: L.flag :: L.cin :: (L.constant ++ L.carry ++ L.counter.y ++ L.counter.out ++
     L.counter.carry ++ [L.compareCin])
 
-theorem counter_out (L : HalvingLayout) :
-    L.counter.out = L.counterLow.map AddBit.out ++ [L.counterHigh.out] := by
-  simp [counter, AdderLayout.out]
-
 theorem carry_length (L : HalvingLayout) : L.carry.length = L.chain.length + 1 := by
   simp [carry]
 
@@ -59,7 +55,7 @@ theorem HalvingCounter.congr (L : AdderLayout) (K : Nat) (s t : BasisState)
 受控右移；flag ^= active；flag ^= active ∧ [data < (q+1)/2]；active ^= [i<k]。 -/
 def halveStep (L : HalvingLayout) (q i : Nat) : Program :=
   -- 装入本轮使能 active = [i<k]，计数输入 k 保持。
-  counterActiveXor L.counter L.counterHigh.out L.active i ++
+  counterActiveXor L.counter L.active i ++
   -- 记录输入奇偶；奇数先加 q，使待右移的数为偶数。
   [.CCX L.active L.data.head! L.flag] ++
   maskedAddConst L.flag L.constant L.data L.chain L.cin q ++
@@ -68,12 +64,12 @@ def halveStep (L : HalvingLayout) (q i : Nat) : Program :=
   [.CX L.active L.flag] ++
   compareLtConst (some L.active) L.data L.constant L.carry L.cin L.flag ((q+1)/2) ++
   -- k 未变，再算同一个 [i<k]，将 active 清零。
-  counterActiveXor L.counter L.counterHigh.out L.active i
+  counterActiveXor L.counter L.active i
 
 /-- 一轮受控原地模加倍，以独立前向门列恢复减半前的数据。 -/
 def doubleStep (L : HalvingLayout) (q i : Nat) : Program :=
   -- 装入本轮使能；比较加 CX 得到 flag = active ∧ [data ≥ (q+1)/2]。
-  counterActiveXor L.counter L.counterHigh.out L.active i ++
+  counterActiveXor L.counter L.active i ++
   compareLtConst (some L.active) L.data L.constant L.carry L.cin L.flag ((q+1)/2) ++
   [.CX L.active L.flag] ++
   -- 左移加倍；flag 记录是否需要减 q，使结果回到 [0,q)。
@@ -82,7 +78,7 @@ def doubleStep (L : HalvingLayout) (q i : Nat) : Program :=
   -- q 为奇数，约减后结果的奇偶恰好等于约减标志，故可清 flag。
   [.CCX L.active L.data.head! L.flag] ++
   -- 同一计数比较清 active；本轮借用工作线全部恢复为零。
-  counterActiveXor L.counter L.counterHigh.out L.active i
+  counterActiveXor L.counter L.active i
 
 /-- 轮内各步之间的状态：data 值、flag、active、计数输入 k；其余工作线为零。 -/
 structure HalvingValues (L : HalvingLayout) (K X : Nat) (F A : Bool) (st : BasisState) : Prop where
@@ -183,17 +179,19 @@ end HalvingLayout
 /-- 第 1、7 步：比较 i<k，翻转 active；计数与比较工作区逐线恢复。 -/
 theorem step_active (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (i K X : Nat) (F A : Bool) (hi : i < 512) (hk : K ≤ 512) :
-    Triple (HalvingValues L K X F A) (counterActiveXor L.counter L.counterHigh.out L.active i)
+    Triple (HalvingValues L K X F A) (counterActiveXor L.counter L.active i)
       (HalvingValues L K X F (A ^^ decide (i < K))) := by
   intro s m h
   have hn := L.counter_nodup hnd
-  obtain ⟨hp, hv⟩ := counterActiveXor_spec L.counter (L.counterLow.map AddBit.out) L.counterHigh.out
-    L.active hn L.counter_out hw.counter K i A hk hi s m
-    ⟨⟨⟨⟨⟨h.active, h.counter.1⟩, h.counter.2.1⟩, h.counter.2.2.1⟩, h.counter.2.2.2.1⟩, h.counter.2.2.2.2⟩
-  have he := counterActiveXor_frame L.counter (L.counterLow.map AddBit.out) L.counterHigh.out L.active
-    hn L.counter_out hw.counter i K hi hk A s m h.active h.counter.1 h.counter.2.1 h.counter.2.2.1
-    h.counter.2.2.2.1 h.counter.2.2.2.2
-  refine ⟨hp, ⟨?_, ?_, hv.1.1.1.1.1, ?_, ?_, ?_, ?_, ⟨hv.1.1.1.1.2, hv.1.1.1.2, hv.1.1.2, hv.1.2, hv.2⟩⟩⟩
+  obtain ⟨hp, hv⟩ := counterActiveXor_spec L.counter L.active hn hw.counter K i A hk hi s m
+    ⟨⟨⟨⟨h.active, h.counter.1⟩, h.counter.2.1⟩, h.counter.2.2.1⟩, h.counter.2.2.2.2⟩
+  have he := counterActiveXor_frame L.counter L.active
+    hn hw.counter i K hi hk A s m h.active h.counter.1 h.counter.2.1 h.counter.2.2.1
+    h.counter.2.2.2.2
+  have hout : regValue L.counter.out (run (counterActiveXor L.counter L.active i) m s).basis=0 := by
+    apply Eq.trans (regValue_congr _ _ _ (fun w hw' => he w ?_)) h.counter.2.2.2.1
+    exact fun e => (List.nodup_cons.mp hn).1 (e ▸ L.counter.reg_subset.2.2.1 hw')
+  refine ⟨hp, ⟨?_, ?_, hv.1.1.1.1, ?_, ?_, ?_, ?_, ⟨hv.1.1.1.2, hv.1.1.2, hv.1.2, hout, hv.2⟩⟩⟩
   · exact (regValue_congr _ _ _ (fun w hw' => he w (L.not_active hnd w (by simp [hw'])))).trans h.data
   · exact (he _ (L.not_active hnd _ (by simp))).trans h.flag
   · exact (he _ (L.not_active hnd _ (by simp))).trans h.cin

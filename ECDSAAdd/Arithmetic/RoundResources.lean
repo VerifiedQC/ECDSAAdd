@@ -72,17 +72,17 @@ private theorem record_counts (L : KaliskiRoundLayout) :
 
 /-- 正逆轮使用相同次数的 CCX 与测量；每轮复用数据宽度 w 的算术工作区。 -/
 theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw : L.counter.width=10) (i : Nat) :
-    toffoliCount (kaliskiRound L i)=18*L.data.width+43 ∧
-    measurementCount (kaliskiRound L i)=6*L.data.width+40 ∧
-    toffoliCount (kaliskiUnround L i)=18*L.data.width+43 ∧
-    measurementCount (kaliskiUnround L i)=6*L.data.width+40 := by
+    toffoliCount (kaliskiRound L i)=18*L.data.width+33 ∧
+    measurementCount (kaliskiRound L i)=6*L.data.width+30 ∧
+    toffoliCount (kaliskiUnround L i)=18*L.data.width+33 ∧
+    measurementCount (kaliskiUnround L i)=6*L.data.width+30 := by
   have hb := body_counts L.data L.active L.swap L.subtract (by simp [KaliskiRoundLayout.data,RoundDataLayout.width])
   have hr := record_counts L
   have hz := zeroControlled_counts L.active L.done (L.data.zeroBits .v)
   have hc := counter_resources L.counter (L.counter_nodup hnd) hw
   have hci := counter_resources L.counter.swapCounter (L.counter.swapCounter_perm.nodup_iff.mpr (L.counter_nodup hnd))
     (L.counter.swapCounter_fields.2.2.2.2.2.trans hw)
-  have ha := counterActiveXor_counts L.comparator L.counterHigh.x L.active i
+  have ha := counterActiveXor_counts L.comparator L.active i
   rw [L.comparator_fields.2.2.2.2.2,hw] at ha
   have hl : toffoliCount (loadActive L)=0 ∧ measurementCount (loadActive L)=0 := ⟨rfl,rfl⟩
   simp only [kaliskiRound,kaliskiUnround,toffoliCount_append,measurementCount_append,hl.1,hl.2,hr.1,hr.2,

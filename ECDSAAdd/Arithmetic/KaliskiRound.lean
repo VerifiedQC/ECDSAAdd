@@ -87,11 +87,6 @@ theorem comparator_fields (L : KaliskiRoundLayout) :
   have h := L.counter.swapCounter_fields
   exact ⟨h.1,h.2.1,h.2.2.1,h.2.2.2.1,rfl,h.2.2.2.2.2⟩
 
-theorem comparator_out (L : KaliskiRoundLayout) :
-    L.comparator.out = L.counterLow.map AddBit.x ++ [L.counterHigh.x] := by
-  rw [L.comparator_fields.2.1]
-  simp [k,counter,AdderLayout.x]
-
 theorem data_reg_length (L : KaliskiRoundLayout) (f : RoundField) :
     (L.data.reg f).length=L.low.length+1 := by
   simp [RoundDataLayout.reg,data]
@@ -115,7 +110,7 @@ def recordRound (L : KaliskiRoundLayout) : Program :=
 def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]
 
 def roundActiveXor (L : KaliskiRoundLayout) (i : Nat) : Program :=
-  counterActiveXor L.comparator L.counterHigh.x L.active i
+  counterActiveXor L.comparator L.active i
 
 /-- 终止轮先更新并计数，再改变 done；最后用 i<新 k 清理活动工作位。 -/
 def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program :=

@@ -145,13 +145,14 @@ theorem inverseHalving_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   have hwire := halveInPlace_wires L.halving hwidth q 0 512
   simp only [show ¬(512:Nat)=0 by omega,if_false] at hwire
   have lift (circ : Program) (V W : Nat)
-      (hc : wires circ=L.halving.wires.toFinset)
+      (hc : wires circ=L.halving.usedWires.toFinset)
       (hv : Triple (HalvingValues L.halving z.k V false false) circ (HalvingValues L.halving z.k W false false)) :
       Triple (InverseMiddle L z cs V) circ (InverseMiddle L z cs W) := by
     intro s m h
     obtain ⟨hp,hv⟩ := hv s m (InversePhase.halving L z.k V s.basis h.2)
     have he (w : Wire) (hw : w∉L.halving.wires) : (run circ m s).basis w=s.basis w :=
-      run_preserves_outside circ m s w (by simpa [hc] using hw)
+      run_preserves_outside circ m s w (by
+        rw [hc]; exact fun h => hw (L.halving.usedWires_subset (List.mem_toFinset.mp h)))
     refine ⟨hp,InverseRest.congr L z cs s.basis _ h.1 ?_,
       InversePhase.of_halving L hnd z.k V W _ _ h.2 hv he⟩
     intro w hw

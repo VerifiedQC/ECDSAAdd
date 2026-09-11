@@ -25,3 +25,5 @@ M3 第三部分的四线控制扩展、最终输出选择、受控点交换、�
 基础层的 `majority`、`addInPlace`/`subInPlace`、受控常数/寄存器加减和 `compareChain`/`compareLt`/`compareLtConst` 为本项目编写，按 [REWORK_PLAN](REWORK_PLAN.md) §1.1 与 §5.2 的构造（Gidney 2018 "Halving the cost of quantum addition" 的进位链、和位写回与比较器思路），门列复用现有 `fullAdder` 的进位段与 `eraseCarry`。擦除顺序按独立复审意见改为"先擦进位再写和位"，最高位不算进位。`Math/ModularHalving.lean` 的三条奇偶/加倍引理为本项目编写。`RippleAdder.lean` 的 `sum_value_step` 由私有改为公开以供复用，陈述未变。没有复制外部程序或证明源码，没有新增测试、数值对照、真值表、公理或证明资源限制放宽。
 
 改 1：`HalveInPlace.lean` 与重写的 `HalvingLoop.lean` 按已复审设计实现原地减半、显式加倍恢复与固定轮数正逆证明。奇数加模数、移位、从输出范围恢复奇偶的构造依据 Roetteler 等（2017）Fig. 4 的模减半/加倍思路，基础加法及比较器复用上节的 Gidney 原语。证明和布局复用代码均为本项目编写，未复制外部源码。删除旧 out-of-place Halve/两字交替循环，保留 Double（模乘仍调用）。历史基线 fieldInverse 为 14,303,280/6,936,624/6,468，本次变为 5,626,928/2,198,576/6,211；第二阶段仍正反两遍，公开 XOR 接口不变。未新增测试、公理、native_decide 或放宽证明资源限制。
+
+改 4 首批：计数活动比较直接组合本项目已证明的 Gidney 比较器与 X 门。删除旧 Borrow 包装，保留其唯一有效数学依赖为 RecordRound 私有引理。新接口、frame、精确支持及资源适配均为本项目证明，未复制外部源码；完整求逆从5,626,928/2,198,576降至5,596,208/2,167,856，内部线路仍为5,955。记录段门列未变。
