@@ -486,3 +486,74 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 正确性与资源定理指向同一个 `controlledPointAdd`。新增门通过 `selector_nodup`、`selected_nodup`、`swap_nodup` 从全局互异条件证明合法；算术继续复用先前的接口合法性和独立乘数副本。
 
 第三部分完整验证通过：`lake --wfail build` 完成 2,067 项；脚本选定的 118 个公开定理全部通过传递公理检查，白名单仅为 `propext`、`Classical.choice`、`Quot.sound`。新增检查覆盖选择位恢复、受控输出、任意目标 XOR 引理、点交换、最终公开规格、实际支持与两种资源分支。未添加测试、数值对照或证明资源限制放宽。
+
+## 基础层：原地加减法器、受控加减与 Gidney 比较器
+
+重做计划（[REWORK_PLAN](REWORK_PLAN.md) §1.1–§1.3、§5）的共用原语。接口直接用线路列表，宽度相等作为长度前提，互异条件是一个 `Nodup`；每条程序给 Triple、输出以外逐线保持（`_correct`）和同程序资源。本节的原语尚无调用方，改 1（求逆第二阶段）与改 2（模乘）在其上组合。
+
+[InPlaceAdder](../ECDSAAdd/Arithmetic/InPlaceAdder.lean) 的 `majority` 是现有 `fullAdder` 的前六门：进位异或写入 carry，三个输入恢复，不写和位。`addInPlace` 每位先算进位、递归处理高位，再用现有 `eraseCarry` 擦除本位进位——此时 x、y、cin 仍是原值，`eraseCarry_spec` 的前提逐字成立——最后用两个 CX 把和位写回 y；最高位只写和位、不算进位，进位链比位宽少一根。
+
+```lean
+theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
+    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
+    (hc : carry.length + 1 = y.length) (X Y : Nat) (C : Bool) :
+  {{ x = X, y = Y, cin = C, carry = 0 }} addInPlace x y carry cin
+  {{ x = X, y = ((X + Y + C.toNat) % 2^y.length), cin = C, carry = 0 }}
+
+theorem subInPlace_spec (x y carry : List Wire) (cin : Wire)
+    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
+    (hc : carry.length + 1 = y.length) (X Y : Nat) :
+  {{ x = X, y = Y, cin = false, carry = 0 }} subInPlace x y carry cin
+  {{ x = X, y = ((Y + 2^y.length - X) % 2^y.length), cin = false, carry = 0 }}
+```
+
+`subInPlace` 是"按位取反 y、加 x、再取反"，恒等式 ¬(¬Y + X) = Y − X (mod 2^n)。受控常数加减 `maskedAddConst` / `maskedSubConst`：零寄存器 T 受 c 控制装入 K（`maskedConstant`），原地加/减到 y，再同样受控清 T；受控寄存器加减 `maskedAddInPlace` / `maskedSubInPlace`：t ← c·src（受控复制），原地加/减到 y，再清 t。四条规格的形状相同：
+
+```lean
+theorem maskedAddConst_spec (c cin : Wire) (T y carry : List Wire)
+    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
+    (hc : carry.length + 1 = y.length) (K : Nat) (hK : K < 2^T.length) (C : Bool) (Y : Nat) :
+  {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedAddConst c T y carry cin K
+  {{ c = C, T = 0, y = ((Y + (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }}
+
+theorem maskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
+    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
+    (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
+  {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedAddInPlace c src t y carry cin
+  {{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }}
+```
+
+减法版把 `Y + …` 换成 `Y + 2^y.length − …`。控制为假时加数为零、y 不变，T/t 装入又清除的都是零。
+
+[Compare](../ECDSAAdd/Arithmetic/Compare.lean) 是 Gidney 2018 的比较器：`compareChain` 每位用 `majority` 算进位、递归到最高位，递归到底时 cin 就是最高进位，用 `flipBelow` 读出（无控制：`X target; CX top target`；受控：`CX c target; CCX c top target`），再按相反顺序用现有 `eraseCarry` 擦除进位链；三个输入寄存器全程不变。`compareLt` 先把 y 按位取反、cin 置 1，链算的是 x + ¬y + 1，最高进位 = [x ≥ y]，所以 target 得到 [x < y]；`compareLtConst` 把常量装进零寄存器 T 再比较、再卸载。
+
+```lean
+theorem compareLt_spec (x y carry : List Wire) (cin target : Wire)
+    (hnd : (target :: cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
+    (hc : carry.length = y.length) (X Y : Nat) (T : Bool) :
+  {{ x = X, y = Y, carry = 0, cin = false, target = T }} compareLt none x y carry cin target
+  {{ x = X, y = Y, carry = 0, cin = false, target = (T ^^ decide (X < Y)) }}
+
+theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
+    (hnd : (target :: cin :: (x ++ T ++ carry)).Nodup) (hx : x.length = T.length)
+    (hc : carry.length = T.length) (K : Nat) (hK : K < 2^T.length) (X : Nat) (B : Bool) :
+  {{ x = X, T = 0, carry = 0, cin = false, target = B }} compareLtConst none x T carry cin target K
+  {{ x = X, T = 0, carry = 0, cin = false, target = (B ^^ decide (X < K)) }}
+```
+
+受控版 `maskedCompareLt_spec` / `maskedCompareLtConst_spec` 多一个 `c = C` 断言，结果为 `T ^^ (C && decide (X < Y))`。比较器需要 n 根进位线（最高进位是结果），加法器只需 n−1 根。
+
+[ModularHalving](../ECDSAAdd/Math/ModularHalving.lean) 新增三条纯数学引理，供改 1 的减半/加倍轮清标志：`halveMod_eq`（减半门列的值：奇数先加 p 再右移）、`halve_parity`（p 奇、r<p 时 r 奇 ⇔ (p+1)/2 ≤ halveMod p r）、`double_flag`（(p+1)/2 ≤ r ⇔ p ≤ 2r；此时 2r mod p = 2r − p 且为奇数，否则 = 2r 为偶数）。
+
+| 同一具体程序，n = y.length | Toffoli | 测量 | 静态线路数（布局互异） |
+| --- | ---: | ---: | ---: |
+| `majority` | 1 | 0 | 4 |
+| `addInPlace` / `subInPlace` | n−1 | n−1 | 3n |
+| `maskedAddConst` / `maskedSubConst` | n−1 | n−1 | 3n + 1（含控制位；T 计入） |
+| `maskedAddInPlace` / `maskedSubInPlace` | 3n−1 | n−1 | 4n + 1 |
+| `compareLt` 无控制 / 受控 | n / n+1 | n | 3n+2 / 3n+3 |
+| `compareLtConst` 无控制 / 受控 | n / n+1 | n | 3n+2 / 3n+3 |
+
+`addInPlace_resources` 与 `compareLt_resources` 给出加减法器和比较器的三项资源；受控变体的计数由其组成部分的计数直接相加（受控复制每次 n 个 CCX），没有单独的资源定理。与现有 `rippleAdder`（n / n / 4n+1）相比，原地加法省去输出寄存器和最高位进位；与 `borrowXor`（2n / 2n）相比，比较器省一半。线路数是静态支持集的基数，不是最大同时存活数；这些是原语，不声称任何上层成本。
+
+基础层验证通过：`lake --wfail build` 完成 2,069 项；脚本选定的 133 个公开定理全部通过传递公理检查，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。新增 15 个入口覆盖加减法器规格与资源、四条受控加减规格、四条比较器规格与资源、三条减半/加倍引理。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。

@@ -59,3 +59,32 @@ theorem halveFixed_correct (p k rounds r : Nat) (hp : p%2 = 1) (hr : r<p) (hk : 
   exact halve_mod_iterate p k r hp hr
 
 end ECDSAAdd
+
+namespace ECDSAAdd
+
+/-- 减半门列的值：奇数先加 p 再右移。 -/
+theorem halveMod_eq (p r : Nat) : halveMod p r = (r + (if r % 2 = 1 then p else 0)) / 2 := by
+  unfold halveMod
+  split_ifs <;> omega
+
+/-- 减半后由结果大小恢复原奇偶：r 奇 ⇔ 结果 ≥ (p+1)/2。 -/
+theorem halve_parity (p r : Nat) (hp : p % 2 = 1) (hr : r < p) :
+    r % 2 = 1 ↔ (p+1)/2 ≤ halveMod p r := by
+  unfold halveMod
+  split_ifs <;> omega
+
+/-- 加倍门列的值与标志：r ≥ (p+1)/2 ⇔ 2r ≥ p；此时 2r mod p = 2r − p 且为奇数，否则 = 2r 为偶数。 -/
+theorem double_flag (p r : Nat) (hp : p % 2 = 1) (hr : r < p) :
+    ((p+1)/2 ≤ r ↔ p ≤ 2*r) ∧
+    (2*r) % p = 2*r - (if (p+1)/2 ≤ r then p else 0) ∧
+    (((2*r) % p) % 2 = 1 ↔ p ≤ 2*r) := by
+  have h1 : (p+1)/2 ≤ r ↔ p ≤ 2*r := by omega
+  have h2 : (2*r) % p = 2*r - (if (p+1)/2 ≤ r then p else 0) := by
+    split_ifs with h
+    · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
+    · rw [Nat.mod_eq_of_lt (by omega), Nat.sub_zero]
+  refine ⟨h1, h2, ?_⟩
+  rw [h2]
+  split_ifs <;> omega
+
+end ECDSAAdd

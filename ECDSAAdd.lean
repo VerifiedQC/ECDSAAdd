@@ -6,6 +6,7 @@ import ECDSAAdd.Arithmetic.FieldMultiply
 import ECDSAAdd.Math.KaliskiInverse
 import ECDSAAdd.Arithmetic.Shift
 import ECDSAAdd.Arithmetic.Counter
+import ECDSAAdd.Arithmetic.Compare
 import ECDSAAdd.Arithmetic.RoundSpec
 import ECDSAAdd.Arithmetic.InverseLoopResources
 import ECDSAAdd.Arithmetic.InverseResources
