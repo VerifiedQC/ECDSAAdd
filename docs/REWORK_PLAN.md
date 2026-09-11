@@ -777,13 +777,13 @@ compareLt (some b) v u carry cin sw ++
 - 验收逐项检查功能、同一门列、全测量记录相位、全部工作位清理、实际支持集/资源、可读性、无过度抽象、README同步；完整 scripts/verify.sh 新增记录段 Triple、frame 与三项资源入口，共145项公开入口公理白名单检查；无测试、新公理或证明资源放宽。设计复审通过后完成实现。
 
 
-## 15. 改 5 实施设计：测量清零检测与原地受控加减（待复审、未实现）
+## 15. 改 5 实施设计：测量清零检测与原地受控加减（设计修订、未实现）
 
-基线 main 38c8fbba，已证受控点加56,083,253 Toffoli。此处所有新成本为具体门列推导的目标，尚非Lean结果；README Current status保持不变。本次只改变Kaliski单轮的零检测和两次受控算术。原记录段、移位、数据交换、计数、第二阶段减半均保持。
+基线 main 38c8fbba，已证受控点加56,083,253 Toffoli。此处所有新成本为具体门列推导的目标，尚非Lean结果；README Current status保持不变。本次原地替换零检测门列，并改变Kaliski单轮的两次受控算术；等常量检测及点加标志同步传播。原记录段、移位、数据交换、计数、第二阶段减半均保持。
 
 ### 15.1 零检测：计算AND链，读结果，再测量清链
 
-新增 `zeroControlledMbu`，继续使用 `ZeroBit` 接线。原 `zeroControlled` 仍服务点加标志等现有调用方；仅Kaliski正逆轮改用新入口，避免扩大本次门列变更范围。
+原地替换 `zeroControlled`，保持名称、公开规格和 `ZeroBit` 接线，不保留重复公开入口。所有调用方共用测量清链实现；`equalConstant` 的常数装卸不变，每次n位检测从2n/0变为n/n。
 
 ```lean
 -- q = c AND NOT input
@@ -792,10 +792,10 @@ negAnd c input work := [X input, CCX c input work, X input]
 negAndErase c input work :=
   [X input, measureX work [] [CZ c input], X input]
 
-zeroControlledMbu c target [] := [CX c target]
-zeroControlledMbu c target (b::bs) :=
+zeroControlled c target [] := [CX c target]
+zeroControlled c target (b::bs) :=
   negAnd c b.input b.work ++
-  zeroControlledMbu b.work target bs ++
+  zeroControlled b.work target bs ++
   negAndErase c b.input b.work
 ```
 
@@ -804,7 +804,7 @@ zeroControlledMbu c target (b::bs) :=
 公开契约（inputs/work为bs逐项的输入/工作线列表）：
 
 ```text
-{{ c=C, target=T, inputs=X, work=0 }} zeroControlledMbu c target bs
+{{ c=C, target=T, inputs=X, work=0 }} zeroControlled c target bs
 {{ c=C, target=T XOR (C AND [X=0]), inputs=X, work=0 }}
 ```
 
@@ -875,9 +875,11 @@ src与控制在中间原地算术完成后仍保持，因而最后的复制能�
 | inverseLoop | 4,541,488 | 1,639,472 | 5,698 |
 | fieldInverse | 4,541,488 | 1,639,472 | 5,954 |
 | pointCandidateCompute/Clear各 | 13,227,848 | 7,961,672 | 原组合支持保持 |
-| pointAddOut | 26,458,260 | 15,923,344 | 74,020 |
-| controlledPointAddOut | 26,458,266 | 15,923,344 | 74,024 |
-| controlledPointAdd | 52,917,045 | 31,846,688 | 74,024 |
+| pointAddOut | 26,457,236 | 15,924,368 | 74,020 |
+| controlledPointAddOut | 26,457,242 | 15,924,368 | 74,024 |
+| controlledPointAdd | 52,914,997 | 31,848,736 | 74,024 |
+
+点加标志的compute/clear各调用两次256位equalConstant，各从1026/0变为514/512；pointAddOut合计另省1024 Toffoli、增加1024测量，controlledPointAdd再乘二。pointCandidateCompute/Clear各自的求逆收益不变。safeDivisor的门列只有X、CX及受控复制，没有零检测调用，其256/0成本保持；标志正确性和安全除数的组合证明须适配新的测量记录分段，不能继续假定等常量检测无测量。
 
 通用inverseLoop目标公式为1024(17w+51)+60w−12 Toffoli、1024(6w+47)+48w测量，线数18w+1072（同宽/固定512轮条件不变）。这不是“与改2/3叠加后的15M”；其它调用结构保持当前实现。
 
@@ -887,9 +889,9 @@ poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对�
 
 ### 15.4 文件归属、证明交付与边界
 
-- ZeroControlMbu新文件：复用ZeroBit，局部负AND擦除引理、递归correct、寄存器Triple、frame、计数和精确支持。ZeroControl旧入口保持其余调用方行为，不全局替换。
+- ZeroControl原地替换门列：局部负AND擦除引理、递归correct、现有寄存器Triple/frame、计数和精确支持。EqualConstant与PointFlagProof适配任意测量记录及顺序分段；PointFlagResources同步n/n成本。SafeDivisor门列和成本不变，检查上层安全除数组合证明。
 - RoundFrame/RoundBody：接入现有原地受控算术、必要的子布局/Nodup/帧证明；保持正逆体数学更新。InPlaceAdder只补确有组合用途的资源/精确支持引理，不改已有原语门列。
-- KaliskiRound与相关Controls/Resources/Wires/Loop：只替换零检测调用，传播算术资源和新usedWires；RecordRound门列不改。可同步加入审阅建议的carry访问器，作为直接字段视图，不另建布局抽象。
+- KaliskiRound与相关Controls/Resources/Wires/Loop：保留零检测调用名称，传播新测量分段、算术资源和新usedWires；RecordRound门列不改。可同步加入审阅建议的carry访问器，作为直接字段视图，不另建布局抽象。
 - InverseLoopSupport/Resources、InverseResources/Ports、PointCandidateSupport及点加资源：传播实际支持、公式与精确数；不改求逆/点加数学接口，不重排池编号。
 - 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖尚未实现的Horner或模加核。必要新公开入口加入verify.sh；其余沿用传递公理检查。
 - 实现PR同步README、PROOF_STATUS（实际公理输出）、PROVENANCE与本计划；当前文档PR只同步设计目标。完整scripts/verify.sh、独立八项复审和最终head hosted CI按既有规则执行；无测试、新公理、native_decide或证明资源放宽。设计复审通过后再实施。
