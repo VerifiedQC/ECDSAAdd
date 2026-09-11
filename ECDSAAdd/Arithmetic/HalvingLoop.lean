@@ -19,7 +19,7 @@ def halvingValue (q K i : Nat) : Nat → Nat → Nat
 
 theorem halveInPlace_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q K i n X : Nat) (hq : q % 2 = 1) (hX : X < q)
-    (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) (hn : i+n ≤ 512) :
+    (hfit : 2*q ≤ 2^L.data.length) (hn : i+n ≤ 512) :
     Triple (HalvingValues L K X false false) (halveInPlace L q i n)
       (HalvingValues L K (halvingValue q K i n X) false false) ∧
     Triple (HalvingValues L K (halvingValue q K i n X) false false) (restoreInPlace L q i n)
@@ -30,8 +30,8 @@ theorem halveInPlace_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Wi
     let Y := if i<K then halveMod q X else X
     have hy : Y < q := by dsimp [Y]; split_ifs; exact halve_mod_bound q X hq hX; exact hX
     obtain ⟨hf,hb⟩ := ih (i+1) Y hy (by omega)
-    have hs := halveStep_values L hnd hw q i K X hq hX hfit (by omega) hK
-    have hr := doubleStep_values L hnd hw q i K Y hq hy hfit (by omega) hK
+    have hs := halveStep_values L hnd hw q i K X hq hX hfit (by omega)
+    have hr := doubleStep_values L hnd hw q i K Y hq hy hfit (by omega)
     have hv : (if i<K then (2*Y)%q else Y) = X := by
       dsimp [Y]; split_ifs <;> simp_all [double_halve_mod q X hq hX]
     rw [hv] at hr
@@ -54,7 +54,7 @@ theorem halveInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widt
     (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) :
     {{ L.data=X, L.counter.x=K, L.work=0 }} halveInPlace L q 0 512
     {{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }} := by
-  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit hK (by omega)).1
+  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit (by omega)).1
   rw [halvingValue_eq,Nat.sub_zero,min_eq_right hK] at h
   exact Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h) h
     (fun s h => (HalvingValues.iff L K _ s).mp h)
@@ -65,7 +65,7 @@ theorem restoreInPlace_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Wi
     (hfit : 2*q ≤ 2^L.data.length) (hK : K ≤ 512) :
     {{ L.data=(halveMod q)^[K] X, L.counter.x=K, L.work=0 }} restoreInPlace L q 0 512
     {{ L.data=X, L.counter.x=K, L.work=0 }} := by
-  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit hK (by omega)).2
+  have h := (halveInPlace_values L hnd hw q K 0 512 X hq hX hfit (by omega)).2
   rw [halvingValue_eq,Nat.sub_zero,min_eq_right hK] at h
   exact Triple.conseq (fun s h => (HalvingValues.iff L K _ s).mpr h) h
     (fun s h => (HalvingValues.iff L K X s).mp h)

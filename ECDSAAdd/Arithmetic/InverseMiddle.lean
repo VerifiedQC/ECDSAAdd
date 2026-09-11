@@ -129,7 +129,7 @@ theorem InversePhase.of_halving (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 theorem inverseHalving_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (ha : L.a.length=L.arithmetic.width+1) (hw : L.first.counter.width=10)
     (q X : Nat) (z : KState) (cs : List (Bool×Bool))
-    (hq : q<2^L.arithmetic.width) (ho : q%2=1) (hx : X<q) (hk : z.k≤512) :
+    (hq : q<2^L.arithmetic.width) (ho : q%2=1) (hx : X<q) :
     Triple (InverseMiddle L z cs X) (halveInPlace L.halving q 0 512)
       (InverseMiddle L z cs (halveFixed q z.k 512 X)) ∧
     Triple (InverseMiddle L z cs (halveFixed q z.k 512 X)) (restoreInPlace L.halving q 0 512)
@@ -138,7 +138,7 @@ theorem inverseHalving_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     change 2*q ≤ 2^L.a.length
     rw [ha,pow_succ]; omega
   have hwidth := L.halving_widths ha hw
-  have hh := halveInPlace_values L.halving (L.halving_nodup hnd) hwidth q z.k 0 512 X ho hx hfit hk (by omega)
+  have hh := halveInPlace_values L.halving (L.halving_nodup hnd) hwidth q z.k 0 512 X ho hx hfit (by omega)
   have hval : halvingValue q z.k 0 512 X = halveFixed q z.k 512 X := by
     rw [halvingValue_eq,halveFixed_eq,Nat.sub_zero]
   rw [hval] at hh

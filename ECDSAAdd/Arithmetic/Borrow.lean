@@ -11,7 +11,7 @@ def counterActiveXor (L : AdderLayout) (target : Wire) (i : Nat) : Program :=
 
 theorem counterActiveXor_spec (L : AdderLayout) (target : Wire)
     (hnd : (target::L.wires).Nodup) (hw : L.width=10)
-    (K i : Nat) (T : Bool) (_hk : K≤512) (hi : i<512) :
+    (K i : Nat) (T : Bool) (hi : i<512) :
     {{ target=T, L.x=K, L.y=0, L.cin=false, L.carry=0 }} counterActiveXor L target i
     {{ target=(T ^^ decide (i < K)), L.x=K, L.y=0, L.cin=false, L.carry=0 }} := by
   have hs : (target::L.cin::(L.x++L.y++L.carry)).Nodup := by

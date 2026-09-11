@@ -221,9 +221,9 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 | --- | ---: | ---: | ---: |
 | `kaliskiRound L i` | 18w+33 | 6w+30 | 8w+48 |
 | `kaliskiUnround L i` | 18w+33 | 6w+30 | 8w+48 |
-| 两者各自在 w=257 时 | 4669 | 1582 | 2104 |
+| 两者各自在 w=257 时 | 4659 | 1572 | 2104 |
 
-[RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 2w+5 / 2w，算术体为 14w−2 / 4w，计数移动为 20 / 20，零检测为 2w / 0，活动比较为 20 / 20。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和四份工作寄存器共 8w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
+[RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 2w+5 / 2w，算术体为 14w−2 / 4w，计数移动为 20 / 20，零检测为 2w / 0，活动比较为 10 / 10。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和四份工作寄存器共 8w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
 
 实现中的 RoundDataLayout 与字段值表用于同一组工作线的局部组合；RoundAuxValues 专门保留计数与控制位，公开 API 仍直接写寄存器断言。辅助模块分别处理比较、零检测、受控加减、分支记录和算术体，均用于上述两条程序；没有新增通用编译器、测试框架或全环境审计。I4 固定循环/第二阶段见下节；I5 外部输入装载与完整逆元契约见后节；点加电路仍待实现。
 
@@ -620,7 +620,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 
 ## 改 1 的公开寄存器接口
 
-下面是源码公开定理的前后条件。省略的共同参数只包括全局 Nodup、位宽与范围：q 为奇数，X<q，2q 能装入 data，K≤512；单轮还要求 i<512。`(halveMod q)^[K] X` 表示对 X 做 K 次模减半。
+下面是源码公开定理的前后条件。省略的共同参数只包括全局 Nodup、位宽与范围：q 为奇数，X<q，2q 能装入 data，完整512轮规格要求 K≤512；单轮仅要求 i<512。`(halveMod q)^[K] X` 表示对 X 做 K 次模减半。
 
 ```lean
 -- halveStep_spec
@@ -669,6 +669,6 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 
 ### 改 4 首批：计数活动比较
 
-`counterActiveXor L target i` 直接执行 `compareLtConst ... (i+1)` 再 X target；公开 Triple 只列 target/x/y/cin/carry，保留十位、K≤512、i<512 的领域条件。out 的任意初值由 frame 逐线保持。旧 borrowXor/constantBorrowXor 及专用转发证明已删除；记录段仍需的 subtraction_high 移为 RecordRound 私有引理。
+`counterActiveXor L target i` 直接执行 `compareLtConst ... (i+1)` 再 X target；公开 Triple 只列 target/x/y/cin/carry，仅要求十位和 i<512，K 的取值由寄存器自然限制。out 的任意初值由 frame 逐线保持。旧 borrowXor/constantBorrowXor 及专用转发证明已删除；记录段仍需的 subtraction_high 移为 RecordRound 私有引理。
 
 活动比较十位成本从20/20降至10/10，完整求逆3072次调用共省30,720 Toffoli/测量。半倍实际支持为 HalvingLayout.usedWires，排除 counter.out；完整求逆仍使用该银行做 counterInc/Dec，故其5,955根内部静态线路不变。recordRound 的门列与成本未改。

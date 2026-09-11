@@ -178,15 +178,15 @@ end HalvingLayout
 
 /-- 第 1、7 步：比较 i<k，翻转 active；计数与比较工作区逐线恢复。 -/
 theorem step_active (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
-    (i K X : Nat) (F A : Bool) (hi : i < 512) (hk : K ≤ 512) :
+    (i K X : Nat) (F A : Bool) (hi : i < 512) :
     Triple (HalvingValues L K X F A) (counterActiveXor L.counter L.active i)
       (HalvingValues L K X F (A ^^ decide (i < K))) := by
   intro s m h
   have hn := L.counter_nodup hnd
-  obtain ⟨hp, hv⟩ := counterActiveXor_spec L.counter L.active hn hw.counter K i A hk hi s m
+  obtain ⟨hp, hv⟩ := counterActiveXor_spec L.counter L.active hn hw.counter K i A hi s m
     ⟨⟨⟨⟨h.active, h.counter.1⟩, h.counter.2.1⟩, h.counter.2.2.1⟩, h.counter.2.2.2.2⟩
   have he := counterActiveXor_frame L.counter L.active
-    hn hw.counter i K hi hk A s m h.active h.counter.1 h.counter.2.1 h.counter.2.2.1
+    hn hw.counter i K hi A s m h.active h.counter.1 h.counter.2.1 h.counter.2.2.1
     h.counter.2.2.2.2
   have hout : regValue L.counter.out (run (counterActiveXor L.counter L.active i) m s).basis=0 := by
     apply Eq.trans (regValue_congr _ _ _ (fun w hw' => he w ?_)) h.counter.2.2.2.1
@@ -373,7 +373,7 @@ theorem step_compare (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
 /-- 完整减半轮：只改写 data，全部借用工作线清零，计数 K 保持。 -/
 theorem halveStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
-    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) :
     Triple (HalvingValues L K X false false) (halveStep L q i)
       (HalvingValues L K (if i < K then halveMod q X else X) false false) := by
   have hqfit : q < 2^L.constant.length := by rw [hw.constant]; omega
@@ -384,7 +384,7 @@ theorem halveStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Width
   have hyfit : Y < 2^L.data.length := by dsimp [Y]; split_ifs <;> omega
   have heven : A = true → Y % 2 = 0 := by
     intro ha; simp only [Y, F, ha, Bool.true_and]; split_ifs <;> simp_all; omega
-  have h1 := step_active L hnd hw i K X false false hi hK
+  have h1 := step_active L hnd hw i K X false false hi
   simp only [Bool.false_xor] at h1
   have h2 := step_parity L hnd hw K X false A
   simp only [Bool.false_xor] at h2
@@ -405,7 +405,7 @@ theorem halveStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Width
       by_cases hx : X % 2 ≠ 0 <;> by_cases hz : halveMod q X < (q+1)/2 <;> simp_all; omega
     · simp [F, A, ha]
   rw [hflag] at h6
-  have h7 := step_active L hnd hw i K Z false A hi hK
+  have h7 := step_active L hnd hw i K Z false A hi
   have haa : (A ^^ decide (i < K)) = false := by simp [A]
   rw [haa] at h7
   have hz : Z = if i < K then halveMod q X else X := by
@@ -420,7 +420,7 @@ theorem halveStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Width
 /-- 完整加倍轮：显式前向门列撤销减半，不倒放测量。 -/
 theorem doubleStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
-    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) :
     Triple (HalvingValues L K X false false) (doubleStep L q i)
       (HalvingValues L K (if i < K then (2*X)%q else X) false false) := by
   have hqfit : q < 2^L.constant.length := by rw [hw.constant]; omega
@@ -451,7 +451,7 @@ theorem doubleStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widt
       · have he : ((2*X)%q)%2 ≠ 0 := by omega
         simp [F, C, A, ha, hx, he]
     · simp [F, C, A, ha]
-  have h1 := step_active L hnd hw i K X false false hi hK
+  have h1 := step_active L hnd hw i K X false false hi
   simp only [Bool.false_xor] at h1
   have h2 := step_compare L hnd hw ((q+1)/2) K X false A hcfit
   simp only [Bool.false_xor] at h2
@@ -460,7 +460,7 @@ theorem doubleStep_values (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widt
   have h5 := step_subConst L hnd hw q K Y F A hqfit
   have h6 := step_parity L hnd hw K Z F A
   rw [hflag] at h6
-  have h7 := step_active L hnd hw i K Z false A hi hK
+  have h7 := step_active L hnd hw i K Z false A hi
   have haa : (A ^^ decide (i < K)) = false := by simp [A]
   rw [haa] at h7
   have hall := (((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7
@@ -490,21 +490,21 @@ theorem HalvingValues.iff (L : HalvingLayout) (K X : Nat) (s : BasisState) :
 /-- 第 i 轮：i<k 时原地模减半，否则保持；k 不变且全部工作线清零。 -/
 theorem halveStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
-    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) :
     {{ L.data=X, L.counter.x=K, L.work=0 }} halveStep L q i
     {{ L.data=(if i<K then halveMod q X else X), L.counter.x=K, L.work=0 }} :=
   Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h)
-    (halveStep_values L hnd hw q i K X hq hX hfit hi hK)
+    (halveStep_values L hnd hw q i K X hq hX hfit hi)
     (fun s h => (HalvingValues.iff L K _ s).mp h)
 
 /-- 第 i 个恢复轮：i<k 时原地模加倍，否则保持；k 不变且全部工作线清零。 -/
 theorem doubleStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (q i K X : Nat) (hq : q % 2 = 1) (hX : X < q)
-    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) (hK : K ≤ 512) :
+    (hfit : 2*q ≤ 2^L.data.length) (hi : i < 512) :
     {{ L.data=X, L.counter.x=K, L.work=0 }} doubleStep L q i
     {{ L.data=(if i<K then (2*X)%q else X), L.counter.x=K, L.work=0 }} :=
   Triple.conseq (fun s h => (HalvingValues.iff L K X s).mpr h)
-    (doubleStep_values L hnd hw q i K X hq hX hfit hi hK)
+    (doubleStep_values L hnd hw q i K X hq hX hfit hi)
     (fun s h => (HalvingValues.iff L K _ s).mp h)
 
 end ECDSAAdd.Arithmetic

@@ -17,7 +17,7 @@
 | 改 2 | 模乘 → Horner 零输出内核 + 反序清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | 内核 ≈ 590,000、清理 ≈ 786,000，XOR 适配器 ≈ 1,376,000；≈ 1,500 线 | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变；调用次数不变 |
 | 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（已证） | ≈ 18.5M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"与 λ* 数学引理 |
 | 改 4 | 首批接入计数比较器（§13，已实现） | 十位比较 20 | 10 | 每次求逆 −30,720 Toffoli/测量；记录段待融合设计；模算术已用比较器的收益不重复扣减 |
-| 改 5 | Kaliski 轮压缩 | 每轮 4,669（18w+43） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
+| 改 5 | Kaliski 轮压缩 | 每轮 4,659（18w+33） | 每轮 ≈ 3,620（≈14w+22，含改 4） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
 | 改 6 | Montgomery 4 位窗口模乘（研究预算） | 改 2 后每个乘积算+清 ≈ 1,376,000 | 6a 标准形式 ≤ 600,000；6b 全 Montgomery 表示 ≈ 300,000–430,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
 | 改 7 | 测量反计算查表所需的 CCZ 修正（条件项） | 语言只有 Z/CZ 修正 | 每个查表的反计算从 2^k 降到 ≈ 2^(k/2) | 只在改 6 选择 MBU 反查表时需要；扩展 Syntax/Semantics/Cost 三处 |
 
@@ -133,12 +133,12 @@ inverseLoop' L q :=
   ++ kaliskiUnloop L.first 0 L.records                  -- 不变：逆向 512 轮，清记录带
 ```
 
-已实现的每轮：`counterActiveXor`（20）+ 受控原地减半或加倍（3w）+ `counterActiveXor`（20）= 3w+40。w=257 时两方向均为 811 Toffoli、553 次测量；512 轮单向 415,232/283,136，第二阶段总计 830,464/566,272。与历史基线相同，仍执行正反两遍；改 4 后续替换的是既有 Borrow 调用点。
+已实现的每轮：`counterActiveXor`（10）+ 受控原地减半或加倍（3w）+ `counterActiveXor`（10）= 3w+20。w=257 时两方向均为 791 Toffoli、533 次测量；512 轮单向 404,992/272,896，第二阶段总计 809,984/545,792。与历史基线相同，仍执行正反两遍；改 4 首批已接入活动比较器，记录段融合仍是后续工作。
 
 ### 2.3 接口与陈述
 
 - `inverseLoop_spec`、`inverseLoop_xor_spec`、`fieldInverse_spec`、`fieldInverse_xor_spec`、`fieldInverse_contract` 的正确性陈述保持不变（`inverseLoop_*` 去掉已删除 b 的长度前提，`fieldInverse_contract` 更新资源常数）：`halveFixed q z.k 512` 的数学定义就是"i<k 时减半"，与 I1 一致；任意 O 的 XOR 语义由 inv + CX 保证，M3 的"同一模块再跑一遍清零"照常成立。加倍循环是减半循环的逆（`HalvingBijection` 的 double∘halve = id），要证 `doublingLoop'` 把 inv 恢复到减半前的值。
-- 已证资源：`fieldInverse` = 2×2,390,528 + 2×7,704 + 2×415,232 = **5,626,928** Toffoli，**2,198,576** 次测量。
+- 已证资源：`fieldInverse` = 2×2,385,408 + 2×7,704 + 2×404,992 = **5,596,208** Toffoli，**2,167,856** 次测量。
 - 线路：只删除 b 的 257 根；a、temp 和 ModLayout 仍供 negativeInit 使用，减半所需常数字、进位链与标志借自其中，不新增线路。求逆工作池前缀 5,956 → **5,699**，`fieldInverse` 实际线路 6,468 → **6,211**。模乘仍决定共享池大小，所以**改 2 之前点加总线路保持 74,024**。
 
 ### 2.4 证明义务与文件
@@ -308,11 +308,11 @@ PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C
 
 ### 6.1 现状
 
-`kaliskiRound` 每轮 18w+43（w=257 时 4,669），分解：记录段 2w+5（比较 = 两次减法 2w，编码 5）；算术体 14w−2（两次数据对交换 4w、两次 masked 加减各 4w、两次受控移位 2w−2）；计数移动 20；零检测 2w（AND 链正向算、正向清）；活动比较 20。
+`kaliskiRound` 每轮 18w+33（w=257 时 4,659），分解：记录段 2w+5（比较 = 两次减法 2w，编码 5）；算术体 14w−2（两次数据对交换 4w、两次 masked 加减各 4w、两次受控移位 2w−2）；计数移动 20；零检测 2w（AND 链正向算、正向清）；活动比较 10。
 
 ### 6.2 前提：改 4 的 Gidney 比较器
 
-轮内两处比较（记录段 v<u、活动比较 i<k）直接使用第 5 节的比较器；本节其余改动独立于它。
+活动比较 i<k 已直接使用第 5 节比较器；记录段 v<u 尚待融合比较设计。本节其它轮压缩仍未实现。
 
 ### 6.3 轮内改动
 
@@ -322,9 +322,9 @@ PR A 已证明 Gidney 比较器；改 1 减半标志清除直接使用它，PR C
 | 零检测 v=0（done 更新） | 2w（AND 链正向算、正向清） | w（AND 链算、MBU 擦） | w |
 | 两次 masked 加减 | 各 4w（复制、加、反向减、复制） | 各 3w（t ← c·v，原地加/减，清 t） | 2w |
 | 两次数据对交换、两次受控移位 | 4w + (2w−2) | 不变（Litinski 也计 4 次受控 SWAP 和 1 次受控移位） | 0 |
-| 计数移动、活动比较 | 20 + 20 | 20 + 10（比较器减半） | 10 |
+| 计数移动、活动比较 | 20 + 10（改 4 首批已实现） | 不变 | 0 |
 
-每轮 ≈ 14w+22 ≈ 3,620（w=257），相比 4,669 省 22%；Litinski 的 13n=3,328 是同一结构再用 Gidney 受控加法器（2n）得到的，可作后续微调。
+每轮 ≈ 14w+22 ≈ 3,620（w=257），相比 4,659 省 22%；Litinski 的 13n=3,328 是同一结构再用 Gidney 受控加法器（2n）得到的，可作后续微调。
 
 ### 6.4 影响与证明义务
 
@@ -667,14 +667,14 @@ def counterActiveXor (L : AdderLayout) (target : Wire) (i : Nat) : Program :=
 theorem counterActiveXor_spec (L : AdderLayout) (target : Wire)
     (hnd : (target :: L.wires).Nodup)
     (hw : L.width=10) (K i : Nat) (T : Bool)
-    (_hk : K≤512) (hi : i<512) :
+    (hi : i<512) :
     {{ target=T, L.x=K, L.y=0, L.cin=false, L.carry=0 }}
       counterActiveXor L target i
     {{ target=(T ^^ decide (i<K)), L.x=K, L.y=0,
        L.cin=false, L.carry=0 }}
 ```
 
-删除 high、low、hout、差值范围前提和 out=0 断言。K≤512、i<512 与 width=10 保留，保证 i+1 可表示；不把512误换成九位上界。另有同一前置条件下所有 w≠target 逐线保持的 frame 定理，L.out 由该定理保持，不要求初值为零。调用方从原全局 Nodup 推导所需子视图。
+删除 high、low、hout、差值范围前提和 out=0 断言。仅保留 i<512 与 width=10，保证 i+1 可表示；不额外约束 K。512仍可由十位寄存器表示。另有同一前置条件下所有 w≠target 逐线保持的 frame 定理，L.out 由该定理保持，不要求初值为零。调用方从原全局 Nodup 推导所需子视图。
 
 ### 13.2 支持集与证明义务
 

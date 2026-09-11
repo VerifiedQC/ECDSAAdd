@@ -108,15 +108,15 @@ theorem zeroDone_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   simp [writeBit,hd]
 
 theorem roundActiveXor_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
-    (hw : L.counter.width=10) (z : KState) (K i : Nat) (hk : K≤512) (hi : i<512) (A D S T : Bool) :
+    (hw : L.counter.width=10) (z : KState) (K i : Nat) (hi : i<512) (A D S T : Bool) :
     Triple (RoundState L z 0 K A D S T) (roundActiveXor L i)
       (RoundState L z 0 K (A ^^ decide (i < K)) D S T) := by
   intro s m h
   have hc := L.comparator_fields
   have hs := counterActiveXor_spec L.comparator L.active
-    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) K i A hk hi
+    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) K i A hi
   have hf := counterActiveXor_frame L.comparator L.active
-    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) i K hi hk A s m
+    (L.comparator_nodup hnd) (hc.2.2.2.2.2.trans hw) i K hi A s m
   simp only [hc.1,hc.2.2.1,hc.2.2.2.1,hc.2.2.2.2.1] at hs hf
   obtain ⟨hp,hv⟩ := hs s m ⟨⟨⟨⟨h.2.active,h.2.next⟩,h.2.y⟩,h.2.cin⟩,h.2.carry⟩
   have he := hf h.2.active h.2.next h.2.y h.2.cin h.2.carry

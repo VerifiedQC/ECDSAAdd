@@ -12,11 +12,11 @@ theorem counterActiveXor_wires (L : AdderLayout) (target : Wire) (i : Nat) :
 /-- 活动比较只翻转 target；其它线路（包括 out）逐线保持。 -/
 theorem counterActiveXor_frame (L : AdderLayout) (target : Wire)
     (hnd : (target::L.wires).Nodup) (hw : L.width=10)
-    (i K : Nat) (hi : i<512) (hk : K≤512) (T : Bool) (s : State) (m : List Bool)
+    (i K : Nat) (hi : i<512) (T : Bool) (s : State) (m : List Bool)
     (ht : s.basis target=T) (hx : regValue L.x s.basis=K) (hy : regValue L.y s.basis=0)
     (hc : s.basis L.cin=false) (hcarry : regValue L.carry s.basis=0) :
     ∀ w, w≠target → (run (counterActiveXor L target i) m s).basis w=s.basis w := by
-  obtain ⟨_,hv⟩ := counterActiveXor_spec L target hnd hw K i T hk hi s m
+  obtain ⟨_,hv⟩ := counterActiveXor_spec L target hnd hw K i T hi s m
     ⟨⟨⟨⟨ht,hx⟩,hy⟩,hc⟩,hcarry⟩
   intro w hwt
   by_cases hm : w∈L.cin::(L.x++L.y++L.carry)
