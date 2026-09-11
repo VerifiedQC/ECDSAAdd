@@ -448,7 +448,7 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 
 比较只读低 n 位，**不把正待清理的 h 当比较输入**。未约减时 lo=A+Z≥A；约减时 lo=A+Z−p<A（Z<p）。A=p 时必约减且 lo=Z<p，仍成立。总计 `4n−1 / 4n−1`。
 
-受控版先 `mask.low ^= c·a.low`（n CCX），mask 高位保持零；对 mask 和 z 执行上述模加，比较完成后再次受控复制清 mask（n CCX）。必须与实际 mask 比较。总计 `6n−1 / 4n−1`。c=false 时 mask=0，程序仍执行但最终 z 原值且 h/mask 全零。
+受控版先 `mask.low ^= c·a.low`（n CCX），mask 高位保持零；对 mask 和 z 执行上述内部模加核（核工作区只含 constant/carry/cin，不含 mask/flag，接线与中间断言见 §12.9），比较完成后再次受控复制清 mask（n CCX）。必须与实际 mask 比较。总计 `6n−1 / 4n−1`。c=false 时 mask=0，程序仍执行但最终 z 原值且 h/mask 全零。
 
 拟定公开规格（W 是工作区，非代码占位 axiom）：
 
@@ -587,6 +587,25 @@ PR B 目标 `fieldInverse=5,626,928` 时，保持现有点加组合的累计 Tof
 | `F : MulAdapterLayout` | `F.x.length=F.out.length=F.product.length=w`、`F.y.length=n`，工作字段长度如上 | `F.work=F.product++F.scratch`，包含临时积 | `F.wires=F.x++F.y++F.out++F.work`，要求 `F.wires.Nodup` |
 
 `U` 可从模加布局借用 z 和同一 scratch；适配器将 product 作为内核 acc 借用。借用不复制线路，也不把同一子视图再次拼入 wires。每个 `Widths n` 同时检查该行全部外部与工作字段长度。`work=0` 表示列表内每根线为零，包括 cin/flag；低位子视图和高位标志均来自上述固定寄存器。
+
+**内部模加核与受控包装的断言边界。** 六个外层接口之外，模加证明使用一个专用内部子视图 `K`：字段为 `a(w)、z(w)、constant(w)、carry(n)、cin`，`K.work=K.constant++K.carry++[K.cin]`，`K.wires=K.a++K.z++K.work`。它不含 mask 或 flag，也不分配新线。`K.Widths n` 检查这些长度，`K.wires.Nodup` 保证接线合法。在共同模数前提与 `A≤p, Z<p` 下，内部引理为：
+
+```text
+{{ K.a=A, K.z=Z, K.work=0 }} modAddCore K p
+{{ K.a=A, K.z=(Z+A)%p, K.work=0 }}
+```
+
+核对任意测量记录恢复相位，并对所有 `q∉K.z` 保持最终位值，既保持作为源的 K.a，也保持未纳入核视图的线路；包装中的 flag 和外部控制由此保持。普通模加取 `K.a=L.a, K.z=L.z`，借用同一 constant/carry/cin；其余 mask/flag 由核的 frame 保持零，从而推出外层 `L.work=0` 的公开规格。
+
+受控模加则取 `K.a=L.mask, K.z=L.z`，constant/carry/cin 仍借用原字段。此时 K.wires 只包含 mask 一次，核工作区不含该源；从外层 `(c::L.wires).Nodup` 推出核 Nodup，而不是将源 mask 再拼进外层 work。令 `V=if B then A else 0`，范围 `A≤p` 给出 `V≤p<2^n`，从而只复制低 n 位已足够，mask 的高位保持零。三个阶段的断言边界为：
+
+| 阶段 | 前置条件 | 后置条件 |
+| --- | --- | --- |
+| 受控复制 a.low 到 mask.low | `c=B, L.a=A, L.z=Z, L.mask=0, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=Z, L.mask=V, K.work=0, L.flag=false` |
+| `modAddCore K p`，以 mask 为源 | `c=B, L.a=A, L.z=Z, L.mask=V, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=V, K.work=0, L.flag=false` |
+| 再次受控复制 a.low 到 mask.low | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=V, K.work=0, L.flag=false` | `c=B, L.a=A, L.z=(Z+V)%p, L.mask=0, K.work=0, L.flag=false` |
+
+中间两处不声称 `L.work=0`：mask=V 可以非零。核内部的末尾比较读取 `K.a.low=L.mask.low`，直到该比较完成才允许清 mask。核的输入保持与 frame 维持 c、原源 a、flag；最后由 mask=0、K.work=0、flag=false 重新组合出 L.work=0。B=false 时 V=0，利用 Z<p 得到 `(Z+V)%p=Z`。这需要内部核的上述 Triple/frame，不能直接套用要求整个 L.work=0 的外层公开模加 Triple；同样也不额外添加第二份 mask。受控模减包装先将 a 取负，在该扩展范围上调用已证受控模加，再恢复 a。
 
 **PR C：实际被调用的六个公开接口。** 下列每行使用 `L.Widths n` 或 `U.Widths n` 及表中的 Nodup，前后条件列出的寄存器为同一物理布局。
 
