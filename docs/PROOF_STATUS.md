@@ -286,11 +286,11 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 | 测量 | 1,904,688 |
 | 静态线路 | 6,211 |
 
-CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，再以 Nodup 计数，得到 256+5955=6211。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 5596208 2167856 6211` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
+CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，再以 Nodup 计数，得到 256+5955=6211。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 5333040 1904688 6211` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2061 项构建，以下 145 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2067 项构建，以下 157 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -351,6 +351,18 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.compareLtConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.maskedCompareLtConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.compareLt_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modAddInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modAddInPlace_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modAddInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modSubInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modSubInPlace_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modSubInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModAdd_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModAdd_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledModSub_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.halveMod_eq' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.halve_parity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.double_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -684,3 +696,29 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 `recordRound_spec` 直接列出 u/v/active、任意初值的 swap/subtract，以及清零的 oddWork/bothWork/carry/cin；不再要求有符号差范围。条件位先保存，`compareLt (some bothWork)` 直接将 `[v<u]` XOR 到 swap，比较完全恢复 u/v 后再清条件。`recordRound_correct` 对所有测量记录保持相位，`recordRound_preserves` 保证除两个记录位外逐线保持，y/out 可有任意初值。同一个前向门列支持恢复旧输入后的记录清理。
 
 `recordRound_counts` 为w+5 Toffoli/w测量；`recordRound_wires` 的精确支持是u/v/carry加六根控制、记录与cin线，完整轮仍为8w+48线。CaseRecord、caseLayout及私有 subtraction_high 已删除。记录段状态适配层去掉无用范围前提，公开正逆轮、求逆与点加功能陈述保持。每次完整求逆减少263,168 Toffoli/测量，已计入本文件和README的当前值。
+
+### 改 2 C1：原地模加减
+
+`ModInPlaceLayout` 的 a/z/constant/mask 宽 n+1，carry 宽 n，另有 cin/flag；z=low++[high]，low 宽 n。work=constant++carry++[cin]++mask++[flag]。普通接口要求 L.wires.Nodup，受控接口要求 (c::L.wires).Nodup；共同数值前提为 0<p<2^n、A≤p、Z<p。
+
+```lean
+{{ L.a=A,L.z=Z,L.work=0 }} modAddInPlace L p
+{{ L.a=A,L.z=((Z+A)%p),L.work=0 }}
+{{ L.a=A,L.z=Z,L.work=0 }} modSubInPlace L p
+{{ L.a=A,L.z=((Z+p-A)%p),L.work=0 }}
+{{ c=B,L.a=A,L.z=Z,L.work=0 }} controlledModAdd c L p
+{{ c=B,L.a=A,L.z=(if B then (Z+A)%p else Z),L.work=0 }}
+{{ c=B,L.a=A,L.z=Z,L.work=0 }} controlledModSub c L p
+{{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }}
+```
+
+四个 `_spec` 对所有初始相位和测量记录成立；各 `_frame` 保持 z 外每根物理位。模加核 work 仅含 constant/carry/cin，受控复制后的活跃 mask 是核源，不与核工作区重叠。源可等于 p，使模减在 A=0 时经过临时 p；`negRaw` 两次前向取负恢复源，无需反转测量。半倍、Horner 与旧模乘替换仍未实现。
+
+| 同一程序（n>0） | Toffoli | 测量 | 实际线路 |
+| --- | ---: | ---: | ---: |
+| modAddInPlace | 4n−1 | 4n−1 | 4n+4 |
+| modSubInPlace | 6n−1 | 6n−1 | 4n+4 |
+| controlledModAdd | 6n−1 | 4n−1 | 5n+5 |
+| controlledModSub | 8n−1 | 6n−1 | 5n+6 |
+
+线路数由门列支持集等式及全局 Nodup 求基数：普通加减不触及 mask/flag，受控加不触及源高位/flag，受控减取反源高位但不触及 flag。全为 O(n) 静态支持，未声称最优。数学约减、低位受控复制、核四阶段、外层加法、取负、减法组合按用途拆入同名辅助文件。未改现有域乘法、求逆与点加接口或成本。
