@@ -530,9 +530,19 @@ sub: mulInto product ; modSubInPlace product out ; mulClear product
 
 XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±XY)%p`。输入、product、W 在后置条件中明确保持/清零。平方调用者必须提供独立乘数副本，以满足 Nodup，不能把 x/y 接同一组线。
 
-拟定 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；总 `6n+6` 根。XOR 包装再加公开 out(w)，原 acc 作为 product，故 `7n+7` 根；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。这组计数包含扩宽最高位，即使值为零，程序仍会触及它们。
+拟定 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；**布局共分配 `6n+6` 根，不代表每段都触及全部字段**。XOR 包装另加公开 out(w)，原 acc 作为 product；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。
 
-支持集证明先给上界，再逐个字段给见证门：x/acc/mask/constant/carry/cin 来自加法与比較，flag 来自减半，y 每一位作为控制，out 每一位有复制门。域 `1<p<2^n` 保证 n≥2。必须得到 `wires(program)=layout.wires.toFinset` 后才定 `qubitCount`，不把分配上界直接冒充已证支持集。
+按当前字面门列分别提出支持集证明义务：
+
+| 程序 | 拟证明的实际支持集 | 拟定基数（n=256） |
+| --- | --- | ---: |
+| mulInto | 内核布局去掉 `flag` 和 `x[n]` | `6n+4` = 1,540 |
+| mulClear | 整个内核布局 | `6n+6` = 1,542 |
+| 完整 XOR 包装 | 整个内核布局，加 out(w) | `7n+7` = 1,799 |
+
+mulInto 不调用减半，因此不触及 flag；它只掩码复制 x 的低 n 位，模加读取 mask 而不是 x[n]，所以 x[n] 也不在其支持集。mulClear 的 `negRaw x` 触及源的全部 w 位，减半触及 flag，因此两根线都重新进入完整包装的支持集。其余字段分别从加法/比较与掩码门给出见证：acc/mask/constant/carry/cin 都被触及，y 每一位作为控制，包装 out 每一位有复制门。
+
+域 `1<p<2^n` 保证 n≥2。实现时先证明各自上界和逐线见证，再得到对应集合的等式与 qubitCount；上表仍是设计推导，不是已证资源定理。
 
 ### 12.7 同一门列资源推导
 
@@ -546,7 +556,7 @@ XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±X
 | 加适配器 | 18n²+n−1 | 14n²+n−1 | 1,179,903 / 917,759 |
 | 减适配器 | 18n²+3n−1 | 14n²+3n−1 | 1,180,415 / 918,271 |
 
-XOR 适配器拟定实际线数 7n+7=1,799；内核 6n+6=1,542。资源下降同时用了 PR A 的 Gidney 比较器，故不是 §9 中“尚未用改 4 比较器”的 ≈1.38M 版本；改 4 仍需将旧 Borrow 的入口替换，不能再重复从这些新模算术里扣一次比较器节省。
+XOR 适配器拟定实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mulClear 为 6n+6=1,542。资源下降同时用了 PR A 的 Gidney 比较器，故不是 §9 中“尚未用改 4 比较器”的 ≈1.38M 版本；改 4 仍需将旧 Borrow 的入口替换，不能再重复从这些新模算术里扣一次比较器节省。
 
 PR B 目标 `fieldInverse=5,626,928` 时，保持现有点加组合的累计 Toffoli 公式为
 `4*5,626,928 + 12*1,178,880 + 37,493 = 36,691,765`。
