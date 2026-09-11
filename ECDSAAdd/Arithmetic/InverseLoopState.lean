@@ -7,11 +7,15 @@ def InverseRest (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool)) (s
   RoundValues L.middle.data (roundDataValues z) s ∧ s L.middle.done=decide (z.v=0) ∧
     s L.middle.oddWork=false ∧ s L.middle.bothWork=false ∧ TapeValues L.records cs s
 
-def InverseExtra (L : InverseLoopLayout) (A B : Nat) (s : BasisState) : Prop :=
-  regValue L.a s=A ∧ regValue L.b s=B ∧ regValue L.temp s=0 ∧ regValue L.arithmetic.wires s=0
+def InverseExtra (L : InverseLoopLayout) (A : Nat) (s : BasisState) : Prop :=
+  regValue L.a s=A ∧ regValue L.temp s=0 ∧ regValue L.arithmetic.wires s=0
 
-def InverseMiddle (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool)) (A B : Nat) (s : BasisState) : Prop :=
-  InverseRest L z cs s ∧ PhaseValues L.phase z.k A B false s
+def InversePhase (L : InverseLoopLayout) (K A : Nat) (s : BasisState) : Prop :=
+  (regValue L.a s=A ∧ s L.middle.active=false ∧ regValue (L.temp++L.arithmetic.wires) s=0) ∧
+    HalvingCounter L.halving.counter K s
+
+def InverseMiddle (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool)) (A : Nat) (s : BasisState) : Prop :=
+  InverseRest L z cs s ∧ InversePhase L z.k A s
 
 theorem InverseRest.congr (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool))
     (s t : BasisState) (h : InverseRest L z cs s) (he : ∀ w∈L.restWires, t w=s w) :
@@ -28,24 +32,24 @@ theorem InverseRest.congr (L : InverseLoopLayout) (z : KState) (cs : List (Bool�
       (fun w hw => he w (by simp [InverseLoopLayout.restWires,hw]))
 
 theorem InverseMiddle.iff (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool))
-    (A B : Nat) (s : BasisState) :
-    InverseMiddle L z cs A B s ↔
-      LoopState L.middle z s ∧ TapeValues L.records cs s ∧ InverseExtra L A B s := by
+    (A : Nat) (s : BasisState) :
+    InverseMiddle L z cs A s ↔
+      LoopState L.middle z s ∧ TapeValues L.records cs s ∧ InverseExtra L A s := by
   constructor
   · rintro ⟨hr,hp⟩
     refine ⟨⟨hr.1,hp.2.1,hp.2.2.2.2.1,hp.2.2.1,hp.2.2.2.2.2,
-      hp.1.2.2.1,hr.2.1,hr.2.2.1,hr.2.2.2.1,hp.2.2.2.1⟩,hr.2.2.2.2,?_⟩
-    have hw := (regValue_zero _ _).mp hp.1.2.2.2
-    exact ⟨hp.1.1,hp.1.2.1,
+      hp.1.2.1,hr.2.1,hr.2.2.1,hr.2.2.2.1,hp.2.2.2.1⟩,hr.2.2.2.2,?_⟩
+    have hw := (regValue_zero _ _).mp hp.1.2.2
+    exact ⟨hp.1.1,
       (regValue_zero _ _).mpr (fun w hh => hw w (List.mem_append_left _ hh)),
       (regValue_zero _ _).mpr (fun w hh => hw w (List.mem_append_right _ hh))⟩
   · rintro ⟨h,ht,he⟩
     refine ⟨⟨h.data,h.done,h.odd,h.both,ht⟩,
-      ⟨he.1,he.2.1,h.active,?_⟩,h.k,h.y,h.cin,h.next,h.carry⟩
+      ⟨he.1,h.active,?_⟩,h.k,h.y,h.cin,h.next,h.carry⟩
     apply (regValue_zero _ _).mpr
     intro w hw
     rcases List.mem_append.mp hw with hh|hh
-    · exact (regValue_zero _ _).mp he.2.2.1 w hh
-    · exact (regValue_zero _ _).mp he.2.2.2 w hh
+    · exact (regValue_zero _ _).mp he.2.1 w hh
+    · exact (regValue_zero _ _).mp he.2.2 w hh
 
 end ECDSAAdd.Arithmetic

@@ -26,7 +26,6 @@ structure Widths (L : InverseLayout) : Prop where
   low : L.inner.first.low.length=256
   arithmetic : L.inner.arithmetic.width=256
   a : L.inner.a.length=257
-  b : L.inner.b.length=257
   temp : L.inner.temp.length=257
   output : L.inner.out.length=257
 

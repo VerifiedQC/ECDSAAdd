@@ -64,11 +64,11 @@ theorem fieldInverse_xor_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.
   have hcop : p.Coprime X := Secp256k1.p_prime.coprime_iff_not_dvd.mpr
     (fun h => (Nat.not_le_of_lt hX) (Nat.le_of_dvd hX0 h))
   have hc := inverseLoop_xor_spec L.inner (L.inner_nodup hnd) hw.records hw.counter hw.low
-    hw.arithmetic hw.a hw.b hw.temp hw.output p X O hp (by norm_num [p]) hX0 hX hcop
+    hw.arithmetic hw.a hw.temp hw.output p X O hp (by norm_num [p]) hX0 hX hcop
   have hwire := inverseLoop_wires L.inner hw.records hw.counter
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low])
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low,hw.arithmetic])
-    (by rw [hw.a,hw.arithmetic]) (by rw [hw.b,hw.arithmetic])
+    (by rw [hw.a,hw.arithmetic])
     (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) p
   have hdis := (List.nodup_append'.mp (L.wires_perm.nodup_iff.mp hnd)).2.2
   have hc' := hc.frame (R:=fun st => regValue L.x st=X) (by

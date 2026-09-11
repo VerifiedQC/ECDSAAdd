@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部分（候选计算、完整经典常量点加、受控原地点加）已全部合并到 main。成本压缩计划见 [重做设计](REWORK_PLAN.md)，其中各项均未实现。
+M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部分（候选计算、完整经典常量点加、受控原地点加）的基线已合并到 main。本次改 1 已实现原地求逆第二阶段，以下状态与资源对应当前提交；其余成本压缩计划见 [重做设计](REWORK_PLAN.md)。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -246,11 +246,11 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 - [KaliskiLoopProof](../ECDSAAdd/Arithmetic/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
 - [NegativeInit](../ECDSAAdd/Arithmetic/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
-- [Halve](../ECDSAAdd/Arithmetic/Halve.lean) 在原值为奇数时加 q，然后右移；输出复制后以左移和同一加法清理。已载入奇模数的最低位提供移位控制，无需额外常一线路。[HalvingBijection](../ECDSAAdd/Math/HalvingBijection.lean) 证明模减半与模加倍在规范代表元上互逆。
-- [HalvingLoopProof](../ECDSAAdd/Arithmetic/HalvingLoopProof.lean) 每轮比较 i<k，活动时减半，否则保持数值；两组数据寄存器交换角色。k 不递减，比较工作区和活动位每轮清零。固定 512 轮等于 I1 的 `halveFixed`，正逆循环均已证明。
+- [HalveInPlace](../ECDSAAdd/Arithmetic/HalveInPlace.lean) 在内部 a 上原地受控减半：奇数先加 q，再右移，比较结果大小清奇偶标志。恢复轮先比较 `(q+1)/2`，再左移、受控减 q，并以结果奇偶清标志。两者都是前向门列，对任意测量记录恢复相位；没有倒放含测量的程序。
+- [HalvingLoop](../ECDSAAdd/Arithmetic/HalvingLoop.lean) 每轮比较 i<k，活动时减半，否则保持数值；固定布局、不再交换 a/b。k 不递减，借用工作区和活动位每轮清零。`halveInPlace_spec` 同时证明正向循环与逆序加倍恢复，`halvingValue_eq` 连接 I1 的 `halveFixed`。
 - [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 让第二阶段使用第一阶段终点的当前 k 银行、空银行、比较工作区及活动位；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
 
-`ExternalMod` 的字段框架由已有倍增实现提取，约减、取负、倍增和减半实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
+`ExternalMod` 的字段框架由已有倍增实现提取，约减、取负与倍增实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
 
 令 N=512、w 为带额外高位的内部数据宽度。以下计数来自规格里的同一字面门列：
 
@@ -258,12 +258,12 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 | --- | ---: | ---: |
 | 第一阶段正向或逆向 N 轮 | N(18w+43) | N(6w+40) |
 | 一次规范化取负及临时值清理 | 30w−6 | 24w |
-| 第二阶段正向或逆向 N 轮，含比较装入/清理 | N(36w+32) | N(20w+40) |
-| 完整 `inverseLoop`，含复制后反计算 | 2N(54w+75)+60w−12 | 2N(26w+80)+48w |
+| 第二阶段正向或逆向 N 轮，含比较装入/清理 | N(3w+40) | N(2w+39) |
+| 完整 `inverseLoop`，含复制后反计算 | 2N(21w+83)+60w−12 | 2N(8w+79)+48w |
 
-第一阶段实际静态支持为 8w+46+2N：包含交替计数银行和全部 2N 根记录线。第二阶段新增三组 w 位数据/临时寄存器及 8w+2 位模算术区，共 11w+2；比较和计数线路已包含在第一阶段支持中。输出为 w 位，合计 **20w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
+第一阶段实际静态支持为 8w+46+2N：包含交替计数银行和全部 2N 根记录线。取负初始化及第二阶段共用 a、temp 两组 w 位寄存器及 8w+2 位模算术区，共 10w+2；减半的常数字和进位链借自其中，不另加线路；比较和计数线路已包含在第一阶段支持中。输出为 w 位，合计 **19w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
 
-[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.wires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **14,303,280 Toffoli、6,936,624 次测量、6,212 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；首版反复复用既有模算术核，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
+[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.wires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **5,626,928 Toffoli、2,198,576 次测量、5,955 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改 1 使用原地第二阶段，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
 
 ## I5：外部输入封装与逆元契约
 
@@ -274,7 +274,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 {{ L.x=X, L.out=((X : Fp)⁻¹).val, L.work=0 }}
 ```
 
-前提是 `L.wires.Nodup`、`L.Widths`、0<X<p。Widths 明确要求输入 256 位，内核低位数与模算术宽度 256，内核 a/b/temp/out 各 257 位，512 对记录和十位计数器；公开 out 为内核 out 的低 256 位。XOR 形式 `fieldInverse_xor_spec` 输出 `O ^^^ ((X : Fp)⁻¹).val`。断言对所有初始相位、所有测量结果成立，并由 `kaliski_inverse_p` 接上数学域逆元；零输入不在契约内。
+前提是 `L.wires.Nodup`、`L.Widths`、0<X<p。Widths 明确要求输入 256 位，内核低位数与模算术宽度 256，内核 a/temp/out 各 257 位，512 对记录和十位计数器；公开 out 为内核 out 的低 256 位。XOR 形式 `fieldInverse_xor_spec` 输出 `O ^^^ ((X : Fp)⁻¹).val`。断言对所有初始相位、所有测量结果成立，并由 `kaliski_inverse_p` 接上数学域逆元；零输入不在契约内。
 
 `inverseLoad` 复制外部 x 到第一阶段 v 的低 256 位，并用 X 门载入 u=p、s=1；其余工作区初始为零。执行原 `inverseLoop` 后，`inverseUnload` 以同样的 XOR 门卸载常数和输入副本，外部 x 保持。v 的内部高位始终留在工作区；内核输出高位初末均为零，后置清零由逆元小于 p<2^256 及 XOR 范围证明，而非作为额外假设。六字段值表用于这三个装载寄存器的局部更新，公开定理仍直接使用寄存器断言。
 
@@ -282,15 +282,15 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 | 同一个 `fieldInverse L` | 精确资源 |
 | --- | --- |
-| Toffoli | 14,303,280 |
-| 测量 | 6,936,624 |
-| 静态线路 | 6,468 |
+| Toffoli | 5,626,928 |
+| 测量 | 2,198,576 |
+| 静态线路 | 6,211 |
 
-CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，再以 Nodup 计数，得到 256+6212=6468。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 14303280 6936624 6468` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
+CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，再以 Nodup 计数，得到 256+5955=6211。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 5626928 2198576 6211` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2018 项构建，以下 80 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2062 项构建，以下 139 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -339,6 +339,21 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.counterInc_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.counterDec_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.counter_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.addInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.subInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.addInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedAddConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedSubConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedAddInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedSubInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compareLt_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedCompareLt_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compareLtConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedCompareLtConst_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compareLt_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.halveMod_eq' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.halve_parity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.double_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_unstep_step' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_round_active' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.kaliskiRound_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -359,11 +374,55 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.inverseLoop_257_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.kaliskiLoop_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.kaliskiLoop_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.halvingLoop_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.halvingLoop_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.halveXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveStep_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.doubleStep_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveStep_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveInPlace_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveStep_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.halveInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseCompute_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.inverseHalving_values' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.negativeInit_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.equalConstant_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.equalConstant_counts' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.equalConstant_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointBranchFlags_correct' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.pointBranchFlags_counts' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.safeDivisor_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.safeDivisor_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.PointAddLayout.allocated_length' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.poolSub_work' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.poolMul_work' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.poolInverse_work_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.PointAddLayout.candidate_interfaces_nodup' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCandidate_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCandidate_cleanup_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCandidate_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.candidateResult_coordinates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCandidateValues_generic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.maskedConstant_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.point_classification' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointFlagsCompute_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointFlagsClear_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointFlags_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCandidate_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointOutput_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointAddOut_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointAddOut_xor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointAddOut_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointAddOut_finite_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointAddOut_zero_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointSelectors_correct' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointOutput_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAddOut_finite_ready' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointSwap_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAddOut_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAddOut_finite_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAdd_finite_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledPointAdd_zero_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_register_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.halve_mod_correct' depends on axioms: [propext, Quot.sound]
@@ -400,8 +459,8 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 22,989,640 | 13,258,824 |
-| `pointCandidateClear` | 22,989,640 | 13,258,824 |
+| `pointCandidateCompute` | 14,313,288 | 8,520,776 |
+| `pointCandidateClear` | 14,313,288 | 8,520,776 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
@@ -409,7 +468,7 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 - `poolSub`：输入、输出直接连接调用方，五个 257 位工作字和两根进位使用池前 1,287 位；`poolSub_work` 给出准确工作列表。
 - `poolMul`：两份模算术区与 256 个倍数字使用池前 69,908 位；`poolMul_work` 给出准确工作列表。
-- `poolInverse`：单轮共享区、512 对记录、模算术区及 a/b/temp、输出高位使用池前 5,956 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
+- `poolInverse`：单轮共享区、512 对记录、模算术区及 a/temp、输出高位使用池前 5,699 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
 `PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
@@ -448,10 +507,10 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 45,981,844 | 26,517,648 | 74,020 |
+| C 有限 | 28,629,140 | 17,041,552 | 74,020 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×22,989,640，加标志计算/清理 2×1,026，加输出复制 512；测量只有两段候选 2×13,258,824。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×14,313,288，加标志计算/清理 2×1,026，加输出复制 512；测量只有两段候选 2×8,520,776。常量写入和负控制包夹仅使用 X/CX。
 
 `pointAddOut_support` 证明 `wires (pointAddOut L (.some hc)) = L.usedWires.toFinset`。`usedWires` 包括候选实际支持及边界输入有限位、其他标志和完整输出；与分配表相比，恰好没有 dx 和 yg 的填充最高位。模减法不写输出高位，两者也没有后续读取；其他高位通过模乘输入、模减输入或平方副本被真实触及。`PointAddLayout.usedWires_nodup` 与 `usedWires_length` 从同一个全局布局条件给出 74,020，包含全体共享池及测量修正线。空间仍为 O(n²+N)，不是最大同时存活数或最优性结论。
 
@@ -477,11 +536,11 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| 有限 C 的 `controlledPointAddOut` | 45,981,850 | 26,517,648 | 74,024 |
-| 有限 C 的 `controlledPointAdd` | 91,964,213 | 53,035,296 | 74,024 |
+| 有限 C 的 `controlledPointAddOut` | 28,629,146 | 17,041,552 | 74,024 |
+| 有限 C 的 `controlledPointAdd` | 57,258,805 | 34,083,104 | 74,024 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-总成本为 2×(45,981,844+6)+513 个 Toffoli、2×26,517,648 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表仍有 dx/yg 两根未触及的填充最高位，未计入实际支持；空间仍为 O(n²+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
+总成本为 2×(28,629,140+6)+513 个 Toffoli、2×17,041,552 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表仍有 dx/yg 两根未触及的填充最高位，未计入实际支持；空间仍为 O(n²+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
 
 正确性与资源定理指向同一个 `controlledPointAdd`。新增门通过 `selector_nodup`、`selected_nodup`、`swap_nodup` 从全局互异条件证明合法；算术继续复用先前的接口合法性和独立乘数副本。
 
@@ -489,7 +548,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 ## 基础层：原地加减法器、受控加减与 Gidney 比较器
 
-重做计划（[REWORK_PLAN](REWORK_PLAN.md) §1.1–§1.3、§5）的共用原语。接口直接用线路列表，宽度相等作为长度前提，互异条件是一个 `Nodup`；每条程序给 Triple、输出以外逐线保持（`_correct`）和同程序资源。本节的原语尚无调用方，改 1（求逆第二阶段）与改 2（模乘）在其上组合。
+重做计划（[REWORK_PLAN](REWORK_PLAN.md) §1.1–§1.3、§5）的共用原语。接口直接用线路列表，宽度相等作为长度前提，互异条件是一个 `Nodup`；每条程序给 Triple、输出以外逐线保持（`_correct`）和同程序资源。改 1 的求逆第二阶段已复用原地常数加减与受控比较器；改 2 将继续组合这些原语。
 
 [InPlaceAdder](../ECDSAAdd/Arithmetic/InPlaceAdder.lean) 的 `majority` 是现有 `fullAdder` 的前六门：进位异或写入 carry，三个输入恢复，不写和位。`addInPlace` 每位先算进位、递归处理高位，再用现有 `eraseCarry` 擦除本位进位——此时 x、y、cin 仍是原值，`eraseCarry_spec` 的前提逐字成立——最后用两个 CX 把和位写回 y；最高位只写和位、不算进位，进位链比位宽少一根。
 
@@ -557,3 +616,11 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 `addInPlace_resources` 与 `compareLt_resources` 给出加减法器和比较器的三项资源；受控变体的计数由其组成部分的计数直接相加（受控复制每次 n 个 CCX），没有单独的资源定理。与现有 `rippleAdder`（n / n / 4n+1）相比，原地加法省去输出寄存器和最高位进位；与 `borrowXor`（2n / 2n）相比，比较器省一半。线路数是静态支持集的基数，不是最大同时存活数；这些是原语，不声称任何上层成本。
 
 基础层验证通过：`lake --wfail build` 完成 2,069 项；脚本选定的 133 个公开定理全部通过传递公理检查，白名单仍仅为 `propext`、`Classical.choice`、`Quot.sound`。新增 15 个入口覆盖加减法器规格与资源、四条受控加减规格、四条比较器规格与资源、三条减半/加倍引理。没有测试、数值对照、真值表、额外公理或证明资源限制放宽。
+
+## 改 1 的中间状态接口
+
+`inverseCompute_values` 公开一对可组合的 Hoare triple：从 `InverseInitial L q x` 执行 `inverseCompute L q` 得到 `InverseMiddle L z cs R`；从这个状态执行 `inverseUncompute L q` 恢复初始断言。这里 `z = kaliskiStep^[512] (kaliskiInit q x)`，`cs = kaliskiCodes 512 (kaliskiInit q x)`，`R = halveFixed q z.k 512 (-(z.r : ZMod q)).val`。
+
+`InverseMiddle.iff` 将中间断言展开为第一阶段的 u/v/r/s/k 与活动、终止、比较工作位状态、记录带 `cs`、内部 `a=R`、`temp=0` 和整个模算术区为零。后续 divide 可在准备段与恢复段之间组合使用逆元的模块，同时保持这些条件。`inverseCopy_values` 是现有 XOR 包装的实例：只把 a 复制进任意初值的 out，中间断言保持。公开 `fieldInverse_spec` / `fieldInverse_xor_spec` 的输入、输出、范围与清零陈述未改。
+
+原地轮的资源均为 `3w+40` Toffoli、`2w+39` 次测量；w=257 时为 811/553，512 轮单向为 415,232/283,136。`halveStep_wires` 与 `halveInPlace_wires` 从门列给出精确支持集；求逆借用 `ModLayout.reg .modulus`、`.carrySum`、`cinSum/cinDiff`，全局 Nodup 推出所有子程序的互异条件。

@@ -30,8 +30,8 @@ def InverseLoopLayout.work (L : InverseLoopLayout) : List Wire :=
   L.first.kNext++L.first.scratch++L.records.flatMap RoundRecord.wires++L.extra
 
 theorem InverseExtra.zero_iff (L : InverseLoopLayout) (s : BasisState) :
-    InverseExtra L 0 0 s ↔ regValue L.extra s=0 := by
-  simp [InverseExtra,InverseLoopLayout.extra,regValue_zero,or_imp,forall_and,and_left_comm]
+    InverseExtra L 0 s ↔ regValue L.extra s=0 := by
+  simp [InverseExtra,InverseLoopLayout.extra,regValue_zero,or_imp,forall_and]
 
 theorem InverseInitial.iff (L : InverseLoopLayout) (q a : Nat) (ha : 0<a) (s : BasisState) :
     InverseInitial L q a s ↔
@@ -46,7 +46,7 @@ theorem InverseInitial.iff (L : InverseLoopLayout) (q a : Nat) (ha : 0<a) (s : B
 theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
-    (ha : L.a.length=257) (hb : L.b.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
+    (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
     (q a O : Nat) (hq : q<2^256) (ho : q%2=1) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
     {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0, L.out=O }}
       inverseLoop L q
@@ -54,7 +54,7 @@ theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
       L.out=(O ^^^ kaliskiInverse q a 256) }} := by
   have hwidth : L.first.data.width=L.arithmetic.width+1 := by
     simp [KaliskiRoundLayout.data,RoundDataLayout.width,hlow,harith]
-  have h := inverseLoop_values L hnd hn hw hwidth (by omega) (by omega) (by omega) (by omega)
+  have h := inverseLoop_values L hnd hn hw hwidth (by omega) (by omega) (by omega)
     q a O (by omega) (by simpa only [hlow] using hq) (by simpa only [harith] using hq) ho hx hcop
   apply Triple.conseq ?_ h ?_
   · intro s h; exact ⟨(InverseInitial.iff L q a hx0 s).mpr h.1,h.2⟩
@@ -65,12 +65,12 @@ theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 theorem inverseLoop_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
-    (ha : L.a.length=257) (hb : L.b.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
+    (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
     (q a : Nat) (hq : q<2^256) (ho : q%2=1) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
     {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0, L.out=0 }}
       inverseLoop L q
     {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0,
       L.out=kaliskiInverse q a 256 }} := by
-  simpa only [Nat.zero_xor] using inverseLoop_xor_spec L hnd hn hw hlow harith ha hb ht hout q a 0 hq ho hx0 hx hcop
+  simpa only [Nat.zero_xor] using inverseLoop_xor_spec L hnd hn hw hlow harith ha ht hout q a 0 hq ho hx0 hx hcop
 
 end ECDSAAdd.Arithmetic
