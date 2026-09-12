@@ -26,7 +26,7 @@ theorem fieldMul_zero_spec (L : MontLayout) (hnd : L.wires.Nodup) (hw : L.Widths
   simpa only [Nat.zero_xor] using fieldMul_spec L hnd hw X Y 0 hX
 
 theorem fieldMul_resources (L : MontLayout) (hnd : L.wires.Nodup) (hw : L.Widths) :
-    toffoliCount (fieldMul L)=513056 ∧ measurementCount (fieldMul L)=245792 ∧
+    toffoliCount (fieldMul L)=379424 ∧ measurementCount (fieldMul L)=379424 ∧
     qubitCount (fieldMul L)=2596 := by
   have hc := montAdapter_counts L p hw hnd
   have hq := montAdapter_qubits L p hw hnd

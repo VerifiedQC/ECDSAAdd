@@ -27,13 +27,13 @@ private theorem maskedDigit_correct (subtract : Bool) (c cin : Wire) (src mask a
     (hs : src.length=mask.length) (ht : mask.length=acc.length) (hc : carry.length+1=acc.length)
     (s : State) (m : List Bool) (hz : regValue mask s.basis=0)
     (hca : regValue carry s.basis=0) (hci : s.basis cin=false) :
-    let circuit := if subtract then maskedSubInPlace c src mask acc carry cin else maskedAddInPlace c src mask acc carry cin
+    let circuit := if subtract then measuredMaskedSubInPlace c src mask acc carry cin else measuredMaskedAddInPlace c src mask acc carry cin
     (run circuit m s).phase=s.phase ∧
     (∀ w, w∉acc → (run circuit m s).basis w=s.basis w) ∧
     regValue acc (run circuit m s).basis=(if subtract then
       (regValue acc s.basis+2^acc.length-(if s.basis c then regValue src s.basis else 0))%2^acc.length
       else (regValue acc s.basis+(if s.basis c then regValue src s.basis else 0))%2^acc.length) := by
-  let circuit := if subtract then maskedSubInPlace c src mask acc carry cin else maskedAddInPlace c src mask acc carry cin
+  let circuit := if subtract then measuredMaskedSubInPlace c src mask acc carry cin else measuredMaskedAddInPlace c src mask acc carry cin
   have h : (run circuit m s).phase=s.phase ∧
       (run circuit m s).basis c=s.basis c ∧ regValue src (run circuit m s).basis=regValue src s.basis ∧
       regValue mask (run circuit m s).basis=0 ∧
@@ -43,11 +43,11 @@ private theorem maskedDigit_correct (subtract : Bool) (c cin : Wire) (src mask a
       (run circuit m s).basis cin=false ∧ regValue carry (run circuit m s).basis=0 := by
     cases subtract with
     | false =>
-      have hh := maskedAddInPlace_spec c cin src mask acc carry hnd hs ht hc
+      have hh := measuredMaskedAddInPlace_spec c cin src mask acc carry hnd hs ht hc
         (s.basis c) (regValue src s.basis) (regValue acc s.basis) s m ⟨⟨⟨⟨⟨rfl,rfl⟩,hz⟩,rfl⟩,hci⟩,hca⟩
       exact ⟨hh.1,hh.2.1.1.1.1.1,hh.2.1.1.1.1.2,hh.2.1.1.1.2,hh.2.1.1.2,hh.2.1.2,hh.2.2⟩
     | true =>
-      have hh := maskedSubInPlace_spec c cin src mask acc carry hnd hs ht hc
+      have hh := measuredMaskedSubInPlace_spec c cin src mask acc carry hnd hs ht hc
         (s.basis c) (regValue src s.basis) (regValue acc s.basis) s m ⟨⟨⟨⟨⟨rfl,rfl⟩,hz⟩,rfl⟩,hci⟩,hca⟩
       exact ⟨hh.1,hh.2.1.1.1.1.1,hh.2.1.1.1.1.2,hh.2.1.1.1.2,hh.2.1.1.2,hh.2.1.2,hh.2.2⟩
   refine ⟨h.1,?_,h.2.2.2.2.1⟩
@@ -63,7 +63,7 @@ private theorem maskedDigit_correct (subtract : Bool) (c cin : Wire) (src mask a
   by_cases hcarry : w∈carry
   · exact (regValue_eq_iff carry _ _).mp (h.2.2.2.2.2.2.trans hca.symm) w hcarry
   have hwires : wires circuit=(c::cin::(src++mask++acc++carry)).toFinset := by
-    have hh := maskedInPlace_wires c src mask acc carry cin hs ht hc
+    have hh := measuredMaskedInPlace_wires c src mask acc carry cin hs ht hc
     cases subtract with
     | false => exact hh.1
     | true => exact hh.2
@@ -81,8 +81,8 @@ private theorem montBit_correct (subtract : Bool) (L : MontStageLayout) (x y : L
     (hpz : regValue L.pad s.basis=0) (hmz : regValue L.mask s.basis=0)
     (hcz : regValue L.carry s.basis=0) (hci : s.basis L.cin=false) :
     let c := y.getD (4*i+j) L.flag
-    let circuit := if subtract then maskedSubInPlace c (L.source x j) L.mask L.acc L.carry L.cin
-      else maskedAddInPlace c (L.source x j) L.mask L.acc L.carry L.cin
+    let circuit := if subtract then measuredMaskedSubInPlace c (L.source x j) L.mask L.acc L.carry L.cin
+      else measuredMaskedAddInPlace c (L.source x j) L.mask L.acc L.carry L.cin
     (run circuit m s).phase=s.phase ∧
     (∀ w, w∉L.acc → (run circuit m s).basis w=s.basis w) ∧
     regValue L.acc (run circuit m s).basis=(if subtract then
@@ -144,7 +144,7 @@ private theorem montAddBits_correct (L : MontStageLayout) (x y : List Wire)
     (hva : regValue L.acc s.basis=U) (hpz : regValue L.pad s.basis=0) (hmz : regValue L.mask s.basis=0)
     (hcz : regValue L.carry s.basis=0) (hci : s.basis L.cin=false) :
     let circuit := (List.range k).flatMap (fun j =>
-      maskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+      measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
     (run circuit m s).phase=s.phase ∧
     (∀ w, w∉L.acc → (run circuit m s).basis w=s.basis w) ∧
     regValue L.acc (run circuit m s).basis=U+X*((Y/2^(4*i))%2^k) := by
@@ -162,7 +162,7 @@ private theorem montAddBits_correct (L : MontStageLayout) (x y : List Wire)
     exact ⟨trivial,fun w _ => trivial,hva⟩
   | succ k ih =>
     let first := (List.range k).flatMap (fun j =>
-      maskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+      measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
     let s1 := run first m s
     let m1 := m.drop (measurementCount first)
     have h1 := ih (by omega)
@@ -194,7 +194,7 @@ private theorem montSubBits_correct (L : MontStageLayout) (x y : List Wire)
     (hva : regValue L.acc s.basis=U+X*((Y/2^(4*i))%2^k)) (hpz : regValue L.pad s.basis=0) (hmz : regValue L.mask s.basis=0)
     (hcz : regValue L.carry s.basis=0) (hci : s.basis L.cin=false) :
     let circuit := (List.range k).reverse.flatMap (fun j =>
-      maskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+      measuredMaskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
     (run circuit m s).phase=s.phase ∧
     (∀ w, w∉L.acc → (run circuit m s).basis w=s.basis w) ∧
     regValue L.acc (run circuit m s).basis=U := by
@@ -211,7 +211,7 @@ private theorem montSubBits_correct (L : MontStageLayout) (x y : List Wire)
     simp only [List.range_zero,List.reverse_nil,List.flatMap_nil,run]
     exact ⟨trivial,fun w _ => trivial,by simpa only [Nat.pow_zero,Nat.mod_one,Nat.mul_zero,Nat.add_zero] using hva⟩
   | succ k ih =>
-    let first := maskedSubInPlace (y.getD (4*i+k) L.flag) (L.source x k) L.mask L.acc L.carry L.cin
+    let first := measuredMaskedSubInPlace (y.getD (4*i+k) L.flag) (L.source x k) L.mask L.acc L.carry L.cin
     let s1 := run first m s
     let m1 := m.drop (measurementCount first)
     have h1 := montBit_correct true L x y i k X Y (by omega) (by omega) hnd hx hpad hm hw hc hX

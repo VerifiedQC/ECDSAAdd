@@ -81,3 +81,7 @@ Deutsch依照已复审§18.6在本仓库编写lookupWalk及其递归证明：正
 ## 改8第一批：测量清掩码受控加减
 
 本批直接复用本库AND测量清理语义及InPlaceAdder的加减门列：中段保持t=c AND src，末段每位测量并用CZ c src[i]消除相位。新文件MeasuredMaskedAdder证明全记录正确性、目标外逐线保持和精确资源；没有引入新的量子语义或外部未验证原语。原InPlaceAdder三个内部组合引理改为可跨文件复用的具名引理，陈述与证明主体保持，其余旧公开规格/门列不变。尚未接入Montgomery，完整点加成本不变。
+
+## 改8窗口集成
+
+MontPrepare变量窗口接入MeasuredMaskedAdder，按已审§20的门列组合；MontDigit规格、精确支持和全部下游资源重新证明。常数窗口、查表、求逆和公开点加契约不变；同程序完整点加11,001,338 Toffoli /5,193,978测量 /6,218线。完整verify2134/252通过，实际公理输出保存于PROOF_STATUS；没有新的外部证明来源或语义扩展。

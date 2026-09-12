@@ -16,7 +16,7 @@ theorem pointSubConstant_counts (L : PointAddLayout) (h : L.Widths)
 
 theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
     (hnd : (L.slope++L.constant.take 256++L.square++L.pool).Nodup) :
-    toffoliCount (pointSquare L)=513056 ∧ measurementCount (pointSquare L)=245792 := by
+    toffoliCount (pointSquare L)=379424 ∧ measurementCount (pointSquare L)=379424 := by
   have hs := h.words L.slope (by simp [PointAddLayout.words])
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have ho := h.words L.square (by simp [PointAddLayout.words])
@@ -31,10 +31,10 @@ theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
 /-- 候选计算和按依赖逆序清理调用相同的前向模块，因此门数和测量数相同。 -/
 theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
     (cx cy : Fp) :
-    (toffoliCount (pointCandidateCompute L cx cy)=6088616 ∧
-      measurementCount (pointCandidateCompute L cx cy)=2383016) ∧
-    (toffoliCount (pointCandidateClear L cx cy)=6088616 ∧
-      measurementCount (pointCandidateClear L cx cy)=2383016) := by
+    (toffoliCount (pointCandidateCompute L cx cy)=5687720 ∧
+      measurementCount (pointCandidateCompute L cx cy)=2783912) ∧
+    (toffoliCount (pointCandidateClear L cx cy)=5687720 ∧
+      measurementCount (pointCandidateClear L cx cy)=2783912) := by
   obtain ⟨nDx,nDy,nOffset,nX,nDelta,nY,nSlope,nSquare,nProduct,nInverse⟩ :=
     L.candidate_interfaces_nodup hnd
   have hdx := h.words L.dx (by simp [PointAddLayout.words])

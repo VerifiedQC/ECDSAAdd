@@ -108,11 +108,11 @@ X<p，Y为任意256位值；XOR允许任意257位O，模加减另需O<p。fieldM
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| montMulXor / fieldMul | 513,056 | 245,792 | 2,596 |
-| montMulAdd | 514,079 | 246,815 | 2,596 |
-| montMulSub | 514,591 | 247,327 | 2,596 |
-| montMulControlledAdd | 514,591 | 246,815 | 2,597 |
-| montMulControlledSub | 515,103 | 247,327 | 2,597 |
+| montMulXor / fieldMul | 379,424 | 379,424 | 2,596 |
+| montMulAdd | 380,447 | 380,447 | 2,596 |
+| montMulSub | 380,959 | 380,959 | 2,596 |
+| montMulControlledAdd | 380,959 | 380,447 | 2,597 |
+| montMulControlledSub | 381,471 | 380,959 | 2,597 |
 
 MontAdapterResources证明同一程序的精确支持等式、门数和基数；不把分配数当实际支持。
 
@@ -560,8 +560,8 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 6,088,616 | 2,383,016 |
-| `pointCandidateClear` | 6,088,616 | 2,383,016 |
+| `pointCandidateCompute` | 5,687,720 | 2,783,912 |
+| `pointCandidateClear` | 5,687,720 | 2,783,912 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
@@ -608,10 +608,10 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 12,178,772 | 4,767,056 | 9,780 |
+| C 有限 | 11,376,980 | 5,568,848 | 9,780 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×6,088,616，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×2,383,016 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×5,687,720，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×2,783,912 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
 
 `pointAddOut_support`证明实际支持等于L.usedWires.toFinset。相比布局分配，排除dx/dy/delta/yg四根填充高位和池中29根旧out：dy/delta由模减写低256位，后续Montgomery源也只读低256位；平方副本仍触及slope全字。usedWires_nodup与usedWires_length给出9,780，其中实际池支持5,670。该数来自静态门列并集，不是最大同时存活数。
 
@@ -636,7 +636,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 11,669,498 | 4,525,818 | 6,218 |
+| 有限 C 的 `controlledPointAdd` | 11,001,338 | 5,193,978 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -891,12 +891,12 @@ D<p, E<p, Z<p, B=true → D≠0
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| divideAdd | 5,056,591 | 1,886,287 | 6,210 |
-| divideSub | 5,057,103 | 1,886,799 | 6,210 |
+| divideAdd | 4,922,959 | 2,019,919 | 6,210 |
+| divideSub | 4,923,471 | 2,020,431 | 6,210 |
 
 `divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
 
-除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体11,669,498/4,525,818/6218已在本批实现，见下节。
+除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体11,001,338/5,193,978/6218已在本批实现，见下节。
 
 ### 改 3 原地点加本体与公开入口
 
@@ -906,7 +906,7 @@ D<p, E<p, Z<p, B=true → D≠0
 
 平方先复制λ到独立S，执行montMulSub，再清S，最后加3cx；常数加法会复用S区域，故必须采用这个顺序。montQ不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
 
-资源定理指向同一有限程序：11,669,498 Toffoli、4,525,818测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
+资源定理指向同一有限程序：11,001,338 Toffoli、5,193,978测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表（历史48/48阶段，改7现已替换）
 
 `Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
@@ -972,6 +972,14 @@ verify.sh删除15个旧入口：mulInto_spec、mulClear_spec、mulInto_frame、m
 
 `MeasuredMaskedAdder.lean` 提供 `measuredMaskedAddInPlace_spec` / `measuredMaskedSubInPlace_spec`，与旧规格的前提和后置相同，只换程序名。`eraseMask_correct` 以掩码等于c AND src为前提，对全部测量记录证明相位恢复、目标外逐线保持与掩码归零；`eraseMask_eq_copy`说明在此合法输入上与旧CCX清理恢复相同完整状态。独立frame进一步保持完整加减目标y以外的全部位。
 
-同一门列的精确计数为2W−1 CCX、2W−1测量、4W+1实际线；W=261为521/521/1045。无新语义、无CCZ、无测试、新公理或证明资源放宽。InPlaceAdder三个内部来源保持引理改为可复用的具名引理，其陈述/证明主体未变；旧受控程序与规格保持。尚未接入Montgomery窗口，完整点加仍11,669,498/4,525,818/6,218。
+同一门列的精确计数为2W−1 CCX、2W−1测量、4W+1实际线；W=261为521/521/1045。无新语义、无CCZ、无测试、新公理或证明资源放宽。InPlaceAdder三个内部来源保持引理改为可复用的具名引理，其陈述/证明主体未变；旧受控程序与规格保持。原语批当时尚未接入Montgomery窗口，阶段点加为11,669,498/4,525,818/6,218。
 
 完整scripts/verify.sh退出0：2,134项构建、252条实际公理输出，新增8个入口。上方公理块为本次实际输出，只依赖propext、Classical.choice、Quot.sound（部分定理无公理）。
+
+## 改8第二批：Montgomery变量窗口集成
+
+MontPrepare的变量窗口已改用measuredMaskedAdd/SubInPlace；MontDigit组合相同的前后置，MontWires与资源支持等式重证，公开模乘、除法和点加Triple保持。Lookup、常数窗口及求逆门列不变。变量窗口2,372/2,372，变量准备或恢复152,328/152,328，常数准备或恢复仍37,384/37,384；P/Q各189,712/189,712。
+
+五个适配器XOR、加、减、受控加、受控减分别379,424/379,424、380,447/380,447、380,959/380,959、380,959/380,447、381,471/380,959。支持仍2,596或2,597线。完整controlledPointAdd为11,001,338/5,193,978/6,218；相对改7少668,160 Toffoli、多668,160测量。前节改7及原语批数字保留为阶段记录。
+
+本批完整scripts/verify.sh退出0：2134项构建、252条实际公理输出，与上方公理块逐行一致，仅白名单三项；无新增检查入口、测试、公理或证明资源放宽。

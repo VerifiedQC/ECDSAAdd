@@ -100,7 +100,7 @@ theorem montDigit_wires (L : MontStageLayout) (x y : List Wire) (i : Nat)
     (hw : L.Widths) (hx : 256≤x.length) (hi : 4*i+4≤y.length) :
     wires (montAddDigit L x y i)=((y.drop (4*i)).take 4++[L.cin]++x.take 256++L.pad++L.mask++L.acc++L.carry).toFinset ∧
     wires (montSubDigit L x y i)=((y.drop (4*i)).take 4++[L.cin]++x.take 256++L.pad++L.mask++L.acc++L.carry).toFinset := by
-  have hbit (j : Nat) := maskedInPlace_wires (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin
+  have hbit (j : Nat) := measuredMaskedInPlace_wires (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin
     (show (L.source x j).length=L.mask.length by
       simp only [MontStageLayout.source,List.length_append,List.length_take,List.length_drop,hw.pad,hw.mask,Nat.min_eq_left hx]; omega)
     (hw.mask.trans hw.acc.symm) (by simp [hw.carry,hw.acc])

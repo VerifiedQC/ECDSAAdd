@@ -3,9 +3,9 @@ import ECDSAAdd.Arithmetic.MontAdapterSpec
 namespace ECDSAAdd.Arithmetic
 
 theorem montAdapter_counts (M : MontLayout) (p : Nat) (hw : M.Widths) (hnd : M.wires.Nodup) :
-    (toffoliCount (montMulXor M p)=513056 ∧ measurementCount (montMulXor M p)=245792) ∧
-    (toffoliCount (montMulAdd M p)=514079 ∧ measurementCount (montMulAdd M p)=246815) ∧
-    (toffoliCount (montMulSub M p)=514591 ∧ measurementCount (montMulSub M p)=247327) := by
+    (toffoliCount (montMulXor M p)=379424 ∧ measurementCount (montMulXor M p)=379424) ∧
+    (toffoliCount (montMulAdd M p)=380447 ∧ measurementCount (montMulAdd M p)=380447) ∧
+    (toffoliCount (montMulSub M p)=380959 ∧ measurementCount (montMulSub M p)=380959) := by
   have h := montPQ_counts M p hw
   have hc := copyRegister_counts none M.product M.out (by simp [MontLayout.product,hw.z,hw.out])
   have ha := modAddInPlace_resources M.addView 256 p (M.add_widths hw) (M.add_nodup hw hnd) (by omega)
@@ -17,8 +17,8 @@ theorem montAdapter_counts (M : MontLayout) (p : Nat) (hw : M.Widths) (hnd : M.w
 
 theorem montControlledAdapter_counts (c : Wire) (M : MontLayout) (p : Nat)
     (hw : M.Widths) (hnd : (c::M.wires).Nodup) :
-    (toffoliCount (montMulControlledAdd c M p)=514591 ∧ measurementCount (montMulControlledAdd c M p)=246815) ∧
-    (toffoliCount (montMulControlledSub c M p)=515103 ∧ measurementCount (montMulControlledSub c M p)=247327) := by
+    (toffoliCount (montMulControlledAdd c M p)=380959 ∧ measurementCount (montMulControlledAdd c M p)=380447) ∧
+    (toffoliCount (montMulControlledSub c M p)=381471 ∧ measurementCount (montMulControlledSub c M p)=380959) := by
   have h := montPQ_counts M p hw
   have hn := MontLayout.controlled_add_nodup c M hw hnd
   have ha := controlledModAdd_resources c M.addView 256 p (M.add_widths hw) hn (by omega)
