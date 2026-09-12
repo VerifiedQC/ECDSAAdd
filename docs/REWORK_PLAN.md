@@ -1496,3 +1496,33 @@ MeasuredMaskedAdder原语的两个Triple、全测量记录相位恢复、逐线�
 已接改7的14/14查表及第一批原语。只替换MontPrepare变量窗口的受控加减调用；旧原语、常数窗口、Lookup及求逆调用者保留。变量窗口2,372/2,372，变量段152,328/152,328，常数段37,384/37,384，P/Q各189,712/189,712；五个适配器合计1,904,795 Toffoli /1,903,259测量。完整点加11,001,338/5,193,978/6,218已由同一门列证明。相对改7少668,160 Toffoli、多668,160测量，实际支持不变。
 
 完整verify退出0（2134项构建、252条公理），实际输出见PROOF_STATUS。§17为改6a初始48/48查表阶段，§18为改7阶段，§20.6为原语批阶段；当前资源以本节和§16.7为准。普通坐标公开规格、相位与全部工作区清理均保持。
+
+## 21. 改10：Kaliski轮受控加减的测量清掩码（设计，待实现）
+
+基线main75ce0c6，完整点加11,001,338 Toffoli /5,193,978测量 /6,218线。本项只将RoundFrame.inplaceArithmetic的maskedSub/AddInPlace换为已证measuredMaskedSub/AddInPlace；不改Montgomery、第二阶段或公开kaliskiRound_spec/fieldInverse_spec/controlledPointAdd_spec陈述。
+
+### 21.1 门列与契约
+
+正轮分别以subtract控制u减v、r加s；恢复轮以相同控制执行u加v、r减s。四个调用共用RoundFrame.inplaceArithmetic，源g、目标f、掩码L.reg .y、低w−1位carry及cin布局不变。RoundFrame.inplace已要求y=0、carry=0、cin=false和全局互异，两个新原语的完整Triple与旧规格模程序名相同，可直接复用。
+
+门列是copyRegister (some c) src mask；add/subInPlace mask target carry cin；逐位measureX mask[i] [] [CZ c src[i]]。算术段保持掩码与源，测量相位m·c·src[i]由本次CZ抵消；全部记录下mask恢复0，目标外逐线保持。没有倒放测量或新增语义。必须保持RoundFrame.inplace的外部frame，并以measuredMaskedInPlace_wires重证现有支持等式。
+
+### 21.2 精确设计账本（均待实现验证）
+
+两处均可替换，不采用仅一处的保守估计。每处由3w−1 /w−1变为2w−1 /2w−1。正/恢复轮各省2w Toffoli，增加2w测量；body由12w−4 /2w−2变为10w−4 /4w−2，完整轮由14w+31 /4w+28变为12w+31 /6w+28。w=257时3,629/1,056→3,115/1,570。
+
+| 层次 | 当前Toffoli/测量 | 改10后设计值 |
+|---|---|---|
+| 一次完整求逆（512正轮+512恢复轮） | 4,541,488 /1,639,472 | 4,015,152 /2,165,808 |
+| divideAdd | 4,922,959 /2,019,919 | 4,396,623 /2,546,255 |
+| divideSub | 4,923,471 /2,020,431 | 4,397,135 /2,546,767 |
+| controlledPointAdd，有限C | 11,001,338 /5,193,978 | 9,948,666 /6,246,650 |
+
+
+每次求逆少526,336 Toffoli、增加526,336测量；两次合计少1,052,672（相对基线约9.57%），增加同数测量。fieldInverse仍预计5,954线，完整点加6,218线，须由同程序支持等式重证。C=O为空程序不变。此处仅声称Toffoli减少，不声称总运行时间下降。模乘适配器不变；独立XOR点加含两次完整求逆，其资源也随之传播。
+
+### 21.3 实施与交付
+
+设计GO后修改RoundFrame、RoundResources、RoundWires及RoundSpec实例，沿Kaliski循环、InverseResources、除法、候选与点加传播计数。全测量记录、控制false、w=1原语角落和旧公开范围均保持；Kaliski实例仍w=257。不新增通用框架、不删除旧原语、不增加测试或证明资源限额。完整verify及实际公理块、README、PROVENANCE同步。
+
+与改11的分工：本项先基于75ce0c6实现；改11当前只交第二阶段设计，后续实现接本项合入后的求逆资源，分别计算差额，不把共享InverseResources或点加文件并行覆盖。
