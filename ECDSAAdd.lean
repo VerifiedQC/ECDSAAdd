@@ -21,3 +21,4 @@ import ECDSAAdd.Arithmetic.HornerResources
 
 import ECDSAAdd.Math.PointInPlace
 import ECDSAAdd.Arithmetic.DivideSpec
+import ECDSAAdd.Arithmetic.PointInPlaceResources

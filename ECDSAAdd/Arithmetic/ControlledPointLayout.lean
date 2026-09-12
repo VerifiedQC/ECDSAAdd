@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.ControlledPointPorts
+import ECDSAAdd.Arithmetic.PointInPlaceProgram
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -29,11 +30,10 @@ def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
 def controlledPointSwap (c : Wire) (a b : PointReg) : Program :=
   cswap c a.finite b.finite++swapRegisters c a.x b.x++swapRegisters c a.y b.y
 
-/-- 两次前向 XOR 点加清除旧点；C=O 的原地程序在构造期为空。 -/
+/-- 除法中心原地点加；有限常量执行固定门列，C=O时构造为空。 -/
 def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => []
-  | .some _ => controlledPointAddOut L C++controlledPointSwap L.control L.point L.temporary++
-      controlledPointAddOut L (-C)
+  | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => pointInPlaceFinite L C cx cy
 
 end ECDSAAdd.Arithmetic
