@@ -979,8 +979,8 @@ D<p, E<p, Z<p, c=true → D≠0
 | 2 | `divideAdd(g,x,y,λ)` | λ=E/D，除法工作区零；x/y 保持 |
 | 3 | D 的 `mulSub(λ,x,y)` | y=E−λD=0 |
 | 4 | CX 复制 λ 到独立 n 位 S；`mulInto(λ,S,t)` | S=λ，t=λ²；不将同一物理字接到两个乘数口 |
-| 5 | `modSubInPlace(t,x)`；受 g 控制的常数模加 3cx | x=D−λ²+3cx=cx−x₃ |
-| 6 | `mulClear(λ,S,t)`；同一 CX 清 S | t=S=0，λ 保持 |
+| 5 | `modSubInPlace(t,x)`；`mulClear(λ,S,t)`；同一 CX 清 S | x=D−λ²；t=S=0，λ 保持 |
+| 6 | 受 g 控制的常数模加 3cx | x=D−λ²+3cx=cx−x₃ |
 | 7 | D 的 `mulAdd(λ,x,y)` | y=λ(cx−x₃)=y₃+cy |
 | 8 | `zeroControlled g e` 检测当前 x；两 CX 写 q=g XOR e | e=g∧[x=0]，q=g∧[x≠0] |
 | 9 | `divideSub(q,x,y,λ)` | q=true 时 λ=0；否则 λ 保持 |
@@ -1062,7 +1062,7 @@ B 是有顺序的物理线列表，不是新分配。下表区间为 B 的半开
 | 受控取负 | 点x高位=B[0]；T=B[1:258]；scratch=B[258:1030] |
 | 完整点相等 / x零检测 | 分别用 B[0:513] / B[0:256] 作清零检测链 |
 
-每个 scratch 的 772 位依次为 constant(257)、carry(256)、cin(1)、mask(257)、flag(1)，与 C1/D 布局一致。平方中的 S/t 与 scratch/点x高位互异；λ 从复制到清 S 之间不改变。除法期间只借 B，绝不借用历史中的银行，即使某个历史值恰为零。只通过子列表、置换与分段索引证明互异，不把生命周期代替物理 `Nodup`。
+每个 scratch 的 772 位依次为 constant(257)、carry(256)、cin(1)、mask(257)、flag(1)，与 C1/D 布局一致。平方中的 S/t 与 scratch/点x高位互异；λ 从复制到清 S 之间不改变。必须先完成减平方并清 t/S，才调用常数模加 3cx：后者的源和 scratch 会复用 S/t 所在线路。mulClear 不读取当前点 x，因此该次序保持算术结果和资源数。除法期间只借 B，绝不借用历史中的银行，即使某个历史值恰为零。只通过子列表、置换与分段索引证明互异，不把生命周期代替物理 `Nodup`。
 
 完整有限 C 程序的支持目标为
 

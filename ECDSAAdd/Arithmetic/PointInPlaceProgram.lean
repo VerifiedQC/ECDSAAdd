@@ -24,9 +24,9 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
   copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
   mulInto L.inPlaceSquare p ++
   modSubInPlace L.inPlaceSquareSub p ++
-  pointInPlaceConstantAdd L L.point.x (3*cx) ++
   mulClear L.inPlaceSquare p ++
   copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
+  pointInPlaceConstantAdd L L.point.x (3*cx) ++
   mulAdd L.inPlaceMultiply p ++
   equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
   [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
