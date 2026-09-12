@@ -2,26 +2,6 @@ import ECDSAAdd.Arithmetic.MontCounts
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 三层查表 AND 链必定触及四个地址位及三根辅助线，与表项无关。 -/
-private theorem lookup_core_subset (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hc : controls.length=3) (hs : scratch.length=3) :
-    (a::controls++scratch).toFinset ⊆ wires (lookup a controls scratch target table) := by
-  obtain ⟨b,c,d,rfl⟩ := List.length_eq_three.mp hc
-  obtain ⟨u,v,w,rfl⟩ := List.length_eq_three.mp hs
-  have hfirst : wires (lookupRow a [b,c,d] [u,v,w] target 0 (table 0)) ⊆
-      wires (lookup a [b,c,d] [u,v,w] target table) := by
-    change wires (lookupRow a [b,c,d] [u,v,w] target 0 (table 0)) ⊆
-      wires (lookupRow a [b,c,d] [u,v,w] target 0 (table 0) ++ _)
-    rw [wires_append]
-    exact Finset.subset_union_left
-  apply Finset.Subset.trans ?_ hfirst
-  intro q hq
-  simp only [lookupRow,lookupAnd,wires_append,wires,Instr.wires,correctionWires]
-  simp only [List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,
-    Finset.notMem_empty,or_false,List.cons_append,List.nil_append] at hq
-  simp only [Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,Finset.notMem_empty,or_false]
-  tauto
-
 private theorem montLookup_bounds (L : MontStageLayout) (addr : List Wire) (K : Nat)
     (hw : L.Widths) (ha : addr.length=4) :
     (addr++L.scratch).toFinset ⊆ wires (montLookup L addr K) ∧
@@ -31,7 +11,7 @@ private theorem montLookup_bounds (L : MontStageLayout) (addr : List Wire) (K : 
   | cons a rest =>
     have hr : rest.length=3 := by simpa using ha
     constructor
-    · simpa [montLookup] using lookup_core_subset a rest L.scratch L.table (fun d => d*K) hr hw.scratch
+    · simpa [montLookup] using lookup_core_wires a rest L.scratch L.table (fun d => d*K) hr hw.scratch
     · simpa [montLookup] using lookup_wires_subset a rest L.scratch L.table (fun d => d*K)
 
 theorem montLookupUpdate_wires (L : MontStageLayout) (addr : List Wire) (K : Nat)

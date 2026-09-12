@@ -9,8 +9,8 @@ theorem MontLayout.work_length (M : MontLayout) (hw : M.Widths) : M.work.length=
 
 /-- 输出字不计入 P/Q 的实际支持；布局中的高位 X 也不计入。 -/
 theorem montPQ_resources (M : MontLayout) (p : Nat) (hw : M.Widths) (hnd : M.wires.Nodup) :
-    (toffoliCount (montP M p)=269584 ∧ measurementCount (montP M p)=135952 ∧ qubitCount (montP M p)=2339) ∧
-    (toffoliCount (montQ M p)=269584 ∧ measurementCount (montQ M p)=135952 ∧ qubitCount (montQ M p)=2339) := by
+    (toffoliCount (montP M p)=256528 ∧ measurementCount (montP M p)=122896 ∧ qubitCount (montP M p)=2339) ∧
+    (toffoliCount (montQ M p)=256528 ∧ measurementCount (montQ M p)=122896 ∧ qubitCount (montQ M p)=2339) := by
   have hc := montPQ_counts M p hw
   have hs := montPQ_wires M p hw
   have hn : (M.x.take 256++M.y++M.work).Nodup := by
