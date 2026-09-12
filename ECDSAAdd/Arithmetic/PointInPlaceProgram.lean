@@ -51,6 +51,13 @@ def pointInPlaceGenericFlag (L : ControlledPointLayout) : Program :=
 def pointInPlaceDoubleEnable (L : ControlledPointLayout) (cy : Fp) : Program :=
   if cy≠-cy then [.CX L.control L.core.double] else []
 
+/-- 互斥角落的四次XOR：O→C、C→2C、−C→O。 -/
+def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program :=
+  maskedPointConstant L.infinitySelect L.point C ++
+  maskedPointConstant L.doubleSelect L.point C ++
+  maskedPointConstant L.doubleSelect L.point (C+C) ++
+  maskedPointConstant L.genericSelect L.point (-C)
+
 /-- 输入分类、普通分支、三个互斥角落写回，再从输出清除分类位。 -/
 def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Program :=
   pointInPlaceDoubleEnable L cy ++
@@ -59,10 +66,7 @@ def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Pr
   equalConstant L.control L.genericSelect L.inPlacePointZero (pointCode (-C)) ++
   pointInPlaceGenericFlag L ++
   pointInPlaceGeneric L cx cy (exceptionalSlope C) ++
-  maskedPointConstant L.infinitySelect L.point C ++
-  maskedPointConstant L.doubleSelect L.point C ++
-  maskedPointConstant L.doubleSelect L.point (C+C) ++
-  maskedPointConstant L.genericSelect L.point (-C) ++
+  pointInPlaceCorners L C ++
   pointInPlaceGenericFlag L ++
   equalConstant L.control L.infinitySelect L.inPlacePointZero (pointCode C) ++
   equalConstant L.core.double L.doubleSelect L.inPlacePointZero (pointCode (C+C)) ++

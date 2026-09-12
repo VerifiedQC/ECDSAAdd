@@ -99,7 +99,7 @@ theorem pointInPlaceFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
       measurementCount (pointInPlaceDoubleEnable L cy)=0 := by
     unfold pointInPlaceDoubleEnable
     split <;> simp [toffoliCount,measurementCount]
-  simp only [pointInPlaceFinite,toffoliCount_append,measurementCount_append,hg.1,hg.2,
+  simp only [pointInPlaceFinite,pointInPlaceCorners,toffoliCount_append,measurementCount_append,hg.1,hg.2,
     (hz _ _ _).1,(hz _ _ _).2,hzl,(maskedPointConstant_counts _ _ _).1,
     (maskedPointConstant_counts _ _ _).2,he.1,he.2]
   norm_num [pointInPlaceGenericFlag,toffoliCount,measurementCount]
