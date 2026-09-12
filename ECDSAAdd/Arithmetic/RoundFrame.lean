@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.RoundLayout
-import ECDSAAdd.Arithmetic.InPlaceAdder
+import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
 
 namespace ECDSAAdd.Arithmetic
 
@@ -10,9 +10,9 @@ def RoundFrame (L : RoundDataLayout) (v : RoundField → Nat) (base : BasisState
 /-- 复用原地受控加减，y和低位进位链清零，out不再被触及。 -/
 def inplaceArithmetic (L : RoundDataLayout) (f g : RoundField) (c : Wire) (negative : Bool) : Program :=
   if negative then
-    maskedSubInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
+    measuredMaskedSubInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
   else
-    maskedAddInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
+    measuredMaskedAddInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
 
 namespace RoundFrame
 
@@ -119,7 +119,7 @@ theorem inplace (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
       (L.adder_fields f).2.2.2.1,(L.adder_fields f).2.2.2.2.1] at h1 h2 h3 ⊢
     dsimp only [chain] at *
     omega
-  have hw := maskedInPlace_wires_subset c (L.reg g) (L.reg .y) (L.reg f) chain L.cin hs ht hc
+  have hwEq := measuredMaskedInPlace_wires c (L.reg g) (L.reg .y) (L.reg f) chain L.cin hs ht hc
   intro s m hv
   have hz : regValue chain s.basis=0 := by
     apply (regValue_zero _ _).mpr
@@ -138,12 +138,12 @@ theorem inplace (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
         regValue (L.reg .y) s.basis=0) ∧ regValue (L.reg f) s.basis=v f) ∧
         s.basis L.cin=false) ∧ regValue chain s.basis=0 := ⟨⟨⟨⟨⟨hv.2 c hh.1,hv.1.1 g⟩,(hv.1.1 .y).trans hy⟩,hv.1.1 f⟩,hv.1.2⟩,hz⟩
     cases negative
-    · obtain ⟨ha,hb⟩ := maskedAddInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
+    · obtain ⟨ha,hb⟩ := measuredMaskedAddInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
         hn hs ht hc (base c) (v g) (v f) s m hp
       simp only [Holds.holds,L.reg_length] at hb
       simpa only [p,inplaceArithmetic,Bool.false_eq_true,if_false,L.reg_length] using
         ⟨ha,hb.1.1.1.1.1,hb.1.1.1.1.2,hb.1.1.1.2,hb.1.1.2,hb.1.2,hb.2⟩
-    · obtain ⟨ha,hb⟩ := maskedSubInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
+    · obtain ⟨ha,hb⟩ := measuredMaskedSubInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
         hn hs ht hc (base c) (v g) (v f) s m hp
       simp only [Holds.holds,L.reg_length] at hb
       simpa only [p,inplaceArithmetic,if_true,L.reg_length] using
@@ -162,7 +162,9 @@ theorem inplace (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
     · apply run_preserves_outside
       intro hw'
       have hsub : wires p ⊆ (c::L.cin::(L.reg g++L.reg .y++L.reg f++chain)).toFinset := by
-        cases negative <;> simp only [p,inplaceArithmetic,Bool.false_eq_true,if_false,if_true] <;> tauto
+        cases negative
+        · simpa only [p,inplaceArithmetic,Bool.false_eq_true,if_false,chain] using hwEq.1.le
+        · simpa only [p,inplaceArithmetic,if_true,chain] using hwEq.2.le
       exact hm (List.mem_toFinset.mp (hsub hw'))
   exact ⟨hp,RoundValues.update L hh.2 v f _ s.basis _ hv.1 he hf',
     fun w hw => (he w (fun hm => hw (L.reg_mem f hm))).trans (hv.2 w hw)⟩

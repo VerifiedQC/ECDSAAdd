@@ -29,19 +29,19 @@ private theorem usedShared_swap (L : KaliskiRoundLayout) :
 
 theorem kaliskiLoop_counts (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat)
     (hnd : (L.tapeWires rs).Nodup) (hw : L.counter.width=10) :
-    toffoliCount (kaliskiLoop L i rs)=rs.length*(14*L.data.width+31) ∧
-    measurementCount (kaliskiLoop L i rs)=rs.length*(4*L.data.width+28) ∧
-    toffoliCount (kaliskiUnloop L i rs)=rs.length*(14*L.data.width+31) ∧
-    measurementCount (kaliskiUnloop L i rs)=rs.length*(4*L.data.width+28) := by
+    toffoliCount (kaliskiLoop L i rs)=rs.length*(12*L.data.width+31) ∧
+    measurementCount (kaliskiLoop L i rs)=rs.length*(6*L.data.width+28) ∧
+    toffoliCount (kaliskiUnloop L i rs)=rs.length*(12*L.data.width+31) ∧
+    measurementCount (kaliskiUnloop L i rs)=rs.length*(6*L.data.width+28) := by
   induction rs generalizing L i with
   | nil => simp [kaliskiLoop,kaliskiUnloop,toffoliCount,measurementCount]
   | cons r rs ih =>
     have hr := kaliskiRound_counts (L.withRecord r) (L.withRecord_nodup r rs hnd) hw i
     have hnw : L.swapCounter.counter.width=10 := by rw [L.swapCounter_counter,L.counter.swapCounter_fields.2.2.2.2.2,hw]
     have ht := ih L.swapCounter (i+1) (L.tail_nodup r rs hnd) hnw
-    change _=rs.length*(14*L.data.width+31) ∧ _=rs.length*(4*L.data.width+28) ∧
-      _=rs.length*(14*L.data.width+31) ∧ _=rs.length*(4*L.data.width+28) at ht
-    change _=14*L.data.width+31 ∧ _=4*L.data.width+28 ∧ _=14*L.data.width+31 ∧ _=4*L.data.width+28 at hr
+    change _=rs.length*(12*L.data.width+31) ∧ _=rs.length*(6*L.data.width+28) ∧
+      _=rs.length*(12*L.data.width+31) ∧ _=rs.length*(6*L.data.width+28) at ht
+    change _=12*L.data.width+31 ∧ _=6*L.data.width+28 ∧ _=12*L.data.width+31 ∧ _=6*L.data.width+28 at hr
     simp only [kaliskiLoop,kaliskiUnloop,toffoliCount_append,measurementCount_append,hr.1,hr.2.1,
       hr.2.2.1,hr.2.2.2,ht.1,ht.2.1,ht.2.2.1,ht.2.2.2,List.length_cons,Nat.add_mul,Nat.one_mul]
     simp [Nat.add_comm]

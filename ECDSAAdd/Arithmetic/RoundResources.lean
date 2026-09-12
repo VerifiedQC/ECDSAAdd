@@ -13,9 +13,9 @@ private theorem swap_counts (c : Wire) (a b : List Wire) (hlen : a.length=b.leng
 
 private theorem inplace_counts (L : RoundDataLayout) (f g : RoundField) (c : Wire)
     (neg : Bool) (hw : 0<L.width) :
-    toffoliCount (inplaceArithmetic L f g c neg)=3*L.width-1 ∧
-    measurementCount (inplaceArithmetic L f g c neg)=L.width-1 := by
-  have hm := maskedInPlace_counts c (L.reg g) (L.reg .y) (L.reg f)
+    toffoliCount (inplaceArithmetic L f g c neg)=2*L.width-1 ∧
+    measurementCount (inplaceArithmetic L f g c neg)=2*L.width-1 := by
+  have hm := measuredMaskedInPlace_counts c (L.reg g) (L.reg .y) (L.reg f)
     ((L.reg .carry).take (L.width-1)) L.cin
     (by simp [L.reg_length]) (by simp [L.reg_length])
     (by simp [L.reg_length]; omega)
@@ -24,10 +24,10 @@ private theorem inplace_counts (L : RoundDataLayout) (f g : RoundField) (c : Wir
     (by tauto : _)
 
 private theorem body_counts (L : RoundDataLayout) (a sw su : Wire) (hw : 0<L.width) :
-    toffoliCount (kaliskiBodyProgram L a sw su)=12*L.width-4 ∧
-    measurementCount (kaliskiBodyProgram L a sw su)=2*L.width-2 ∧
-    toffoliCount (kaliskiUnbodyProgram L a sw su)=12*L.width-4 ∧
-    measurementCount (kaliskiUnbodyProgram L a sw su)=2*L.width-2 := by
+    toffoliCount (kaliskiBodyProgram L a sw su)=10*L.width-4 ∧
+    measurementCount (kaliskiBodyProgram L a sw su)=4*L.width-2 ∧
+    toffoliCount (kaliskiUnbodyProgram L a sw su)=10*L.width-4 ∧
+    measurementCount (kaliskiUnbodyProgram L a sw su)=4*L.width-2 := by
   have huv := swap_counts sw L.u L.v (by simp [RoundDataLayout.u,RoundDataLayout.v,L.reg_length])
   have hrs := swap_counts sw L.r L.s (by simp [RoundDataLayout.r,RoundDataLayout.s,L.reg_length])
   have hmU := inplace_counts L .u .v su true hw
@@ -53,10 +53,10 @@ theorem recordRound_counts (L : KaliskiRoundLayout) :
 
 /-- 正逆轮使用相同次数的 CCX 与测量；每轮复用数据宽度 w 的算术工作区。 -/
 theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw : L.counter.width=10) (i : Nat) :
-    toffoliCount (kaliskiRound L i)=14*L.data.width+31 ∧
-    measurementCount (kaliskiRound L i)=4*L.data.width+28 ∧
-    toffoliCount (kaliskiUnround L i)=14*L.data.width+31 ∧
-    measurementCount (kaliskiUnround L i)=4*L.data.width+28 := by
+    toffoliCount (kaliskiRound L i)=12*L.data.width+31 ∧
+    measurementCount (kaliskiRound L i)=6*L.data.width+28 ∧
+    toffoliCount (kaliskiUnround L i)=12*L.data.width+31 ∧
+    measurementCount (kaliskiUnround L i)=6*L.data.width+28 := by
   have hb := body_counts L.data L.active L.swap L.subtract (by simp [KaliskiRoundLayout.data,RoundDataLayout.width])
   have hr := recordRound_counts L
   have hz := zeroControlled_counts L.active L.done (L.data.zeroBits .v)

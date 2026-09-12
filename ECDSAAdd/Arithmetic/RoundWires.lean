@@ -52,7 +52,7 @@ private theorem inplace_wires (L : RoundDataLayout) (f g : RoundField) (c : Wire
     (hw : 0<L.width) :
     wires (inplaceArithmetic L f g c neg)=
       (c::L.cin::(L.reg g++L.reg .y++L.reg f++(L.reg .carry).take (L.width-1))).toFinset := by
-  have hm := maskedInPlace_wires c (L.reg g) (L.reg .y) (L.reg f)
+  have hm := measuredMaskedInPlace_wires c (L.reg g) (L.reg .y) (L.reg f)
     ((L.reg .carry).take (L.width-1)) L.cin
     (by simp [L.reg_length]) (by simp [L.reg_length]) (by simp [L.reg_length]; omega)
   cases neg <;> simp only [inplaceArithmetic,Bool.false_eq_true,if_false,if_true] <;> tauto

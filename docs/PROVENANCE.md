@@ -85,3 +85,7 @@ Deutsch依照已复审§18.6在本仓库编写lookupWalk及其递归证明：正
 ## 改8窗口集成
 
 MontPrepare变量窗口接入MeasuredMaskedAdder，按已审§20的门列组合；MontDigit规格、精确支持和全部下游资源重新证明。常数窗口、查表、求逆和公开点加契约不变；同程序完整点加11,001,338 Toffoli /5,193,978测量 /6,218线。完整verify2134/252通过，实际公理输出保存于PROOF_STATUS；没有新的外部证明来源或语义扩展。
+
+## 改10 Kaliski轮集成
+
+复用本仓库MeasuredMaskedAdder已证原语，替换RoundFrame.inplaceArithmetic的加减分支；不引入外部证明或语义。保留RoundFrame与公开求逆/点加规格，重证精确支持和下游资源。完整点加9,948,666 Toffoli /6,246,650测量 /6,218线；这是门数换测量的优化。

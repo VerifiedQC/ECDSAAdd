@@ -73,9 +73,9 @@ theorem kaliskiUnround_spec (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 /-- secp256k1 使用 257 位数据/工作寄存器；这里仅计一轮，不是完整逆元成本。 -/
 theorem kaliskiRound_257_resources (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     (hw : L.counter.width=10) (hd : L.data.width=257) (i : Nat) :
-    toffoliCount (kaliskiRound L i)=3629 ∧ measurementCount (kaliskiRound L i)=1056 ∧
+    toffoliCount (kaliskiRound L i)=3115 ∧ measurementCount (kaliskiRound L i)=1570 ∧
     qubitCount (kaliskiRound L i)=1847 ∧
-    toffoliCount (kaliskiUnround L i)=3629 ∧ measurementCount (kaliskiUnround L i)=1056 ∧
+    toffoliCount (kaliskiUnround L i)=3115 ∧ measurementCount (kaliskiUnround L i)=1570 ∧
     qubitCount (kaliskiUnround L i)=1847 := by
   have hc := kaliskiRound_counts L hnd hw i
   have hq := kaliskiRound_qubits L hnd hw (by omega) i
