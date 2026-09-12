@@ -468,6 +468,18 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.halveFixed_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_inverse_p' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomeryStep_exact' depends on axioms: [propext]
+'ECDSAAdd.montgomeryStep_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomeryStep_restore' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.montgomery_normalize' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.montgomeryValue_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomeryValue_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomeryValue_finish' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomery_standard_conversion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.p_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -873,3 +885,10 @@ D<p, E<p, Z<p, B=true → D≠0
 平方先复制λ到独立S，执行Into/Sub/Clear，再清S，最后加3cx；常数加法会复用S/t区域，故必须采用这个顺序。mulClear不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
 
 资源定理指向同一有限程序：14,998,618 Toffoli、7,880,538测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
+## 改6a第一批：数学与查表
+
+`Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q尚未实现。
+
+`Arithmetic/Lookup.lean` 提供四位地址、16项经典表的XOR查表；`lookup_spec`直接给地址D、目标T、scratch=0的前后值，保持全部目标外线路和相位，覆盖所有测量记录。每项三层AND与反向测量CZ清理，固定16项（包括零表项），`lookup_counts`证明48 Toffoli/48测量；`lookup_wires_subset`只给支持上界，不声称任意表都触及全部目标位。没有CCZ、原生求值公理或测试。
+
+完整verify通过2114项构建、227条实际公理输出（上方逐行收录），新增12个公开检查入口。当前域乘法和点加门列/资源不变；§17的539,168等适配器数字仍是待实现预算。
