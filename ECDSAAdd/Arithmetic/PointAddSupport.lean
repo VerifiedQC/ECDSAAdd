@@ -5,14 +5,14 @@ import ECDSAAdd.Arithmetic.PointOutputResources
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
 
-/-- 有限常量分支实际触及的线路；dx/yg 的填充最高位不列入。 -/
+/-- 有限常量分支实际触及的线路；dx/dy/delta/yg 的填充最高位不列入。 -/
 def PointAddLayout.usedWires (L : PointAddLayout) : List Wire := L.candidateUsed++L.boundaryWires
 
 theorem PointAddLayout.usedWires_nodup (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup) :
     L.usedWires.Nodup := L.candidate_boundary_nodup h hn
 
 theorem PointAddLayout.usedWires_length (L : PointAddLayout) (h : L.Widths) :
-    L.usedWires.length=9714 := by
+    L.usedWires.length=9780 := by
   have hd := h.words L.dx (by simp [PointAddLayout.words])
   have hy := h.words L.candidateY (by simp [PointAddLayout.words])
   have hdy := h.words L.dy (by simp [PointAddLayout.words])

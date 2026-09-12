@@ -32,6 +32,8 @@ theorem ControlledPointLayout.candidate_subset (L : ControlledPointLayout) (h : 
   all_goals try { subst w; simp }
   all_goals try { have hh := List.mem_of_mem_take hdx; simp_all only [true_or,or_true] }
   all_goals try { have hh := List.mem_of_mem_take hcy; simp_all only [true_or,or_true] }
+  all_goals try { have hh := List.mem_of_mem_take hdy; simp_all only [true_or,or_true] }
+  all_goals try { have hh := List.mem_of_mem_take hd; simp_all only [true_or,or_true] }
   all_goals simp_all only [true_or,or_true]
 
 theorem ControlledPointLayout.flags_subset (L : ControlledPointLayout) :

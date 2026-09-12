@@ -106,7 +106,7 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 {{ L.x=X,L.y=Y,L.out=(O ^^^ ((X*Y)%p)),L.work=0 }}
 ```
 
-[FieldMultiply](../ECDSAAdd/Arithmetic/FieldMultiply.lean) 取 n=256、X<p；Y 的范围从其 256 位寄存器自动推出。公开数值陈述保持，布局类型改为 MulAdapterLayout，Widths 改为固定临时积/工作区而非倍数链。`fieldMul_correct` 继续提供相位、输出外逐线保持及 XOR 数值结果供上层组合。
+[FieldMultiply](../ECDSAAdd/Arithmetic/FieldMultiply.lean) 取 n=256、X<p；Y 的范围从其 256 位寄存器自动推出。公开数值陈述保持，本批布局类型改为 MontLayout，Widths 描述固定窗口工作区；Horner 的 MulAdapterLayout 仍由除法与原地点加调用。`fieldMul_correct` 继续提供相位、输出外逐线保持及 XOR 数值结果供上层组合。
 
 [MulAdapterSpec](../ECDSAAdd/Arithmetic/MulAdapterSpec.lean) 对奇数 p<2^n、X<p、Y<2^n 证明三个适配器。先 mulInto 得到临时积，再 XOR/模加/模减到公开输出，最后 mulClear 清掉临时积。加减接口另需 O<p；三个 Triple 均对全部测量记录恢复相位、输入与工作区，且有目标外 frame。没有任意初值 Horner 乘加的错误假设。
 
@@ -115,7 +115,7 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 | mulXor | n(18n−3) | n(14n−3) | 7n+7 |
 | mulAdd | n(18n−3)+4n−1 | n(14n−3)+4n−1 | 7n+7 |
 | mulSub | n(18n−3)+6n−1 | n(14n−3)+6n−1 | 7n+7 |
-| fieldMul，n=256 | 1,178,880 | 916,736 | 1,799 |
+| fieldMul，n=256 | 539,168 | 271,904 | 2,596 |
 
 `mulAdapter_wires` 证明三条实际门列均触及完整布局；清理补上前向内核未触及的源高位与 flag，输出每位由复制或算术触及。`mulAdapter_counts/resources` 从同一程序求精确资源，空间为 O(n)，不声称最优或最大同时存活数。半倍与 Horner 内核证明详见 C2 节。
 
@@ -527,6 +527,22 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.montPQ_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.montPQ_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.montPQ_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulControlledAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulControlledSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulXor_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulAdd_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulControlledAdd_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montMulControlledSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montAdapter_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montControlledAdapter_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montAdapter_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montControlledAdapter_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montAdapter_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montControlledAdapter_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -554,15 +570,15 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 8,086,088 | 4,395,848 |
-| `pointCandidateClear` | 8,086,088 | 4,395,848 |
+| `pointCandidateCompute` | 6,166,952 | 2,461,352 |
+| `pointCandidateClear` | 6,166,952 | 2,461,352 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
 共享映射是实际布局构造，不是抽象存在前提：
 
 - `poolSub`：输入、输出直接连接调用方，五个 257 位工作字和两根进位使用池前 1,287 位；`poolSub_work` 给出准确工作列表。
-- `poolMul`：临时积与 scratch 使用池前 1,029 位；`poolMul_work` 给出准确工作列表。
+- `poolMul`：两段Montgomery历史与共享辅助区使用池前1,827位；`poolMul_work` 给出准确工作列表。
 - `poolInverse`：单轮共享区、512 对记录、模算术区及 a/temp、输出高位使用池前 5,699 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
@@ -602,12 +618,12 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 16,173,716 | 8,792,720 | 9,714 |
+| C 有限 | 12,335,444 | 4,923,728 | 9,780 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×8,086,088，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×4,395,848 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×6,166,952，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×2,461,352 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
 
-`pointAddOut_support` 证明 `wires (pointAddOut L (.some hc)) = L.usedWires.toFinset`。`usedWires` 包括候选实际支持及边界输入有限位、其他标志和完整输出；与分配表相比，排除 dx 和 yg 的填充最高位，以及共享池中 97 根未使用的旧 out 线。模减法不写输出高位，两者也没有后续读取；其他高位通过模乘输入、模减输入或平方副本被真实触及。`PointAddLayout.usedWires_nodup` 与 `usedWires_length` 从同一个全局布局条件给出 9,714，包含 5,602 根实际池支持及测量修正线。空间为 O(n+N)，不是最大同时存活数或最优性结论。
+`pointAddOut_support`证明实际支持等于L.usedWires.toFinset。相比布局分配，排除dx/dy/delta/yg四根填充高位和池中29根旧out：dy/delta由模减写低256位，后续Montgomery源也只读低256位；平方副本仍触及slope全字。usedWires_nodup与usedWires_length给出9,780，其中实际池支持5,670。该数来自静态门列并集，不是最大同时存活数。
 
 公开资源入口是 `pointAddOut_finite_resources` 和 `pointAddOut_zero_resources`，正确性和资源指向同一个 `pointAddOut` 定义。互异条件通过原有算术接口及新增输出/标志接口从 L.wires.Nodup 推出，候选乘法保持独立乘数副本，没有重复控制 CCX。
 
@@ -840,7 +856,7 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 
 `mulXor_spec` 对任意输出 O，`mulAdd_spec` / `mulSub_spec` 对 O<p，均保留 x/y、恢复相位并清零 F.work（含临时积）。对应 frame 保持 out 外每根位；p 奇、p<2^n、X<p、Y<2^n。三个资源分别为 1,178,880/916,736、1,179,903/917,759、1,180,415/918,271，均为 1,799 根静态线。未增加受控乘加接口；上层若采用受控中段，需另证其组合。
 
-`poolMul` 使用前 1,029 位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
+D阶段（改6a前）的`poolMul`使用前1,029位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
 
 D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
 
@@ -907,7 +923,7 @@ D<p, E<p, Z<p, B=true → D≠0
 
 `Arithmetic/Lookup.lean` 提供四位地址、16项经典表的XOR查表；`lookup_spec`直接给地址D、目标T、scratch=0的前后值，保持全部目标外线路和相位，覆盖所有测量记录。每项三层AND与反向测量CZ清理，固定16项（包括零表项），`lookup_counts`证明48 Toffoli/48测量；`lookup_wires_subset`只给支持上界，不声称任意表都触及全部目标位。没有CCZ、原生求值公理或测试。
 
-完整verify通过2114项构建、227条实际公理输出（上方逐行收录），新增12个公开检查入口。当前域乘法和点加门列/资源不变；§17的539,168等适配器数字仍是待实现预算。
+完整verify通过2114项构建、227条实际公理输出（上方逐行收录），新增12个公开检查入口。第一批时域乘法和点加门列/资源不变；适配器已在下述第三批实现。
 
 
 ## 改6a第二批：两段准备/恢复 P/Q
@@ -918,6 +934,18 @@ D<p, E<p, Z<p, B=true → D≠0
 
 `MontCounts.lean`逐门组合证明变量窗口3,484/1,396，常数窗口712/712，规范化或撤销520/520；变量准备/恢复223,496/89,864，常数准备/恢复46,088/46,088。`montPQ_counts`证明P/Q各269,584 Toffoli与135,952测量；`montPQ_wires`证明支持恰为X低256位、Y和全部工作区，`montPQ_resources`据Nodup得到2,339根实际线，工作区为1,827位。输出字和X高位未计入支持。
 
-五个输出适配器、fieldMul替换及除法/点加接入尚未实现；现有点加14,998,618/7,880,538/6,218不变。完整适配器539,168等及点加11,800,058仍为后续预算，不作为本批已证收益。
+第二批结束时五个适配器与集成尚未实现；第三批结果见下。原地点加14,998,618/7,880,538/6,218仍未改接，11,800,058仍是后续预算。
 
 本批完整scripts/verify.sh退出0：2,136项构建、243条公开入口公理输出；新增16项，实际输出逐行收录于上方，仅依赖propext、Classical.choice、Quot.sound。
+
+## 改6a第三批：五个适配器与fieldMul
+
+MontAdapterLayout为输出中段借用table前257位、carry前256位、mask前257位、cin和已清零的一个scratch；§17.4原写255根carry是宽度笔误，已按C1完整257位模加核修正为256根，仍在既有260根内，不增加工作位或门数。MontAdapterSpec证明XOR、模加、模减、受控模加、受控模减的完整Triple；中段只改out并保持MontPrepared，Q因此清空全部历史。MontAdapterFrame逐项证明out外每根线路保持。受控false仍执行P/Q，但输出不变，控制位保持。
+
+同一门列的Toffoli/测量：XOR539,168/271,904，加540,191/272,927，减540,703/273,439，受控加540,703/272,927，受控减541,215/273,439。普通三项支持等于x.take256++y++out++work，由Nodup得2,596线；受控两项另含c，共2,597线。
+
+fieldMul改用MontLayout与montMulXor，保留任意初值输出的数值契约；固定宽度结构删除了旧width=256重复参数。poolMul工作列表恰为wireBlock前1,827位。候选实际池为该前缀与求逆支持并集，candidatePool_length证明5,670位；两根额外未读输入高位dy/delta从支持移除。候选各6,166,952/2,461,352，独立pointAddOut为12,335,444/4,923,728/9,780，controlledPointAddOut为12,335,450/4,923,728/9,784。
+
+原地点加controlledPointAdd及其除法仍使用旧Horner算术，资源14,998,618/7,880,538/6,218不变。保留旧内核/适配器是因为仍有调用者；下一批才改接两次除法与三个外部乘积，11,800,058目标尚未实现。
+
+第三批完整 scripts/verify.sh 退出0：2,140项构建、259条公开入口公理输出；新增16项，以上公理块为本次实际输出，仅依赖propext、Classical.choice、Quot.sound。

@@ -249,6 +249,22 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.montPQ_counts
 #print axioms ECDSAAdd.Arithmetic.montPQ_wires
 #print axioms ECDSAAdd.Arithmetic.montPQ_resources
+#print axioms ECDSAAdd.Arithmetic.montMulXor_spec
+#print axioms ECDSAAdd.Arithmetic.montMulAdd_spec
+#print axioms ECDSAAdd.Arithmetic.montMulSub_spec
+#print axioms ECDSAAdd.Arithmetic.montMulControlledAdd_spec
+#print axioms ECDSAAdd.Arithmetic.montMulControlledSub_spec
+#print axioms ECDSAAdd.Arithmetic.montMulXor_frame
+#print axioms ECDSAAdd.Arithmetic.montMulAdd_frame
+#print axioms ECDSAAdd.Arithmetic.montMulSub_frame
+#print axioms ECDSAAdd.Arithmetic.montMulControlledAdd_frame
+#print axioms ECDSAAdd.Arithmetic.montMulControlledSub_frame
+#print axioms ECDSAAdd.Arithmetic.montAdapter_counts
+#print axioms ECDSAAdd.Arithmetic.montControlledAdapter_counts
+#print axioms ECDSAAdd.Arithmetic.montAdapter_wires
+#print axioms ECDSAAdd.Arithmetic.montControlledAdapter_wires
+#print axioms ECDSAAdd.Arithmetic.montAdapter_qubits
+#print axioms ECDSAAdd.Arithmetic.montControlledAdapter_qubits
 LEAN
 )
 printf '%s\n' "$axioms"

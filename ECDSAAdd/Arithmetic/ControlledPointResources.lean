@@ -13,9 +13,9 @@ theorem controlledPointOutput_counts (L : ControlledPointLayout) (h : L.Widths) 
 
 theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAddOut L (.some hc))=16173722 ∧
-    measurementCount (controlledPointAddOut L (.some hc))=8792720 ∧
-    qubitCount (controlledPointAddOut L (.some hc))=9718 := by
+    toffoliCount (controlledPointAddOut L (.some hc))=12335450 ∧
+    measurementCount (controlledPointAddOut L (.some hc))=4923728 ∧
+    qubitCount (controlledPointAddOut L (.some hc))=9784 := by
   have cc := pointCandidate_counts L.core h (L.core_nodup hn) cx cy
   have cf := pointFlags_counts L.core h cx cy
   have co := controlledPointOutput_counts L h (.some hc)

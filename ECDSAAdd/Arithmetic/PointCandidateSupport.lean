@@ -29,11 +29,10 @@ theorem poolSub_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire
 
 theorem poolMul_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire)
     (hx : x.length=257) (hy : y.length=256) (ho : out.length=257) :
-    wires (fieldMul (poolMul L.poolWire x y out))=(x++y++out++L.pool.take 1029).toFinset := by
-  rw [fieldMul,(mulAdapter_wires _ p (poolMul_widths _ _ _ _ hx hy ho)
-    (by rw [poolMul_width]; omega)).1]
-  change (x++y++out++(poolMul L.poolWire x y out).work).toFinset=_
-  rw [poolMul_work,L.pool_prefix h 1029 (by omega)]
+    wires (fieldMul (poolMul L.poolWire x y out))=(x.take 256++y++out++L.pool.take 1827).toFinset := by
+  rw [fieldMul,(montAdapter_wires _ p (poolMul_widths _ _ _ _ hx hy ho)).1]
+  change (x.take 256++y++out++(poolMul L.poolWire x y out).work).toFinset=_
+  rw [poolMul_work,L.pool_prefix h 1827 (by omega)]
 
 theorem poolInverse_support (L : PointAddLayout) (x out : List Wire)
     (hx : x.length=256) (ho : out.length=256) :
@@ -74,7 +73,7 @@ theorem pointSubConstant_support (L : PointAddLayout) (h : L.Widths)
     Finset.union_eq_right.mpr hc,Finset.union_eq_left.mpr hc]
 
 theorem pointSquare_support (L : PointAddLayout) (h : L.Widths) :
-    wires (pointSquare L)=(L.slope++L.constant++L.square++L.pool.take 1029).toFinset := by
+    wires (pointSquare L)=(L.slope++L.constant++L.square++L.pool.take 1827).toFinset := by
   have hs := h.words L.slope (by simp [PointAddLayout.words])
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have ho := h.words L.square (by simp [PointAddLayout.words])
@@ -84,6 +83,7 @@ theorem pointSquare_support (L : PointAddLayout) (h : L.Widths) :
   simp only [hn,Bool.false_eq_true,if_false,Option.toList_none,List.nil_append]
   ext w
   have ht : w∈L.constant.take 256 → w∈L.constant := List.mem_of_mem_take
+  have hst : w∈L.slope.take 256 → w∈L.slope := List.mem_of_mem_take
   simp only [Finset.mem_union,List.mem_toFinset,List.mem_append]
   tauto
 
@@ -101,18 +101,18 @@ theorem PointAddLayout.candidatePool_sublist (L : PointAddLayout) (h : L.Widths)
   rw [L.pool_prefix h 5699 (by omega),List.take_of_length_le (by rw [h.pool])] at hh
   exact hh
 
-theorem PointAddLayout.pool_prefix_used (L : PointAddLayout) (h : L.Widths) (n : Nat) (hn : n≤1287) :
+theorem PointAddLayout.pool_prefix_used (L : PointAddLayout) (h : L.Widths) (n : Nat) (hn : n≤1827) :
     ∀ q∈L.pool.take n, q∈candidatePool L.poolWire := by
   intro q hq
-  rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1287 (by omega)]
-  exact Finset.mem_union_left _ (List.mem_toFinset.mpr ((by simpa only [List.take_take,Nat.min_eq_left hn] using List.take_sublist n (L.pool.take 1287) : (L.pool.take n).Sublist (L.pool.take 1287)).subset hq))
+  rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1827 (by omega)]
+  exact Finset.mem_union_left _ (List.mem_toFinset.mpr ((by simpa only [List.take_take,Nat.min_eq_left hn] using List.take_sublist n (L.pool.take 1827) : (L.pool.take n).Sublist (L.pool.take 1827)).subset hq))
 
 def PointAddLayout.candidateUsed (L : PointAddLayout) : List Wire :=
-  L.extendedX++L.extendedY++L.dx.take 256++L.dy++L.slope++L.square++L.offset++
-    L.candidateX++L.delta++L.product++L.candidateY.take 256++L.constant++
+  L.extendedX++L.extendedY++L.dx.take 256++L.dy.take 256++L.slope++L.square++L.offset++
+    L.candidateX++L.delta.take 256++L.product++L.candidateY.take 256++L.constant++
     L.divisor++L.inverse++[L.generic]++candidatePool L.poolWire
 
-/-- 同一前向模块的计算与清理具有相同支持集；两根填充高位均不在其中。 -/
+/-- 同一前向模块的计算与清理具有相同支持集；四根填充高位均不在其中。 -/
 theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) :
     wires (pointCandidateCompute L cx cy)=L.candidateUsed.toFinset ∧
     wires (pointCandidateClear L cx cy)=L.candidateUsed.toFinset := by
@@ -146,10 +146,10 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
     cOffset,cDelta,cY,cSlope,cProduct,cSquare,hsafe,cInverse]
   constructor <;> ext w
   all_goals
-    have hp1 : w∈L.pool.take 1029 → w∈L.pool.take 1287 :=
-      fun hh => (by simpa only [List.take_take] using List.take_sublist 1029 (L.pool.take 1287) : (L.pool.take 1029).Sublist (L.pool.take 1287)).subset hh
-    have hpool : w∈candidatePool L.poolWire ↔ w∈L.pool.take 1287 ∨ w∈poolInverseUsedWork L.poolWire := by
-      rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1287 (by omega)]
+    have hp1 : w∈L.pool.take 1287 → w∈L.pool.take 1827 :=
+      fun hh => (by simpa only [List.take_take] using List.take_sublist 1287 (L.pool.take 1827) : (L.pool.take 1287).Sublist (L.pool.take 1827)).subset hh
+    have hpool : w∈candidatePool L.poolWire ↔ w∈L.pool.take 1827 ∨ w∈poolInverseUsedWork L.poolWire := by
+      rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1827 (by omega)]
       simp
     have hs : w∈L.slope.take 256 → w∈L.slope := List.mem_of_mem_take
     have ho : w∈L.offset.take 256 → w∈L.offset := List.mem_of_mem_take

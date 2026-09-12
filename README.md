@@ -4,7 +4,7 @@
 
 ## Current status
 
-本节描述当前提交包含的代码。M1（语义、Hoare 规格、AND 测量反计算）、M2（加减法、模 p 加减、模乘）、完整 EEA 求逆（I1–I5）和 M3（候选计算、完整经典常量点加、受控原地点加）已完成；改 1 已将求逆第二阶段替换为原地减半与显式加倍恢复；改 5 已用测量清零检测链并接入原地受控加减；改 4 已将计数活动比较及记录段接入 Gidney 比较器；改 2 已用 Horner 内核及三个适配器替换倍数链模乘，并缩小共享工作池；改 3 已接入两次除法与五个乘积的原地点加。最终结果 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b 证明 `point = if b then R+C else R`，清零全部工作位并对所有测量记录恢复相位；有限 C 的同程序精确资源为 14,998,618 个 Toffoli、7,880,538 次测量、6,218 根实际静态线路。改 1 已实现，后续门数压缩见下文计划。
+本节描述当前提交包含的代码。M1（语义、Hoare 规格、AND 测量反计算）、M2（加减法、模 p 加减、模乘）、完整 EEA 求逆（I1–I5）和 M3（候选计算、完整经典常量点加、受控原地点加）已完成；改 1 已将求逆第二阶段替换为原地减半与显式加倍恢复；改 5 已用测量清零检测链并接入原地受控加减；改 4 已将计数活动比较及记录段接入 Gidney 比较器；改 2 已用 Horner 内核及三个适配器替换倍数链模乘，并缩小共享工作池；改3已接入两次除法与五个乘积的原地点加；改6a的五个标准模乘适配器已接入fieldMul及独立XOR点加，原地点加改接仍待后续集成。最终结果 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b 证明 `point = if b then R+C else R`，清零全部工作位并对所有测量记录恢复相位；有限 C 的同程序精确资源为 14,998,618 个 Toffoli、7,880,538 次测量、6,218 根实际静态线路。改 1 已实现，后续门数压缩见下文计划。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -14,10 +14,10 @@
 | AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/And.lean) |
 | M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Layout.lean) |
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
-| 模乘 | 已证明 Horner 内核、XOR/加/减适配器与精确资源，fieldMul 使用 XOR 适配器，空间 O(n) | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
+| 模乘 | 已证明两段Montgomery的五个适配器，fieldMul使用标准模积XOR，工作区1,827位 | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
 | 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Horner 和适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
 | 改 2 C2 半倍与 Horner 内核 | 已证明无控制半倍、零输出乘积和清回零的 Triple/frame/精确资源；已接入域乘法 | [HornerResources.lean](ECDSAAdd/Arithmetic/HornerResources.lean) |
-| 改 6a 准备/恢复 | 已证明两段Montgomery计算及前向清理的内部Triple、逐线保持、精确资源；五个适配器和集成待实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/MontResources.lean) |
+| 改 6a 准备/恢复 | 已证明P/Q与五个适配器的Triple、逐线保持、精确资源；已接入fieldMul，原地点加改接待实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/MontResources.lean) |
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
@@ -30,7 +30,7 @@
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
-n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。XOR 模乘使用 n(18n−3) 个 Toffoli、n(14n−3) 次测量、7n+7 根静态线路；p 实例为 1,178,880、916,736、1,799。模乘空间为 O(n)，未声称资源最优。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
+n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。当前fieldMul使用539,168个Toffoli、271,904次测量和2,596根实际线路。旧Horner适配器仍供原地点加复用，其公式为n(18n−3)、n(14n−3)、7n+7。模乘空间为 O(n)，未声称资源最优。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
 
 I2 的 w 位受控移位使用 max(w−1,0) 个 Toffoli、零测量；w≥2 时静态线路为 w+1，否则为零。10 位计数器按模 1024 增减，使用 20 个 Toffoli、20 次测量、41 根静态线路；结果移入空寄存器并清空旧寄存器，控制为假时数值不变但角色仍交换。
 
@@ -42,9 +42,9 @@ I4 在两个阶段各执行 N=512 轮。第一阶段保存 2N 根记录线；第
 
 I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli 和测量数保持 **4,541,488 / 1,639,472**，完整静态线路为 **5,954**。外部输入增加 256 根线路；内核的 257 位输出被拆成 256 位公开输出与一根工作高位，后者由逆元范围证明为零。
 
-M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 **8,086,088 个 Toffoli、4,395,848 次测量**。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的 1,029、5,699、1,287 位前缀。布局分配数为 9,813；实际池支持为 5,602 位，完整电路排除 dx/yg 两根填充最高位及池中的 97 根旧 out 线。
+M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 **6,166,952 个 Toffoli、2,461,352 次测量**。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的 1,827、5,699、1,287 位前缀。布局分配数为 9,813；实际池支持为5,670位，完整电路排除dx/dy/delta/yg四根填充最高位及池中的29根旧out线。
 
-M3 完整 `pointAddOut` 对有限经典常量使用 **16,173,716 个 Toffoli、8,792,720 次测量、9,714 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。空间为 O(n+N)，不声称资源最优。
+M3 完整 `pointAddOut` 对有限经典常量使用 **12,335,444 个 Toffoli、4,923,728 次测量、9,780 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。空间为 O(n+N)，不声称资源最优。
 
 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **14,998,618 个 Toffoli、7,880,538 次测量、6,218 根实际静态线路**。两次除法保留求逆历史，只借已清零的工作区做受控累加；其余三个乘积完成原地坐标更新。输入分类和输出重算恢复七个标志，λ及全部工作位归零；覆盖O、互逆点、倍点、C=−C和控制false。C=O在构造期为空程序，三项资源均为零。`pointInPlaceFinite_wires` 与全局互异证明给出实际支持，公共布局仍分配9,817位。独立XOR点加接口继续保留。
 
@@ -54,7 +54,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **14,998,618 个 Toffoli
 
 改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 已证明无控制半倍与 Horner 内核。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 已证明三个适配器并替换域乘法；旧倍数链布局已删除，该阶段完整受控点加降至 32,347,957 Toffoli / 17,585,440 测量 / 9,718 根实际线路。
 
-改 1、改 2、改 3、改 4、改 5 已计入 Current status；改6a的P/Q已实现但尚未接入域乘法，后续适配器和集成仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
+改 1、改 2、改 3、改 4、改 5 已计入 Current status；改6a五个适配器和fieldMul已实现，原地点加改接仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
 
 | 项 | 内容 | 受控原地点加 Toffoli 目标 | 线路目标 | 负责 |
 | --- | --- | ---: | ---: | --- |
@@ -157,6 +157,6 @@ scripts/verify.sh
 
 Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 
-改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#montgomery-design)：包含标准表示转换与历史清理的 XOR 适配器预算为 539,168 Toffoli / 271,904 测量 / 2,596 根实际线路，尚未实现或证明，不计入 Current status。
+改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#montgomery-design)：包含标准表示转换与历史清理的 XOR适配器已证539,168 Toffoli / 271,904测量 / 2,596根实际线路，并已用于fieldMul；原地点加11,800,058目标仍待集成。
 
-改6a已实现数学、查表和共享工作区的准备/恢复电路 P/Q。`montP_spec` 得到标准模积并保留两段历史，`montQ_spec` 消费历史并清空全部工作位；两者各为269,584 Toffoli / 135,952测量 / 2,339根实际线路（工作区1,827位），对全部测量记录保持相位及工作区外线路。入口为Arithmetic/MontPQ.lean、MontResources.lean。五个输出适配器及集成尚未实现，上述完整乘法预算仍未证明。
+改6a已实现数学、查表和共享工作区的准备/恢复电路 P/Q。`montP_spec` 得到标准模积并保留两段历史，`montQ_spec` 消费历史并清空全部工作位；两者各为269,584 Toffoli / 135,952测量 / 2,339根实际线路（工作区1,827位），对全部测量记录保持相位及工作区外线路。入口为Arithmetic/MontPQ.lean、MontResources.lean。五个适配器已证明，fieldMul使用XOR版；普通加/减为540,191/272,927和540,703/273,439，均2,596线；受控加/减为540,703/272,927和541,215/273,439，均2,597线。原地点加改接待实现。
