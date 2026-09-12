@@ -69,7 +69,7 @@ theorem fieldInverse_xor_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low])
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low,hw.arithmetic])
     (by rw [hw.a,hw.arithmetic])
-    (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) p
+    (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) hw.low hw.arithmetic p
   have hdis := (List.nodup_append'.mp (L.wires_perm.nodup_iff.mp hnd)).2.2
   have hc' := hc.frame (R:=fun st => regValue L.x st=X) (by
     intro s t he hx

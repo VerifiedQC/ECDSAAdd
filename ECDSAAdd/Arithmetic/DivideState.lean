@@ -90,10 +90,10 @@ theorem divideReady_iff (L : DivideLayout) (hw : L.Widths) (D S : Nat)
 
 /-- 所有求逆内部位保持时，准备段的历史与逆元断言保持。 -/
 theorem divideMiddle_congr (L : DivideLayout) (S A : Nat) (s t : BasisState)
-    (h : InverseMiddle L.inner (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S)) A s)
+    (h : InverseScaledMiddle L.inner p (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S)) A s)
     (he : ∀ q∈L.inner.wires, t q=s q) :
-    InverseMiddle L.inner (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S)) A t := by
-  apply InverseMiddle.congr L.inner _ _ A s t h
+    InverseScaledMiddle L.inner p (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S)) A t := by
+  apply InverseScaledMiddle.congr L.inner p _ _ A s t h
   intro q hq
   exact he q (List.mem_append_left _ hq)
 

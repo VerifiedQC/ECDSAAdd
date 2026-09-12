@@ -279,6 +279,9 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset
+#print axioms ECDSAAdd.Arithmetic.inverseScaling_values
+#print axioms ECDSAAdd.Arithmetic.InverseScaledMiddle.congr
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_fields
 LEAN
 )
 printf '%s\n' "$axioms"
