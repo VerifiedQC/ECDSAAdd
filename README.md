@@ -16,6 +16,7 @@
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
 | 模乘 | 已证明保留输入、输出 XOR、完整清理及资源公式；首版保留倍数链，空间 O(n²) | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
 | 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；旧模乘尚未接入 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
+| 改 2 C2 半倍与 Horner 内核 | 已证明无控制半倍、零输出乘积和清回零的 Triple/frame/精确资源；尚未替换域乘法 | [HornerResources.lean](ECDSAAdd/Arithmetic/HornerResources.lean) |
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
@@ -50,9 +51,9 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **52,914,997 个 Toffoli
 
 ## 优化进度与下一步计划
 
-改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 的无控制半倍与 Horner 内核、D 的适配器和域乘法替换尚未实现，当前点加成本不变。
+改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 已证明无控制半倍与 Horner 内核。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 的适配器与域乘法替换尚未实现，当前点加成本不变。
 
-改 1、改 4、改 5 已计入 Current status，改 2 的 C1 接口已实现，其余项目仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
+改 1、改 4、改 5 已计入 Current status，改 2 的 C1/C2 接口已实现，其余项目仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
 
 | 项 | 内容 | 受控原地点加 Toffoli 目标 | 线路目标 | 负责 |
 | --- | --- | ---: | ---: | --- |
@@ -68,7 +69,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **52,914,997 个 Toffoli
 
 线路按"外部寄存器 + 各模块工作区的最大值"估算：现 74,024 根中 69,908 是模乘倍数链与模加减工作区构成的共享池，只改求逆不缩池，改 2 后该池缩为求逆工作区。5k 以下的进一步削减（Kaliski 记录带每轮 1 位、常数加法器不用临时寄存器、比较/零检测链复用加法器辅助位）尚未纳入编号计划。
 
-改 2 的具体门列与资源推导见 [实施设计](docs/REWORK_PLAN.md#12-改-2-实施设计已复审c1-已实现)。该细化方案已使用基础层 Gidney 比较器，XOR 模乘目标为 1,178,880 个 Toffoli / 1,799 根线路；若接入 PR B 当前目标，既有点加组合累计目标为 36,691,765 个 Toffoli / 9,815 根线路。设计已复审，C1 模加减已证明，其余模乘与集成目标仍待 Lean 证明，不替换 Current status；总表中的早期量级预算与此具体方案的比较器/求逆布局口径不同。拟定公开接口集中在 §12.9；PR C1 已实现四个模加减接口，C2 接无控制半倍与 Horner 内核，D 接适配器与域乘法；受控半倍留作后续计划。
+改 2 的具体门列与资源推导见 [实施设计](docs/REWORK_PLAN.md#12-改-2-实施设计已复审c1c2-已实现)。该细化方案已使用基础层 Gidney 比较器，XOR 模乘目标为 1,178,880 个 Toffoli / 1,799 根线路；按 PR B 阶段的历史求逆数，既有点加组合累计目标曾为 36,691,765 个 Toffoli / 9,815 根线路。设计已复审，C1 模加减与 C2 半倍/Horner 内核已证明，适配器与集成目标仍待 Lean 证明；PR D 将按改 5 后的求逆资源重算，不替换 Current status；总表中的早期量级预算与此具体方案的比较器/求逆布局口径不同。拟定公开接口集中在 §12.9；PR C1/C2 已实现四个模加减接口、无控制半倍与 Horner 内核，D 接适配器与域乘法；受控半倍留作后续计划。
 
 改 4 首批计数比较器接入已实现，见 [实施说明 §13](docs/REWORK_PLAN.md#13-改-4-首批接入计数比较器已实现)：完整求逆省30,720 Toffoli/测量，当前资源已包含此收益；记录段直接受控比较也已实现，见 [§14](docs/REWORK_PLAN.md#14-改-4-后续记录段直接受控比较已实现)，每次求逆再省263,168 Toffoli/测量。
 

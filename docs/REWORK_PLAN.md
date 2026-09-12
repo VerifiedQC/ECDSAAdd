@@ -427,11 +427,11 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 - `lake --wfail build` 与公开入口公理白名单通过；无 sorry / native_decide / 新 axiom。
 - 每项先交"构造 + 逐步寄存器表 + 门数推导 + 证明义务"的设计 PR 描述，确认后再写证明（与 M3 流程一致）。
 
-## 12. 改 2 实施设计（已复审，C1 已实现）
+## 12. 改 2 实施设计（已复审，C1/C2 已实现）
 
-C1 状态：模加、模减、受控模加、受控模减的 Triple/frame/精确资源已证明，源范围放宽为 A≤p。普通加减实际线路为 4n+4，受控加为 5n+5，受控减为 5n+6。C2 接无控制半倍与 Horner 内核，D 接适配器与域乘法，均尚未实现。
+C1 状态：模加、模减、受控模加、受控模减的 Triple/frame/精确资源已证明，源范围放宽为 A≤p。普通加减实际线路为 4n+4，受控加为 5n+5，受控减为 5n+6。C2 已证明无控制半倍和 Horner 正向/清理的 Triple、frame、支持集及精确资源。D 的适配器与域乘法接入尚未实现。
 
-本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**除上述 C1 外，下面的精确数仍是拟定门列推导值，尚非 Lean 定理**。不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
+本节将 §1/§3 的量级预算细化为 PR C/D 的可实现门列。基于 PR A 的 list 接口及 Gidney 比较器；**C1/C2 原语及内核的精确数已由 Lean 证明；适配器和集成数字仍是门列推导值**。不要求先完成 PR B 的求逆专用减半。PR B 先合并，PR D 的点加资源与共享池映射在其上重算。
 
 ### 12.1 固定布局、基础接口和旋转
 
@@ -441,7 +441,7 @@ C1 状态：模加、模减、受控模加、受控模减的 Triple/frame/精确
 
 基础接口沿用 Deutsch：`addInPlace` / `subInPlace`、`maskedAddConst` / `maskedSubConst`、`maskedAddInPlace` / `maskedSubInPlace`、带可选控制的 `compareLt` / `compareLtConst`。r 位加减计 r−1 个 CCX、r−1 次测量；r 位比较计 r 个 CCX/r 次测量，带控制多一个 CCX。常数装卸用 X/CX；掩码装卸用已有受控复制门列。需要让 mask 存活到比较结束时，显式展开“复制、调用基础加法、复制清理”，不改基础加法内部。
 
-**旋转使用真实门列，不改变固定布局。** 两线 swap 为 `CX a b; CX b a; CX a b`，零 CCX、零测量。w 位循环左移按相邻交换 `(n−1,n),…,(0,1)`；高位零时等于乘 2。循环右移用反序交换；低位零时等于除 2。每次 n 个 swap，3n 个 CX。受控旋转将 swap 换为已证 `cswap`，计 n 个 CCX。每一步恢复到同一 z 线路列表，因此没有 n 轮布局旋转后输出接线错位的问题。CX 数不计入 Toffoli，但不称“没有门”。
+**旋转使用真实门列，不改变固定布局。** 两线 swap 为 `CX b a; CX a b; CX b a`，零 CCX、零测量。w 位循环左移按相邻交换 `(n−1,n),…,(0,1)`；高位零时等于乘 2。循环右移用反序交换；低位零时等于除 2。每次 n 个 swap，3n 个 CX。受控旋转将 swap 换为已证 `cswap`，计 n 个 CCX。每一步恢复到同一 z 线路列表，因此没有 n 轮布局旋转后输出接线错位的问题。CX 数不计入 Toffoli，但不称“没有门”。
 
 ### 12.2 模加与受控模加
 
@@ -538,11 +538,11 @@ sub: mulInto product ; modSubInPlace product out ; mulClear product
 
 XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±XY)%p`。输入、product、W 在后置条件中明确保持/清零。平方调用者必须提供独立乘数副本，以满足 Nodup，不能把 x/y 接同一组线。
 
-拟定 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；**布局共分配 `6n+6` 根，不代表每段都触及全部字段**。XOR 包装另加公开 out(w)，原 acc 作为 product；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。
+已实现的 `MulInPlaceLayout` 只列 x(w)、y(n)、acc(w)、mask(w)、constant(w)、carry(n)、cin、flag；**布局共分配 `6n+6` 根，不代表每段都触及全部字段**。XOR 包装另加公开 out(w)，原 acc 作为 product；工作池为 product+mask+constant+carry+cin+flag，即 `4n+5` 根（n=256：1,029）。
 
-按当前字面门列分别提出支持集证明义务：
+按当前字面门列，C2 已证明以下两个内核支持集，完整包装留待 D：
 
-| 程序 | 拟证明的实际支持集 | 拟定基数（n=256） |
+| 程序 | 实际支持集（包装待证） | 基数（n=256） |
 | --- | --- | ---: |
 | mulInto | 内核布局去掉 `flag` 和 `x[n]` | `6n+4` = 1,540 |
 | mulClear | 整个内核布局 | `6n+6` = 1,542 |
@@ -550,7 +550,7 @@ XOR 对任意 O 给 `out=O XOR (XY%p)`；加/减适配器要求 O<p，给 `(O±X
 
 mulInto 不调用减半，因此不触及 flag；它只掩码复制 x 的低 n 位，模加读取 mask 而不是 x[n]，所以 x[n] 也不在其支持集。mulClear 的 `negRaw x` 触及源的全部 w 位，减半触及 flag，因此两根线都重新进入完整包装的支持集。其余字段分别从加法/比较与掩码门给出见证：acc/mask/constant/carry/cin 都被触及，y 每一位作为控制，包装 out 每一位有复制门。
 
-域 `1<p<2^n` 保证 n≥2。实现时先证明各自上界和逐线见证，再得到对应集合的等式与 qubitCount；上表仍是设计推导，不是已证资源定理。
+实际 C2 数值前提放宽为奇数 p、p<2^n、规范输入；也覆盖 p=1。支持集和资源只需 n>0、Widths 和 Nodup。`mulInPlace_wires` 与 `mulInPlace_resources` 已证明两个内核的精确集合与基数；完整包装仍待 D。
 
 ### 12.7 同一门列资源推导
 
@@ -566,7 +566,7 @@ mulInto 不调用减半，因此不触及 flag；它只掩码复制 x 的低 n �
 
 XOR 适配器拟定实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mulClear 为 6n+6=1,542。资源下降同时用了 PR A 的 Gidney 比较器，故不是 §9 中“尚未用改 4 比较器”的 ≈1.38M 版本；改 4 首批已将旧 Borrow 计数入口替换，不能再重复从这些新模算术里扣一次比较器节省。
 
-以下为 PR B 阶段 `fieldInverse=5,626,928` 的历史集成预算（改 4 首批已再省30,720；PR D 接入时重算）：当时，保持现有点加组合的累计 Toffoli 公式为
+以下为 PR B 阶段 `fieldInverse=5,626,928` 的历史集成预算（当前改 5 后 fieldInverse=4,541,488；PR D 接入时重算）：当时，保持现有点加组合的累计 Toffoli 公式为
 `4*5,626,928 + 12*1,178,880 + 37,493 = 36,691,765`。
 只有原语和布局证明完成后才替换已证资源表。若 PR B 的实际池前缀为 5,699，新乘法只需 1,029，则重布点加共享池的目标为 `4,116+max(5,699,1,029,其他仍用模块工作区)=9,815`（其他现有前缀不超过两者最大值）。这比 §9 的约 8k 保守：保留 PR B 实际布局，而不假定尚未实现的求逆 3.9k 池。
 
@@ -574,18 +574,18 @@ XOR 适配器拟定实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mul
 
 设计阶段只改本文与 README 的计划说明，不写未证电路。
 
-- PR C1（已实现四个模加减接口）、C2（待实现无控制半倍及 Horner 正向/清理）：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
-- PR C2 以 `Math/HornerMultiply.lean` 证明 `H_i` 关系与各步规范范围，再证明 `Arithmetic/MulInPlace.lean` 的正向/清理循环。PR D 追加三个适配器、布局与物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
+- PR C1（已实现四个模加减接口）、C2（已实现无控制半倍及 Horner 正向/清理）：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
+- PR C2 以 `Math/HornerMultiply.lean` 证明 `H_i` 关系与各步规范范围，并在 `Arithmetic/HornerLayout/Steps/Spec/Resources.lean` 证明正向/清理循环；半倍实现位于 `ModUnary/ModHalf/ModDouble/ModUnaryResources.lean`，物理旋转位于 `Rotate.lean`。PR D 追加三个适配器、布局与物理线路支持。把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
 - 接入：更新 MultiplyPorts/PointCandidate 的工作池视图及 Nodup/frame/support，保留 M3 的 12 次 fieldMul 和4次 fieldInverse 调用结构。PR B 先合并，后续修改基于其真实 main，不覆盖旧常数。
 - 旧倍数链实现待所有引用迁移完再删除；不同时保留两套公开 fieldMul。源码引用检查后列出删文件清单，保护还被求逆/其他模块使用的旧算术。
 - 每个实现 PR 同步 README、PROOF_STATUS、PROVENANCE、总 import 与 verify.sh；新增公开规格和资源进入现有白名单入口。只运行 Lean 构建及公开公理检查，无测试/数值 oracle/新 axiom/sorry，无 heartbeat 放宽。
 - 八项复审包含可读性、设计必要性、状态真实、Lean 验证、相位/清理、同一合法门列、范围完整性和证据；结论单列 README 同步。常规设计选择由本节明确给出，复审需具体指出构造或接口问题。
 
-### 12.9 集中的公开接口（C1 模加减已实现，其余为设计）
+### 12.9 集中的公开接口（C1/C2 已实现，适配器为设计）
 
-以下是实现 PR 必须交付的完整陈述形状，不是已有 Lean 定理。统一前提为 `1<p<2^n`、p 为奇数、`w=n+1`；数值变量取 Nat，B 为 Bool。`halfₚ(Z)=(Z+(if Z%2=1 then p else 0))/2`。每一行还须满足该行的数值范围及下述对应布局的 Widths/Nodup 前提。
+以下给出统一陈述形状；C1/C2 已有对应 Lean 定理，适配器尚为设计。设计的共同充分前提为 `1<p<2^n`、p 为奇数、`w=n+1`；实际 C1 将模数前提放宽为 0<p<2^n，C2 放宽为 p<2^n 且 p 为奇数（允许 p=1）；数值变量取 Nat，B 为 Bool。`halfₚ(Z)=(Z+(if Z%2=1 then p else 0))/2`。每一行还须满足该行的数值范围及下述对应布局的 Widths/Nodup 前提。
 
-**命名布局与工作区。** 各布局使用同一组实际工作线 `mask(w)、constant(w)、carry(n)、cin、flag`，记其拼接列表为 `scratch=mask++constant++carry++[cin,flag]`；这里只定义字段和借用视图，不引入第二套状态框架。
+**命名布局与工作区。** 各布局使用同一组实际工作线 `mask(w)、constant(w)、carry(n)、cin、flag`，记其拼接列表为 `scratch=constant++carry++[cin]++mask++[flag]`；这里只定义字段和借用视图，不引入第二套状态框架。
 
 | 布局/视图 | 外部字段及 Widths n | work 的确切含义 | wires / Nodup 前提 |
 | --- | --- | --- | --- |
@@ -895,5 +895,5 @@ poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对�
 - RoundFrame/RoundBody：接入现有原地受控算术、必要的子布局/Nodup/帧证明；保持正逆体数学更新。InPlaceAdder只补确有组合用途的资源/精确支持引理，不改已有原语门列。
 - KaliskiRound与相关Controls/Resources/Wires/Loop：保留零检测调用名称，传播新测量分段、算术资源和新usedWires；RecordRound门列不改。直接复用data.reg .carry，不另建布局抽象。
 - InverseLoopSupport/Resources、InverseResources/Ports、PointCandidateSupport及点加资源：传播实际支持、公式与精确数；不改求逆/点加数学接口，不重排池编号。
-- 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖尚未实现的Horner或模加核。verify.sh新增七项公开检查，共164项；其余沿用传递公理检查。
+- 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖Horner或模加核。verify.sh新增七项公开检查，共164项；其余沿用传递公理检查。
 - 实现PR同步README、PROOF_STATUS（实际公理输出）、PROVENANCE与本计划；实现已同步实际值。完整scripts/verify.sh、独立八项复审和最终head hosted CI按既有规则执行；无测试、新公理、native_decide或证明资源放宽。设计八项通过后完成实现。

@@ -290,7 +290,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2067 项构建，以下 164 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2077 项构建，以下 180 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -370,6 +370,22 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.controlledModSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledModSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledModSub_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rotateRight_spec' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.rotateLeft_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rotate_frame' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.rotate_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rotate_counts' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.halfInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dblInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modUnary_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modUnary_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.modUnary_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulInto_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulClear_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulInto_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.halveMod_eq' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.halve_parity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.double_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -719,7 +735,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 {{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }}
 ```
 
-四个 `_spec` 对所有初始相位和测量记录成立；各 `_frame` 保持 z 外每根物理位。模加核 work 仅含 constant/carry/cin，受控复制后的活跃 mask 是核源，不与核工作区重叠。源可等于 p，使模减在 A=0 时经过临时 p；`negRaw` 两次前向取负恢复源，无需反转测量。半倍、Horner 与旧模乘替换仍未实现。
+四个 `_spec` 对所有初始相位和测量记录成立；各 `_frame` 保持 z 外每根物理位。模加核 work 仅含 constant/carry/cin，受控复制后的活跃 mask 是核源，不与核工作区重叠。源可等于 p，使模减在 A=0 时经过临时 p；`negRaw` 两次前向取负恢复源，无需反转测量。半倍与 Horner 内核见下文 C2；旧域乘法替换仍待 D。
 
 | 同一程序（n>0） | Toffoli | 测量 | 实际线路 |
 | --- | ---: | ---: | ---: |
@@ -740,3 +756,31 @@ inplaceArithmetic 复用已有 maskedAddInPlace/SubInPlace，src=g、临时字=y
 单轮14w+31/4w+28，w=257时3629/1056/1847；完整逆循环4,541,488/1,639,472/5,698，外层求逆同门数/5,954线。RoundDataLayout、轮、循环和逆元的usedWires均由同一门列精确支持证明；原分配布局与编号保持。poolInverseUsedWork显式跳过10+8i（0≤i≤256），长度5442；poolInverse_used_perm及poolInverse_support给出精确接线，不用分配5699冒充实际支持。
 
 候选各13,227,848/7,961,672；pointAddOut为26,457,236/15,924,368/74,020；controlledPointAdd为52,914,997/31,848,736/74,024。共享模乘池仍覆盖全部原池，故点加实际线数不变。公开公理检查增加零检测正确性/规格/资源、原地受控算术计数/支持、池置换/长度七项；完整脚本164项，无测试、新公理或证明资源放宽。
+
+### 改 2 C2：无控制半倍与 Horner 内核
+
+`ModUnaryLayout` 的 z=low++[high]，low 宽 n，constant/mask 宽 n+1，carry 宽 n，另有 cin/flag；work=constant++carry++[cin]++mask++[flag]。`MulInPlaceLayout` 在此基础上加入 x（n+1 位）、y（n 位），acc 借用 unary.z，work 不含 acc。各自要求完整 wires.Nodup；子视图不重新分配线路。数值前提为 p%2=1、p<2^n，半倍另需 Z<p；Horner 需 X<p、Y<2^n，不要求 Y<p。
+
+```lean
+{{ U.z=Z,U.work=0 }} dblInPlace U p
+{{ U.z=((2*Z)%p),U.work=0 }}
+{{ U.z=Z,U.work=0 }} halfInPlace U p
+{{ U.z=(halveMod p Z),U.work=0 }}
+{{ M.x=X,M.y=Y,M.acc=0,M.work=0 }} mulInto M p
+{{ M.x=X,M.y=Y,M.acc=((X*Y)%p),M.work=0 }}
+{{ M.x=X,M.y=Y,M.acc=((X*Y)%p),M.work=0 }} mulClear M p
+{{ M.x=X,M.y=Y,M.acc=0,M.work=0 }}
+```
+
+以上四个 `_spec` 对任意初始相位和测量记录成立。`modUnary_frame`、`mulInto_frame`、`mulClear_frame` 保持目标外每根线路。物理旋转由三 CX 相邻交换组成，布局不随轮次改变；加倍以结果奇偶清借位，减半以结果与 (p+1)/2 比较清原奇偶。Horner 用 H_i=(X*(Y/2^i))%p 的正逆递推组合；清理是前向减法与减半，未倒放测量。接口只承诺零累加器/对应乘积，未声称任意初值乘加。
+
+| 同一程序（n>0） | Toffoli | 测量 | 实际静态线路 |
+| --- | ---: | ---: | ---: |
+| dblInPlace | 2n−1 | 2n−1 | 3n+3 |
+| halfInPlace | 2n | 2n | 3n+4 |
+| mulInto | n(8n−2) | n(6n−2) | 6n+4 |
+| mulClear | n(10n−1) | n(8n−1) | 6n+6 |
+
+n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modUnary_wires` 排除从未触及的 mask；加倍还排除 flag。`mulInPlace_wires` 前向排除 x[n] 与 flag，清理触及完整布局；逐轮控制覆盖 y 的每一位。qubitCount 由这些等式及 Nodup 得出，是 O(n) 静态支持，不是最大同时存活数或最优性声明。
+
+本批复用 C1 的两个内部阶段引理（`modAddCore_reduce`/`modAddCore_addback` 改为可跨文件引用，陈述和证明未变）。未改旧 fieldMul、求逆、点加门列或成本；适配器与池布局迁移属于 D。验证新增 16 个公开入口，覆盖旋转、半倍和内核的规格、frame、支持与资源；公理披露见上方本次实际输出。

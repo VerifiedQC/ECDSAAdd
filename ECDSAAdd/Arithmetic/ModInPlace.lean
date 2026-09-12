@@ -173,7 +173,7 @@ private theorem modAddCore_subtract (L : ModAddCoreLayout) (n A Z p : Nat)
   exact ⟨hf, ⟨⟨⟨ha, by simpa only [hz] using hv.1.1.2⟩, hv.1.1.1⟩, hv.2⟩, hv.1.2⟩
 
 /-- 第二阶段：装 p、扩宽减 p、卸 p；整体恢复全部核工作位。 -/
-private theorem modAddCore_reduce (L : ModAddCoreLayout) (n A Z p : Nat)
+theorem modAddCore_reduce (L : ModAddCoreLayout) (n A Z p : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : p < 2^(n+1)) :
     {{ L.a=A, L.z=Z, L.work=0 }}
       (xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++
@@ -203,7 +203,7 @@ private theorem modAddCore_reduce (L : ModAddCoreLayout) (n A Z p : Nat)
   · subst q; exact hv.2
 
 /-- 第三阶段：只向低位加回 p；借位与原源保持，借用的常数/进位前缀归零。 -/
-private theorem modAddCore_addback (L : ModAddCoreLayout) (n A Z p : Nat) (B : Bool)
+theorem modAddCore_addback (L : ModAddCoreLayout) (n A Z p : Nat) (B : Bool)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hn : 0<n) (hp : p<2^n) :
     {{ L.a=A, L.low=Z, L.high=B, L.work=0 }}
       maskedAddConst L.high (L.constant.take L.low.length) L.low
