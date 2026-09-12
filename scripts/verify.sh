@@ -209,6 +209,18 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.divide_counts
 #print axioms ECDSAAdd.Arithmetic.divide_wires
 #print axioms ECDSAAdd.Arithmetic.divide_qubits
+#print axioms ECDSAAdd.Arithmetic.pointCode_injective
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceNegate_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceSquare_correct
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceClearSlope_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceGeneric_point
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceCorners_effect
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_frame
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_full_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_counts
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_wires
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_qubits
 LEAN
 )
 printf '%s\n' "$axioms"

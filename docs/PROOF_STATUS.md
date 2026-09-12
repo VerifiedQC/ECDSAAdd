@@ -1,6 +1,6 @@
 # 公开定理与证明状态
 
-M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部分（候选计算、完整经典常量点加、受控原地点加）的基线已合并到 main。本次改 1 已实现原地求逆第二阶段，以下状态与资源对应当前提交；其余成本压缩计划见 [重做设计](REWORK_PLAN.md)。
+M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部分（候选计算、完整经典常量点加、受控原地点加）的基线已合并到 main。改1/2/3/4/5已实现，包括原地求逆、Horner模乘和除法中心点加，以下状态与资源对应当前提交；其余成本压缩计划见 [重做设计](REWORK_PLAN.md)。
 
 验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
 
@@ -281,7 +281,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2085 项构建，以下 203 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2112 项构建，以下 215 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -487,6 +487,18 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.divide_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.divide_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.divide_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointCode_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceNegate_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceClearSlope_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceGeneric_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceCorners_effect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_full_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceFinite_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -585,21 +597,18 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 `L.core` 复用完整点加布局；`L.point` 是输入点，`L.temporary` 是临时输出点。`L.work` 包括临时点的 513 位、全部算术工作区及三个输出选择位。唯一全局 `Nodup` 同时约束原布局、外部控制位和三个选择位；宽度条件复用已证完整点加。公开规格没有横坐标不同、非零纵坐标或结果有限等几何前提，覆盖 R/C/结果为 O、互逆点、倍点和控制为假。
 
-有限 C 时，先无条件计算分类与候选，再用三个 CCX 生成 b∧generic、b∧double、b∧¬finite；只用这三个选择位控制最终 XOR 输出，随后重新执行选择位程序清零。选择位计算/清理总计 6 个 CCX，不测量、不修改候选算术。`controlledPointOutput_correct` 证明完整目标 XOR 效果及目标外逐线保持。内部 `controlledPointAddOut_finite_ready` / `controlledPointAddOut_ready` 支持任意目标位串，不假设中间 XOR 结果是曲线点；原地程序只在 C≠O 时调用它们。
-
-原地组合执行 `controlledPointAddOut L C`、513 位受控交换、`controlledPointAddOut L (-C)`。控制为假时两次输出均不写入，交换不改变点；控制为真时临时点先得到 R+C，交换后输入是 R+C、临时点是 R，第二次 XOR 写入 (R+C)+(-C)=R，从而清空临时点。`controlledPointSwap_correct` 证明有限标志和两个坐标均正确交换，其他线路保持。全部 Triple 对任意初始相位和所有测量记录证明相位恢复；清理仍使用前向 XOR 算术，不倒放测量。
+有限C的原地程序执行完整点相等检测，生成O、启用的倍点、相反点及普通分支标志；普通分支用两次保留历史的除法和另外三个乘积直接更新坐标。第二除数为零时用λ*清斜率，角落分支用四次常量XOR写回；从输出重算分类，再清全部七个标志。C=−C时禁用倍点标志，最终规格没有新增几何前提。
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| 有限 C 的 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 32,347,957 | 17,585,440 | 9,718 |
+| 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
+| 有限 C 的 `controlledPointAdd` | 14,998,618 | 7,880,538 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-总成本为 2×(16,173,716+6)+513 个 Toffoli、2×8,792,720 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表还有 dx/yg 两根填充最高位及 97 根旧 out 线未触及，未计入实际支持；空间为 O(n+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
+`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
 
-正确性与资源定理指向同一个 `controlledPointAdd`。新增门通过 `selector_nodup`、`selected_nodup`、`swap_nodup` 从全局互异条件证明合法；算术继续复用先前的接口合法性和独立乘数副本。
+独立XOR接口`controlledPointAddOut`仍保留，原地程序不再调用两次XOR加点交换；只服务旧组合的ControlledPointPair及装载/擦除组合已删除。所有Triple对任意相位和测量记录成立，平方有独立乘数副本，子视图均由全局Nodup证明互异。完整验证及实际公理输出见本文件公理块；本批新增说明见末尾改3节。
 
-第三部分完整验证通过：`lake --wfail build` 完成 2,067 项；脚本选定的 118 个公开定理全部通过传递公理检查，白名单仅为 `propext`、`Classical.choice`、`Quot.sound`。新增检查覆盖选择位恢复、受控输出、任意目标 XOR 引理、点交换、最终公开规格、实际支持与两种资源分支。未添加测试、数值对照或证明资源限制放宽。
 
 ## 基础层：原地加减法器、受控加减与 Gidney 比较器
 
@@ -805,14 +814,14 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 
 `poolMul` 使用前 1,029 位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
 
-保留四次求逆与十二次 XOR 模乘，当前 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
+D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
 
 删除已无引用的 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个文件，保留求逆/基础层仍使用的 Accumulate 和 ModularXorSteps。公开验证移除三个旧 modMul 入口，增加十个适配器/池支持入口；采用当前源码的实际公理输出，无测试、新公理、native_decide 或证明资源放宽。
 
 
 ### 改 3 数学：原地更新与输出侧清理条件
 
-[Math/PointInPlace.lean](../ECDSAAdd/Math/PointInPlace.lean) 已证明八个入口，服务 REWORK_PLAN §16 的具体清理步骤。这里只证明群律与域等式，尚未实现新的点加门列、Triple 或资源定理；当前受控点加成本不变。
+[Math/PointInPlace.lean](../ECDSAAdd/Math/PointInPlace.lean) 已证明八个入口，服务 REWORK_PLAN §16 的具体清理步骤。这八个入口证明群律与域等式，已由下文原地点加电路复用。
 
 | 入口 | 已证含义 |
 | --- | --- |
@@ -853,4 +862,14 @@ D<p, E<p, Z<p, B=true → D≠0
 
 `divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
 
-文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持。只新增除法文件，未修改现有模乘/求逆/Point*门列。原地点加本体与§16总体14,998,618/7,880,538/6218目标仍未实现；当前点加成本保持。
+除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体14,998,618/7,880,538/6218已在本批实现，见下节。
+
+### 改 3 原地点加本体与公开入口
+
+`controlledPointAdd_spec`的输入输出陈述保持原样，有限分支已改用`pointInPlaceFinite`。`PointInPlaceValues`直接列普通阶段的x/y/λ/g/e/q及干净求逆区；`PointInPlaceBoundary`直接列合法点、控制、七个标志及干净工作区。二者分别服务算术和整点阶段组合，没有添加通用状态框架。
+
+`pointInPlaceGeneric_point`证明普通分支选中时R→R+C，未选中时R保持；`pointInPlaceCorners_effect`给出四次XOR的逐字段效果；`pointInPlaceFinite_spec`组合输入分类、普通分支、角落写回及输出清标志。`pointInPlaceFinite_frame`保持点外全部位，`pointInPlaceFinite_full_spec`恢复公共布局所有工作位，含未使用的旧银行。
+
+平方先复制λ到独立S，执行Into/Sub/Clear，再清S，最后加3cx；常数加法会复用S/t区域，故必须采用这个顺序。mulClear不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
+
+资源定理指向同一有限程序：14,998,618 Toffoli、7,880,538测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
