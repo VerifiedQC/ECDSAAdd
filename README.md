@@ -17,6 +17,7 @@
 | 模乘 | 已证明 Horner 内核、XOR/加/减适配器与精确资源，fieldMul 使用 XOR 适配器，空间 O(n) | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
 | 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Horner 和适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
 | 改 2 C2 半倍与 Horner 内核 | 已证明无控制半倍、零输出乘积和清回零的 Triple/frame/精确资源；已接入域乘法 | [HornerResources.lean](ECDSAAdd/Arithmetic/HornerResources.lean) |
+| 改 6a 准备/恢复 | 已证明两段Montgomery计算及前向清理的内部Triple、逐线保持、精确资源；五个适配器和集成待实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/MontResources.lean) |
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
@@ -53,7 +54,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **14,998,618 个 Toffoli
 
 改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 已证明无控制半倍与 Horner 内核。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 已证明三个适配器并替换域乘法；旧倍数链布局已删除，该阶段完整受控点加降至 32,347,957 Toffoli / 17,585,440 测量 / 9,718 根实际线路。
 
-改 1、改 2、改 3、改 4、改 5 已计入 Current status，其余项目仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
+改 1、改 2、改 3、改 4、改 5 已计入 Current status；改6a的P/Q已实现但尚未接入域乘法，后续适配器和集成仍在计划中。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
 
 | 项 | 内容 | 受控原地点加 Toffoli 目标 | 线路目标 | 负责 |
 | --- | --- | ---: | ---: | --- |
@@ -158,4 +159,4 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 
 改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#montgomery-design)：包含标准表示转换与历史清理的 XOR 适配器预算为 539,168 Toffoli / 271,904 测量 / 2,596 根实际线路，尚未实现或证明，不计入 Current status。
 
-改6a第一批已实现Montgomery整数循环数学与16项查表的Triple、目标外frame及48 Toffoli/48测量计数，入口为Math/Montgomery.lean和Arithmetic/Lookup.lean；P/Q、五个适配器及集成尚未实现，上述完整乘法预算仍未证明。
+改6a已实现数学、查表和共享工作区的准备/恢复电路 P/Q。`montP_spec` 得到标准模积并保留两段历史，`montQ_spec` 消费历史并清空全部工作位；两者各为269,584 Toffoli / 135,952测量 / 2,339根实际线路（工作区1,827位），对全部测量记录保持相位及工作区外线路。入口为Arithmetic/MontPQ.lean、MontResources.lean。五个输出适配器及集成尚未实现，上述完整乘法预算仍未证明。

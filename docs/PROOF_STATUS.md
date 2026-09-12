@@ -511,6 +511,22 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.pointInPlaceFinite_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceFinite_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceFinite_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomery_two_stages' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rotateRightBits_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.rotateLeftBits_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montNormalize_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montDenormalize_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montPrepare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montRestore_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.constPrepare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.constRestore_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montP_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montQ_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montP_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montQ_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montPQ_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montPQ_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.montPQ_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -887,8 +903,21 @@ D<p, E<p, Z<p, B=true → D≠0
 资源定理指向同一有限程序：14,998,618 Toffoli、7,880,538测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表
 
-`Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q尚未实现。
+`Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
 
 `Arithmetic/Lookup.lean` 提供四位地址、16项经典表的XOR查表；`lookup_spec`直接给地址D、目标T、scratch=0的前后值，保持全部目标外线路和相位，覆盖所有测量记录。每项三层AND与反向测量CZ清理，固定16项（包括零表项），`lookup_counts`证明48 Toffoli/48测量；`lookup_wires_subset`只给支持上界，不声称任意表都触及全部目标位。没有CCZ、原生求值公理或测试。
 
 完整verify通过2114项构建、227条实际公理输出（上方逐行收录），新增12个公开检查入口。当前域乘法和点加门列/资源不变；§17的539,168等适配器数字仍是待实现预算。
+
+
+## 改6a第二批：两段准备/恢复 P/Q
+
+`MontPrepare.lean` 给出实际门列，`MontStageSpec.lean` 与 `ConstStageSpec.lean` 分别证明变量/常数64轮及规范化、反规范化和恢复的完整Triple。每轮保留四位修正系数，完整历史值由montgomeryQuotient描述；Q先撤规范化，再按逆窗口顺序执行前向减法/旋转/查表清理。证明覆盖全部测量记录。
+
+`MontgomeryConversion.lean` 的montgomery_two_stages证明第二段将Montgomery结果转为标准余数。`MontLayout.lean` 构造共享辅助区并定义显式MontPrepared契约；`montP_spec` 从零工作区得到Z=(XY)%p和两段规范化历史，`montQ_spec` 消费同一历史并清空全部工作区。`montP_correct`/`montQ_correct`还证明相位及工作区外每根线路保持。前提为素数p、p<2^256、p%16=15、X<p、Y<2^256、给定寄存器宽度和全布局Nodup；输出字不要求为零。
+
+`MontCounts.lean`逐门组合证明变量窗口3,484/1,396，常数窗口712/712，规范化或撤销520/520；变量准备/恢复223,496/89,864，常数准备/恢复46,088/46,088。`montPQ_counts`证明P/Q各269,584 Toffoli与135,952测量；`montPQ_wires`证明支持恰为X低256位、Y和全部工作区，`montPQ_resources`据Nodup得到2,339根实际线，工作区为1,827位。输出字和X高位未计入支持。
+
+五个输出适配器、fieldMul替换及除法/点加接入尚未实现；现有点加14,998,618/7,880,538/6,218不变。完整适配器539,168等及点加11,800,058仍为后续预算，不作为本批已证收益。
+
+本批完整scripts/verify.sh退出0：2,136项构建、243条公开入口公理输出；新增16项，实际输出逐行收录于上方，仅依赖propext、Classical.choice、Quot.sound。

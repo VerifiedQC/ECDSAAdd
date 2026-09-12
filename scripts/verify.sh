@@ -233,6 +233,22 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_counts
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_wires
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_qubits
+#print axioms ECDSAAdd.montgomery_two_stages
+#print axioms ECDSAAdd.Arithmetic.rotateRightBits_spec
+#print axioms ECDSAAdd.Arithmetic.rotateLeftBits_spec
+#print axioms ECDSAAdd.Arithmetic.montNormalize_correct
+#print axioms ECDSAAdd.Arithmetic.montDenormalize_correct
+#print axioms ECDSAAdd.Arithmetic.montPrepare_spec
+#print axioms ECDSAAdd.Arithmetic.montRestore_spec
+#print axioms ECDSAAdd.Arithmetic.constPrepare_spec
+#print axioms ECDSAAdd.Arithmetic.constRestore_spec
+#print axioms ECDSAAdd.Arithmetic.montP_correct
+#print axioms ECDSAAdd.Arithmetic.montQ_correct
+#print axioms ECDSAAdd.Arithmetic.montP_spec
+#print axioms ECDSAAdd.Arithmetic.montQ_spec
+#print axioms ECDSAAdd.Arithmetic.montPQ_counts
+#print axioms ECDSAAdd.Arithmetic.montPQ_wires
+#print axioms ECDSAAdd.Arithmetic.montPQ_resources
 LEAN
 )
 printf '%s\n' "$axioms"
