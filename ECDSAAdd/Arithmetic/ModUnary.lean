@@ -92,4 +92,63 @@ theorem modUnary_counts (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn :
   simp only [Nat.min_eq_left (by omega : n≤n+1)]
   omega
 
+/-- 资源按实际支持计：加倍不触及 mask/flag，减半不触及 mask。 -/
+theorem modUnary_wires (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn : 0<n) :
+    wires (dblInPlace U p)=(U.z++U.core.work).toFinset ∧
+    wires (halfInPlace U p)=(U.z++U.core.work++[U.flag]).toFinset := by
+  have hz : U.z.length=n+1 := by simp [ModUnaryLayout.z,hw.low]
+  have hlen : ¬U.z.length<2 := by omega
+  have ht : (U.constant.take U.low.length).length=n := by simp [hw.low,hw.constant]
+  have hc : (U.carry.take (U.low.length-1)).length=n-1 := by simp [hw.low,hw.carry]
+  have ha := addInPlace_wires U.constant U.z U.carry U.cin (hw.constant.trans hz.symm)
+    (by rw [hw.carry,hz])
+  have hs := subInPlace_wires U.constant U.z U.carry U.cin (hw.constant.trans hz.symm)
+    (by rw [hw.carry,hz])
+  have hcmp := (compareLt_wires none U.low (U.constant.take U.low.length) U.carry U.cin U.flag
+    (hw.low.trans ht.symm) (hw.carry.trans ht.symm)).2 ((p+1)/2)
+  have hdend : wires [.X U.high,.CX U.bit U.high]=[U.bit,U.high].toFinset := by
+    ext q; simp [wires,Instr.wires]
+  have hstart : wires [.CX U.bit U.flag]=[U.bit,U.flag].toFinset := by
+    ext q; simp [wires,Instr.wires]
+  have hend : wires [.X U.flag]=[U.flag].toFinset := by simp [wires,Instr.wires]
+  constructor
+  · simp only [dblInPlace,wires_append,(rotate_wires U.z).2,hlen,if_false,hs,hdend]
+    ext q
+    have hx : q∈wires (xorConstant U.constant p) → q∈U.constant :=
+      fun hh => List.mem_toFinset.mp (xorConstant_wires_subset U.constant p hh)
+    have hm : q∈wires (maskedAddConst U.high (U.constant.take U.low.length) U.low
+        (U.carry.take (U.low.length-1)) U.cin p) →
+        q∈U.high::U.cin::U.constant++U.low++U.carry := by
+      intro hh
+      have ht' := List.mem_toFinset.mp ((maskedConst_wires_subset U.high
+        (U.constant.take U.low.length) U.low (U.carry.take (U.low.length-1)) U.cin p
+        (ht.trans hw.low.symm) (by rw [hc,hw.low]; omega)).1 hh)
+      have tsub := (List.take_sublist U.low.length U.constant).subset
+      have csub := (List.take_sublist (U.low.length-1) U.carry).subset
+      simp only [List.mem_cons,List.mem_append] at ht' ⊢
+      rcases ht' with hh | hh | (hh | hh) | hh
+      · exact Or.inl (Or.inl (Or.inl hh))
+      · exact Or.inl (Or.inl (Or.inr (Or.inl hh)))
+      · exact Or.inl (Or.inl (Or.inr (Or.inr (tsub hh))))
+      · exact Or.inl (Or.inr hh)
+      · exact Or.inr (csub hh)
+    have hb : q=U.bit → q∈U.low := fun he => he.symm ▸ U.bit_mem n hw hn
+    simp only [Finset.mem_union,List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,
+      or_false,ModUnaryLayout.core,ModAddCoreLayout.work,ModUnaryLayout.z] at hx hm hb ⊢
+    clear hw hn hz ht hc ha hs hcmp hdend hstart hend hlen
+    aesop
+  · simp only [halfInPlace,maskedAddConst,wires_append,ha,hcmp,(rotate_wires U.z).1,
+      hlen,if_false,hstart,hend]
+    ext q
+    have hm : q∈wires (maskedConstant U.flag U.constant p) → q∈U.flag::U.constant :=
+      fun hh => List.mem_toFinset.mp (maskedConstant_wires_subset U.flag U.constant p hh)
+    have hts : q∈U.constant.take U.low.length → q∈U.constant :=
+      fun hh => (List.take_sublist U.low.length U.constant).subset hh
+    have hb : q=U.bit → q∈U.low := fun he => he.symm ▸ U.bit_mem n hw hn
+    simp only [Finset.mem_union,List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,
+      or_false,Option.toList_none,List.nil_append,ModUnaryLayout.core,ModAddCoreLayout.work,
+      ModUnaryLayout.z] at hm hb ⊢
+    clear hw hn hz ht hc ha hs hcmp hdend hstart hend hlen
+    aesop
+
 end ECDSAAdd.Arithmetic
