@@ -72,3 +72,8 @@ MontAdapterLayout/Spec/Frame/Resources复用本项目P/Q和C1模算术，按REWO
 ## 改6a独立清理批
 
 按复审清单删除无调用者的Horner四文件、MulAdapter三文件、controlledPointSwap与PointSwap。regValue_bit陈述与证明逐字迁移、仅改所在文件至Registers；其余源码变化只有删除及导入路径调整。半倍原语与Montgomery仍复用的数学保留，活动程序、功能规格和资源不变。
+
+
+### 改7方案1：共享前缀的单迭代查表
+
+Deutsch依照已复审§18.6在本仓库编写lookupWalk及其递归证明：正AND子树、CX切负分支、负AND测量修正，两半直接由地址a0使能。未复制外部代码、未引用15门预算代替实际计数；14/14来自同一程序的递归计数。lookup_spec与controlledPointAdd_spec陈述逐字保持，资源和支持传播到现有Montgomery/域乘法/除法/点加。Framework未改，逐位测量清表的方案2只留设计。实际公理输出244条，完整verify通过，无测试、新公理或证明限制放宽。

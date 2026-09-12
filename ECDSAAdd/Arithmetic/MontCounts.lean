@@ -4,13 +4,13 @@ namespace ECDSAAdd.Arithmetic
 
 theorem montLookup_counts (L : MontStageLayout) (addr : List Wire) (K : Nat)
     (hw : L.Widths) (ha : addr.length=4) :
-    toffoliCount (montLookup L addr K)=48 ∧ measurementCount (montLookup L addr K)=48 := by
+    toffoliCount (montLookup L addr K)=14 ∧ measurementCount (montLookup L addr K)=14 := by
   exact lookup_counts _ _ _ _ _ (by simp [List.length_tail,ha]) hw.scratch
 
 theorem montLookupUpdate_counts (L : MontStageLayout) (addr : List Wire) (K : Nat)
     (hw : L.Widths) (ha : addr.length=4) :
-    (toffoliCount (montLookupAdd L addr K)=356 ∧ measurementCount (montLookupAdd L addr K)=356) ∧
-    (toffoliCount (montLookupSub L addr K)=356 ∧ measurementCount (montLookupSub L addr K)=356) := by
+    (toffoliCount (montLookupAdd L addr K)=288 ∧ measurementCount (montLookupAdd L addr K)=288) ∧
+    (toffoliCount (montLookupSub L addr K)=288 ∧ measurementCount (montLookupSub L addr K)=288) := by
   have hl := montLookup_counts L addr K hw ha
   have hadd := addInPlace_counts L.table L.acc L.carry L.cin (hw.table.trans hw.acc.symm) (by simp [hw.carry,hw.acc])
   have hsub := subInPlace_counts L.table L.acc L.carry L.cin (hw.table.trans hw.acc.symm) (by simp [hw.carry,hw.acc])
@@ -18,8 +18,8 @@ theorem montLookupUpdate_counts (L : MontStageLayout) (addr : List Wire) (K : Na
     hl.1,hl.2,hadd.1,hadd.2,hsub.1,hsub.2,hw.acc]
 
 theorem montReduce_counts (L : MontStageLayout) (p i : Nat) (hw : L.Widths) (hi : i<64) :
-    (toffoliCount (montReduce L p i)=356 ∧ measurementCount (montReduce L p i)=356) ∧
-    (toffoliCount (montRestoreReduce L p i)=356 ∧ measurementCount (montRestoreReduce L p i)=356) := by
+    (toffoliCount (montReduce L p i)=288 ∧ measurementCount (montReduce L p i)=288) ∧
+    (toffoliCount (montRestoreReduce L p i)=288 ∧ measurementCount (montRestoreReduce L p i)=288) := by
   have hr := L.record_length hw i hi
   have hc := copyRegister_counts none (L.acc.take 4) (L.record i) (by simp [hw.acc,hr])
   have hu := montLookupUpdate_counts L (L.record i) p hw hr
@@ -62,8 +62,8 @@ theorem montDigit_counts (L : MontStageLayout) (x y : List Wire) (i : Nat)
 
 theorem montWindow_counts (L : MontStageLayout) (x y : List Wire) (p i : Nat)
     (hw : L.Widths) (hx : 256≤x.length) (hi : i<64) :
-    (toffoliCount (montWindow L x y p i)=3484 ∧ measurementCount (montWindow L x y p i)=1396) ∧
-    (toffoliCount (montRestoreWindow L x y p i)=3484 ∧ measurementCount (montRestoreWindow L x y p i)=1396) := by
+    (toffoliCount (montWindow L x y p i)=3416 ∧ measurementCount (montWindow L x y p i)=1328) ∧
+    (toffoliCount (montRestoreWindow L x y p i)=3416 ∧ measurementCount (montRestoreWindow L x y p i)=1328) := by
   have hd := montDigit_counts L x y i hw hx
   have hr := montReduce_counts L p i hw hi
   simp [montWindow,montRestoreWindow,toffoliCount_append,measurementCount_append,
@@ -71,8 +71,8 @@ theorem montWindow_counts (L : MontStageLayout) (x y : List Wire) (p i : Nat)
 
 theorem constWindow_counts (L : MontStageLayout) (y : List Wire) (p K i : Nat)
     (hw : L.Widths) (hy : 256≤y.length) (hi : i<64) :
-    (toffoliCount (constMontWindow L y p K i)=712 ∧ measurementCount (constMontWindow L y p K i)=712) ∧
-    (toffoliCount (constMontRestoreWindow L y p K i)=712 ∧ measurementCount (constMontRestoreWindow L y p K i)=712) := by
+    (toffoliCount (constMontWindow L y p K i)=576 ∧ measurementCount (constMontWindow L y p K i)=576) ∧
+    (toffoliCount (constMontRestoreWindow L y p K i)=576 ∧ measurementCount (constMontRestoreWindow L y p K i)=576) := by
   have hl : ((y.drop (4*i)).take 4).length=4 := by simp only [List.length_take,List.length_drop]; omega
   have hd := montLookupUpdate_counts L ((y.drop (4*i)).take 4) K hw hl
   have hr := montReduce_counts L p i hw hi
@@ -81,8 +81,8 @@ theorem constWindow_counts (L : MontStageLayout) (y : List Wire) (p K i : Nat)
 
 theorem montRounds_counts (L : MontStageLayout) (x y : List Wire) (p k : Nat)
     (hw : L.Widths) (hx : 256≤x.length) (hk : k≤64) :
-    (toffoliCount (montPrepareRounds L x y p k)=3484*k ∧ measurementCount (montPrepareRounds L x y p k)=1396*k) ∧
-    (toffoliCount (montRestoreRounds L x y p k)=3484*k ∧ measurementCount (montRestoreRounds L x y p k)=1396*k) := by
+    (toffoliCount (montPrepareRounds L x y p k)=3416*k ∧ measurementCount (montPrepareRounds L x y p k)=1328*k) ∧
+    (toffoliCount (montRestoreRounds L x y p k)=3416*k ∧ measurementCount (montRestoreRounds L x y p k)=1328*k) := by
   induction k with
   | zero => simp [montPrepareRounds,montRestoreRounds,toffoliCount,measurementCount]
   | succ k ih =>
@@ -93,8 +93,8 @@ theorem montRounds_counts (L : MontStageLayout) (x y : List Wire) (p k : Nat)
 
 theorem constRounds_counts (L : MontStageLayout) (y : List Wire) (p K k : Nat)
     (hw : L.Widths) (hy : 256≤y.length) (hk : k≤64) :
-    (toffoliCount (constPrepareRounds L y p K k)=712*k ∧ measurementCount (constPrepareRounds L y p K k)=712*k) ∧
-    (toffoliCount (constRestoreRounds L y p K k)=712*k ∧ measurementCount (constRestoreRounds L y p K k)=712*k) := by
+    (toffoliCount (constPrepareRounds L y p K k)=576*k ∧ measurementCount (constPrepareRounds L y p K k)=576*k) ∧
+    (toffoliCount (constRestoreRounds L y p K k)=576*k ∧ measurementCount (constRestoreRounds L y p K k)=576*k) := by
   induction k with
   | zero => simp [constPrepareRounds,constRestoreRounds,toffoliCount,measurementCount]
   | succ k ih =>
@@ -105,8 +105,8 @@ theorem constRounds_counts (L : MontStageLayout) (y : List Wire) (p K k : Nat)
 
 
 theorem montStage_counts (L : MontStageLayout) (x y : List Wire) (p : Nat) (hw : L.Widths) (hx : 256≤x.length) :
-    (toffoliCount (montPrepare L x y p)=223496 ∧ measurementCount (montPrepare L x y p)=89864) ∧
-    (toffoliCount (montRestore L x y p)=223496 ∧ measurementCount (montRestore L x y p)=89864) := by
+    (toffoliCount (montPrepare L x y p)=219144 ∧ measurementCount (montPrepare L x y p)=85512) ∧
+    (toffoliCount (montRestore L x y p)=219144 ∧ measurementCount (montRestore L x y p)=85512) := by
   have h := montRounds_counts L x y p 64 hw hx (by omega)
   have hn := montNormalize_counts L p hw
   simp only [montPrepare,montRestore,toffoliCount_append,measurementCount_append,
@@ -114,8 +114,8 @@ theorem montStage_counts (L : MontStageLayout) (x y : List Wire) (p : Nat) (hw :
   norm_num
 
 theorem constStage_counts (L : MontStageLayout) (y : List Wire) (p K : Nat) (hw : L.Widths) (hy : 256≤y.length) :
-    (toffoliCount (constPrepare L y p K)=46088 ∧ measurementCount (constPrepare L y p K)=46088) ∧
-    (toffoliCount (constRestore L y p K)=46088 ∧ measurementCount (constRestore L y p K)=46088) := by
+    (toffoliCount (constPrepare L y p K)=37384 ∧ measurementCount (constPrepare L y p K)=37384) ∧
+    (toffoliCount (constRestore L y p K)=37384 ∧ measurementCount (constRestore L y p K)=37384) := by
   have h := constRounds_counts L y p K 64 hw hy (by omega)
   have hn := montNormalize_counts L p hw
   simp only [constPrepare,constRestore,toffoliCount_append,measurementCount_append,
@@ -124,8 +124,8 @@ theorem constStage_counts (L : MontStageLayout) (y : List Wire) (p K : Nat) (hw 
 
 /-- P/Q 同一前向门列的精确计数，包含全部标准表示转换和恢复。 -/
 theorem montPQ_counts (M : MontLayout) (p : Nat) (hw : M.Widths) :
-    (toffoliCount (montP M p)=269584 ∧ measurementCount (montP M p)=135952) ∧
-    (toffoliCount (montQ M p)=269584 ∧ measurementCount (montQ M p)=135952) := by
+    (toffoliCount (montP M p)=256528 ∧ measurementCount (montP M p)=122896) ∧
+    (toffoliCount (montQ M p)=256528 ∧ measurementCount (montQ M p)=122896) := by
   have h1 := montStage_counts M.first M.x M.y p hw.first (by simp [hw.x])
   have h2 := constStage_counts M.second M.a p (montgomeryConversion p) (M.second_widths hw) (by simp [MontLayout.a,hw.first.acc])
   simp only [montP,montQ,toffoliCount_append,measurementCount_append,
