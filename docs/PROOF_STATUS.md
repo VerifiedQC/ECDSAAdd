@@ -281,7 +281,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2076 项构建，以下 187 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2077 项构建，以下 195 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -471,6 +471,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Secp256k1.p_prime' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.G_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.affineAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.sameX_iff_eq_or_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.ordinary_point_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.doubling_enabled_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.translated_point_flags' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.generic_inplace_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.second_denominator_zero_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.exceptional_slope_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.slope_from_output' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -745,7 +753,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 线路数由门列支持集等式及全局 Nodup 求基数：普通加减不触及 mask/flag，受控加不触及源高位/flag，受控减取反源高位但不触及 flag。全为 O(n) 静态支持，未声称最优。数学约减、低位受控复制、核四阶段、外层加法、取负、减法组合按用途拆入同名辅助文件。未改现有域乘法、求逆与点加接口或成本。
 
 
-## 改 5：零检测测量清理与轮内原地受控加减（改 2 接入前阶段值）
+### 改 5：零检测测量清理与轮内原地受控加减（改 2 接入前阶段值）
 
 zeroControlled 保留原名及 Triple，负AND链在递归读出后以 X/measureX(CZ)/X 擦除；对全部测量记录恢复相位，输入、控制和工作位恢复，任意初始目标按XOR写入。空输入仍为CX。资源变为n/n/2n+2，equalConstant与点加标志共用此实现；标志compute/clear各514 Toffoli/512测量。safeDivisor没有零检测，256/0不变。
 
@@ -792,3 +800,21 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 保留四次求逆与十二次 XOR 模乘，当前 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
 
 删除已无引用的 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个文件，保留求逆/基础层仍使用的 Accumulate 和 ModularXorSteps。公开验证移除三个旧 modMul 入口，增加十个适配器/池支持入口；采用当前源码的实际公理输出，无测试、新公理、native_decide 或证明资源放宽。
+
+
+### 改 3 数学：原地更新与输出侧清理条件
+
+[Math/PointInPlace.lean](../ECDSAAdd/Math/PointInPlace.lean) 已证明八个入口，服务 REWORK_PLAN §16 的具体清理步骤。这里只证明群律与域等式，尚未实现新的点加门列、Triple 或资源定理；当前受控点加成本不变。
+
+| 入口 | 已证含义 |
+| --- | --- |
+| `sameX_iff_eq_or_neg` | 两个有限合法点同横坐标，当且仅当相同或互为相反点 |
+| `ordinary_point_iff` | 普通分支恰好排除 O、C、−C |
+| `doubling_enabled_iff` | cy≠−cy 当且仅当 C≠−C；不添加没有二阶点的假设 |
+| `translated_point_flags` | b 控制平移后的三个输出谓词，分别等价于输入 O、启用的 C、−C；b=false 时全假 |
+| `generic_inplace_values` | 依次清 y、得到 cx−x₃、重建 y₃ 的三条域等式 |
+| `second_denominator_zero_iff` | 普通分支内 cx−x₃=0 当且仅当 R=−2C |
+| `exceptional_slope_eq` | 此时斜率等于 `exceptionalSlope C`，可供后续常量 XOR 清理 |
+| `slope_from_output` | 第二除数非零时 `(y₃+cy)/(cx−x₃)=λ` |
+
+例外斜率直接用现有 `coordinates` 与 `genericSlope` 定义，R*=O 时坐标按已有编码取零。等式只在普通分支可达例外上使用；没有增加 R≠±C、cy≠0 或 C+C≠O 的最终接口前提。三个输出标志的陈述显式包含外部控制，以及倍点启用条件 C≠−C。证明为本项目的代数推导，未增加状态框架、测试或公理。
