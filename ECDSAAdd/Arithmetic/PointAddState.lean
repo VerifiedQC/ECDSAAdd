@@ -25,6 +25,8 @@ theorem PointAddLayout.candidate_boundary_nodup (L : PointAddLayout) (h : L.Widt
   have hh := List.nodup_iff_count.mp hn w
   have hx := (List.take_sublist 256 L.dx).count_le w
   have hy := (List.take_sublist 256 L.candidateY).count_le w
+  have hdy := (List.take_sublist 256 L.dy).count_le w
+  have hdelta := (List.take_sublist 256 L.delta).count_le w
   have hp := (L.candidatePool_sublist h).count_le w
   simp only [PointAddLayout.candidateUsed,PointAddLayout.boundaryWires,
     PointAddLayout.extendedX,PointAddLayout.extendedY,

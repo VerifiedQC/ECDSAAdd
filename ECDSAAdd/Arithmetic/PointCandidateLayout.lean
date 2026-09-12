@@ -51,8 +51,8 @@ theorem poolMul_nodup (L : PointAddLayout) (h : L.Widths) (x y out : List Wire)
     (hnd : (x++y++out++L.pool).Nodup) :
     (Arithmetic.poolMul L.poolWire x y out).wires.Nodup := by
   apply Arithmetic.poolMul_nodup
-  rw [pool_prefix L h 1029 (by omega)]
-  exact hnd.sublist ((List.take_sublist 1029 L.pool).append_left _)
+  rw [pool_prefix L h 1827 (by omega)]
+  exact hnd.sublist ((List.take_sublist 1827 L.pool).append_left _)
 
 theorem poolInverse_nodup (L : PointAddLayout) (h : L.Widths) (x out : List Wire)
     (ho : out.length=256) (hnd : (x++out++L.pool).Nodup) :

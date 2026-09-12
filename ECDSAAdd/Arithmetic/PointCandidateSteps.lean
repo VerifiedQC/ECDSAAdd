@@ -89,9 +89,9 @@ theorem CandidateValues.mul (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.N
     exact (hl.mp (hv.1 b)).1
   have hw : regValue (poolMul L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o)).work s.basis=0 := by
     rw [poolMul_work]
-    exact pool_zero L h s.basis hv.2.1 1029 (by omega)
+    exact pool_zero L h s.basis hv.2.1 1827 (by omega)
   obtain ⟨hp,he,hr⟩ := fieldMul_correct _ (L.poolMul_nodup h _ _ _ hn)
-    (poolMul_widths _ _ _ _ ha hbl ho) (poolMul_width _ _ _ _) s m
+    (poolMul_widths _ _ _ _ ha hbl ho)  s m
     (by rw [hi.1,hv.1 a]; exact hA) hw
   generalize hrun : run (fieldMul (poolMul L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o))) m s=t at hp he hr ⊢
   rw [hi.2.2] at he hr
