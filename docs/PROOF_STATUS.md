@@ -95,29 +95,26 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 
 [ModularResources](../ECDSAAdd/Arithmetic/ModularResources.lean) 对完整程序证明计数和线路集合等式，实际支持集 `L.activeWires` 排除不施门的 `out_high`（布局本身仍要求其互异）。5n+4 = 4(n+1) 次算术 Toffoli + n 次选择 Toffoli；常量零位不施门，资源计算没有通过额外虚门填充。线路数是程序静态支持集的基数，不是最大同时存活数，也未声称资源最优。
 
-## M2：保留输入的模乘（改 2 已替换）
+## M2：保留输入的模乘（改6a已替换）
 
-[MulAdapterLayout](../ECDSAAdd/Arithmetic/MulAdapterLayout.lean) 列出 x、y、out、unary，product 借用 unary.z；work=product++unary.work。`Widths` 要求 x/out/product 宽 n+1、y 宽 n、constant/mask 宽 n+1、carry 宽 n；`wires.Nodup` 覆盖输入、输出和完整工作区。旧 MulLayout、倍数链和专用 Double/MaskedAccumulate 文件已经删除。
+[MontAdapterLayout](../ECDSAAdd/Arithmetic/MontAdapterLayout.lean) 复用MontLayout：x/out宽257、y宽256，工作区1827位，要求完整wires.Nodup。五个适配器均为P、中段输出更新、Q；输入和全部工作区恢复，支持普通XOR/加/减与受控加/减。
 
 ```lean
-{{ L.x=X,L.y=Y,L.out=0,L.work=0 }} fieldMul L
-{{ L.x=X,L.y=Y,L.out=((X*Y)%p),L.work=0 }}
 {{ L.x=X,L.y=Y,L.out=O,L.work=0 }} fieldMul L
 {{ L.x=X,L.y=Y,L.out=(O ^^^ ((X*Y)%p)),L.work=0 }}
 ```
 
-[FieldMultiply](../ECDSAAdd/Arithmetic/FieldMultiply.lean) 取 n=256、X<p；Y 的范围从其 256 位寄存器自动推出。公开数值陈述保持，本批布局类型改为 MontLayout，Widths 描述固定窗口工作区；Horner 的 MulAdapterLayout 仍由除法与原地点加调用。`fieldMul_correct` 继续提供相位、输出外逐线保持及 XOR 数值结果供上层组合。
+X<p，Y为任意256位值；XOR允许任意257位O，模加减另需O<p。fieldMul_spec的数值契约保持；五项Triple/frame对所有测量记录恢复相位。Horner电路与旧MulAdapter专用文件留待独立清理PR，数学和仍复用的半倍原语保留。
 
-[MulAdapterSpec](../ECDSAAdd/Arithmetic/MulAdapterSpec.lean) 对奇数 p<2^n、X<p、Y<2^n 证明三个适配器。先 mulInto 得到临时积，再 XOR/模加/模减到公开输出，最后 mulClear 清掉临时积。加减接口另需 O<p；三个 Triple 均对全部测量记录恢复相位、输入与工作区，且有目标外 frame。没有任意初值 Horner 乘加的错误假设。
-
-| 同一程序，n>0 | Toffoli | 测量 | 实际静态线路 |
+| 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| mulXor | n(18n−3) | n(14n−3) | 7n+7 |
-| mulAdd | n(18n−3)+4n−1 | n(14n−3)+4n−1 | 7n+7 |
-| mulSub | n(18n−3)+6n−1 | n(14n−3)+6n−1 | 7n+7 |
-| fieldMul，n=256 | 539,168 | 271,904 | 2,596 |
+| montMulXor / fieldMul | 539,168 | 271,904 | 2,596 |
+| montMulAdd | 540,191 | 272,927 | 2,596 |
+| montMulSub | 540,703 | 273,439 | 2,596 |
+| montMulControlledAdd | 540,703 | 272,927 | 2,597 |
+| montMulControlledSub | 541,215 | 273,439 | 2,597 |
 
-`mulAdapter_wires` 证明三条实际门列均触及完整布局；清理补上前向内核未触及的源高位与 flag，输出每位由复制或算术触及。`mulAdapter_counts/resources` 从同一程序求精确资源，空间为 O(n)，不声称最优或最大同时存活数。半倍与 Horner 内核证明详见 C2 节。
+MontAdapterResources证明同一程序的精确支持等式、门数和基数；不把分配数当实际支持。
 
 ## I1：EEA 求逆的数学证明
 
@@ -582,7 +579,7 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 - `poolInverse`：单轮共享区、512 对记录、模算术区及 a/temp、输出高位使用池前 5,699 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
-`PointAddLayout.allocated_length` 的 9,813 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，已接入 O(n) 空间 Horner 模乘。
+`PointAddLayout.allocated_length` 的 9,813 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，已接入 O(n) 空间 Montgomery 模乘。
 
 标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。这些原语在下一节的完整点分类和最终选择中组合。
 
@@ -646,7 +643,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 14,998,618 | 7,880,538 | 6,218 |
+| 有限 C 的 `controlledPointAdd` | 11,800,058 | 4,656,378 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -824,7 +821,7 @@ inplaceArithmetic 复用已有 maskedAddInPlace/SubInPlace，src=g、临时字=y
 
 候选各13,227,848/7,961,672；pointAddOut为26,457,236/15,924,368/74,020；controlledPointAdd为52,914,997/31,848,736/74,024。共享模乘池仍覆盖全部原池，故点加实际线数不变。公开公理检查增加零检测正确性/规格/资源、原地受控算术计数/支持、池置换/长度七项；完整脚本164项，无测试、新公理或证明资源放宽。
 
-### 改 2 C2：无控制半倍与 Horner 内核
+### 改 2 C2：无控制半倍与 Horner 内核（历史阶段，Horner电路现已替换，旧文件待清理）
 
 `ModUnaryLayout` 的 z=low++[high]，low 宽 n，constant/mask 宽 n+1，carry 宽 n，另有 cin/flag；work=constant++carry++[cin]++mask++[flag]。`MulInPlaceLayout` 在此基础上加入 x（n+1 位）、y（n 位），acc 借用 unary.z，work 不含 acc。各自要求完整 wires.Nodup；子视图不重新分配线路。数值前提为 p%2=1、p<2^n，半倍另需 Z<p；Horner 需 X<p、Y<2^n，不要求 Y<p。
 
@@ -897,16 +894,16 @@ D<p, E<p, Z<p, B=true → D≠0
 
 这里 inv(D) 是 `((D : Fp)⁻¹).val`。`divideAdd_spec` / `divideSub_spec` 对全部初始相位与测量记录成立；`divide_frame` 保持 acc 外每根位。控制假时分母可以为零，内部改用1，仍执行全部准备/乘积/恢复门列。
 
-装载把安全分母直接写入v，准备段得到a与存活历史；乘法仅借temp++arithmetic共2315位中的前1030位。`multiply_borrow` 证明该段恰为输出高位加乘法工作区；全局Nodup推出所有控制/输入/输出/工作位互异。受控累加后前向mulClear清积与scratch，规范输出范围归还借用高位零；`divideProduct_correct` 由此证明整个求逆内部状态逐线保持。恢复使用原 `InverseMiddle` 断言和前向 inverseUncompute，最后卸载u/s/v。未复制逆元，未倒放测量，未建立回调式求逆框架。
+装载把安全分母直接写入v，准备段得到a与存活历史；乘法仅借temp++arithmetic共2315位中的前1828位。`multiply_borrow` 证明该段恰为输出高位加乘法工作区；全局Nodup推出所有控制/输入/输出/工作位互异。受控累加后前向montQ清理两段历史与工作区，规范输出范围归还借用高位零；`divideProduct_correct` 由此证明整个求逆内部状态逐线保持。恢复使用原 `InverseMiddle` 断言和前向 inverseUncompute，最后卸载u/s/v。未复制逆元，未倒放测量，未建立回调式求逆框架。
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| divideAdd | 5,722,415 | 2,557,231 | 6,210 |
-| divideSub | 5,722,927 | 2,557,743 | 6,210 |
+| divideAdd | 5,082,703 | 1,912,399 | 6,210 |
+| divideSub | 5,083,215 | 1,912,911 | 6,210 |
 
 `divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
 
-除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体14,998,618/7,880,538/6218已在本批实现，见下节。
+除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体11,800,058/4,656,378/6218已在本批实现，见下节。
 
 ### 改 3 原地点加本体与公开入口
 
@@ -914,9 +911,9 @@ D<p, E<p, Z<p, B=true → D≠0
 
 `pointInPlaceGeneric_point`证明普通分支选中时R→R+C，未选中时R保持；`pointInPlaceCorners_effect`给出四次XOR的逐字段效果；`pointInPlaceFinite_spec`组合输入分类、普通分支、角落写回及输出清标志。`pointInPlaceFinite_frame`保持点外全部位，`pointInPlaceFinite_full_spec`恢复公共布局所有工作位，含未使用的旧银行。
 
-平方先复制λ到独立S，执行Into/Sub/Clear，再清S，最后加3cx；常数加法会复用S/t区域，故必须采用这个顺序。mulClear不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
+平方先复制λ到独立S，执行montMulSub，再清S，最后加3cx；常数加法会复用S区域，故必须采用这个顺序。montQ不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
 
-资源定理指向同一有限程序：14,998,618 Toffoli、7,880,538测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
+资源定理指向同一有限程序：11,800,058 Toffoli、4,656,378测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表
 
 `Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
@@ -934,7 +931,7 @@ D<p, E<p, Z<p, B=true → D≠0
 
 `MontCounts.lean`逐门组合证明变量窗口3,484/1,396，常数窗口712/712，规范化或撤销520/520；变量准备/恢复223,496/89,864，常数准备/恢复46,088/46,088。`montPQ_counts`证明P/Q各269,584 Toffoli与135,952测量；`montPQ_wires`证明支持恰为X低256位、Y和全部工作区，`montPQ_resources`据Nodup得到2,339根实际线，工作区为1,827位。输出字和X高位未计入支持。
 
-第二批结束时五个适配器与集成尚未实现；第三批结果见下。原地点加14,998,618/7,880,538/6,218仍未改接，11,800,058仍是后续预算。
+第二批结束时五个适配器与集成尚未实现；第三批结果见下。原地点加接入见第四批记录。
 
 本批完整scripts/verify.sh退出0：2,136项构建、243条公开入口公理输出；新增16项，实际输出逐行收录于上方，仅依赖propext、Classical.choice、Quot.sound。
 
@@ -946,6 +943,16 @@ MontAdapterLayout为输出中段借用table前257位、carry前256位、mask前2
 
 fieldMul改用MontLayout与montMulXor，保留任意初值输出的数值契约；固定宽度结构删除了旧width=256重复参数。poolMul工作列表恰为wireBlock前1,827位。候选实际池为该前缀与求逆支持并集，candidatePool_length证明5,670位；两根额外未读输入高位dy/delta从支持移除。候选各6,166,952/2,461,352，独立pointAddOut为12,335,444/4,923,728/9,780，controlledPointAddOut为12,335,450/4,923,728/9,784。
 
-原地点加controlledPointAdd及其除法仍使用旧Horner算术，资源14,998,618/7,880,538/6,218不变。保留旧内核/适配器是因为仍有调用者；下一批才改接两次除法与三个外部乘积，11,800,058目标尚未实现。
+第三批时原地点加仍使用Horner；第四批已完成最后五个乘积的迁移；旧电路留待独立清理PR，见下。
 
 第三批完整 scripts/verify.sh 退出0：2,140项构建、259条公开入口公理输出；新增16项，以上公理块为本次实际输出，仅依赖propext、Classical.choice、Quot.sound。
+
+## 改6a第四批：除法与受控原地点加集成
+
+DivideLayout公开字段/Widths、divideAdd/Sub_spec、divide_frame及controlledPointAdd_spec陈述保持。内部multiply改为MontLayout；B[0]为输出高位，B[1:1828]为工作区。逆元与求逆历史均由frame保持，全部借用位归零后才执行inverseUncompute。divideAdd/Sub门数从5,722,415/5,722,927降至5,082,703/5,083,215，测量为1,912,399/1,912,911；usedCoreWires与6,210实际线保持，因为B全部包含于求逆已有支持。
+
+外部乘积工作区为B[2:1829]；平方保留S=B[0:256]，输入/输出高位256/257，工作区B[258:2085]。复制λ→S、montMulSub(λ,S,x)、清S完成后才执行+3cx；常数加复用S线路，顺序与frame证明共同保证生命周期。旧t和inPlaceSquareSub视图删除。
+
+同一完整controlledPointAdd有限分支为11,800,058 Toffoli、4,656,378测量、6,218实际线；C=O三项零。旧Horner四文件、MulAdapter三文件与对应公理入口暂保留，待集成合入后另交清理PR；数学HornerMultiply仍为Montgomery数学的依赖，半倍原语保留。
+
+第四批完整scripts/verify.sh退出0：2,141项构建、259条公理输出，与上方本次实际输出一致；保留旧Horner公开入口至下一纯清理批。

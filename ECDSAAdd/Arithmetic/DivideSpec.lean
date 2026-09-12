@@ -129,10 +129,10 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
           h.2.1⟩,h.2.2.2.1,h.2.2.2.2.1⟩
   have hproduct :
       Triple (prepared Z)
-        (mulInto L.multiply.core p ++ controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p)
+        (montMulControlledAdd L.control L.multiply p)
         (prepared (if B then (Z+(A*E)%p)%p else Z)) ∧
       Triple (prepared Z)
-        (mulInto L.multiply.core p ++ controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p)
+        (montMulControlledSub L.control L.multiply p)
         (prepared (if B then (Z+p-(A*E)%p)%p else Z)) := by
     have finish (P : Program) (V : Nat) (s : State) (m : List Bool) (h : prepared Z s.basis)
         (hc : (run P m s).phase=s.phase ∧ regValue L.acc (run P m s).basis=V ∧

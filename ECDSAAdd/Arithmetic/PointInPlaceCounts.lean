@@ -45,25 +45,18 @@ theorem pointInPlaceNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (h
 /-- 与§16逐门预算对应的普通分支精确门数；尚不替代其功能规格。 -/
 theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (cx cy lambdaStar : Fp) :
-    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=14995540 ∧
-    measurementCount (pointInPlaceGeneric L cx cy lambdaStar)=7877460 := by
+    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=11796980 ∧
+    measurementCount (pointInPlaceGeneric L cx cy lambdaStar)=4653300 := by
   have ha k := pointInPlaceConstantAdd_counts L hw hnd L.point.x (Or.inl rfl) k
   have hb k := pointInPlaceConstantAdd_counts L hw hnd L.point.y (Or.inr rfl) k
   have hd c (hc : c∈L.inPlaceFlags) := divide_counts (L.inPlaceDivide c L.point.x L.point.y)
     (L.inPlaceDivide_widths hw c _ _ hw.inputX hw.inputY) (L.inPlaceDivide_nodup hw hnd c hc)
   have hdg := hd L.core.generic (by simp [inPlaceFlags])
   have hdq := hd L.core.equalNegY (by simp [inPlaceFlags])
-  have hmw : L.inPlaceMultiply.width=256 := by
-    simp only [MulAdapterLayout.width,inPlaceMultiply,inPlaceUnary,List.length_take,List.length_drop,
-      L.inPlaceBorrow_length hw]
-    norm_num
-  have hm := mulAdapter_counts L.inPlaceMultiply p (L.inPlaceMultiply_widths hw)
-    (L.inPlaceMultiply_nodup hw hnd) (by rw [hmw]; omega)
-  rw [hmw] at hm
-  have hs := mulInPlace_counts L.inPlaceSquare 256 p (L.inPlaceSquare_widths hw)
-    (L.inPlaceSquare_nodup hw hnd) (by omega)
-  have hsub := modSubInPlace_resources L.inPlaceSquareSub 256 p (L.inPlaceSquareSub_widths hw)
-    (L.inPlaceSquareSub_nodup hw hnd) (by omega)
+  have hm := montAdapter_counts L.inPlaceMultiply p (L.inPlaceMultiply_widths hw)
+    (L.inPlaceMultiply_nodup hw hnd)
+  have hs := montAdapter_counts L.inPlaceSquare p (L.inPlaceSquare_widths hw)
+    (L.inPlaceSquare_nodup hw hnd)
   have hcopy := copyRegister_counts none L.inPlaceSlope L.inPlaceSquare.y
     ((L.inPlaceSlope_length hw).trans (L.inPlaceSquare_widths hw).y.symm)
   have hz := equalConstant_counts L.core.generic L.core.equalX L.inPlaceXZero 0
@@ -76,16 +69,15 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
   have hn := pointInPlaceNegate_counts L hw hnd
   simp only [pointInPlaceGeneric,pointInPlaceClearSlope,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hdg.1,hdg.2.1,hdq.2.2.1,hdq.2.2.2,
-    hm.2.2.1,hm.2.2.2.1,hm.2.2.2.2.1,hm.2.2.2.2.2,
-    hs.1,hs.2.1,hs.2.2.1,hs.2.2.2,hsub.1,hsub.2.1,
+    hm.2.1.1,hm.2.1.2,hm.2.2.1,hm.2.2.2,hs.2.2.1,hs.2.2.2,
     hcopy.1,hcopy.2,hz.1,hz.2,hn.1,hn.2,(maskedConstant_counts _ _ _).1,(maskedConstant_counts _ _ _).2]
   norm_num [toffoliCount,measurementCount]
 
 /-- 分类与输出清标志各做三次完整点检测；常量写回不含Toffoli。 -/
 theorem pointInPlaceFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointInPlaceFinite L C cx cy)=14998618 ∧
-    measurementCount (pointInPlaceFinite L C cx cy)=7880538 := by
+    toffoliCount (pointInPlaceFinite L C cx cy)=11800058 ∧
+    measurementCount (pointInPlaceFinite L C cx cy)=4656378 := by
   have hg := pointInPlaceGeneric_counts L hw hnd cx cy (exceptionalSlope C)
   have hz c t k := equalConstant_counts c t L.inPlacePointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by

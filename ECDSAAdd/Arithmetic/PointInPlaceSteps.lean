@@ -33,9 +33,9 @@ theorem pointStep_addY (k : Fp) :
   cases G <;> simpa [ZMod.val_add,Nat.mod_eq_of_lt (ZMod.val_lt Y)] using hy
 
 theorem pointStep_product :
-    Triple (PointInPlaceValues L X Y A G E Q) (mulAdd L.inPlaceMultiply p)
+    Triple (PointInPlaceValues L X Y A G E Q) (montMulAdd L.inPlaceMultiply p)
       (PointInPlaceValues L X (Y+A*X) A G E Q) ∧
-    Triple (PointInPlaceValues L X Y A G E Q) (mulSub L.inPlaceMultiply p)
+    Triple (PointInPlaceValues L X Y A G E Q) (montMulSub L.inPlaceMultiply p)
       (PointInPlaceValues L X (Y-A*X) A G E Q) := by
   constructor
   · intro s m v
@@ -57,8 +57,7 @@ theorem pointStep_negate :
 
 theorem pointStep_square :
     Triple (PointInPlaceValues L X Y A G E Q)
-      (copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++ mulInto L.inPlaceSquare p ++
-        modSubInPlace L.inPlaceSquareSub p ++ mulClear L.inPlaceSquare p ++
+      (copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++ montMulSub L.inPlaceSquare p ++
         copyRegister none L.inPlaceSlope L.inPlaceSquare.y)
       (PointInPlaceValues L (X-A*A) Y A G E Q) := by
   intro s m v

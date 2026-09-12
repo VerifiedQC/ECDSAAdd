@@ -70,25 +70,19 @@ theorem inPlaceDivide_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L
   omega
 
 theorem inPlaceMultiply_borrow (L : ControlledPointLayout) (hw : L.Widths) :
-    [L.inPlaceBit 0,L.inPlaceBit 1]++L.inPlaceMultiply.work=L.inPlaceBorrow.take 1031 := by
+    [L.inPlaceBit 0,L.inPlaceBit 1]++L.inPlaceMultiply.work=L.inPlaceBorrow.take 1829 := by
   have h0 := L.inPlaceBit_prefix hw 0 (by omega)
   have h1 := L.inPlaceBit_prefix hw 1 (by omega)
-  have h258 := L.inPlaceBit_prefix hw 258 (by omega)
-  have hwork := L.inPlaceUnary_prefix hw ((L.inPlaceBorrow.drop 2).take 256) (L.inPlaceBit 258) 259 (by omega)
   have h01 : [L.inPlaceBit 0,L.inPlaceBit 1]=L.inPlaceBorrow.take 2 := by
-    rw [← h1,← h0]
-    rfl
-  change [L.inPlaceBit 0,L.inPlaceBit 1]++
-    (((L.inPlaceBorrow.drop 2).take 256++[L.inPlaceBit 258])++
-      (L.inPlaceUnary ((L.inPlaceBorrow.drop 2).take 256) (L.inPlaceBit 258) 259).work)=_
-  simp only [← List.append_assoc]
-  rw [h01,← List.take_add,h258,hwork]
+    rw [← h1,← h0]; rfl
+  rw [h01]
+  exact borrowedMont_prefix _ _ 2 _ _ _ (by rw [L.inPlaceBorrow_length hw]; omega)
 
 theorem inPlaceMultiply_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
     L.inPlaceMultiply.wires.Nodup := by
   apply List.nodup_iff_count.mpr; intro q
   have h := List.nodup_iff_count.mp (L.inPlace_interfaces_nodup hw hnd) q
-  have ht := (List.take_sublist 1031 L.inPlaceBorrow).count_le q
+  have ht := (List.take_sublist 1829 L.inPlaceBorrow).count_le q
   rw [← L.inPlaceMultiply_borrow hw] at ht
   have hb := L.inPlaceBorrow_count q
   change (L.inPlaceSlope++[L.inPlaceBit 0]++L.point.x++(L.point.y++[L.inPlaceBit 1])++L.inPlaceMultiply.work).count q≤1
@@ -111,15 +105,6 @@ theorem inPlaceNegate_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inP
       List.length_drop, List.length_append, List.length_cons, List.length_nil,
       L.inPlaceBorrow_length hw, point, hw.inputX] <;> omega
   · simp only [inPlaceNegate, inPlaceUnary, List.length_take, List.length_drop,
-      L.inPlaceBorrow_length hw]; omega
-
-theorem inPlaceSquareSub_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceSquareSub.Widths 256 := by
-  constructor
-  · constructor
-    all_goals simp only [inPlaceSquareSub, inPlaceSquare, MulInPlaceLayout.acc, ModUnaryLayout.z,
-      ModUnaryLayout.core, inPlaceUnary, List.length_take, List.length_drop, List.length_append,
-      List.length_cons, List.length_nil, L.inPlaceBorrow_length hw, point, hw.inputX] <;> omega
-  · simp only [inPlaceSquareSub, inPlaceSquare, inPlaceUnary, List.length_take, List.length_drop,
       L.inPlaceBorrow_length hw]; omega
 
 theorem inPlaceConstant_borrow (L : ControlledPointLayout) (hw : L.Widths) (r : List Wire) :
@@ -166,36 +151,24 @@ theorem inPlaceNegate_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L
   omega
 
 theorem inPlaceSquare_borrow (L : ControlledPointLayout) (hw : L.Widths) :
-    L.inPlaceSquare.y++[L.inPlaceBit 256]++L.inPlaceSquare.acc++L.inPlaceSquare.work=L.inPlaceBorrow.take 1286 := by
-  have hp := L.inPlaceUnary_prefix hw ((L.inPlaceBorrow.drop 257).take 256) (L.inPlaceBit 513) 514 (by omega)
-  simp only [inPlaceUnary] at hp
-  simp only [inPlaceSquare, MulInPlaceLayout.acc, MulInPlaceLayout.work, ModUnaryLayout.z, inPlaceUnary]
-  simp only [← List.append_assoc]
-  rw [L.inPlaceBit_prefix hw 256 (by omega),← List.take_add,L.inPlaceBit_prefix hw 513 (by omega)]
-  exact hp
+    L.inPlaceSquare.y++[L.inPlaceBit 256,L.inPlaceBit 257]++L.inPlaceSquare.work=L.inPlaceBorrow.take 2085 := by
+  have h256 := L.inPlaceBit_prefix hw 256 (by omega)
+  have h257 := L.inPlaceBit_prefix hw 257 (by omega)
+  change (L.inPlaceBorrow.take 256++[L.inPlaceBit 256,L.inPlaceBit 257])++_=_
+  rw [show [L.inPlaceBit 256,L.inPlaceBit 257]=[L.inPlaceBit 256]++[L.inPlaceBit 257] from rfl,
+    ←List.append_assoc,h256,h257]
+  exact borrowedMont_prefix _ _ 258 _ _ _ (by rw [L.inPlaceBorrow_length hw]; omega)
 
 theorem inPlaceSquare_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
     L.inPlaceSquare.wires.Nodup := by
   apply List.nodup_iff_count.mpr; intro q
   have h := List.nodup_iff_count.mp (L.inPlace_interfaces_nodup hw hnd) q
-  have ht := (List.take_sublist 1286 L.inPlaceBorrow).count_le q
+  have ht := (List.take_sublist 2085 L.inPlaceBorrow).count_le q
   rw [← L.inPlaceSquare_borrow hw] at ht
   have hb := L.inPlaceBorrow_count q
-  change ((L.inPlaceSlope++[L.inPlaceBit 256])++L.inPlaceSquare.y++L.inPlaceSquare.acc++L.inPlaceSquare.work).count q≤1
-  simp only [List.count_append,List.count_cons,List.count_nil] at h ht ⊢
-  omega
-
-theorem inPlaceSquareSub_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    L.inPlaceSquareSub.wires.Nodup := by
-  apply List.nodup_iff_count.mpr; intro q
-  have h := List.nodup_iff_count.mp (L.inPlace_interfaces_nodup hw hnd) q
-  have ht := (List.take_sublist 1287 L.inPlaceBorrow).count_le q
-  rw [← L.inPlaceBit_prefix hw 1286 (by omega),← L.inPlaceSquare_borrow hw] at ht
-  have hb := L.inPlaceBorrow_count q
-  simp only [inPlaceSquareSub, ModInPlaceLayout.wires, ModInPlaceLayout.z, ModInPlaceLayout.work,
-    ModUnaryLayout.core, ModAddCoreLayout.z, ModAddCoreLayout.work,
-    MulInPlaceLayout.work, ModUnaryLayout.work, PointAddLayout.pointWires,
-    List.count_append, List.count_cons, List.count_nil] at h ht ⊢
+  change ((L.inPlaceSlope++[L.inPlaceBit 256])++L.inPlaceSquare.y++
+    (L.point.x++[L.inPlaceBit 257])++L.inPlaceSquare.work).count q≤1
+  simp only [PointAddLayout.pointWires,List.count_append,List.count_cons,List.count_nil] at h ht ⊢
   omega
 
 theorem inPlacePointZero_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)

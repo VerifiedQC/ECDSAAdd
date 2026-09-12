@@ -29,19 +29,15 @@ def inPlaceUnary (L : ControlledPointLayout) (low : List Wire) (high : Wire) (k 
 def inPlaceDivide (L : ControlledPointLayout) (c : Wire) (D E : List Wire) : DivideLayout :=
   ⟨c,D,E,L.inPlaceSlope,L.inPlaceInverse⟩
 
-/-- 两个外部乘积：源λ，乘数当前x，累加目标y。 -/
-def inPlaceMultiply (L : ControlledPointLayout) : MulAdapterLayout :=
-  ⟨L.inPlaceSlope++[L.inPlaceBit 0],L.point.x,L.point.y++[L.inPlaceBit 1],
-    L.inPlaceUnary ((L.inPlaceBorrow.drop 2).take 256) (L.inPlaceBit 258) 259⟩
+/-- 两个外部乘积共用B[2…1828]，B[0]/B[1]为输入/输出高位。 -/
+def inPlaceMultiply (L : ControlledPointLayout) : MontLayout :=
+  borrowedMont L.inPlaceBorrow L.control 2 (L.inPlaceSlope++[L.inPlaceBit 0])
+    L.point.x (L.point.y++[L.inPlaceBit 1])
 
-/-- 平方保留独立乘数S与积t，直到从当前x减去t后才清理。 -/
-def inPlaceSquare (L : ControlledPointLayout) : MulInPlaceLayout :=
-  ⟨L.inPlaceSlope++[L.inPlaceBit 256],L.inPlaceBorrow.take 256,
-    L.inPlaceUnary ((L.inPlaceBorrow.drop 257).take 256) (L.inPlaceBit 513) 514⟩
-
-def inPlaceSquareSub (L : ControlledPointLayout) : ModInPlaceLayout :=
-  ⟨{ L.inPlaceSquare.unary.core with a:=L.inPlaceSquare.acc,low:=L.point.x,high:=L.inPlaceBit 1286 },
-    L.inPlaceSquare.unary.mask,L.inPlaceSquare.unary.flag⟩
+/-- 平方只保留S=B[0…255]及两个扩展高位，工作区从258开始。 -/
+def inPlaceSquare (L : ControlledPointLayout) : MontLayout :=
+  borrowedMont L.inPlaceBorrow L.control 258 (L.inPlaceSlope++[L.inPlaceBit 256])
+    (L.inPlaceBorrow.take 256) (L.point.x++[L.inPlaceBit 257])
 
 /-- 常数源占前257位，目标高位257，scratch从258开始。 -/
 def inPlaceConstant (L : ControlledPointLayout) (r : List Wire) : ModInPlaceLayout :=
@@ -81,21 +77,12 @@ theorem inPlaceUnary_widths (L : ControlledPointLayout) (hw : L.Widths)
   · exact hl
   all_goals simp only [inPlaceUnary,List.length_take,List.length_drop,L.inPlaceBorrow_length hw]; omega
 
-theorem inPlaceMultiply_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceMultiply.Widths := by
-  have hu := L.inPlaceUnary_widths hw ((L.inPlaceBorrow.drop 2).take 256) (L.inPlaceBit 258) 259
-    (by simp [L.inPlaceBorrow_length hw]) (by omega)
-  have hn : L.inPlaceMultiply.width=256 := hu.low
-  change L.inPlaceMultiply.core.Widths L.inPlaceMultiply.width ∧ L.inPlaceMultiply.out.length=L.inPlaceMultiply.width+1
-  rw [hn]
-  refine ⟨⟨?_,hw.inputX,hu⟩,?_⟩
-  · simp [inPlaceMultiply,MulAdapterLayout.core,L.inPlaceSlope_length hw]
-  · simp [inPlaceMultiply,point,hw.inputY]
+theorem inPlaceMultiply_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceMultiply.Widths :=
+  borrowedMont_widths _ _ _ _ _ _ (by simp [L.inPlaceSlope_length hw]) hw.inputX (by simp [point,hw.inputY])
 
-theorem inPlaceSquare_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceSquare.Widths 256 := by
-  refine ⟨?_,?_,L.inPlaceUnary_widths hw _ _ 514 ?_ (by omega)⟩
-  · simp [inPlaceSquare,L.inPlaceSlope_length hw]
-  · simp [inPlaceSquare,L.inPlaceBorrow_length hw]
-  · simp [L.inPlaceBorrow_length hw]
+theorem inPlaceSquare_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceSquare.Widths :=
+  borrowedMont_widths _ _ _ _ _ _ (by simp [L.inPlaceSlope_length hw])
+    (by simp [L.inPlaceBorrow_length hw]) (by simp [point,hw.inputX])
 
 end ControlledPointLayout
 end ECDSAAdd.Arithmetic

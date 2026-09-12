@@ -2,31 +2,6 @@ import ECDSAAdd.Arithmetic.DivideResources
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 三段乘积门列的支持含输入、输出、全部乘法工作区和外部控制。 -/
-theorem divideProduct_wires (F : MulAdapterLayout) (c : Wire) (hf : F.Widths) (hn : 0<F.width) :
-    wires (mulInto F.core p ++ controlledModAdd c F.addView p ++ mulClear F.core p)=
-      (c :: F.wires).toFinset ∧
-    wires (mulInto F.core p ++ controlledModSub c F.addView p ++ mulClear F.core p)=
-      (c :: F.wires).toFinset := by
-  have hi := mulInPlace_wires F.core F.width p hf.1 hn
-  have ha := controlledModAdd_wires c F.addView F.width p (F.add_widths hf) hn
-  have hs := controlledModSub_wires c F.addView F.width p (F.add_widths hf) hn
-  have he : F.addView.maskedCore.wires=F.unary.mask++F.out++F.unary.core.work := by
-    change F.unary.mask++F.addView.z++F.unary.core.work=_
-    rw [(F.add_ports hf).2.1]
-  rw [he] at ha hs
-  simp only [wires_append,hi.1,hi.2,ha,hs]
-  constructor <;> ext q
-  all_goals
-    have htx : q∈F.x.take F.width → q∈F.x := fun h => (List.take_sublist _ _).subset h
-    have htp : q∈F.product.take F.width → q∈F.product := fun h => (List.take_sublist _ _).subset h
-    simp only [Finset.mem_union,List.mem_toFinset,MulAdapterLayout.core,MulAdapterLayout.wires,
-      MulAdapterLayout.work,MulAdapterLayout.addView,MulAdapterLayout.product,
-      ModUnaryLayout.core,ModUnaryLayout.work,ModUnaryLayout.z,ModAddCoreLayout.wires,
-      ModAddCoreLayout.z,ModAddCoreLayout.work,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at htx htp ⊢
-    clear hf hn hi ha hs he
-    grind only
-
 namespace DivideLayout
 
 def usedWires (L : DivideLayout) : List Wire :=
@@ -80,8 +55,7 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
     (by rw [hd,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
     (by rw [show L.inner.a.length=257 from hw.inverse.a,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
     (by rw [show L.inner.temp.length=257 from hw.inverse.temp,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic]) p
-  have hm := divideProduct_wires L.multiply L.control (L.multiply_widths hw)
-    (by rw [L.multiply_width hw]; omega)
+  have hm := montControlledAdapter_wires L.control L.multiply p (L.multiply_widths hw)
   have hc := copyRegister_wires (some L.control) L.denominator L.vLow
     (hw.inverse.input.trans (L.vLow_length hw).symm)
   have hne : L.denominator.isEmpty=false := by
@@ -102,10 +76,10 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
     intro q h
     exact List.mem_toFinset.mpr (L.data_used_subset .s (by decide) (List.mem_toFinset.mp (xorConstant_wires_subset _ _ h)))
   have heA : divideAdd L = divideLoad L ++ inverseCompute L.inner p ++
-      (mulInto L.multiply.core p ++ controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p) ++
+      (montMulControlledAdd L.control L.multiply p) ++
       inverseUncompute L.inner p ++ divideUnload L := by simp only [divideAdd,List.append_assoc]
   have heS : divideSub L = divideLoad L ++ inverseCompute L.inner p ++
-      (mulInto L.multiply.core p ++ controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p) ++
+      (montMulControlledSub L.control L.multiply p) ++
       inverseUncompute L.inner p ++ divideUnload L := by simp only [divideSub,List.append_assoc]
   rw [heA,heS]
   simp only [wires_append,hi.1,hi.2,hm.1,hm.2,divideLoad,divideUnload,wires_append,hc,
@@ -115,11 +89,18 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
     have hu' := fun h => List.mem_toFinset.mp (hu (a:=q) h)
     have hs' := fun h => List.mem_toFinset.mp (hs (a:=q) h)
     have hv' := fun h => L.vLow_used_subset (a:=q) h
-    have hm' := fun h => L.multiply_used_subset hw (a:=q) h
-    have hn' : q∈L.numerator → q∈L.multiply.wires := by intro h; simp [MulAdapterLayout.wires,DivideLayout.multiply,h]
-    have ha' : q∈L.acc → q∈L.multiply.wires := by intro h; simp [MulAdapterLayout.wires,DivideLayout.multiply,h]
+    have hm' : q∈L.multiply.x.take 256++L.multiply.y++L.multiply.out++L.multiply.work → q∈L.usedWires := by
+      intro h
+      apply L.multiply_used_subset hw
+      have ht : q∈L.multiply.x.take 256 → q∈L.multiply.x := fun h => List.mem_of_mem_take h
+      change q∈L.multiply.x++L.multiply.y++L.multiply.out++L.multiply.work
+      simp only [List.mem_append] at h ⊢
+      clear hw hd hi hm hc hne hu hs heA heS
+      tauto
+    have hn' : q∈L.numerator → q∈L.multiply.x.take 256++L.multiply.y++L.multiply.out++L.multiply.work := by intro h; simp [DivideLayout.multiply,borrowedMont,poolMul,h]
+    have ha' : q∈L.acc → q∈L.multiply.x.take 256++L.multiply.y++L.multiply.out++L.multiply.work := by intro h; simp [DivideLayout.multiply,borrowedMont,poolMul,h]
     simp only [Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,List.mem_toFinset,
-      List.mem_cons,List.mem_append,DivideLayout.usedWires] at hm' ⊢
+      List.mem_cons,List.mem_append,DivideLayout.usedWires] at hm' hn' ha' ⊢
     clear hw hd hi hm hc hne hu hs heA heS
     grind only
 

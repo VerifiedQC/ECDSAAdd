@@ -2,27 +2,16 @@ import ECDSAAdd.Arithmetic.Divide
 
 namespace ECDSAAdd.Arithmetic.DivideLayout
 
-/-- 乘法输出高位与全部工作位恰为借用区前1030位；未使用的尾部保留。 -/
+/-- 输出高位与乘法工作区恰为借用区前1828位。 -/
 theorem multiply_borrow (L : DivideLayout) (hw : L.Widths) :
-    [L.borrowedBit 0] ++ L.multiply.work = L.borrow.take 1030 := by
-  have one (i : Nat) (hi : i<2315) :
-      L.borrow.take i ++ [L.borrowedBit i] = L.borrow.take (i+1) := by
-    have h : i<L.borrow.length := by rw [L.borrow_length hw]; exact hi
-    change L.borrow.take i ++ [L.borrow.getD i L.inner.first.done] = _
-    rw [List.getD_eq_getElem _ _ h,List.take_add_one,List.getElem?_eq_getElem h]
-    rfl
-  have h0 := one 0 (by omega)
-  have h257 := one 257 (by omega)
-  have h771 := one 771 (by omega)
-  have h1029 := one 1029 (by omega)
-  change [L.borrowedBit 0] ++
-    (((L.borrow.drop 1).take 256 ++ [L.borrowedBit 257]) ++
-      ((L.borrow.drop 258).take 257 ++ (L.borrow.drop 515).take 256 ++
-        [L.borrowedBit 771] ++ (L.borrow.drop 772).take 257 ++ [L.borrowedBit 1029])) = _
-  simp only [List.nil_append,List.take_zero] at h0
-  simp only [← List.append_assoc]
-  rw [h0, ← List.take_add, h257, ← List.take_add, ← List.take_add, h771,
-    ← List.take_add, h1029]
+    [L.borrowedBit 0] ++ L.multiply.work = L.borrow.take 1828 := by
+  have h := borrowedMont_prefix L.borrow L.inner.first.done 1 L.inner.a L.numerator
+    (L.acc++[L.borrowedBit 0]) (by rw [L.borrow_length hw]; omega)
+  have he : L.borrow.take 1=[L.borrowedBit 0] := by
+    have hh : 0<L.borrow.length := by rw [L.borrow_length hw]; omega
+    simp [borrowedBit,List.take_add_one,List.getElem?_eq_getElem hh]
+  rw [he] at h
+  exact h
 
 theorem inner_nodup (L : DivideLayout) (hnd : L.wires.Nodup) : L.inner.wires.Nodup := by
   apply List.nodup_iff_count.mpr; intro q
@@ -34,23 +23,13 @@ theorem multiply_nodup (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) 
     (L.control :: L.multiply.wires).Nodup := by
   apply List.nodup_iff_count.mpr; intro q
   have h := List.nodup_iff_count.mp hnd q
-  have hb := List.Sublist.count_le q (List.take_sublist 1030 L.borrow)
+  have hb := List.Sublist.count_le q (List.take_sublist 1828 L.borrow)
   rw [← L.multiply_borrow hw] at hb
   simp only [wires,work,InverseLoopLayout.wires,InverseLoopLayout.extra,
     List.count_cons,List.count_append] at h
   simp only [borrow,List.count_append,List.count_cons,List.count_nil] at hb
   change (L.control :: L.inner.a ++ L.numerator ++ (L.acc++[L.borrowedBit 0]) ++ L.multiply.work).count q ≤ 1
   simp only [List.count_cons,List.count_append,List.count_nil]
-  omega
-
-theorem add_nodup (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    (L.control :: L.multiply.addView.wires).Nodup := by
-  apply List.nodup_iff_count.mpr; intro q
-  have h := List.nodup_iff_count.mp (L.multiply_nodup hw hnd) q
-  have hp := L.multiply.add_ports (L.multiply_widths hw)
-  change (L.control :: L.multiply.addView.a ++ L.multiply.addView.z ++ L.multiply.addView.work).count q ≤ 1
-  rw [hp.1,hp.2.1,hp.2.2]
-  simp only [MulAdapterLayout.wires,MulAdapterLayout.work,List.count_append,List.count_cons] at h ⊢
   omega
 
 theorem inverse_nodup (L : DivideLayout) (hnd : L.wires.Nodup) :
