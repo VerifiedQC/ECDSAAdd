@@ -3,7 +3,7 @@ import ECDSAAdd.Arithmetic.PointCandidateState
 namespace ECDSAAdd.Arithmetic
 
 private theorem pool_zero (L : PointAddLayout) (h : L.Widths) (st : BasisState)
-    (hz : regValue L.pool st=0) (n : Nat) (hn : n≤69908) :
+    (hz : regValue L.pool st=0) (n : Nat) (hn : n≤5699) :
     regValue (wireBlock L.poolWire 0 n) st=0 := by
   rw [L.pool_prefix h n hn]
   apply (regValue_zero _ _).mpr
@@ -81,7 +81,7 @@ theorem CandidateValues.mul (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.N
       (CandidateValues L (Function.update v o (v o ^^^ ((v a*v b)%p))) G) := by
   intro s m hv
   have hbl : ((L.reg b).take 256).length=256 := by simp [Nat.min_eq_left hb]
-  have hi := poolMul_inputs L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o) hbl
+  have hi := poolMul_inputs L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o)
   have hvb : regValue ((L.reg b).take 256) s.basis=v b := by
     have hl := regValue_low_iff ((L.reg b).take 256) ((L.reg b).drop 256) s.basis (v b)
       (by rw [hbl]; exact hB)
@@ -89,9 +89,9 @@ theorem CandidateValues.mul (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.N
     exact (hl.mp (hv.1 b)).1
   have hw : regValue (poolMul L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o)).work s.basis=0 := by
     rw [poolMul_work]
-    exact pool_zero L h s.basis hv.2.1 69908 (by omega)
-  obtain ⟨hp,he,hr⟩ := fieldMul_correct _ (L.poolMul_nodup h _ _ _ hbl hn)
-    (poolMul_widths _ _ _ _ ha ho) (poolMod_width _ _ _) s m
+    exact pool_zero L h s.basis hv.2.1 1029 (by omega)
+  obtain ⟨hp,he,hr⟩ := fieldMul_correct _ (L.poolMul_nodup h _ _ _ hn)
+    (poolMul_widths _ _ _ _ ha hbl ho) (poolMul_width _ _ _ _) s m
     (by rw [hi.1,hv.1 a]; exact hA) hw
   generalize hrun : run (fieldMul (poolMul L.poolWire (L.reg a) ((L.reg b).take 256) (L.reg o))) m s=t at hp he hr ⊢
   rw [hi.2.2] at he hr

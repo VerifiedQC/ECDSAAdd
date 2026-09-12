@@ -16,13 +16,13 @@ theorem pointSubConstant_counts (L : PointAddLayout) (h : L.Widths)
 
 theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
     (hnd : (L.slope++L.constant.take 256++L.square++L.pool).Nodup) :
-    toffoliCount (pointSquare L)=2892800 ∧ measurementCount (pointSquare L)=2105344 := by
+    toffoliCount (pointSquare L)=1178880 ∧ measurementCount (pointSquare L)=916736 := by
   have hs := h.words L.slope (by simp [PointAddLayout.words])
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have ho := h.words L.square (by simp [PointAddLayout.words])
   have hy : (L.constant.take 256).length=256 := by simp [hk]
-  have hc := fieldMul_resources _ (L.poolMul_nodup h _ _ _ hy hnd)
-    (poolMul_widths _ _ _ _ hs ho) (poolMod_width _ _ _)
+  have hc := fieldMul_resources _ (L.poolMul_nodup h _ _ _ hnd)
+    (poolMul_widths _ _ _ _ hs hy ho) (poolMul_width _ _ _ _)
   have hcopy := copyRegister_counts none L.slope L.constant (hs.trans hk.symm)
   simp only [Option.isSome_none,Bool.false_eq_true,if_false] at hcopy
   simp only [pointSquare,toffoliCount_append,measurementCount_append,hcopy.1,hcopy.2,
@@ -31,10 +31,10 @@ theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
 /-- 候选计算和按依赖逆序清理调用相同的前向模块，因此门数和测量数相同。 -/
 theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
     (cx cy : Fp) :
-    (toffoliCount (pointCandidateCompute L cx cy)=13227848 ∧
-      measurementCount (pointCandidateCompute L cx cy)=7961672) ∧
-    (toffoliCount (pointCandidateClear L cx cy)=13227848 ∧
-      measurementCount (pointCandidateClear L cx cy)=7961672) := by
+    (toffoliCount (pointCandidateCompute L cx cy)=8086088 ∧
+      measurementCount (pointCandidateCompute L cx cy)=4395848) ∧
+    (toffoliCount (pointCandidateClear L cx cy)=8086088 ∧
+      measurementCount (pointCandidateClear L cx cy)=4395848) := by
   obtain ⟨nDx,nDy,nOffset,nX,nDelta,nY,nSlope,nSquare,nProduct,nInverse⟩ :=
     L.candidate_interfaces_nodup hnd
   have hdx := h.words L.dx (by simp [PointAddLayout.words])
@@ -57,11 +57,11 @@ theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires
   have cY := fieldSub_resources _
     (L.poolSub_nodup h _ _ _ hproduct heY hy nY) (poolSub_width _ _ _ _)
   have cSlope := fieldMul_resources _
-    (L.poolMul_nodup h _ _ _ h.inverse nSlope) (poolMul_widths _ _ _ _ hdy hslope)
-    (poolMod_width _ _ _)
+    (L.poolMul_nodup h _ _ _ nSlope) (poolMul_widths _ _ _ _ hdy h.inverse hslope)
+    (poolMul_width _ _ _ _)
   have cProduct := fieldMul_resources _
-    (L.poolMul_nodup h _ _ _ (by simp [hslope]) nProduct)
-    (poolMul_widths _ _ _ _ hdelta hproduct) (poolMod_width _ _ _)
+    (L.poolMul_nodup h _ _ _ nProduct)
+    (poolMul_widths _ _ _ _ hdelta (by simp [hslope]) hproduct) (poolMul_width _ _ _ _)
   have cSquare := pointSquare_counts L h nSquare
   have cInverse := fieldInverse_resources _ (L.poolInverse_nodup h _ _ h.inverse nInverse)
     (poolInverse_widths _ _ _ h.divisor h.inverse)

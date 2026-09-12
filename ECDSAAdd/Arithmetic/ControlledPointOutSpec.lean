@@ -25,13 +25,13 @@ theorem controlledPointAddOut_finite_ready (L : ControlledPointLayout) (h : L.Wi
   have hclear := pointCandidate_clear_spec L.core h hnc (pointGeneric R cx) (pointX R) (pointY R) cx cy hb.1 hb.2 hg
   have h1 := pointControl_frame L hn b (pointStage_flags L.core h hnc R cx cy OF OX OY)
     (by rw [hf.1]; exact L.flags_subset)
-  have h2 := pointControl_frame L hn b (pointStage_candidate L.core hnc R cx cy OF OX OY _ _ _ hs.1 hcompute)
-    (by rw [hs.1]; exact L.candidate_subset)
+  have h2 := pointControl_frame L hn b (pointStage_candidate L.core h hnc R cx cy OF OX OY _ _ _ hs.1 hcompute)
+    (by rw [hs.1]; exact L.candidate_subset h)
   have h3 := controlledPointStage_output L h hn b R cx cy hc OF OX OY
-  have h4 := pointControl_frame L hn b (pointStage_candidate L.core hnc R cx cy
+  have h4 := pointControl_frame L hn b (pointStage_candidate L.core h hnc R cx cy
     (OF^^(b&&pointFinite (R+.some hc))) (OX^^^(if b then pointX (R+.some hc) else 0))
     (OY^^^(if b then pointY (R+.some hc) else 0)) _ _ _ hs.2 hclear)
-    (by rw [hs.2]; exact L.candidate_subset)
+    (by rw [hs.2]; exact L.candidate_subset h)
   have h5 := pointControl_frame L hn b (pointStage_clearFlags L.core h hnc R cx cy
     (OF^^(b&&pointFinite (R+.some hc))) (OX^^^(if b then pointX (R+.some hc) else 0))
     (OY^^^(if b then pointY (R+.some hc) else 0)))

@@ -19,12 +19,13 @@ structure PointBoundary (L : PointAddLayout) (F EX EY D OF : Bool) (OX OY : Nat)
 def PointAddLayout.boundaryWires (L : PointAddLayout) : List Wire :=
   [L.input.finite,L.equalX,L.equalNegY,L.double]++PointAddLayout.pointWires L.output
 
-theorem PointAddLayout.candidate_boundary_nodup (L : PointAddLayout) (hn : L.wires.Nodup) :
+theorem PointAddLayout.candidate_boundary_nodup (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup) :
   (L.candidateUsed++L.boundaryWires).Nodup := by
   apply List.nodup_iff_count.mpr; intro w
   have hh := List.nodup_iff_count.mp hn w
   have hx := (List.take_sublist 256 L.dx).count_le w
   have hy := (List.take_sublist 256 L.candidateY).count_le w
+  have hp := (L.candidatePool_sublist h).count_le w
   simp only [PointAddLayout.candidateUsed,PointAddLayout.boundaryWires,
     PointAddLayout.extendedX,PointAddLayout.extendedY,
     PointAddLayout.wires,PointAddLayout.pointWires,PointAddLayout.work,PointAddLayout.words,
@@ -32,9 +33,9 @@ theorem PointAddLayout.candidate_boundary_nodup (L : PointAddLayout) (hn : L.wir
     List.count_append,List.count_cons,List.count_nil] at hh ⊢
   omega
 
-theorem PointAddLayout.candidate_boundary_disjoint (L : PointAddLayout) (hn : L.wires.Nodup) :
+theorem PointAddLayout.candidate_boundary_disjoint (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup) :
     L.candidateUsed.Disjoint L.boundaryWires :=
-  (List.nodup_append'.mp (L.candidate_boundary_nodup hn)).2.2
+  (List.nodup_append'.mp (L.candidate_boundary_nodup h hn)).2.2
 
 theorem PointBoundary.congr {L : PointAddLayout} {F EX EY D OF : Bool} {OX OY : Nat}
     {s t : BasisState} (h : PointBoundary L F EX EY D OF OX OY s)
@@ -49,7 +50,7 @@ theorem PointBoundary.congr {L : PointAddLayout} {F EX EY D OF : Bool} {OX OY : 
   · exact (regValue_congr _ _ _ (fun w hw => he w (by simp [PointAddLayout.boundaryWires,PointAddLayout.pointWires,hw]))).trans h.outX
   · exact (regValue_congr _ _ _ (fun w hw => he w (by simp [PointAddLayout.boundaryWires,PointAddLayout.pointWires,hw]))).trans h.outY
 
-theorem pointCandidate_frame (L : PointAddLayout) (hn : L.wires.Nodup)
+theorem pointCandidate_frame (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (c : Program) (hs : wires c=L.candidateUsed.toFinset)
     (F EX EY D OF : Bool) (OX OY : Nat) (s : State) (m : List Bool)
     (hb : PointBoundary L F EX EY D OF OX OY s.basis) :
@@ -58,7 +59,7 @@ theorem pointCandidate_frame (L : PointAddLayout) (hn : L.wires.Nodup)
   intro w hw
   apply run_preserves_outside
   rw [hs,List.mem_toFinset]
-  exact fun hc => List.disjoint_left.mp (L.candidate_boundary_disjoint hn) hc hw
+  exact fun hc => List.disjoint_left.mp (L.candidate_boundary_disjoint h hn) hc hw
 
 /-- 点输入和工作区全零给出候选段的初态，包含输入的两个扩展最高位。 -/
 theorem point_initial_values (L : PointAddLayout) (R : Point) (s : BasisState)

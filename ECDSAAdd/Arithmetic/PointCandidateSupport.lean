@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.PointCandidateLayout
+import ECDSAAdd.Arithmetic.CandidatePool
 
 namespace ECDSAAdd.Arithmetic
 
@@ -28,25 +29,11 @@ theorem poolSub_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire
 
 theorem poolMul_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire)
     (hx : x.length=257) (hy : y.length=256) (ho : out.length=257) :
-    wires (fieldMul (poolMul L.poolWire x y out))=(x++y++out++L.pool).toFinset := by
-  let M := poolMul L.poolWire x y out
-  have hw := poolMul_widths L.poolWire x y out hx ho
-  have hh := multiplyLoop_wires M.steps M.doubling M.accumulator M.x M.out
-    hw.1 hw.2.1 hw.2.2.1 hw.2.2.2.2 p
-  have hn : M.steps.isEmpty=false := by
-    have hl : M.steps.length=M.width := hw.2.2.2.1
-    have hn : M.width=256 := poolMod_width _ _ _
-    cases he : M.steps <;> simp_all
-  simp only [hn,Bool.false_eq_true,if_false] at hh
-  change wires (modMul M p)=_
-  rw [modMul,hh]
-  change M.wires.toFinset=_
-  rw [← List.toFinset_eq_of_perm _ _ (MulLayout.interface_perm M)]
-  obtain ⟨hX,hY,hO⟩ := poolMul_inputs L.poolWire x y out hy
-  change ((poolMul L.poolWire x y out).x++(poolMul L.poolWire x y out).y++
-    (poolMul L.poolWire x y out).out++(poolMul L.poolWire x y out).work).toFinset=_
-  have hp := h.pool
-  rw [hX,hY,hO,poolMul_work,L.pool_prefix h 69908 (by decide),List.take_of_length_le (by omega : L.pool.length≤69908)]
+    wires (fieldMul (poolMul L.poolWire x y out))=(x++y++out++L.pool.take 1029).toFinset := by
+  rw [fieldMul,(mulAdapter_wires _ p (poolMul_widths _ _ _ _ hx hy ho)
+    (by rw [poolMul_width]; omega)).1]
+  change (x++y++out++(poolMul L.poolWire x y out).work).toFinset=_
+  rw [poolMul_work,L.pool_prefix h 1029 (by omega)]
 
 theorem poolInverse_support (L : PointAddLayout) (x out : List Wire)
     (hx : x.length=256) (ho : out.length=256) :
@@ -87,7 +74,7 @@ theorem pointSubConstant_support (L : PointAddLayout) (h : L.Widths)
     Finset.union_eq_right.mpr hc,Finset.union_eq_left.mpr hc]
 
 theorem pointSquare_support (L : PointAddLayout) (h : L.Widths) :
-    wires (pointSquare L)=(L.slope++L.constant++L.square++L.pool).toFinset := by
+    wires (pointSquare L)=(L.slope++L.constant++L.square++L.pool.take 1029).toFinset := by
   have hs := h.words L.slope (by simp [PointAddLayout.words])
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have ho := h.words L.square (by simp [PointAddLayout.words])
@@ -108,10 +95,22 @@ theorem safeDivisor_support (g : Wire) (src : List Wire) (head : Wire) (tail : L
   ext w
   simp [hn,wires,Instr.wires]
 
+theorem PointAddLayout.candidatePool_sublist (L : PointAddLayout) (h : L.Widths) :
+    (candidatePool L.poolWire).Sublist L.pool := by
+  have hh := Arithmetic.candidatePool_sublist L.poolWire
+  rw [L.pool_prefix h 5699 (by omega),List.take_of_length_le (by rw [h.pool])] at hh
+  exact hh
+
+theorem PointAddLayout.pool_prefix_used (L : PointAddLayout) (h : L.Widths) (n : Nat) (hn : n≤1287) :
+    ∀ q∈L.pool.take n, q∈candidatePool L.poolWire := by
+  intro q hq
+  rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1287 (by omega)]
+  exact Finset.mem_union_left _ (List.mem_toFinset.mpr ((by simpa only [List.take_take,Nat.min_eq_left hn] using List.take_sublist n (L.pool.take 1287) : (L.pool.take n).Sublist (L.pool.take 1287)).subset hq))
+
 def PointAddLayout.candidateUsed (L : PointAddLayout) : List Wire :=
   L.extendedX++L.extendedY++L.dx.take 256++L.dy++L.slope++L.square++L.offset++
     L.candidateX++L.delta++L.product++L.candidateY.take 256++L.constant++
-    L.divisor++L.inverse++[L.generic]++L.pool
+    L.divisor++L.inverse++[L.generic]++candidatePool L.poolWire
 
 /-- 同一前向模块的计算与清理具有相同支持集；两根填充高位均不在其中。 -/
 theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) :
@@ -142,36 +141,24 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
   have cSlope := poolMul_support L h _ _ _ hdy h.inverse hslope
   have cProduct := poolMul_support L h L.delta (L.slope.take 256) L.product hdelta (by simp [hslope]) hproduct
   have cSquare := pointSquare_support L h
-  have cInverse := poolInverse_support_subset L h _ _ h.divisor h.inverse
+  have cInverse := poolInverse_support L _ _ h.divisor h.inverse
   simp only [pointCandidateCompute,pointCandidateClear,wires_append,cDx,cDy,cX,
-    cOffset,cDelta,cY,cSlope,cProduct,cSquare,hsafe]
+    cOffset,cDelta,cY,cSlope,cProduct,cSquare,hsafe,cInverse]
   constructor <;> ext w
   all_goals
-    have hp1 : w∈L.pool.take 1287 → w∈L.pool := List.mem_of_mem_take
-    have hp2 : w∈wires (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) →
-        w∈L.divisor ∨ w∈L.inverse ∨ w∈L.pool := by
-      intro hm
-      have ht := cInverse hm
-      simp only [List.mem_toFinset,List.mem_append] at ht
-      rcases ht with (hd | hi) | hp
-      · exact Or.inl hd
-      · exact Or.inr (Or.inl hi)
-      · exact Or.inr (Or.inr (List.mem_of_mem_take hp))
+    have hp1 : w∈L.pool.take 1029 → w∈L.pool.take 1287 :=
+      fun hh => (by simpa only [List.take_take] using List.take_sublist 1029 (L.pool.take 1287) : (L.pool.take 1029).Sublist (L.pool.take 1287)).subset hh
+    have hpool : w∈candidatePool L.poolWire ↔ w∈L.pool.take 1287 ∨ w∈poolInverseUsedWork L.poolWire := by
+      rw [← List.mem_toFinset,candidatePool_union,L.pool_prefix h 1287 (by omega)]
+      simp
     have hs : w∈L.slope.take 256 → w∈L.slope := List.mem_of_mem_take
     have ho : w∈L.offset.take 256 → w∈L.offset := List.mem_of_mem_take
     have hx : w∈L.candidateX.take 256 → w∈L.candidateX := List.mem_of_mem_take
     have hd : w∈L.delta.take 256 → w∈L.delta := List.mem_of_mem_take
     have hy : w∈L.dy.take 256 → w∈L.dy := List.mem_of_mem_take
     simp only [PointAddLayout.candidateUsed,Finset.mem_union,List.mem_toFinset,
-      List.mem_append,List.mem_cons,List.not_mem_nil,or_false]
+      List.mem_append,List.mem_cons,List.not_mem_nil,or_false,hpool]
     clear cDx cDy cX cOffset cDelta cY cSlope cProduct cSquare cInverse hsafe
-    constructor
-    · intro hm
-      repeat' rcases hm with hm | hm
-      all_goals simp_all only [true_or,or_true]
-      all_goals obtain h|h|h := hp2 trivial <;> simp_all only [true_or,or_true]
-    · intro hm
-      repeat' rcases hm with hm | hm
-      all_goals simp_all only [true_or,or_true]
+    aesop
 
 end ECDSAAdd.Arithmetic

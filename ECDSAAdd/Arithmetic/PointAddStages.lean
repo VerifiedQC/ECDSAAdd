@@ -11,7 +11,7 @@ def PointStage (L : PointAddLayout) (R : Point) (cx cy : Fp) (OF : Bool) (OX OY 
     (pointFinite R && decide (pointX R=cx.val))
     (pointFinite R && decide (pointY R=(-cy).val)) (pointDouble R cx cy) OF OX OY s
 
-theorem pointStage_candidate (L : PointAddLayout) (hn : L.wires.Nodup)
+theorem pointStage_candidate (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (R : Point) (cx cy : Fp) (OF : Bool) (OX OY : Nat)
     (v v' : CandidateField → Nat) (c : Program) (hs : wires c=L.candidateUsed.toFinset)
     (hc : Triple (CandidateValues L v (pointGeneric R cx)) c
@@ -19,7 +19,7 @@ theorem pointStage_candidate (L : PointAddLayout) (hn : L.wires.Nodup)
     Triple (PointStage L R cx cy OF OX OY v) c (PointStage L R cx cy OF OX OY v') := by
   intro s m hh
   obtain ⟨hp,hv⟩ := hc s m hh.1
-  exact ⟨hp,hv,pointCandidate_frame L hn c hs _ _ _ _ _ _ _ s m hh.2⟩
+  exact ⟨hp,hv,pointCandidate_frame L h hn c hs _ _ _ _ _ _ _ s m hh.2⟩
 
 theorem pointStage_output (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (R : Point) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy)

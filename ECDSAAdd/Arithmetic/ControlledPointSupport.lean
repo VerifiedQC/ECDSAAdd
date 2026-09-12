@@ -5,23 +5,23 @@ open Secp256k1
 
 def ControlledPointLayout.usedWires (L : ControlledPointLayout) := L.core.usedWires++L.extras
 
-theorem ControlledPointLayout.used_subset (L : ControlledPointLayout) :
+theorem ControlledPointLayout.used_subset (L : ControlledPointLayout) (h : L.Widths) :
     L.core.usedWires.toFinset⊆L.core.wires.toFinset := by
   intro w hw
   simp only [PointAddLayout.usedWires,List.toFinset_append,Finset.mem_union] at hw
   rcases hw with hw|hw
-  · exact L.candidate_subset hw
+  · exact L.candidate_subset h hw
   · simpa only [List.mem_toFinset] using (show w∈L.core.wires from by
       simp only [PointAddLayout.boundaryWires,List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hw
       rcases hw with (rfl|rfl|rfl|rfl)|hw
       all_goals simp_all [PointAddLayout.wires,PointAddLayout.pointWires,PointAddLayout.work,PointAddLayout.flags] <;> tauto)
 
-theorem ControlledPointLayout.used_nodup (L : ControlledPointLayout) (hn : L.wires.Nodup) :
+theorem ControlledPointLayout.used_nodup (L : ControlledPointLayout) (h : L.Widths) (hn : L.wires.Nodup) :
     L.usedWires.Nodup := by
   apply List.nodup_append'.mpr
-  refine ⟨L.core.usedWires_nodup (L.core_nodup hn),(List.nodup_append'.mp hn).2.1,?_⟩
+  refine ⟨L.core.usedWires_nodup h (L.core_nodup hn),(List.nodup_append'.mp hn).2.1,?_⟩
   exact List.disjoint_left.mpr (fun w hw he => L.extra_not_core hn w he
-    (List.mem_toFinset.mp (L.used_subset (List.mem_toFinset.mpr hw))))
+    (List.mem_toFinset.mp (L.used_subset h (List.mem_toFinset.mpr hw))))
 
 theorem controlledPointAddOut_support (L : ControlledPointLayout) (h : L.Widths) (cx cy : Fp)
     (hc : curve.toAffine.Nonsingular cx cy) :
@@ -29,7 +29,7 @@ theorem controlledPointAddOut_support (L : ControlledPointLayout) (h : L.Widths)
   have hflags : (L.core.input.finite::L.core.input.x++L.core.input.y++L.core.flags++L.core.pool.take 256).toFinset ⊆
       L.usedWires.toFinset := by
     intro w hw
-    have hp : w∈L.core.pool.take 256 → w∈L.core.pool := List.mem_of_mem_take
+    have hp : w∈L.core.pool.take 256 → w∈candidatePool L.core.poolWire := L.core.pool_prefix_used h 256 (by omega) w
     simp only [ControlledPointLayout.usedWires,PointAddLayout.usedWires,PointAddLayout.candidateUsed,PointAddLayout.boundaryWires,
       PointAddLayout.extendedX,PointAddLayout.extendedY,PointAddLayout.flags,
       List.mem_toFinset,List.mem_cons,List.mem_append,List.not_mem_nil,or_false] at hw ⊢

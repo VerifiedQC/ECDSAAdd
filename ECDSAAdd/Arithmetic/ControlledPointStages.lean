@@ -19,9 +19,10 @@ theorem pointControl_frame (L : ControlledPointLayout) (hn : L.wires.Nodup) (b :
     hh L.doubleSelect (by simp [ControlledPointLayout.extras,ControlledPointLayout.selectors]),
     hh L.infinitySelect (by simp [ControlledPointLayout.extras,ControlledPointLayout.selectors])] using hb
 
-theorem ControlledPointLayout.candidate_subset (L : ControlledPointLayout) :
+theorem ControlledPointLayout.candidate_subset (L : ControlledPointLayout) (h : L.Widths) :
     L.core.candidateUsed.toFinset⊆L.core.wires.toFinset := by
   intro w hw
+  have hp : w∈candidatePool L.core.poolWire → w∈L.core.pool := fun hh => (L.core.candidatePool_sublist h).subset hh
   simp only [List.mem_toFinset,PointAddLayout.candidateUsed,PointAddLayout.extendedX,
     PointAddLayout.extendedY,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hw
   simp only [List.mem_toFinset,PointAddLayout.wires,PointAddLayout.pointWires,

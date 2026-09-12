@@ -16,9 +16,9 @@ theorem pointAddOut_finite_ready (L : PointAddLayout) (h : L.Widths) (hn : L.wir
   have hcompute := pointCandidate_compute_spec L h hn (pointGeneric R cx) (pointX R) (pointY R) cx cy hb.1 hb.2 hg
   have hclear := pointCandidate_clear_spec L h hn (pointGeneric R cx) (pointX R) (pointY R) cx cy hb.1 hb.2 hg
   have h1 := pointStage_flags L h hn R cx cy OF OX OY
-  have h2 := pointStage_candidate L hn R cx cy OF OX OY _ _ _ hs.1 hcompute
+  have h2 := pointStage_candidate L h hn R cx cy OF OX OY _ _ _ hs.1 hcompute
   have h3 := pointStage_output L h hn R cx cy hc OF OX OY
-  have h4 := pointStage_candidate L hn R cx cy (OF^^pointFinite (R+.some hc))
+  have h4 := pointStage_candidate L h hn R cx cy (OF^^pointFinite (R+.some hc))
     (OX^^^pointX (R+.some hc)) (OY^^^pointY (R+.some hc)) _ _ _ hs.2 hclear
   have h5 := pointStage_clearFlags L h hn R cx cy (OF^^pointFinite (R+.some hc))
     (OX^^^pointX (R+.some hc)) (OY^^^pointY (R+.some hc))
