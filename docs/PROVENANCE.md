@@ -94,3 +94,8 @@ MontPrepare变量窗口接入MeasuredMaskedAdder，按已审§20的门列组合�
 ### 改11第一批：十位查表与计数缩放数学
 
 Deutsch按REWORK_PLAN §22自主组合本仓库的递归lookup与Montgomery数学。lookup的私有通用长度证明供四位和十位规格共用，新增计数/相位清理/frame/支持证明；门列定义未变。InverseScaleFactor用ZMod单位关系证明R补偿、单段缩放与既有Kaliski数学一致，不依赖外部代码、额外公理或测试。缩放组合电路尚未实现，当前求逆和点加资源保持。
+
+
+### 改11第二批：缩放组合电路
+
+Deutsch按§22组合既有lookup10、montPrepare/montRestore与copyRegister。私有Values仅记录各门列边界的寄存器值；显式InverseScaleLayout和InverseLoopLayout视图给出实际借用，不引入回调或状态框架。完整相位/清理/frame、308,744/308,744计数及借用互异证明均由本仓库原语推出，无外部代码或新公理。当前求逆和点加门列尚未替换。
