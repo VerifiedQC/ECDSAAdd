@@ -156,4 +156,6 @@ scripts/verify.sh
 
 Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 
-改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#17-改-6a标准表示的四位窗口-montgomery-设计待复审未实现)：包含标准表示转换与历史清理的 XOR 适配器预算为 539,168 Toffoli / 271,904 测量 / 2,596 根实际线路，尚未实现或证明，不计入 Current status。
+改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#montgomery-design)：包含标准表示转换与历史清理的 XOR 适配器预算为 539,168 Toffoli / 271,904 测量 / 2,596 根实际线路，尚未实现或证明，不计入 Current status。
+
+改6a第一批已实现Montgomery整数循环数学与16项查表的Triple、目标外frame及48 Toffoli/48测量计数，入口为Math/Montgomery.lean和Arithmetic/Lookup.lean；P/Q、五个适配器及集成尚未实现，上述完整乘法预算仍未证明。

@@ -22,3 +22,5 @@ import ECDSAAdd.Arithmetic.HornerResources
 import ECDSAAdd.Math.PointInPlace
 import ECDSAAdd.Arithmetic.DivideSpec
 import ECDSAAdd.Arithmetic.PointInPlaceResources
+import ECDSAAdd.Math.Montgomery
+import ECDSAAdd.Arithmetic.Lookup
