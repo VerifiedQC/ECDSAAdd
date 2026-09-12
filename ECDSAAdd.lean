@@ -27,3 +27,5 @@ import ECDSAAdd.Arithmetic.Lookup
 import ECDSAAdd.Arithmetic.MontResources
 
 import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
+
+import ECDSAAdd.Math.InverseScaleFactor

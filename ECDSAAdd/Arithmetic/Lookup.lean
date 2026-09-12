@@ -145,10 +145,10 @@ def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat
   lookupWalk a controls scratch target (fun d => table (2*d)) ++ [X a]
 
 /-- 查表保持地址与目标外所有线路，对全部测量记录恢复相位。 -/
-theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+private theorem lookup_correct_length (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
     (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=3) (hs : scratch.length=3)
-    (ht : ∀ j<16, table j<2^target.length)
+    (hlen : scratch.length=controls.length)
+    (ht : ∀ j<2^(controls.length+1), table j<2^target.length)
     (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false) :
     (run (lookup a controls scratch target table) m s).phase=s.phase ∧
     (∀ w, w∉target → (run (lookup a controls scratch target table) m s).basis w=s.basis w) ∧
@@ -171,13 +171,13 @@ theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table :
     have h2 := List.count_pos_iff.mpr ht'
     simp only [List.count_cons,List.count_append] at h; omega
   have ht1 : ∀ d<2^controls.length, table (1+2*d)<2^target.length := by
-    intro d hd; apply ht; simp only [hc] at hd; omega
+    intro d hd; apply ht; rw [Nat.pow_succ]; omega
   have ht0 : ∀ d<2^controls.length, table (2*d)<2^target.length := by
-    intro d hd; apply ht; simp only [hc] at hd; omega
+    intro d hd; apply ht; rw [Nat.pow_succ]; omega
   let p := lookupWalk a controls scratch target (fun d => table (1+2*d))
   let r := lookupWalk a controls scratch target (fun d => table (2*d))
   let t := run p m s
-  obtain ⟨hp1,ho1,hv1⟩ := lookupWalk_correct a controls scratch target _ hnd (hs.trans hc.symm) ht1 s m hz
+  obtain ⟨hp1,ho1,hv1⟩ := lookupWalk_correct a controls scratch target _ hnd hlen ht1 s m hz
   change t.phase=s.phase at hp1
   change ∀ w, w∉target → t.basis w=s.basis w at ho1
   change regValue target t.basis=_ at hv1
@@ -188,7 +188,7 @@ theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table :
     intro w hw; rw [s2out w (hsa w hw),ho1 w (hsT w hw)]; exact hz w hw
   let m2 := m.drop (measurementCount p)
   let v := run r m2 s2
-  obtain ⟨hp2,ho2,hv2⟩ := lookupWalk_correct a controls scratch target _ hnd (hs.trans hc.symm) ht0 s2 m2 hz2
+  obtain ⟨hp2,ho2,hv2⟩ := lookupWalk_correct a controls scratch target _ hnd hlen ht0 s2 m2 hz2
   change v.phase=s2.phase at hp2
   change ∀ w, w∉target → v.basis w=s2.basis w at ho2
   change regValue target v.basis=_ at hv2
@@ -212,6 +212,19 @@ theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table :
       exact (s2out w (hca w hw)).trans (ho1 w (hcT w hw))
     simp only [hout,hv2,ht2,hv1,hctrl,s2a]
     cases ha : s.basis a <;> simp [regValue,ha]
+
+theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hnd : (a::(controls++scratch++target)).Nodup)
+    (hc : controls.length=3) (hs : scratch.length=3)
+    (ht : ∀ j<16, table j<2^target.length)
+    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false) :
+    (run (lookup a controls scratch target table) m s).phase=s.phase ∧
+    (∀ w, w∉target → (run (lookup a controls scratch target table) m s).basis w=s.basis w) ∧
+    regValue target (run (lookup a controls scratch target table) m s).basis =
+      regValue target s.basis ^^^ table (regValue (a::controls) s.basis) := by
+  apply lookup_correct_length a controls scratch target table hnd (hs.trans hc.symm)
+  · simpa only [hc] using ht
+  · exact hz
 /-- 公开寄存器接口；工作辅助位初末均为零。 -/
 theorem lookup_spec (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
     (hnd : (a::(controls++scratch++target)).Nodup)
@@ -309,5 +322,86 @@ theorem lookup_frame (a : Wire) (controls scratch target : List Wire) (table : N
     (s : State) (m : List Bool) (hz : regValue scratch s.basis=0) (w : Wire) (hw : w∉target) :
     (run (lookup a controls scratch target table) m s).basis w=s.basis w :=
   (lookup_correct a controls scratch target table hnd hc hs ht s m ((regValue_zero _ _).mp hz)).2.1 w hw
+
+private theorem lookupWalk_core (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hlen : scratch.length=controls.length) :
+    (controls++scratch).toFinset ⊆ wires (lookupWalk a controls scratch target table) := by
+  induction controls generalizing a scratch table with
+  | nil =>
+    have : scratch=[] := by simpa using hlen
+    simp [this]
+  | cons b bs ih =>
+    cases scratch with
+    | nil => simp at hlen
+    | cons q qs =>
+      have h := ih q qs (fun d => table (1+2*d)) (by simpa using hlen)
+      intro w hw
+      have hh := @h w
+      simp only [List.mem_toFinset,List.mem_append,List.mem_cons] at hw hh
+      simp only [lookupWalk,wires_append,wires,Instr.wires,correctionWires,
+        Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,Finset.notMem_empty,or_false]
+      tauto
+
+/-- 十位地址和九根scratch均在实际支持内，与表值无关。 -/
+theorem lookup10_core_wires (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hc : controls.length=9) (hs : scratch.length=9) :
+    (a::controls++scratch).toFinset ⊆ wires (lookup a controls scratch target table) := by
+  have h := lookupWalk_core a controls scratch target (fun d => table (1+2*d)) (hs.trans hc.symm)
+  intro w hw
+  have hh := @h w
+  simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at hw hh
+  simp only [lookup,wires_append,wires,Instr.wires,Finset.mem_union,
+    Finset.mem_singleton,Finset.notMem_empty,or_false]
+  tauto
+
+/-- 十位计数查表：同一递归门列，九根scratch。 -/
+theorem lookup10_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hnd : (a::(controls++scratch++target)).Nodup)
+    (hc : controls.length=9) (hs : scratch.length=9)
+    (ht : ∀ j<1024, table j<2^target.length)
+    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false) :
+    (run (lookup a controls scratch target table) m s).phase=s.phase ∧
+    (∀ w, w∉target → (run (lookup a controls scratch target table) m s).basis w=s.basis w) ∧
+    regValue target (run (lookup a controls scratch target table) m s).basis =
+      regValue target s.basis ^^^ table (regValue (a::controls) s.basis) := by
+  apply lookup_correct_length a controls scratch target table hnd (hs.trans hc.symm)
+  · simpa only [hc] using ht
+  · exact hz
+
+theorem lookup10_spec (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hnd : (a::(controls++scratch++target)).Nodup)
+    (hc : controls.length=9) (hs : scratch.length=9)
+    (ht : ∀ j<1024, table j<2^target.length) (D T : Nat) :
+    {{ (a::controls) = D, target = T, scratch = 0 }} lookup a controls scratch target table
+    {{ (a::controls) = D, target = (T ^^^ table D), scratch = 0 }} := by
+  intro s m h
+  simp only [Holds.holds] at h ⊢
+  have hz : ∀ w∈scratch, s.basis w=false := (regValue_zero scratch s.basis).mp h.2
+  obtain ⟨hp,ho,hv⟩ := lookup10_correct a controls scratch target table hnd hc hs ht s m hz
+  have hd : ((a::controls++scratch)++target).Nodup := by simpa using hnd
+  have hn := (List.nodup_append.mp hd).2.2
+  have ha : regValue (a::controls) (run (lookup a controls scratch target table) m s).basis=D := by
+    rw [← h.1.1]; apply regValue_congr; intro w hw
+    apply ho w; intro ht; exact hn w (by simp only [List.cons_append,List.mem_cons,List.mem_append] at hw ⊢; tauto) w ht rfl
+  have hw : regValue scratch (run (lookup a controls scratch target table) m s).basis=0 := by
+    rw [← h.2]; apply regValue_congr; intro w hw
+    apply ho w; intro ht; exact hn w (by simp [hw]) w ht rfl
+  exact ⟨hp,⟨ha,by simpa [h.1.1,h.1.2] using hv⟩,hw⟩
+
+theorem lookup10_counts (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hc : controls.length=9) (hs : scratch.length=9) :
+    toffoliCount (lookup a controls scratch target table)=1022 ∧
+    measurementCount (lookup a controls scratch target table)=1022 := by
+  have h1 := lookupWalk_counts a controls scratch target (fun d => table (1+2*d)) (hs.trans hc.symm)
+  have h0 := lookupWalk_counts a controls scratch target (fun d => table (2*d)) (hs.trans hc.symm)
+  simp [lookup,toffoliCount_append,measurementCount_append,toffoliCount,measurementCount,h1,h0,hc]
+
+theorem lookup10_frame (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
+    (hnd : (a::(controls++scratch++target)).Nodup)
+    (hc : controls.length=9) (hs : scratch.length=9)
+    (ht : ∀ j<1024, table j<2^target.length)
+    (s : State) (m : List Bool) (hz : regValue scratch s.basis=0) (w : Wire) (hw : w∉target) :
+    (run (lookup a controls scratch target table) m s).basis w=s.basis w :=
+  (lookup10_correct a controls scratch target table hnd hc hs ht s m ((regValue_zero _ _).mp hz)).2.1 w hw
 
 end ECDSAAdd.Arithmetic
