@@ -268,6 +268,17 @@ import ECDSAAdd
 #print axioms ECDSAAdd.inverseScaleFactor_halving
 #print axioms ECDSAAdd.kaliski_scale_count
 #print axioms ECDSAAdd.kaliski_montgomery_scale
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.prepare_spec
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.restore_spec
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.prepare_frame
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.restore_frame
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.wires_subset
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.counts
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_widths
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_work
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset
 LEAN
 )
 printf '%s\n' "$axioms"

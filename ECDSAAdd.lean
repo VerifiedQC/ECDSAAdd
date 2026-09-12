@@ -29,3 +29,5 @@ import ECDSAAdd.Arithmetic.MontResources
 import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
 
 import ECDSAAdd.Math.InverseScaleFactor
+
+import ECDSAAdd.Arithmetic.InverseScaleBorrow

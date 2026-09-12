@@ -543,6 +543,17 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.inverseScaleFactor_halving' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_scale_count' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_montgomery_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.prepare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.restore_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.prepare_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.restore_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_widths' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_work' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset' depends on axioms: [propext]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1010,3 +1021,14 @@ RoundFrame.inplaceArithmetic的两个程序分支接入measuredMaskedAdd/SubInPl
 `InverseScaleFactor.lean`证明因子界、F_q(K)·2^K=R、一段Montgomery缩放、与固定减半一致、K≤512及Kaliski逆元对接；只用模数中2为单位，不要求q为素数。新对接引理要求q%16=15。**内部求逆定理由任意奇数q收窄为q%16=15将在接入批发生；本批旧求逆门列和规格尚未替换。** fieldInverse和点加当前资源不变，§22组合缩放电路尚待证明。
 
 完整scripts/verify.sh退出0：2,135项构建、262条实际公理输出（新增10个入口）；上方公理块逐行取自本批日志，只依赖既有三白名单。无测试、新公理、CCZ或证明限制放宽。
+
+
+### 改11第二批：缩放准备/恢复与具体借用
+
+`InverseScaleLayout.prepare_spec`与`restore_spec`组合两次查表、Montgomery变量段和三次CX复制交换，覆盖全部测量记录。准备保留a=M、acc=N、256位约减商和借位；恢复后a=N、历史与工作位全零。两条frame保持a与显式历史之外的所有位。每个方向精确154,372 Toffoli/154,372测量，完整缩放308,744/308,744；没有使用montP的额外常数转换。
+
+`InverseScaleBorrow`在现有InverseLoopLayout上构造视图：518位历史来自round.y、zero低4位及carry，工作区等于(temp++arithmetic.wires).take1054。Widths和全局Nodup已证明，历史包含于原轮工作区；门列支持上界指向同一布局。未声称独立缩放的所有分配位均被触及，最终求逆支持等式留给接入批。
+
+前提q%16=15、q<2^256、N<q；不要求q为素数或额外K范围。旧inverseCompute/Uncompute和内部一般奇数规格尚未替换，fieldInverse与点加资源保持改10基线。内部求逆定理由任意奇数q收窄为q%16=15将在接入批明确记录。
+
+完整scripts/verify.sh退出0：2,137项构建、273条实际公理输出（新增11个入口）；上方公理块逐行取自本批日志。无新公理、测试、CCZ或证明限制放宽。
