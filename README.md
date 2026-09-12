@@ -66,6 +66,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **11,001,338 个 Toffoli
 | 改 6a（已实现） | 标准表示四位窗口Montgomery，全部模乘接入 | 11,800,058（改6a阶段已证） | 6,218（已证） | Lamport；6b设计留档 |
 | 改 7（方案1已实现，改8前阶段） | 14/14单迭代查表；测量清理仍为可选设计 | 11,669,498（已证） | 6,218（已证） | [实现与设计](docs/REWORK_PLAN.md#18-改-7四位单迭代查表与可选测量清理方案1已实现)；测量4,525,818 |
 | 改 8（已实现） | 变量窗口测量清掩码 | 11,001,338（已证） | 6,218（已证） | [实现](docs/REWORK_PLAN.md#opt8-measured-mask)；测量5,193,978 |
+| 改 11（设计，待证明） | 量子计数查表与单段Montgomery缩放 | 9,998,858（仅改11目标） | 6,218（目标） | [设计](docs/REWORK_PLAN.md#opt11-counted-scaling)；测量4,719,882；改10合入后重算 |
 
 每项先提交设计 PR 描述（构造、逐步寄存器表、门数推导、证明义务、文件改动），复审确认后再写证明；公开定理陈述保持不变，只替换实现与资源数。
 
@@ -169,3 +170,5 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 改8受控加减的实现见 [REWORK_PLAN §20](docs/REWORK_PLAN.md#opt8-measured-mask)。`MeasuredMaskedAdder.lean` 的完整Triple、目标外逐线保持与同程序资源为 `(2W−1, 2W−1, 4W+1)`；W=261时521 Toffoli /521测量 /1045线。Montgomery变量窗口已接入，旧原语保留；接改7的14/14查表后，完整点加已证11,001,338 Toffoli /5,193,978测量 /6,218线。
 
 改10的Kaliski轮测量清掩码设计见[REWORK_PLAN §21](docs/REWORK_PLAN.md#21-改10kaliski轮受控加减的测量清掩码设计待实现)。两处替换的待证目标为完整点加9,948,666 Toffoli /6,246,650测量 /6,218线；当前已证值不变。
+
+改11的[第二阶段替换设计](docs/REWORK_PLAN.md#opt11-counted-scaling)采用十位K查表与一段Montgomery准备/恢复，每次求逆目标少501,240 Toffoli和237,048次测量；与改10的单轮优化分开记账。上述目标尚未实现，不改变Current status。
