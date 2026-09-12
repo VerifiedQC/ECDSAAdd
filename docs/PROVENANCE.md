@@ -68,3 +68,7 @@ MontAdapterLayout/Spec/Frame/Resources复用本项目P/Q和C1模算术，按REWO
 ## 改6a第四批：除法与原地点加
 
 沿用§16的算法和公开寄存器契约，把五个Horner乘积替换为§17的Montgomery适配器。borrowedMont仅把既有poolMul映射到借用列表连续片段；平方S清理先于复用其线路的常数加。旧Horner四文件和MulAdapter三文件已无电路调用者，本PR保留，后续另交清理PR；数学HornerMultiply与半倍原语仍被复用。最终资源11,800,058/4,656,378/6,218由同一完整程序证明；未增加测试、公理或放宽证明限制。
+
+## 改6a独立清理批
+
+按复审清单删除无调用者的Horner四文件、MulAdapter三文件、controlledPointSwap与PointSwap。regValue_bit陈述与证明逐字迁移、仅改所在文件至Registers；其余源码变化只有删除及导入路径调整。半倍原语与Montgomery仍复用的数学保留，活动程序、功能规格和资源不变。

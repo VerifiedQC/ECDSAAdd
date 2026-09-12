@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.MontConstant
-import ECDSAAdd.Arithmetic.HornerLayout
+import ECDSAAdd.Arithmetic.ModUnaryResources
 
 namespace ECDSAAdd.Arithmetic
 

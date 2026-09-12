@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.PointSwap
+import ECDSAAdd.Arithmetic.ControlledPointOutSpec
 import ECDSAAdd.Arithmetic.PointInPlaceIntegration
 
 namespace ECDSAAdd.Arithmetic

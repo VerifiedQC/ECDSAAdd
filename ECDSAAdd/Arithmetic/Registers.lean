@@ -128,4 +128,20 @@ theorem notRegister_qubitCount (r : List Wire) (hnd : r.Nodup) :
     qubitCount (notRegister r) = r.length := by
   rw [qubitCount, notRegister_wires, List.toFinset_card_of_nodup hnd]
 
+/-- 小端寄存器第 i 位与自然数除法表示一致。 -/
+theorem regValue_bit (r : List Wire) (i : Nat) (fallback : Wire) (s : BasisState) (hi : i<r.length) :
+    (s (r.getD i fallback)).toNat=(regValue r s/2^i)%2 := by
+  induction r generalizing i with
+  | nil => simp at hi
+  | cons a as ih =>
+    cases i with
+    | zero => simp [regValue,Bool.toNat]; cases s a <;> simp
+    | succ i =>
+      simp only [List.getD_cons_succ]
+      rw [ih i (by simpa using hi)]
+      have hd : regValue (a::as) s/2=regValue as s := by
+        change ((if s a then 1 else 0)+2*regValue as s)/2=regValue as s
+        cases s a <;> simp only [Bool.false_eq_true,if_false,if_true] <;> omega
+      rw [Nat.pow_succ,Nat.mul_comm (2^i) 2,← Nat.div_div_eq_div_mul,hd]
+
 end ECDSAAdd.Arithmetic

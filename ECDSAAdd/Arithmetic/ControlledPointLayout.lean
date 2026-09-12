@@ -27,9 +27,6 @@ def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
     pointFlagsCompute L.core cx cy++pointCandidateCompute L.core cx cy++controlledPointOutput L C++
       pointCandidateClear L.core cx cy++pointFlagsClear L.core cx cy
 
-def controlledPointSwap (c : Wire) (a b : PointReg) : Program :=
-  cswap c a.finite b.finite++swapRegisters c a.x b.x++swapRegisters c a.y b.y
-
 /-- 除法中心原地点加；有限常量执行固定门列，C=O时构造为空。 -/
 def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
