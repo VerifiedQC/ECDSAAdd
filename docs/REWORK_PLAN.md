@@ -935,7 +935,7 @@ poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对�
 
 ### 16.2 除法：在保留的求逆历史中使用逆元
 
-拟新增直接寄存器布局 `DivideLayout`：控制 c，n 位分母 D、分子 E、累加器 Z，以及一个现有 `InverseLoopLayout I`。I 的完整分配线作为工作区，包含仅为兼容旧布局保留的未使用输出；布局全局互异。两次调用共用同一 I。只给实际所需的两个入口，不建立可传任意回调的“求逆框架”。
+已实现直接寄存器布局 `DivideLayout`：控制 c，n 位分母 D、分子 E、累加器 Z，以及一个现有 `InverseLoopLayout I`。I 的完整分配线作为工作区，包含仅为兼容旧布局保留的未使用输出；布局全局互异。两次调用共用同一 I。只给实际所需的两个入口，不建立可传任意回调的“求逆框架”。
 
 ```text
 D<p, E<p, Z<p, c=true → D≠0
@@ -967,7 +967,7 @@ D<p, E<p, Z<p, c=true → D≠0
 | divideAdd | I_T+P+(6n−1)+2n | I_M+M_P+4n−1 | 5,722,415 / 2,557,231 |
 | divideSub | I_T+P+(8n−1)+2n | I_M+M_P+6n−1 | 5,722,927 / 2,557,743 |
 
-最后的 2n 是两遍受控除数复制，X/CX 不计 Toffoli。该布局的静态支持目标为 `I.usedCoreWires ∪ D ∪ E ∪ Z ∪ {c}`，即 5,441+3n+1=6,210；两种符号均需直接证明门列支持等式，不能从 `inverseLoop` 的整段支持等式直接删去输出后当作证明。
+最后的 2n 是两遍受控除数复制，X/CX 不计 Toffoli。该布局已证静态支持为 `I.usedCoreWires ∪ D ∪ E ∪ Z ∪ {c}`，即 5,441+3n+1=6,210；两种符号均已直接证明门列支持等式；使用 `inverseCompute_wires` 的实际核心支持，没有从 `inverseLoop` 整段支持等式直接删输出。
 
 ### 16.3 原地普通分支的逐步寄存器表
 
@@ -1097,9 +1097,9 @@ n=256，固定求逆轮宽 w=257。P=1,178,880、M_P=916,736。下面将两次�
 ### 16.8 证明与交付切分
 
 1. **数学 PR（引理已实现）**：`Math/PointInPlace.lean` 已按现有群律/`AffineFormula` 证明有限点分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
-2. **除法 PR（依赖 D 接口）**：`DivideLayout`、两条直接门列、准备/恢复之间的 frame、两种累加规格、资源与实际支持。受控中段以现有 C1 原语组合，不要求 Lamport 增加受控乘法入口。复用 `inversePrepare_spec`/`inverseRestore_spec`，必要时只补未复制输出的支持引理，不改求逆算法。
+2. **除法 PR（已实现，基于 D 接口）**：`DivideLayout`、两条直接门列、准备/恢复之间的 frame、两种累加规格、资源与实际支持。受控中段以现有 C1 原语组合，不要求 Lamport 增加受控乘法入口。复用准备/恢复规格共用的 `inverseCompute_values` 与 `InverseMiddle`，以原生历史断言组合完整规格；实际核心支持复用 `inverseCompute_wires`，未改求逆算法。
 3. **原地点加 PR（依赖 D 合并、数学与除法）**：增加 Point 的直接子视图、常数/取负阶段与本体证明，替换 `ControlledPointLayout.lean` 中 `controlledPointAdd` 的有限分支及它的 Spec/Resources/Support。删除只服务旧“两个受控 XOR + swap”原地证明的私有组合；仍服务 XOR 接口的 PointCandidate/PointAdd/ControlledPointOut 证明保留。最终公共 `controlledPointAdd_spec` 的输入输出陈述不变。
 
 实现只在设计复审通过后开始；按当前分工，先等 D 合并再接其 main，不与 Lamport 同时修改 Point*。数学与接口的逻辑依赖仍按上述顺序列出。
 
-每批完整 `scripts/verify.sh`、新增入口公理审计、实际输出同步 PROOF_STATUS，README 当前值只随相应实现更新。设计批仅 README/REWORK_PLAN 文档修改，做 diff 检查，不宣称 Lean 已证明本节。保留相位/全记录、完整工作区清理、逐线保持、同一门列计数和精确支持的八项复审；不加测试、新公理、反转测量或证明资源放宽。
+每批完整 `scripts/verify.sh`、新增入口公理审计、实际输出同步 PROOF_STATUS，README 当前值只随相应实现更新。设计批仅做文档 diff 检查；后续数学与除法批已完成 Lean 证明，§16.3–16.7 的完整原地点加本体、映射和总资源仍待实现。保留相位/全记录、完整工作区清理、逐线保持、同一门列计数和精确支持的八项复审；不加测试、新公理、反转测量或证明资源放宽。

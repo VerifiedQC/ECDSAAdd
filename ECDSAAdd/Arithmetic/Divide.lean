@@ -4,7 +4,7 @@ import ECDSAAdd.Arithmetic.MulAdapterResources
 namespace ECDSAAdd.Arithmetic
 
 /-- 除法保留分母/分子，只累加到 acc；inner 的历史保存到乘积清理后。
-当前文件给出 §16.2 的布局与门列，完整 Triple/frame/资源证明随后补齐。 -/
+§16.2 的直接门列；完整规格、逐线保持和资源见 DivideSpec/DivideSupport。 -/
 structure DivideLayout where
   control : Wire
   denominator : List Wire

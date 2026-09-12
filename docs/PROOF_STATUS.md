@@ -281,7 +281,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2077 项构建，以下 195 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2085 项构建，以下 203 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -479,6 +479,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Secp256k1.second_denominator_zero_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.exceptional_slope_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.slope_from_output' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divideLoad_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divideProduct_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divideAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divideSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divide_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divide_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divide_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.divide_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -818,3 +826,31 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 | `slope_from_output` | 第二除数非零时 `(y₃+cy)/(cx−x₃)=λ` |
 
 例外斜率直接用现有 `coordinates` 与 `genericSlope` 定义，R*=O 时坐标按已有编码取零。等式只在普通分支可达例外上使用；没有增加 R≠±C、cy≠0 或 C+C≠O 的最终接口前提。三个输出标志的陈述显式包含外部控制，以及倍点启用条件 C≠−C。证明为本项目的代数推导，未增加状态框架、测试或公理。
+
+
+### 改 3 除法：保留求逆历史的受控累加
+
+`DivideLayout` 含控制、三个256位寄存器（denominator、numerator、acc）和一个现有 `InverseLoopLayout`。work 为 inner 的完整分配线路，包含未执行的旧XOR输出银行；统一 Widths 与 wires.Nodup。两个入口允许任意规范初始累加器，只在控制为真时要求分母非零：
+
+```text
+D<p, E<p, Z<p, B=true → D≠0
+{{ control=B, denominator=D, numerator=E, acc=Z, work=0 }} divideAdd L
+{{ control=B, denominator=D, numerator=E,
+   acc=(if B then (Z+inv(D)*E)%p else Z), work=0 }}
+{{ control=B, denominator=D, numerator=E, acc=Z, work=0 }} divideSub L
+{{ control=B, denominator=D, numerator=E,
+   acc=(if B then (Z+p-(inv(D)*E)%p)%p else Z), work=0 }}
+```
+
+这里 inv(D) 是 `((D : Fp)⁻¹).val`。`divideAdd_spec` / `divideSub_spec` 对全部初始相位与测量记录成立；`divide_frame` 保持 acc 外每根位。控制假时分母可以为零，内部改用1，仍执行全部准备/乘积/恢复门列。
+
+装载把安全分母直接写入v，准备段得到a与存活历史；乘法仅借temp++arithmetic共2315位中的前1030位。`multiply_borrow` 证明该段恰为输出高位加乘法工作区；全局Nodup推出所有控制/输入/输出/工作位互异。受控累加后前向mulClear清积与scratch，规范输出范围归还借用高位零；`divideProduct_correct` 由此证明整个求逆内部状态逐线保持。恢复使用原 `InverseMiddle` 断言和前向 inverseUncompute，最后卸载u/s/v。未复制逆元，未倒放测量，未建立回调式求逆框架。
+
+| 同一程序 | Toffoli | 测量 | 实际静态线路 |
+| --- | ---: | ---: | ---: |
+| divideAdd | 5,722,415 | 2,557,231 | 6,210 |
+| divideSub | 5,722,927 | 2,557,743 | 6,210 |
+
+`divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
+
+文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持。只新增除法文件，未修改现有模乘/求逆/Point*门列。原地点加本体与§16总体14,998,618/7,880,538/6218目标仍未实现；当前点加成本保持。

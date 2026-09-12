@@ -201,6 +201,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Secp256k1.second_denominator_zero_iff
 #print axioms ECDSAAdd.Secp256k1.exceptional_slope_eq
 #print axioms ECDSAAdd.Secp256k1.slope_from_output
+#print axioms ECDSAAdd.Arithmetic.divideLoad_values
+#print axioms ECDSAAdd.Arithmetic.divideProduct_correct
+#print axioms ECDSAAdd.Arithmetic.divideAdd_spec
+#print axioms ECDSAAdd.Arithmetic.divideSub_spec
+#print axioms ECDSAAdd.Arithmetic.divide_frame
+#print axioms ECDSAAdd.Arithmetic.divide_counts
+#print axioms ECDSAAdd.Arithmetic.divide_wires
+#print axioms ECDSAAdd.Arithmetic.divide_qubits
 LEAN
 )
 printf '%s\n' "$axioms"
