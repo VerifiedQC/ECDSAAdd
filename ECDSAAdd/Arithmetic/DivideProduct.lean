@@ -130,4 +130,95 @@ theorem divideProduct_spec (F : MulAdapterLayout) (c : Wire) (X Y Z : Nat) (B : 
     · intro s h
       exact ⟨h.1.1,(hz s).mpr ⟨h.1.2,h.2⟩⟩
 
+/-- 三段乘积只改变累加输出，所有输入、历史候选线和工作位逐线保持。 -/
+theorem divideProduct_frame (F : MulAdapterLayout) (c : Wire) (X Y Z : Nat) (B : Bool)
+    (hw : F.Widths) (hnd : (c::F.wires).Nodup) (hpn : p<2^F.width)
+    (hX : X<p) (hY : Y<2^F.width) (hZ : Z<p) (s : State) (m : List Bool)
+    (hb : s.basis c=B) (hx : regValue F.x s.basis=X) (hy : regValue F.y s.basis=Y)
+    (hz : regValue F.out s.basis=Z) (hc : regValue F.work s.basis=0)
+    (q : Wire) (hq : q∉F.out) :
+    (run (mulInto F.core p ++ controlledModAdd c F.addView p ++ mulClear F.core p) m s).basis q=s.basis q ∧
+    (run (mulInto F.core p ++ controlledModSub c F.addView p ++ mulClear F.core p) m s).basis q=s.basis q := by
+  have ht := divideProduct_spec F c X Y Z B hw hnd hpn hX hY hZ
+  have hn : 0<F.width := by
+    by_contra hh
+    have hh' : F.width=0 := by omega
+    simp [hh'] at hpn
+    norm_num [p] at hpn
+  have hs := divideProduct_wires F c hw hn
+  have keep (P : Program) (hp : wires P=(c::F.wires).toFinset)
+      (hb' : (run P m s).basis c=B)
+      (hx' : regValue F.x (run P m s).basis=X)
+      (hy' : regValue F.y (run P m s).basis=Y)
+      (hc' : regValue F.work (run P m s).basis=0) : (run P m s).basis q=s.basis q := by
+    by_cases hqc : q=c
+    · subst q; exact hb'.trans hb.symm
+    by_cases hqx : q∈F.x
+    · exact (regValue_eq_iff _ _ _).mp (hx'.trans hx.symm) q hqx
+    by_cases hqy : q∈F.y
+    · exact (regValue_eq_iff _ _ _).mp (hy'.trans hy.symm) q hqy
+    by_cases hqw : q∈F.work
+    · exact (regValue_eq_iff _ _ _).mp (hc'.trans hc.symm) q hqw
+    apply run_preserves_outside
+    rw [hp]
+    simp [MulAdapterLayout.wires,hqc,hqx,hqy,hqw,hq]
+  obtain ⟨_,ha⟩ := ht.1 s m ⟨⟨⟨⟨hb,hx⟩,hy⟩,hz⟩,hc⟩
+  obtain ⟨_,hb'⟩ := ht.2 s m ⟨⟨⟨⟨hb,hx⟩,hy⟩,hz⟩,hc⟩
+  exact ⟨keep _ hs.1 ha.1.1.1.1 ha.1.1.1.2 ha.1.1.2 ha.2,
+    keep _ hs.2 hb'.1.1.1.1 hb'.1.1.1.2 hb'.1.1.2 hb'.2⟩
+
+/-- 归还借用的输出高位后，乘积组合只修改256位acc；整个求逆历史逐线保持。 -/
+theorem divideProduct_correct (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
+    (X Y Z : Nat) (B : Bool) (hX : X<p) (hY : Y<2^256) (hZ : Z<p)
+    (s : State) (m : List Bool) (hb : s.basis L.control=B)
+    (hx : regValue L.inner.a s.basis=X) (hy : regValue L.numerator s.basis=Y)
+    (hz : regValue L.acc s.basis=Z) (hc : regValue L.borrow s.basis=0) :
+    ((run (mulInto L.multiply.core p ++ controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).phase=s.phase ∧
+      regValue L.acc (run (mulInto L.multiply.core p ++ controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).basis=
+        (if B then (Z+(X*Y)%p)%p else Z) ∧
+      ∀ q∉L.acc, (run (mulInto L.multiply.core p ++ controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).basis q=s.basis q) ∧
+    ((run (mulInto L.multiply.core p ++ controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).phase=s.phase ∧
+      regValue L.acc (run (mulInto L.multiply.core p ++ controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).basis=
+        (if B then (Z+p-(X*Y)%p)%p else Z) ∧
+      ∀ q∉L.acc, (run (mulInto L.multiply.core p ++ controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p) m s).basis q=s.basis q) := by
+  have hp : p<2^256 := by norm_num [p]
+  have hp0 : 0<p := by norm_num [p]
+  have hs : [L.borrowedBit 0]++L.multiply.work ⊆ L.borrow := by
+    rw [L.multiply_borrow hw]
+    exact (List.take_sublist _ _).subset
+  have clean := (regValue_zero _ _).mp hc
+  have h0 : s.basis (L.borrowedBit 0)=false := clean _ (hs (by simp))
+  have hwork : regValue L.multiply.work s.basis=0 := (regValue_zero _ _).mpr
+    (fun q hq => clean q (hs (List.mem_append_right _ hq)))
+  have hout : regValue L.multiply.out s.basis=Z := by
+    change regValue (L.acc++[L.borrowedBit 0]) s.basis=Z
+    rw [regValue_append,hz]
+    simp [regValue,h0]
+  have hpn : p<2^L.multiply.width := by rw [L.multiply_width hw]; exact hp
+  have hY' : Y<2^L.multiply.width := by rw [L.multiply_width hw]; exact hY
+  have ht := divideProduct_spec L.multiply L.control X Y Z B (L.multiply_widths hw)
+    (L.multiply_nodup hw hnd) hpn hX hY' hZ
+  have hf := divideProduct_frame L.multiply L.control X Y Z B (L.multiply_widths hw)
+    (L.multiply_nodup hw hnd) hpn hX hY' hZ s m hb hx hy hout hwork
+  have finish (P : Program) (V : Nat) (hV : V<p)
+      (hphase : (run P m s).phase=s.phase)
+      (hval : regValue L.multiply.out (run P m s).basis=V)
+      (hframe : ∀ q∉L.multiply.out, (run P m s).basis q=s.basis q) :
+      (run P m s).phase=s.phase ∧ regValue L.acc (run P m s).basis=V ∧
+        ∀ q∉L.acc, (run P m s).basis q=s.basis q := by
+    have hlow := (regValue_low_iff L.acc [L.borrowedBit 0] (run P m s).basis V
+      (by rw [hw.acc]; exact hV.trans hp)).mp hval
+    refine ⟨hphase,hlow.1,?_⟩
+    intro q hq
+    by_cases he : q=L.borrowedBit 0
+    · subst q
+      exact ((regValue_zero _ _).mp hlow.2 _ (by simp)).trans h0.symm
+    · apply hframe q
+      change q∉L.acc++[L.borrowedBit 0]
+      simp [hq,he]
+  obtain ⟨hpa,ha⟩ := ht.1 s m ⟨⟨⟨⟨hb,hx⟩,hy⟩,hout⟩,hwork⟩
+  obtain ⟨hps,hsub⟩ := ht.2 s m ⟨⟨⟨⟨hb,hx⟩,hy⟩,hout⟩,hwork⟩
+  exact ⟨finish _ _ (by split <;> first | exact Nat.mod_lt _ hp0 | exact hZ) hpa ha.1.2 (fun q hq => (hf q hq).1),
+    finish _ _ (by split <;> first | exact Nat.mod_lt _ hp0 | exact hZ) hps hsub.1.2 (fun q hq => (hf q hq).2)⟩
+
 end ECDSAAdd.Arithmetic
