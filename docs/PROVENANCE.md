@@ -64,3 +64,7 @@ Deutsch依照已复审§16和本仓库数学/除法接口编写PointInPlace系�
 ## 改6a第三批：输出适配器与域乘法
 
 MontAdapterLayout/Spec/Frame/Resources复用本项目P/Q和C1模算术，按REWORK_PLAN §17.4组合五个适配器，未引入外部代码。中段carry长度由设计笔误255更正为256，既有260位分配不变。fieldMul迁移到MontLayout；共享池前缀1827及实际支持5670、旧XOR点加路径资源均重证。除法与受控原地点加仍使用Horner，待下一批迁移。完整verify为2140项构建、259条实际公理输出，白名单不变。
+
+## 改6a第四批：除法与原地点加
+
+沿用§16的算法和公开寄存器契约，把五个Horner乘积替换为§17的Montgomery适配器。borrowedMont仅把既有poolMul映射到借用列表连续片段；平方S清理先于复用其线路的常数加。旧Horner四文件和MulAdapter三文件已无电路调用者，本PR保留，后续另交清理PR；数学HornerMultiply与半倍原语仍被复用。最终资源11,800,058/4,656,378/6,218由同一完整程序证明；未增加测试、公理或放宽证明限制。

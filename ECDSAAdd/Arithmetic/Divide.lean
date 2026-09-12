@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.InverseResources
-import ECDSAAdd.Arithmetic.MulAdapterResources
+import ECDSAAdd.Arithmetic.MontBorrow
 
 namespace ECDSAAdd.Arithmetic
 
@@ -31,12 +31,9 @@ def borrow (L : DivideLayout) : List Wire := L.inner.temp ++ L.inner.arithmetic.
 /-- 位宽条件保证所有索引有效；done 只使坏布局上的定义全域成立。 -/
 def borrowedBit (L : DivideLayout) (i : Nat) : Wire := L.borrow.getD i L.inner.first.done
 
-/-- §16.6 的固定分割：输出高位0、临时积1…257、scratch258…1029。 -/
-def multiply (L : DivideLayout) : MulAdapterLayout :=
-  ⟨L.inner.a,L.numerator,L.acc++[L.borrowedBit 0],
-    ⟨(L.borrow.drop 1).take 256,L.borrowedBit 257,
-      (L.borrow.drop 258).take 257,(L.borrow.drop 515).take 256,L.borrowedBit 771,
-      (L.borrow.drop 772).take 257,L.borrowedBit 1029⟩⟩
+/-- 输出高位为B[0]，Montgomery工作区借用B[1…1827]。 -/
+def multiply (L : DivideLayout) : MontLayout :=
+  borrowedMont L.borrow L.inner.first.done 1 L.inner.a L.numerator (L.acc++[L.borrowedBit 0])
 
 def vLow (L : DivideLayout) : List Wire := L.inverseView.vLow
 def vBit (L : DivideLayout) : Wire := L.vLow.headD L.inner.first.high.v
@@ -53,18 +50,8 @@ theorem borrow_length (L : DivideLayout) (hw : L.Widths) : L.borrow.length=2315 
   simp only [ModLayout.width] at ha
   omega
 
-theorem multiply_width (L : DivideLayout) (hw : L.Widths) : L.multiply.width=256 := by
-  simp [multiply,MulAdapterLayout.width,L.borrow_length hw]
-
-theorem multiply_widths (L : DivideLayout) (hw : L.Widths) : L.multiply.Widths := by
-  change L.multiply.core.Widths L.multiply.width ∧ L.multiply.out.length=L.multiply.width+1
-  rw [L.multiply_width hw]
-  constructor
-  · constructor
-    · exact hw.inverse.a
-    · exact hw.numerator
-    · constructor <;> simp [multiply,MulAdapterLayout.core,L.borrow_length hw]
-  · simp [multiply,hw.acc]
+theorem multiply_widths (L : DivideLayout) (hw : L.Widths) : L.multiply.Widths :=
+  borrowedMont_widths _ _ _ _ _ _ hw.inverse.a hw.numerator (by simp [hw.acc])
 
 theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
   simp only [vLow,InverseLayout.vLow,List.length_map]
@@ -86,14 +73,12 @@ def divideUnload (L : DivideLayout) : Program :=
 
 /-- acc 加上受控分子/分母；准备、乘积清理、恢复均为显式前向程序。 -/
 def divideAdd (L : DivideLayout) : Program :=
-  divideLoad L ++ inverseCompute L.inner p ++ mulInto L.multiply.core p ++
-  controlledModAdd L.control L.multiply.addView p ++ mulClear L.multiply.core p ++
+  divideLoad L ++ inverseCompute L.inner p ++ montMulControlledAdd L.control L.multiply p ++
   inverseUncompute L.inner p ++ divideUnload L
 
 /-- acc 减去受控分子/分母；只替换累加中段，不倒放带测量的除法。 -/
 def divideSub (L : DivideLayout) : Program :=
-  divideLoad L ++ inverseCompute L.inner p ++ mulInto L.multiply.core p ++
-  controlledModSub L.control L.multiply.addView p ++ mulClear L.multiply.core p ++
+  divideLoad L ++ inverseCompute L.inner p ++ montMulControlledSub L.control L.multiply p ++
   inverseUncompute L.inner p ++ divideUnload L
 
 end ECDSAAdd.Arithmetic

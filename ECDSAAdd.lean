@@ -18,6 +18,7 @@ import ECDSAAdd.Arithmetic.ControlledPointResources
 import ECDSAAdd.Arithmetic.ModInPlaceSubtract
 
 import ECDSAAdd.Arithmetic.HornerResources
+import ECDSAAdd.Arithmetic.MulAdapterResources
 
 import ECDSAAdd.Math.PointInPlace
 import ECDSAAdd.Arithmetic.DivideSpec
