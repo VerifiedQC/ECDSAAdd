@@ -462,7 +462,7 @@ theorem maskedSubConst_spec (c cin : Wire) (T y carry : List Wire)
   simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
   simpa only [maskedSubConst, List.append_assoc] using h1.seq (h2.seq h3)
 
-private theorem masked_copy (c cin : Wire) (src t y carry : List Wire)
+theorem maskedCopyWithFrame_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
     (C : Bool) (S V Y : Nat) :
     {{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }} copyRegister (some c) src t
@@ -495,7 +495,7 @@ private theorem masked_copy (c cin : Wire) (src t y carry : List Wire)
   rw [hv]
   simp only [copyValue, h.1.1.1.1.1, h.1.1.1.1.2, h.1.1.1.2]
 
-private theorem masked_add_src (c cin : Wire) (src t y carry : List Wire)
+theorem addInPlaceWithSource_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (ht : t.length = y.length)
     (hc : carry.length + 1 = y.length) (C : Bool) (S V Y : Nat) :
     {{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }} addInPlace t y carry cin
@@ -524,7 +524,7 @@ private theorem masked_add_src (c cin : Wire) (src t y carry : List Wire)
     (regValue_congr _ _ _ (fun w hw => run_preserves_outside _ m s w (hout w (Or.inr hw)))).trans h.1.1.1.1.2⟩,
     hpost.1.1.1⟩, hpost.1.1.2⟩, hpost.1.2⟩, hpost.2⟩
 
-private theorem masked_sub_src (c cin : Wire) (src t y carry : List Wire)
+theorem subInPlaceWithSource_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (ht : t.length = y.length)
     (hc : carry.length + 1 = y.length) (C : Bool) (S V Y : Nat) :
     {{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }} subInPlace t y carry cin
@@ -559,9 +559,9 @@ theorem maskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedAddInPlace c src t y carry cin
     {{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := masked_copy c cin src t y carry hnd hs C S 0 Y
-  have h2 := masked_add_src c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := masked_copy c cin src t y carry hnd hs C S (if C then S else 0)
+  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
+  have h2 := addInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
+  have h3 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S (if C then S else 0)
     ((Y + (if C then S else 0)) % 2^y.length)
   simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
   simpa only [maskedAddInPlace, List.append_assoc] using h1.seq (h2.seq h3)
@@ -572,9 +572,9 @@ theorem maskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedSubInPlace c src t y carry cin
     {{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := masked_copy c cin src t y carry hnd hs C S 0 Y
-  have h2 := masked_sub_src c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := masked_copy c cin src t y carry hnd hs C S (if C then S else 0)
+  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
+  have h2 := subInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
+  have h3 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S (if C then S else 0)
     ((Y + 2^y.length - (if C then S else 0)) % 2^y.length)
   simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
   simpa only [maskedSubInPlace, List.append_assoc] using h1.seq (h2.seq h3)

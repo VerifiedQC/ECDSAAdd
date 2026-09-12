@@ -77,3 +77,7 @@ MontAdapterLayout/Spec/Frame/Resources复用本项目P/Q和C1模算术，按REWO
 ### 改7方案1：共享前缀的单迭代查表
 
 Deutsch依照已复审§18.6在本仓库编写lookupWalk及其递归证明：正AND子树、CX切负分支、负AND测量修正，两半直接由地址a0使能。未复制外部代码、未引用15门预算代替实际计数；14/14来自同一程序的递归计数。lookup_spec与controlledPointAdd_spec陈述逐字保持，资源和支持传播到现有Montgomery/域乘法/除法/点加。Framework未改，逐位测量清表的方案2只留设计。实际公理输出244条，完整verify通过，无测试、新公理或证明限制放宽。
+
+## 改8第一批：测量清掩码受控加减
+
+本批直接复用本库AND测量清理语义及InPlaceAdder的加减门列：中段保持t=c AND src，末段每位测量并用CZ c src[i]消除相位。新文件MeasuredMaskedAdder证明全记录正确性、目标外逐线保持和精确资源；没有引入新的量子语义或外部未验证原语。原InPlaceAdder三个内部组合引理改为可跨文件复用的具名引理，陈述与证明主体保持，其余旧公开规格/门列不变。尚未接入Montgomery，完整点加成本不变。

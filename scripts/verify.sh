@@ -250,6 +250,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.montControlledAdapter_wires
 #print axioms ECDSAAdd.Arithmetic.montAdapter_qubits
 #print axioms ECDSAAdd.Arithmetic.montControlledAdapter_qubits
+#print axioms ECDSAAdd.Arithmetic.eraseMask_correct
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedAddInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedSubInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedAddInPlace_frame
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedSubInPlace_frame
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_counts
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_wires
+#print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_qubits
 LEAN
 )
 printf '%s\n' "$axioms"
