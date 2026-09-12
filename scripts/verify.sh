@@ -193,6 +193,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Secp256k1.p_prime
 #print axioms ECDSAAdd.Secp256k1.G_ne_zero
 #print axioms ECDSAAdd.Secp256k1.affineAdd_correct
+#print axioms ECDSAAdd.Secp256k1.sameX_iff_eq_or_neg
+#print axioms ECDSAAdd.Secp256k1.ordinary_point_iff
+#print axioms ECDSAAdd.Secp256k1.doubling_enabled_iff
+#print axioms ECDSAAdd.Secp256k1.translated_point_flags
+#print axioms ECDSAAdd.Secp256k1.generic_inplace_values
+#print axioms ECDSAAdd.Secp256k1.second_denominator_zero_iff
+#print axioms ECDSAAdd.Secp256k1.exceptional_slope_eq
+#print axioms ECDSAAdd.Secp256k1.slope_from_output
 LEAN
 )
 printf '%s\n' "$axioms"

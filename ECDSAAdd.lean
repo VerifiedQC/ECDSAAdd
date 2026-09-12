@@ -18,3 +18,5 @@ import ECDSAAdd.Arithmetic.ControlledPointResources
 import ECDSAAdd.Arithmetic.ModInPlaceSubtract
 
 import ECDSAAdd.Arithmetic.HornerResources
+
+import ECDSAAdd.Math.PointInPlace

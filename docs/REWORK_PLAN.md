@@ -200,7 +200,7 @@ for i = 0 to n−1:
 
 ## 4. 改 3：点加组合（早期方案，已由 §16 细化）
 
-本节保留演化背景；门列、退化角落、受控方式与资源以 [§16](#16-改-3-实施设计除法中心的受控原地点加待复审待实现) 为准。这里的 18.5M/≈5k 及旧求逆数不是当前设计目标。
+本节保留演化背景；门列、退化角落、受控方式与资源以 [§16](#16-改-3-实施设计除法中心的受控原地点加设计已复审电路待实现) 为准。这里的 18.5M/≈5k 及旧求逆数不是当前设计目标。
 
 ### 4.1 目标结构（Roetteler 2017 Algorithm 1 的原地更新 + Litinski 2023 的角落标志 + 我们的常数 C）
 
@@ -900,7 +900,7 @@ poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对�
 - 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖Horner或模加核。verify.sh新增七项公开检查，共164项；其余沿用传递公理检查。
 - 实现PR同步README、PROOF_STATUS（实际公理输出）、PROVENANCE与本计划；实现已同步实际值。完整scripts/verify.sh、独立八项复审和最终head hosted CI按既有规则执行；无测试、新公理、native_decide或证明资源放宽。设计八项通过后完成实现。
 
-## 16. 改 3 实施设计：除法中心的受控原地点加（待复审、待实现）
+## 16. 改 3 实施设计：除法中心的受控原地点加（设计已复审，电路待实现）
 
 本节替代 §4 的早期预算与未细化门列。只替换 `controlledPointAdd` 的有限常量分支，保留它的公开寄存器规格、`ControlledPointLayout` 类型以及 `C=O` 时的空程序。`pointAddOut` / `controlledPointAddOut` 的任意输出 XOR 功能不同，继续保留；新的原地程序不再调用它们，不再用临时点交换清理。此处不新增无控制原地点加入口。
 
@@ -1096,7 +1096,7 @@ n=256，固定求逆轮宽 w=257。P=1,178,880、M_P=916,736。下面将两次�
 
 ### 16.8 证明与交付切分
 
-1. **数学 PR**：在 Math 中按现有群律/`AffineFormula` 证明互斥分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
+1. **数学 PR（引理已实现）**：`Math/PointInPlace.lean` 已按现有群律/`AffineFormula` 证明有限点分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
 2. **除法 PR（依赖 D 接口）**：`DivideLayout`、两条直接门列、准备/恢复之间的 frame、两种累加规格、资源与实际支持。受控中段以现有 C1 原语组合，不要求 Lamport 增加受控乘法入口。复用 `inversePrepare_spec`/`inverseRestore_spec`，必要时只补未复制输出的支持引理，不改求逆算法。
 3. **原地点加 PR（依赖 D 合并、数学与除法）**：增加 Point 的直接子视图、常数/取负阶段与本体证明，替换 `ControlledPointLayout.lean` 中 `controlledPointAdd` 的有限分支及它的 Spec/Resources/Support。删除只服务旧“两个受控 XOR + swap”原地证明的私有组合；仍服务 XOR 接口的 PointCandidate/PointAdd/ControlledPointOut 证明保留。最终公共 `controlledPointAdd_spec` 的输入输出陈述不变。
 
