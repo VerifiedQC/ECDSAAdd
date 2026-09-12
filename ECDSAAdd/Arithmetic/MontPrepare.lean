@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
 import ECDSAAdd.Arithmetic.MontRotate
 import ECDSAAdd.Arithmetic.Lookup
 import ECDSAAdd.Arithmetic.InPlaceAdder
@@ -66,12 +67,12 @@ def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program :=
 /-- 逐位加入一个变量四位窗口；控制值不改变门列。 -/
 def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program :=
   (List.range 4).flatMap (fun j =>
-    maskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+    measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
 
 /-- 按 j=3..0 执行前向减法，并非反转测量。 -/
 def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program :=
   (List.range 4).reverse.flatMap (fun j =>
-    maskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+    measuredMaskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
 
 def montWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program :=
   montAddDigit L x y i ++ montReduce L p i

@@ -41,17 +41,17 @@ theorem montNormalize_counts (L : MontStageLayout) (p : Nat) (hw : L.Widths) :
 
 theorem montDigit_counts (L : MontStageLayout) (x y : List Wire) (i : Nat)
     (hw : L.Widths) (hx : 256≤x.length) :
-    (toffoliCount (montAddDigit L x y i)=3128 ∧ measurementCount (montAddDigit L x y i)=1040) ∧
-    (toffoliCount (montSubDigit L x y i)=3128 ∧ measurementCount (montSubDigit L x y i)=1040) := by
+    (toffoliCount (montAddDigit L x y i)=2084 ∧ measurementCount (montAddDigit L x y i)=2084) ∧
+    (toffoliCount (montSubDigit L x y i)=2084 ∧ measurementCount (montSubDigit L x y i)=2084) := by
   have hbit (j : Nat) :
-      (toffoliCount (maskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=782 ∧
-       measurementCount (maskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=260) ∧
-      (toffoliCount (maskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=782 ∧
-       measurementCount (maskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=260) := by
+      (toffoliCount (measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=521 ∧
+       measurementCount (measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=521) ∧
+      (toffoliCount (measuredMaskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=521 ∧
+       measurementCount (measuredMaskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)=521) := by
     have hlen : (L.source x j).length=L.mask.length := by
       simp only [MontStageLayout.source,List.length_append,List.length_take,List.length_drop,hw.pad,hw.mask,Nat.min_eq_left hx]
       omega
-    simpa only [hw.acc] using maskedInPlace_counts (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin hlen (hw.mask.trans hw.acc.symm) (by simp [hw.carry,hw.acc])
+    simpa only [hw.acc] using measuredMaskedInPlace_counts (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin hlen (hw.mask.trans hw.acc.symm) (by simp [hw.carry,hw.acc])
   simp only [montAddDigit,montSubDigit,show List.range 4=[0,1,2,3] from rfl,
     show ([0,1,2,3] : List Nat).reverse=[3,2,1,0] from rfl,List.flatMap_cons,List.flatMap_nil,
     toffoliCount_append,measurementCount_append,(hbit _).1.1,(hbit _).1.2,
@@ -62,8 +62,8 @@ theorem montDigit_counts (L : MontStageLayout) (x y : List Wire) (i : Nat)
 
 theorem montWindow_counts (L : MontStageLayout) (x y : List Wire) (p i : Nat)
     (hw : L.Widths) (hx : 256≤x.length) (hi : i<64) :
-    (toffoliCount (montWindow L x y p i)=3416 ∧ measurementCount (montWindow L x y p i)=1328) ∧
-    (toffoliCount (montRestoreWindow L x y p i)=3416 ∧ measurementCount (montRestoreWindow L x y p i)=1328) := by
+    (toffoliCount (montWindow L x y p i)=2372 ∧ measurementCount (montWindow L x y p i)=2372) ∧
+    (toffoliCount (montRestoreWindow L x y p i)=2372 ∧ measurementCount (montRestoreWindow L x y p i)=2372) := by
   have hd := montDigit_counts L x y i hw hx
   have hr := montReduce_counts L p i hw hi
   simp [montWindow,montRestoreWindow,toffoliCount_append,measurementCount_append,
@@ -81,8 +81,8 @@ theorem constWindow_counts (L : MontStageLayout) (y : List Wire) (p K i : Nat)
 
 theorem montRounds_counts (L : MontStageLayout) (x y : List Wire) (p k : Nat)
     (hw : L.Widths) (hx : 256≤x.length) (hk : k≤64) :
-    (toffoliCount (montPrepareRounds L x y p k)=3416*k ∧ measurementCount (montPrepareRounds L x y p k)=1328*k) ∧
-    (toffoliCount (montRestoreRounds L x y p k)=3416*k ∧ measurementCount (montRestoreRounds L x y p k)=1328*k) := by
+    (toffoliCount (montPrepareRounds L x y p k)=2372*k ∧ measurementCount (montPrepareRounds L x y p k)=2372*k) ∧
+    (toffoliCount (montRestoreRounds L x y p k)=2372*k ∧ measurementCount (montRestoreRounds L x y p k)=2372*k) := by
   induction k with
   | zero => simp [montPrepareRounds,montRestoreRounds,toffoliCount,measurementCount]
   | succ k ih =>
@@ -105,8 +105,8 @@ theorem constRounds_counts (L : MontStageLayout) (y : List Wire) (p K k : Nat)
 
 
 theorem montStage_counts (L : MontStageLayout) (x y : List Wire) (p : Nat) (hw : L.Widths) (hx : 256≤x.length) :
-    (toffoliCount (montPrepare L x y p)=219144 ∧ measurementCount (montPrepare L x y p)=85512) ∧
-    (toffoliCount (montRestore L x y p)=219144 ∧ measurementCount (montRestore L x y p)=85512) := by
+    (toffoliCount (montPrepare L x y p)=152328 ∧ measurementCount (montPrepare L x y p)=152328) ∧
+    (toffoliCount (montRestore L x y p)=152328 ∧ measurementCount (montRestore L x y p)=152328) := by
   have h := montRounds_counts L x y p 64 hw hx (by omega)
   have hn := montNormalize_counts L p hw
   simp only [montPrepare,montRestore,toffoliCount_append,measurementCount_append,
@@ -124,8 +124,8 @@ theorem constStage_counts (L : MontStageLayout) (y : List Wire) (p K : Nat) (hw 
 
 /-- P/Q 同一前向门列的精确计数，包含全部标准表示转换和恢复。 -/
 theorem montPQ_counts (M : MontLayout) (p : Nat) (hw : M.Widths) :
-    (toffoliCount (montP M p)=256528 ∧ measurementCount (montP M p)=122896) ∧
-    (toffoliCount (montQ M p)=256528 ∧ measurementCount (montQ M p)=122896) := by
+    (toffoliCount (montP M p)=189712 ∧ measurementCount (montP M p)=189712) ∧
+    (toffoliCount (montQ M p)=189712 ∧ measurementCount (montQ M p)=189712) := by
   have h1 := montStage_counts M.first M.x M.y p hw.first (by simp [hw.x])
   have h2 := constStage_counts M.second M.a p (montgomeryConversion p) (M.second_widths hw) (by simp [MontLayout.a,hw.first.acc])
   simp only [montP,montQ,toffoliCount_append,measurementCount_append,
