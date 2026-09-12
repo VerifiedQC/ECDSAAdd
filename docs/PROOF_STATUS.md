@@ -525,6 +525,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.montControlledAdapter_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.montAdapter_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.montControlledAdapter_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseMask_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedAddInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedSubInPlace_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedAddInPlace_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedSubInPlace_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedInPlace_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredMaskedInPlace_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -958,3 +966,12 @@ verify.sh删除15个旧入口：mulInto_spec、mulClear_spec、mulInto_frame、m
 同一门列P/Q各256,528/122,896/2,339；XOR模乘513,056/245,792/2,596；普通加514,079/246,815，普通减514,591/247,327，受控加514,591/246,815，受控减515,103/247,327，受控2,597线。两次除法分别5,056,591/1,886,287和5,057,103/1,886,799，均6,210线。完整controlledPointAdd为11,669,498/4,525,818/6,218；C=O空程序。旧pointAddOut12,178,772/4,767,056/9,780，controlledPointAddOut12,178,778/4,767,056/9,784。
 
 完整scripts/verify.sh退出0，2,133构建项、244条实际公理输出；审计入口不变，上方公理块为本次实际输出，只依赖既有三白名单。未新增测试、公理、native_decide或放宽证明限制。Framework不变，方案2的逐位测量清表未实现，数字仍为设计预算。公开点加规格逐字保持。
+
+
+## 改8第一批：测量清掩码的受控原地加减
+
+`MeasuredMaskedAdder.lean` 提供 `measuredMaskedAddInPlace_spec` / `measuredMaskedSubInPlace_spec`，与旧规格的前提和后置相同，只换程序名。`eraseMask_correct` 以掩码等于c AND src为前提，对全部测量记录证明相位恢复、目标外逐线保持与掩码归零；`eraseMask_eq_copy`说明在此合法输入上与旧CCX清理恢复相同完整状态。独立frame进一步保持完整加减目标y以外的全部位。
+
+同一门列的精确计数为2W−1 CCX、2W−1测量、4W+1实际线；W=261为521/521/1045。无新语义、无CCZ、无测试、新公理或证明资源放宽。InPlaceAdder三个内部来源保持引理改为可复用的具名引理，其陈述/证明主体未变；旧受控程序与规格保持。尚未接入Montgomery窗口，完整点加仍11,669,498/4,525,818/6,218。
+
+完整scripts/verify.sh退出0：2,134项构建、252条实际公理输出，新增8个入口。上方公理块为本次实际输出，只依赖propext、Classical.choice、Quot.sound（部分定理无公理）。
