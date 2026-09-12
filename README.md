@@ -16,7 +16,7 @@
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
 | 模乘 | 已证明两段Montgomery的五个适配器，fieldMul使用标准模积XOR，工作区1,827位 | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
 | 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Montgomery 适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
-| 改 2 C2 半倍 | 无控制半倍的 Triple/frame/资源保留；旧Horner电路已由Montgomery替换，旧文件待清理 | [ModUnaryResources.lean](ECDSAAdd/Arithmetic/ModUnaryResources.lean) |
+| 改 2 C2 半倍 | 无控制半倍的 Triple/frame/资源保留；旧Horner电路已由Montgomery替换，旧文件已清理 | [ModUnaryResources.lean](ECDSAAdd/Arithmetic/ModUnaryResources.lean) |
 | 改 6a 准备/恢复 | 已证明P/Q与五个适配器的Triple、逐线保持、精确资源；已接入fieldMul，原地点加改接已实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/MontResources.lean) |
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
@@ -30,7 +30,7 @@
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
-n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。当前fieldMul使用539,168个Toffoli、271,904次测量和2,596根实际线路。全部模乘调用已统一为Montgomery适配器；旧Horner电路与适配器无实际调用者，留待独立清理PR。模乘空间为 O(n)，未声称资源最优。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
+n 位加法和减法均使用 n 个 Toffoli、n 次测量；非空加法与减法均使用 4n+1 根静态线路。用 n+1 位加法保留完整结果时，资源为 n+1 个 Toffoli、n+1 次测量、4n+5 根线路。n 位常量模数的模加减各用 5n+4 个 Toffoli、4(n+1) 次测量、8n+9 根线路；secp256k1 实例分别为 1284、1028、2057。当前fieldMul使用539,168个Toffoli、271,904次测量和2,596根实际线路。全部模乘调用已统一为Montgomery适配器；旧Horner电路与适配器已删除。模乘空间为 O(n)，未声称资源最优。每项计数都针对规格中的同一个程序，详见 [证明状态](docs/PROOF_STATUS.md)。
 
 I2 的 w 位受控移位使用 max(w−1,0) 个 Toffoli、零测量；w≥2 时静态线路为 w+1，否则为零。10 位计数器按模 1024 增减，使用 20 个 Toffoli、20 次测量、41 根静态线路；结果移入空寄存器并清空旧寄存器，控制为假时数值不变但角色仍交换。
 
@@ -52,7 +52,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **11,800,058 个 Toffoli
 
 ## 优化进度与下一步计划
 
-改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 阶段曾证明无控制半倍与 Horner 内核（后者现已替换，旧文件待清理）。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 已证明三个适配器并替换域乘法；旧倍数链布局已删除，该阶段完整受控点加降至 32,347,957 Toffoli / 17,585,440 测量 / 9,718 根实际线路。
+改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 阶段曾证明无控制半倍与 Horner 内核（后者现已替换，旧文件已清理）。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 已证明三个适配器并替换域乘法；旧倍数链布局已删除，该阶段完整受控点加降至 32,347,957 Toffoli / 17,585,440 测量 / 9,718 根实际线路。
 
 改 1、改 2、改 3、改 4、改 5 已计入 Current status；改6a五个适配器和fieldMul已实现，原地点加改接也已实现。成本压缩按 [重做设计](docs/REWORK_PLAN.md) 分七项推进；目标数是按文档门列推导的预期值（标"研究预算"者未从已有门列推导），以实现后的 Lean 资源定理为准。依赖：先做基础层（原地加法器与原地模算术），改 1/2/4 只通过 Hoare triple 接口相互独立、可并行，改 5 可并行开发但集成依赖改 4，改 3 依赖改 1 与改 2。
 

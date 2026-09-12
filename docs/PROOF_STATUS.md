@@ -104,7 +104,7 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 {{ L.x=X,L.y=Y,L.out=(O ^^^ ((X*Y)%p)),L.work=0 }}
 ```
 
-X<p，Y为任意256位值；XOR允许任意257位O，模加减另需O<p。fieldMul_spec的数值契约保持；五项Triple/frame对所有测量记录恢复相位。Horner电路与旧MulAdapter专用文件留待独立清理PR，数学和仍复用的半倍原语保留。
+X<p，Y为任意256位值；XOR允许任意257位O，模加减另需O<p。fieldMul_spec的数值契约保持；五项Triple/frame对所有测量记录恢复相位。Horner电路与旧MulAdapter专用文件已删除，数学和仍复用的半倍原语保留。
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
@@ -365,20 +365,6 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.modUnary_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.modUnary_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.modUnary_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulInto_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulClear_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulInto_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulXor_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulAddSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulAdapter_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulAdapter_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.mulAdapter_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.candidatePool_union' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.candidatePool_length' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.halveMod_eq' depends on axioms: [propext, Quot.sound]
@@ -453,7 +439,6 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.pointSelectors_correct' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledPointOutput_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledPointAddOut_finite_ready' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.controlledPointSwap_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledPointAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledPointAddOut_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledPointAddOut_finite_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -821,7 +806,7 @@ inplaceArithmetic 复用已有 maskedAddInPlace/SubInPlace，src=g、临时字=y
 
 候选各13,227,848/7,961,672；pointAddOut为26,457,236/15,924,368/74,020；controlledPointAdd为52,914,997/31,848,736/74,024。共享模乘池仍覆盖全部原池，故点加实际线数不变。公开公理检查增加零检测正确性/规格/资源、原地受控算术计数/支持、池置换/长度七项；完整脚本164项，无测试、新公理或证明资源放宽。
 
-### 改 2 C2：无控制半倍与 Horner 内核（历史阶段，Horner电路现已替换，旧文件待清理）
+### 改 2 C2：无控制半倍与 Horner 内核（历史阶段，Horner电路现已替换，旧文件已清理）
 
 `ModUnaryLayout` 的 z=low++[high]，low 宽 n，constant/mask 宽 n+1，carry 宽 n，另有 cin/flag；work=constant++carry++[cin]++mask++[flag]。`MulInPlaceLayout` 在此基础上加入 x（n+1 位）、y（n 位），acc 借用 unary.z，work 不含 acc。各自要求完整 wires.Nodup；子视图不重新分配线路。数值前提为 p%2=1、p<2^n，半倍另需 Z<p；Horner 需 X<p、Y<2^n，不要求 Y<p。
 
@@ -943,7 +928,7 @@ MontAdapterLayout为输出中段借用table前257位、carry前256位、mask前2
 
 fieldMul改用MontLayout与montMulXor，保留任意初值输出的数值契约；固定宽度结构删除了旧width=256重复参数。poolMul工作列表恰为wireBlock前1,827位。候选实际池为该前缀与求逆支持并集，candidatePool_length证明5,670位；两根额外未读输入高位dy/delta从支持移除。候选各6,166,952/2,461,352，独立pointAddOut为12,335,444/4,923,728/9,780，controlledPointAddOut为12,335,450/4,923,728/9,784。
 
-第三批时原地点加仍使用Horner；第四批已完成最后五个乘积的迁移；旧电路留待独立清理PR，见下。
+第三批时原地点加仍使用Horner；第四批已完成最后五个乘积的迁移；旧电路已在清理批删除，见下。
 
 第三批完整 scripts/verify.sh 退出0：2,140项构建、259条公开入口公理输出；新增16项，以上公理块为本次实际输出，仅依赖propext、Classical.choice、Quot.sound。
 
@@ -953,6 +938,14 @@ DivideLayout公开字段/Widths、divideAdd/Sub_spec、divide_frame及controlled
 
 外部乘积工作区为B[2:1829]；平方保留S=B[0:256]，输入/输出高位256/257，工作区B[258:2085]。复制λ→S、montMulSub(λ,S,x)、清S完成后才执行+3cx；常数加复用S线路，顺序与frame证明共同保证生命周期。旧t和inPlaceSquareSub视图删除。
 
-同一完整controlledPointAdd有限分支为11,800,058 Toffoli、4,656,378测量、6,218实际线；C=O三项零。旧Horner四文件、MulAdapter三文件与对应公理入口暂保留，待集成合入后另交清理PR；数学HornerMultiply仍为Montgomery数学的依赖，半倍原语保留。
+同一完整controlledPointAdd有限分支为11,800,058 Toffoli、4,656,378测量、6,218实际线；C=O三项零。第四批曾保留旧Horner四文件、MulAdapter三文件与对应公理入口，收尾批已删除；数学HornerMultiply仍为Montgomery数学的依赖，半倍原语保留。
 
-第四批完整scripts/verify.sh退出0：2,141项构建、259条公理输出，与上方本次实际输出一致；保留旧Horner公开入口至下一纯清理批。
+第四批完整scripts/verify.sh退出0：2,141项构建、259条公理输出，与上方本次实际输出一致；当时保留旧Horner公开入口，收尾批删除项见下。
+
+## 改6a收尾：删除无调用者电路
+
+删除HornerLayout/Steps/Spec/Resources、MulAdapterLayout/Spec/Resources、PointSwap八个文件，以及ControlledPointLayout中的controlledPointSwap。regValue_bit陈述与证明逐字迁移、仅改所在文件至Registers；MontDigit与MontNormalize继续使用，HornerMultiply数学及半倍原语保留。
+
+verify.sh删除15个旧入口：mulInto_spec、mulClear_spec、mulInto_frame、mulClear_frame、mulInPlace_wires、mulInPlace_resources、mulXor_spec、mulAdd_spec、mulSub_spec、mulXor_frame、mulAddSub_frame、mulAdapter_wires、mulAdapter_counts、mulAdapter_resources、controlledPointSwap_correct。其余244个入口保持，完整点加资源仍为11,800,058/4,656,378/6,218；所有活动程序与公开规格不变。
+
+收尾批完整scripts/verify.sh退出0：2,133项构建、244条实际公理输出；以上公理块逐行收录本次输出，仅使用既有三项白名单。
