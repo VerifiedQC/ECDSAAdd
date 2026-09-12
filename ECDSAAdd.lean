@@ -20,3 +20,4 @@ import ECDSAAdd.Arithmetic.ModInPlaceSubtract
 import ECDSAAdd.Arithmetic.HornerResources
 
 import ECDSAAdd.Math.PointInPlace
+import ECDSAAdd.Arithmetic.DivideSpec
