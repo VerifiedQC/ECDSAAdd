@@ -15,7 +15,7 @@
 | --- | --- | ---: | ---: | --- |
 | 改 1（已实现） | 求逆第二阶段 → 内部寄存器上原地模减半 + 逆序原地模加倍，XOR 接口不变 | 每次求逆 9,506,816 | 830,464（改 4 前；当前 809,984） | 只动 I4 的 halving 循环；`fieldInverse_spec` / `fieldInverse_xor_spec` 陈述不变 |
 | 改 2（已实现，实证见§12） | 模乘 → Horner 零输出内核 + 反序清理 + 适配器，不存倍数链 | 每个 XOR 乘积 2,892,800 Toffoli，70,678 线 | mulInto 523,776、mulClear 655,104，XOR 适配器 1,178,880 Toffoli / 1,799 线（已证） | 新原语 `mulInto`/`mulClear`，`fieldMul_spec` 陈述不变；调用次数不变 |
-| 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 受控原地 91,964,213（已证） | ≈ 18.5M（用改 1、改 2 后的原语） | M3 第二版；新增"输出侧标志"与 λ* 数学引理 |
+| 改 3 | 点加 → 除法中心 + 原地更新 + 角落标志 | 改5后受控原地 52,914,997（已证） | 14,998,618 / 6,218线（§16，待证明） | Deutsch；输出侧标志、λ* 与保留历史的除法 |
 | 改 4 | 首批接入计数比较器（§13，已实现） | 十位比较 20 | 10 | 每次求逆 −30,720 Toffoli/测量；记录段见 §14（已实现）；模算术已用比较器的收益不重复扣减 |
 | 改 5 | Kaliski 轮压缩 | 改4后每轮4,402（17w+33） | 每轮3,629（14w+31，§15已实现） | I3 统一体内的零检测换 MBU 擦除、masked 加减换原地受控版；`kaliskiRound_spec` 陈述不变 |
 | 改 6 | Montgomery 4 位窗口模乘（研究预算） | 改 2 后每个乘积算+清 ≈ 1,376,000 | 6a 标准形式 ≤ 600,000；6b 全 Montgomery 表示 ≈ 300,000–430,000 | 新增查表原语与 Montgomery 形式；6a 不动其他模块，6b 动所有坐标表示 |
@@ -198,7 +198,9 @@ for i = 0 to n−1:
 - `mulInto` / `mulClear` 的循环不变量（Math 层各一条）、改名移位的 `regValue` 引理。
 - 三个适配器的 Triple 与资源；`fieldMul_spec` 陈述不变、`fieldMul_resources` 换数字。
 
-## 4. 改 3：点加组合
+## 4. 改 3：点加组合（早期方案，已由 §16 细化）
+
+本节保留演化背景；门列、退化角落、受控方式与资源以 [§16](#16-改-3-实施设计除法中心的受控原地点加待复审待实现) 为准。这里的 18.5M/≈5k 及旧求逆数不是当前设计目标。
 
 ### 4.1 目标结构（Roetteler 2017 Algorithm 1 的原地更新 + Litinski 2023 的角落标志 + 我们的常数 C）
 
@@ -381,7 +383,7 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 | 基线（PR 11–13，已合并并验收） | 91,964,213 | 74,024 | 已证 |
 | + 改 1（第二阶段原地减半/加倍，XOR 接口不变，已实现） | 57,258,805（已证） | 74,024（池仍由模乘 69,908 决定） | 4 次求逆各 14,303,280 → 5,626,928；4I + 12M₀ + 37,493 |
 | + 改 2（Horner 内核 + XOR 适配器） | ≈ 40M | ≈ 10.1k（外部 ≈ 4.1k + 求逆工作区 5,956；与改 1 合计 ≈ 8k） | 调用次数不变：12 次 XOR 乘法各 2.89M → 1.38M，4 次求逆 5.76M：4I + 12M + 37,493 ≈ 39.6M；倍数链消失 |
-| + 改 3（除法中心原地点加） | ≈ 18.5M | ≈ 5k（点 513 + λ/t/inv/Dsafe ≈ 1k + 求逆工作区 ≈ 3.9k + 标志） | 2 除法（各含一个乘积）+ 3 个外部乘积 |
+| + 改 3（除法中心原地点加） | 14,998,618（§16，待证明） | 6,218 实际支持；保留 D 的 9,817 位兼容布局 | 2 除法（各含一个乘积）+ 3 个外部乘积；含改5基线 |
 | + 改 4（Gidney 比较器） | ≈ 16.6M | ≈ 5k | 每次求逆 ≈ 5.32M，`mulInto` −n/位、`mulClear` −2n/位 |
 | + 改 5（Kaliski 轮压缩） | ≈ 15M | ≈ 5k | 每次求逆 ≈ 4.5M |
 | + 改 6a（Montgomery，标准形式；研究预算） | ≈ 12M | ≈ 5k | 每个乘积算+清 ≤ 600k |
@@ -400,7 +402,7 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 2. 改 4（1 个 PR：比较器原语 + 替换 Borrow.lean 调用点 + 资源数更新；公开陈述不变）。
 3. 改 1（1 个 PR：受控减半/加倍循环 + `inverseLoop` 重组 + 资源/文档）。
 4. 改 2（2 个 PR：`mulInto`/`mulClear` 与循环不变量；三个适配器 + `fieldMul_spec` 重证 + 资源）。
-5. 改 3（3 个 PR：Math 引理组（输出侧标志、λ*、x_{R+C}=cx ⇔ R=−2C）；`divide`；原地点加与受控版）。
+5. 改 3（Deutsch，§16）：Math 引理组（输出侧标志、λ*）；`divideAdd/divideSub`；替换受控原地点加本体。设计与数学可先行，接口集成接 D。
 6. 改 5（2 个 PR：MBU 零检测 + 原地受控加减接入 I3 统一体；轮内替换与资源）。
 7. 改 6a（先交受控加模块门列与计数，再 2 个 PR：查表原语 + Montgomery 约减数学；窗口乘法与资源），6b 视需要；改 7 仅在改 6 采用 MBU 反查表时立项。
 
@@ -899,3 +901,207 @@ poolInverse仍沿用原编号与5699位分配前缀，其中第一阶段out对�
 - InverseLoopSupport/Resources、InverseResources/Ports、PointCandidateSupport及点加资源：传播实际支持、公式与精确数；不改求逆/点加数学接口，不重排池编号。
 - 不编辑Lamport的Modular/Multiply/Field门列，不接手改2适配器，不依赖Horner或模加核。verify.sh新增七项公开检查，共164项；其余沿用传递公理检查。
 - 实现PR同步README、PROOF_STATUS（实际公理输出）、PROVENANCE与本计划；实现已同步实际值。完整scripts/verify.sh、独立八项复审和最终head hosted CI按既有规则执行；无测试、新公理、native_decide或证明资源放宽。设计八项通过后完成实现。
+
+## 16. 改 3 实施设计：除法中心的受控原地点加（待复审、待实现）
+
+本节替代 §4 的早期预算与未细化门列。只替换 `controlledPointAdd` 的有限常量分支，保留它的公开寄存器规格、`ControlledPointLayout` 类型以及 `C=O` 时的空程序。`pointAddOut` / `controlledPointAddOut` 的任意输出 XOR 功能不同，继续保留；新的原地程序不再调用它们，不再用临时点交换清理。此处不新增无控制原地点加入口。
+
+依据为 main `5560c9cf` 的 `InverseCompute` / `InverseLoopSpec` / `InversePorts` / `ModInPlaceWrappers` / `ModInPlaceSubtract`，以及 C2 PR 26 `d3d8b0c0` 的 Horner 内核和 D PR 27 `2ca88e5f` 的 `MulAdapterLayout` / `MulAdapterResources` 门列。已直接核对 D 的源代码；最终合并提交在实现 PR 固定。下列数字都是这份具体门列的**推导目标，尚无 Lean 实现证明**；不替换 README Current status。
+
+### 16.1 公开契约与分支
+
+继续证明原来的最终陈述：
+
+```text
+{{ L.control=b, L.point=R, L.work=0 }} controlledPointAdd L C
+{{ L.control=b, L.point=(if b then R+C else R), L.work=0 }}
+```
+
+只需原来的 `L.Widths`、`L.wires.Nodup` 与合法 `Point`；不增加 `R≠±C`、`cy≠0`、`C+C≠O` 等前提。全部低位域寄存器始终解释为 `[0,p)` 的规范代表；模运算的高位在模块边界为零。Triple 对任意初始相位、所有测量记录成立，另证目标外逐线保持。非法点位串不增加新承诺。
+
+以下固定有限 `C=(cx,cy)`、n=256。令 `χ = decide (cy ≠ -cy)`，是构造期常量。七个工作标志直接借现有字段：
+
+| 名称 | 现有字段 | 初始计算后的含义 |
+| --- | --- | --- |
+| o | `L.infinitySelect` | b ∧ [R=O] |
+| d | `L.doubleSelect` | b ∧ χ ∧ [R=C] |
+| i | `L.genericSelect` | b ∧ [R=−C] |
+| g | `L.core.generic` | b XOR o XOR d XOR i |
+| e | `L.core.equalX` | 初始零；第二除法前 g ∧ [当前 x=0] |
+| q | `L.core.equalNegY` | 初始零；第二除法前 g XOR e |
+| h | `L.core.double` | b ∧ χ |
+
+`χ=false` 时 C=−C，d 恒零，o/i 仍互斥；无需先证明曲线没有二阶点。`χ=true` 时 O/C/−C 互异。由同横坐标点为相同点或相反点，g 恰为 `b ∧ finite(R) ∧ [x_R≠cx]`。
+
+定义编码整数 `enc(P)=finite(P)+2·x(P)+2^(n+1)·y(P)`，对应现有 `finite::x++y` 的 2n+1 位顺序。输入标志用三次现有 `equalConstant`：`EQ(b,R,O)→o`、`EQ(h,R,C)→d`、`EQ(b,R,−C)→i`。每次工作链 2n+1 位，成本 `(2n+1,2n+1)`。h 用构造期选择的一个 CX 或空段装入，g 用四个 CX 装入。整个过程中 b 与 h 保持。
+
+### 16.2 除法：在保留的求逆历史中使用逆元
+
+拟新增直接寄存器布局 `DivideLayout`：控制 c，n 位分母 D、分子 E、累加器 Z，以及一个现有 `InverseLoopLayout I`。I 的完整分配线作为工作区，包含仅为兼容旧布局保留的未使用输出；布局全局互异。两次调用共用同一 I。只给实际所需的两个入口，不建立可传任意回调的“求逆框架”。
+
+```text
+D<p, E<p, Z<p, c=true → D≠0
+{{ c=B, denominator=D, numerator=E, acc=Z, work=0 }} divideAdd/sub
+{{ c=B, denominator=D, numerator=E,
+   acc=(if B then Z ± E/D else Z) mod p, work=0 }}
+```
+
+负号表示域减法的规范代表。分母和分子始终保持，累加器可为任意规范值；不是仅在零目标上成立。`divideSub` 不是倒放 `divideAdd`。
+
+| 段 | 字面组合 | 边界寄存器 |
+| --- | --- | --- |
+| 1 | 在 `I.first.v` 低 n 位执行 `X v₀; CX c v₀; copyRegister (some c) D vLow`；装常数 u=p、s=1 | v=Dsafe=(B?D:1)，r/k/记录/工作零 |
+| 2 | `inverseCompute I p` | a=Dsafe⁻¹，`InverseHistory I p Dsafe` 保留；temp/算术区零 |
+| 3 | `mulInto`，源为 a 与 E，临时积 T | T=E·a mod p；a/E/历史保持 |
+| 4 | `controlledModAdd c` 或 `controlledModSub c`，源 T，目标 Z | 只有 Z 的规范值改变 |
+| 5 | `mulClear`，仍用 a/E | T 和整个乘法 scratch 清零；a/历史原样 |
+| 6 | `inverseUncompute I p` | 恢复 u=p、v=Dsafe、s=1；a 与所有记录/临时位清零 |
+| 7 | 卸 u/s；执行 `copyRegister (some c) D vLow; CX c v₀; X v₀` | v 与整个工作区清零 |
+
+选择除数直接写入 Kaliski v，不保留另一个 Dsafe 字。第 7 段的 D 必须仍是第 1 段的值；调用方在整个除法期间不得改 D。即使 B=false，也实际执行 512 轮准备、乘法与恢复，只以安全分母 1 运行并抑制中段累加。
+
+`inversePrepare_spec` / `inverseRestore_spec` 已公开的历史断言正好允许第 3–5 段：只借 `I.temp ++ I.arithmetic.wires`，它们在准备后全零，且不在 `InverseHistory` 中。不借用仍存活的 a、u/v/r/s/k 或记录带。恢复前用适配器 frame 和全部 scratch=0 重新建立同一个历史断言。a 的第 n 位由逆元范围为零，源取低位无需复制逆元。
+
+设 `P=n(8n−2)+n(10n−1)=18n²−3n`、`M_P=14n²−3n`，分别是一次 `mulInto` 加一次 `mulClear`。准备/恢复的 Toffoli/测量总和与改5 `fieldInverse` 相同，记 `I_T=4,541,488`、`I_M=1,639,472`；去掉的仅是 CX 输出复制和 CX/X 装卸。
+
+| 模块 | Toffoli | 测量 | n=256 |
+| --- | ---: | ---: | --- |
+| divideAdd | I_T+P+(6n−1)+2n | I_M+M_P+4n−1 | 5,722,415 / 2,557,231 |
+| divideSub | I_T+P+(8n−1)+2n | I_M+M_P+6n−1 | 5,722,927 / 2,557,743 |
+
+最后的 2n 是两遍受控除数复制，X/CX 不计 Toffoli。该布局的静态支持目标为 `I.usedCoreWires ∪ D ∪ E ∪ Z ∪ {c}`，即 5,441+3n+1=6,210；两种符号均需直接证明门列支持等式，不能从 `inverseLoop` 的整段支持等式直接删去输出后当作证明。
+
+### 16.3 原地普通分支的逐步寄存器表
+
+λ 取 `L.core.slope.take n`，初始零。以下表中的减法、加法均在 Fp 中；仅值表假定 g=true。非普通分支由 λ=0 不变量保持，下文单独说明。
+
+| 步 | 门列组合 | x、y、λ 与临时值 |
+| --- | --- | --- |
+| 1 | 受 g 控制的常数模加 −cx、−cy | x=D=x_R−cx，y=E=y_R−cy，λ=0 |
+| 2 | `divideAdd(g,x,y,λ)` | λ=E/D，除法工作区零；x/y 保持 |
+| 3 | D 的 `mulSub(λ,x,y)` | y=E−λD=0 |
+| 4 | CX 复制 λ 到独立 n 位 S；`mulInto(λ,S,t)` | S=λ，t=λ²；不将同一物理字接到两个乘数口 |
+| 5 | `modSubInPlace(t,x)`；受 g 控制的常数模加 3cx | x=D−λ²+3cx=cx−x₃ |
+| 6 | `mulClear(λ,S,t)`；同一 CX 清 S | t=S=0，λ 保持 |
+| 7 | D 的 `mulAdd(λ,x,y)` | y=λ(cx−x₃)=y₃+cy |
+| 8 | `zeroControlled g e` 检测当前 x；两 CX 写 q=g XOR e | e=g∧[x=0]，q=g∧[x≠0] |
+| 9 | `divideSub(q,x,y,λ)` | q=true 时 λ=0；否则 λ 保持 |
+| 10 | `maskedConstant e λ λ*` | λ=0，包含 x=0 的例外 |
+| 11 | 两 CX 清 q；同一 `zeroControlled g e` 清 e | x/g 未变，e=q=0 |
+| 12 | §16.4 的受控原地取负 x；受 g 控制的常数模加 cx；受 g 控制的常数模加 −cy 到 y | x=x₃，y=y₃，λ 与所有算术工作零 |
+
+数学核为现有 `genericSlope` / `genericX` / `genericY`。除法1后 `λD=E`；第7步等式由 `y₃=λ(x_R−x₃)−y_R` 推出。第9步的除数是**当前 x=cx−x₃**，不是输入横坐标或 x₃ 本身。
+
+令 `R*=−(C+C)`，`λ* = genericSlope (pointX R*) (pointY R*) cx cy` 的规范域值；坐标在 R*=O 时按已有编码取零，域除法全定义。只需证明以下**带普通分支前提**的引理：
+
+1. g=true 且当前 x=0 ⇒ R+C=−C ⇒ R=R*。
+2. 此时 R* 有限且 `x(R*)≠cx`，故 λ=λ*。
+3. g=true 且当前 x≠0 ⇒ y/x=λ。
+
+第1点用有限点同 x 时等于 C 或 −C；R+C=C 将推出 R=O，与普通分支矛盾。若 R* 为 O，或其横坐标等于 cx，该异常分支本来不可达；**不为定义 λ* 添加新的用户前提**。
+
+当 g=false，第1步常数源为零，除法1不写 λ，故 λ 一直为零；第3/7步乘积为零，第4–6步平方为零，e=q=false，除法2不写 λ，受控取负和常数加亦保持 x/y。因此不需要给外部两个乘加/乘减或平方新增受控版本；它们仍执行完整固定门列并清工作区。
+
+### 16.4 只组合已有原语的常数加与取负
+
+受 g 控制的常数模加 k：在干净 n+1 位 A 上用 `maskedConstant g A (k mod p)` 装载，调用无控制 `modAddInPlace(A,z)`，再同一 maskedConstant 卸载。A 与核 constant 必须不同；成本 `4n−1 / 4n−1`。五次调用为 −cx、−cy、3cx、cx、−cy，负常量先在构造期归一化。不要误用模 2^n 的 `maskedAddConst` 当模 p 加法。
+
+取负只需一个私有阶段，不新增通用单目接口：
+
+```text
+T=0;
+controlledModSub g (source=x, target=T);       -- g ? -x : 0
+swapRegisters g x T.low;                    -- n 个 cswap
+controlledModAdd g (source=x, target=T);      -- g=true 时 T=旧x+(-旧x)=0
+```
+
+结果为 `x=(if g then -旧x else 旧x)`，T/scratch 全零。覆盖 x=0，故不把 `negRaw` 的 0→p 误当规范取负。成本 `(8n−1)+n+(6n−1)=15n−2` Toffoli，`(6n−1)+(4n−1)=10n−2` 测量。所有交换都用现有 `cswap` 的 CX/CCX/CX 门列，只交换低 n 位，两个独立高位在边界均零。
+
+### 16.5 角落写回与输出侧清标志
+
+普通阶段完成后，三个角落标志仍保存输入分类。按 o、d、i 分别执行 `maskedPointConstant` 的常量差：
+
+- o：`enc(O) XOR enc(C)`；
+- d：`enc(C) XOR enc(C+C)`；
+- i：`enc(−C) XOR enc(O)`。
+
+这是对现有点编码的 CX/XOR 写回，零 Toffoli/测量；三个标志互斥。此时点已为 `R'=(if b then R+C else R)`。先用 `CX b g; CX o g; CX d g; CX i g` 清 g，再用输出做三次相等检测 XOR 清 o/d/i：
+
+```text
+EQ(b, R', C) → o
+EQ(h, R', C+C) → d
+EQ(b, R', O) → i
+```
+
+最后按装载方式清 h。关键证明是平移的单射性，且每个输出谓词都含 b 或 h：`b∧[R'=C] = b∧[R=O]`、`h∧[R'=2C] = h∧[R=C]`、`b∧[R'=O] = b∧[R=−C]`。当 C=−C 时 h=false，第二个检测仍执行固定门列但结果恒零；不会把输出 O 同时解释成两个输入分支。b=false 时三个标志保持零，即使输入恰为 C/2C/O。
+
+每次 `equalConstant` / `zeroControlled` 用已证的测量清 AND 链，并以新测量记录运行第二遍；并非“逆转首次测量”。各阶段 frame 证明确保条件在重算前未变。六次完整点相等检测总成本为 `6(2n+1)` Toffoli 与相同测量。
+
+### 16.6 物理映射、存活寄存器与静态支持
+
+不更改 `ControlledPointLayout` 类型。设 `w=L.core.poolWire`，取现有 `poolInverse w L.core.divisor L.core.inverse` 的 inner 为 I。此处外部 divisor/inverse 两字只是复用旧视图的布局占位，**不执行 fieldInverse、inverseLoad 或输出复制**；选择除数直接写 v。布局互异仍由已有全局 `Nodup` 推出，未触及位以 frame 保持零。
+
+由 `InversePorts` 的现有编号，I 在准备/恢复中实际使用的池位是：
+
+```text
+U = {0,…,5697} \ {10+8j | 0≤j<257}      -- 5,441 位
+```
+
+被排除的是第一阶段 out 银行，另一个旧输出高位 5698 也不用。`I.a` 是 5184…5440；可借的清零区固定为
+
+```text
+B = [5441,…,5697] ++ [3126,…,5183]       -- temp ++ arithmetic，2,315 位
+```
+
+B 是有顺序的物理线列表，不是新分配。下表区间为 B 的半开索引；所有子段开始/结束时所用 B 均为零，除平方中的 S/t 在标明的边界存活。
+
+| 用途 | 对 B 的具体分割 |
+| --- | --- |
+| 除法乘加 | x=I.a；y=分子；out=λ++[B[0]]；product=B[1:258]；scratch=B[258:1030] |
+| 外部乘加/减 | x=λ++[B[0]]；y=当前点 x；out=点 y++[B[1]]；product=B[2:259]；scratch=B[259:1031] |
+| 平方与减平方 | S=B[0:256]；λ高位=B[256]；t=B[257:514]；scratch=B[514:1286]；点x高位=B[1286] |
+| 常数模加 | A=B[0:257]；目标高位=B[257]；scratch=B[258:1030] |
+| 受控取负 | 点x高位=B[0]；T=B[1:258]；scratch=B[258:1030] |
+| 完整点相等 / x零检测 | 分别用 B[0:513] / B[0:256] 作清零检测链 |
+
+每个 scratch 的 772 位依次为 constant(257)、carry(256)、cin(1)、mask(257)、flag(1)，与 C1/D 布局一致。平方中的 S/t 与 scratch/点x高位互异；λ 从复制到清 S 之间不改变。除法期间只借 B，绝不借用历史中的银行，即使某个历史值恰为零。只通过子列表、置换与分段索引证明互异，不把生命周期代替物理 `Nodup`。
+
+完整有限 C 程序的支持目标为
+
+```text
+pointWires L.point ++ [L.control] ++ L.core.slope.take 256
+  ++ [o,d,i,g,e,q,h] ++ map w U
+```
+
+长度 `513+1+256+7+5441 = 6,218`。各项均有门列触及，反向包含要从两个 inverseCompute/Uncompute 的组件和相等检测/累加门列证明；上层只能在支持等式与 Nodup 完成后写 qubitCount。所有 B 已包含于 U，不再次计数。
+
+D 将旧共享池分配改为 5,699 位后，原公共布局仍分配 9,817 位（包括保留给 XOR 点加的临时点与旧字段）；新原地程序实际使用 6,218 位，余位保持。**不把 6,218 称为布局分配数，也不把旧“≈5k”称为已达到。** 若未来要删除这些兼容布局位，是独立接口清理，不在本项增加新布局类型。C=O 时为空程序，三项资源仍全零。
+
+### 16.7 完整门数账本
+
+n=256，固定求逆轮宽 w=257。P=1,178,880、M_P=916,736。下面将两次除法内的乘积也统一计入五个乘积；除法不可再整项重复相加。
+
+| 项 | 次数/组成 | Toffoli | 测量 |
+| --- | --- | ---: | ---: |
+| 求逆准备+恢复，不含乘积与除数选择 | 2 | 9,082,976 | 3,278,944 |
+| 完整乘积（除法2个、外部乘加2个、平方1个） | 5 | 5,894,400 | 4,583,680 |
+| 五个积的累加中段 | 受控加6n−1、受控减8n−1、普通减6n−1两次、普通加4n−1 | 7,675 | 6,651 |
+| 受控常数模加 | 5×(4n−1) | 5,115 | 5,115 |
+| 受控规范取负 | 15n−2 / 10n−2 | 3,838 | 2,558 |
+| 除数选择与清除 | 两次除法各2n | 1,024 | 0 |
+| 第二除数为零的标志计算/清除 | 2n | 512 | 512 |
+| 输入/输出完整点相等检测 | 6(2n+1) | 3,078 | 3,078 |
+| 其余常量、标志 CX、平方复制/清副本、λ*、角落写回 | X/CX | 0 | 0 |
+| **受控原地点加目标** | **2I + 5P + 83n−6；测量2I_M+5M_P+70n−6** | **14,998,618** | **7,880,538** |
+
+实际支持目标 **6,218**。相对 main 5560c9cf 的 52,914,997 Toffoli，推导减少 37,916,379；这包含 D 的每次乘积成本下降，不能全部归因于改3减少调用次数。D 集成后的实际基线由其资源定理单列，不把尚未合并的估计写成当前成本。
+
+### 16.8 证明与交付切分
+
+1. **数学 PR**：在 Math 中按现有群律/`AffineFormula` 证明互斥分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
+2. **除法 PR（依赖 D 接口）**：`DivideLayout`、两条直接门列、准备/恢复之间的 frame、两种累加规格、资源与实际支持。受控中段以现有 C1 原语组合，不要求 Lamport 增加受控乘法入口。复用 `inversePrepare_spec`/`inverseRestore_spec`，必要时只补未复制输出的支持引理，不改求逆算法。
+3. **原地点加 PR（依赖 D 合并、数学与除法）**：增加 Point 的直接子视图、常数/取负阶段与本体证明，替换 `ControlledPointLayout.lean` 中 `controlledPointAdd` 的有限分支及它的 Spec/Resources/Support。删除只服务旧“两个受控 XOR + swap”原地证明的私有组合；仍服务 XOR 接口的 PointCandidate/PointAdd/ControlledPointOut 证明保留。最终公共 `controlledPointAdd_spec` 的输入输出陈述不变。
+
+实现只在设计复审通过后开始；按当前分工，先等 D 合并再接其 main，不与 Lamport 同时修改 Point*。数学与接口的逻辑依赖仍按上述顺序列出。
+
+每批完整 `scripts/verify.sh`、新增入口公理审计、实际输出同步 PROOF_STATUS，README 当前值只随相应实现更新。设计批仅 README/REWORK_PLAN 文档修改，做 diff 检查，不宣称 Lean 已证明本节。保留相位/全记录、完整工作区清理、逐线保持、同一门列计数和精确支持的八项复审；不加测试、新公理、反转测量或证明资源放宽。
