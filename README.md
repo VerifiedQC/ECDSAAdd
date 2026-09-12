@@ -167,3 +167,5 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 以上6b预算保留改7前的6a基线；接入14/14查表后的净账本由6b实现批重算。
 
 改8受控加减的实现见 [REWORK_PLAN §20](docs/REWORK_PLAN.md#opt8-measured-mask)。`MeasuredMaskedAdder.lean` 的完整Triple、目标外逐线保持与同程序资源为 `(2W−1, 2W−1, 4W+1)`；W=261时521 Toffoli /521测量 /1045线。Montgomery变量窗口已接入，旧原语保留；接改7的14/14查表后，完整点加已证11,001,338 Toffoli /5,193,978测量 /6,218线。
+
+改10的Kaliski轮测量清掩码设计见[REWORK_PLAN §21](docs/REWORK_PLAN.md#21-改10kaliski轮受控加减的测量清掩码设计待实现)。两处替换的待证目标为完整点加9,948,666 Toffoli /6,246,650测量 /6,218线；当前已证值不变。
