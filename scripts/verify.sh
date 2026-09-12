@@ -258,6 +258,16 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_counts
 #print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_wires
 #print axioms ECDSAAdd.Arithmetic.measuredMaskedInPlace_qubits
+#print axioms ECDSAAdd.Arithmetic.lookup10_spec
+#print axioms ECDSAAdd.Arithmetic.lookup10_counts
+#print axioms ECDSAAdd.Arithmetic.lookup10_core_wires
+#print axioms ECDSAAdd.Arithmetic.lookup10_frame
+#print axioms ECDSAAdd.inverseScaleFactor_bound
+#print axioms ECDSAAdd.inverseScaleFactor_relation
+#print axioms ECDSAAdd.montgomery_inverseScaleFactor
+#print axioms ECDSAAdd.inverseScaleFactor_halving
+#print axioms ECDSAAdd.kaliski_scale_count
+#print axioms ECDSAAdd.kaliski_montgomery_scale
 LEAN
 )
 printf '%s\n' "$axioms"

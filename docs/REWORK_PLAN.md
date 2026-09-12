@@ -1630,3 +1630,9 @@ false控制分支仍以Dsafe=1运行全部门列，不能删除缩放；分母�
 实现接改10合入后的main，并对照该基线重算InverseResources；改10差额与本节差额分别列出。设计GO后分批：①十位lookup及F_q的单位/缩放数学引理（四位接口不变）；②具体借用视图和缩放准备/恢复Triple、frame与精确资源；③替换inverseCompute/Uncompute，调整InverseHistory及内部模数前提，接入fieldInverse/Divide，传播全部资源和实际支持。不创建抽象求逆回调框架，不添加运行时开关；若旧半倍定义还有独立调用则保留，不为本优化复制它们。
 
 每批完成完整verify及实际公理输出同步后才把README/PROOF_STATUS数字改为已证。设计阶段仅更新README目标与本文，不修改证明限制/语义框架/Lean门列。失败条件：F_q数学关系不成立、K或历史被中段修改、需要触碰活的数据或任意旧输出、phase只覆盖部分记录、无法保持公开fieldInverse规格，或出现未入账的常数转换/清理。遇到上述情况重新设计，不把308,744当作既定结果。
+
+### 22.7 第一批证明记录
+
+十位 `lookup10_spec` / `lookup10_frame` / `lookup10_counts` / `lookup10_core_wires` 已证明，调用同一lookup门列，四位公开规格不变。`lookup_wires_subset`原有一般上界继续适用；不声称表中恒零列一定被触及。正确性主体提为私有长度引理，两种宽度共用；没有新增查表程序。
+
+`InverseScaleFactor.lean`已证明因子界、F_q(K)·2^K=R、单段Montgomery缩放、与halveFixed一致、K≤512及Kaliski逆元对接，q可为合数。新Montgomery对接要求q%16=15；旧求逆程序及其一般奇数规格本批尚未替换。组合门列、内部InverseHistory调整和全部下游资源仍待后续批实现，不把数学结论当作电路证明。

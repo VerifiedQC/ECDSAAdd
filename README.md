@@ -173,3 +173,5 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 改10的Kaliski轮测量清掩码实现见[REWORK_PLAN §21](docs/REWORK_PLAN.md#opt10-kaliski)。两处替换已证明完整点加9,948,666 Toffoli /6,246,650测量 /6,218线。
 
 改11的[第二阶段替换设计](docs/REWORK_PLAN.md#opt11-counted-scaling)采用十位K查表与一段Montgomery准备/恢复，每次求逆目标少501,240 Toffoli和237,048次测量；与改10的单轮优化分开记账。上述目标尚未实现，不改变Current status。
+
+改11第一批已完成十位查表的完整Triple/frame、1,022/1,022计数与地址/scratch支持下界，以及计数因子的Montgomery缩放数学证明；四位查表规格保持。缩放门列与求逆接入仍未实现，当前资源不变。

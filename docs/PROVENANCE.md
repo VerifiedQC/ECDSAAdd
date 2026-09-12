@@ -89,3 +89,8 @@ MontPrepare变量窗口接入MeasuredMaskedAdder，按已审§20的门列组合�
 ## 改10 Kaliski轮集成
 
 复用本仓库MeasuredMaskedAdder已证原语，替换RoundFrame.inplaceArithmetic的加减分支；不引入外部证明或语义。保留RoundFrame与公开求逆/点加规格，重证精确支持和下游资源。完整点加9,948,666 Toffoli /6,246,650测量 /6,218线；这是门数换测量的优化。
+
+
+### 改11第一批：十位查表与计数缩放数学
+
+Deutsch按REWORK_PLAN §22自主组合本仓库的递归lookup与Montgomery数学。lookup的私有通用长度证明供四位和十位规格共用，新增计数/相位清理/frame/支持证明；门列定义未变。InverseScaleFactor用ZMod单位关系证明R补偿、单段缩放与既有Kaliski数学一致，不依赖外部代码、额外公理或测试。缩放组合电路尚未实现，当前求逆和点加资源保持。
