@@ -228,30 +228,30 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
    L.out=kaliskiInverse q a 256 }}
 ```
 
-`inverseLoop_spec` 要求一个全布局 `L.wires.Nodup`、512 对记录位、十位计数器、256 个低位和 257 位第二阶段/输出寄存器，以及奇模数 q<2^256、0<a<q、q 与 a 互素。`inverseLoop_xor_spec` 支持任意输出 O，结果为 `O ^^^ kaliskiInverse q a 256`。`L.work` 包含空计数银行、第一阶段 scratch、整个记录带及第二阶段全部寄存器和算术区；输入的 u/v/r/s/k/done 恢复，工作区归零，相位对所有测量记录保持。输出的数学函数已经由 I1 证明为逆元；此处仍要求第一阶段输入已装载，外部 256 位求逆契约由 I5 封装提供。
+`inverseLoop_spec` 要求一个全布局 `L.wires.Nodup`、512 对记录位、十位计数器、256 个低位和 257 位第二阶段/输出寄存器，以及模数 q%16=15、q<2^256、0<a<q、q 与 a 互素。`inverseLoop_xor_spec` 支持任意输出 O，结果为 `O ^^^ kaliskiInverse q a 256`。`L.work` 包含空计数银行、第一阶段 scratch、整个记录带及第二阶段全部寄存器和算术区；输入的 u/v/r/s/k/done 恢复，工作区归零，相位对所有测量记录保持。输出的数学函数已经由 I1 证明为逆元；此处仍要求第一阶段输入已装载，外部 256 位求逆契约由 I5 封装提供。
 
-电路固定执行以下顺序：[InverseCompute](../ECDSAAdd/Arithmetic/InverseCompute.lean) 的第一阶段记录循环、规范化取负、第二阶段减半循环、复制输出，再依次恢复第二阶段、清空取负结果和恢复第一阶段。没有逆序执行测量指令。
+电路固定执行以下顺序：[InverseCompute](../ECDSAAdd/Arithmetic/InverseCompute.lean) 的第一阶段记录循环、规范化取负、十位查表与单段Montgomery缩放、复制输出，再依次恢复缩放、清空取负结果和恢复第一阶段。没有逆序执行测量指令。
 
 - [KaliskiLoopProof](../ECDSAAdd/Arithmetic/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
 - [NegativeInit](../ECDSAAdd/Arithmetic/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
-- [HalveInPlace](../ECDSAAdd/Arithmetic/HalveInPlace.lean) 在内部 a 上原地受控减半：奇数先加 q，再右移，比较结果大小清奇偶标志。恢复轮先比较 `(q+1)/2`，再左移、受控减 q，并以结果奇偶清标志。两者都是前向门列，对任意测量记录恢复相位；没有倒放含测量的程序。
-- [HalvingLoop](../ECDSAAdd/Arithmetic/HalvingLoop.lean) 每轮比较 i<k，活动时减半，否则保持数值；固定布局、不再交换 a/b。k 不递减，借用工作区和活动位每轮清零。`halveInPlace_spec` / `restoreInPlace_spec` 分别给出正向循环与逆序加倍恢复的寄存器规格，`halvingValue_eq` 连接 I1 的 `halveFixed`。
-- [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 让第二阶段使用第一阶段终点的当前 k 银行、空银行、比较工作区及活动位；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
+- [InverseScale](../ECDSAAdd/Arithmetic/InverseScale.lean) 的准备/恢复各用两次十位查表、单段Montgomery及三次CX交换。因子F_q(K)=R·2^{-K}，变量段直接返回规范逆元，不另做常数转换。y保存N，carry低256位保存商、顶位保存借位，zero仍全零；factor和共享工作区在中段前清零。恢复段重新得到旧轮工作区全零断言。
+- [InverseScaleState](../ECDSAAdd/Arithmetic/InverseScaleState.lean) 显式列出上述历史值，证明使用段保持K与全部历史后可恢复。内部求逆定理由任意奇数q收窄为q%16=15，Montgomery段固定256位；fieldInverse_spec及完整点加规格逐字不变。旧独立半倍原语保留，求逆中只使用新的缩放门列。
+- [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 保留第一阶段终点的当前k银行和计数工作区；缩放借用视图见InverseScaleBorrow；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
 
 `ExternalMod` 的字段框架由已有倍增实现提取，约减、取负与倍增实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
 
-令 N=512、w 为带额外高位的内部数据宽度。以下计数来自规格里的同一字面门列：
+令N=512、w=257（256位数据加高位）。以下计数来自规格里的同一字面门列：
 
 | 程序段 | Toffoli | 测量 |
 | --- | ---: | ---: |
 | 第一阶段正向或逆向 N 轮 | N(12w+31) | N(6w+28) |
 | 一次规范化取负及临时值清理 | 30w−6 | 24w |
-| 第二阶段正向或逆向 N 轮，含比较装入/清理 | N(3w+20) | N(2w+19) |
-| 完整 `inverseLoop`，含复制后反计算 | 2N(15w+51)+60w−12 | 2N(8w+47)+48w |
+| 一次缩放准备或恢复，含两次查表 | 154,372 | 154,372 |
+| 完整 `inverseLoop`，含复制后反计算 | 2N(12w+31)+60w−12+308,744 | 2N(6w+28)+48w+308,744 |
 
-第一阶段实际静态支持为 7w+46+2N：包含交替计数银行和全部 2N 根记录线。取负初始化及第二阶段共用 a、temp 两组 w 位寄存器及 8w+2 位模算术区，共 10w+2；减半的常数字和进位链借自其中，不另加线路；比较和计数线路已包含在第一阶段支持中。输出为 w 位，合计 **18w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
+第一阶段实际静态支持为 7w+46+2N：包含交替计数银行和全部 2N 根记录线。取负初始化及第二阶段共用 a、temp 两组 w 位寄存器及 8w+2 位模算术区，共 10w+2；缩放的1054位共享工作区借自其中，518位历史借自原轮实际支持中的y/zero/carry；K仍在旧计数银行，不另加线路。输出为 w 位，合计 **18w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
 
-[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **4,015,152 Toffoli、2,165,808 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改 1 使用原地第二阶段，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
+[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **3,513,912 Toffoli、1,928,760 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改11已替换原地减半循环，未声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
 
 ## I5：外部输入封装与逆元契约
 
@@ -270,8 +270,8 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 | 同一个 `fieldInverse L` | 精确资源 |
 | --- | --- |
-| Toffoli | 4,015,152 |
-| 测量 | 2,165,808 |
+| Toffoli | 3,513,912 |
+| 测量 | 1,928,760 |
 | 静态线路 | 5,954 |
 
 CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，实际支持改用InverseLayout.usedWires（x加内核usedWires），再以其Nodup计数，得到256+5698=5954。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 4541488 1639472 5954` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
@@ -554,6 +554,9 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.inverseScaling_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaledMiddle.congr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -581,8 +584,8 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 5,161,384 | 3,310,248 |
-| `pointCandidateClear` | 5,161,384 | 3,310,248 |
+| `pointCandidateCompute` | 4,660,144 | 3,073,200 |
+| `pointCandidateClear` | 4,660,144 | 3,073,200 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
@@ -629,10 +632,10 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 10,324,308 | 6,621,520 | 9,780 |
+| C 有限 | 9,321,828 | 6,147,424 | 9,780 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×5,161,384，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×3,310,248 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×4,660,144，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×3,073,200 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
 
 `pointAddOut_support`证明实际支持等于L.usedWires.toFinset。相比布局分配，排除dx/dy/delta/yg四根填充高位和池中29根旧out：dy/delta由模减写低256位，后续Montgomery源也只读低256位；平方副本仍触及slope全字。usedWires_nodup与usedWires_length给出9,780，其中实际池支持5,670。该数来自静态门列并集，不是最大同时存活数。
 
@@ -657,7 +660,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 9,948,666 | 6,246,650 | 6,218 |
+| 有限 C 的 `controlledPointAdd` | 8,946,186 | 5,772,554 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -869,7 +872,7 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 
 D阶段（改6a前）的`poolMul`使用前1,029位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
 
-D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,015,152 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
+D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
 
 删除已无引用的 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个文件，保留求逆/基础层仍使用的 Accumulate 和 ModularXorSteps。公开验证移除三个旧 modMul 入口，增加十个适配器/池支持入口；采用当前源码的实际公理输出，无测试、新公理、native_decide 或证明资源放宽。
 
@@ -912,12 +915,12 @@ D<p, E<p, Z<p, B=true → D≠0
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| divideAdd | 4,396,623 | 2,546,255 | 6,210 |
-| divideSub | 4,397,135 | 2,546,767 | 6,210 |
+| divideAdd | 3,895,383 | 2,309,207 | 6,210 |
+| divideSub | 3,895,895 | 2,309,719 | 6,210 |
 
 `divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
 
-除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体9,948,666/6,246,650/6218已在本批实现，见下节。
+除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体8,946,186/5,772,554/6218已在本批实现，见下节。
 
 ### 改 3 原地点加本体与公开入口
 
@@ -927,7 +930,7 @@ D<p, E<p, Z<p, B=true → D≠0
 
 平方先复制λ到独立S，执行montMulSub，再清S，最后加3cx；常数加法会复用S区域，故必须采用这个顺序。montQ不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
 
-资源定理指向同一有限程序：9,948,666 Toffoli、6,246,650测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
+资源定理指向同一有限程序：8,946,186 Toffoli、5,772,554测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表（历史48/48阶段，改7现已替换）
 
 `Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
@@ -1014,21 +1017,41 @@ RoundFrame.inplaceArithmetic的两个程序分支接入measuredMaskedAdd/SubInPl
 本批完整scripts/verify.sh退出0：2134项构建、252条实际公理，上方公理块与本次输出逐行一致。无新增入口、测试、公理或证明资源放宽。
 
 
-### 改11第一批：十位查表与缩放数学
+### 改11第一批：十位查表与缩放数学（阶段记录）
 
 `lookup10_spec` / `lookup10_frame`证明十位地址、任意旧XOR目标和九根零scratch的完整Triple与逐线保持，对全部测量记录恢复相位。`lookup10_counts`为同一lookup门列的1,022 Toffoli/1,022测量；`lookup10_core_wires`覆盖十位地址与九根scratch，目标的恒零表列不计为必触线。原一般支持上界继续适用。原四位六个公开定理陈述及lookup/lookupWalk门列逐字未变，正确性主体提为私有长度引理复用。
 
-`InverseScaleFactor.lean`证明因子界、F_q(K)·2^K=R、一段Montgomery缩放、与固定减半一致、K≤512及Kaliski逆元对接；只用模数中2为单位，不要求q为素数。新对接引理要求q%16=15。**内部求逆定理由任意奇数q收窄为q%16=15将在接入批发生；本批旧求逆门列和规格尚未替换。** fieldInverse和点加当前资源不变，§22组合缩放电路尚待证明。
+`InverseScaleFactor.lean`证明因子界、F_q(K)·2^K=R、一段Montgomery缩放、与固定减半一致、K≤512及Kaliski逆元对接；只用模数中2为单位，不要求q为素数。新对接引理要求q%16=15。**内部求逆定理由任意奇数q收窄为q%16=15当时留待接入批处理；本批完成时旧求逆门列和规格尚未替换。** 本批当时fieldInverse和点加资源不变，§22组合缩放电路尚待证明。
 
 完整scripts/verify.sh退出0：2,135项构建、262条实际公理输出（新增10个入口）；上方公理块逐行取自本批日志，只依赖既有三白名单。无测试、新公理、CCZ或证明限制放宽。
 
 
-### 改11第二批：缩放准备/恢复与具体借用
+### 改11第二批：缩放准备/恢复与具体借用（阶段记录）
 
 `InverseScaleLayout.prepare_spec`与`restore_spec`组合两次查表、Montgomery变量段和三次CX复制交换，覆盖全部测量记录。准备保留a=M、acc=N、256位约减商和借位；恢复后a=N、历史与工作位全零。两条frame保持a与显式历史之外的所有位。每个方向精确154,372 Toffoli/154,372测量，完整缩放308,744/308,744；没有使用montP的额外常数转换。
 
 `InverseScaleBorrow`在现有InverseLoopLayout上构造视图：518位历史来自round.y、zero低4位及carry，工作区等于(temp++arithmetic.wires).take1054。Widths和全局Nodup已证明，历史包含于原轮工作区；门列支持上界指向同一布局。未声称独立缩放的所有分配位均被触及，最终求逆支持等式留给接入批。
 
-前提q%16=15、q<2^256、N<q；不要求q为素数或额外K范围。旧inverseCompute/Uncompute和内部一般奇数规格尚未替换，fieldInverse与点加资源保持改10基线。内部求逆定理由任意奇数q收窄为q%16=15将在接入批明确记录。
+前提q%16=15、q<2^256、N<q；不要求q为素数或额外K范围。本批当时旧inverseCompute/Uncompute和内部一般奇数规格尚未替换，fieldInverse与点加资源保持改10基线。内部求逆定理由任意奇数q收窄为q%16=15已在下方接入批明确记录。
 
 完整scripts/verify.sh退出0：2,137项构建、273条实际公理输出（新增11个入口）；上方公理块逐行取自本批日志。无新公理、测试、CCZ或证明限制放宽。
+
+
+### 改11第三批：求逆、除法与完整点加接入
+
+inverseCompute/Uncompute现只调用缩放prepare/restore，旧求逆半倍适配证明已删除。InverseScaledMiddle与InverseHistory显式记录y=N、carry商/借位以及其余轮寄存器、K与记录带。中段复制或受控模乘保持整个求逆核心；恢复缩放后y/carry/zero重新全零，再清N并执行Kaliski逆循环。Prepared按N=(−z.r).val连接kaliski_montgomery_scale。
+
+**内部求逆定理由任意奇数q收窄为q%16=15，内部低位与Montgomery算术宽度固定256。** secp256k1满足此条件，fieldInverse_spec、fieldInverse_xor_spec、divideAdd/Sub_spec及完整controlledPointAdd_spec陈述逐字不变；仍覆盖控制false、C=O与全部合法点分支。
+
+| 同一程序 | Toffoli | 测量 | 实际支持线 |
+| --- | ---: | ---: | ---: |
+| inverseLoop | 3,513,912 | 1,928,760 | 5,698 |
+| fieldInverse | 3,513,912 | 1,928,760 | 5,954 |
+| divideAdd | 3,895,383 | 2,309,207 | 6,210 |
+| divideSub | 3,895,895 | 2,309,719 | 6,210 |
+| pointAddOut，有限C | 9,321,828 | 6,147,424 | 9,780 |
+| controlledPointAdd，有限C | 8,946,186 | 5,772,554 | 6,218 |
+
+相对改10，每次求逆少501,240 Toffoli/237,048测量，完整点加少1,002,480/474,096。支持上界由scaling_used_subset；下界由保留的Kaliski循环与negativeInit覆盖原usedCoreWires，所有最终线路计数由同程序支持等式与Nodup导出，未重排分配编号。
+
+完整scripts/verify.sh退出0：2,138构建项、276条实际公理输出（新增3个入口），与上方公理块逐行一致。无新公理、测试、CCZ、native_decide、linter抑制或证明限制放宽。

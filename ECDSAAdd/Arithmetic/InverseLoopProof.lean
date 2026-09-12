@@ -22,17 +22,29 @@ theorem InversePhase.congr (L : InverseLoopLayout) (K A : Nat)
       KaliskiRoundLayout.counter,AdderLayout.wires]
     tauto
 
-theorem InverseMiddle.congr (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool))
-    (A : Nat) (s t : BasisState) (h : InverseMiddle L z cs A s)
-    (he : ∀ w∈L.coreWires,t w=s w) : InverseMiddle L z cs A t :=
-  ⟨InverseRest.congr L z cs s t h.1 (fun w hw => he w (L.rest_subset hw)),
-    InversePhase.congr L z.k A s t h.2 (fun w hw => he w (L.phase_subset hw))⟩
+theorem InverseScaledMiddle.congr (L : InverseLoopLayout) (q : Nat) (z : KState)
+    (cs : List (Bool×Bool)) (N : Nat) (s t : BasisState) (h : InverseScaledMiddle L q z cs N s)
+    (he : ∀ w∈L.coreWires,t w=s w) : InverseScaledMiddle L q z cs N t := by
+  have hd (w : Wire) (hw : w∈L.middle.data.wires) : t w=s w :=
+    he w (L.rest_subset (List.mem_append_right _ hw))
+  have hr (f : RoundField) := regValue_congr (L.middle.data.reg f) t s
+    (fun w hw => hd w (L.middle.data.reg_mem f hw))
+  have hs (w : Wire) (hw : w∈L.restWires) := he w (L.rest_subset hw)
+  refine ⟨⟨⟨fun f => (hr f).trans (h.1.1.1 f),?_⟩,?_,?_,?_,?_⟩,
+    InversePhase.congr L _ _ s t h.2 (fun w hw => he w (L.phase_subset hw))⟩
+  · exact (hd _ (by simp [RoundDataLayout.wires])).trans h.1.1.2
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.1
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.2.1
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.2.2.1
+  · exact TapeValues.congr L.records cs s t h.1.2.2.2.2
+      (fun w hw => hs w (by simp [InverseLoopLayout.restWires,hw]))
 
 theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
-    (hlen : L.a.length=L.out.length) (z : KState) (cs : List (Bool×Bool)) (A O : Nat) :
-    Triple (fun s => InverseMiddle L z cs A s ∧ regValue L.out s=O)
+    (hlen : L.a.length=L.out.length) (q : Nat) (z : KState) (cs : List (Bool×Bool)) (N O : Nat) :
+    Triple (fun s => InverseScaledMiddle L q z cs N s ∧ regValue L.out s=O)
       (copyRegister none L.a L.out)
-      (fun s => InverseMiddle L z cs A s ∧ regValue L.out s=(O ^^^ A)) := by
+      (fun s => InverseScaledMiddle L q z cs N s ∧
+        regValue L.out s=(O ^^^ (montgomeryValue q (inverseScaleFactor q z.k) N 64%q))) := by
   intro s m h
   have hn : (L.a++L.out).Nodup := by
     apply List.nodup_iff_count.mpr
@@ -42,36 +54,28 @@ theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     omega
   obtain ⟨hp,he,hz⟩ := copyRegister_correct none L.a L.out hlen hn (by simp) s m
   have hdis : L.coreWires.Disjoint L.out := (List.nodup_append'.mp hnd).2.2
-  refine ⟨hp,InverseMiddle.congr L z cs A s.basis _ h.1 ?_,?_⟩
+  refine ⟨hp,InverseScaledMiddle.congr L q z cs N s.basis _ h.1 ?_,?_⟩
   · intro w hw; exact he w (List.disjoint_left.mp hdis hw)
-  · simpa only [copyValue,h.2,show regValue L.a s.basis=A from h.1.2.1.1] using hz
+  · simpa only [copyValue,h.2,show regValue L.a s.basis=montgomeryValue q (inverseScaleFactor q z.k) N 64%q from h.1.2.1.1] using hz
 
-/-- I4 核：保留已初始化的第一阶段输入，XOR 写入逆算法结果，并清除全部历史与第二阶段工作。 -/
+/-- 保留初始化数据，XOR写入规范逆元，再清除全部第一阶段与缩放历史。 -/
 theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
-    (hwidth : L.first.data.width=L.arithmetic.width+1)
-    (ha : L.a.length=L.arithmetic.width+1)
-    (ht : L.temp.length=L.arithmetic.width+1) (hout : L.out.length=L.arithmetic.width+1)
-    (q a O : Nat) (hq0 : 0<q) (hq : q<2^L.first.low.length)
-    (hqa : q<2^L.arithmetic.width) (ho : q%2=1) (hx : a<q) (hcop : q.Coprime a) :
-    let z := kaliskiStep^[512] (kaliskiInit q a)
-    let R := halveFixed q z.k 512 (-(z.r : ZMod q)).val
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
+    (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
+    (q a O : Nat) (hq : q<2^256) (ho : q%16=15) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
     Triple (fun s => InverseInitial L q a s ∧ regValue L.out s=O) (inverseLoop L q)
-      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ R)) := by
-  dsimp only
+      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ kaliskiInverse q a 256)) := by
   let z := kaliskiStep^[512] (kaliskiInit q a)
   let cs := kaliskiCodes 512 (kaliskiInit q a)
-  let R := halveFixed q z.k 512 (-(z.r : ZMod q)).val
-  have hcompute := inverseCompute_values L hnd hn hw hwidth ha ht q a hq0 hq hqa ho hx hcop
-  have hd : 2≤L.first.data.width := by
-    have hpos : 0<L.first.low.length := by
-      by_contra hh
-      have hz : L.first.low.length=0 := by omega
-      simp only [hz,pow_zero] at hq
-      omega
-    simp only [KaliskiRoundLayout.data,RoundDataLayout.width,List.length_append,List.length_cons,List.length_nil]
-    omega
-  have hwires := inverseCompute_wires L hn hw hd hwidth ha ht q
+  let N := (-(z.r : ZMod q)).val
+  let R := montgomeryValue q (inverseScaleFactor q z.k) N 64%q
+  have heq : R=kaliskiInverse q a 256 :=
+    (kaliski_montgomery_scale q a ho hq hx0 hx hcop).trans
+      (kaliski_correct q a 256 (by omega) hq hx0 (hx.trans hq) hcop).symm
+  have hcompute := inverseCompute_values L hnd hn hw hl hm ha ht q a hq ho hx hcop
+  have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl]
+  have hwires := inverseCompute_wires L hn hw (by omega) (by omega) (by omega) (by omega) hl hm q
   have hdis : L.coreWires.Disjoint L.out := (List.nodup_append'.mp hnd).2.2
   have frame (circ : Program) (hc : wires circ=L.usedCoreWires.toFinset) (V : Nat)
       (s t : BasisState) (he : ∀ w,w∉wires circ → s w=t w) (hv : regValue L.out s=V) :
@@ -82,8 +86,9 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     rw [hc]
     exact fun hh => List.disjoint_left.mp hdis (L.usedCoreWires_sublist.subset (List.mem_toFinset.mp hh)) hw
   have hf := hcompute.1.frame (frame _ hwires.1 O)
-  have hb' := hcompute.2.frame (frame _ hwires.2 (O ^^^ R))
-  have hc := inverseCopy_values L hnd (ha.trans hout.symm) z cs R O
-  exact (hf.seq hc).seq hb'
+  have hb := hcompute.2.frame (frame _ hwires.2 (O ^^^ R))
+  have hc := inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O
+  have hall := (hf.seq hc).seq hb
+  simpa only [heq] using hall
 
 end ECDSAAdd.Arithmetic

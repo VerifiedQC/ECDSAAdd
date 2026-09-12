@@ -54,7 +54,7 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
   have hi := inverseCompute_wires L.inner hw.inverse.records hw.inverse.counter (by omega)
     (by rw [hd,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
     (by rw [show L.inner.a.length=257 from hw.inverse.a,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
-    (by rw [show L.inner.temp.length=257 from hw.inverse.temp,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic]) p
+    (by rw [show L.inner.temp.length=257 from hw.inverse.temp,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic]) hw.inverse.low hw.inverse.arithmetic p
   have hm := montControlledAdapter_wires L.control L.multiply p (L.multiply_widths hw)
   have hc := copyRegister_wires (some L.control) L.denominator L.vLow
     (hw.inverse.input.trans (L.vLow_length hw).symm)
@@ -115,7 +115,7 @@ theorem divide_qubits (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
     (by rw [hd,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
     (by rw [show L.inner.a.length=257 from hw.inverse.a,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
     (by rw [show L.inner.temp.length=257 from hw.inverse.temp,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic])
-    (by rw [show L.inner.out.length=257 from hw.inverse.output,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic]) p
+    (by rw [show L.inner.out.length=257 from hw.inverse.output,show L.inner.arithmetic.width=256 from hw.inverse.arithmetic]) hw.inverse.low hw.inverse.arithmetic p
   have hl := hi.2.2
   rw [qubitCount,hs,List.toFinset_card_of_nodup (L.inner.usedWires_sublist.nodup (L.inner_nodup hnd))] at hl
   simp only [InverseLoopLayout.usedWires,List.length_append,show L.inner.out.length=257 from hw.inverse.output] at hl

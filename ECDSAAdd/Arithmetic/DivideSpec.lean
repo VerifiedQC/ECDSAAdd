@@ -6,8 +6,8 @@ private theorem divideInverse_values (L : DivideLayout) (hw : L.Widths) (hnd : L
     (D E Z S : Nat) (B : Bool) (hS0 : 0<S) (hS : S<p) :
     let extra := fun st => st L.control=B ∧ regValue L.denominator st=D ∧
       regValue L.numerator st=E ∧ regValue L.acc st=Z ∧ regValue L.inner.out st=0
-    let middle := InverseMiddle L.inner (kaliskiStep^[512] (kaliskiInit p S))
-      (kaliskiCodes 512 (kaliskiInit p S)) ((S : Fp)⁻¹).val
+    let middle := InverseScaledMiddle L.inner p (kaliskiStep^[512] (kaliskiInit p S))
+      (kaliskiCodes 512 (kaliskiInit p S)) (-((kaliskiStep^[512] (kaliskiInit p S)).r : Fp)).val
     Triple (fun st => InverseInitial L.inner p S st ∧ extra st) (inverseCompute L.inner p)
       (fun st => middle st ∧ extra st) ∧
     Triple (fun st => middle st ∧ extra st) (inverseUncompute L.inner p)
@@ -18,17 +18,11 @@ private theorem divideInverse_values (L : DivideLayout) (hw : L.Widths) (hnd : L
     simp [KaliskiRoundLayout.data,RoundDataLayout.width,show L.inner.first.low.length=256 from hw.inverse.low]
   have ha : L.inner.arithmetic.width=256 := hw.inverse.arithmetic
   have hc := inverseCompute_values L.inner (L.inner_nodup hnd) hw.inverse.records hw.inverse.counter
-    (by omega) (by rw [show L.inner.a.length=257 from hw.inverse.a,ha])
-    (by rw [show L.inner.temp.length=257 from hw.inverse.temp,ha]) p S (by norm_num [p])
-    (by rw [show L.inner.first.low.length=256 from hw.inverse.low]; exact hp)
-    (by rw [ha]; exact hp) (by norm_num [p]) hS
+    hw.inverse.low hw.inverse.arithmetic hw.inverse.a hw.inverse.temp p S hp (by norm_num [p]) hS
     (Secp256k1.p_prime.coprime_iff_not_dvd.mpr (fun h => (Nat.not_le_of_lt hS) (Nat.le_of_dvd hS0 h)))
-  change Triple _ _ (InverseMiddle L.inner _ _ (kaliskiInverse p S 256)) ∧
-    Triple (InverseMiddle L.inner _ _ (kaliskiInverse p S 256)) _ _ at hc
-  rw [kaliski_inverse_p S hS0 hS] at hc
   have hs := inverseCompute_wires L.inner hw.inverse.records hw.inverse.counter (by omega)
     (by omega) (by rw [show L.inner.a.length=257 from hw.inverse.a,ha])
-    (by rw [show L.inner.temp.length=257 from hw.inverse.temp,ha]) p
+    (by rw [show L.inner.temp.length=257 from hw.inverse.temp,ha]) hw.inverse.low hw.inverse.arithmetic p
   have frame (P : Program) (hP : wires P=L.inner.usedCoreWires.toFinset)
       (s t : BasisState) (he : ∀ q, q∉wires P → s q=t q)
       (h : s L.control=B ∧ regValue L.denominator s=D ∧ regValue L.numerator s=E ∧
@@ -105,11 +99,14 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
     · decide
   have hS : S<p := by dsimp [S]; split; exact hD; norm_num [p]
   have hA : A<p := ZMod.val_lt _
+  have hscale := kaliski_montgomery_scale p S (by norm_num [p]) hp hS0 hS
+    (Secp256k1.p_prime.coprime_iff_not_dvd.mpr (fun h => (Nat.not_le_of_lt hS) (Nat.le_of_dvd hS0 h)))
   let ready := fun Z st =>
     (InverseValues L.inverseView (inverseValues D p S 1 0) st ∧ st L.control=B) ∧
       (regValue L.numerator st=E ∧ regValue L.acc st=Z)
   let prepared := fun Z st =>
-    InverseMiddle L.inner (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S)) A st ∧
+    InverseScaledMiddle L.inner p (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S))
+      (-((kaliskiStep^[512] (kaliskiInit p S)).r : Fp)).val st ∧
       (st L.control=B ∧ regValue L.denominator st=D ∧ regValue L.numerator st=E ∧
         regValue L.acc st=Z ∧ regValue L.inner.out st=0)
   have hinverse (V : Nat) :
@@ -141,7 +138,7 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
       have keep (q : Wire) (hq : q∈L.control::L.denominator++L.numerator++L.inner.wires) :
           (run P m s).basis q=s.basis q :=
         hc.2.2 q (List.disjoint_left.mp (L.acc_disjoint_other hnd) hq)
-      refine ⟨hc.1,divideMiddle_congr L S A _ _ h.1 (fun q hq => keep q (by simp [hq])),
+      refine ⟨hc.1,divideMiddle_congr L S _ _ _ h.1 (fun q hq => keep q (by simp [hq])),
         (keep _ (by simp)).trans h.2.1,
         (regValue_congr _ _ _ (fun q hq => keep q (by simp [hq]))).trans h.2.2.1,
         (regValue_congr _ _ _ (fun q hq => keep q (by simp [hq]))).trans h.2.2.2.1,hc.2.1,?_⟩
@@ -153,11 +150,11 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
     constructor
     · intro s m h
       have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
-        h.1.2.1.1 h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
+        (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
       exact finish _ _ s m h hc.1
     · intro s m h
       have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
-        h.1.2.1.1 h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
+        (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
       exact finish _ _ s m h hc.2
   have hload := (divideLoad_extra L hw hnd D E Z B).1
   have hadd := (((hload.seq (hinverse Z).1).seq hproduct.1).seq

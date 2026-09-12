@@ -30,7 +30,7 @@ theorem fieldInverse_wires (L : InverseLayout) (hw : L.Widths) :
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low])
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low,hw.arithmetic])
     (by rw [hw.a,hw.arithmetic])
-    (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) p
+    (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) hw.low hw.arithmetic p
   have hc := copyRegister_wires none L.x L.vLow
     (by simp [InverseLayout.vLow,hw.input,hw.low])
   have hne : L.x.isEmpty=false := by
@@ -69,7 +69,7 @@ theorem fieldInverse_wires (L : InverseLayout) (hw : L.Widths) :
 
 /-- 外部 256 位输入增加 256 根线路；原内核的输出高位仍计入工作区。 -/
 theorem fieldInverse_resources (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths) :
-    toffoliCount (fieldInverse L)=4015152 ∧ measurementCount (fieldInverse L)=2165808 ∧
+    toffoliCount (fieldInverse L)=3513912 ∧ measurementCount (fieldInverse L)=1928760 ∧
     qubitCount (fieldInverse L)=5954 := by
   have hi := inverseLoop_257_resources L.inner (L.inner_nodup hnd) hw.records hw.counter hw.low
     hw.arithmetic hw.a hw.temp hw.output p
@@ -81,7 +81,7 @@ theorem fieldInverse_resources (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L
       (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low])
       (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low,hw.arithmetic])
       (by rw [hw.a,hw.arithmetic])
-      (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) p
+      (by rw [hw.temp,hw.arithmetic]) (by rw [hw.output,hw.arithmetic]) hw.low hw.arithmetic p
     have hn := hi.2.2
     rw [qubitCount,hwi,List.toFinset_card_of_nodup (L.inner.usedWires_sublist.nodup (L.inner_nodup hnd))] at hn
     rw [qubitCount,fieldInverse_wires L hw,List.toFinset_card_of_nodup (L.usedWires_nodup hnd),InverseLayout.usedWires,
@@ -89,7 +89,7 @@ theorem fieldInverse_resources (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L
 
 /-- 求逆接口的具体实现证明；正确性、精确资源和支持集均指向 fieldInverse L。 -/
 theorem fieldInverse_contract (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths) :
-    inverseContract L.x L.out L.work (fieldInverse L) 4015152 2165808 5954 := by
+    inverseContract L.x L.out L.work (fieldInverse L) 3513912 1928760 5954 := by
   obtain ⟨ht,hm,hq⟩ := fieldInverse_resources L hnd hw
   refine ⟨hnd,hw.input,?_,fun X hX0 hX => fieldInverse_spec L hnd hw X hX0 hX,ht,hm,hq,?_⟩
   · simp [InverseLayout.out,hw.output]

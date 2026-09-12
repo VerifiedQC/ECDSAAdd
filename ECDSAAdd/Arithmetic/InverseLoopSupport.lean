@@ -69,13 +69,39 @@ theorem first_negative_union (L : InverseLoopLayout) :
   simp only [usedCoreWires,extra,Finset.mem_union,List.mem_toFinset,List.mem_append] at hs ⊢
   tauto
 
+
+/-- 新缩放只触及原求逆实际支持中的数据、计数和借用区。 -/
+theorem scaling_used_subset (L : InverseLoopLayout) (ht : L.temp.length=257)
+    (hm : L.arithmetic.width=256) (hl : L.first.low.length=256) :
+    L.scaling.wires⊆L.usedCoreWires := by
+  intro w h
+  simp only [InverseScaleLayout.wires,L.scaling_live hl,L.scaling_work ht hm,List.mem_append] at h
+  rcases h with ((ha|hk)|hlive)|hb
+  · exact L.phase_used_subset (L.a_mem_phase ha)
+  · apply L.phase_used_subset
+    have hc : w∈L.middle.counter.wires := by
+      obtain ⟨b,hb,rfl⟩ := List.mem_map.mp hk
+      exact List.mem_cons_of_mem _ (mem_addWires hb).1
+    simp [phaseWires,hc]
+  · have hd : w∈L.middle.data.usedWires := by
+      simp only [scaleLive,List.mem_append] at hlive
+      rcases hlive with (hy|hz)|hc
+      · exact L.middle.data.reg_used_mem .y (by decide) hy
+      · exact L.middle.data.reg_used_mem .zero (by decide) (List.mem_of_mem_take hz)
+      · exact L.middle.data.reg_used_mem .carry (by decide) hc
+    have hh : w∈L.middle.usedSharedWires := List.mem_append_left _ (List.mem_append_right _ hd)
+    exact List.mem_append_left _ (List.mem_append_right _ (L.middle_used_perm.mem_iff.mp hh))
+  · have hb := List.mem_of_mem_take hb
+    exact List.mem_append_right _ (by simp only [extra,scaleBorrow,List.mem_append] at hb ⊢; tauto)
+
 end InverseLoopLayout
 
 theorem inverseCompute_wires (L : InverseLoopLayout)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hd : 2≤L.first.data.width) (hwidth : L.first.data.width=L.arithmetic.width+1)
     (ha : L.a.length=L.arithmetic.width+1)
-    (ht : L.temp.length=L.arithmetic.width+1) (q : Nat) :
+    (ht : L.temp.length=L.arithmetic.width+1)
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256) (q : Nat) :
     wires (inverseCompute L q)=L.usedCoreWires.toFinset ∧
     wires (inverseUncompute L q)=L.usedCoreWires.toFinset := by
   have hh := kaliskiLoop_wires L.first L.records 0 hw hd
@@ -88,31 +114,28 @@ theorem inverseCompute_wires (L : InverseLoopLayout)
     change (L.middle.data.reg .r).length=_
     rw [L.middle.data.reg_length,InverseLoopLayout.middle,loopEnd_data,hwidth]
   have hneg := negativeInit_wires L.arithmetic q L.middle.r L.temp L.a hrlen ht ha
-  have hhalf := halveInPlace_wires L.halving (L.halving_widths ha hw) q 0 512
-  simp only [show ¬(512:Nat)=0 by omega,if_false] at hhalf
-  have hs : L.halving.usedWires.toFinset ⊆ L.usedCoreWires.toFinset := by
+  have hscale := L.scaling.wires_subset (L.scaling_widths (by omega) (by omega) hm hl hw) q
+  have hs : L.scaling.wires.toFinset⊆L.usedCoreWires.toFinset := by
     intro w h
-    exact List.mem_toFinset.mpr (L.phase_used_subset (L.halving_subset (L.halving.usedWires_subset (List.mem_toFinset.mp h))))
-  simp only [inverseCompute,inverseUncompute,wires_append,hh.1,hh.2,hneg,hhalf.1,hhalf.2]
+    exact List.mem_toFinset.mpr (L.scaling_used_subset (by omega) hm hl (List.mem_toFinset.mp h))
+  have hf := hscale.1.trans hs
+  have hb := hscale.2.trans hs
+  simp only [inverseCompute,inverseUncompute,wires_append,hh.1,hh.2,hneg]
   have he := L.first_negative_union
   constructor
-  · rw [he,Finset.union_eq_left.mpr hs]
-  · ext w
-    have hm := fun h => hs (a := w) h
-    have hu : w∈(L.first.usedTapeWires L.records).toFinset ∨
-        w∈(L.middle.r++L.temp++L.a++L.arithmetic.wires).toFinset ↔ w∈L.usedCoreWires.toFinset := by
-      rw [← Finset.mem_union,he]
-    simp only [Finset.mem_union]
-    clear hn hw hd hwidth ha ht hh hne hrlen hneg hhalf hs he
-    tauto
+  · rw [he,Finset.union_eq_left.mpr hf]
+  · rw [Finset.union_assoc,Finset.union_comm (wires (L.scaling.restore q)),
+      Finset.union_comm (L.middle.r++L.temp++L.a++L.arithmetic.wires).toFinset,
+      he,Finset.union_eq_left.mpr hb]
 
 theorem inverseLoop_wires (L : InverseLoopLayout)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hd : 2≤L.first.data.width) (hwidth : L.first.data.width=L.arithmetic.width+1)
     (ha : L.a.length=L.arithmetic.width+1)
-    (ht : L.temp.length=L.arithmetic.width+1) (ho : L.out.length=L.arithmetic.width+1) (q : Nat) :
+    (ht : L.temp.length=L.arithmetic.width+1) (ho : L.out.length=L.arithmetic.width+1)
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256) (q : Nat) :
     wires (inverseLoop L q)=L.usedWires.toFinset := by
-  have hc := inverseCompute_wires L hn hw hd hwidth ha ht q
+  have hc := inverseCompute_wires L hn hw hd hwidth ha ht hl hm q
   have hcopy := copyRegister_wires none L.a L.out (ha.trans ho.symm)
   have hne : L.a.isEmpty=false := by
     cases he : L.a with

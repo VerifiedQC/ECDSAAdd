@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.InverseMiddle
+import ECDSAAdd.Arithmetic.InverseScaleState
 
 namespace ECDSAAdd.Arithmetic
 
@@ -8,13 +8,13 @@ def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program :=
   kaliskiLoop L.first 0 L.records ++
   -- 将 (−r) mod q 写入初始为零的 a；temp 与模算术工作区恢复为零。
   negativeInit L.arithmetic q L.middle.r L.temp L.a ++
-  -- 第二阶段：按保存的 k 在 a 中原地减半，得到逆元；借用工作区清零。
-  halveInPlace L.halving q 0 512
+  -- 第二阶段：十位k查表与单段Montgomery缩放；y/carry保存缩放历史，B清零。
+  L.scaling.prepare q
 
 /-- 逆元使用后的恢复；各段均执行显式前向门列，不倒放测量。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  -- 逆序加倍，将 a 恢复为 (−r) mod q。
-  restoreInPlace L.halving q 0 512 ++
+  -- 清除缩放历史，将a恢复为(−r) mod q，轮工作区重新全部为零。
+  L.scaling.restore q ++
   -- negativeInit 是 XOR 模块：再写同一个值，将 a 清零。
   negativeInit L.arithmetic q L.middle.r L.temp L.a ++
   -- 利用保存的分支恢复第一阶段初值，同时清 records。
@@ -78,33 +78,34 @@ theorem inverseFirst_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
-    (hwidth : L.first.data.width=L.arithmetic.width+1)
-    (ha : L.a.length=L.arithmetic.width+1)
-    (ht : L.temp.length=L.arithmetic.width+1)
-    (q a : Nat) (hq0 : 0<q) (hq : q<2^L.first.low.length)
-    (hqa : q<2^L.arithmetic.width) (ho : q%2=1) (hx : a<q) (hcop : q.Coprime a) :
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
+    (ha : L.a.length=257) (ht : L.temp.length=257)
+    (q a : Nat) (hq : q<2^256) (ho : q%16=15) (hx : a<q) (hcop : q.Coprime a) :
     let z := kaliskiStep^[512] (kaliskiInit q a)
     let cs := kaliskiCodes 512 (kaliskiInit q a)
-    let R := halveFixed q z.k 512 (-(z.r : ZMod q)).val
-    Triple (InverseInitial L q a) (inverseCompute L q) (InverseMiddle L z cs R) ∧
-    Triple (InverseMiddle L z cs R) (inverseUncompute L q) (InverseInitial L q a) := by
+    let N := (-(z.r : ZMod q)).val
+    Triple (InverseInitial L q a) (inverseCompute L q) (InverseScaledMiddle L q z cs N) ∧
+    Triple (InverseScaledMiddle L q z cs N) (inverseUncompute L q) (InverseInitial L q a) := by
   dsimp only
+  letI : NeZero q := ⟨by omega⟩
   let z := kaliskiStep^[512] (kaliskiInit q a)
   let cs := kaliskiCodes 512 (kaliskiInit q a)
   let N := (-(z.r : ZMod q)).val
-  have hbnd := kaliski_register_bounds q a 512 hq0 hcop
+  have hwidth : L.first.data.width=L.arithmetic.width+1 := by
+    simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl,hm]
+  have hbnd := kaliski_register_bounds q a 512 (by omega) hcop
   have hr : z.r<2*q := hbnd.2.2.1
-  have hN : N<q := by
-    letI : NeZero q := ⟨by omega⟩
-    exact ZMod.val_lt _
-  have hfirst := inverseFirst_values L hnd hn hw q a hq0 hq hx hcop
+  have hN : N<q := ZMod.val_lt _
+  have hfirst := inverseFirst_values L hnd hn hw q a (by omega) (by simpa only [hl] using hq) hx hcop
   have hneg : Triple (InverseMiddle L z cs 0) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
       (InverseMiddle L z cs N) := by
-    simpa only [Nat.zero_xor] using inverseNegative_values L hnd hwidth ha ht q z cs 0 hq0 hqa hr
+    simpa only [Nat.zero_xor] using inverseNegative_values L hnd hwidth
+      (by omega) (by omega) q z cs 0 (by omega) (by simpa only [hm] using hq) hr
   have hnegback : Triple (InverseMiddle L z cs N) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
       (InverseMiddle L z cs 0) := by
-    simpa only [N,Nat.xor_self] using inverseNegative_values L hnd hwidth ha ht q z cs N hq0 hqa hr
-  have hhalf := inverseHalving_values L hnd ha hw q N z cs hqa ho hN
-  exact ⟨(hfirst.1.seq hneg).seq hhalf.1,(hhalf.2.seq hnegback).seq hfirst.2⟩
+    simpa only [N,Nat.xor_self] using inverseNegative_values L hnd hwidth
+      (by omega) (by omega) q z cs N (by omega) (by simpa only [hm] using hq) hr
+  have hscale := inverseScaling_values L hnd hl hw ha ht hm q ho hq z cs N hN
+  exact ⟨(hfirst.1.seq hneg).seq hscale.1,(hscale.2.seq hnegback).seq hfirst.2⟩
 
 end ECDSAAdd.Arithmetic
