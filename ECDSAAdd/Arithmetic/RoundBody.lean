@@ -80,7 +80,7 @@ theorem kaliskiBodyProgram_frame (L : RoundDataLayout) (active swap subtract : W
   have h1 : Triple (RoundFrame L (roundDataValues t) base) (inplaceArithmetic L .u .v subtract true)
       (RoundFrame L (roundDataValues z1) base) := by
     have h := RoundFrame.inplace L subtract hd hpos (roundDataValues t) base .u .v
-      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl rfl true
+      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl true
     change Triple _ _ (RoundFrame L (Function.update (roundDataValues t) .u
       ((t.u+2^L.width-(if base subtract then t.v else 0))%2^L.width)) base) at h
     rw [hdiff,(data_updates t U).1] at h
@@ -88,7 +88,7 @@ theorem kaliskiBodyProgram_frame (L : RoundDataLayout) (active swap subtract : W
   have h2 : Triple (RoundFrame L (roundDataValues z1) base) (inplaceArithmetic L .r .s subtract false)
       (RoundFrame L (roundDataValues z2) base) := by
     have h := RoundFrame.inplace L subtract hd hpos (roundDataValues z1) base .r .s
-      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl rfl false
+      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl false
     change Triple _ _ (RoundFrame L (Function.update (roundDataValues z1) .r (R%2^L.width)) base) at h
     rw [Nat.mod_eq_of_lt hR,(data_updates z1 R).2.1] at h
     exact h
@@ -187,7 +187,7 @@ theorem kaliskiUnbodyProgram_frame (L : RoundDataLayout) (active swap subtract :
   have h3 : Triple (RoundFrame L (roundDataValues z2) base) (inplaceArithmetic L .r .s subtract true)
       (RoundFrame L (roundDataValues z3) base) := by
     have h := RoundFrame.inplace L subtract hd hpos (roundDataValues z2) base .r .s
-      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl rfl true
+      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl true
     change Triple _ _ (RoundFrame L (Function.update (roundDataValues z2) .r
       ((R+2^L.width-(if base subtract then t.s else 0))%2^L.width)) base) at h
     rw [hdiff,(data_updates z2 t.r).2.1] at h
@@ -198,7 +198,7 @@ theorem kaliskiUnbodyProgram_frame (L : RoundDataLayout) (active swap subtract :
   have h4 : Triple (RoundFrame L (roundDataValues z3) base) (inplaceArithmetic L .u .v subtract false)
       (RoundFrame L (roundDataValues t) base) := by
     have h := RoundFrame.inplace L subtract hd hpos (roundDataValues z3) base .u .v
-      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl rfl false
+      (by simp [RoundDataLayout.DataField]) (by simp [RoundDataLayout.DataField]) (by decide) rfl rfl false
     change Triple _ _ (RoundFrame L (Function.update (roundDataValues z3) .u
       ((U+(if base subtract then t.v else 0))%2^L.width)) base) at h
     rw [hsum,(data_updates z3 t.u).1] at h

@@ -2,15 +2,38 @@ import ECDSAAdd.Arithmetic.RoundResources
 
 namespace ECDSAAdd.Arithmetic
 
-private theorem adder_interface (L : RoundDataLayout) (f : RoundField) :
-    (L.adder f).wires.toFinset = (L.cin::(L.reg f++L.reg .y++L.reg .out++L.reg .carry)).toFinset := by
-  have hp := (L.adder f).interface_perm
-  ext w
-  have h := hp.mem_iff (a:=w)
-  obtain ⟨hx,hy,ho,hc,hi,_⟩ := L.adder_fields f
-  simp only [hx,hy,ho,hc,hi,List.mem_append,List.mem_cons] at h
-  simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
-  tauto
+/-- 实际接线不含旧out银行；分配布局仍保留原编号。 -/
+def RoundBit.usedWires (b : RoundBit) : List Wire :=
+  [b.u,b.v,b.r,b.s,b.y,b.carry,b.zero]
+
+def RoundDataLayout.usedWires (L : RoundDataLayout) : List Wire :=
+  L.cin :: L.bits.flatMap RoundBit.usedWires
+
+def KaliskiRoundLayout.usedWires (L : KaliskiRoundLayout) : List Wire :=
+  [L.done,L.swap,L.subtract,L.oddWork,L.bothWork,L.compareCin] ++ L.data.usedWires ++ L.counter.wires
+
+theorem RoundDataLayout.usedWires_sublist (L : RoundDataLayout) : L.usedWires.Sublist L.wires := by
+  apply List.Sublist.cons₂
+  suffices h : ∀ bs : List RoundBit,
+      (bs.flatMap RoundBit.usedWires).Sublist (bs.flatMap RoundBit.wires) from h L.bits
+  intro bs
+  induction bs with
+  | nil => exact List.Sublist.refl _
+  | cons b bs ih =>
+    have hb : b.usedWires.Sublist b.wires := by
+      simp [RoundBit.usedWires,RoundBit.wires]
+    exact hb.append ih
+
+theorem RoundDataLayout.reg_used_mem (L : RoundDataLayout) (f : RoundField) (hf : f≠.out)
+    {w : Wire} (hw : w∈L.reg f) : w∈L.usedWires := by
+  obtain ⟨b,hb,rfl⟩ := List.mem_map.mp hw
+  apply List.mem_cons_of_mem
+  apply List.mem_flatMap.mpr
+  refine ⟨b,hb,?_⟩
+  cases f <;> simp_all [RoundBit.get,RoundBit.usedWires]
+
+theorem KaliskiRoundLayout.usedWires_sublist (L : KaliskiRoundLayout) : L.usedWires.Sublist L.wires :=
+  (L.data.usedWires_sublist.append_left _).append_right _
 
 private theorem swap_wires (c : Wire) (a b : List Wire) (hlen : a.length=b.length) (hpos : 0<a.length) :
     wires (swapRegisters c a b)=(c::(a++b)).toFinset ∧
@@ -28,22 +51,14 @@ private theorem swap_wires (c : Wire) (a b : List Wire) (hlen : a.length=b.lengt
 private theorem inplace_wires (L : RoundDataLayout) (f g : RoundField) (c : Wire) (neg : Bool)
     (hw : 0<L.width) :
     wires (inplaceArithmetic L f g c neg)=
-      (c::L.cin::(L.reg f++L.reg g++L.reg .y++L.reg .out++L.reg .carry)).toFinset := by
-  have hm := maskedAdder_wires (L.adder f) (L.reg g) c
-    (by rw [L.reg_length,(L.adder_fields f).2.2.2.2.2]) (by rw [(L.adder_fields f).2.2.2.2.2]; exact hw)
-  have he := (swap_wires c (L.reg f) (L.reg .out) (by rw [L.reg_length,L.reg_length])
-    (by rw [L.reg_length]; exact hw)).2
-  have had := adder_interface L f
-  cases neg <;> simp only [inplaceArithmetic,Bool.false_eq_true,if_false,if_true,wires_append,hm.1,hm.2,he]
-  all_goals
-    ext w
-    have ha : w∈(L.adder f).wires ↔ w∈L.cin::(L.reg f++L.reg .y++L.reg .out++L.reg .carry) := by
-      simpa only [List.mem_toFinset] using (congrArg (fun s => w∈s) had).to_iff
-    simp only [Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append] at ha ⊢
-    tauto
+      (c::L.cin::(L.reg g++L.reg .y++L.reg f++(L.reg .carry).take (L.width-1))).toFinset := by
+  have hm := maskedInPlace_wires c (L.reg g) (L.reg .y) (L.reg f)
+    ((L.reg .carry).take (L.width-1)) L.cin
+    (by simp [L.reg_length]) (by simp [L.reg_length]) (by simp [L.reg_length]; omega)
+  cases neg <;> simp only [inplaceArithmetic,Bool.false_eq_true,if_false,if_true] <;> tauto
 
 private def bodyWires (L : RoundDataLayout) (a sw su : Wire) : Finset Wire :=
-  ([a,sw,su,L.cin]++L.u++L.v++L.r++L.s++L.reg .y++L.reg .out++L.reg .carry).toFinset
+  ([a,sw,su,L.cin]++L.u++L.v++L.r++L.s++L.reg .y++(L.reg .carry).take (L.width-1)).toFinset
 
 set_option maxHeartbeats 2000000 in
 private theorem body_wires (L : RoundDataLayout) (a sw su : Wire) (hw : 2≤L.width) :
@@ -74,10 +89,10 @@ private theorem body_wires (L : RoundDataLayout) (a sw su : Wire) (hw : 2≤L.wi
     tauto
 
 private theorem data_interface (L : RoundDataLayout) :
-    L.wires.toFinset=(L.cin::(L.u++L.v++L.r++L.s++L.reg .y++L.reg .out++L.reg .carry++L.reg .zero)).toFinset := by
+    L.usedWires.toFinset=(L.cin::(L.u++L.v++L.r++L.s++L.reg .y++L.reg .carry++L.reg .zero)).toFinset := by
   ext w
-  simp [RoundDataLayout.wires,RoundDataLayout.u,RoundDataLayout.v,RoundDataLayout.r,RoundDataLayout.s,
-    RoundDataLayout.reg,RoundBit.wires,RoundBit.get,and_or_left,exists_or,eq_comm]
+  simp [RoundDataLayout.usedWires,RoundDataLayout.u,RoundDataLayout.v,RoundDataLayout.r,RoundDataLayout.s,
+    RoundDataLayout.reg,RoundBit.usedWires,RoundBit.get,and_or_left,exists_or,eq_comm]
 
 private theorem zero_interface (L : RoundDataLayout) :
     ((L.zeroBits .v).flatMap ZeroBit.wires).toFinset=(L.v++L.reg .zero).toFinset := by
@@ -147,7 +162,7 @@ set_option maxHeartbeats 2000000 in
 /-- 静态线路并集恰好等于单轮布局，包括共享工作线而非“最大同时存活”估计。 -/
 theorem kaliskiRound_wires (L : KaliskiRoundLayout) (hw : L.counter.width=10)
     (hd : 2≤L.data.width) (i : Nat) :
-    wires (kaliskiRound L i)=L.wires.toFinset ∧ wires (kaliskiUnround L i)=L.wires.toFinset := by
+    wires (kaliskiRound L i)=L.usedWires.toFinset ∧ wires (kaliskiUnround L i)=L.usedWires.toFinset := by
   have hb := body_wires L.data L.active L.swap L.subtract hd
   have hr := recordRound_wires L
   have ha := activity_wires L i
@@ -182,29 +197,31 @@ theorem kaliskiRound_wires (L : KaliskiRoundLayout) (hw : L.counter.width=10)
     have hcm := hcomp w
     simp only [List.mem_append] at hcm
     have hac : w=L.active → w∈L.counter.wires := fun he => he ▸ List.mem_cons_self
-    simp only [bodyWires,KaliskiRoundLayout.wires,Finset.mem_union,List.mem_toFinset,List.mem_cons,
+    have htake : w∈(L.data.reg .carry).take (L.data.width-1) → w∈L.data.reg .carry :=
+      fun h => List.mem_of_mem_take h
+    simp only [bodyWires,KaliskiRoundLayout.usedWires,Finset.mem_union,List.mem_toFinset,List.mem_cons,
       List.mem_append,List.mem_nil_iff,hD,hZ]
     simp only [KaliskiRoundLayout.u,KaliskiRoundLayout.v,RoundDataLayout.u,RoundDataLayout.v,
       RoundDataLayout.r,RoundDataLayout.s] at *
     clear hb hr ha hz hc hci hcp hl hdata hzero hD hZ
     tauto
 
-/-- 8w 数据/工作线路、双银行十位计数器及常数个控制位的精确总数。 -/
+/-- 7w 数据/工作线路、双银行十位计数器及常数个控制位的精确总数。 -/
 theorem kaliskiRound_qubits (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     (hw : L.counter.width=10) (hd : 2≤L.data.width) (i : Nat) :
-    qubitCount (kaliskiRound L i)=8*L.data.width+48 ∧
-    qubitCount (kaliskiUnround L i)=8*L.data.width+48 := by
-  have hlen : L.wires.length=8*L.data.width+48 := by
-    have he (bs : List RoundBit) : (bs.flatMap RoundBit.wires).length=8*bs.length := by
+    qubitCount (kaliskiRound L i)=7*L.data.width+48 ∧
+    qubitCount (kaliskiUnround L i)=7*L.data.width+48 := by
+  have hlen : L.usedWires.length=7*L.data.width+48 := by
+    have he (bs : List RoundBit) : (bs.flatMap RoundBit.usedWires).length=7*bs.length := by
       induction bs with
       | nil => simp
-      | cons b bs ih => simp [RoundBit.wires,ih]; omega
-    simp only [KaliskiRoundLayout.wires,List.length_append,List.length_cons,List.length_nil,
-      RoundDataLayout.wires,he,AdderLayout.wires,addWires_length]
+      | cons b bs ih => simp [RoundBit.usedWires,ih]; omega
+    simp only [KaliskiRoundLayout.usedWires,List.length_append,List.length_cons,List.length_nil,
+      RoundDataLayout.usedWires,he,AdderLayout.wires,addWires_length]
     change L.counter.bits.length=10 at hw
     simp only [RoundDataLayout.width]
     omega
   have h := kaliskiRound_wires L hw hd i
-  simp only [qubitCount,h.1,h.2,List.toFinset_card_of_nodup hnd,hlen,and_self]
+  simp only [qubitCount,h.1,h.2,List.toFinset_card_of_nodup (L.usedWires_sublist.nodup hnd),hlen,and_self]
 
 end ECDSAAdd.Arithmetic

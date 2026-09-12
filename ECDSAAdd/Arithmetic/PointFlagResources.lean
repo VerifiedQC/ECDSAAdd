@@ -7,8 +7,8 @@ theorem pointBranchFlags_wires (f ex ey g d : Wire) :
   ext w; simp [pointBranchFlags,wires,Instr.wires]; tauto
 
 theorem pointFlags_counts (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) :
-    (toffoliCount (pointFlagsCompute L cx cy)=1026 ∧ measurementCount (pointFlagsCompute L cx cy)=0) ∧
-    (toffoliCount (pointFlagsClear L cx cy)=1026 ∧ measurementCount (pointFlagsClear L cx cy)=0) := by
+    (toffoliCount (pointFlagsCompute L cx cy)=514 ∧ measurementCount (pointFlagsCompute L cx cy)=512) ∧
+    (toffoliCount (pointFlagsClear L cx cy)=514 ∧ measurementCount (pointFlagsClear L cx cy)=512) := by
   have hx := (zeroPorts_maps L.input.x (L.pool.take 256) (by simp [h.inputX,h.pool])).1
   have hy := (zeroPorts_maps L.input.y (L.pool.take 256) (by simp [h.inputY,h.pool])).1
   have hlx : L.zeroX.length=256 := by simpa [PointAddLayout.zeroX,h.inputX] using congrArg List.length hx

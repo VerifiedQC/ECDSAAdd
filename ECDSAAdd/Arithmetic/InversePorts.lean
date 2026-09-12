@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.PoolLayout
-import ECDSAAdd.Arithmetic.InverseLayout
+import ECDSAAdd.Arithmetic.InverseResources
 
 namespace ECDSAAdd.Arithmetic
 
@@ -121,6 +121,67 @@ theorem poolInverse_work_perm (w : Nat → Wire) (x out : List Wire) (ho : out.l
   have hc := ht.count_eq v
   simp only [List.count_append] at hc
   omega
+
+/-- 保留原池编号，跳过每个八线银行中的旧out位置10+8i。 -/
+def poolInverseUsedWork (w : Nat → Wire) : List Wire :=
+  wireBlock w 0 5 ++
+    (List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires) ++
+    wireBlock w 2061 3638
+
+theorem poolInverseUsedWork_length (w : Nat → Wire) : (poolInverseUsedWork w).length=5442 := by
+  have hl (bs : List Nat) : (bs.flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires)).length=7*bs.length := by
+    induction bs with
+    | nil => rfl
+    | cons i bs ih =>
+      rw [List.flatMap_cons,List.length_append,ih]
+      change 7+7*bs.length=7*(bs.length+1)
+      omega
+  simp [poolInverseUsedWork,hl,wireBlock_length]
+
+theorem poolInverse_used_perm (w : Nat → Wire) (x out : List Wire) :
+    (poolInverse w x out).usedWires.Perm (x++out++poolInverseUsedWork w) := by
+  have hd : (poolFirstRound w).data.bits=
+      (List.range 257).map (fun i => poolRoundBit w (5+8*i)) := by
+    rw [show (257:Nat)=256+1 from rfl,List.range_succ]
+    simp [poolFirstRound,KaliskiRoundLayout.data]
+  have hc : (poolFirstRound w).counter.wires=wireBlock w 2061 41 := by
+    have hb : (poolFirstRound w).counter.bits=
+        (List.range 10).map (fun i => poolAddBit w (2062+4*i)) := by
+      rw [show (10:Nat)=9+1 from rfl,List.range_succ]
+      simp [poolFirstRound,KaliskiRoundLayout.counter]
+    rw [AdderLayout.wires,hb,addWires_flatMap,List.flatMap_map]
+    simp only [poolAddBit_wires]
+    rw [wireBlock_flatMap]
+    change w 2061::wireBlock w (2061+1) 40=_
+    rw [← wireBlock_append w 2061 1 40]
+    rfl
+  have hr : ((poolInverse w x out).inner.records.flatMap RoundRecord.wires)=
+      wireBlock w 2102 1024 := by
+    simp only [poolInverse,List.flatMap_map,RoundRecord.wires]
+    change ((List.range 512).flatMap (fun i => wireBlock w (2102+2*i) 2))=_
+    exact wireBlock_flatMap _ _ _ _
+  have hj : wireBlock w 2061 41++wireBlock w 2102 1024++wireBlock w 3126 2058++
+      wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 5698 1=wireBlock w 2061 3638 := by
+    rw [wireBlock_append w 2061 41 1024,wireBlock_append w 2061 1065 2058,
+      wireBlock_append w 2061 3123 257,wireBlock_append w 2061 3380 257,
+      wireBlock_append w 2061 3637 1]
+  rw [InverseLayout.usedWires,InverseLoopLayout.usedWires,InverseLoopLayout.usedCoreWires,
+    KaliskiRoundLayout.usedTapeWires,hr]
+  change (x++(wireBlock w 2102 1024++(poolFirstRound w).usedSharedWires++
+    (wireBlock w 5184 257++wireBlock w 5441 257++(poolMod w 3126 256).wires)++
+    (out++[w 5698]))).Perm _
+  rw [KaliskiRoundLayout.usedSharedWires,RoundDataLayout.usedWires,hd,hc,
+    List.flatMap_map,poolMod_wires]
+  simp only [List.append_assoc,List.cons_append,List.nil_append]
+  change (x++(wireBlock w 2102 1024++(wireBlock w 0 5++
+    ((List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires)++
+    (wireBlock w 2061 41++(wireBlock w 5184 257++(wireBlock w 5441 257++
+    (wireBlock w 3126 2058++(out++wireBlock w 5698 1))))))))).Perm _
+  rw [poolInverseUsedWork,← hj]
+  apply List.perm_iff_count.mpr
+  intro v
+  simp only [List.count_append]
+  ac_rfl
 
 theorem poolInverse_nodup (w : Nat → Wire) (x out : List Wire) (ho : out.length=256)
     (h : (x++out++wireBlock w 0 5699).Nodup) : (poolInverse w x out).wires.Nodup := by

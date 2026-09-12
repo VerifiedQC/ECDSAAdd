@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.RoundLayout
+import ECDSAAdd.Arithmetic.InPlaceAdder
 
 namespace ECDSAAdd.Arithmetic
 
@@ -6,10 +7,12 @@ namespace ECDSAAdd.Arithmetic
 def RoundFrame (L : RoundDataLayout) (v : RoundField → Nat) (base : BasisState)
     (st : BasisState) : Prop := RoundValues L v st ∧ ∀ w, w∉L.wires → st w=base w
 
-/-- 加减后以无控制交换把结果放回固定目标，借用 out 恢复为零。 -/
+/-- 复用原地受控加减，y和低位进位链清零，out不再被触及。 -/
 def inplaceArithmetic (L : RoundDataLayout) (f g : RoundField) (c : Wire) (negative : Bool) : Program :=
-  (if negative then maskedSub (L.adder f) (L.reg g) c else maskedAdd (L.adder f) (L.reg g) c) ++
-  exchangeRegisters (L.reg f) (L.reg .out)
+  if negative then
+    maskedSubInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
+  else
+    maskedAddInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin
 
 namespace RoundFrame
 
@@ -89,108 +92,80 @@ theorem swap (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
   · intro s m _
     exact (swapRegisters_correct c (L.reg f) (L.reg g) hlen hr s m).2.1
 
-theorem exchange (L : RoundDataLayout) (hnd : L.wires.Nodup)
-    (v : RoundField → Nat) (base : BasisState) (f g : RoundField) (hne : f≠g) :
-    Triple (RoundFrame L v base) (exchangeRegisters (L.reg f) (L.reg g))
-      (RoundFrame L (Function.update (Function.update v f (v g)) g (v f)) base) := by
-  have hr : (L.reg f++L.reg g).Nodup := List.nodup_append'.mpr
-    ⟨L.reg_nodup hnd f,L.reg_nodup hnd g,L.reg_disjoint hnd f g hne⟩
-  have hlen : (L.reg f).length=(L.reg g).length := by rw [L.reg_length,L.reg_length]
-  apply lift_two L hnd v base f g _ _ _
-  · intro s m hv
-    exact exchangeRegisters_spec (L.reg f) (L.reg g) hlen hr (v f) (v g) s m ⟨hv.1.1 f,hv.1.1 g⟩
-  · intro s m _ w hf hg
-    apply run_preserves_outside
-    intro hm
-    have he := exchangeRegisters_wires (L.reg f) (L.reg g) hlen hm
-    simp [hf,hg] at he
-
-/-- 编译期选择加或减；运行时的控制仅用于来源复制。旧目标归零、结果写入共用 out。 -/
-theorem masked (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
-    (hpos : 0<L.width) (v : RoundField → Nat) (base : BasisState)
-    (f g : RoundField) (hf : RoundDataLayout.DataField f) (hg : RoundDataLayout.DataField g) (hne : f≠g)
-    (hy : v .y=0) (ho : v .out=0) (hcarry : v .carry=0) (negative : Bool) :
-    let R := if negative then (v f+2^L.width-(if base c then v g else 0))%2^L.width
-      else (v f+(if base c then v g else 0))%2^L.width
-    Triple (RoundFrame L v base)
-      (if negative then maskedSub (L.adder f) (L.reg g) c else maskedAdd (L.adder f) (L.reg g) c)
-      (RoundFrame L (Function.update (Function.update v f 0) .out R) base) := by
-  dsimp only
-  let A := L.adder f
-  obtain ⟨ax,ay,ao,ac,ai,aw⟩ := L.adder_fields f
-  change A.x=L.reg f at ax
-  change A.y=L.reg .y at ay
-  change A.out=L.reg .out at ao
-  change A.carry=L.reg .carry at ac
-  change A.cin=L.cin at ai
-  change A.width=L.width at aw
-  have hh := List.nodup_cons.mp hnd
-  have hn : (c::(L.reg g++A.wires)).Nodup := List.nodup_cons.mpr
-    ⟨fun hm => hh.1 (List.count_pos_iff.mp ((List.count_pos_iff.mpr hm).trans_le
-        (L.source_adder_count f g hf hg hne c))),L.source_adder_nodup hh.2 f g hf hg hne⟩
-  have hlen : (L.reg g).length=A.width := by rw [L.reg_length,aw]
-  let R := if negative then (v f+2^L.width-(if base c then v g else 0))%2^L.width
-      else (v f+(if base c then v g else 0))%2^L.width
-  let p := if negative then maskedSub A (L.reg g) c else maskedAdd A (L.reg g) c
-  have hs : {{ L.reg g=v g, c=base c, L.reg f=v f, L.reg .y=0, L.cin=false,
-      L.reg .out=0, L.reg .carry=0 }} p
-      {{ L.reg g=v g, c=base c, L.reg f=0, L.reg .y=0, L.cin=false,
-        L.reg .out=R, L.reg .carry=0 }} := by
-    cases negative
-    · simpa only [p,R,Bool.false_eq_true,if_false,ax,ay,ao,ac,ai,aw] using
-        maskedAdd_spec A (L.reg g) c hn hlen (v g) (v f) (base c)
-    · simpa only [p,R,if_true,ax,ay,ao,ac,ai,aw] using
-        maskedSub_spec A (L.reg g) c hn hlen (v g) (v f) (base c)
-  have hw : wires p=(c::(L.reg g++A.wires)).toFinset := by
-    have h := maskedAdder_wires A (L.reg g) c hlen (by simpa only [aw] using hpos)
-    cases negative
-    · exact h.1
-    · exact h.2
-  apply lift_two L hh.2 v base f .out 0 R p
-  · intro s m hv
-    obtain ⟨hp,h⟩ := hs s m ⟨⟨⟨⟨⟨⟨hv.1.1 g,hv.2 c hh.1⟩,hv.1.1 f⟩,
-      (hv.1.1 .y).trans hy⟩,hv.1.2⟩,(hv.1.1 .out).trans ho⟩,(hv.1.1 .carry).trans hcarry⟩
-    exact ⟨hp,h.1.1.1.1.2,h.1.2⟩
-  · intro s m hv
-    obtain ⟨_,h⟩ := hs s m ⟨⟨⟨⟨⟨⟨hv.1.1 g,hv.2 c hh.1⟩,hv.1.1 f⟩,
-      (hv.1.1 .y).trans hy⟩,hv.1.2⟩,(hv.1.1 .out).trans ho⟩,(hv.1.1 .carry).trans hcarry⟩
-    have he : ∀ w, w∉c::(L.reg g++A.wires) → (run p m s).basis w=s.basis w := by
-      intro w hn
-      apply run_preserves_outside
-      rw [hw]
-      exact fun hm => hn (List.mem_toFinset.mp hm)
-    have hframe := A.masked_frame (L.reg g) c s.basis _
-      (h.1.1.1.1.1.1.trans (hv.1.1 g).symm)
-      (h.1.1.1.1.1.2.trans (hv.2 c hh.1).symm)
-      (by simpa only [ay] using h.1.1.1.2.trans ((hv.1.1 .y).trans hy).symm)
-      (by simpa only [ai] using h.1.1.2.trans hv.1.2.symm)
-      (by simpa only [ac] using h.2.trans ((hv.1.1 .carry).trans hcarry).symm) he
-    simpa only [ax,ao] using hframe
-
 theorem inplace (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
     (hpos : 0<L.width) (v : RoundField → Nat) (base : BasisState)
     (f g : RoundField) (hf : RoundDataLayout.DataField f) (hg : RoundDataLayout.DataField g) (hne : f≠g)
-    (hy : v .y=0) (ho : v .out=0) (hcarry : v .carry=0) (negative : Bool) :
+    (hy : v .y=0) (hcarry : v .carry=0) (negative : Bool) :
     let R := if negative then (v f+2^L.width-(if base c then v g else 0))%2^L.width
       else (v f+(if base c then v g else 0))%2^L.width
     Triple (RoundFrame L v base) (inplaceArithmetic L f g c negative)
       (RoundFrame L (Function.update v f R) base) := by
   dsimp only
-  let R := if negative then (v f+2^L.width-(if base c then v g else 0))%2^L.width
-      else (v f+(if base c then v g else 0))%2^L.width
-  let v1 := Function.update (Function.update v f 0) .out R
-  have hfo : f≠.out := by rcases hf with rfl | rfl | rfl | rfl <;> decide
-  have h1 := masked L c hnd hpos v base f g hf hg hne hy ho hcarry negative
-  have h2 := exchange L (List.nodup_cons.mp hnd).2 v1 base f .out hfo
-  have he : Function.update (Function.update v1 f (v1 .out)) .out (v1 f) = Function.update v f R := by
-    funext k
-    by_cases hkf : k=f
-    · subst k; simp [v1,hfo]
-    by_cases hko : k=.out
-    · subst k; simp [v1,hfo,hkf,ho]
-    · simp [v1,hkf,hko]
-  have hh := h1.seq h2
-  simpa only [inplaceArithmetic, he] using hh
+  let chain := (L.reg .carry).take (L.width-1)
+  let p := inplaceArithmetic L f g c negative
+  have hh := List.nodup_cons.mp hnd
+  have hs : (L.reg g).length=(L.reg .y).length := by simp [L.reg_length]
+  have ht : (L.reg .y).length=(L.reg f).length := by simp [L.reg_length]
+  have hc : chain.length+1=(L.reg f).length := by simp [chain,L.reg_length]; omega
+  have hn : (c::L.cin::(L.reg g++L.reg .y++L.reg f++chain)).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro w
+    have h1 := L.source_adder_count f g hf hg hne w
+    have h2 := (L.adder f).interface_perm.count_eq w
+    have h3 := List.nodup_iff_count.mp hnd w
+    have h4 := (List.take_sublist (L.width-1) (L.reg .carry)).count_le w
+    simp only [List.count_append,List.count_cons,
+      (L.adder_fields f).1,(L.adder_fields f).2.1,(L.adder_fields f).2.2.1,
+      (L.adder_fields f).2.2.2.1,(L.adder_fields f).2.2.2.2.1] at h1 h2 h3 ⊢
+    dsimp only [chain] at *
+    omega
+  have hw := maskedInPlace_wires_subset c (L.reg g) (L.reg .y) (L.reg f) chain L.cin hs ht hc
+  intro s m hv
+  have hz : regValue chain s.basis=0 := by
+    apply (regValue_zero _ _).mpr
+    intro w hm
+    exact (regValue_zero _ _).mp ((hv.1.1 .carry).trans hcarry) w (List.mem_of_mem_take hm)
+  have hpost :
+      (run p m s).phase=s.phase ∧
+      (run p m s).basis c=base c ∧
+      regValue (L.reg g) (run p m s).basis=v g ∧
+      regValue (L.reg .y) (run p m s).basis=0 ∧
+      regValue (L.reg f) (run p m s).basis=
+        (if negative then (v f+2^L.width-(if base c then v g else 0))%2^L.width
+        else (v f+(if base c then v g else 0))%2^L.width) ∧
+      (run p m s).basis L.cin=false ∧ regValue chain (run p m s).basis=0 := by
+    have hp : ((((s.basis c=base c ∧ regValue (L.reg g) s.basis=v g) ∧
+        regValue (L.reg .y) s.basis=0) ∧ regValue (L.reg f) s.basis=v f) ∧
+        s.basis L.cin=false) ∧ regValue chain s.basis=0 := ⟨⟨⟨⟨⟨hv.2 c hh.1,hv.1.1 g⟩,(hv.1.1 .y).trans hy⟩,hv.1.1 f⟩,hv.1.2⟩,hz⟩
+    cases negative
+    · obtain ⟨ha,hb⟩ := maskedAddInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
+        hn hs ht hc (base c) (v g) (v f) s m hp
+      simp only [Holds.holds,L.reg_length] at hb
+      simpa only [p,inplaceArithmetic,Bool.false_eq_true,if_false,L.reg_length] using
+        ⟨ha,hb.1.1.1.1.1,hb.1.1.1.1.2,hb.1.1.1.2,hb.1.1.2,hb.1.2,hb.2⟩
+    · obtain ⟨ha,hb⟩ := maskedSubInPlace_spec c L.cin (L.reg g) (L.reg .y) (L.reg f) chain
+        hn hs ht hc (base c) (v g) (v f) s m hp
+      simp only [Holds.holds,L.reg_length] at hb
+      simpa only [p,inplaceArithmetic,if_true,L.reg_length] using
+        ⟨ha,hb.1.1.1.1.1,hb.1.1.1.1.2,hb.1.1.1.2,hb.1.1.2,hb.1.2,hb.2⟩
+  obtain ⟨hp,hc',hg',hy',hf',hcin',hchain'⟩ := hpost
+  have he (w : Wire) (hf : w∉L.reg f) : (run p m s).basis w=s.basis w := by
+    by_cases hm : w∈(c::L.cin::(L.reg g++L.reg .y++L.reg f++chain))
+    · simp only [List.mem_cons,List.mem_append] at hm
+      rcases hm with rfl | rfl | ((hm | hm) | hm) | hm
+      · exact hc'.trans (hv.2 w hh.1).symm
+      · exact hcin'.trans hv.1.2.symm
+      · exact (regValue_eq_iff _ _ _).mp (hg'.trans (hv.1.1 g).symm) w hm
+      · exact (regValue_eq_iff _ _ _).mp (hy'.trans ((hv.1.1 .y).trans hy).symm) w hm
+      · exact False.elim (hf hm)
+      · exact (regValue_eq_iff _ _ _).mp (hchain'.trans hz.symm) w hm
+    · apply run_preserves_outside
+      intro hw'
+      have hsub : wires p ⊆ (c::L.cin::(L.reg g++L.reg .y++L.reg f++chain)).toFinset := by
+        cases negative <;> simp only [p,inplaceArithmetic,Bool.false_eq_true,if_false,if_true] <;> tauto
+      exact hm (List.mem_toFinset.mp (hsub hw'))
+  exact ⟨hp,RoundValues.update L hh.2 v f _ s.basis _ hv.1 he hf',
+    fun w hw => (he w (fun hm => hw (L.reg_mem f hm))).trans (hv.2 w hw)⟩
 
 theorem copy (L : RoundDataLayout) (hnd : L.wires.Nodup) (v : RoundField → Nat)
     (base : BasisState) (f g : RoundField) (hne : f≠g) :

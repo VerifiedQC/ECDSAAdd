@@ -580,6 +580,40 @@ theorem maskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
   simpa only [maskedSubInPlace, List.append_assoc] using h1.seq (h2.seq h3)
 
 
+/-- 两次受控复制与一次原地加减的字面门数。 -/
+theorem maskedInPlace_counts (c : Wire) (src t y carry : List Wire) (cin : Wire)
+    (hs : src.length = t.length) (ht : t.length = y.length)
+    (hc : carry.length + 1 = y.length) :
+    (toffoliCount (maskedAddInPlace c src t y carry cin) = 3*y.length-1 ∧
+      measurementCount (maskedAddInPlace c src t y carry cin) = y.length-1) ∧
+    (toffoliCount (maskedSubInPlace c src t y carry cin) = 3*y.length-1 ∧
+      measurementCount (maskedSubInPlace c src t y carry cin) = y.length-1) := by
+  have cp := copyRegister_counts (some c) src t hs
+  have ap := addInPlace_counts t y carry cin ht hc
+  have sp := subInPlace_counts t y carry cin ht hc
+  simp only [maskedAddInPlace,maskedSubInPlace,toffoliCount_append,measurementCount_append,
+    cp.1,cp.2,ap.1,ap.2,sp.1,sp.2,Option.isSome_some,if_true]
+  omega
+
+/-- 非空目标保证受控复制确实触及控制位；支持不包含任何额外out寄存器。 -/
+theorem maskedInPlace_wires (c : Wire) (src t y carry : List Wire) (cin : Wire)
+    (hs : src.length = t.length) (ht : t.length = y.length)
+    (hc : carry.length + 1 = y.length) :
+    wires (maskedAddInPlace c src t y carry cin) = (c::cin::(src++t++y++carry)).toFinset ∧
+    wires (maskedSubInPlace c src t y carry cin) = (c::cin::(src++t++y++carry)).toFinset := by
+  have hn : src ≠ [] := by intro h; simp [h] at hs; omega
+  have cp := copyRegister_wires (some c) src t hs
+  simp only [List.isEmpty_iff,hn,if_false,Option.toList_some,List.cons_append,List.nil_append] at cp
+  constructor
+  · rw [maskedAddInPlace,wires_append,wires_append,cp,addInPlace_wires t y carry cin ht hc]
+    ext w
+    simp only [Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append]
+    tauto
+  · rw [maskedSubInPlace,wires_append,wires_append,cp,subInPlace_wires t y carry cin ht hc]
+    ext w
+    simp only [Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append]
+    tauto
+
 /-- 受控加减只触及控制位、cin、常数字/临时字、目标与进位链。 -/
 theorem maskedConst_wires_subset (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat)
     (hT : T.length = y.length) (hc : carry.length + 1 = y.length) :

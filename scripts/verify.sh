@@ -59,6 +59,13 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.maskedSubConst_spec
 #print axioms ECDSAAdd.Arithmetic.maskedAddInPlace_spec
 #print axioms ECDSAAdd.Arithmetic.maskedSubInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.zeroControlled_correct
+#print axioms ECDSAAdd.Arithmetic.zeroControlled_spec
+#print axioms ECDSAAdd.Arithmetic.zeroControlled_resources
+#print axioms ECDSAAdd.Arithmetic.maskedInPlace_counts
+#print axioms ECDSAAdd.Arithmetic.maskedInPlace_wires
+#print axioms ECDSAAdd.Arithmetic.poolInverse_used_perm
+#print axioms ECDSAAdd.Arithmetic.poolInverseUsedWork_length
 #print axioms ECDSAAdd.Arithmetic.compareLt_spec
 #print axioms ECDSAAdd.Arithmetic.maskedCompareLt_spec
 #print axioms ECDSAAdd.Arithmetic.compareLtConst_spec

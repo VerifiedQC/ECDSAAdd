@@ -74,7 +74,7 @@ theorem fieldInverse_xor_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.
   have hc' := hc.frame (R:=fun st => regValue L.x st=X) (by
     intro s t he hx
     exact (regValue_congr _ _ _ (fun w hw' => (he w (by
-      rw [hwire]; exact fun hh => List.disjoint_left.mp hdis hw' (List.mem_toFinset.mp hh))).symm)).trans hx)
+      rw [hwire]; exact fun hh => List.disjoint_left.mp hdis hw' (L.inner.usedWires_sublist.subset (List.mem_toFinset.mp hh)))).symm)).trans hx)
   intro st m hpre
   have hO : O<2^256 := by
     have h := regValue_lt L.out st.basis

@@ -48,18 +48,29 @@ theorem poolMul_support (L : PointAddLayout) (h : L.Widths) (x y out : List Wire
   have hp := h.pool
   rw [hX,hY,hO,poolMul_work,L.pool_prefix h 69908 (by decide),List.take_of_length_le (by omega : L.pool.length≤69908)]
 
-theorem poolInverse_support (L : PointAddLayout) (h : L.Widths) (x out : List Wire)
+theorem poolInverse_support (L : PointAddLayout) (x out : List Wire)
     (hx : x.length=256) (ho : out.length=256) :
-    wires (fieldInverse (poolInverse L.poolWire x out))=(x++out++L.pool.take 5699).toFinset := by
+    wires (fieldInverse (poolInverse L.poolWire x out))=
+      (x++out++poolInverseUsedWork L.poolWire).toFinset := by
   rw [fieldInverse_wires _ (poolInverse_widths _ _ _ hx ho)]
-  change ((poolInverse L.poolWire x out).x++(poolInverse L.poolWire x out).out++
-    (poolInverse L.poolWire x out).work).toFinset=_
-  obtain ⟨hX,hO⟩ := poolInverse_inputs L.poolWire x out ho
-  rw [hX,hO]
-  have hp := poolInverse_work_perm L.poolWire x out ho
-  rw [List.toFinset_append,List.toFinset_append,List.toFinset_eq_of_perm _ _ hp,
-    L.pool_prefix h 5699 (by decide)]
-  simp
+  exact List.toFinset_eq_of_perm _ _ (poolInverse_used_perm L.poolWire x out)
+
+theorem poolInverse_support_subset (L : PointAddLayout) (h : L.Widths) (x out : List Wire)
+    (hx : x.length=256) (ho : out.length=256) :
+    wires (fieldInverse (poolInverse L.poolWire x out)) ⊆ (x++out++L.pool.take 5699).toFinset := by
+  rw [fieldInverse_wires _ (poolInverse_widths _ _ _ hx ho)]
+  have hs := (poolInverse L.poolWire x out).usedWires_subset
+  have hp : (poolInverse L.poolWire x out).wires.toFinset=(x++out++L.pool.take 5699).toFinset := by
+    change ((poolInverse L.poolWire x out).x++(poolInverse L.poolWire x out).out++
+      (poolInverse L.poolWire x out).work).toFinset=_
+    obtain ⟨hX,hO⟩ := poolInverse_inputs L.poolWire x out ho
+    rw [hX,hO]
+    have ht := poolInverse_work_perm L.poolWire x out ho
+    rw [List.toFinset_append,List.toFinset_append,List.toFinset_eq_of_perm _ _ ht,
+      L.pool_prefix h 5699 (by decide)]
+    simp
+  rw [← hp]
+  exact fun _ hm => List.mem_toFinset.mpr (hs (List.mem_toFinset.mp hm))
 
 
 theorem pointSubConstant_support (L : PointAddLayout) (h : L.Widths)
@@ -131,13 +142,21 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
   have cSlope := poolMul_support L h _ _ _ hdy h.inverse hslope
   have cProduct := poolMul_support L h L.delta (L.slope.take 256) L.product hdelta (by simp [hslope]) hproduct
   have cSquare := pointSquare_support L h
-  have cInverse := poolInverse_support L h _ _ h.divisor h.inverse
+  have cInverse := poolInverse_support_subset L h _ _ h.divisor h.inverse
   simp only [pointCandidateCompute,pointCandidateClear,wires_append,cDx,cDy,cX,
-    cOffset,cDelta,cY,cSlope,cProduct,cSquare,cInverse,hsafe]
+    cOffset,cDelta,cY,cSlope,cProduct,cSquare,hsafe]
   constructor <;> ext w
   all_goals
     have hp1 : w∈L.pool.take 1287 → w∈L.pool := List.mem_of_mem_take
-    have hp2 : w∈L.pool.take 5699 → w∈L.pool := List.mem_of_mem_take
+    have hp2 : w∈wires (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) →
+        w∈L.divisor ∨ w∈L.inverse ∨ w∈L.pool := by
+      intro hm
+      have ht := cInverse hm
+      simp only [List.mem_toFinset,List.mem_append] at ht
+      rcases ht with (hd | hi) | hp
+      · exact Or.inl hd
+      · exact Or.inr (Or.inl hi)
+      · exact Or.inr (Or.inr (List.mem_of_mem_take hp))
     have hs : w∈L.slope.take 256 → w∈L.slope := List.mem_of_mem_take
     have ho : w∈L.offset.take 256 → w∈L.offset := List.mem_of_mem_take
     have hx : w∈L.candidateX.take 256 → w∈L.candidateX := List.mem_of_mem_take
@@ -150,6 +169,7 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
     · intro hm
       repeat' rcases hm with hm | hm
       all_goals simp_all only [true_or,or_true]
+      all_goals obtain h|h|h := hp2 trivial <;> simp_all only [true_or,or_true]
     · intro hm
       repeat' rcases hm with hm | hm
       all_goals simp_all only [true_or,or_true]
