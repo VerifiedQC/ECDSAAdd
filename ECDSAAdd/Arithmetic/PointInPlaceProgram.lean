@@ -15,6 +15,15 @@ def pointInPlaceNegate (L : ControlledPointLayout) : Program :=
   swapRegisters L.core.generic L.point.x L.inPlaceNegate.low ++
   controlledModAdd L.core.generic L.inPlaceNegate p
 
+/-- 从当前x/y重算斜率；零除数例外用编译期常量清除。 -/
+def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program :=
+  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
+  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
+  divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y) ++
+  maskedConstant L.core.equalX L.inPlaceSlope lambdaStar.val ++
+  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
+  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0
+
 /-- §16.3十二步普通分支；λ在未启用分支始终为零，外部乘积无需外部控制。 -/
 def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Program :=
   pointInPlaceConstantAdd L L.point.x (-cx) ++
@@ -28,12 +37,7 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
   copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
   pointInPlaceConstantAdd L L.point.x (3*cx) ++
   mulAdd L.inPlaceMultiply p ++
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
-  divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y) ++
-  maskedConstant L.core.equalX L.inPlaceSlope lambdaStar.val ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
+  pointInPlaceClearSlope L lambdaStar ++
   pointInPlaceNegate L ++
   pointInPlaceConstantAdd L L.point.x cx ++
   pointInPlaceConstantAdd L L.point.y (-cy)
