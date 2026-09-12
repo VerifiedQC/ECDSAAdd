@@ -155,3 +155,5 @@ scripts/verify.sh
 - [来源与复现](docs/PROVENANCE.md)
 
 Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
+
+改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#17-改-6a标准表示的四位窗口-montgomery-设计待复审未实现)：包含标准表示转换与历史清理的 XOR 适配器预算为 539,168 Toffoli / 271,904 测量 / 2,596 根实际线路，尚未实现或证明，不计入 Current status。
