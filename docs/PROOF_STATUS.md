@@ -201,17 +201,17 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 `kaliskiUnround_spec` 以此后置条件为前置条件，恢复全部旧值，清除两位记录与 scratch。两者要求 i<512、十位计数器、I1 的 KInvariant，以及 u/v/p 小于 `2^L.low.length`。I4 去掉了冗余的公开 r 范围参数：正轮从输入寄存器读值导出；逆轮活动时由不变量导出旧 r<p，空转时由输入的新 r 等于旧 r 导出。数据宽度 w 等于低位数加一；这些范围保证比较借位、受控减法和移位有正确整数含义。`KRoundCount i z` 表示 k≤i，且 v≠0 时 k=i，保证计数不回绕，并给出本轮活动当且仅当 i<更新后的 k。
 
-[Math/KaliskiRound](../ECDSAAdd/Math/KaliskiRound.lean) 给四分支编码 `(swap,subtract)`：u 偶为 00、v 偶为 10、都奇且 v<u 为 01、其余为 11；终止后也是 00，是否活动另外由计数关系确定。电路先由原 u/v 的奇偶和 v−u 的借位生成记录，随后立即清除比较差。归一化算术体交换两组数据、按记录减/加、按活动位移位，再交换回来；临时加法输出每次都移回固定目标并清空。
+[Math/KaliskiRound](../ECDSAAdd/Math/KaliskiRound.lean) 给四分支编码 `(swap,subtract)`：u 偶为 00、v 偶为 10、都奇且 v<u 为 01、其余为 11；终止后也是 00，是否活动另外由计数关系确定。电路先由原 u/v 的奇偶和 v−u 的借位生成记录，随后立即清除比较差。归一化算术体交换两组数据、按记录减/加、按活动位移位，再交换回来；加减直接更新目标，掩码在每次调用末尾由测量清空。
 
 正轮先计数，再以“活动且新 v=0”翻转 done，最后比较 i<新 k 清空活动位。逆轮先用相同计数比较装入活动位，恢复旧 done，再恢复数据和计数，最后从恢复的数据重新计算记录并 XOR 清零。比较阈值 i+1 的范围包含第 512 轮边界，计数器按固定次序交换银行，即使空转轮也如此。没有以测量结果选择算术分支，也没有逆序执行带测量的程序；所有 Triple 对任意相位和任意测量记录证明相位恢复。
 
 | 同一程序，数据宽度 w | Toffoli | 测量 | 静态线路（w≥2） |
 | --- | ---: | ---: | ---: |
-| `kaliskiRound L i` | 17w+33 | 5w+30 | 8w+48 |
-| `kaliskiUnround L i` | 17w+33 | 5w+30 | 8w+48 |
-| 两者各自在 w=257 时 | 4402 | 1315 | 2104 |
+| `kaliskiRound L i` | 12w+31 | 6w+28 | 7w+48 |
+| `kaliskiUnround L i` | 12w+31 | 6w+28 | 7w+48 |
+| 两者各自在 w=257 时 | 3115 | 1570 | 1847 |
 
-[RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 w+5 / w（受控比较 w+1，条件计算/清理 4），算术体为 14w−2 / 4w，计数移动为 20 / 20，零检测为 2w / 0，活动比较为 10 / 10。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和四份工作寄存器共 8w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
+[RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 w+5 / w（受控比较 w+1，条件计算/清理 4），算术体为 10w−4 / (4w−2)，计数移动为 20 / 20，零检测为 w / w，活动比较为 10 / 10。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和三份实际使用的工作寄存器共 7w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
 
 实现中的 RoundDataLayout 与字段值表用于同一组工作线的局部组合；RoundAuxValues 专门保留计数与控制位，公开 API 仍直接写寄存器断言。辅助模块分别处理比较、零检测、受控加减、分支记录和算术体，均用于上述两条程序；没有新增通用编译器、测试框架或全环境审计。I4 固定循环/第二阶段见下节；I5 外部输入装载与完整逆元契约见后节；点加电路证明见后面的 M3 章节。
 
@@ -244,14 +244,14 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 | 程序段 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| 第一阶段正向或逆向 N 轮 | N(14w+31) | N(4w+28) |
+| 第一阶段正向或逆向 N 轮 | N(12w+31) | N(6w+28) |
 | 一次规范化取负及临时值清理 | 30w−6 | 24w |
 | 第二阶段正向或逆向 N 轮，含比较装入/清理 | N(3w+20) | N(2w+19) |
-| 完整 `inverseLoop`，含复制后反计算 | 2N(17w+51)+60w−12 | 2N(6w+47)+48w |
+| 完整 `inverseLoop`，含复制后反计算 | 2N(15w+51)+60w−12 | 2N(8w+47)+48w |
 
 第一阶段实际静态支持为 7w+46+2N：包含交替计数银行和全部 2N 根记录线。取负初始化及第二阶段共用 a、temp 两组 w 位寄存器及 8w+2 位模算术区，共 10w+2；减半的常数字和进位链借自其中，不另加线路；比较和计数线路已包含在第一阶段支持中。输出为 w 位，合计 **18w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
 
-[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **4,541,488 Toffoli、1,639,472 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改 1 使用原地第二阶段，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
+[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **4,015,152 Toffoli、2,165,808 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改 1 使用原地第二阶段，没有声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
 
 ## I5：外部输入封装与逆元契约
 
@@ -270,8 +270,8 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 | 同一个 `fieldInverse L` | 精确资源 |
 | --- | --- |
-| Toffoli | 4,541,488 |
-| 测量 | 1,639,472 |
+| Toffoli | 4,015,152 |
+| 测量 | 2,165,808 |
 | 静态线路 | 5,954 |
 
 CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，实际支持改用InverseLayout.usedWires（x加内核usedWires），再以其Nodup计数，得到256+5698=5954。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 4541488 1639472 5954` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
@@ -560,8 +560,8 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 5,687,720 | 2,783,912 |
-| `pointCandidateClear` | 5,687,720 | 2,783,912 |
+| `pointCandidateCompute` | 5,161,384 | 3,310,248 |
+| `pointCandidateClear` | 5,161,384 | 3,310,248 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
@@ -608,10 +608,10 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 11,376,980 | 5,568,848 | 9,780 |
+| C 有限 | 10,324,308 | 6,621,520 | 9,780 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×5,687,720，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×2,783,912 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×5,161,384，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×3,310,248 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
 
 `pointAddOut_support`证明实际支持等于L.usedWires.toFinset。相比布局分配，排除dx/dy/delta/yg四根填充高位和池中29根旧out：dy/delta由模减写低256位，后续Montgomery源也只读低256位；平方副本仍触及slope全字。usedWires_nodup与usedWires_length给出9,780，其中实际池支持5,670。该数来自静态门列并集，不是最大同时存活数。
 
@@ -636,7 +636,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 11,001,338 | 5,193,978 | 6,218 |
+| 有限 C 的 `controlledPointAdd` | 9,948,666 | 6,246,650 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -848,7 +848,7 @@ n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modU
 
 D阶段（改6a前）的`poolMul`使用前1,029位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
 
-D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
+D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×4,015,152 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
 
 删除已无引用的 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个文件，保留求逆/基础层仍使用的 Accumulate 和 ModularXorSteps。公开验证移除三个旧 modMul 入口，增加十个适配器/池支持入口；采用当前源码的实际公理输出，无测试、新公理、native_decide 或证明资源放宽。
 
@@ -891,12 +891,12 @@ D<p, E<p, Z<p, B=true → D≠0
 
 | 同一程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| divideAdd | 4,922,959 | 2,019,919 | 6,210 |
-| divideSub | 4,923,471 | 2,020,431 | 6,210 |
+| divideAdd | 4,396,623 | 2,546,255 | 6,210 |
+| divideSub | 4,397,135 | 2,546,767 | 6,210 |
 
 `divide_wires` 给出控制、三个外部寄存器与inner.usedCoreWires的精确支持等式；后者5441位，合计1+3×256+5441=6210。`divide_qubits` 从该等式及Nodup得出基数，不把未使用的旧输出银行算入实际支持，也不声称最大同时存活数。门数由相同字面门列的原语计数相加，包含两遍受控分母复制。
 
-除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体11,001,338/5,193,978/6218已在本批实现，见下节。
+除法批文件按现有用途分为布局/直接门列、布局互异、装卸、乘积阶段、状态边界、完整规格与frame、计数与支持；该批只新增除法文件，点加本体在后续批接入。原地点加本体及§16总体9,948,666/6,246,650/6218已在本批实现，见下节。
 
 ### 改 3 原地点加本体与公开入口
 
@@ -906,7 +906,7 @@ D<p, E<p, Z<p, B=true → D≠0
 
 平方先复制λ到独立S，执行montMulSub，再清S，最后加3cx；常数加法会复用S区域，故必须采用这个顺序。montQ不读取点x，调整不改变算术与计数。两次除法只借准备后为零的temp/arithmetic；历史在恢复前完整保留。控制false执行同一固定门列，C=O构造为空；不增加R≠±C、cy≠0或C+C≠O前提。
 
-资源定理指向同一有限程序：11,001,338 Toffoli、5,193,978测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
+资源定理指向同一有限程序：9,948,666 Toffoli、6,246,650测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表（历史48/48阶段，改7现已替换）
 
 `Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
@@ -959,7 +959,7 @@ verify.sh删除15个旧入口：mulInto_spec、mulClear_spec、mulInto_frame、m
 收尾批完整scripts/verify.sh退出0：2,133项构建、244条公理输出；上方公理块现更新为改7实际输出，白名单保持。
 
 
-### 改7方案1：14门单迭代查表（当前实现）
+### 改7方案1：14门单迭代查表（改8前阶段资源）
 
 `Lookup.lean`私有lookupWalk递归共享三根scratch：计算正AND、执行正子树、CX切换负AND、执行负子树，以X包夹CZ测量清负AND。无外部控制时a0直接使能两半表，每半7个AND，lookup_counts证明14 Toffoli/14测量。lookup_spec陈述与先前逐字相同，仍允许任意旧目标；lookup_correct/frame覆盖所有测量记录的相位与逐线保持。lookup_core_wires证明地址/scratch必触及，lookup_wires_subset限制其余支持；MontWires重接上下界，所有上层精确支持及线数重证。
 
@@ -983,3 +983,11 @@ MontPrepare的变量窗口已改用measuredMaskedAdd/SubInPlace；MontDigit组�
 五个适配器XOR、加、减、受控加、受控减分别379,424/379,424、380,447/380,447、380,959/380,959、380,959/380,447、381,471/380,959。支持仍2,596或2,597线。完整controlledPointAdd为11,001,338/5,193,978/6,218；相对改7少668,160 Toffoli、多668,160测量。前节改7及原语批数字保留为阶段记录。
 
 本批完整scripts/verify.sh退出0：2134项构建、252条实际公理输出，与上方公理块逐行一致，仅白名单三项；无新增检查入口、测试、公理或证明资源放宽。
+
+## 改10：Kaliski受控加减测量清掩码
+
+RoundFrame.inplaceArithmetic的两个程序分支接入measuredMaskedAdd/SubInPlace；正/恢复轮各调用两次，完整Triple、源与目标外保持和工作区归零条件保持。RoundWires精确支持等式重证，旧原语及Montgomery、第二阶段门列不变。
+
+完整轮12w+31 Toffoli /6w+28测量，w=257为3,115/1,570/1,847。inverseLoop通式1024(15w+51)+60w−12 /1024(8w+47)+48w，实例4,015,152/2,165,808/5,698；fieldInverse同门数与测量、5,954线。两次除法4,396,623/2,546,255和4,397,135/2,546,767；完整点加9,948,666/6,246,650/6,218，所有几何分支与公开规格保持。上述改7/8资源记录是历史阶段值。
+
+本批完整scripts/verify.sh退出0：2134项构建、252条实际公理，上方公理块与本次输出逐行一致。无新增入口、测试、公理或证明资源放宽。
