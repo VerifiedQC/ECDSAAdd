@@ -12,16 +12,16 @@ theorem controlledPointOutput_counts (L : ControlledPointLayout) (h : L.Widths) 
 
 theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAddOut L (.some hc))=26457242 ∧
-    measurementCount (controlledPointAddOut L (.some hc))=15924368 ∧
-    qubitCount (controlledPointAddOut L (.some hc))=74024 := by
+    toffoliCount (controlledPointAddOut L (.some hc))=16173722 ∧
+    measurementCount (controlledPointAddOut L (.some hc))=8792720 ∧
+    qubitCount (controlledPointAddOut L (.some hc))=9718 := by
   have cc := pointCandidate_counts L.core h (L.core_nodup hn) cx cy
   have cf := pointFlags_counts L.core h cx cy
   have co := controlledPointOutput_counts L h (.some hc)
   refine ⟨?_,?_,?_⟩
   · simp only [controlledPointAddOut,toffoliCount_append,cc.1.1,cc.2.1,cf.1.1,cf.2.1,co.1]
   · simp only [controlledPointAddOut,measurementCount_append,cc.1.2,cc.2.2,cf.1.2,cf.2.2,co.2]
-  · rw [qubitCount,controlledPointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.used_nodup hn)]
+  · rw [qubitCount,controlledPointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.used_nodup h hn)]
     simp [ControlledPointLayout.usedWires,ControlledPointLayout.extras,ControlledPointLayout.selectors,L.core.usedWires_length h]
 
 theorem controlledPointSwap_counts (c : Wire) (a b : PointReg)
@@ -62,9 +62,9 @@ theorem controlledPointSwap_subset (L : ControlledPointLayout) (h : L.Widths) :
 /-- 有限常量两次前向受控 XOR 调用与 513 位交换的同程序精确成本。 -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=52914997 ∧
-    measurementCount (controlledPointAdd L (.some hc))=31848736 ∧
-    qubitCount (controlledPointAdd L (.some hc))=74024 := by
+    toffoliCount (controlledPointAdd L (.some hc))=32347957 ∧
+    measurementCount (controlledPointAdd L (.some hc))=17585440 ∧
+    qubitCount (controlledPointAdd L (.some hc))=9718 := by
   have hfirst := controlledPointAddOut_finite_resources L h hn cx cy hc
   have hnext := controlledPointAddOut_finite_resources L h hn _ _ ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hc)
   have snext := controlledPointAddOut_support L h _ _ ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hc)
@@ -77,7 +77,7 @@ theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.W
   · rw [qubitCount,controlledPointAdd,wires_append,wires_append,WeierstrassCurve.Affine.Point.neg_some,
       controlledPointAddOut_support L h cx cy hc,snext,
       Finset.union_eq_left.mpr (controlledPointSwap_subset L h),Finset.union_self,
-      List.toFinset_card_of_nodup (L.used_nodup hn)]
+      List.toFinset_card_of_nodup (L.used_nodup h hn)]
     simp [ControlledPointLayout.usedWires,ControlledPointLayout.extras,ControlledPointLayout.selectors,L.core.usedWires_length h]
 
 /-- C=O 在构造期为空程序，故实际门数、测量和线路集合均为空。 -/

@@ -44,7 +44,7 @@ def work (L : PointAddLayout) : List Wire :=
 def wires (L : PointAddLayout) : List Wire :=
   pointWires L.input++pointWires L.output++L.work
 
-/-- 宽度是公开布局条件；工作池按现有模乘模块的实际工作线数分配。 -/
+/-- 宽度是公开布局条件；工作池按求逆的现有分配前缀分配。 -/
 structure Widths (L : PointAddLayout) : Prop where
   inputX : L.input.x.length=256
   inputY : L.input.y.length=256
@@ -53,9 +53,9 @@ structure Widths (L : PointAddLayout) : Prop where
   words : ∀ r∈L.words,r.length=257
   divisor : L.divisor.length=256
   inverse : L.inverse.length=256
-  pool : L.pool.length=69908
+  pool : L.pool.length=5699
 
-theorem allocated_length (L : PointAddLayout) (h : L.Widths) : L.wires.length=74022 := by
+theorem allocated_length (L : PointAddLayout) (h : L.Widths) : L.wires.length=9813 := by
   have hw : L.words.flatten.length=257*L.words.length := by
     have aux : ∀ rs : List (List Wire), (∀ r∈rs,r.length=257) →
         rs.flatten.length=257*rs.length := by

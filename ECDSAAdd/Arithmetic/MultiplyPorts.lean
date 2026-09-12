@@ -1,44 +1,40 @@
 import ECDSAAdd.Arithmetic.PoolLayout
-import ECDSAAdd.Arithmetic.MultiplyLayout
+import ECDSAAdd.Arithmetic.MulAdapterResources
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 模乘直接连接三个接口；两份模算术布局和 256 个倍数寄存器共享池的前 69908 位。 -/
-def poolMul (w : Nat → Wire) (x y out : List Wire) : MulLayout :=
-  ⟨x,out,(List.range 256).map (fun i => ⟨y.getD i 0,wireBlock w (4116+257*i) 257⟩),
-    poolMod w 0 256,poolMod w 2058 256⟩
+/-- 临时积与 scratch 共享池前 1029 位；三个公开接口直接接线。 -/
+def poolMul (w : Nat → Wire) (x y out : List Wire) : MulAdapterLayout :=
+  ⟨x,y,out,⟨wireBlock w 0 256,w 256,wireBlock w 257 257,
+    wireBlock w 514 256,w 770,wireBlock w 771 257,w 1028⟩⟩
 
-theorem poolMul_inputs (w : Nat → Wire) (x y out : List Wire) (hy : y.length=256) :
-    (poolMul w x y out).x=x ∧ (poolMul w x y out).y=y ∧ (poolMul w x y out).out=out := by
-  refine ⟨rfl,?_,rfl⟩
-  simp only [poolMul,MulLayout.y,List.map_map]
-  apply List.ext_getElem
-  · simp [hy]
-  · intro i hi hj
-    simp [List.getElem_map,List.getElem_range,List.getD, List.getElem?_eq_getElem hj]
+theorem poolMul_inputs (w : Nat → Wire) (x y out : List Wire) :
+    (poolMul w x y out).x=x ∧ (poolMul w x y out).y=y ∧ (poolMul w x y out).out=out :=
+  ⟨rfl,rfl,rfl⟩
+
+theorem poolMul_width (w : Nat → Wire) (x y out : List Wire) : (poolMul w x y out).width=256 := by
+  simp [poolMul,MulAdapterLayout.width,wireBlock_length]
 
 theorem poolMul_work (w : Nat → Wire) (x y out : List Wire) :
-    (poolMul w x y out).work=wireBlock w 0 69908 := by
-  simp only [poolMul,MulLayout.work,poolMod_wires,List.flatMap_map]
-  change wireBlock w 0 2058++wireBlock w 2058 2058++
-    (List.range 256).flatMap (fun i => wireBlock w (4116+257*i) 257)=_
-  rw [wireBlock_flatMap]
-  rw [show (2058:Nat)=0+2058 from rfl,wireBlock_append]
-  rw [show (4116:Nat)=0+(2058+2058) from rfl,wireBlock_append]
+    (poolMul w x y out).work=wireBlock w 0 1029 := by
+  change (wireBlock w 0 256++[w 256])++
+    ((wireBlock w 257 257++wireBlock w 514 256++[w 770])++wireBlock w 771 257++[w 1028])=_
+  have h256 : [w 256]=wireBlock w 256 1 := by simp [wireBlock,List.range']
+  have h770 : [w 770]=wireBlock w 770 1 := by simp [wireBlock,List.range']
+  have h1028 : [w 1028]=wireBlock w 1028 1 := by simp [wireBlock,List.range']
+  rw [h256,h770,h1028,wireBlock_append w 0 256 1,wireBlock_append w 257 257 256,
+    wireBlock_append w 257 513 1,wireBlock_append w 257 514 257,wireBlock_append w 257 771 1,
+    wireBlock_append w 0 257 772]
 
 theorem poolMul_widths (w : Nat → Wire) (x y out : List Wire)
-    (hx : x.length=257) (ho : out.length=257) : (poolMul w x y out).Widths := by
-  simp only [MulLayout.Widths,MulLayout.width,poolMul,poolMod_width]
-  refine ⟨True.intro,hx,ho,by simp,?_⟩
-  intro b hb
-  obtain ⟨i,hi,rfl⟩ := List.mem_map.mp hb
-  exact wireBlock_length _ _ _
+    (hx : x.length=257) (hy : y.length=256) (ho : out.length=257) : (poolMul w x y out).Widths := by
+  refine ⟨⟨?_,?_,?_,?_,?_,?_⟩,?_⟩
+  all_goals simp [poolMul,MulAdapterLayout.core,MulAdapterLayout.width,wireBlock_length,hx,hy,ho]
 
-theorem poolMul_nodup (w : Nat → Wire) (x y out : List Wire) (hy : y.length=256)
-    (h : (x++y++out++wireBlock w 0 69908).Nodup) : (poolMul w x y out).wires.Nodup := by
-  apply (MulLayout.interface_perm _).nodup_iff.mp
-  rw [(poolMul_inputs w x y out hy).1,(poolMul_inputs w x y out hy).2.1,
-    (poolMul_inputs w x y out hy).2.2,poolMul_work]
+theorem poolMul_nodup (w : Nat → Wire) (x y out : List Wire)
+    (h : (x++y++out++wireBlock w 0 1029).Nodup) : (poolMul w x y out).wires.Nodup := by
+  change (x++y++out++(poolMul w x y out).work).Nodup
+  rw [poolMul_work]
   exact h
 
 end ECDSAAdd.Arithmetic

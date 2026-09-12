@@ -8,11 +8,11 @@ open Secp256k1
 /-- 有限常量分支实际触及的线路；dx/yg 的填充最高位不列入。 -/
 def PointAddLayout.usedWires (L : PointAddLayout) : List Wire := L.candidateUsed++L.boundaryWires
 
-theorem PointAddLayout.usedWires_nodup (L : PointAddLayout) (hn : L.wires.Nodup) :
-    L.usedWires.Nodup := L.candidate_boundary_nodup hn
+theorem PointAddLayout.usedWires_nodup (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup) :
+    L.usedWires.Nodup := L.candidate_boundary_nodup h hn
 
 theorem PointAddLayout.usedWires_length (L : PointAddLayout) (h : L.Widths) :
-    L.usedWires.length=74020 := by
+    L.usedWires.length=9714 := by
   have hd := h.words L.dx (by simp [PointAddLayout.words])
   have hy := h.words L.candidateY (by simp [PointAddLayout.words])
   have hdy := h.words L.dy (by simp [PointAddLayout.words])
@@ -24,7 +24,7 @@ theorem PointAddLayout.usedWires_length (L : PointAddLayout) (h : L.Widths) :
   have hp := h.words L.product (by simp [PointAddLayout.words])
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   simp [usedWires,candidateUsed,boundaryWires,extendedX,extendedY,pointWires,hd,hy,hdy,hs,hsq,ho,hx,hdel,hp,hk,
-    h.inputX,h.inputY,h.outputX,h.outputY,h.divisor,h.inverse,h.pool]
+    h.inputX,h.inputY,h.outputX,h.outputY,h.divisor,h.inverse,candidatePool_length]
 
 theorem pointAddOut_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp)
     (hc : curve.toAffine.Nonsingular cx cy) :
@@ -32,7 +32,7 @@ theorem pointAddOut_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp)
   have hflags : (L.input.finite::L.input.x++L.input.y++L.flags++L.pool.take 256).toFinset ⊆
       L.usedWires.toFinset := by
     intro w hw
-    have hp : w∈L.pool.take 256 → w∈L.pool := List.mem_of_mem_take
+    have hp : w∈L.pool.take 256 → w∈candidatePool L.poolWire := L.pool_prefix_used h 256 (by omega) w
     simp only [PointAddLayout.usedWires,PointAddLayout.candidateUsed,PointAddLayout.boundaryWires,
       PointAddLayout.extendedX,PointAddLayout.extendedY,PointAddLayout.flags,
       List.mem_toFinset,List.mem_cons,List.mem_append,List.not_mem_nil,or_false] at hw ⊢

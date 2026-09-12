@@ -95,38 +95,29 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 
 [ModularResources](../ECDSAAdd/Arithmetic/ModularResources.lean) 对完整程序证明计数和线路集合等式，实际支持集 `L.activeWires` 排除不施门的 `out_high`（布局本身仍要求其互异）。5n+4 = 4(n+1) 次算术 Toffoli + n 次选择 Toffoli；常量零位不施门，资源计算没有通过额外虚门填充。线路数是程序静态支持集的基数，不是最大同时存活数，也未声称资源最优。
 
-## M2：保留输入的模乘
+## M2：保留输入的模乘（改 2 已替换）
 
-[MulLayout](../ECDSAAdd/Arithmetic/MultiplyLayout.lean) 给出 x、y、out、work 的命名接口。`L.Widths` 统一说明 x/out/每个倍数寄存器均为 n+1 位、两份模算术布局同宽、乘数 y 有 n 位；`L.wires.Nodup` 要求所有线路互异。
+[MulAdapterLayout](../ECDSAAdd/Arithmetic/MulAdapterLayout.lean) 列出 x、y、out、unary，product 借用 unary.z；work=product++unary.work。`Widths` 要求 x/out/product 宽 n+1、y 宽 n、constant/mask 宽 n+1、carry 宽 n；`wires.Nodup` 覆盖输入、输出和完整工作区。旧 MulLayout、倍数链和专用 Double/MaskedAccumulate 文件已经删除。
 
 ```lean
-theorem modMul_zero_spec (L : MulLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
-    (q X Y : Nat) (hq0 : 0 < q) (hq : q < 2^L.width) (hX : X < q) :
-  {{ L.x = X, L.y = Y, L.out = 0, L.work = 0 }} modMul L q
-  {{ L.x = X, L.y = Y, L.out = ((X*Y)%q), L.work = 0 }}
+{{ L.x=X,L.y=Y,L.out=0,L.work=0 }} fieldMul L
+{{ L.x=X,L.y=Y,L.out=((X*Y)%p),L.work=0 }}
+{{ L.x=X,L.y=Y,L.out=O,L.work=0 }} fieldMul L
+{{ L.x=X,L.y=Y,L.out=(O ^^^ ((X*Y)%p)),L.work=0 }}
 ```
 
-`modMul_spec` 支持任意初值 O，输出为 `O ^^^ ((X*Y)%q)`。Y 可取 n 位能表示的任意自然数，不需 Y<q；X<q 保证每轮复制到模加工作区的值已经约化。q 是编译期常量，程序不存在依赖测量结果的算术分支。[FieldMultiply](../ECDSAAdd/Arithmetic/FieldMultiply.lean) 将 q 固定为 p、n 固定为 256，给出对应的零输出、任意输出与资源定理。
+[FieldMultiply](../ECDSAAdd/Arithmetic/FieldMultiply.lean) 取 n=256、X<p；Y 的范围从其 256 位寄存器自动推出。公开数值陈述保持，布局类型改为 MulAdapterLayout，Widths 改为固定临时积/工作区而非倍数链。`fieldMul_correct` 继续提供相位、输出外逐线保持及 XOR 数值结果供上层组合。
 
-[Multiply](../ECDSAAdd/Arithmetic/Multiply.lean) 的每轮固定顺序为：
+[MulAdapterSpec](../ECDSAAdd/Arithmetic/MulAdapterSpec.lean) 对奇数 p<2^n、X<p、Y<2^n 证明三个适配器。先 mulInto 得到临时积，再 XOR/模加/模减到公开输出，最后 mulClear 清掉临时积。加减接口另需 O<p；三个 Triple 均对全部测量记录恢复相位、输入与工作区，且有目标外 frame。没有任意初值 Horner 乘加的错误假设。
 
-1. 用共用的加倍工作区，将 `(X+X)%q` XOR 写入下一倍数寄存器，再清空整份工作区。
-2. 乘数位只控制逐位 CCX 复制，把当前倍数或零复制到累加布局的 y。用模加写入空累加器，再用模减清除旧累加器，最后清掉 y。
-3. 交换两份累加器的角色，递归处理剩余乘数位；到底后把累加器复制到外部输出。
-4. 依次撤销累加、清掉下一倍数。这里调用已证明的前向模减/模加与 XOR 程序，不反转测量指令。
-
-`multiplyLoop_correct` 以任意初始累加值 Acc<q 归纳，得到输出 XOR `(Acc+X*Y)%q`；同时证明输出以外每根线恢复、任意初始相位恢复，且对所有测量记录成立。公开模乘取 Acc=0，整个 work 包含两份完整工作区和倍数链，均从零恢复为零。
-
-设计只保留 n 个倍数值，不保留 n 份累加器历史，也不为每轮分配一份模加工作区。为保持一个统一递归步骤，最后一轮仍计算并清除下一倍数，即使它不再参与累加；下表完整计入该开销。这是空间 O(n²) 的首版正确性基线，未做末步裁剪或就地加倍/减半优化，不声称最优。
-
-| 同一具体程序 | Toffoli | 测量 | 静态线路数 |
+| 同一程序，n>0 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| `modMul`，n>0 | n(44n+36) | 32n(n+1) | (n+18)(n+1)+n+4 |
-| `fieldMul`，n=256 | 2,892,800 | 2,105,344 | 70,678 |
+| mulXor | n(18n−3) | n(14n−3) | 7n+7 |
+| mulAdd | n(18n−3)+4n−1 | n(14n−3)+4n−1 | 7n+7 |
+| mulSub | n(18n−3)+6n−1 | n(14n−3)+6n−1 | 7n+7 |
+| fieldMul，n=256 | 1,178,880 | 916,736 | 1,799 |
 
-[MultiplyResources](../ECDSAAdd/Arithmetic/MultiplyResources.lean) 证明循环的门数和精确线路集合；`modMul_resources` 再由布局互异求支持集基数。每轮两次加倍各用 10n+8 个 Toffoli，两次受控累加/撤销各用 12n+10 个 Toffoli；末尾无控制复制不使用 Toffoli。每轮测量共 32(n+1) 次。静态线路来自两个外部 n+1 位寄存器、n 位乘数、n 个 n+1 位倍数寄存器和两份模加布局，各工作区为 8(n+1)+2 根。全部门控制/目标互异由统一布局的 `Nodup` 经子布局推导；受控复制的控制位与源和目标分离。没有通过添加虚门凑线路数，静态线路数也不是最大同时存活数。
-
-[求逆契约](../ECDSAAdd/Arithmetic/InverseContract.lean) 声明 256 位寄存器、非零输入、逆元输出、清理/相位和资源要求；当前分支的 fieldInverse_contract 给出具体程序的满足证明，见 I5 节。
+`mulAdapter_wires` 证明三条实际门列均触及完整布局；清理补上前向内核未触及的源高位与 flag，输出每位由复制或算术触及。`mulAdapter_counts/resources` 从同一程序求精确资源，空间为 O(n)，不声称最优或最大同时存活数。半倍与 Horner 内核证明详见 C2 节。
 
 ## I1：EEA 求逆的数学证明
 
@@ -290,7 +281,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2077 项构建，以下 180 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成 2076 项构建，以下 187 个公开定理的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -321,9 +312,6 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.fieldSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldAdd_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldSub_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.modMul_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.modMul_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.modMul_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.fieldMul_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -386,6 +374,16 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.mulClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.mulInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.mulInPlace_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulXor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulXor_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulAddSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulAdapter_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulAdapter_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.mulAdapter_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.candidatePool_union' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.candidatePool_length' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.halveMod_eq' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.halve_parity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.double_flag' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -435,7 +433,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.safeDivisor_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.PointAddLayout.allocated_length' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.Arithmetic.poolSub_work' depends on axioms: [propext, Quot.sound]
-'ECDSAAdd.Arithmetic.poolMul_work' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.poolMul_work' depends on axioms: [propext]
 'ECDSAAdd.Arithmetic.poolInverse_work_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.PointAddLayout.candidate_interfaces_nodup' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.Arithmetic.pointCandidate_zero_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -500,19 +498,19 @@ theorem pointCandidate_zero_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wi
 
 | 同一具体程序 | Toffoli | 测量 |
 | --- | ---: | ---: |
-| `pointCandidateCompute` | 13,227,848 | 7,961,672 |
-| `pointCandidateClear` | 13,227,848 | 7,961,672 |
+| `pointCandidateCompute` | 8,086,088 | 4,395,848 |
+| `pointCandidateClear` | 8,086,088 | 4,395,848 |
 
 `pointCandidate_counts` 使用已证算术模块的精确资源公式，包含安全除数的 256 个 CCX。常量字装卸、平方乘数复制使用 X/CX，不增加上述两种计数。
 
 共享映射是实际布局构造，不是抽象存在前提：
 
 - `poolSub`：输入、输出直接连接调用方，五个 257 位工作字和两根进位使用池前 1,287 位；`poolSub_work` 给出准确工作列表。
-- `poolMul`：两份模算术区与 256 个倍数字使用池前 69,908 位；`poolMul_work` 给出准确工作列表。
+- `poolMul`：临时积与 scratch 使用池前 1,029 位；`poolMul_work` 给出准确工作列表。
 - `poolInverse`：单轮共享区、512 对记录、模算术区及 a/temp、输出高位使用池前 5,699 位；`poolInverse_work_perm` 给出工作列表置换。占位记录字段在固定循环内由每轮独立记录替换，不另占工作线。
 - `PointAddLayout.candidate_interfaces_nodup` 从唯一的全布局 `Nodup` 推出每次算术调用的接口互异；前缀映射据此满足已有内核的条件。平方使用独立的乘数副本，没有重复控制 CCX。
 
-`PointAddLayout.allocated_length` 的 74,022 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，仍复用 O(n²) 空间模乘基线。
+`PointAddLayout.allocated_length` 的 9,813 是布局字段分配数，不能作为候选程序的实际 qubit 定理。下一节给出完整点输出的精确支持集与总资源；受控原地版本见第三部分。本部分不声称资源最优，已接入 O(n) 空间 Horner 模乘。
 
 标志辅助程序也有独立状态证明：`equalConstant_correct` 按 XOR 写入 control∧(输入=k)，恢复输入及零检测工作线；其成本为 2n 个 CCX、零测量，支持集由 `equalConstant_wires` 精确给出。`pointBranchFlags_correct` 用两个负控制 CCX 生成 generic/double 标志，其他线路保持。`safeDivisor_correct` 对任意目标初值 XOR 写入 G?X:1，便于同程序再次清零。这些原语在下一节的完整点分类和最终选择中组合。
 
@@ -548,12 +546,12 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 26,457,236 | 15,924,368 | 74,020 |
+| C 有限 | 16,173,716 | 8,792,720 | 9,714 |
 | C=O | 0 | 0 | 1,026 |
 
-有限分支的计数为两段候选 2×13,227,848，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×7,961,672 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
+有限分支的计数为两段候选 2×8,086,088，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×4,395,848 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
 
-`pointAddOut_support` 证明 `wires (pointAddOut L (.some hc)) = L.usedWires.toFinset`。`usedWires` 包括候选实际支持及边界输入有限位、其他标志和完整输出；与分配表相比，恰好没有 dx 和 yg 的填充最高位。模减法不写输出高位，两者也没有后续读取；其他高位通过模乘输入、模减输入或平方副本被真实触及。`PointAddLayout.usedWires_nodup` 与 `usedWires_length` 从同一个全局布局条件给出 74,020，包含全体共享池及测量修正线。空间仍为 O(n²+N)，不是最大同时存活数或最优性结论。
+`pointAddOut_support` 证明 `wires (pointAddOut L (.some hc)) = L.usedWires.toFinset`。`usedWires` 包括候选实际支持及边界输入有限位、其他标志和完整输出；与分配表相比，排除 dx 和 yg 的填充最高位，以及共享池中 97 根未使用的旧 out 线。模减法不写输出高位，两者也没有后续读取；其他高位通过模乘输入、模减输入或平方副本被真实触及。`PointAddLayout.usedWires_nodup` 与 `usedWires_length` 从同一个全局布局条件给出 9,714，包含 5,602 根实际池支持及测量修正线。空间为 O(n+N)，不是最大同时存活数或最优性结论。
 
 公开资源入口是 `pointAddOut_finite_resources` 和 `pointAddOut_zero_resources`，正确性和资源指向同一个 `pointAddOut` 定义。互异条件通过原有算术接口及新增输出/标志接口从 L.wires.Nodup 推出，候选乘法保持独立乘数副本，没有重复控制 CCX。
 
@@ -577,11 +575,11 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| 有限 C 的 `controlledPointAddOut` | 26,457,242 | 15,924,368 | 74,024 |
-| 有限 C 的 `controlledPointAdd` | 52,914,997 | 31,848,736 | 74,024 |
+| 有限 C 的 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
+| 有限 C 的 `controlledPointAdd` | 32,347,957 | 17,585,440 | 9,718 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-总成本为 2×(26,457,236+6)+513 个 Toffoli、2×15,924,368 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表仍有 dx/yg 两根未触及的填充最高位，未计入实际支持；空间仍为 O(n²+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
+总成本为 2×(16,173,716+6)+513 个 Toffoli、2×8,792,720 次测量。`controlledPointAddOut_support` 证明实际支持等于原 `core.usedWires` 加外部控制和三个选择位；交换没有新增线路，两次调用共享布局。分配表还有 dx/yg 两根填充最高位及 97 根旧 out 线未触及，未计入实际支持；空间为 O(n+N)，不是最大同时存活数，也不声称最优。C=O 的原地定义直接为空程序，不运行辅助输出分支。
 
 正确性与资源定理指向同一个 `controlledPointAdd`。新增门通过 `selector_nodup`、`selected_nodup`、`swap_nodup` 从全局互异条件证明合法；算术继续复用先前的接口合法性和独立乘数副本。
 
@@ -735,7 +733,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 {{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }}
 ```
 
-四个 `_spec` 对所有初始相位和测量记录成立；各 `_frame` 保持 z 外每根物理位。模加核 work 仅含 constant/carry/cin，受控复制后的活跃 mask 是核源，不与核工作区重叠。源可等于 p，使模减在 A=0 时经过临时 p；`negRaw` 两次前向取负恢复源，无需反转测量。半倍与 Horner 内核见下文 C2；旧域乘法替换仍待 D。
+四个 `_spec` 对所有初始相位和测量记录成立；各 `_frame` 保持 z 外每根物理位。模加核 work 仅含 constant/carry/cin，受控复制后的活跃 mask 是核源，不与核工作区重叠。源可等于 p，使模减在 A=0 时经过临时 p；`negRaw` 两次前向取负恢复源，无需反转测量。半倍与 Horner 内核见下文 C2；域乘法已在 D 接入。
 
 | 同一程序（n>0） | Toffoli | 测量 | 实际线路 |
 | --- | ---: | ---: | ---: |
@@ -747,7 +745,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 线路数由门列支持集等式及全局 Nodup 求基数：普通加减不触及 mask/flag，受控加不触及源高位/flag，受控减取反源高位但不触及 flag。全为 O(n) 静态支持，未声称最优。数学约减、低位受控复制、核四阶段、外层加法、取负、减法组合按用途拆入同名辅助文件。未改现有域乘法、求逆与点加接口或成本。
 
 
-## 改 5：零检测测量清理与轮内原地受控加减
+## 改 5：零检测测量清理与轮内原地受控加减（改 2 接入前阶段值）
 
 zeroControlled 保留原名及 Triple，负AND链在递归读出后以 X/measureX(CZ)/X 擦除；对全部测量记录恢复相位，输入、控制和工作位恢复，任意初始目标按XOR写入。空输入仍为CX。资源变为n/n/2n+2，equalConstant与点加标志共用此实现；标志compute/clear各514 Toffoli/512测量。safeDivisor没有零检测，256/0不变。
 
@@ -783,4 +781,14 @@ inplaceArithmetic 复用已有 maskedAddInPlace/SubInPlace，src=g、临时字=y
 
 n=256 的内核分别为 523,776/392,704/1,540 与 655,104/524,032/1,542。`modUnary_wires` 排除从未触及的 mask；加倍还排除 flag。`mulInPlace_wires` 前向排除 x[n] 与 flag，清理触及完整布局；逐轮控制覆盖 y 的每一位。qubitCount 由这些等式及 Nodup 得出，是 O(n) 静态支持，不是最大同时存活数或最优性声明。
 
-本批复用 C1 的两个内部阶段引理（`modAddCore_reduce`/`modAddCore_addback` 改为可跨文件引用，陈述和证明未变）。未改旧 fieldMul、求逆、点加门列或成本；适配器与池布局迁移属于 D。验证新增 16 个公开入口，覆盖旋转、半倍和内核的规格、frame、支持与资源；公理披露见上方本次实际输出。
+本批复用 C1 的两个内部阶段引理（`modAddCore_reduce`/`modAddCore_addback` 改为可跨文件引用，陈述和证明未变）。C2 阶段未改旧 fieldMul、求逆、点加门列或成本；D 已完成适配器与池布局迁移，见 M2 节。验证新增 16 个公开入口，覆盖旋转、半倍和内核的规格、frame、支持与资源；公理披露见上方本次实际输出。
+
+### 改 2 D：三个适配器与域乘法接入
+
+`mulXor_spec` 对任意输出 O，`mulAdd_spec` / `mulSub_spec` 对 O<p，均保留 x/y、恢复相位并清零 F.work（含临时积）。对应 frame 保持 out 外每根位；p 奇、p<2^n、X<p、Y<2^n。三个资源分别为 1,178,880/916,736、1,179,903/917,759、1,180,415/918,271，均为 1,799 根静态线。未增加受控乘加接口；上层若采用受控中段，需另证其组合。
+
+`poolMul` 使用前 1,029 位，保持求逆 5,699 位池前缀编号。`candidatePool_union` 证明实际池支持恰好是模减前 1,287 位与求逆支持的并集；前 160 个旧 out 位置由模减触及，剩余 97 位仍不触及。`candidatePool_sublist` 证明它是分配池的子列表，`candidatePool_length` 给出 5,602，由全局 Nodup 得出精确支持基数。完整点加排除另外两根填充高位：普通点加 9,714，受控加外部控制/三个选择位后 9,718；分配数分别为 9,813/9,817，不混同实际线数。
+
+保留四次求逆与十二次 XOR 模乘，当前 Toffoli 总计为 `4×4,541,488 + 12×1,178,880 + 35,445 = 32,347,957`，测量 17,585,440。历史 §12 的 37,493 额外项在改 5 的相等检测替换后已减少 2,048，故从同程序资源重新推导，没有沿用历史常数。完整功能规格及所有点加角落分支保持。
+
+删除已无引用的 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个文件，保留求逆/基础层仍使用的 Accumulate 和 ModularXorSteps。公开验证移除三个旧 modMul 入口，增加十个适配器/池支持入口；采用当前源码的实际公理输出，无测试、新公理、native_decide 或证明资源放宽。

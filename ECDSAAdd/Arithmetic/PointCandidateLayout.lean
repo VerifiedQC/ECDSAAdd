@@ -3,7 +3,7 @@ import ECDSAAdd.Arithmetic.PointCandidate
 namespace ECDSAAdd.Arithmetic
 namespace PointAddLayout
 
-theorem pool_prefix (L : PointAddLayout) (h : L.Widths) (n : Nat) (hn : n≤69908) :
+theorem pool_prefix (L : PointAddLayout) (h : L.Widths) (n : Nat) (hn : n≤5699) :
     wireBlock L.poolWire 0 n=L.pool.take n := by
   apply List.ext_getElem
   · simp [wireBlock,h.pool,Nat.min_eq_left hn]
@@ -48,11 +48,11 @@ theorem poolSub_nodup (L : PointAddLayout) (h : L.Widths) (x y out : List Wire)
   exact hnd.sublist ((List.take_sublist 1287 L.pool).append_left _)
 
 theorem poolMul_nodup (L : PointAddLayout) (h : L.Widths) (x y out : List Wire)
-    (hy : y.length=256) (hnd : (x++y++out++L.pool).Nodup) :
+    (hnd : (x++y++out++L.pool).Nodup) :
     (Arithmetic.poolMul L.poolWire x y out).wires.Nodup := by
-  apply Arithmetic.poolMul_nodup _ _ _ _ hy
-  rw [pool_prefix L h 69908 (by omega),List.take_of_length_le (by rw [h.pool])]
-  exact hnd
+  apply Arithmetic.poolMul_nodup
+  rw [pool_prefix L h 1029 (by omega)]
+  exact hnd.sublist ((List.take_sublist 1029 L.pool).append_left _)
 
 theorem poolInverse_nodup (L : PointAddLayout) (h : L.Widths) (x out : List Wire)
     (ho : out.length=256) (hnd : (x++out++L.pool).Nodup) :

@@ -7,16 +7,16 @@ open Secp256k1
 /-- 有限常量的同程序精确资源，包含计算、输出、全部清理及测量修正支持。 -/
 theorem pointAddOut_finite_resources (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (pointAddOut L (.some hc))=26457236 ∧
-    measurementCount (pointAddOut L (.some hc))=15924368 ∧
-    qubitCount (pointAddOut L (.some hc))=74020 := by
+    toffoliCount (pointAddOut L (.some hc))=16173716 ∧
+    measurementCount (pointAddOut L (.some hc))=8792720 ∧
+    qubitCount (pointAddOut L (.some hc))=9714 := by
   have cc := pointCandidate_counts L h hn cx cy
   have cf := pointFlags_counts L h cx cy
   have co := pointOutput_counts L h (.some hc)
   refine ⟨?_,?_,?_⟩
   · simp only [pointAddOut,toffoliCount_append,cc.1.1,cc.2.1,cf.1.1,cf.2.1,co.1]
   · simp only [pointAddOut,measurementCount_append,cc.1.2,cc.2.2,cf.1.2,cf.2.2,co.2]
-  · rw [qubitCount,pointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.usedWires_nodup hn),L.usedWires_length h]
+  · rw [qubitCount,pointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.usedWires_nodup h hn),L.usedWires_length h]
 
 /-- 无穷远常量在构造期选择 513 个 CX，仅触及两个点寄存器。 -/
 theorem pointAddOut_zero_resources (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup) :

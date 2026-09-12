@@ -34,9 +34,6 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.fieldSub_spec
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_resources
 #print axioms ECDSAAdd.Arithmetic.fieldSub_resources
-#print axioms ECDSAAdd.Arithmetic.modMul_zero_spec
-#print axioms ECDSAAdd.Arithmetic.modMul_spec
-#print axioms ECDSAAdd.Arithmetic.modMul_resources
 #print axioms ECDSAAdd.Arithmetic.fieldMul_zero_spec
 #print axioms ECDSAAdd.Arithmetic.fieldMul_spec
 #print axioms ECDSAAdd.Arithmetic.fieldMul_resources
@@ -99,6 +96,16 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.mulClear_frame
 #print axioms ECDSAAdd.Arithmetic.mulInPlace_wires
 #print axioms ECDSAAdd.Arithmetic.mulInPlace_resources
+#print axioms ECDSAAdd.Arithmetic.mulXor_spec
+#print axioms ECDSAAdd.Arithmetic.mulAdd_spec
+#print axioms ECDSAAdd.Arithmetic.mulSub_spec
+#print axioms ECDSAAdd.Arithmetic.mulXor_frame
+#print axioms ECDSAAdd.Arithmetic.mulAddSub_frame
+#print axioms ECDSAAdd.Arithmetic.mulAdapter_wires
+#print axioms ECDSAAdd.Arithmetic.mulAdapter_counts
+#print axioms ECDSAAdd.Arithmetic.mulAdapter_resources
+#print axioms ECDSAAdd.Arithmetic.candidatePool_union
+#print axioms ECDSAAdd.Arithmetic.candidatePool_length
 #print axioms ECDSAAdd.halveMod_eq
 #print axioms ECDSAAdd.halve_parity
 #print axioms ECDSAAdd.double_flag
