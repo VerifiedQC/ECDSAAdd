@@ -533,6 +533,16 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.measuredMaskedInPlace_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.measuredMaskedInPlace_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.measuredMaskedInPlace_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup10_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup10_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup10_core_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.lookup10_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.inverseScaleFactor_bound' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.inverseScaleFactor_relation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.montgomery_inverseScaleFactor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.inverseScaleFactor_halving' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_scale_count' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_montgomery_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -991,3 +1001,12 @@ RoundFrame.inplaceArithmetic的两个程序分支接入measuredMaskedAdd/SubInPl
 完整轮12w+31 Toffoli /6w+28测量，w=257为3,115/1,570/1,847。inverseLoop通式1024(15w+51)+60w−12 /1024(8w+47)+48w，实例4,015,152/2,165,808/5,698；fieldInverse同门数与测量、5,954线。两次除法4,396,623/2,546,255和4,397,135/2,546,767；完整点加9,948,666/6,246,650/6,218，所有几何分支与公开规格保持。上述改7/8资源记录是历史阶段值。
 
 本批完整scripts/verify.sh退出0：2134项构建、252条实际公理，上方公理块与本次输出逐行一致。无新增入口、测试、公理或证明资源放宽。
+
+
+### 改11第一批：十位查表与缩放数学
+
+`lookup10_spec` / `lookup10_frame`证明十位地址、任意旧XOR目标和九根零scratch的完整Triple与逐线保持，对全部测量记录恢复相位。`lookup10_counts`为同一lookup门列的1,022 Toffoli/1,022测量；`lookup10_core_wires`覆盖十位地址与九根scratch，目标的恒零表列不计为必触线。原一般支持上界继续适用。原四位六个公开定理陈述及lookup/lookupWalk门列逐字未变，正确性主体提为私有长度引理复用。
+
+`InverseScaleFactor.lean`证明因子界、F_q(K)·2^K=R、一段Montgomery缩放、与固定减半一致、K≤512及Kaliski逆元对接；只用模数中2为单位，不要求q为素数。新对接引理要求q%16=15。**内部求逆定理由任意奇数q收窄为q%16=15将在接入批发生；本批旧求逆门列和规格尚未替换。** fieldInverse和点加当前资源不变，§22组合缩放电路尚待证明。
+
+完整scripts/verify.sh退出0：2,135项构建、262条实际公理输出（新增10个入口）；上方公理块逐行取自本批日志，只依赖既有三白名单。无测试、新公理、CCZ或证明限制放宽。
