@@ -59,14 +59,14 @@ theorem inverseFirst_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     | cons r rs => rfl
   simp only [hne] at hwire
   have hdis := (List.nodup_append'.mp (List.nodup_append'.mp hnd).1).2.2
-  have frame (circ : Program) (hc : wires circ=(L.first.tapeWires L.records).toFinset)
+  have frame (circ : Program) (hc : wires circ=(L.first.usedTapeWires L.records).toFinset)
       (s t : BasisState) (he : ∀ w,w∉wires circ → s w=t w) (h : InverseExtra L 0 s) :
       InverseExtra L 0 t := by
     apply InverseExtra.congr L 0 s t h
     intro w hw
     apply (he w ?_).symm
     rw [hc]
-    exact fun hh => List.disjoint_left.mp hdis (List.mem_toFinset.mp hh) hw
+    exact fun hh => List.disjoint_left.mp hdis ((L.first.usedTapeWires_sublist L.records).subset (List.mem_toFinset.mp hh)) hw
   have hf := hh.1.frame (frame _ hwire.1)
   have hb := hh.2.frame (frame _ hwire.2)
   have hm : loopEndLayout L.first 512=L.middle := by rw [InverseLoopLayout.middle,hn]

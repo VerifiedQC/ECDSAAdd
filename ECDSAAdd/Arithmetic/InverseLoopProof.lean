@@ -73,14 +73,14 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     omega
   have hwires := inverseCompute_wires L hn hw hd hwidth ha ht q
   have hdis : L.coreWires.Disjoint L.out := (List.nodup_append'.mp hnd).2.2
-  have frame (circ : Program) (hc : wires circ=L.coreWires.toFinset) (V : Nat)
+  have frame (circ : Program) (hc : wires circ=L.usedCoreWires.toFinset) (V : Nat)
       (s t : BasisState) (he : ∀ w,w∉wires circ → s w=t w) (hv : regValue L.out s=V) :
       regValue L.out t=V := by
     apply (regValue_congr _ _ _ ?_).trans hv
     intro w hw
     apply (he w ?_).symm
     rw [hc]
-    exact fun hh => List.disjoint_left.mp hdis (List.mem_toFinset.mp hh) hw
+    exact fun hh => List.disjoint_left.mp hdis (L.usedCoreWires_sublist.subset (List.mem_toFinset.mp hh)) hw
   have hf := hcompute.1.frame (frame _ hwires.1 O)
   have hb' := hcompute.2.frame (frame _ hwires.2 (O ^^^ R))
   have hc := inverseCopy_values L hnd (ha.trans hout.symm) z cs R O

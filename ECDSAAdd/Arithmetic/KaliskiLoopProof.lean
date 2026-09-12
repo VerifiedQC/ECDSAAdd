@@ -51,13 +51,13 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
     have htw := kaliskiLoop_wires L.swapCounter rs (i+1) hnw hd
     have hdis := record_rest_disjoint L r rs hnd
     have hhead := (List.nodup_append'.mp (partition_nodup L r rs hnd)).2.2
-    have restFrame (circ : Program) (hcirc : wires circ=(L.withRecord r).wires.toFinset)
+    have restFrame (circ : Program) (hcirc : wires circ=(L.withRecord r).usedWires.toFinset)
         (cs : List (Bool×Bool)) (s t : BasisState) (he : ∀ w, w∉wires circ → s w=t w)
         (h : TapeValues rs cs s) : TapeValues rs cs t := by
       apply TapeValues.congr rs cs s t h
       intro w hw
-      exact (he w (by rw [hcirc]; exact fun hm => List.disjoint_left.mp hdis hw (List.mem_toFinset.mp hm))).symm
-    have headFrame (circ : Program) (hcirc : wires circ=(if rs.isEmpty then ∅ else (L.swapCounter.tapeWires rs).toFinset))
+      exact (he w (by rw [hcirc]; exact fun hm => List.disjoint_left.mp hdis hw ((L.withRecord r).usedWires_sublist.subset (List.mem_toFinset.mp hm)))).symm
+    have headFrame (circ : Program) (hcirc : wires circ=(if rs.isEmpty then ∅ else (L.swapCounter.usedTapeWires rs).toFinset))
         (S T : Bool) (s t : BasisState) (he : ∀ w, w∉wires circ → s w=t w)
         (h : s r.swap=S ∧ s r.subtract=T) : t r.swap=S ∧ t r.subtract=T := by
       have hh (w : Wire) (hm : w∈r.wires) : t w=s w := by
@@ -65,7 +65,7 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
         rw [hcirc]
         split_ifs
         · simp
-        · exact fun hc => List.disjoint_left.mp hhead hm (List.mem_toFinset.mp hc)
+        · exact fun hc => List.disjoint_left.mp hhead hm ((L.swapCounter.usedTapeWires_sublist rs).subset (List.mem_toFinset.mp hc))
       exact ⟨(hh _ (by simp [RoundRecord.wires])).trans h.1,(hh _ (by simp [RoundRecord.wires])).trans h.2⟩
     have hf1 := hround.frame (restFrame _ hrw.1 (List.replicate rs.length (false,false)))
     have hf2 := ht.1.frame (headFrame _ htw.1 (kaliskiCode z).1 (kaliskiCode z).2)

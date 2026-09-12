@@ -63,6 +63,6 @@ theorem fieldInverse_correct (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.W
     · exact (regValue_eq_iff _ _ _).mp (hpost.2.trans hz.symm) w hi
   · apply run_preserves_outside
     rw [fieldInverse_wires L hw]
-    exact fun h => hm (List.mem_toFinset.mp h)
+    exact fun h => hm (L.usedWires_subset (List.mem_toFinset.mp h))
 
 end ECDSAAdd.Arithmetic

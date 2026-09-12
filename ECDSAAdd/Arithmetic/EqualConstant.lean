@@ -74,17 +74,17 @@ theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : N
     dsimp [v]
     rw [show u.phase=s.phase from hup,show u.basis target=s.basis target from hue _ ht,
       show u.basis control=s.basis control from hue _ hc]
-  obtain ⟨hvp,hve,hvv⟩ := xorConstant_correct src hsrc k (by simpa [src] using hk) v m
+  obtain ⟨hvp,hve,hvv⟩ := xorConstant_correct src hsrc k (by simpa [src] using hk) v (m.drop bs.length)
   have hvs : regValue src v.basis=regValue src u.basis := by
     apply regValue_congr
     intro w hw
     simp [v,writeBit,show w≠target from fun h => ht (h ▸ hw)]
-  have hrestore : regValue src (run (xorConstant src k) m v).basis=regValue src s.basis := by
+  have hrestore : regValue src (run (xorConstant src k) (m.drop bs.length) v).basis=regValue src s.basis := by
     rw [hvv,hvs,show regValue src u.basis=regValue src s.basis ^^^ k from huv,Nat.xor_assoc,Nat.xor_self,Nat.xor_zero]
   rw [equalConstant,run_append,run_take,run_append,run_take]
   simp only [measurementCount_append,(xorConstant_counts _ _).2,
     (zeroControlled_counts _ _ _).2,Nat.zero_add,List.drop_zero]
-  change run (xorConstant src k) m (run (zeroControlled control target bs) m u)=_
+  change run (xorConstant src k) (m.drop bs.length) (run (zeroControlled control target bs) m u)=_
   rw [hv]
   apply (show ∀ a b : State, a.phase=b.phase → a.basis=b.basis → a=b from
     fun ⟨ap,ab⟩ ⟨bp,bb⟩ hp hb => by cases hp; cases hb; rfl)
@@ -100,8 +100,8 @@ theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : N
       · simp [writeBit,hwt,show u.basis w=s.basis w from hue w hw]
 
 theorem equalConstant_counts (control target : Wire) (bs : List ZeroBit) (k : Nat) :
-    toffoliCount (equalConstant control target bs k)=2*bs.length ∧
-    measurementCount (equalConstant control target bs k)=0 := by
+    toffoliCount (equalConstant control target bs k)=bs.length ∧
+    measurementCount (equalConstant control target bs k)=bs.length := by
   simp only [equalConstant,toffoliCount_append,measurementCount_append,
     (xorConstant_counts _ _).1,(xorConstant_counts _ _).2,
     (zeroControlled_counts _ _ _).1,(zeroControlled_counts _ _ _).2,Nat.zero_add,Nat.add_zero,and_self]

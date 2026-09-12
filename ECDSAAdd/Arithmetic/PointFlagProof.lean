@@ -63,7 +63,6 @@ theorem pointFlagsCompute_correct (L : PointAddLayout) (h : L.Widths) (hn : L.wi
     (regValue_zero _ _).mpr (fun w hw => (regValue_zero _ _).mp hz w (List.mem_of_mem_take hw))
   have hcx : cx.val<2^L.input.x.length := by rw [h.inputX]; exact lt_trans (ZMod.val_lt cx) (by norm_num [p])
   have hcy : (-cy).val<2^L.input.y.length := by rw [h.inputY]; exact lt_trans (ZMod.val_lt (-cy)) (by norm_num [p])
-  have hx := equalPorts_correct L.input.finite L.equalX L.input.x (L.pool.take 256) cx.val hxlen nx hcx s m hp
   have hex := flag_not_input_pool L hn L.equalX (by simp [PointAddLayout.flags])
   have hey := flag_not_input_pool L hn L.equalNegY (by simp [PointAddLayout.flags])
   have hxy : L.equalNegY≠L.equalX := by
@@ -78,19 +77,19 @@ theorem pointFlagsCompute_correct (L : PointAddLayout) (h : L.Widths) (hn : L.wi
   let ex := s.basis L.input.finite && decide (regValue L.input.x s.basis=cx.val)
   let ey := s.basis L.input.finite && decide (regValue L.input.y s.basis=(-cy).val)
   let u : State := ⟨s.phase,writeBit s.basis L.equalX ex⟩
-  have hu : run (equalConstant L.input.finite L.equalX L.zeroX cx.val) m s=u := by
-    simpa only [hfx,Bool.false_xor] using hx
+  have hu (m : List Bool) : run (equalConstant L.input.finite L.equalX L.zeroX cx.val) m s=u := by
+    simpa only [hfx,Bool.false_xor] using equalPorts_correct L.input.finite L.equalX L.input.x (L.pool.take 256) cx.val hxlen nx hcx s m hp
   have hup : regValue (L.pool.take 256) u.basis=0 := by
     rw [show u.basis=writeBit s.basis L.equalX ex from rfl,
       regValue_write_away _ _ _ _ (fun hm => hex.2.2.2 (List.mem_of_mem_take hm))]
     exact hp
-  have hy := equalPorts_correct L.input.finite L.equalNegY L.input.y (L.pool.take 256) (-cy).val hylen ny hcy u m hup
   let v : State := ⟨s.phase,writeBit u.basis L.equalNegY ey⟩
-  have hv : run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m u=v := by
+  have hv (m : List Bool) : run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m u=v := by
+    have hy := equalPorts_correct L.input.finite L.equalNegY L.input.y (L.pool.take 256) (-cy).val hylen ny hcy u m hup
     have huy : regValue L.input.y u.basis=regValue L.input.y s.basis := regValue_write_away _ _ _ _ hex.2.2.1
     rw [huy] at hy
     simpa [u,v,ey,writeBit,hxy,hfy,Ne.symm hex.1] using hy
-  have hb := pointBranchFlags_correct _ _ _ _ _ nb v m
+  have hb (m : List Bool) := pointBranchFlags_correct _ _ _ _ _ nb v m
   have hnb := nb
   simp only [List.nodup_cons,List.mem_cons,List.not_mem_nil,or_false,not_or,
     List.nodup_nil,not_false_eq_true,and_true] at hnb
@@ -99,7 +98,7 @@ theorem pointFlagsCompute_correct (L : PointAddLayout) (h : L.Widths) (hn : L.wi
   have hdex : L.double≠L.equalX ∧ L.double≠L.equalNegY :=
     ⟨Ne.symm hnb.2.1.2.2,Ne.symm hnb.2.2.1.2⟩
   rw [pointFlagsCompute,run_append,run_take,run_append,run_take]
-  simp only [measurementCount_append,(equalConstant_counts _ _ _ _).2,Nat.zero_add,List.drop_zero]
+  simp only [measurementCount_append,(equalConstant_counts _ _ _ _).2]
   rw [hu,hv,hb]
   simp [pointFlagState,u,v,ex,ey,writeBit,Ne.symm hxy,hfg,hfd,hgex.1,hgex.2,
     hdex.1,hdex.2,Ne.symm hex.1,Ne.symm hey.1]
@@ -148,27 +147,50 @@ theorem pointFlags_roundtrip (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
     (regValue_zero _ _).mpr (fun w hw => (regValue_zero _ _).mp hz w (List.mem_of_mem_take hw))
   have hcx : cx.val<2^L.input.x.length := by rw [h.inputX]; exact lt_trans (ZMod.val_lt cx) (by norm_num [p])
   have hcy : (-cy).val<2^L.input.y.length := by rw [h.inputY]; exact lt_trans (ZMod.val_lt (-cy)) (by norm_num [p])
-  let u := run (equalConstant L.input.finite L.equalX L.zeroX cx.val) m s
+  let u := run (equalConstant L.input.finite L.equalX (zeroPorts L.input.x (L.pool.take 256)) cx.val) m s
   have hup : regValue (L.pool.take 256) u.basis=0 := by
     dsimp [u,PointAddLayout.zeroX]
     rw [equalPorts_correct _ _ _ _ _ hxlen nx hcx s m hp]
     have hex := flag_not_input_pool L hn L.equalX (by simp [PointAddLayout.flags])
     rw [regValue_write_away _ _ _ _ (fun hm => hex.2.2.2 (List.mem_of_mem_take hm))]
     exact hp
-  simp only [pointFlagsClear,pointFlagsCompute,run_append,
-    measurementCount_append,(equalConstant_counts _ _ _ _).2,(pointBranchFlags_counts _ _ _ _ _).2,
-    Nat.zero_add,List.drop_zero]
-  have ht (c : Program) (hc : measurementCount c=0) (m : List Bool) (s : State) :
-      run c (m.take 0) s=run c m s := by rw [← hc,run_take]
-  simp only [ht _ (equalConstant_counts _ _ _ _).2,ht _ (pointBranchFlags_counts _ _ _ _ _).2]
+  have heq (c t : Wire) (src work : List Wire) (k : Nat)
+      (hl : src.length=work.length) (nd : (c::t::src++work).Nodup)
+      (hk : k<2^src.length) (st : State) (m' : List Bool)
+      (hz' : regValue work st.basis=0) :
+      run (equalConstant c t (zeroPorts src work) k) m' st =
+        run (equalConstant c t (zeroPorts src work) k) m st := by
+    rw [equalPorts_correct _ _ _ _ _ hl nd hk st m' hz',
+      equalPorts_correct _ _ _ _ _ hl nd hk st m hz']
+  have hb (st : State) (m' : List Bool) :
+      run (pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double) m' st =
+        run (pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double) m st := by
+    rw [pointBranchFlags_correct _ _ _ _ _ nb,pointBranchFlags_correct _ _ _ _ _ nb]
+  simp only [pointFlagsClear,pointFlagsCompute,run_append,run_take]
+  simp only [PointAddLayout.zeroX,PointAddLayout.zeroY]
+  rw [heq _ _ _ _ _ hxlen nx hcx s m hp]
+  change run (equalConstant L.input.finite L.equalX L.zeroX cx.val) _
+    (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) _
+      (run (pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double) _
+        (run (pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double) _
+          (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) _ u))))=s
+  simp only [hb]
   rw [pointBranchFlags_cancel _ _ _ _ _ nb]
-  change run (equalConstant L.input.finite L.equalX L.zeroX cx.val) m
-    (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m
-      (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m u))=s
-  rw [show run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m
-    (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m u)=u from
-      equalPorts_cancel _ _ _ _ _ hylen ny hcy u m hup]
+  simp only [PointAddLayout.zeroX,PointAddLayout.zeroY]
+  rw [heq _ _ _ _ _ hylen ny hcy u _ hup]
+  have hvp : regValue (L.pool.take 256)
+      (run (equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val) m u).basis=0 := by
+    simp only [PointAddLayout.zeroY]
+    rw [equalPorts_correct _ _ _ _ _ hylen ny hcy u m hup]
+    have hey := flag_not_input_pool L hn L.equalNegY (by simp [PointAddLayout.flags])
+    rw [regValue_write_away _ _ _ _ (fun hm => hey.2.2.2 (List.mem_of_mem_take hm))]
+    exact hup
+  simp only [PointAddLayout.zeroY] at hvp
+  rw [heq _ _ _ _ _ hylen ny hcy _ _ hvp,
+    equalPorts_cancel _ _ _ _ _ hylen ny hcy u m hup,
+    heq _ _ _ _ _ hxlen nx hcx u _ hup]
   exact equalPorts_cancel _ _ _ _ _ hxlen nx hcx s m hp
+
 
 
 theorem pointFlagState_outside (L : PointAddLayout) (s : BasisState) (ex ey g d : Bool)

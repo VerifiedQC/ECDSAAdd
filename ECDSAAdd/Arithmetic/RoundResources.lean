@@ -3,26 +3,6 @@ import ECDSAAdd.Arithmetic.KaliskiRoundProof
 
 namespace ECDSAAdd.Arithmetic
 
-private theorem masked_counts (L : AdderLayout) (src : List Wire) (c : Wire) (hlen : src.length=L.width) :
-    toffoliCount (maskedAdd L src c)=4*L.width ∧ measurementCount (maskedAdd L src c)=2*L.width ∧
-    toffoliCount (maskedSub L src c)=4*L.width ∧ measurementCount (maskedSub L src c)=2*L.width := by
-  have hc := copyRegister_counts (some c) src L.y (by simpa [AdderLayout.y,AdderLayout.width] using hlen)
-  have ha : toffoliCount (add L)=L.width ∧ measurementCount (add L)=L.width :=
-    ⟨rippleAdder_toffoliCount _ _,rippleAdder_measurementCount _ _⟩
-  have hd := rippleSubtractor_counts L.bits L.cin
-  have has : toffoliCount (add L.swapCounter)=L.width ∧ measurementCount (add L.swapCounter)=L.width := by
-    simpa only [L.swapCounter_fields.2.2.2.2.2] using
-      (show toffoliCount (add L.swapCounter)=L.swapCounter.width ∧ measurementCount (add L.swapCounter)=L.swapCounter.width from
-        ⟨rippleAdder_toffoliCount _ _,rippleAdder_measurementCount _ _⟩)
-  have hds : toffoliCount (sub L.swapCounter)=L.width ∧ measurementCount (sub L.swapCounter)=L.width := by
-    simpa only [L.swapCounter_fields.2.2.2.2.2] using
-      (show toffoliCount (sub L.swapCounter)=L.swapCounter.width ∧ measurementCount (sub L.swapCounter)=L.swapCounter.width from
-        rippleSubtractor_counts _ _)
-  change toffoliCount (sub L)=L.width ∧ measurementCount (sub L)=L.width at hd
-  simp only [maskedAdd,maskedSub,toffoliCount_append,measurementCount_append,hc.1,hc.2,ha.1,ha.2,hd.1,hd.2,
-    has.1,has.2,hds.1,hds.2,Option.isSome_some,if_true,hlen]
-  omega
-
 private theorem swap_counts (c : Wire) (a b : List Wire) (hlen : a.length=b.length) :
     toffoliCount (swapRegisters c a b)=a.length ∧ measurementCount (swapRegisters c a b)=0 ∧
     toffoliCount (exchangeRegisters a b)=0 ∧ measurementCount (exchangeRegisters a b)=0 := by
@@ -31,25 +11,29 @@ private theorem swap_counts (c : Wire) (a b : List Wire) (hlen : a.length=b.leng
   have hc := copyRegister_counts none a b hlen
   simp [swapRegisters,exchangeRegisters,ha.1,ha.2,hb.1,hb.2,hc.1,hc.2]
 
-private theorem inplace_counts (L : RoundDataLayout) (f g : RoundField) (c : Wire) (neg : Bool) :
-    toffoliCount (inplaceArithmetic L f g c neg)=4*L.width ∧
-    measurementCount (inplaceArithmetic L f g c neg)=2*L.width := by
-  have hm := masked_counts (L.adder f) (L.reg g) c (by rw [L.reg_length,(L.adder_fields f).2.2.2.2.2])
-  have hs := swap_counts c (L.reg f) (L.reg .out) (by rw [L.reg_length,L.reg_length])
-  cases neg <;> simp [inplaceArithmetic,hm.1,hm.2.1,hm.2.2.1,hm.2.2.2,
-    hs.2.2.1,hs.2.2.2,(L.adder_fields f).2.2.2.2.2]
+private theorem inplace_counts (L : RoundDataLayout) (f g : RoundField) (c : Wire)
+    (neg : Bool) (hw : 0<L.width) :
+    toffoliCount (inplaceArithmetic L f g c neg)=3*L.width-1 ∧
+    measurementCount (inplaceArithmetic L f g c neg)=L.width-1 := by
+  have hm := maskedInPlace_counts c (L.reg g) (L.reg .y) (L.reg f)
+    ((L.reg .carry).take (L.width-1)) L.cin
+    (by simp [L.reg_length]) (by simp [L.reg_length])
+    (by simp [L.reg_length]; omega)
+  simp only [L.reg_length] at hm
+  cases neg <;> simpa only [inplaceArithmetic,if_true,Bool.false_eq_true,if_false,L.reg_length] using
+    (by tauto : _)
 
 private theorem body_counts (L : RoundDataLayout) (a sw su : Wire) (hw : 0<L.width) :
-    toffoliCount (kaliskiBodyProgram L a sw su)=14*L.width-2 ∧
-    measurementCount (kaliskiBodyProgram L a sw su)=4*L.width ∧
-    toffoliCount (kaliskiUnbodyProgram L a sw su)=14*L.width-2 ∧
-    measurementCount (kaliskiUnbodyProgram L a sw su)=4*L.width := by
+    toffoliCount (kaliskiBodyProgram L a sw su)=12*L.width-4 ∧
+    measurementCount (kaliskiBodyProgram L a sw su)=2*L.width-2 ∧
+    toffoliCount (kaliskiUnbodyProgram L a sw su)=12*L.width-4 ∧
+    measurementCount (kaliskiUnbodyProgram L a sw su)=2*L.width-2 := by
   have huv := swap_counts sw L.u L.v (by simp [RoundDataLayout.u,RoundDataLayout.v,L.reg_length])
   have hrs := swap_counts sw L.r L.s (by simp [RoundDataLayout.r,RoundDataLayout.s,L.reg_length])
-  have hmU := inplace_counts L .u .v su true
-  have hmR := inplace_counts L .r .s su false
-  have hmUi := inplace_counts L .u .v su false
-  have hmRi := inplace_counts L .r .s su true
+  have hmU := inplace_counts L .u .v su true hw
+  have hmR := inplace_counts L .r .s su false hw
+  have hmUi := inplace_counts L .u .v su false hw
+  have hmRi := inplace_counts L .r .s su true hw
   have hsu := shift_counts a L.u
   have hss := shift_counts a L.s
   simp only [kaliskiBodyProgram,kaliskiUnbodyProgram,swapDataPairs,toffoliCount_append,measurementCount_append,
@@ -69,10 +53,10 @@ theorem recordRound_counts (L : KaliskiRoundLayout) :
 
 /-- 正逆轮使用相同次数的 CCX 与测量；每轮复用数据宽度 w 的算术工作区。 -/
 theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw : L.counter.width=10) (i : Nat) :
-    toffoliCount (kaliskiRound L i)=17*L.data.width+33 ∧
-    measurementCount (kaliskiRound L i)=5*L.data.width+30 ∧
-    toffoliCount (kaliskiUnround L i)=17*L.data.width+33 ∧
-    measurementCount (kaliskiUnround L i)=5*L.data.width+30 := by
+    toffoliCount (kaliskiRound L i)=14*L.data.width+31 ∧
+    measurementCount (kaliskiRound L i)=4*L.data.width+28 ∧
+    toffoliCount (kaliskiUnround L i)=14*L.data.width+31 ∧
+    measurementCount (kaliskiUnround L i)=4*L.data.width+28 := by
   have hb := body_counts L.data L.active L.swap L.subtract (by simp [KaliskiRoundLayout.data,RoundDataLayout.width])
   have hr := recordRound_counts L
   have hz := zeroControlled_counts L.active L.done (L.data.zeroBits .v)
