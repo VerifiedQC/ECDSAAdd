@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2140项构建，以下284个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2145项构建，以下292个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -565,6 +565,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.negativeEven_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.negativeEven_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.negativeEven_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.kaliski_swap_from_r' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.recoverSwap_state' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitRound_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitUnround_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitRound_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitRound_preserves' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.oneBitRound_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1072,3 +1080,9 @@ inverseCompute/Uncompute现只调用缩放prepare/restore，旧求逆半倍适�
 `negativeEven_spec`含正向/恢复两个寄存器Triple，旧目标z保持，work初末零；`negativeEven_correct`同时给任意记录的相位和目标a外逐线保持。`negativeEven_counts`为3n−1/3n−1及3n/3n；`negativeEven_wires`给同程序支持，恢复额外触及flag。n=256合计1535 Toffoli/测量。
 
 完整scripts/verify.sh退出0：2140构建项、284条实际公理输出（新增8入口），上方公理块与日志逐行一致。顺带修正公理披露段残留的旧2133/244计数。仅使用现有白名单，无新公理、测试、限制放宽或linter抑制；求逆、除法与点加门列未变，资源仍为改11已证值。
+
+## Q1 第一批：一位记录的正逆轮
+
+`kaliski_swap_from_r`由奇数p和现有整数不变量恢复交换位。`oneBitRound_spec`/`oneBitUnround_spec`显式断言swap前后为零、subtract正轮保存而逆轮清零；四字、计数、done更新对应旧轮。所有测量记录下精确保持相位，目标外保持见`oneBitRound_preserves`。
+
+`oneBitRound_counts`及`oneBitRound_wires`/`oneBitRound_qubits`给出同一门列资源：12w+32 Toffoli、6w+28测量、7w+48根实际线，257位实例为3,116/1,570/1,847。旧通用两位规格保持；新程序只增加奇数p前提。共享循环及求逆/点加接入尚未实现，当前顶层资源不变。

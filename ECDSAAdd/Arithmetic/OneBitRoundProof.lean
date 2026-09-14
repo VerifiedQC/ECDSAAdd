@@ -1,50 +1,17 @@
-import ECDSAAdd.Arithmetic.RoundControls
+import ECDSAAdd.Arithmetic.OneBitRound
 
 namespace ECDSAAdd.Arithmetic
 
-theorem round_body_bounds (L : KaliskiRoundLayout) (p a : Nat) (z : KState)
-    (hi : KInvariant p a z) (hp : p<2^L.low.length)
-    (hu : z.u<2^L.low.length) (hv : z.v<2^L.low.length) (hr : z.r<2^L.data.width) :
-    let A := decide (z.v≠0)
-    let code := kaliskiCode z
-    let t := kaliskiSwap code.1 z
-    t.u<2^L.data.width ∧
-    (if code.2 then t.v else 0)≤t.u ∧
-    t.r+(if code.2 then t.s else 0)<2^L.data.width ∧
-    (A=true → (t.u-(if code.2 then t.v else 0))%2=0) ∧
-    (A=true → 2*t.s<2^L.data.width) := by
-  have hw : L.data.width=L.low.length+1 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width]
-  have hpow : 2^L.low.length≤2^L.data.width := by rw [hw,pow_succ]; omega
-  have hut : (kaliskiSwap (kaliskiCode z).1 z).u<2^L.data.width := by
-    cases (kaliskiCode z).1 <;> simp [kaliskiSwap] <;> omega
-  by_cases hz : z.v=0
-  · simpa [kaliskiCode,hz,kaliskiSwap] using (show z.u<2^L.data.width ∧ z.r<2^L.data.width from ⟨hu.trans_le hpow,hr⟩)
-  · have h := kaliski_body_bounds p a L.low.length z hi hz hp
-    rw [← hw] at h
-    exact ⟨hut,h.1,h.2.2.1,fun _ => h.2.1,fun _ => h.2.2.2⟩
-
-theorem step_counter (z : KState) :
-    (kaliskiStep z).k=z.k+(decide (z.v≠0)).toNat := by
-  unfold kaliskiStep
-  split_ifs <;> simp_all [Bool.toNat]
-
-theorem step_done (z : KState) :
-    (decide (z.v=0) ^^ (decide (z.v≠0) && decide ((kaliskiStep z).v=0))) =
-      decide ((kaliskiStep z).v=0) := by
-  by_cases hz : z.v=0
-  · simp [kaliskiStep,hz]
-  · simp [hz]
-
-/-- 一轮完整正向规格：更新四份数据和计数，保存两位分支，恢复所有工作区。
+/-- 一轮完整正向规格：更新四份数据和计数，只保存减法分支，恢复所有工作区。
 范围条件来自 I1 的可达状态界；计数更新包含使 v 首次为零的终止轮。 -/
-theorem kaliskiRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
+theorem oneBitRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     (hw : L.counter.width=10) (i p a : Nat) (z : KState)
-    (hi : i<512) (hk : KRoundCount i z) (hinv : KInvariant p a z)
+    (hi : i<512) (hk : KRoundCount i z) (hinv : KInvariant p a z) (hodd : p%2=1)
     (hp : p<2^L.low.length) (hu : z.u<2^L.low.length) (hv : z.v<2^L.low.length)
     (hr : z.r<2^L.data.width) :
-    Triple (RoundState L z z.k 0 false (decide (z.v=0)) false false) (kaliskiRound L i)
+    Triple (RoundState L z z.k 0 false (decide (z.v=0)) false false) (oneBitRound L i)
       (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0))
-        (kaliskiCode z).1 (kaliskiCode z).2) := by
+        false (kaliskiCode z).2) := by
   let A := decide (z.v≠0)
   let code := kaliskiCode z
   have hA : (!decide (z.v=0))=A := by simp [A]
@@ -62,23 +29,26 @@ theorem kaliskiRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   have h3 := kaliskiBodyProgram_state L hnd z z.k 0 A (decide (z.v=0)) code.1 code.2 hU hsub hR heven hfit
   change Triple _ _ (RoundState L (kaliskiBody A code z) z.k 0 A (decide (z.v=0)) code.1 code.2) at h3
   rw [kaliski_body_step] at h3
-  have h4 := counterInc_state L hnd hw (kaliskiStep z) z.k A (decide (z.v=0)) code.1 code.2
+  have hrec := recoverSwap_state L hnd (kaliskiStep z) z.k 0 A (decide (z.v=0)) code.1 code.2
+  have hcode : code.1 = (A && decide ((kaliskiStep z).r%2=0)) := kaliski_swap_from_r p a z hinv hodd
+  rw [← hcode,Bool.xor_self] at hrec
+  have h4 := counterInc_state L hnd hw (kaliskiStep z) z.k A (decide (z.v=0)) false code.2
   rw [hmod] at h4
-  have h5 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2
+  have h5 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) false code.2
   rw [step_done] at h5
   have h6 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hi A
-    (decide ((kaliskiStep z).v=0)) code.1 code.2
+    (decide ((kaliskiStep z).v=0)) false code.2
   rw [hactive,Bool.xor_self] at h6
-  exact ((((h1.seq h2).seq h3).seq h4).seq h5).seq h6
+  exact (((((h1.seq h2).seq h3).seq hrec).seq h4).seq h5).seq h6
 
-/-- 一轮完整逆向规格：由更新后 k 恢复活动性，清除保存的两位记录并恢复旧状态。 -/
-theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
+/-- 一轮完整逆向规格：由更新后 k 恢复活动性，重算交换条件并清除减法记录并恢复旧状态。 -/
+theorem oneBitUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     (hw : L.counter.width=10) (i p a : Nat) (z : KState)
-    (hi : i<512) (hk : KRoundCount i z) (hinv : KInvariant p a z)
+    (hi : i<512) (hk : KRoundCount i z) (hinv : KInvariant p a z) (hodd : p%2=1)
     (hp : p<2^L.low.length) (hu : z.u<2^L.low.length) (hv : z.v<2^L.low.length)
     (hr : z.r<2^L.data.width) :
     Triple (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0))
-        (kaliskiCode z).1 (kaliskiCode z).2) (kaliskiUnround L i)
+        false (kaliskiCode z).2) (oneBitUnround L i)
       (RoundState L z z.k 0 false (decide (z.v=0)) false false) := by
   let A := decide (z.v≠0)
   let code := kaliskiCode z
@@ -98,8 +68,12 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
           (A && decide ((kaliskiStep z).v=0))) := congrArg (fun b => b ^^ (A && decide ((kaliskiStep z).v=0))) h.symm
       _ = _ := by simp
   have h1 := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hi false
-    (decide ((kaliskiStep z).v=0)) code.1 code.2
+    (decide ((kaliskiStep z).v=0)) false code.2
   rw [Bool.false_xor,hactive] at h1
+  have hrec := recoverSwap_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A
+    (decide ((kaliskiStep z).v=0)) false code.2
+  have hcode : code.1 = (A && decide ((kaliskiStep z).r%2=0)) := kaliski_swap_from_r p a z hinv hodd
+  rw [Bool.false_xor,← hcode] at hrec
   have h2 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide ((kaliskiStep z).v=0)) code.1 code.2
   rw [hdone] at h2
   obtain ⟨hU,hsub,hR,heven,_⟩ := round_body_bounds L p a z hinv hp hu hv hr
@@ -113,6 +87,6 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   have h6 := loadActive_state L hnd z z.k 0 A (decide (z.v=0)) false false
   have hA : (!decide (z.v=0))=A := by simp [A]
   rw [hA,Bool.xor_self] at h6
-  exact ((((h1.seq h2).seq h3).seq h4).seq h5).seq h6
+  exact (((((h1.seq hrec).seq h2).seq h3).seq h4).seq h5).seq h6
 
 end ECDSAAdd.Arithmetic

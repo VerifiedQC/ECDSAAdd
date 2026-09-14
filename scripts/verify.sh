@@ -290,6 +290,15 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.negativeEven_spec
 #print axioms ECDSAAdd.Arithmetic.negativeEven_counts
 #print axioms ECDSAAdd.Arithmetic.negativeEven_wires
+
+#print axioms ECDSAAdd.kaliski_swap_from_r
+#print axioms ECDSAAdd.Arithmetic.recoverSwap_state
+#print axioms ECDSAAdd.Arithmetic.oneBitRound_spec
+#print axioms ECDSAAdd.Arithmetic.oneBitUnround_spec
+#print axioms ECDSAAdd.Arithmetic.oneBitRound_counts
+#print axioms ECDSAAdd.Arithmetic.oneBitRound_wires
+#print axioms ECDSAAdd.Arithmetic.oneBitRound_preserves
+#print axioms ECDSAAdd.Arithmetic.oneBitRound_qubits
 LEAN
 )
 printf '%s\n' "$axioms"
