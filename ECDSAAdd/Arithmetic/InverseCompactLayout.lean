@@ -1,5 +1,4 @@
 import ECDSAAdd.Arithmetic.InverseScaleBorrow
-import ECDSAAdd.Arithmetic.InverseLoopSupport
 import ECDSAAdd.Arithmetic.NegativeEven
 
 namespace ECDSAAdd.Arithmetic
