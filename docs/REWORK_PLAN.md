@@ -1655,3 +1655,97 @@ false控制分支仍以Dsafe=1运行全部门列，不能删除缩放；分母�
 InverseHistory显式包含y=N、carry低256位约减商及顶位借位；zero仍全零。K与历史在复制或Montgomery中段均保持，进入Kaliski逆轮前恢复旧工作区断言。内部任意奇数q前提收窄为q%16=15，低位与算术宽度固定256；secp256k1公开求逆、除法与点加规格逐字保持。
 
 新缩放上界包含于原usedCoreWires，保留的Kaliski循环与negativeInit给出下界，最终全部支持等式重证；没有从分配位数推导qubitCount。完整verify通过2138项构建/276条公理，PROOF_STATUS为实际输出。本节22.7/22.8保留分批进度记录，其当时未接入事项现均完成。
+
+<a id="q1-one-bit-tape"></a>
+
+## 24. Q1：一位 Kaliski 历史（D2 设计，待证明）
+
+基线 main `9c74a7f`，task #51。本节只交设计，不改变当前实现或已证资源。目标保持受控常数点加公开规格；不引入窗口量子加数、不缩小点的输入域。D1 的 Q2–Q4 独立设计放 §23，本节不预扣其收益。
+
+### 24.1 编码与恢复引理
+
+旧 `kaliskiCode z=(swap,subtract)` 有四个活动分支。一轮完成后记状态 `z'=kaliskiStep z`：
+
+| 分支 | swap | subtract | 更新后的系数 |
+|---|---|---|---|
+| u 偶 | false | false | r'=r，s'=2s |
+| u 奇、v 偶 | true | false | r'=2r，s'=s |
+| u/v 奇且 v<u | false | true | r'=r+s，s'=2s |
+| u/v 奇且 u≤v | true | true | r'=2r，s'=r+s |
+
+新增数学引理拟陈述为：`KInvariant p a z → p%2=1 → (kaliskiCode z).1 = (decide (z.v≠0) && decide ((kaliskiStep z).r%2=0))`。
+
+证明路径：活动轮中交换分支使 r' 为偶，不交换分支使 s' 为偶；更新后的整数不变量 `u'*s'+v'*r'=p` 与 p 奇保证 r'/s' 不同为偶。不活动时交换位为 false。此推导不依赖只对实际初始化轨迹成立的额外猜想，也不从更新后 u/v 重新猜分支。
+
+逆轮在固定 i 使用已有 `KRoundCount i z` 引理获得 `A=decide(i<z'.k)=decide(z.v≠0)`，故可从 A 与 r' 最低位恢复 swap。保存的唯一历史位仍是 subtract，不是 activity。终止轮 v'=0 但 A=true，必须使用 k/i；后续恒等轮 A=false，不读取 r 奇偶决定执行。保留 K=0/512 和最终相等减法分支。
+
+### 24.2 同一门列与临时位
+
+定义设计门列 `recoverSwap L = [CX L.active L.swap, CCX L.active L.r.head! L.swap]`。它将 swap 异或 `A && !r₀`，数据与相位不变，无测量；三线互异由当前轮 Nodup，r 非空由宽度给出。
+
+新内部正轮：
+
+```
+loadActive ; recordRound ; kaliskiBodyProgram ; recoverSwap ;
+counterInc ; zeroControlled ; roundActiveXor
+```
+
+`recordRound` 仍先计算两位条件，执行算术时需要 swap。`recoverSwap` 位于算术之后、清活动位之前，擦去 swap；subtract 留在本轮历史线上。计数银行、done 和其它清理沿用当前顺序。
+
+新内部逆轮：
+
+```
+roundActiveXor ; recoverSwap ; zeroControlled ;
+kaliskiUnbodyProgram ; counterDec ; recordRound ; loadActive
+```
+
+此时 r 仍是更新后值。重算 swap 后原逆算术恢复四字；原 recordRound 在旧状态上清掉 swap 和 subtract。没有倒放测量程序。新门没有测量，因此已有子程序的记录切片长度不变，组合证明仍覆盖全部测量记录及初始相位。
+
+新正轮 Triple 的数值前提沿用旧正轮并增加 `p%2=1`；前置 swap=false、subtract=false，后置 swap=false、subtract=(kaliskiCode z).2，其余四字/计数/done 的更新逐字对应旧轮。新逆轮用该后置作前置，恢复全部旧值并清两个工作位。另证明目标外逐线 frame。
+
+### 24.3 兼容布局与记录区映射
+
+保留通用 `kaliskiRound`/`kaliskiUnround` 和它们的公开规格原文：它们支持更一般 p，且明确输出两位记录。另加一位记录的内部入口和循环；不要给旧定理偷偷补 p 奇前提。
+
+为保持 `fieldInverse_spec` 等公开布局接口，第一批保留旧 `RoundRecord` 和分配列表，不把同一 swap 重复填入旧 records（否则旧 tapeWires 的 Nodup 失败）。对于非空 rs：
+
+- 共享临时位 `sw=rs.head!.swap`；
+- 第 j 轮视图的 swap 指向 sw，subtract 指向 `rs[j].subtract`；
+- 新使用的历史支持列表为 `[sw] ++ rs.map RoundRecord.subtract`；
+- 其余 `rs.tail.map RoundRecord.swap` 不执行任何门，零值以 frame 保持。
+
+新循环接受显式 sw 和 subtract 列表，避免递归每步重新选择头部 swap；按旧规则交替 counter 银行。N=0 时门列空，不要求访问 head；固定求逆 N=512，由 Widths 证明非空。
+
+保留旧 `tapeWires` 作为兼容分配表，新增 `oneBitTapeWires`/实际支持列表，并从旧 Nodup 推新列表 Nodup、每轮视图 Nodup。这不是仅缩小一张计数表：须证明新门列支持恰等于共享数据/控制支持并上该历史列表；旧 swap 尾部无一门触及。可选的连续重编号不计额外收益。
+
+求逆内部 prepare/history/restore 要改用一位 TapeValues；缩放、negativeInit、输入输出加载的程序不因 Q1 变化。改11历史保持原位置。顶层公开字段和断言不变，通过未使用位的 frame 证明完整 work=0。
+
+### 24.4 资源账本（设计推导，非已证值）
+
+新增 recoverSwap 每次 **1 Toffoli、0 测量**，每个正轮及每个逆轮各一次。单轮支持仍使用一个 swap 与一个 subtract，与旧单轮相同；节省来自循环共享 swap。
+
+| 项目 | 当前已证 | Q1 单独接入目标 |
+|---|---:|---:|
+| 257位正/逆轮，各自 T/M | 3,115 / 1,570 | 3,116 / 1,570 |
+| N轮正向加恢复的增量 T/M | — | +2N / 0 |
+| N>0的历史与交换临时位支持 | 2N | N+1，净省 N−1 |
+| N=512记录区 | 1,024 | 513，净省511 |
+| inverseLoop T/M/线 | 3,513,912 / 1,928,760 / 5,698 | 3,514,936 / 1,928,760 / 5,187 |
+| fieldInverse T/M/线 | 3,513,912 / 1,928,760 / 5,954 | 3,514,936 / 1,928,760 / 5,443 |
+| 有限C的controlledPointAdd T/M/线 | 8,946,186 / 5,772,554 / 6,218 | 8,948,234 / 5,772,554 / 5,707 |
+
+顶层两次除法各调用一套准备/恢复，共增加2,048 Toffoli（约0.023%），实际共用同一记录区，线数只减一次511。C=O的构造期空程序仍为0/0/0。控制false仍按相同静态门列计数，不把未活动分支当门数节省。
+
+本方案没有实现“Toffoli不升”的目标，明确以小幅门数增加换511线；不声称省512，因为共享临时swap也触及。若以后复用现有辅助位，必须重新给 recordRound/算术的存活与互异证明，本设计不计那1线。
+
+### 24.5 D1接口与实施顺序
+
+建议 D1 实现先合、Q1实现随后 rebase。D1保持 records 的长度及字段视图可用，新增借用区不要使用旧 swap 尾部511线，否则联合支持集不能再减511。平方可借求逆其它数据或保留的513位记录区，但必须列明跨阶段支持并集；即使某位在平方阶段已零，使用它仍计静态线。
+
+D1合入后重新核对其支持列表，Q1账本只列可证明的增量，不把本节5,707与D1估算重复相减。改11的缩放历史与交换临时位不能重叠。D1若必须借用被删尾部，先调整联合映射再提交实现。
+
+实现文件预计新增数学恢复引理及一位轮/循环的规格与资源文件，复用现有 RoundBody/RecordRound/Counter，不复制算术体；修改 InverseLoop 的内部历史、实际支持和具体 pool 映射证明。旧一般入口继续用于其原来声明的范围，不保留第二份复制的算术算法。
+
+验收：恢复引理、正逆轮和循环 Triple/frame、精确 T/M、支持等式、Nodup、求逆/除法/点加公开规格；完整 verify 与实际公理输出，只依赖白名单，README、PROOF_STATUS、PROVENANCE按最终实现同步。设计PR不更新公理块、不将目标冒充Current status。
+
+Q5受控查表去mask不在本次范围。其控制输入如何与4位地址结合、计算与清理的计数尚需独立设计，不能在本次预算直接扣261线或声称查表门数不变。
