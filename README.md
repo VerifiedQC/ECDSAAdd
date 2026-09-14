@@ -2,6 +2,12 @@
 
 在 Lean 中证明 Bitcoin/secp256k1 点加程序的 monomial 行为与资源计数。
 
+## 从哪里开始读
+
+先看[项目地图](docs/MODULES.md)，按任务找到公共接口和模块阅读路径。第一份[求逆模块说明](docs/modules/inverse.md) 从输入输出讲起，解释当前算法、准备/恢复边界，以及除法如何借用工作区。其他模块暂由项目地图链接到源码入口。
+
+当前证明与资源证据见 [PROOF_STATUS](docs/PROOF_STATUS.md)，算法设计和历史见 [REWORK_PLAN](docs/REWORK_PLAN.md)。下面保留项目状态摘要；调用模块通常从地图中的公开规格开始。
+
 ## Current status
 
 本节描述当前提交包含的代码。M1（语义、Hoare 规格、AND 测量反计算）、M2（加减法、模 p 加减、模乘）、完整 EEA 求逆（I1–I5）和 M3（候选计算、完整经典常量点加、受控原地点加）已完成；改1曾将求逆第二阶段改为原地减半/加倍，改11现替换为量子计数查表与单段Montgomery缩放；改 5 已用测量清零检测链并接入原地受控加减；改 4 已将计数活动比较及记录段接入 Gidney 比较器；改 2 已用 Horner 内核及三个适配器替换倍数链模乘，并缩小共享工作池；改3已接入两次除法与五个乘积的原地点加；改6a的五个标准模乘适配器已接入fieldMul及独立XOR点加，原地点加的两次除法与三个外部乘积也已接入。最终结果 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b 证明 `point = if b then R+C else R`，清零全部工作位并对所有测量记录恢复相位；有限 C 的同程序精确资源为 8,946,186 个 Toffoli、5,772,554 次测量、6,218 根实际静态线路。改7方案1已将四位查表替换为14个Toffoli/14次测量的单迭代门列，保持通用查表XOR规格；方案2测量清表尚未实现。改8已将变量窗口接入测量清掩码原语，相对改7少668,160个Toffoli、多668,160次测量，线路数不变。改10已将Kaliski正/恢复轮各两处受控加减接入同一原语，另少1,052,672个Toffoli、多同数测量，公开规格与线路不变。后续门数压缩见下文计划。
@@ -21,7 +27,7 @@
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
-| EEA 固定循环与反计算 | 已证明两个 512 轮阶段、规范化取负、XOR 输出及恢复已初始化输入；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/InverseLoopResources.lean) |
+| EEA 固定循环与反计算 | 已证明 512 轮 Kaliski、规范化取负、计数查表与单段 Montgomery 缩放、XOR 输出及显式恢复；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/InverseLoopResources.lean) |
 | 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/InverseResources.lean) |
 | M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointCandidateResources.lean) |
 | 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddResources.lean) |
@@ -88,13 +94,13 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **8,946,186 个 Toffoli�
 每次创建或更新 PR 都逐项检查，并在 PR 描述里简述结果；可读性和设计必要性需要人工审阅，不能用构建通过代替。
 
 - [ ] **Human readable**：公开定理直接表达前置条件、程序与结果；使用 `r = v`、命名布局、统一 `Nodup` 和中文说明。先展示零输出等常用形式，再提供组合所需的 XOR 形式；检查程序及测量语法是否容易读。
-- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。项目文档集中在 README、PROOF_STATUS、PROVENANCE；未实现的计划只放在 REWORK_PLAN（唯一来源，README 只留摘要表）。
+- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。README 提供总入口，MODULES 和 docs/modules 说明当前模块与阅读路径，PROOF_STATUS 保存证明和资源证据，PROVENANCE 保存来源；未实现的算法优化计划集中在 REWORK_PLAN（README 只留摘要表）。可读性整理报告作为该轮提案留档，当前说明不重复维护算法历史和资源表。
 - [ ] **状态真实**：逐项对照 README Current status、实际源码、公开定理和验证结果；契约不写成实现，数学群律不写成点加电路证明。
 - [ ] **Lean 验证**：固定工具链与依赖，运行 `lake --wfail build` 和选定公开定理的传递 `#print axioms` 白名单，仅允许 `propext`、`Classical.choice`、`Quot.sound`。不添加小 case 测试、Python 对照或真值表验证。
 - [ ] **语义与清理**：Triple 对任意初始相位及所有测量记录证明相位恢复、所需输入保持和工作位清零。即时 Z/CZ 修正不是自动正确；测量结果只能选择即时修正。清理必须有适用的不变量，不能直接反转带测量的程序。
 - [ ] **同一条合法电路**：正确性与 Toffoli、测量、qubit 定理指向同一具体程序；门的控制与目标满足互异要求，不含重复控制 CCX。线路数按完整程序及修正分支的实际支持集计算，不冒充最大同时存活数；披露空间复杂度，不声称未经证明的最优性。
 - [ ] **范围与完整性**：当前只做带符号基态分支模型，不加入量子态语义、桥或 Reference 树。最终点加必须覆盖无穷远、相反点和倍点等角落情形，C 是经典常量、R 是变量；模算术必要的位宽与取值范围前提仍应明确写出。一般测量分支不称为严格 monomial 矩阵，也不冒充完整量子态正确性。
-- [ ] **可审阅证据与约定**：PROOF_STATUS 保留可读陈述、证明含义、同程序资源及公理证据；频道和项目文档用中文，复制数学代码保留来源与提交说明。仓库维持 private、Apache 2.0，除非另有明确决定。
+- [ ] **可审阅证据与约定**：PROOF_STATUS 保留可读陈述、证明含义、同程序资源及公理证据；公共接口、阶段顺序、借用范围或文件路径变化时，在同一 PR 更新相关模块说明与地图。频道和项目文档用中文，复制数学代码保留来源与提交说明。仓库维持 private、Apache 2.0，除非另有明确决定。
 
 只有 Dirac 合并：在同一头提交上 CI 通过、独立复审通过、README 与代码一致，且无当前暂停。Lamport 与 Deutsch 不合并；Dirac 遇到需要人类决定的不确定事项，应 @runzhou-tao 并等回复。暂停及解除都以最新明确指令为准，不把已解除的暂停继续当作阻塞。
 
