@@ -282,6 +282,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.inverseScaling_values
 #print axioms ECDSAAdd.Arithmetic.InverseScaledMiddle.congr
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_fields
+#print axioms ECDSAAdd.kaliski_terminal_even
+#print axioms ECDSAAdd.kaliski_terminal_values
+#print axioms ECDSAAdd.negative_even_value
+#print axioms ECDSAAdd.negative_even_restore
+#print axioms ECDSAAdd.Arithmetic.negativeEven_correct
+#print axioms ECDSAAdd.Arithmetic.negativeEven_spec
+#print axioms ECDSAAdd.Arithmetic.negativeEven_counts
+#print axioms ECDSAAdd.Arithmetic.negativeEven_wires
 LEAN
 )
 printf '%s\n' "$axioms"
