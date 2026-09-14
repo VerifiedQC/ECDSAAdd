@@ -1755,6 +1755,16 @@ D1内核目标支持3673=1024记录+1028状态+771轮工作+46计数/控制+804�
 
 D1实现先合入，D2随后rebase；D1不修改RoundRecord、Round门列或记录区编号。双方可能共同触及InverseLoop支持列表/资源与文档，D2只在D1最终实际计数上加入自己经证明的差额。设计复审通过后直接实施，无需再次请求owner授权。
 
+
+### 23.7 第一批基础证明（后续接入待实现）
+
+已证明 `kaliski_terminal_values` 的u=1/v=0/s=q及r正偶、小于2q，覆盖任意给定宽度内的合法正输入、奇模数及终止后的恒等轮。`negative_even_value`/`negative_even_restore` 给出规范取负与原系数的精确恢复。
+
+`negativeEven`/`restoreNegativeEven` 直接组合上述原语，双向寄存器Triple、全部记录相位、目标外逐线保持及工作位清零已证明；同一门列计数为3n−1/3n−1及3n/3n，n=256时767/767与768/768。正向支持为a++constant++carry++cin，恢复另含flag，不把未触及的mask或旧目标算入支持。`sourceUnary`只是同一ModInPlaceLayout源a的单目视图，不分配新线路。
+
+本批尚未实现B/Hlive/P借用与求逆集成；§23.5的下游目标仍待证明，当前已证点加资源不变。
+
+
 <a id="q1-one-bit-tape"></a>
 
 ## 24. Q1：一位 Kaliski 历史（D2 设计，待证明）
