@@ -35,3 +35,4 @@ import ECDSAAdd.Arithmetic.InverseScaleBorrow
 import ECDSAAdd.Arithmetic.NegativeEven
 
 import ECDSAAdd.Arithmetic.OneBitRoundResources
+import ECDSAAdd.Arithmetic.InverseTerminalConstants

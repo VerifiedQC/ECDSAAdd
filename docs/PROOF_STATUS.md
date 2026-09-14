@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2145项构建，以下292个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2148项构建，以下309个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -573,6 +573,23 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.oneBitRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.oneBitRound_preserves' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.oneBitRound_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactBorrow_length' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.idleBorrow_length' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compact_parts_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compact_inputs_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactCore_nodup' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactCore_length' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.idleBorrow_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_widths' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_work' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_live' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_widths' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_partition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.terminalConstants_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.terminalConstants_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.terminalConstants_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1086,3 +1103,11 @@ inverseCompute/Uncompute现只调用缩放prepare/restore，旧求逆半倍适�
 `kaliski_swap_from_r`由奇数p和现有整数不变量恢复交换位。`oneBitRound_spec`/`oneBitUnround_spec`显式断言swap前后为零、subtract正轮保存而逆轮清零；四字、计数、done更新对应旧轮。所有测量记录下精确保持相位，目标外保持见`oneBitRound_preserves`。
 
 `oneBitRound_counts`及`oneBitRound_wires`/`oneBitRound_qubits`给出同一门列资源：12w+32 Toffoli、6w+28测量、7w+48根实际线，257位实例为3,116/1,570/1,847。旧通用两位规格保持；新程序只增加奇数p前提。共享循环及求逆/点加接入尚未实现，当前顶层资源不变。
+
+### D1 第二批：借用映射与终态常量清理
+
+已证明 compactBorrow（B，1828位）、idleBorrow（P，2603位）及 r/Hlive/B 分割、互异和具体缩放/取负视图；P 包含于长度3673的 compactCoreWires 显式列表。此长度尚不是生产程序的 qubitCount，实际支持等式在第三批组合后证明。B/P 均不含记录带。
+
+terminalConstants 使用 X 门清除终态 u=1/s=q，并按同一门列写回，双向寄存器 Triple、全测量记录相位及其它线路保持已证明；Toffoli/测量均为零。当前求逆、除法和点加门列与资源未改变。
+
+完整 scripts/verify.sh 退出0：2148项构建、309条实际公理输出；17个新增入口与上方实际公理块同步。基于已合入Q1第一批的main，未放宽证明限制、未新增测试或公理。
