@@ -1765,6 +1765,14 @@ D1实现先合入，D2随后rebase；D1不修改RoundRecord、Round门列或记�
 本批尚未实现B/Hlive/P借用与求逆集成；§23.5的下游目标仍待证明，当前已证点加资源不变。
 
 
+### 23.8 第二批映射与清常量（已证明，组合待接入）
+
+已定义compactBank、compactBorrow、idleBorrow与compactCoreWires，分别证明银行分割下B=1828、P=2603及目标支持列表3673的长度。r++Hlive++B是P的置换；加入K仍互异。P包含于目标支持列表，完全不包含记录带或已退出的旧out字段。
+
+compactScaling的宽度、B前1054工作区、518历史等式及Nodup均已证明；compactNeg的完整视图为r与B前1029位的置换，宽度与互异成立。terminalConstants给出清除/写回u=1、s=q的双向Triple、其它位保持及零T/M资源。
+
+本批仍未切换inverseCompute、Divide或PointInPlace。目标列表长度与视图支持证明不等于新点加程序的精确qubitCount；§23.5的下游节省等待第三批同程序组合验证。
+
 <a id="q1-one-bit-tape"></a>
 
 ## 24. Q1：一位 Kaliski 历史（D2 设计，待证明）

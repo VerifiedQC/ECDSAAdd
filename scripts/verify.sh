@@ -299,6 +299,23 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_wires
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_preserves
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_qubits
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactBorrow_length
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.idleBorrow_length
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compact_parts_nodup
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compact_inputs_nodup
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactCore_nodup
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactCore_length
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.idleBorrow_subset
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_widths
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_work
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_live
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactScaling_nodup
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_widths
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_partition
+#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactNeg_nodup
+#print axioms ECDSAAdd.Arithmetic.terminalConstants_correct
+#print axioms ECDSAAdd.Arithmetic.terminalConstants_spec
+#print axioms ECDSAAdd.Arithmetic.terminalConstants_resources
 LEAN
 )
 printf '%s\n' "$axioms"

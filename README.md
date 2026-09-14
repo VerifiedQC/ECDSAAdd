@@ -182,3 +182,4 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 D1第一批已证明Kaliski终态常量及r正偶、原地取负/恢复的双向Triple与精确资源（767/767与768/768），见[NegativeEven.lean](ECDSAAdd/Arithmetic/NegativeEven.lean)。新的工作区借用与下游求逆/点加接入尚未实现，Current status中的资源保持不变。
 
 线数计划Q1的一位Kaliski历史见[设计与分批实现§24](docs/REWORK_PLAN.md#q1-one-bit-tape)：数学恢复引理及奇数模数的一位正逆轮已证明，每方向3,116 Toffoli /1,570测量 /1,847线，通用两位记录规格保持。循环共享与下游接入尚未完成；净省511线、完整受控点加增加2,048个Toffoli仍是接入目标，当前点加已证资源不变。
+D1第二批已证明B/P工作区的分割、长度和互异，具体缩放/取负借用视图，以及终态常量清除/写回的双向规格；求逆和点加组合接入仍待第三批，未更新当前资源。
