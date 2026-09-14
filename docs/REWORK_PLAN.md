@@ -1858,3 +1858,10 @@ D1合入后重新核对其支持列表，Q1账本只列可证明的增量，不�
 验收：恢复引理、正逆轮和循环 Triple/frame、精确 T/M、支持等式、Nodup、求逆/除法/点加公开规格；完整 verify 与实际公理输出，只依赖白名单，README、PROOF_STATUS、PROVENANCE按最终实现同步。设计PR不更新公理块、不将目标冒充Current status。
 
 Q5受控查表去mask不在本次范围。其控制输入如何与4位地址结合、计算与清理的计数尚需独立设计，不能在本次预算直接扣261线或声称查表门数不变。
+
+
+### 24.6 第一批：数学恢复与单轮已实现
+
+`Math/KaliskiOneBit.lean`证明恢复公式，`OneBitRound/Proof/Spec/Resources`复用旧轮算术并加入两门recoverSwap。正逆轮完整Triple、目标外frame、精确支持均通过；通用两位入口及其公开陈述未改。为复用组合证明，仅将原有round_body_bounds、step_counter、step_done三个辅助引理由private改为公开，陈述和证明不变。
+
+新轮每方向12w+32 Toffoli /6w+28测量 /7w+48线，w=257时3,116/1,570/1,847；单轮不省线，循环共享交换位才产生收益。本批尚未改循环、InverseLoop历史、求逆或点加资源；24.4下游数值仍为待接入目标。八条新公开验证入口列入verify.sh，实际公理输出见PROOF_STATUS。

@@ -178,6 +178,7 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 
 求逆工作区减线的 D1 联合设计见 [§23](docs/REWORK_PLAN.md#23-d1受控常数点加的求逆工作区复用设计待证明)：保持受控常数点加公开规格，拟通过可逆原地取负与终态工作区复用，将有限 C 点加降至 8,918,440 Toffoli / 5,750,952 测量 / 4,450 线；均待实现证明，不含一位记录的额外收益。
 
-线数计划Q1的一位Kaliski历史见[设计§24](docs/REWORK_PLAN.md#q1-one-bit-tape)：保留通用两位记录规格，新增奇数模数内部入口；单独接入目标净省511线、完整受控点加增加2,048个Toffoli，测量不变。均待实现与支持集证明，当前已证资源不变。
 
 D1第一批已证明Kaliski终态常量及r正偶、原地取负/恢复的双向Triple与精确资源（767/767与768/768），见[NegativeEven.lean](ECDSAAdd/Arithmetic/NegativeEven.lean)。新的工作区借用与下游求逆/点加接入尚未实现，Current status中的资源保持不变。
+
+线数计划Q1的一位Kaliski历史见[设计与分批实现§24](docs/REWORK_PLAN.md#q1-one-bit-tape)：数学恢复引理及奇数模数的一位正逆轮已证明，每方向3,116 Toffoli /1,570测量 /1,847线，通用两位记录规格保持。循环共享与下游接入尚未完成；净省511线、完整受控点加增加2,048个Toffoli仍是接入目标，当前点加已证资源不变。
