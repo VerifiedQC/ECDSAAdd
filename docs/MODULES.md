@@ -85,7 +85,7 @@ flowchart TD
 | [PoolLayout](../ECDSAAdd/Arithmetic/PoolLayout.lean)、[InversePorts](../ECDSAAdd/Arithmetic/InversePorts.lean)、[PointInPlaceLayout](../ECDSAAdd/Arithmetic/PointInPlaceLayout.lean) 等共享布局 | 线路互异、借用关系、实际支持集；先与相关模块任务协调 |
 | README、本地图、[总导入入口](../ECDSAAdd.lean)、验证脚本 | 跨模块导航和验证覆盖，交给本轮集成任务统一协调 |
 
-并行任务各自使用工作分支和独立工作目录，任务开始时写清基线、目标、允许修改的文件和验证范围。本轮合并目标是 `new`，实际合并沿用 README 的责任约定。这里只给协作边界，不限制为解决问题而阅读必要依赖。
+本轮只维护 `new` 和唯一临时分支 `codex/module-map-inverse`。报告、文档和后续代码修改统一在临时分支累积，完成验证与审阅后再集成到 `new`。多个 agent 协作时先约定文件范围，由一个执行者负责 Git 操作；如需独立目录可用 detached worktree 交接补丁，不再为每项任务新建持久分支。任务开始时写清基线、目标和验证范围，实际合并沿用 README 的责任约定。
 
 ## 当前调用与已存在的其他组件
 
