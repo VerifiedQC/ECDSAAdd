@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.Reduction
+import ECDSAAdd.Arithmetic.ModularAddition.Reduction
 import ECDSAAdd.Math.HalvingBijection
 
 namespace ECDSAAdd.Arithmetic

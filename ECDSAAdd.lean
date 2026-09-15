@@ -1,38 +1,38 @@
 import ECDSAAdd.Math.AffineFormula
 import ECDSAAdd.Circuit.And
-import ECDSAAdd.Arithmetic.InverseContract
-import ECDSAAdd.Arithmetic.FieldAddSub
-import ECDSAAdd.Arithmetic.FieldMultiply
+import ECDSAAdd.Arithmetic.ModularInverse.InverseContract
+import ECDSAAdd.Arithmetic.ModularAddition.FieldAddSub
+import ECDSAAdd.Arithmetic.ModularMultiplication.FieldMultiply
 import ECDSAAdd.Math.KaliskiInverse
-import ECDSAAdd.Arithmetic.Shift
-import ECDSAAdd.Arithmetic.Counter
-import ECDSAAdd.Arithmetic.Compare
-import ECDSAAdd.Arithmetic.RoundSpec
-import ECDSAAdd.Arithmetic.InverseLoopResources
-import ECDSAAdd.Arithmetic.InverseResources
-import ECDSAAdd.Arithmetic.PointCandidateSpec
-import ECDSAAdd.Arithmetic.PointCandidateResources
-import ECDSAAdd.Arithmetic.PointAddSpec
-import ECDSAAdd.Arithmetic.PointAddResources
-import ECDSAAdd.Arithmetic.ControlledPointResources
-import ECDSAAdd.Arithmetic.ModInPlaceSubtract
+import ECDSAAdd.Arithmetic.Shift.Shift
+import ECDSAAdd.Arithmetic.Addition.Counter
+import ECDSAAdd.Arithmetic.Comparison.Compare
+import ECDSAAdd.Arithmetic.ModularInverse.RoundSpec
+import ECDSAAdd.Arithmetic.ModularInverse.InverseLoopResources
+import ECDSAAdd.Arithmetic.ModularInverse.InverseResources
+import ECDSAAdd.Arithmetic.PointAddition.PointCandidateSpec
+import ECDSAAdd.Arithmetic.PointAddition.PointCandidateResources
+import ECDSAAdd.Arithmetic.PointAddition.PointAddSpec
+import ECDSAAdd.Arithmetic.PointAddition.PointAddResources
+import ECDSAAdd.Arithmetic.PointAddition.ControlledPointResources
+import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
 
-import ECDSAAdd.Arithmetic.ModUnaryResources
+import ECDSAAdd.Arithmetic.ModularDoubling.ModUnaryResources
 
 import ECDSAAdd.Math.PointInPlace
-import ECDSAAdd.Arithmetic.DivideSpec
-import ECDSAAdd.Arithmetic.PointInPlaceResources
+import ECDSAAdd.Arithmetic.Division.DivideSpec
+import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceResources
 import ECDSAAdd.Math.Montgomery
-import ECDSAAdd.Arithmetic.Lookup
-import ECDSAAdd.Arithmetic.MontResources
+import ECDSAAdd.Arithmetic.Lookup.Lookup
+import ECDSAAdd.Arithmetic.ModularMultiplication.MontResources
 
-import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
+import ECDSAAdd.Arithmetic.Addition.MeasuredMaskedAdder
 
 import ECDSAAdd.Math.InverseScaleFactor
 
-import ECDSAAdd.Arithmetic.InverseScaleBorrow
+import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleBorrow
 
-import ECDSAAdd.Arithmetic.NegativeEven
+import ECDSAAdd.Arithmetic.ModularInverse.NegativeEven
 
-import ECDSAAdd.Arithmetic.OneBitRoundResources
-import ECDSAAdd.Arithmetic.InverseTerminalConstants
+import ECDSAAdd.Arithmetic.ModularInverse.OneBitRoundResources
+import ECDSAAdd.Arithmetic.ModularInverse.InverseTerminalConstants

@@ -4,7 +4,7 @@
 
 ## 从哪里开始读
 
-先看[项目地图](docs/MODULES.md)，按任务找到公共接口和模块阅读路径。第一份[求逆模块说明](docs/modules/inverse.md) 从输入输出讲起，解释当前算法、准备/恢复边界，以及除法如何借用工作区。其他模块暂由项目地图链接到源码入口。
+先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。Arithmetic 已按 14 个功能模块整理，每个模块一份人类阅读入口；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
 
 当前证明与资源证据见 [PROOF_STATUS](docs/PROOF_STATUS.md)，算法设计和历史见 [REWORK_PLAN](docs/REWORK_PLAN.md)。下面保留项目状态摘要；调用模块通常从地图中的公开规格开始。
 
@@ -18,21 +18,21 @@
 | 程序与语义 | 已实现 X/CX/CCX、测量及即时 Z/CZ 修正、monomial 执行和静态资源计数 | [Framework](ECDSAAdd/Framework) |
 | Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/Hoare.lean) |
 | AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/And.lean) |
-| M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Layout.lean) |
-| 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/FieldAddSub.lean) |
-| 模乘 | 已证明两段Montgomery的五个适配器，fieldMul使用标准模积XOR，工作区1,827位 | [FieldMultiply.lean](ECDSAAdd/Arithmetic/FieldMultiply.lean) |
-| 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Montgomery 适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
-| 改 2 C2 半倍 | 无控制半倍的 Triple/frame/资源保留；旧Horner电路已由Montgomery替换，旧文件已清理 | [ModUnaryResources.lean](ECDSAAdd/Arithmetic/ModUnaryResources.lean) |
-| 改 6a 准备/恢复 | 已证明P/Q与五个适配器的Triple、逐线保持、精确资源；已接入fieldMul，原地点加改接已实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/MontResources.lean) |
+| M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Addition/Layout.lean) |
+| 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/ModularAddition/FieldAddSub.lean) |
+| 模乘 | 已证明两段Montgomery的五个适配器，fieldMul使用标准模积XOR，工作区1,827位 | [FieldMultiply.lean](ECDSAAdd/Arithmetic/ModularMultiplication/FieldMultiply.lean) |
+| 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Montgomery 适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModularAddition/ModInPlaceSubtract.lean) |
+| 改 2 C2 半倍 | 无控制半倍的 Triple/frame/资源保留；旧Horner电路已由Montgomery替换，旧文件已清理 | [ModUnaryResources.lean](ECDSAAdd/Arithmetic/ModularDoubling/ModUnaryResources.lean) |
+| 改 6a 准备/恢复 | 已证明P/Q与五个适配器的Triple、逐线保持、精确资源；已接入fieldMul，原地点加改接已实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontResources.lean) |
 | EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
-| EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Counter.lean) |
-| EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/RoundSpec.lean) |
-| EEA 固定循环与反计算 | 已证明 512 轮 Kaliski、规范化取负、计数查表与单段 Montgomery 缩放、XOR 输出及显式恢复；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/InverseLoopResources.lean) |
-| 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/InverseResources.lean) |
-| M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointCandidateResources.lean) |
-| 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddResources.lean) |
-| 受控原地点加 | 已证明控制保持、全部点情形、临时点/工作区清零及同程序精确资源 | [ControlledPointAddSpec.lean](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean) · [ControlledPointResources.lean](ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
-| 原地加减与比较器原语 | 已证明原地加/减（n−1 Toffoli、n−1 测量、3n 线）、受控常数/寄存器加减、Gidney 比较器（n Toffoli）；已由求逆第二阶段复用 | [InPlaceAdder.lean](ECDSAAdd/Arithmetic/InPlaceAdder.lean) · [Compare.lean](ECDSAAdd/Arithmetic/Compare.lean) |
+| EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Addition/Counter.lean) |
+| EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/ModularInverse/RoundSpec.lean) |
+| EEA 固定循环与反计算 | 已证明 512 轮 Kaliski、规范化取负、计数查表与单段 Montgomery 缩放、XOR 输出及显式恢复；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseLoopResources.lean) |
+| 完整求逆电路 | 已证明外部 256 位非零输入的域逆元、XOR 输出、装载/卸载、相位/清理和同程序精确资源及契约实例 | [InverseSpec.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseSpec.lean) · [InverseResources.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseResources.lean) |
+| M3 候选计算 | 已证明全部标志取值下的安全候选、清理和同程序 Toffoli/测量数；分支标志原语单独证明 | [PointCandidateSpec.lean](ECDSAAdd/Arithmetic/PointAddition/PointCandidateSpec.lean) · [PointCandidateResources.lean](ECDSAAdd/Arithmetic/PointAddition/PointCandidateResources.lean) |
+| 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddition/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddition/PointAddResources.lean) |
+| 受控原地点加 | 已证明控制保持、全部点情形、临时点/工作区清零及同程序精确资源 | [ControlledPointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddition/ControlledPointAddSpec.lean) · [ControlledPointResources.lean](ECDSAAdd/Arithmetic/PointAddition/ControlledPointResources.lean) |
+| 原地加减与比较器原语 | 已证明原地加/减（n−1 Toffoli、n−1 测量、3n 线）、受控常数/寄存器加减、Gidney 比较器（n Toffoli）；已由求逆第二阶段复用 | [InPlaceAdder.lean](ECDSAAdd/Arithmetic/Addition/InPlaceAdder.lean) · [Compare.lean](ECDSAAdd/Arithmetic/Comparison/Compare.lean) |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
@@ -94,7 +94,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **8,946,186 个 Toffoli�
 每次创建或更新 PR 都逐项检查，并在 PR 描述里简述结果；可读性和设计必要性需要人工审阅，不能用构建通过代替。
 
 - [ ] **Human readable**：公开定理直接表达前置条件、程序与结果；使用 `r = v`、命名布局、统一 `Nodup` 和中文说明。先展示零输出等常用形式，再提供组合所需的 XOR 形式；检查程序及测量语法是否容易读。
-- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。README 提供总入口，MODULES 和 docs/modules 说明当前模块与阅读路径，PROOF_STATUS 保存证明和资源证据，PROVENANCE 保存来源；未实现的算法优化计划集中在 REWORK_PLAN（README 只留摘要表）。可读性整理报告作为该轮提案留档，当前说明不重复维护算法历史和资源表。
+- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。README 提供总入口，MODULES 和 Arithmetic 各功能目录的 README 说明当前模块与阅读路径，PROOF_STATUS 保存证明和资源证据，PROVENANCE 保存来源；未实现的算法优化计划集中在 REWORK_PLAN（README 只留摘要表）。可读性整理报告作为该轮提案留档，当前说明不重复维护算法历史和资源表。
 - [ ] **状态真实**：逐项对照 README Current status、实际源码、公开定理和验证结果；契约不写成实现，数学群律不写成点加电路证明。
 - [ ] **Lean 验证**：固定工具链与依赖，运行 `lake --wfail build` 和选定公开定理的传递 `#print axioms` 白名单，仅允许 `propext`、`Classical.choice`、`Quot.sound`。不添加小 case 测试、Python 对照或真值表验证。
 - [ ] **语义与清理**：Triple 对任意初始相位及所有测量记录证明相位恢复、所需输入保持和工作位清零。即时 Z/CZ 修正不是自动正确；测量结果只能选择即时修正。清理必须有适用的不变量，不能直接反转带测量的程序。
@@ -168,7 +168,7 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 
 改 6a 的具体门列设计见 [重做计划 §17](docs/REWORK_PLAN.md#montgomery-design)：包含标准表示转换与历史清理的 XOR适配器已证379,424 Toffoli / 379,424测量 / 2,596根实际线路，并已用于fieldMul；原地点加8,946,186/5,772,554/6,218也已完成集成与证明。
 
-改6a已实现数学、查表和共享工作区的准备/恢复电路 P/Q。`montP_spec` 得到标准模积并保留两段历史，`montQ_spec` 消费历史并清空全部工作位；两者各为189,712 Toffoli / 189,712测量 / 2,339根实际线路（工作区1,827位），对全部测量记录保持相位及工作区外线路。入口为Arithmetic/MontPQ.lean、MontResources.lean。五个适配器已证明，fieldMul使用XOR版；普通加/减为380,447/380,447和380,959/380,959，均2,596线；受控加/减为380,959/380,447和381,471/380,959，均2,597线。原地点加改接已实现。
+改6a已实现数学、查表和共享工作区的准备/恢复电路 P/Q。`montP_spec` 得到标准模积并保留两段历史，`montQ_spec` 消费历史并清空全部工作位；两者各为189,712 Toffoli / 189,712测量 / 2,339根实际线路（工作区1,827位），对全部测量记录保持相位及工作区外线路。入口为 [MontPQ.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontPQ.lean) 与 [MontResources.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontResources.lean)。五个适配器已证明，fieldMul使用XOR版；普通加/减为380,447/380,447和380,959/380,959，均2,596线；受控加/减为380,959/380,447和381,471/380,959，均2,597线。原地点加改接已实现。
 
 改6b已按普通坐标评测口径搁置，历史设计账本见 [REWORK_PLAN §19](docs/REWORK_PLAN.md#19-改-6b全-montgomery-表示与边界成本设计待复审)。编码接口核心目标11,339,178 Toffoli；保留普通坐标的保守边界包装反而增至12,076,586，设计已复审但未实现，不计入当前已证值。
 
@@ -185,7 +185,7 @@ Apache License 2.0；来源声明见 [NOTICE](NOTICE)。
 求逆工作区减线的 D1 联合设计见 [§23](docs/REWORK_PLAN.md#23-d1受控常数点加的求逆工作区复用设计待证明)：保持受控常数点加公开规格，拟通过可逆原地取负与终态工作区复用，将有限 C 点加降至 8,918,440 Toffoli / 5,750,952 测量 / 4,450 线；均待实现证明，不含一位记录的额外收益。
 
 
-D1第一批已证明Kaliski终态常量及r正偶、原地取负/恢复的双向Triple与精确资源（767/767与768/768），见[NegativeEven.lean](ECDSAAdd/Arithmetic/NegativeEven.lean)。新的工作区借用与下游求逆/点加接入尚未实现，Current status中的资源保持不变。
+D1第一批已证明Kaliski终态常量及r正偶、原地取负/恢复的双向Triple与精确资源（767/767与768/768），见[NegativeEven.lean](ECDSAAdd/Arithmetic/ModularInverse/NegativeEven.lean)。新的工作区借用与下游求逆/点加接入尚未实现，Current status中的资源保持不变。
 
 线数计划Q1的一位Kaliski历史见[设计与分批实现§24](docs/REWORK_PLAN.md#q1-one-bit-tape)：数学恢复引理及奇数模数的一位正逆轮已证明，每方向3,116 Toffoli /1,570测量 /1,847线，通用两位记录规格保持。循环共享与下游接入尚未完成；净省511线、完整受控点加增加2,048个Toffoli仍是接入目标，当前点加已证资源不变。
 D1第二批已证明B/P工作区的分割、长度和互异，具体缩放/取负借用视图，以及终态常量清除/写回的双向规格；求逆和点加组合接入仍待第三批，未更新当前资源。

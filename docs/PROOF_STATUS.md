@@ -40,7 +40,7 @@ ECDSAAdd.andComputeErase_spec (a b anc : ECDSAAdd.Wire) (hnd : [a, b, anc].Nodup
 
 ## M2：命名布局与 XOR 加减法
 
-[AdderLayout](../ECDSAAdd/Arithmetic/Layout.lean) 按位保存 x、y、out、carry 四根线，派生寄存器和位宽；`L.wires.Nodup` 统一要求布局互异。公开规格支持任意输出初值 O：
+[AdderLayout](../ECDSAAdd/Arithmetic/Addition/Layout.lean) 按位保存 x、y、out、carry 四根线，派生寄存器和位宽；`L.wires.Nodup` 统一要求布局互异。公开规格支持任意输出初值 O：
 
 ```lean
 theorem add_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) (C : Bool) :
@@ -58,9 +58,9 @@ theorem sub_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) :
 
 ## M2：常量模数与模 p 加减法
 
-[ModLayout](../ECDSAAdd/Arithmetic/ModularLayout.lean) 包含 n 个低位和一个额外高位。每位有 x、y、total、modulus、diff、out、carrySum、carryDiff 八根线，另有两个输入进位线；所有互异条件仍只有 `L.wires.Nodup`。全部物理寄存器宽度为 n+1，输入小于 q 保证输入高位为零；输出初值 O 可以任意。
+[ModLayout](../ECDSAAdd/Arithmetic/ModularAddition/ModularLayout.lean) 包含 n 个低位和一个额外高位。每位有 x、y、total、modulus、diff、out、carrySum、carryDiff 八根线，另有两个输入进位线；所有互异条件仍只有 `L.wires.Nodup`。全部物理寄存器宽度为 n+1，输入小于 q 保证输入高位为零；输出初值 O 可以任意。
 
-[公开规格](../ECDSAAdd/Arithmetic/Modular.lean)：
+[公开规格](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean)：
 
 ```lean
 theorem modAdd_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
@@ -74,13 +74,13 @@ theorem modSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+q-Y)%q)), L.work = 0 }}
 ```
 
-q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整和 T，再计算候选差 D=(T−q) mod 2^(n+1)；D 的高位选择 T 或 D。模减先计算 D=(X−Y) mod 2^(n+1)，再计算候选 D+q；同一高位选择相应结果。[Reduction](../ECDSAAdd/Arithmetic/Reduction.lean) 证明这些选择等于所需模运算。
+q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整和 T，再计算候选差 D=(T−q) mod 2^(n+1)；D 的高位选择 T 或 D。模减先计算 D=(X−Y) mod 2^(n+1)，再计算候选 D+q；同一高位选择相应结果。[Reduction](../ECDSAAdd/Arithmetic/ModularAddition/Reduction.lean) 证明这些选择等于所需模运算。
 
 选择器只覆盖低 n 位：每位先 `CX no out; CX yes no; CCX flag no out; CX yes no`，用一个 Toffoli 后恢复 no。总布局证明选择位与低位输入、输出分离，不出现重复控制位的 CCX。所选结果小于 q < 2^n，因此输出高位不施门，原有高位保持；这仍满足完整 n+1 位寄存器的任意初值 XOR 规格。
 
 选择器把结果 XOR 到 out；随后保持来源寄存器不变，按前向 XOR 程序依次清理候选、其来源与常量寄存器。选择位直接使用 diff 的高位，并随整个 diff 一起归零；没有单独测量或直接擦除这个高阶布尔函数。测量只发生在已有进位清理子程序中。所有 Triple 均要求对任意初始相位和测量记录恢复相位。
 
-[FieldAddSub](../ECDSAAdd/Arithmetic/FieldAddSub.lean) 将 q 取为 secp256k1 的 p，要求 `L.width = 256`，并证明模数的正性与位宽界；`fieldAdd_spec`、`fieldSub_spec` 给出上述两式的模 p 特例。零输出推论 `fieldAdd_zero_spec`、`fieldSub_zero_spec` 直接给出模加减结果，是 README 首条算术规格。这是保留输入的 XOR 算术，不是就地更新接口。
+[FieldAddSub](../ECDSAAdd/Arithmetic/ModularAddition/FieldAddSub.lean) 将 q 取为 secp256k1 的 p，要求 `L.width = 256`，并证明模数的正性与位宽界；`fieldAdd_spec`、`fieldSub_spec` 给出上述两式的模 p 特例。零输出推论 `fieldAdd_zero_spec`、`fieldSub_zero_spec` 直接给出模加减结果，是 README 首条算术规格。这是保留输入的 XOR 算术，不是就地更新接口。
 
 | 同一具体程序 | Toffoli | 测量 | 静态线路数（布局互异） |
 | --- | ---: | ---: | ---: |
@@ -93,11 +93,11 @@ q 是编译期经典常量，X、Y 是变量寄存器值。模加先计算完整
 | `modAdd` / `modSub`，n=L.width | 5n+4 | 4(n+1) | 8n+9 |
 | `fieldAdd` / `fieldSub`，n=256 | 1284 | 1028 | 2057 |
 
-[ModularResources](../ECDSAAdd/Arithmetic/ModularResources.lean) 对完整程序证明计数和线路集合等式，实际支持集 `L.activeWires` 排除不施门的 `out_high`（布局本身仍要求其互异）。5n+4 = 4(n+1) 次算术 Toffoli + n 次选择 Toffoli；常量零位不施门，资源计算没有通过额外虚门填充。线路数是程序静态支持集的基数，不是最大同时存活数，也未声称资源最优。
+[ModularResources](../ECDSAAdd/Arithmetic/ModularAddition/ModularResources.lean) 对完整程序证明计数和线路集合等式，实际支持集 `L.activeWires` 排除不施门的 `out_high`（布局本身仍要求其互异）。5n+4 = 4(n+1) 次算术 Toffoli + n 次选择 Toffoli；常量零位不施门，资源计算没有通过额外虚门填充。线路数是程序静态支持集的基数，不是最大同时存活数，也未声称资源最优。
 
 ## M2：保留输入的模乘（改6a已替换）
 
-[MontAdapterLayout](../ECDSAAdd/Arithmetic/MontAdapterLayout.lean) 复用MontLayout：x/out宽257、y宽256，工作区1827位，要求完整wires.Nodup。五个适配器均为P、中段输出更新、Q；输入和全部工作区恢复，支持普通XOR/加/减与受控加/减。
+[MontAdapterLayout](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterLayout.lean) 复用MontLayout：x/out宽257、y宽256，工作区1827位，要求完整wires.Nodup。五个适配器均为P、中段输出更新、Q；输入和全部工作区恢复，支持普通XOR/加/减与受控加/减。
 
 ```lean
 {{ L.x=X,L.y=Y,L.out=O,L.work=0 }} fieldMul L
@@ -149,7 +149,7 @@ theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
 
 ## I2：受控移位与 10 位计数
 
-[Shift](../ECDSAAdd/Arithmetic/Shift.lean) 将 CSWAP 分解为 `CX b a; CCX c a b; CX b a`。统一的 `(c::r).Nodup` 保证控制与所有目标互异。左右网络是相反顺序的相邻 CSWAP；`shiftRight_left_cancel` 证明先左后右恢复完整状态。只重排无测量的交换门。
+[Shift](../ECDSAAdd/Arithmetic/Shift/Shift.lean) 将 CSWAP 分解为 `CX b a; CCX c a b; CX b a`。统一的 `(c::r).Nodup` 保证控制与所有目标互异。左右网络是相反顺序的相邻 CSWAP；`shiftRight_left_cancel` 证明先左后右恢复完整状态。只重排无测量的交换门。
 
 ```lean
 theorem shiftRight_spec (c : Wire) (r : List Wire) (hnd : (c::r).Nodup)
@@ -163,7 +163,7 @@ theorem shiftLeft_spec (c : Wire) (r : List Wire) (hnd : (c::r).Nodup)
 
 网络实际是循环移位；右移的偶数条件保证最低位为零，左移条件保证最高位不溢出。没有丢弃非零位。控制为假时值不变，空/单线寄存器也包含在定理中。
 
-[Counter](../ECDSAAdd/Arithmetic/Counter.lean) 复用 `AdderLayout`，不另建布局类型：cin 是控制，x 是旧值，out 初始为空，y/carry 为零工作区。
+[Counter](../ECDSAAdd/Arithmetic/Addition/Counter.lean) 复用 `AdderLayout`，不另建布局类型：cin 是控制，x 是旧值，out 初始为空，y/carry 为零工作区。
 
 ```lean
 theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
@@ -187,7 +187,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 ## I3：完整单轮与逆轮
 
-[RoundSpec](../ECDSAAdd/Arithmetic/RoundSpec.lean) 的公开规格使用同一个命名布局与统一的 `L.wires.Nodup`。四份数据为 u/v/r/s，k 与 kNext 是两份十位计数银行，swap/subtract 是本轮仅有的两位历史记录；scratch 包含共享算术区、零检测区、活动位和其他辅助位。
+[RoundSpec](../ECDSAAdd/Arithmetic/ModularInverse/RoundSpec.lean) 的公开规格使用同一个命名布局与统一的 `L.wires.Nodup`。四份数据为 u/v/r/s，k 与 kNext 是两份十位计数银行，swap/subtract 是本轮仅有的两位历史记录；scratch 包含共享算术区、零检测区、活动位和其他辅助位。
 
 ```lean
 {{ L.u=z.u, L.v=z.v, L.r=z.r, L.s=z.s, L.k=z.k, L.kNext=0,
@@ -211,13 +211,13 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 | `kaliskiUnround L i` | 12w+31 | 6w+28 | 7w+48 |
 | 两者各自在 w=257 时 | 3115 | 1570 | 1847 |
 
-[RoundResources](../ECDSAAdd/Arithmetic/RoundResources.lean) 分解计数：记录为 w+5 / w（受控比较 w+1，条件计算/清理 4），算术体为 10w−4 / (4w−2)，计数移动为 20 / 20，零检测为 w / w，活动比较为 10 / 10。[RoundWires](../ECDSAAdd/Arithmetic/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和三份实际使用的工作寄存器共 7w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
+[RoundResources](../ECDSAAdd/Arithmetic/ModularInverse/RoundResources.lean) 分解计数：记录为 w+5 / w（受控比较 w+1，条件计算/清理 4），算术体为 10w−4 / (4w−2)，计数移动为 20 / 20，零检测为 w / w，活动比较为 10 / 10。[RoundWires](../ECDSAAdd/Arithmetic/ModularInverse/RoundWires.lean) 证明两条程序的完整线路并集恰好为布局的集合，再由 Nodup 求基数；包括测量修正线路，没有按组件线路数相加。四份数据和三份实际使用的工作寄存器共 7w 位，计数及控制线共 48 位。轮内空间 O(w)，记录为两位；未声称最优，也未将此单轮成本冒充整个求逆成本。
 
 实现中的 RoundDataLayout 与字段值表用于同一组工作线的局部组合；RoundAuxValues 专门保留计数与控制位，公开 API 仍直接写寄存器断言。辅助模块分别处理比较、零检测、受控加减、分支记录和算术体，均用于上述两条程序；没有新增通用编译器、测试框架或全环境审计。I4 固定循环/第二阶段见下节；I5 外部输入装载与完整逆元契约见后节；点加电路证明见后面的 M3 章节。
 
 ## I4：固定循环、第二阶段与反计算
 
-[InverseLoopSpec](../ECDSAAdd/Arithmetic/InverseLoopSpec.lean) 先给出已初始化寄存器的常用零输出形式：
+[InverseLoopSpec](../ECDSAAdd/Arithmetic/ModularInverse/InverseLoopSpec.lean) 先给出已初始化寄存器的常用零输出形式：
 
 ```lean
 {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1,
@@ -230,13 +230,13 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 `inverseLoop_spec` 要求一个全布局 `L.wires.Nodup`、512 对记录位、十位计数器、256 个低位和 257 位第二阶段/输出寄存器，以及模数 q%16=15、q<2^256、0<a<q、q 与 a 互素。`inverseLoop_xor_spec` 支持任意输出 O，结果为 `O ^^^ kaliskiInverse q a 256`。`L.work` 包含空计数银行、第一阶段 scratch、整个记录带及第二阶段全部寄存器和算术区；输入的 u/v/r/s/k/done 恢复，工作区归零，相位对所有测量记录保持。输出的数学函数已经由 I1 证明为逆元；此处仍要求第一阶段输入已装载，外部 256 位求逆契约由 I5 封装提供。
 
-电路固定执行以下顺序：[InverseCompute](../ECDSAAdd/Arithmetic/InverseCompute.lean) 的第一阶段记录循环、规范化取负、十位查表与单段Montgomery缩放、复制输出，再依次恢复缩放、清空取负结果和恢复第一阶段。没有逆序执行测量指令。
+电路固定执行以下顺序：[InverseCompute](../ECDSAAdd/Arithmetic/ModularInverse/InverseCompute.lean) 的第一阶段记录循环、规范化取负、十位查表与单段Montgomery缩放、复制输出，再依次恢复缩放、清空取负结果和恢复第一阶段。没有逆序执行测量指令。
 
-- [KaliskiLoopProof](../ECDSAAdd/Arithmetic/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
-- [NegativeInit](../ECDSAAdd/Arithmetic/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
-- [InverseScale](../ECDSAAdd/Arithmetic/InverseScale.lean) 的准备/恢复各用两次十位查表、单段Montgomery及三次CX交换。因子F_q(K)=R·2^{-K}，变量段直接返回规范逆元，不另做常数转换。y保存N，carry低256位保存商、顶位保存借位，zero仍全零；factor和共享工作区在中段前清零。恢复段重新得到旧轮工作区全零断言。
-- [InverseScaleState](../ECDSAAdd/Arithmetic/InverseScaleState.lean) 显式列出上述历史值，证明使用段保持K与全部历史后可恢复。内部求逆定理由任意奇数q收窄为q%16=15，Montgomery段固定256位；fieldInverse_spec及完整点加规格逐字不变。旧独立半倍原语保留，求逆中只使用新的缩放门列。
-- [InverseLoopProof](../ECDSAAdd/Arithmetic/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/InverseLoopLayout.lean) 保留第一阶段终点的当前k银行和计数工作区；缩放借用视图见InverseScaleBorrow；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
+- [KaliskiLoopProof](../ECDSAAdd/Arithmetic/ModularInverse/KaliskiLoopProof.lean) 把单轮与逆轮组合成固定长度循环。每轮独占两根记录线；终止后的轮保持 00，计数银行仍按静态顺序交换。逆向循环清除每一对记录。公开单轮的基准 swap/subtract 字段由记录带视图替换，不另占两根未使用线路。
+- [NegativeInit](../ECDSAAdd/Arithmetic/ModularInverse/NegativeInit.lean) 使用 I1 的 r<2q 范围，先约减 r，再取负，结果严格等于 `(-(r : ZMod q)).val`。`modAdd_bounded_spec` 仅要求两输入之和小于 2q，复用同一模加门列；没有假定终态 r<q，也没有使用错误的自然数 q−r 截断。
+- [InverseScale](../ECDSAAdd/Arithmetic/ModularInverse/InverseScale.lean) 的准备/恢复各用两次十位查表、单段Montgomery及三次CX交换。因子F_q(K)=R·2^{-K}，变量段直接返回规范逆元，不另做常数转换。y保存N，carry低256位保存商、顶位保存借位，zero仍全零；factor和共享工作区在中段前清零。恢复段重新得到旧轮工作区全零断言。
+- [InverseScaleState](../ECDSAAdd/Arithmetic/ModularInverse/InverseScaleState.lean) 显式列出上述历史值，证明使用段保持K与全部历史后可恢复。内部求逆定理由任意奇数q收窄为q%16=15，Montgomery段固定256位；fieldInverse_spec及完整点加规格逐字不变。旧独立半倍原语保留，求逆中只使用新的缩放门列。
+- [InverseLoopProof](../ECDSAAdd/Arithmetic/ModularInverse/InverseLoopProof.lean) 组合各段，证明复制输出后的完整反计算。[InverseLoopLayout](../ECDSAAdd/Arithmetic/ModularInverse/InverseLoopLayout.lean) 保留第一阶段终点的当前k银行和计数工作区；缩放借用视图见InverseScaleBorrow；用布局置换从同一个全局 Nodup 导出所有子布局互异性。
 
 `ExternalMod` 的字段框架由已有倍增实现提取，约减、取负与倍增实际共用。`PairFrame` 只跟踪两组可变寄存器，其余线路逐线保持，服务于条件选择和取负初始化；循环状态则明确区分记录与被借用的计数线路。这些辅助断言用于组合证明，公开规格仍直接列出寄存器。
 
@@ -251,11 +251,11 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 第一阶段实际静态支持为 7w+46+2N：包含交替计数银行和全部 2N 根记录线。取负初始化及第二阶段共用 a、temp 两组 w 位寄存器及 8w+2 位模算术区，共 10w+2；缩放的1054位共享工作区借自其中，518位历史借自原轮实际支持中的y/zero/carry；K仍在旧计数银行，不另加线路。输出为 w 位，合计 **18w+48+2N**，没有把共享支持重复相加，也没有把线路数当成最大存活数。
 
-[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **3,513,912 Toffoli、1,928,760 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改11已替换原地减半循环，未声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
+[InverseLoopResources](../ECDSAAdd/Arithmetic/ModularInverse/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **3,513,912 Toffoli、1,928,760 次测量、5,698 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改11已替换原地减半循环，未声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
 
 ## I5：外部输入封装与逆元契约
 
-[InverseSpec](../ECDSAAdd/Arithmetic/InverseSpec.lean) 的常用零输出规格为：
+[InverseSpec](../ECDSAAdd/Arithmetic/ModularInverse/InverseSpec.lean) 的常用零输出规格为：
 
 ```lean
 {{ L.x=X, L.out=0, L.work=0 }} fieldInverse L
@@ -266,7 +266,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 `inverseLoad` 复制外部 x 到第一阶段 v 的低 256 位，并用 X 门载入 u=p、s=1；其余工作区初始为零。执行原 `inverseLoop` 后，`inverseUnload` 以同样的 XOR 门卸载常数和输入副本，外部 x 保持。v 的内部高位始终留在工作区；内核输出高位初末均为零，后置清零由逆元小于 p<2^256 及 XOR 范围证明，而非作为额外假设。六字段值表用于这三个装载寄存器的局部更新，公开定理仍直接使用寄存器断言。
 
-[InverseResources](../ECDSAAdd/Arithmetic/InverseResources.lean) 证明：
+[InverseResources](../ECDSAAdd/Arithmetic/ModularInverse/InverseResources.lean) 证明：
 
 | 同一个 `fieldInverse L` | 精确资源 |
 | --- | --- |
@@ -705,7 +705,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 重做计划（[REWORK_PLAN](REWORK_PLAN.md) §1.1–§1.3、§5）的共用原语。接口直接用线路列表，宽度相等作为长度前提，互异条件是一个 `Nodup`；每条程序给 Triple、输出以外逐线保持（`_correct`）和同程序资源。改 1 的求逆第二阶段已复用原地常数加减与受控比较器；改 2 将继续组合这些原语。
 
-[InPlaceAdder](../ECDSAAdd/Arithmetic/InPlaceAdder.lean) 的 `majority` 是现有 `fullAdder` 的前六门：进位异或写入 carry，三个输入恢复，不写和位。`addInPlace` 每位先算进位、递归处理高位，再用现有 `eraseCarry` 擦除本位进位——此时 x、y、cin 仍是原值，`eraseCarry_spec` 的前提逐字成立——最后用两个 CX 把和位写回 y；最高位只写和位、不算进位，进位链比位宽少一根。
+[InPlaceAdder](../ECDSAAdd/Arithmetic/Addition/InPlaceAdder.lean) 的 `majority` 是现有 `fullAdder` 的前六门：进位异或写入 carry，三个输入恢复，不写和位。`addInPlace` 每位先算进位、递归处理高位，再用现有 `eraseCarry` 擦除本位进位——此时 x、y、cin 仍是原值，`eraseCarry_spec` 的前提逐字成立——最后用两个 CX 把和位写回 y；最高位只写和位、不算进位，进位链比位宽少一根。
 
 ```lean
 theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
@@ -739,7 +739,7 @@ theorem maskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
 
 减法版把 `Y + …` 换成 `Y + 2^y.length − …`。控制为假时加数为零、y 不变，T/t 装入又清除的都是零。
 
-[Compare](../ECDSAAdd/Arithmetic/Compare.lean) 是 Gidney 2018 的比较器：`compareChain` 每位用 `majority` 算进位、递归到最高位，递归到底时 cin 就是最高进位，用 `flipBelow` 读出（无控制：`X target; CX top target`；受控：`CX c target; CCX c top target`），再按相反顺序用现有 `eraseCarry` 擦除进位链；三个输入寄存器全程不变。`compareLt` 先把 y 按位取反、cin 置 1，链算的是 x + ¬y + 1，最高进位 = [x ≥ y]，所以 target 得到 [x < y]；`compareLtConst` 把常量装进零寄存器 T 再比较、再卸载。
+[Compare](../ECDSAAdd/Arithmetic/Comparison/Compare.lean) 是 Gidney 2018 的比较器：`compareChain` 每位用 `majority` 算进位、递归到最高位，递归到底时 cin 就是最高进位，用 `flipBelow` 读出（无控制：`X target; CX top target`；受控：`CX c target; CCX c top target`），再按相反顺序用现有 `eraseCarry` 擦除进位链；三个输入寄存器全程不变。`compareLt` 先把 y 按位取反、cin 置 1，链算的是 x + ¬y + 1，最高进位 = [x ≥ y]，所以 target 得到 [x < y]；`compareLtConst` 把常量装进零寄存器 T 再比较、再卸载。
 
 ```lean
 theorem compareLt_spec (x y carry : List Wire) (cin target : Wire)
