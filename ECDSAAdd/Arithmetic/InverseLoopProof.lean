@@ -66,7 +66,7 @@ theorem InverseScaledMiddle.congr (L : InverseLoopLayout) (q : Nat) (z : KState)
   · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.1
   · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.2.1
   · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.2.2.1
-  · exact TapeValues.congr _ _ _ _ h.2.2.2.2.2.2.2.2 (fun w hw => hs w (by simp [InverseLoopLayout.restWires,hw]))
+  · exact OneBitRecordsValues.congr _ _ _ _ h.2.2.2.2.2.2.2.2 (fun w hw => hs w (by simp [InverseLoopLayout.restWires,hw]))
 
 theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hlen : L.middle.r.length=L.out.length) (q : Nat) (z : KState) (cs : List (Bool×Bool)) (N O : Nat) :
@@ -81,7 +81,7 @@ theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     refine List.nodup_append'.mpr ⟨?_,(List.nodup_append'.mp hnd).2.1,?_⟩
     · exact (L.compact_data_nodup hnd) |> fun hh => L.middle.data.reg_nodup hh .r
     · exact List.disjoint_left.mpr (fun w hw ho => List.disjoint_left.mp hd
-        (List.mem_append_left _ ((L.first.usedTapeWires_sublist L.records).subset (hs hw))) ho)
+        (List.mem_append_left _ ((L.first.usedRecordTapeWires_sublist L.records).subset (hs hw))) ho)
   obtain ⟨hp,he,hz⟩ := copyRegister_correct none L.middle.r L.out hlen hn (by simp) s m
   have hdis : L.coreWires.Disjoint L.out := (List.nodup_append'.mp hnd).2.2
   refine ⟨hp,InverseScaledMiddle.congr L q z cs N s.basis _ h.1 ?_,?_⟩

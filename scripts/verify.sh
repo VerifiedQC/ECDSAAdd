@@ -302,6 +302,12 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_wires
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_preserves
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_qubits
+#print axioms ECDSAAdd.Arithmetic.oneBitLoop_correct
+#print axioms ECDSAAdd.Arithmetic.oneBitRecordLoop_correct
+#print axioms ECDSAAdd.Arithmetic.oneBitRecordLoop_counts
+#print axioms ECDSAAdd.Arithmetic.oneBitRecordLoop_wires
+#print axioms ECDSAAdd.Arithmetic.oneBitRecordLoop_qubits
+#print axioms ECDSAAdd.Arithmetic.OneBitRecordsValues.zero_iff
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compactBorrow_length
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.idleBorrow_length
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.compact_parts_nodup

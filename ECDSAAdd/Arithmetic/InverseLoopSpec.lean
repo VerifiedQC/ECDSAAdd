@@ -37,7 +37,7 @@ theorem InverseInitial.iff (L : InverseLoopLayout) (q a : Nat) (ha : 0<a) (s : B
     InverseInitial L q a s ↔
       ((((((regValue L.first.u s=q ∧ regValue L.first.v s=a) ∧ regValue L.first.r s=0) ∧
         regValue L.first.s s=1) ∧ regValue L.first.k s=0) ∧ s L.first.done=false) ∧ regValue L.work s=0) := by
-  simp only [InverseInitial,LoopState.iff,TapeValues.zero_iff,InverseExtra.zero_iff,kaliskiInit,
+  simp only [InverseInitial,LoopState.iff,OneBitRecordsValues.zero_iff,InverseExtra.zero_iff,kaliskiInit,
     show decide (a=0)=false by simp [Nat.ne_of_gt ha]]
   simp only [InverseLoopLayout.work,regValue_zero,List.mem_append,or_imp,forall_and]
   tauto

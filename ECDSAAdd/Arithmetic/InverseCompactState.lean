@@ -7,7 +7,7 @@ namespace ECDSAAdd.Arithmetic
 def CompactFrozen (L : InverseLoopLayout) (K : Nat) (cs : List (Bool×Bool)) (s : BasisState) : Prop :=
   InversePhase L K 0 s ∧ regValue (L.middle.data.reg .out) s=0 ∧
     s L.middle.data.cin=false ∧ s L.middle.done=true ∧
-    s L.middle.oddWork=false ∧ s L.middle.bothWork=false ∧ TapeValues L.records cs s
+    s L.middle.oddWork=false ∧ s L.middle.bothWork=false ∧ OneBitRecordsValues L.records cs s
 
 /-- 常量清除后r为唯一数据，历史和中段借用区均为空。 -/
 def CompactReady (L : InverseLoopLayout) (K R : Nat) (cs : List (Bool×Bool)) (s : BasisState) : Prop :=
@@ -79,7 +79,7 @@ theorem CompactFrozen.congr (L : InverseLoopLayout) (hn : L.wires.Nodup)
   · exact (keep _ (outside _ (by simp))).trans h.2.2.2.1
   · exact (keep _ (outside _ (by simp))).trans h.2.2.2.2.1
   · exact (keep _ (outside _ (by simp))).trans h.2.2.2.2.2.1
-  · exact TapeValues.congr L.records cs s t h.2.2.2.2.2.2
+  · exact OneBitRecordsValues.congr L.records cs s t h.2.2.2.2.2.2
       (fun w hw => keep w (outside w (by simp [hw])))
 
 theorem InverseMiddle.update_data (L : InverseLoopLayout) (hn : L.wires.Nodup)
@@ -100,7 +100,7 @@ theorem InverseMiddle.update_data (L : InverseLoopLayout) (hn : L.wires.Nodup)
   · rw [hv]; exact (he _ (outside _ (by simp))).trans h.1.2.1
   · exact (he _ (outside _ (by simp))).trans h.1.2.2.1
   · exact (he _ (outside _ (by simp))).trans h.1.2.2.2.1
-  · exact TapeValues.congr _ _ _ _ h.1.2.2.2.2 (fun w hw => he w (outside w (by simp [hw])))
+  · exact OneBitRecordsValues.congr _ _ _ _ h.1.2.2.2.2 (fun w hw => he w (outside w (by simp [hw])))
   · rw [hk]
     exact InversePhase.congr L _ 0 s t h.2
       (fun w hw => he w (fun hd => List.disjoint_left.mp (L.compact_phase_disjoint hn) hd hw))

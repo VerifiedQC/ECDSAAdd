@@ -5,7 +5,7 @@ namespace ECDSAAdd.Arithmetic
 /-- 第二阶段不会修改的数据、分支记录和第一阶段状态位。 -/
 def InverseRest (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool)) (s : BasisState) : Prop :=
   RoundValues L.middle.data (roundDataValues z) s ∧ s L.middle.done=decide (z.v=0) ∧
-    s L.middle.oddWork=false ∧ s L.middle.bothWork=false ∧ TapeValues L.records cs s
+    s L.middle.oddWork=false ∧ s L.middle.bothWork=false ∧ OneBitRecordsValues L.records cs s
 
 def InverseExtra (L : InverseLoopLayout) (A : Nat) (s : BasisState) : Prop :=
   regValue L.a s=A ∧ regValue L.temp s=0 ∧ regValue L.arithmetic.wires s=0
@@ -28,13 +28,13 @@ theorem InverseRest.congr (L : InverseLoopLayout) (z : KState) (cs : List (Bool�
   · exact (he _ (by simp [InverseLoopLayout.restWires])).trans h.2.1
   · exact (he _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.1
   · exact (he _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.1
-  · exact TapeValues.congr L.records cs s t h.2.2.2.2
+  · exact OneBitRecordsValues.congr L.records cs s t h.2.2.2.2
       (fun w hw => he w (by simp [InverseLoopLayout.restWires,hw]))
 
 theorem InverseMiddle.iff (L : InverseLoopLayout) (z : KState) (cs : List (Bool×Bool))
     (A : Nat) (s : BasisState) :
     InverseMiddle L z cs A s ↔
-      LoopState L.middle z s ∧ TapeValues L.records cs s ∧ InverseExtra L A s := by
+      LoopState L.middle z s ∧ OneBitRecordsValues L.records cs s ∧ InverseExtra L A s := by
   constructor
   · rintro ⟨hr,hp⟩
     refine ⟨⟨hr.1,hp.2.1,hp.2.2.2.2.1,hp.2.2.1,hp.2.2.2.2.2,

@@ -19,23 +19,23 @@ theorem rest_subset (L : InverseLoopLayout) : L.restWires ⊆ L.coreWires :=
   fun _ h => L.core_perm.mem_iff.mp (List.mem_append_left _ h)
 
 /-- 独立求逆仅需要银行前30位；中段乘法的804位另计。 -/
-def usedCoreWires (L : InverseLoopLayout) : List Wire := L.first.usedTapeWires L.records++L.arithmetic.wires.take 30
+def usedCoreWires (L : InverseLoopLayout) : List Wire := L.first.usedRecordTapeWires L.records++L.arithmetic.wires.take 30
 
 theorem compactCore_sublist (L : InverseLoopLayout) : L.compactCoreWires.Sublist L.coreWires :=
-  (L.first.usedTapeWires_sublist L.records).append
+  (L.first.usedRecordTapeWires_sublist L.records).append
     ((List.take_sublist 804 L.arithmetic.wires).trans (List.sublist_append_right _ _))
 
 def usedWires (L : InverseLoopLayout) : List Wire := L.usedCoreWires++L.out
 
 theorem usedCoreWires_sublist (L : InverseLoopLayout) : L.usedCoreWires.Sublist L.coreWires := by
-  exact (L.first.usedTapeWires_sublist L.records).append
+  exact (L.first.usedRecordTapeWires_sublist L.records).append
     ((List.take_sublist 30 L.arithmetic.wires).trans (List.sublist_append_right _ _))
 
 theorem usedWires_sublist (L : InverseLoopLayout) : L.usedWires.Sublist L.wires :=
   L.usedCoreWires_sublist.append_right _
 
 theorem reg_first_used (L : InverseLoopLayout) (f : RoundField) (hf : f≠.out) :
-    L.middle.data.reg f ⊆ L.first.usedTapeWires L.records := by
+    L.middle.data.reg f ⊆ L.first.usedRecordTapeWires L.records := by
   intro w hw
   have hh : w∈L.middle.usedSharedWires := List.mem_append_left _
     (List.mem_append_right _ (L.middle.data.reg_used_mem f hf hw))
@@ -83,7 +83,7 @@ theorem inverseCompute_wires (L : InverseLoopLayout)
     (hl : L.first.low.length=256) (hm : L.arithmetic.width=256) (q : Nat) :
     wires (inverseCompute L q)=L.usedCoreWires.toFinset ∧
     wires (inverseUncompute L q)=L.usedCoreWires.toFinset := by
-  have hk := kaliskiLoop_wires L.first L.records 0 hw hd
+  have hk := oneBitRecordLoop_wires L.first L.records 0 hw hd
   have hne : L.records.isEmpty=false := by
     cases he : L.records with
     | nil => rw [he] at hn; simp at hn
@@ -95,7 +95,7 @@ theorem inverseCompute_wires (L : InverseLoopLayout)
   have hsup := L.compactScaling.wires_subset hsw q
   have hcover := L.compactScaling.work_covered hsw q
   rw [L.compactScaling_work hm hl] at hcover
-  have first : (L.first.usedTapeWires L.records).toFinset⊆L.usedCoreWires.toFinset := by
+  have first : (L.first.usedRecordTapeWires L.records).toFinset⊆L.usedCoreWires.toFinset := by
     intro w hh; exact List.mem_toFinset.mpr (List.mem_append_left _ (List.mem_toFinset.mp hh))
   have bs : (L.compactBorrow.take 1054).toFinset⊆L.usedCoreWires.toFinset := by
     intro w hh; exact List.mem_toFinset.mpr (L.borrow_used_subset hl (List.mem_toFinset.mp hh))
@@ -135,7 +135,7 @@ theorem inverseCompute_wires (L : InverseLoopLayout)
   have upperB : wires (inverseUncompute L q)⊆L.usedCoreWires.toFinset := by
     rw [inverseUncompute,wires_append,wires_append,wires_append,hk.2]
     exact Finset.union_subset (Finset.union_subset (Finset.union_subset (hsup.2.trans sc) negback) constants) first
-  have lower (circ : Program) (hfirst : (L.first.usedTapeWires L.records).toFinset⊆wires circ)
+  have lower (circ : Program) (hfirst : (L.first.usedRecordTapeWires L.records).toFinset⊆wires circ)
       (hfactor : L.compactScaling.factor.toFinset⊆wires circ)
       (hborrow : (L.compactBorrow.take 1054).toFinset⊆wires circ ∪ L.compactScaling.factor.toFinset) :
       L.usedCoreWires.toFinset⊆wires circ := by

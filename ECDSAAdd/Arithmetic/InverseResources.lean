@@ -42,7 +42,7 @@ theorem fieldInverse_wires (L : InverseLayout) (hw : L.Widths) :
       w∈L.usedWires := by
     have hm := L.inner.first.data.reg_used_mem f hf h
     simp only [InverseLayout.usedWires,InverseLoopLayout.usedWires,InverseLoopLayout.usedCoreWires,
-      KaliskiRoundLayout.usedTapeWires,KaliskiRoundLayout.usedSharedWires,List.mem_append]
+      KaliskiRoundLayout.usedRecordTapeWires,KaliskiRoundLayout.usedSharedWires,List.mem_append]
     tauto
   have hu : wires (xorConstant L.inner.first.u p) ⊆ L.usedWires.toFinset := fun w h =>
     List.mem_toFinset.mpr (hd .u (by decide) (List.mem_toFinset.mp (xorConstant_wires_subset _ _ h)))
@@ -69,8 +69,8 @@ theorem fieldInverse_wires (L : InverseLayout) (hw : L.Widths) :
 
 /-- 外部 256 位输入增加 256 根线路；原内核的输出高位仍计入工作区。 -/
 theorem fieldInverse_resources (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths) :
-    toffoliCount (fieldInverse L)=3500039 ∧ measurementCount (fieldInverse L)=1917959 ∧
-    qubitCount (fieldInverse L)=3412 := by
+    toffoliCount (fieldInverse L)=3501063 ∧ measurementCount (fieldInverse L)=1917959 ∧
+    qubitCount (fieldInverse L)=2901 := by
   have hi := inverseLoop_257_resources L.inner (L.inner_nodup hnd) hw.records hw.counter hw.low
     hw.arithmetic hw.a hw.temp hw.output p
   have hc := inverseLoad_counts L hw
@@ -89,7 +89,7 @@ theorem fieldInverse_resources (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L
 
 /-- 求逆接口的具体实现证明；正确性、精确资源和支持集均指向 fieldInverse L。 -/
 theorem fieldInverse_contract (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths) :
-    inverseContract L.x L.out L.work (fieldInverse L) 3500039 1917959 3412 := by
+    inverseContract L.x L.out L.work (fieldInverse L) 3501063 1917959 2901 := by
   obtain ⟨ht,hm,hq⟩ := fieldInverse_resources L hnd hw
   refine ⟨hnd,hw.input,?_,fun X hX0 hX => fieldInverse_spec L hnd hw X hX0 hX,ht,hm,hq,?_⟩
   · simp [InverseLayout.out,hw.output]

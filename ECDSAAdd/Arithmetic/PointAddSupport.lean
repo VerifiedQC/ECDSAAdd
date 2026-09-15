@@ -12,7 +12,7 @@ theorem PointAddLayout.usedWires_nodup (L : PointAddLayout) (h : L.Widths) (hn :
     L.usedWires.Nodup := L.candidate_boundary_nodup h hn
 
 theorem PointAddLayout.usedWires_length (L : PointAddLayout) (h : L.Widths) :
-    L.usedWires.length=7238 := by
+    L.usedWires.length=6727 := by
   have hd := h.words L.dx (by simp [PointAddLayout.words])
   have hy := h.words L.candidateY (by simp [PointAddLayout.words])
   have hdy := h.words L.dy (by simp [PointAddLayout.words])
