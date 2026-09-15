@@ -38,3 +38,5 @@ import ECDSAAdd.Arithmetic.OneBitRoundResources
 import ECDSAAdd.Arithmetic.InverseTerminalConstants
 
 import ECDSAAdd.Arithmetic.KaliskiLoopProof
+
+import ECDSAAdd.Arithmetic.TriangularSquareSpec

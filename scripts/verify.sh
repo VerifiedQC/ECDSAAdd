@@ -325,6 +325,15 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.terminalConstants_correct
 #print axioms ECDSAAdd.Arithmetic.terminalConstants_spec
 #print axioms ECDSAAdd.Arithmetic.terminalConstants_resources
+#print axioms ECDSAAdd.Arithmetic.square_sum128_bound
+#print axioms ECDSAAdd.Arithmetic.square_sum128_square_bound
+#print axioms ECDSAAdd.Arithmetic.triangularSquare_correct
+#print axioms ECDSAAdd.Arithmetic.triangularSquare_spec
+#print axioms ECDSAAdd.Arithmetic.triangularSquareClear_spec
+#print axioms ECDSAAdd.Arithmetic.triangularSquare_frame
+#print axioms ECDSAAdd.Arithmetic.triangularSquareClear_frame
+#print axioms ECDSAAdd.Arithmetic.triangularSquare_counts
+#print axioms ECDSAAdd.Arithmetic.triangularSquare_wires
 LEAN
 )
 printf '%s\n' "$axioms"
