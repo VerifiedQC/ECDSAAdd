@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.Montgomery
+import ECDSAAdd.Math.ModularMultiplication.Montgomery
 
 namespace ECDSAAdd
 

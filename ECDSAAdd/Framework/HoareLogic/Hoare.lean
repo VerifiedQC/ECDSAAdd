@@ -1,5 +1,5 @@
-import ECDSAAdd.Framework.Cost
-import ECDSAAdd.Math.BitcoinCurve
+import ECDSAAdd.Framework.ResourceCounting.Cost
+import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 
 namespace ECDSAAdd
 open Lean

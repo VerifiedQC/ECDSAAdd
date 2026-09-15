@@ -1,5 +1,5 @@
-import ECDSAAdd.Framework.Hoare
-import ECDSAAdd.Math.BitcoinPrimes
+import ECDSAAdd.Framework.HoareLogic.Hoare
+import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 
 namespace ECDSAAdd.Arithmetic
 

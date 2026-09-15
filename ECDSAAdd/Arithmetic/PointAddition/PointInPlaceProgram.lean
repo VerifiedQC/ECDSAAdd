@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayout
-import ECDSAAdd.Math.PointInPlace
+import ECDSAAdd.Math.PointAddition.PointInPlace
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1

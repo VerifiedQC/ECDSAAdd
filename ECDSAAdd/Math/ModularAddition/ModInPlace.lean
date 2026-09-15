@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularAddition.Reduction
-import ECDSAAdd.Math.HalvingBijection
+import ECDSAAdd.Math.ModularDoubling.HalvingBijection
 
 namespace ECDSAAdd.Arithmetic
 

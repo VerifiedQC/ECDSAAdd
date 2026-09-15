@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularInverse.RoundSpec
-import ECDSAAdd.Math.KaliskiOneBit
+import ECDSAAdd.Math.ModularInverse.KaliskiOneBit
 
 namespace ECDSAAdd.Arithmetic
 

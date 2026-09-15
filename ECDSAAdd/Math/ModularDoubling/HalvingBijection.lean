@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.ModularHalving
+import ECDSAAdd.Math.ModularDoubling.ModularHalving
 
 namespace ECDSAAdd
 

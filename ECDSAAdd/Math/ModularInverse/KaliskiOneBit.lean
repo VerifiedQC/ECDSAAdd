@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.KaliskiRound
+import ECDSAAdd.Math.ModularInverse.KaliskiRound
 
 namespace ECDSAAdd
 

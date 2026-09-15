@@ -1,4 +1,4 @@
-import ECDSAAdd.Framework.Hoare
+import ECDSAAdd.Framework.HoareLogic.Hoare
 
 namespace ECDSAAdd.Arithmetic
 open Instr Correction

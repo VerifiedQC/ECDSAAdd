@@ -1,6 +1,6 @@
 import ECDSAAdd.Arithmetic.ModularDoubling.ModUnaryResources
 import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
-import ECDSAAdd.Math.KaliskiTerminal
+import ECDSAAdd.Math.ModularInverse.KaliskiTerminal
 
 namespace ECDSAAdd.Arithmetic
 namespace ModInPlaceLayout

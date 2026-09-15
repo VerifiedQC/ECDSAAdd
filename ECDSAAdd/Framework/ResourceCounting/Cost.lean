@@ -1,4 +1,4 @@
-import ECDSAAdd.Framework.Semantics
+import ECDSAAdd.Framework.Execution.Semantics
 import Mathlib.Data.Finset.Card
 
 namespace ECDSAAdd

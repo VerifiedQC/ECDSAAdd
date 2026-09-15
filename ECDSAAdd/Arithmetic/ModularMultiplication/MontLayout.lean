@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularMultiplication.ConstStageSpec
-import ECDSAAdd.Math.MontgomeryConversion
+import ECDSAAdd.Math.ModularMultiplication.MontgomeryConversion
 
 namespace ECDSAAdd.Arithmetic
 

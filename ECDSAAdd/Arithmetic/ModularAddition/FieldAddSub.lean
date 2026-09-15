@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularAddition.ModularResources
-import ECDSAAdd.Math.BitcoinCurve
+import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 
 namespace ECDSAAdd.Arithmetic
 

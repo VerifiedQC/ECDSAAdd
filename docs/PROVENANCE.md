@@ -1,8 +1,8 @@
 # 来源与复现
 
-数学层改编自 [VerifiedQC/ShorECDLP](https://github.com/VerifiedQC/ShorECDLP) 的提交 `15d2a336743304e069f8a8a468c6ab1da334577b`：`Math/BitcoinCurve.lean`、`Math/BitcoinPrimes.lean` 和 `Math/EllipticCurve/AffineFormula.lean`。命名空间改为 ECDSAAdd，AffineFormula 路径扁平化并直接使用已证 p 素性的实例。BitcoinPrimes 仅保留 `lucasFromFactors`、`p_prime` 所需的 40 条 `prime_cert_*` 及字段/曲线实例；未复制群阶证明。BitcoinCurve 保留群、生成元 G 和坐标；所有证明重新由 Lean 检查。Framework、AND 与 Arithmetic 程序及证明为本项目编写，Hoare/program 语法糖改编自 Dirac 在项目频道提供的原型。
+数学层改编自 [VerifiedQC/ShorECDLP](https://github.com/VerifiedQC/ShorECDLP) 的提交 `15d2a336743304e069f8a8a468c6ab1da334577b`：`Math/BitcoinCurve.lean`、`Math/BitcoinPrimes.lean` 和 `Math/EllipticCurve/AffineFormula.lean`。命名空间改为 ECDSAAdd，AffineFormula 最初路径扁平化并直接使用已证 p 素性的实例；上述路径指上游来源，本项目当前文件分别归于 Math/CurveDefinition、Math/FieldPrimality 和 Math/PointAddition。BitcoinPrimes 仅保留 `lucasFromFactors`、`p_prime` 所需的 40 条 `prime_cert_*` 及字段/曲线实例；未复制群阶证明。BitcoinCurve 保留群、生成元 G 和坐标；所有证明重新由 Lean 检查。Framework、AND 与 Arithmetic 程序及证明为本项目编写，Hoare/program 语法糖改编自 Dirac 在项目频道提供的原型。
 
-`Math/Kaliski.lean`、`Math/ModularHalving.lean`、`Math/KaliskiInverse.lean` 为本项目按已确认的二进制 EEA/Kaliski 算法规格编写的数学证明；未复制上游求逆实现，也不包含求逆电路。
+`Math/ModularInverse/Kaliski.lean`、`Math/ModularDoubling/ModularHalving.lean`、`Math/ModularInverse/KaliskiInverse.lean` 为本项目按已确认的二进制 EEA/Kaliski 算法规格编写的数学证明；未复制上游求逆实现，也不包含求逆电路。
 
 Lean 固定为 `leanprover/lean4:v4.28.0`；Mathlib 固定为 `fadcf92bfcfe7575bbdf04c6f83ab3ada53e3d42`。全新检出执行 `lake exe cache get`，再执行 `scripts/verify.sh`；不需要其他本地仓库。公理检查针对脚本列出的公开定理及其传递依赖，不是全环境声明审计。
 
@@ -10,7 +10,7 @@ Lean 固定为 `leanprover/lean4:v4.28.0`；Mathlib 固定为 `fadcf92bfcfe7575b
 
 I2 的 CSWAP 交换网络、移位和 10 位计数原语及证明为本仓库新增。CSWAP 使用标准 CX/CCX 分解；计数器复用已有加法器和前向 XOR 清理，没有复制新的外部源码。
 
-I3 的 Math/KaliskiRound 与单轮布局、比较、零检测、受控加减、记录、正逆轮组合和资源证明均为本项目编写。算法根据频道确认的 EEA 路线，修正十位计数、终止轮计数时机与完整两位编码；计数比较采用固定 i<更新后 k 恢复活动性。未复制外部电路或证明源码，也未运行数值样例、Python 对照或真值表。I3 只实现单轮与逆轮；I4 与 I5 的后续实现见下文。
+I3 的 Math/ModularInverse/KaliskiRound 与单轮布局、比较、零检测、受控加减、记录、正逆轮组合和资源证明均为本项目编写。算法根据频道确认的 EEA 路线，修正十位计数、终止轮计数时机与完整两位编码；计数比较采用固定 i<更新后 k 恢复活动性。未复制外部电路或证明源码，也未运行数值样例、Python 对照或真值表。I3 只实现单轮与逆轮；I4 与 I5 的后续实现见下文。
 
 I4 的记录带循环、模减半/模加倍互逆证明、条件 XOR 包装、规范化取负、第二阶段循环和整体反计算均为本项目编写，复用 I1–I3 及既有模加减的已证程序。终态 r 先取模再取负，不假定 r<p；计数器在第二阶段保持。没有复制新的外部源码，没有新增测试、Python 数值对照或真值表。共享外部寄存器框架从既有 Double 实现提取，模加证明扩展到输入和小于两倍模数，既有公开模加/模乘接口保持兼容。
 
@@ -22,7 +22,7 @@ M3 第二部分的完整分类、共享池零检测映射、常量/候选输出�
 
 M3 第三部分的四线控制扩展、最终输出选择、受控点交换、两次前向调用的组合规格及实际支持/资源证明均为本项目编写，复用前两部分点加、既有 CSWAP 和寄存器交换。没有复制新的外部源码，没有引入全算术受控变换；不包含另行规划的原地算术或 Montgomery 优化。没有新增测试、Python 数值对照、真值表、公理或证明资源限制放宽。
 
-基础层的 `majority`、`addInPlace`/`subInPlace`、受控常数/寄存器加减和 `compareChain`/`compareLt`/`compareLtConst` 为本项目编写，按 [REWORK_PLAN](REWORK_PLAN.md) §1.1 与 §5.2 的构造（Gidney 2018 "Halving the cost of quantum addition" 的进位链、和位写回与比较器思路），门列复用现有 `fullAdder` 的进位段与 `eraseCarry`。擦除顺序按独立复审意见改为"先擦进位再写和位"，最高位不算进位。`Math/ModularHalving.lean` 的三条奇偶/加倍引理为本项目编写。`RippleAdder.lean` 的 `sum_value_step` 由私有改为公开以供复用，陈述未变。没有复制外部程序或证明源码，没有新增测试、数值对照、真值表、公理或证明资源限制放宽。
+基础层的 `majority`、`addInPlace`/`subInPlace`、受控常数/寄存器加减和 `compareChain`/`compareLt`/`compareLtConst` 为本项目编写，按 [REWORK_PLAN](REWORK_PLAN.md) §1.1 与 §5.2 的构造（Gidney 2018 "Halving the cost of quantum addition" 的进位链、和位写回与比较器思路），门列复用现有 `fullAdder` 的进位段与 `eraseCarry`。擦除顺序按独立复审意见改为"先擦进位再写和位"，最高位不算进位。`Math/ModularDoubling/ModularHalving.lean` 的三条奇偶/加倍引理为本项目编写。`RippleAdder.lean` 的 `sum_value_step` 由私有改为公开以供复用，陈述未变。没有复制外部程序或证明源码，没有新增测试、数值对照、真值表、公理或证明资源限制放宽。
 
 改 1：`HalveInPlace.lean` 与重写的 `HalvingLoop.lean` 按已复审设计实现原地减半、显式加倍恢复与固定轮数正逆证明。奇数加模数、移位、从输出范围恢复奇偶的构造依据 Roetteler 等（2017）Fig. 4 的模减半/加倍思路，基础加法及比较器复用上节的 Gidney 原语。证明和布局复用代码均为本项目编写，未复制外部源码。删除旧 out-of-place Halve/两字交替循环，保留 Double（模乘仍调用）。历史基线 fieldInverse 为 14,303,280/6,936,624/6,468，本次变为 5,626,928/2,198,576/6,211；第二阶段仍正反两遍，公开 XOR 接口不变。未新增测试、公理、native_decide 或放宽证明资源限制。
 
@@ -45,7 +45,7 @@ M3 第三部分的四线控制扩展、最终输出选择、受控点交换、�
 XOR/模乘加/模乘减以本仓库 C2 临时积内核、既有复制和 C1 模加减组合；全部规格、逐线保持、门数与支持由 Lamport 在本仓库证明。域乘法布局换为固定临时积，删除旧倍数链及其仅用辅助文件，无外部源码复制。保留改 5 求逆的池编号，新的候选支持是模减前缀与求逆实际支持的并集；97 根旧 out 位继续不触及。现有点加算法与四次求逆/十二次乘法调用不变，受控结果为32,347,957/17,585,440/9,718，未声称最大存活数或最优性。未增加测试、数值 oracle、新公理或放宽证明资源限制。
 
 
-改 3 数学批：`Math/PointInPlace.lean` 的有限点分类、输出侧平移谓词、原地坐标等式、第二除数零点与例外斜率证明均由本项目编写，直接复用已有 `AffineFormula`、Mathlib 点群律和域运算。数学步骤对应已复审 REWORK_PLAN §16；没有复制新的外部源码。此批没有修改电路或宣称实现新的资源目标，没有新增测试、公理、native_decide 或放宽证明资源限制。
+改 3 数学批：`Math/PointAddition/PointInPlace.lean` 的有限点分类、输出侧平移谓词、原地坐标等式、第二除数零点与例外斜率证明均由本项目编写，直接复用已有 `AffineFormula`、Mathlib 点群律和域运算。数学步骤对应已复审 REWORK_PLAN §16；没有复制新的外部源码。此批没有修改电路或宣称实现新的资源目标，没有新增测试、公理、native_decide 或放宽证明资源限制。
 
 
 改3除法批：依照§16的直接装卸、准备、临时乘积、受控累加、清积、恢复门列，复用仓库内 inverseCompute_values/InverseMiddle、C1模加减与D的Horner内核。布局分割、全部记录相位与工作清理、完整输入输出规格、逐线保持和精确支持/门数由Deutsch在本仓库编写。未复制外部源码，未改变求逆算法或现有模乘/点加门列，未增加测试、新公理、native_decide或证明资源放宽。未来改6a的历史布局不由本批1030位分割覆盖。

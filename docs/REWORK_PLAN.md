@@ -583,8 +583,8 @@ XOR 适配器已证实际线数 7n+7=1,799；单独 mulInto 为 6n+4=1,540，mul
 
 设计阶段只改本文与 README 的计划说明，不写未证电路。
 
-- PR C1（已实现四个模加减接口）、C2（已实现无控制半倍及 Horner 正向/清理）：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
-- PR C2 以 `Math/HornerMultiply.lean` 证明 `H_i` 关系与各步规范范围，并在 `Arithmetic/HornerLayout/Steps/Spec/Resources.lean` 证明正向/清理循环；半倍实现位于 `ModUnary/ModHalf/ModDouble/ModUnaryResources.lean`，物理旋转位于 `Rotate.lean`。PR D 已在 MulAdapterLayout/Spec/Resources 中实现三个适配器、布局与物理线路支持，并把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
+- PR C1（已实现四个模加减接口）、C2（已实现无控制半倍及 Horner 正向/清理）：`Arithmetic/ModInPlace.lean` 及按证明长度合理拆分的同名辅助文件；`Math/ModularAddition/ModInPlace.lean`。范围仅为模加、模减、受控模加、受控模减、无控制加倍与减半；受控半倍留待后续实际需求。证明约减/奇偶/半倍逆关系及 §12.9 中这六个公开接口的 Triple/逐线保持/资源/支持集。原地模算术只依赖 PR A；不编辑 Deutsch 的 HalveInPlace/HalvingLoop/Inverse 文件。
+- PR C2 以 `Math/ModularMultiplication/HornerMultiply.lean` 证明 `H_i` 关系与各步规范范围，并在 `Arithmetic/HornerLayout/Steps/Spec/Resources.lean` 证明正向/清理循环；半倍实现位于 `ModUnary/ModHalf/ModDouble/ModUnaryResources.lean`，物理旋转位于 `Rotate.lean`。PR D 已在 MulAdapterLayout/Spec/Resources 中实现三个适配器、布局与物理线路支持，并把 fieldMul 的调用入口换为新布局对应实现，保留已有任意 O 的数值契约；布局参数类型和宽度前提的迁移显式列出，不宣称全部 Lean 文本逐字不变。
 - 接入：更新 MultiplyPorts/PointCandidate 的工作池视图及 Nodup/frame/support，保留 M3 的 12 次 fieldMul 和4次 fieldInverse 调用结构。PR B 先合并，后续修改基于其真实 main，不覆盖旧常数。
 - 全部引用已迁移：删除 MultiplyLayout、MultiplyResources、Multiply、Double、MaskedAccumulate 五个旧专用文件；只保留一套 fieldMul。Accumulate 与 ModularXorSteps 仍被其它算术使用，保留。
 - 每个实现 PR 同步 README、PROOF_STATUS、PROVENANCE、总 import 与 verify.sh；新增公开规格和资源进入现有白名单入口。只运行 Lean 构建及公开公理检查，无测试/数值 oracle/新 axiom/sorry，无 heartbeat 放宽。
@@ -1102,7 +1102,7 @@ n=256，固定求逆轮宽w=257；五个适配器均已含输出累加中段，�
 
 ### 16.8 证明与交付切分
 
-1. **数学 PR（引理已实现）**：`Math/PointInPlace.lean` 已按现有群律/`AffineFormula` 证明有限点分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
+1. **数学 PR（引理已实现）**：`Math/PointAddition/PointInPlace.lean` 已按现有群律/`AffineFormula` 证明有限点分类、三个输出侧等价谓词、普通分支的坐标等式和 λ* 例外。不引入群阶/无二阶点假设；每个引理直接服务上述一个清理步骤。可在 D 集成期间完成。
 2. **除法 PR（已实现，基于 D 接口）**：`DivideLayout`、两条直接门列、准备/恢复之间的 frame、两种累加规格、资源与实际支持。受控中段以现有 C1 原语组合，不要求 Lamport 增加受控乘法入口。复用准备/恢复规格共用的 `inverseCompute_values` 与 `InverseScaledMiddle`，以原生历史断言组合完整规格；实际核心支持复用 `inverseCompute_wires`，改11现已替换求逆缩放并适配历史。
 3. **原地点加 PR（已实现，依赖 D、数学与除法）**：增加 Point 的直接子视图、常数/取负阶段与本体证明，替换 `ControlledPointLayout.lean` 中 `controlledPointAdd` 的有限分支及它的 Spec/Resources/Support。删除只服务旧“两个受控 XOR + swap”原地证明的私有组合；仍服务 XOR 接口的 PointCandidate/PointAdd/ControlledPointOut 证明保留。最终公共 `controlledPointAdd_spec` 的输入输出陈述不变。
 
@@ -1131,7 +1131,7 @@ n=256，固定求逆轮宽w=257；五个适配器均已含输出累加中段，�
 `16^i*a_i = X*(Y % 16^i) + p*Q_i`，其中 Q_0=0、Q_(i+1)=Q_i+16^i*t_i。
 因此末次条件减p得到 A=XYR⁻¹ modp。界为 u_i<17p、u_i+t_i p<32p<2^261；**260位不足以承诺本门列无溢出**。每次右移之前低四位为零，右移之后高四位为零。
 
-再以 A 的四位窗口和经典常数 K=R² modp 执行同样迭代，得到 Z=AKR⁻¹ modp=XY modp。第二段使用查表 d↦dK 替代四次受控变量加法；K<p。两段最终约减各保留一位借位历史，直到清理阶段。本实现利用已证 p % 16 = 15：15·15 ≡ 1 (mod 16)，因此 −p⁻¹ ≡ 1 (mod 16)，修正系数 t=m，查表直接给 m·p，无需运行时模逆。K=R² mod p 已定义为 montgomeryConversion；Math/MontgomeryConversion.lean 的 montgomery_two_stages 证明两段转换，MontPQ.lean 将其接入实际门列，不用外部数字证书或测试代替证明。
+再以 A 的四位窗口和经典常数 K=R² modp 执行同样迭代，得到 Z=AKR⁻¹ modp=XY modp。第二段使用查表 d↦dK 替代四次受控变量加法；K<p。两段最终约减各保留一位借位历史，直到清理阶段。本实现利用已证 p % 16 = 15：15·15 ≡ 1 (mod 16)，因此 −p⁻¹ ≡ 1 (mod 16)，修正系数 t=m，查表直接给 m·p，无需运行时模逆。K=R² mod p 已定义为 montgomeryConversion；Math/ModularMultiplication/MontgomeryConversion.lean 的 montgomery_two_stages 证明两段转换，MontPQ.lean 将其接入实际门列，不用外部数字证书或测试代替证明。
 
 ### 17.2 查表原语：固定16项，48个Toffoli
 
@@ -1224,7 +1224,7 @@ n=256，固定求逆轮宽w=257；五个适配器均已含输出累加中段，�
 
 ### 18.1 目的、基线和公开契约
 
-本节根据本仓库 `Lookup.lean`、`MontPrepare.lean`、`MontLookup.lean` 与 `Framework/Semantics.lean` 的字面门列推导，不将文献的查表渐近数当作实现成本。基线main为3d1e8bd：每次lookup48 CCX/48测量，`montLookupAdd/Sub`以lookup加载、算术更新acc、再次lookup清table。方案1（§18.6）替换查表内部实现，保留任意旧目标XOR规格；方案2在此基础上替换最后一次清理。以下§18.1–18.5先完整展开MBU构造及独立账本，两方案最终比较见§18.7。
+本节根据本仓库 `Lookup.lean`、`MontPrepare.lean`、`MontLookup.lean` 与 `Framework/Execution/Semantics.lean` 的字面门列推导，不将文献的查表渐近数当作实现成本。基线main为3d1e8bd：每次lookup48 CCX/48测量，`montLookupAdd/Sub`以lookup加载、算术更新acc、再次lookup清table。方案1（§18.6）替换查表内部实现，保留任意旧目标XOR规格；方案2在此基础上替换最后一次清理。以下§18.1–18.5先完整展开MBU构造及独立账本，两方案最终比较见§18.7。
 
 新入口 `lookupErase` 的输入为四位地址addr=[a0,a1,a2,a3]、W位target、三位scratch=[u,v,e]和经典表F。要求 `(addr ++ scratch ++ target).Nodup`、`F(d)<2^W`（d<16），Triple为：
 
@@ -1435,7 +1435,7 @@ for i = 0 .. W-1:
   measureX t[i]; if outcome = 1 then CZ c src[i]
 ```
 
-每次测量把 t[i] 置零，产生的相位为 `outcome AND t[i]`；同一条指令的 CZ 修正产生 `outcome AND c AND src[i]`，由掩码关系相消。此前清掉的位不影响 c 或任何 src 位，故归纳覆盖任意测量记录。控制为 false 时 t 全零，CZ 的控制 c 为零，相位也保持。该构造直接复用本库 `Circuit/And.lean` 的 AND 清理原理；不扩展语法、不用 CCZ、不要求倒放测量。
+每次测量把 t[i] 置零，产生的相位为 `outcome AND t[i]`；同一条指令的 CZ 修正产生 `outcome AND c AND src[i]`，由掩码关系相消。此前清掉的位不影响 c 或任何 src 位，故归纳覆盖任意测量记录。控制为 false 时 t 全零，CZ 的控制 c 为零，相位也保持。该构造直接复用本库 `Circuit/MeasuredAnd/And.lean` 的 AND 清理原理；不扩展语法、不用 CCZ、不要求倒放测量。
 
 ### 20.2 接口与证明义务
 
@@ -1870,6 +1870,6 @@ Q5受控查表去mask不在本次范围。其控制输入如何与4位地址结�
 
 ### 24.6 第一批：数学恢复与单轮已实现
 
-`Math/KaliskiOneBit.lean`证明恢复公式，`OneBitRound/Proof/Spec/Resources`复用旧轮算术并加入两门recoverSwap。正逆轮完整Triple、目标外frame、精确支持均通过；通用两位入口及其公开陈述未改。为复用组合证明，仅将原有round_body_bounds、step_counter、step_done三个辅助引理由private改为公开，陈述和证明不变。
+`Math/ModularInverse/KaliskiOneBit.lean`证明恢复公式，`OneBitRound/Proof/Spec/Resources`复用旧轮算术并加入两门recoverSwap。正逆轮完整Triple、目标外frame、精确支持均通过；通用两位入口及其公开陈述未改。为复用组合证明，仅将原有round_body_bounds、step_counter、step_done三个辅助引理由private改为公开，陈述和证明不变。
 
 新轮每方向12w+32 Toffoli /6w+28测量 /7w+48线，w=257时3,116/1,570/1,847；单轮不省线，循环共享交换位才产生收益。本批尚未改循环、InverseLoop历史、求逆或点加资源；24.4下游数值仍为待接入目标。八条新公开验证入口列入verify.sh，实际公理输出见PROOF_STATUS。

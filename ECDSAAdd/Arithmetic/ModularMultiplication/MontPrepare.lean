@@ -2,7 +2,7 @@ import ECDSAAdd.Arithmetic.Addition.MeasuredMaskedAdder
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontRotate
 import ECDSAAdd.Arithmetic.Lookup.Lookup
 import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
-import ECDSAAdd.Math.Montgomery
+import ECDSAAdd.Math.ModularMultiplication.Montgomery
 
 namespace ECDSAAdd.Arithmetic
 

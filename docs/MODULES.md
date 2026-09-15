@@ -8,7 +8,7 @@
 
 Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
-## 按功能选择模块
+## Arithmetic：电路算术模块
 
 | 模块说明 | 负责的操作 | Lean 文件数 |
 | --- | --- | ---: |
@@ -27,7 +27,34 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 8 |
 | [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 69 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。共享纯数学基础仍在 [Math](../ECDSAAdd/Math)，语义与组合证明仍在 [Framework](../ECDSAAdd/Framework)，测量 AND 原语仍在 [Circuit](../ECDSAAdd/Circuit)。本轮不移动这些目录；功能 README 解释所需数学并链接其证明依据。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 217 个 Lean 文件、26 个功能目录。
+
+## Math：数学结论模块
+
+| 模块说明 | 职责 | Lean 文件数 |
+| --- | --- | ---: |
+| [CurveDefinition](../ECDSAAdd/Math/CurveDefinition/README.md) | 定义 secp256k1 曲线、点与生成元 | 1 |
+| [FieldPrimality](../ECDSAAdd/Math/FieldPrimality/README.md) | 证明域模数 p 的素性 | 1 |
+| [PointAddition](../ECDSAAdd/Math/PointAddition/README.md) | 点加公式、分类与原地清理等式 | 2 |
+| [ModularAddition](../ECDSAAdd/Math/ModularAddition/README.md) | 模加减的数值与借位清理等式 | 1 |
+| [ModularDoubling](../ECDSAAdd/Math/ModularDoubling/README.md) | 模减半、倍增及互逆性 | 2 |
+| [ModularMultiplication](../ECDSAAdd/Math/ModularMultiplication/README.md) | 模乘递推与 Montgomery 转换 | 3 |
+| [ModularInverse](../ECDSAAdd/Math/ModularInverse/README.md) | Kaliski 求逆、终止与缩放 | 6 |
+
+## Framework：语义与证明工具模块
+
+| 模块说明 | 职责 | Lean 文件数 |
+| --- | --- | ---: |
+| [ProgramSyntax](../ECDSAAdd/Framework/ProgramSyntax/README.md) | 程序、指令与书写语法 | 1 |
+| [Execution](../ECDSAAdd/Framework/Execution/README.md) | 基态、相位与测量记录的执行规则 | 1 |
+| [HoareLogic](../ECDSAAdd/Framework/HoareLogic/README.md) | 寄存器断言与程序组合证明 | 1 |
+| [ResourceCounting](../ECDSAAdd/Framework/ResourceCounting/README.md) | 门数、测量数、实际线路支持及外部保持 | 1 |
+
+## Circuit：测量 AND 模块
+
+[MeasuredAnd](../ECDSAAdd/Circuit/MeasuredAnd/README.md) 包含 And.lean，证明 AND 计算后测量清理能够恢复完整状态，并给出同程序资源。Circuit 当前只有这一项功能，不为凑数量继续拆分。
+
+各功能目录只有一份 README，作为人类阅读入口；进入源码只用于核对精确规格或修改证明。现有 Math/ModularAddition 仍依赖 Arithmetic 的 Reduction，HoareLogic 仍依赖曲线定义，本次未强行重排实际依赖层次。
 
 ## 理解上层组合
 
@@ -48,13 +75,13 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | 历史 | 恢复程序仍需要的数据，不能因结果已得到而丢弃 |
 | Support / Resources | 程序实际触及的线路 / 同一程序的资源计数 |
 
-语义入口为 [Syntax](../ECDSAAdd/Framework/Syntax.lean)、[Semantics](../ECDSAAdd/Framework/Semantics.lean)、[Hoare](../ECDSAAdd/Framework/Hoare.lean) 和 [Cost](../ECDSAAdd/Framework/Cost.lean)。模型是带符号的计算基态分支，不在此扩展为一般量子态语义；静态线路支持大小也不同于布局分配数或最大同时存活数。
+语义入口为 [Syntax](../ECDSAAdd/Framework/ProgramSyntax/Syntax.lean)、[Semantics](../ECDSAAdd/Framework/Execution/Semantics.lean)、[Hoare](../ECDSAAdd/Framework/HoareLogic/Hoare.lean) 和 [Cost](../ECDSAAdd/Framework/ResourceCounting/Cost.lean)。模型是带符号的计算基态分支，不在此扩展为一般量子态语义；静态线路支持大小也不同于布局分配数或最大同时存活数。
 
 ## 修改与验证
 
 移动后 import 增加功能目录，例如 `import ECDSAAdd.Arithmetic.ModularInverse.InverseSpec`。声明的 namespace 和公开定理名称保持不变，本轮未修改电路或证明主体。旧路径不提供兼容文件，其他分支合并时需要同步 import。
 
-本轮只用 `new-临时` 累积报告、文档和源码整理，`new` 留作最终验收后的集成分支。多人协作按模块划定写入范围，由一个集成人负责共享文件和 Git 操作。接口、算法、历史寿命或文件归属变化时，同步修改模块 README。
+本轮只用 `new-temp` 累积报告、文档和源码整理，`new` 留作最终验收后的集成分支。多人协作按模块划定写入范围，由一个集成人负责共享文件和 Git 操作。接口、算法、历史寿命或文件归属变化时，同步修改模块 README。
 
 仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
 

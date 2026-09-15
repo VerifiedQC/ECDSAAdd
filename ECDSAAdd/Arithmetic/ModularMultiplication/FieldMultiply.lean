@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontAdapterFrame
-import ECDSAAdd.Math.BitcoinPrimes
+import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 
 namespace ECDSAAdd.Arithmetic
 

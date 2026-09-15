@@ -26,7 +26,7 @@ def Triple (P : BasisState → Prop) (c : Program) (Q : BasisState → Prop) : P
 
 测量记录不足时补 false，多余时忽略；全称量化覆盖所有记录。相位恢复需要证明，不由即时修正的语法自动保证。`Triple.seq`、`conseq`、`frame` 分别证明顺序组合、前后置条件推导、外部线路断言保持。
 
-断言里的顶层 `r = v` 经 `Holds` 读取寄存器：Wire 读 Bool、线路列表按小端读 Nat、PointReg 读有限点标志与坐标（无穷远点全零）。其他命题原样保留，必要时可用隐式状态名 `st`。[判断与表示定义](../ECDSAAdd/Framework/Hoare.lean) · [程序和定理源码](../ECDSAAdd/Circuit/And.lean)
+断言里的顶层 `r = v` 经 `Holds` 读取寄存器：Wire 读 Bool、线路列表按小端读 Nat、PointReg 读有限点标志与坐标（无穷远点全零）。其他命题原样保留，必要时可用隐式状态名 `st`。[判断与表示定义](../ECDSAAdd/Framework/HoareLogic/Hoare.lean) · [程序和定理源码](../ECDSAAdd/Circuit/MeasuredAnd/And.lean)
 
 ## `#check` 原文
 
@@ -118,7 +118,7 @@ MontAdapterResources证明同一程序的精确支持等式、门数和基数；
 
 ## I1：EEA 求逆的数学证明
 
-[Kaliski](../ECDSAAdd/Math/Kaliski.lean) 定义自然数状态 `u,v,r,s,k`，初值为 `p,a,0,1,0`。`v=0` 后状态恒等，否则依次选择 u 偶、v 偶、都奇且 u>v、其余情形；活动轮更新系数并增加 k，终止轮本身也计数。`kaliski_invariant` 证明每轮保持：
+[Kaliski](../ECDSAAdd/Math/ModularInverse/Kaliski.lean) 定义自然数状态 `u,v,r,s,k`，初值为 `p,a,0,1,0`。`v=0` 后状态恒等，否则依次选择 u 偶、v 偶、都奇且 u>v、其余情形；活动轮更新系数并增加 k，终止轮本身也计数。`kaliski_invariant` 证明每轮保持：
 
 - `u*s + v*r = p`，且 u、s 为正；
 - `gcd(u,v)=1`；
@@ -136,9 +136,9 @@ theorem kaliski_terminates (p a n : Nat) (hp0 : 0 < p) (ha0 : 0 < a)
 
 `kaliski_register_bounds` 还证明任意 t 轮后的 u≤p、v≤a、r<2p、s≤p、k≤t。对 n=256，本次按已经证明的 k≤512 上界采用 10 位计数器规划；没有声称 512 必然可达。终态 r 不一定小于 p，第二阶段从 ZMod p 中 `-r` 的标准自然数代表元开始，不能直接使用自然数的截断减法 p−r。
 
-[ModularHalving](../ECDSAAdd/Math/ModularHalving.lean) 将偶数 r 减半、奇数 r 先加 p 再减半。对奇 p，证明两倍结果等于原值（模 p），且输入 r<p 时输出仍小于 p。`halveFixed` 保留 k，用固定索引 i<k 选择减半或恒等；固定轮数不少于 k 时，证明它等于恰好 k 次减半，避免耗尽计数器后丢失逆过程的信息。
+[ModularHalving](../ECDSAAdd/Math/ModularDoubling/ModularHalving.lean) 将偶数 r 减半、奇数 r 先加 p 再减半。对奇 p，证明两倍结果等于原值（模 p），且输入 r<p 时输出仍小于 p。`halveFixed` 保留 k，用固定索引 i<k 选择减半或恒等；固定轮数不少于 k 时，证明它等于恰好 k 次减半，避免耗尽计数器后丢失逆过程的信息。
 
-[KaliskiInverse](../ECDSAAdd/Math/KaliskiInverse.lean) 组合两个阶段，证明任意奇模数与互素非零输入的逆元等式，并实例化到 secp256k1：
+[KaliskiInverse](../ECDSAAdd/Math/ModularInverse/KaliskiInverse.lean) 组合两个阶段，证明任意奇模数与互素非零输入的逆元等式，并实例化到 secp256k1：
 
 ```lean
 theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p) :
@@ -201,7 +201,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 `kaliskiUnround_spec` 以此后置条件为前置条件，恢复全部旧值，清除两位记录与 scratch。两者要求 i<512、十位计数器、I1 的 KInvariant，以及 u/v/p 小于 `2^L.low.length`。I4 去掉了冗余的公开 r 范围参数：正轮从输入寄存器读值导出；逆轮活动时由不变量导出旧 r<p，空转时由输入的新 r 等于旧 r 导出。数据宽度 w 等于低位数加一；这些范围保证比较借位、受控减法和移位有正确整数含义。`KRoundCount i z` 表示 k≤i，且 v≠0 时 k=i，保证计数不回绕，并给出本轮活动当且仅当 i<更新后的 k。
 
-[Math/KaliskiRound](../ECDSAAdd/Math/KaliskiRound.lean) 给四分支编码 `(swap,subtract)`：u 偶为 00、v 偶为 10、都奇且 v<u 为 01、其余为 11；终止后也是 00，是否活动另外由计数关系确定。电路先由原 u/v 的奇偶和 v−u 的借位生成记录，随后立即清除比较差。归一化算术体交换两组数据、按记录减/加、按活动位移位，再交换回来；加减直接更新目标，掩码在每次调用末尾由测量清空。
+[KaliskiRound](../ECDSAAdd/Math/ModularInverse/KaliskiRound.lean) 给四分支编码 `(swap,subtract)`：u 偶为 00、v 偶为 10、都奇且 v<u 为 01、其余为 11；终止后也是 00，是否活动另外由计数关系确定。电路先由原 u/v 的奇偶和 v−u 的借位生成记录，随后立即清除比较差。归一化算术体交换两组数据、按记录减/加、按活动位移位，再交换回来；加减直接更新目标，掩码在每次调用末尾由测量清空。
 
 正轮先计数，再以“活动且新 v=0”翻转 done，最后比较 i<新 k 清空活动位。逆轮先用相同计数比较装入活动位，恢复旧 done，再恢复数据和计数，最后从恢复的数据重新计算记录并 XOR 清零。比较阈值 i+1 的范围包含第 512 轮边界，计数器按固定次序交换银行，即使空转轮也如此。没有以测量结果选择算术分支，也没有逆序执行带测量的程序；所有 Triple 对任意相位和任意测量记录证明相位恢复。
 
@@ -757,7 +757,7 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 
 受控版 `maskedCompareLt_spec` / `maskedCompareLtConst_spec` 多一个 `c = C` 断言，结果为 `T ^^ (C && decide (X < Y))`。比较器需要 n 根进位线（最高进位是结果），加法器只需 n−1 根。
 
-[ModularHalving](../ECDSAAdd/Math/ModularHalving.lean) 新增三条纯数学引理，供改 1 的减半/加倍轮清标志：`halveMod_eq`（减半门列的值：奇数先加 p 再右移）、`halve_parity`（p 奇、r<p 时 r 奇 ⇔ (p+1)/2 ≤ halveMod p r）、`double_flag`（(p+1)/2 ≤ r ⇔ p ≤ 2r；此时 2r mod p = 2r − p 且为奇数，否则 = 2r 为偶数）。
+[ModularHalving](../ECDSAAdd/Math/ModularDoubling/ModularHalving.lean) 新增三条纯数学引理，供改 1 的减半/加倍轮清标志：`halveMod_eq`（减半门列的值：奇数先加 p 再右移）、`halve_parity`（p 奇、r<p 时 r 奇 ⇔ (p+1)/2 ≤ halveMod p r）、`double_flag`（(p+1)/2 ≤ r ⇔ p ≤ 2r；此时 2r mod p = 2r − p 且为奇数，否则 = 2r 为偶数）。
 
 | 同一具体程序，n = y.length | Toffoli | 测量 | 静态线路数（布局互异） |
 | --- | ---: | ---: | ---: |
@@ -912,7 +912,7 @@ D阶段保留四次求逆与十二次 XOR 模乘，阶段 Toffoli 总计为 `4×
 
 ### 改 3 数学：原地更新与输出侧清理条件
 
-[Math/PointInPlace.lean](../ECDSAAdd/Math/PointInPlace.lean) 已证明八个入口，服务 REWORK_PLAN §16 的具体清理步骤。这八个入口证明群律与域等式，已由下文原地点加电路复用。
+[PointInPlace.lean](../ECDSAAdd/Math/PointAddition/PointInPlace.lean) 已证明八个入口，服务 REWORK_PLAN §16 的具体清理步骤。这八个入口证明群律与域等式，已由下文原地点加电路复用。
 
 | 入口 | 已证含义 |
 | --- | --- |
@@ -966,7 +966,7 @@ D<p, E<p, Z<p, B=true → D≠0
 资源定理指向同一有限程序：8,946,186 Toffoli、5,772,554测量、6,218实际线。`pointInPlaceGeneric_wires`和`pointInPlaceFinite_wires`证明双向支持，`inPlaceUsedWires_nodup`由原全局互异导出基数；保留9,817分配编号。新增12个审计入口覆盖关键阶段、完整语义/frame和三种资源；无测试、新公理、native_decide、linter抑制或证明限制放宽。
 ## 改6a第一批：数学与查表（历史48/48阶段，改7现已替换）
 
-`Math/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
+`Math/ModularMultiplication/Montgomery.lean` 已证明低四位为15的模数下精确整除、单轮界、恢复关系、规范化与整数循环不变量，及ZMod中的标准表示转换等式。secp256k1的p%16=15由Lean内核计算确认，修正表简化为m*p。电路循环P/Q已在后续批次实现，见末节。
 
 `Arithmetic/Lookup.lean` 提供四位地址、16项经典表的XOR查表；`lookup_spec`直接给地址D、目标T、scratch=0的前后值，保持全部目标外线路和相位，覆盖所有测量记录。每项三层AND与反向测量CZ清理，固定16项（包括零表项），`lookup_counts`证明48 Toffoli/48测量；`lookup_wires_subset`只给支持上界，不声称任意表都触及全部目标位。没有CCZ、原生求值公理或测试。
 

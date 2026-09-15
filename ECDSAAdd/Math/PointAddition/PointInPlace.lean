@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.AffineFormula
+import ECDSAAdd.Math.PointAddition.AffineFormula
 
 namespace ECDSAAdd.Secp256k1
 

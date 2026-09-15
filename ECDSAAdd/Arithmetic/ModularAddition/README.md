@@ -34,7 +34,7 @@
 | `ModularPorts/PoolLayout/SubtractPorts` | 将同一运算接到调用方线路和工作池切片；不额外分配一套电路 |
 | `Reduction` | 小端高低位与约减数学引理 |
 
-数学补充仍在 [Math/ModInPlace.lean](../../Math/ModInPlace.lean)。纯数学层保留原位置，电路程序与其组合证明在本目录；本 README 解释两者如何连接。
+数学补充仍在 [ModInPlace.lean](../../Math/ModularAddition/ModInPlace.lean)。数学层现归 Math/ModularAddition，电路程序与其组合证明在本目录；本 README 解释两者如何连接。
 
 ## 依赖与验证
 

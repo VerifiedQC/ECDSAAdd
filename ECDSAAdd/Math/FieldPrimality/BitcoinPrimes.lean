@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.BitcoinCurve
+import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 import Mathlib.NumberTheory.LucasPrimality
 import Mathlib.Data.Nat.Factors
 import Mathlib.Tactic.ReduceModChar

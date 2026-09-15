@@ -1,7 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontStageSpec
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontCounts
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontWires
-import ECDSAAdd.Math.InverseScaleFactor
+import ECDSAAdd.Math.ModularInverse.InverseScaleFactor
 
 namespace ECDSAAdd.Arithmetic
 

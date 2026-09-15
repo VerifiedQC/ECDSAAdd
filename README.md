@@ -4,7 +4,7 @@
 
 ## 从哪里开始读
 
-先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。Arithmetic 已按 14 个功能模块整理，每个模块一份人类阅读入口；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
+先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。ECDSAAdd 下四个目录已按 26 个功能模块整理，每个模块一份人类阅读入口；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
 
 当前证明与资源证据见 [PROOF_STATUS](docs/PROOF_STATUS.md)，算法设计和历史见 [REWORK_PLAN](docs/REWORK_PLAN.md)。下面保留项目状态摘要；调用模块通常从地图中的公开规格开始。
 
@@ -16,15 +16,15 @@
 | --- | --- | --- |
 | Bitcoin 数学基础 | 已证明 p 的素性、群与 G 的相关性质、完整 affine 群律规格；没有群阶证明 | [Math](ECDSAAdd/Math) |
 | 程序与语义 | 已实现 X/CX/CCX、测量及即时 Z/CZ 修正、monomial 执行和静态资源计数 | [Framework](ECDSAAdd/Framework) |
-| Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/Hoare.lean) |
-| AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/And.lean) |
+| Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/HoareLogic/Hoare.lean) |
+| AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/MeasuredAnd/And.lean) |
 | M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Addition/Layout.lean) |
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/ModularAddition/FieldAddSub.lean) |
 | 模乘 | 已证明两段Montgomery的五个适配器，fieldMul使用标准模积XOR，工作区1,827位 | [FieldMultiply.lean](ECDSAAdd/Arithmetic/ModularMultiplication/FieldMultiply.lean) |
 | 改 2 C1 原地模加减 | 已证明普通/受控四接口的 Triple、frame、清理及资源；已供 Montgomery 适配器复用 | [ModInPlaceSubtract.lean](ECDSAAdd/Arithmetic/ModularAddition/ModInPlaceSubtract.lean) |
 | 改 2 C2 半倍 | 无控制半倍的 Triple/frame/资源保留；旧Horner电路已由Montgomery替换，旧文件已清理 | [ModUnaryResources.lean](ECDSAAdd/Arithmetic/ModularDoubling/ModUnaryResources.lean) |
 | 改 6a 准备/恢复 | 已证明P/Q与五个适配器的Triple、逐线保持、精确资源；已接入fieldMul，原地点加改接已实现 | [MontPQ.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontPQ.lean) · [MontResources.lean](ECDSAAdd/Arithmetic/ModularMultiplication/MontResources.lean) |
-| EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/KaliskiInverse.lean) |
+| EEA 求逆数学 | 已证明 Kaliski 不变量、2n 轮终止、范围、固定减半与逆元等式；不是电路证明 | [KaliskiInverse.lean](ECDSAAdd/Math/ModularInverse/KaliskiInverse.lean) |
 | EEA 电路原语 | 已证明 CSWAP、带偶数/无溢出前提的左右移位、10 位受控增减与清理及精确资源 | [Shift.lean](ECDSAAdd/Arithmetic/Shift/Shift.lean) · [Counter.lean](ECDSAAdd/Arithmetic/Addition/Counter.lean) |
 | EEA 单轮与逆轮 | 已证明数据/计数/done 更新、两位分支记录、逆轮恢复与清理、同程序精确资源 | [RoundSpec.lean](ECDSAAdd/Arithmetic/ModularInverse/RoundSpec.lean) |
 | EEA 固定循环与反计算 | 已证明 512 轮 Kaliski、规范化取负、计数查表与单段 Montgomery 缩放、XOR 输出及显式恢复；共享计数线路和全部记录线计入资源 | [InverseLoopSpec.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseLoopSpec.lean) · [InverseLoopResources.lean](ECDSAAdd/Arithmetic/ModularInverse/InverseLoopResources.lean) |
@@ -94,7 +94,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **8,946,186 个 Toffoli�
 每次创建或更新 PR 都逐项检查，并在 PR 描述里简述结果；可读性和设计必要性需要人工审阅，不能用构建通过代替。
 
 - [ ] **Human readable**：公开定理直接表达前置条件、程序与结果；使用 `r = v`、命名布局、统一 `Nodup` 和中文说明。先展示零输出等常用形式，再提供组合所需的 XOR 形式；检查程序及测量语法是否容易读。
-- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。README 提供总入口，MODULES 和 Arithmetic 各功能目录的 README 说明当前模块与阅读路径，PROOF_STATUS 保存证明和资源证据，PROVENANCE 保存来源；未实现的算法优化计划集中在 REWORK_PLAN（README 只留摘要表）。可读性整理报告作为该轮提案留档，当前说明不重复维护算法历史和资源表。
+- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。README 提供总入口，MODULES 和各功能目录的 README 说明当前模块与阅读路径，PROOF_STATUS 保存证明和资源证据，PROVENANCE 保存来源；未实现的算法优化计划集中在 REWORK_PLAN（README 只留摘要表）。可读性整理报告作为该轮提案留档，当前说明不重复维护算法历史和资源表。
 - [ ] **状态真实**：逐项对照 README Current status、实际源码、公开定理和验证结果；契约不写成实现，数学群律不写成点加电路证明。
 - [ ] **Lean 验证**：固定工具链与依赖，运行 `lake --wfail build` 和选定公开定理的传递 `#print axioms` 白名单，仅允许 `propext`、`Classical.choice`、`Quot.sound`。不添加小 case 测试、Python 对照或真值表验证。
 - [ ] **语义与清理**：Triple 对任意初始相位及所有测量记录证明相位恢复、所需输入保持和工作位清零。即时 Z/CZ 修正不是自动正确；测量结果只能选择即时修正。清理必须有适用的不变量，不能直接反转带测量的程序。

@@ -1,4 +1,4 @@
-import ECDSAAdd.Framework.Syntax
+import ECDSAAdd.Framework.ProgramSyntax.Syntax
 
 namespace ECDSAAdd
 

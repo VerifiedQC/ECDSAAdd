@@ -1,6 +1,6 @@
 import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 import ECDSAAdd.Arithmetic.Comparison.Compare
-import ECDSAAdd.Math.ModInPlace
+import ECDSAAdd.Math.ModularAddition.ModInPlace
 
 namespace ECDSAAdd.Arithmetic
 

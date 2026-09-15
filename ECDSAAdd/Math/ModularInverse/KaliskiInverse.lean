@@ -1,6 +1,6 @@
-import ECDSAAdd.Math.Kaliski
-import ECDSAAdd.Math.ModularHalving
-import ECDSAAdd.Math.BitcoinPrimes
+import ECDSAAdd.Math.ModularInverse.Kaliski
+import ECDSAAdd.Math.ModularDoubling.ModularHalving
+import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 
 namespace ECDSAAdd
 

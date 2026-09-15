@@ -29,7 +29,7 @@ x=X, out=0, work=0
 x=X, out=X 在模 p 下的逆元, work=0
 ```
 
-XOR 形式允许任意可由输出寄存器表示的 `O`，但不是模加。零输入不在这两个规格的保证范围内。`Triple` 对任意初始相位和任意测量记录保证相位恢复；没有在这里增加完整量子态语义。额外状态的保持需要程序外线路条件，参见 [Cost.lean](../../Framework/Cost.lean) 的 `run_preserves_outside` 与 [Hoare.lean](../../Framework/Hoare.lean) 的 `Triple.frame`。
+XOR 形式允许任意可由输出寄存器表示的 `O`，但不是模加。零输入不在这两个规格的保证范围内。`Triple` 对任意初始相位和任意测量记录保证相位恢复；没有在这里增加完整量子态语义。额外状态的保持需要程序外线路条件，参见 [Cost.lean](../../Framework/ResourceCounting/Cost.lean) 的 `run_preserves_outside` 与 [Hoare.lean](../../Framework/HoareLogic/Hoare.lean) 的 `Triple.frame`。
 
 ## 想理解实现：按“装载、准备、使用、恢复、卸载”读
 
@@ -45,9 +45,9 @@ inverseUncompute = scaling.restore → 再做规范化取负以清 a → 512 轮
 
 装载把模数、输入副本和常数放入内部寄存器；恢复把内部数据还原到这一已装载状态；最后卸载才将这些内部寄存器清零。所以 `inverseUncompute` 结束与 `fieldInverse` 结束的“清零范围”不同。
 
-Kaliski 是使用奇偶、减法和移位的扩展欧几里得算法。它维护 `u,v,r,s,k`，初始为 `(q,X,0,1,0)`；`k` 统计有效轮数。程序固定展开 512 轮，数学状态在 `v=0` 后不再更新，计数银行的物理角色仍按轮号交替。每轮把分支保存到两位记录 `swap/subtract`，供恢复时使用。定义和证明入口是 [Math/Kaliski.lean](../../Math/Kaliski.lean)、[KaliskiLoop.lean](KaliskiLoop.lean)。
+Kaliski 是使用奇偶、减法和移位的扩展欧几里得算法。它维护 `u,v,r,s,k`，初始为 `(q,X,0,1,0)`；`k` 统计有效轮数。程序固定展开 512 轮，数学状态在 `v=0` 后不再更新，计数银行的物理角色仍按轮号交替。每轮把分支保存到两位记录 `swap/subtract`，供恢复时使用。定义和证明入口是 [Kaliski.lean](../../Math/ModularInverse/Kaliski.lean)、[KaliskiLoop.lean](KaliskiLoop.lean)。
 
-Kaliski 结束后还需要消去一个缩放因子。令终态为 `z`，`K=z.k`，`N=(-z.r) mod q`。第一阶段得到的是带 `2^K` 因子的逆元信息；还需要计算 `N × 2^(-K) mod q`。当前通过计数查表得到 `R × 2^(-K) mod q`，再用一段 Montgomery 计算消去 `R=2^256`，得到普通表示的逆元。数学连接见 [InverseScaleFactor.lean](../../Math/InverseScaleFactor.lean) 的 `kaliski_montgomery_scale`。
+Kaliski 结束后还需要消去一个缩放因子。令终态为 `z`，`K=z.k`，`N=(-z.r) mod q`。第一阶段得到的是带 `2^K` 因子的逆元信息；还需要计算 `N × 2^(-K) mod q`。当前通过计数查表得到 `R × 2^(-K) mod q`，再用一段 Montgomery 计算消去 `R=2^256`，得到普通表示的逆元。数学连接见 [InverseScaleFactor.lean](../../Math/ModularInverse/InverseScaleFactor.lean) 的 `kaliski_montgomery_scale`。
 
 电路用 `L.scaling.prepare` 实现查表、Montgomery 准备、交换和清表，用 `restore` 显式恢复，见 [InverseScale.lean](InverseScale.lean)。恢复程序不是把含测量的指令列表倒放；每个恢复段都需要独立的状态前提和正确性证明。
 
@@ -114,12 +114,12 @@ a=V, temp=0, arithmetic.wires=0, InverseHistory L q X
 | --- | --- |
 | 外部装载、输出或清理接口 | [InverseLayout](InverseLayout.lean) → [InverseLoad](InverseLoad.lean) → [InverseSpec](InverseSpec.lean) → [InverseResources](InverseResources.lean) |
 | 准备/恢复的总组合 | [InverseLoopSpec](InverseLoopSpec.lean) → [InverseCompute](InverseCompute.lean) → [InverseLoopProof](InverseLoopProof.lean)；内部布局在 [InverseLoopLayout](InverseLoopLayout.lean) |
-| Kaliski 循环或单轮 | [KaliskiLoop](KaliskiLoop.lean) → [KaliskiLoopProof](KaliskiLoopProof.lean) → [RoundSpec](RoundSpec.lean) → [KaliskiRound](KaliskiRound.lean)；数学依据为 [Kaliski](../../Math/Kaliski.lean) 与 [KaliskiRound](../../Math/KaliskiRound.lean) |
+| Kaliski 循环或单轮 | [KaliskiLoop](KaliskiLoop.lean) → [KaliskiLoopProof](KaliskiLoopProof.lean) → [RoundSpec](RoundSpec.lean) → [KaliskiRound](KaliskiRound.lean)；数学依据为 [Kaliski](../../Math/ModularInverse/Kaliski.lean) 与 [KaliskiRound](../../Math/ModularInverse/KaliskiRound.lean) |
 | 规范化取负 | [NegativeInit](NegativeInit.lean) 与 [NegativeInitResources](NegativeInitResources.lean)；注意终态 `r` 需要约减，不自行假设 `r<q` |
-| 当前缩放算法 | [InverseScaleFactor](../../Math/InverseScaleFactor.lean) → [InverseScale](InverseScale.lean) → [InverseScaleBorrow](InverseScaleBorrow.lean) → [InverseScaleState](InverseScaleState.lean) |
+| 当前缩放算法 | [InverseScaleFactor](../../Math/ModularInverse/InverseScaleFactor.lean) → [InverseScale](InverseScale.lean) → [InverseScaleBorrow](InverseScaleBorrow.lean) → [InverseScaleState](InverseScaleState.lean) |
 | 中间态或借用范围 | [InverseLoopState](InverseLoopState.lean)、[InverseScaleState](InverseScaleState.lean)、`InverseHistory`；一起检查 [DivideState](../Division/DivideState.lean)、[DivideSpec](../Division/DivideSpec.lean) |
 
-有些名字仍保留早期结构：`InverseLoopLayout.halving` 与 `HalvingCounter` 目前还用于计数视图/断言，但 `inverseCompute` 的第二阶段已经是 `scaling.prepare`。不要由名字推断还在执行逐轮减半；旧数学减半结论仍用于连接正确性证明，见 [KaliskiInverse.lean](../../Math/KaliskiInverse.lean)。
+有些名字仍保留早期结构：`InverseLoopLayout.halving` 与 `HalvingCounter` 目前还用于计数视图/断言，但 `inverseCompute` 的第二阶段已经是 `scaling.prepare`。不要由名字推断还在执行逐轮减半；旧数学减半结论仍用于连接正确性证明，见 [KaliskiInverse.lean](../../Math/ModularInverse/KaliskiInverse.lean)。
 
 [OneBitRoundSpec.lean](OneBitRoundSpec.lean) 已提供一位记录单轮规格；[InverseCompactLayout.lean](InverseCompactLayout.lean)、[InverseCompactViews.lean](InverseCompactViews.lean)、[InverseTerminalConstants.lean](InverseTerminalConstants.lean) 提供紧凑布局及相关组件。当前 `kaliskiLoop` 仍调用 `kaliskiRound` 并保存两位记录，`inverseCompute` 仍调用 `negativeInit` 和 `scaling.prepare`。这些新增组件尚未替换完整入口，不能用它们的借用表或局部资源来描述当前完整求逆。
 

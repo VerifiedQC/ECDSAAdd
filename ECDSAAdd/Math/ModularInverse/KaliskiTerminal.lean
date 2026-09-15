@@ -1,5 +1,5 @@
-import ECDSAAdd.Math.KaliskiInverse
-import ECDSAAdd.Math.HalvingBijection
+import ECDSAAdd.Math.ModularInverse.KaliskiInverse
+import ECDSAAdd.Math.ModularDoubling.HalvingBijection
 
 namespace ECDSAAdd
 

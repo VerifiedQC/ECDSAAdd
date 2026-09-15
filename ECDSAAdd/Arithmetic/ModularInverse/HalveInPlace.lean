@@ -2,7 +2,7 @@ import ECDSAAdd.Arithmetic.Comparison.Compare
 import ECDSAAdd.Arithmetic.Shift.Shift
 import ECDSAAdd.Arithmetic.ModularInverse.BorrowFrame
 import ECDSAAdd.Arithmetic.ModularInverse.KaliskiRound
-import ECDSAAdd.Math.HalvingBijection
+import ECDSAAdd.Math.ModularDoubling.HalvingBijection
 
 namespace ECDSAAdd.Arithmetic
 

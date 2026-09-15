@@ -1,5 +1,5 @@
-import ECDSAAdd.Math.HornerMultiply
-import ECDSAAdd.Math.BitcoinCurve
+import ECDSAAdd.Math.ModularMultiplication.HornerMultiply
+import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
 

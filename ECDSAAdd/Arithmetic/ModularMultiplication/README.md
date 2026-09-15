@@ -22,7 +22,7 @@
 
 令 `R=2^256`。单段 Montgomery 的数学结果是 `X×Y×R⁻¹ mod p`。完整模乘先做变量段得到这个值，再与经典常量 `R² mod p` 做一次常数段，结果成为 `X×Y mod p`。因此调用者不需要自己转换输入或解释 Montgomery 表示。
 
-每段分 64 个四位窗口处理。窗口将对应乘积加进扩宽累加器，记录约减系数，加入模数倍数后使低四位为零，再右旋四位。`p%16=15` 支撑这里的约减关系。窗口迭代和最终约减把结果变为规范值；[Math/Montgomery.lean](../../Math/Montgomery.lean) 与 [MontgomeryConversion.lean](../../Math/MontgomeryConversion.lean) 证明算术等式。
+每段分 64 个四位窗口处理。窗口将对应乘积加进扩宽累加器，记录约减系数，加入模数倍数后使低四位为零，再右旋四位。`p%16=15` 支撑这里的约减关系。窗口迭代和最终约减把结果变为规范值；[Montgomery.lean](../../Math/ModularMultiplication/Montgomery.lean) 与 [MontgomeryConversion.lean](../../Math/ModularMultiplication/MontgomeryConversion.lean) 证明算术等式。
 
 电路不能在右移时遗失恢复所需的信息，所以记录每个窗口的约减系数，并保留最后规范化的标志。使用结果后，恢复段按反向窗口次序执行显式前向算术，重建旧值并清历史。测量只用于掩码/进位清理，不用来选择后续窗口。
 
@@ -57,7 +57,7 @@ montQ：常数段恢复 → 变量段恢复
 | `MontLookup/Constant/Rotate/Counts/Wires` | 查表算术、常数/旋转辅助、门数和实际支持 |
 | `MultiplyPorts/MontBorrow` | 接入调用方的共享池与连续借用区 |
 
-依赖 [Addition](../Addition/README.md)、[Lookup](../Lookup/README.md)、[ModularAddition](../ModularAddition/README.md)、[RegisterXor](../RegisterXor/README.md)。数学层保留原位置，相关电路引理和资源证明在本目录。
+依赖 [Addition](../Addition/README.md)、[Lookup](../Lookup/README.md)、[ModularAddition](../ModularAddition/README.md)、[RegisterXor](../RegisterXor/README.md)。数学层现归 Math/ModularMultiplication，相关电路引理和资源证明在本目录。
 
 ## 验证与影响范围
 

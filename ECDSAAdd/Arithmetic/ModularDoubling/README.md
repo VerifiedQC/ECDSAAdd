@@ -14,7 +14,7 @@
 
 减半先记录输入奇偶，奇数时加 `p`，使被移位的数为偶数，再右旋。结果是否达到 `(p+1)/2` 恰好识别原来的奇偶，比较后可以清掉该标志。关键在于 `Z<p` 保证两段值域不重叠。
 
-程序在 [ModUnary.lean](ModUnary.lean)，两个方向的阶段证明在 `ModDouble/ModHalf`。数学依据为 [ModularHalving.lean](../../Math/ModularHalving.lean) 与 [HalvingBijection.lean](../../Math/HalvingBijection.lean)。`ModUnaryResources` 给出逐线保持和同程序资源。
+程序在 [ModUnary.lean](ModUnary.lean)，两个方向的阶段证明在 `ModDouble/ModHalf`。数学依据为 [ModularHalving.lean](../../Math/ModularDoubling/ModularHalving.lean) 与 [HalvingBijection.lean](../../Math/ModularDoubling/HalvingBijection.lean)。`ModUnaryResources` 给出逐线保持和同程序资源。
 
 ## 依赖与维护
 

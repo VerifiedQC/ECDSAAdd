@@ -1,9 +1,9 @@
-import ECDSAAdd.Math.AffineFormula
-import ECDSAAdd.Circuit.And
+import ECDSAAdd.Math.PointAddition.AffineFormula
+import ECDSAAdd.Circuit.MeasuredAnd.And
 import ECDSAAdd.Arithmetic.ModularInverse.InverseContract
 import ECDSAAdd.Arithmetic.ModularAddition.FieldAddSub
 import ECDSAAdd.Arithmetic.ModularMultiplication.FieldMultiply
-import ECDSAAdd.Math.KaliskiInverse
+import ECDSAAdd.Math.ModularInverse.KaliskiInverse
 import ECDSAAdd.Arithmetic.Shift.Shift
 import ECDSAAdd.Arithmetic.Addition.Counter
 import ECDSAAdd.Arithmetic.Comparison.Compare
@@ -19,16 +19,16 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
 
 import ECDSAAdd.Arithmetic.ModularDoubling.ModUnaryResources
 
-import ECDSAAdd.Math.PointInPlace
+import ECDSAAdd.Math.PointAddition.PointInPlace
 import ECDSAAdd.Arithmetic.Division.DivideSpec
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceResources
-import ECDSAAdd.Math.Montgomery
+import ECDSAAdd.Math.ModularMultiplication.Montgomery
 import ECDSAAdd.Arithmetic.Lookup.Lookup
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontResources
 
 import ECDSAAdd.Arithmetic.Addition.MeasuredMaskedAdder
 
-import ECDSAAdd.Math.InverseScaleFactor
+import ECDSAAdd.Math.ModularInverse.InverseScaleFactor
 
 import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleBorrow
 

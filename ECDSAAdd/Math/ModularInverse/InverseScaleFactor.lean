@@ -1,5 +1,5 @@
-import ECDSAAdd.Math.MontgomeryConversion
-import ECDSAAdd.Math.KaliskiInverse
+import ECDSAAdd.Math.ModularMultiplication.MontgomeryConversion
+import ECDSAAdd.Math.ModularInverse.KaliskiInverse
 
 namespace ECDSAAdd
 

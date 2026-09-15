@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.HalvingBijection
+import ECDSAAdd.Math.ModularDoubling.HalvingBijection
 
 namespace ECDSAAdd
 

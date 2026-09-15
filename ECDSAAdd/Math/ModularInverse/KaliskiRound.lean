@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.Kaliski
+import ECDSAAdd.Math.ModularInverse.Kaliski
 
 namespace ECDSAAdd
 

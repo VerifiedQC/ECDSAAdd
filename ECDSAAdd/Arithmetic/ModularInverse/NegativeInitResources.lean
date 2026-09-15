@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularInverse.NegativeInit
-import ECDSAAdd.Math.ModularHalving
+import ECDSAAdd.Math.ModularDoubling.ModularHalving
 
 namespace ECDSAAdd.Arithmetic
 

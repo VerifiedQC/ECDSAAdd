@@ -1,6 +1,6 @@
 # ECDSAAdd 可读性整理报告
 
-日期：2026-09-14。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。目录迁移以前序文档提交 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线，未混入同期 main 的其他开发改动。
+初稿日期：2026-09-14；更新：2026-09-15。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
 ## 目标与采用的方案
 
@@ -8,7 +8,7 @@
 
 根据后续讨论，采用“一个功能一个目录，每个目录一份 README”。原提案中的 Primitives、Modular 宽泛分组和独立 docs/modules 说明不再采用。196 个 Arithmetic Lean 文件已迁入 14 个功能子目录，清单见 [项目地图](MODULES.md)。求逆示范已迁至 [ModularInverse/README.md](../ECDSAAdd/Arithmetic/ModularInverse/README.md)，不保留重复副本。
 
-“单一功能”允许同一操作的逆操作与接口变体共处，例如加/减、模倍增/减半，以及模乘的 XOR、累加、受控形式。布局、辅助 lemma、状态、规格和资源证明随功能归档。共享数学基础、框架语义和测量 AND 原语仍在 Math、Framework、Circuit，本轮不移动。
+“单一功能”允许同一操作的逆操作与接口变体共处，例如加/减、模倍增/减半，以及模乘的 XOR、累加、受控形式。布局、辅助 lemma、状态、规格和资源证明随功能归档。共享数学基础、框架语义和测量 AND 原语分别保留在 Math、Framework、Circuit 层级；2026-09-15 继续将其中 21 个文件归入 12 个功能子目录，各补一份 README。连同 Arithmetic，全库共 26 个功能模块。
 
 ## 每份 README 的要求
 
@@ -26,7 +26,7 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 | --- | --- |
 | 根 README | 项目目标、状态摘要、导航与交付约定 |
 | docs/MODULES.md | 功能导航、共同术语和维护规则 |
-| Arithmetic/功能目录/README.md | 当前功能的契约、算法、证明思路和维护路径 |
+| ECDSAAdd/层级/功能目录/README.md | 当前功能的契约、算法、证明思路和维护路径 |
 | PROOF_STATUS | 证明范围与资源证据 |
 | REWORK_PLAN | 算法优化设计与历史 |
 | PROVENANCE | 来源与复现说明 |
@@ -36,9 +36,9 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 
 ## 分支与协作
 
-本轮仅维护 `new-临时` 与 `new`。所有报告、文档和源码修改累积在前者，最终验证和审阅后再集成至后者，目前不合并。
+本轮仅维护 `new-temp` 与 `new`。所有报告、文档和源码修改累积在前者，最终验证和审阅后再集成至后者，目前不合并。
 
-原报告分支历史已合入工作分支；原 `codex/module-map-inverse` 已改名为 `new-临时`，旧远端分支已移除，完整提交历史保留。仓库原有 main 和其他开发者分支不属于本轮清理范围。
+原报告分支历史已合入工作分支；原 `codex/module-map-inverse` 先改名为中文临时名称；2026-09-15 为减少链接兼容问题再次改名为 `new-temp`。旧远端分支已移除，完整提交历史保留。仓库原有 main 和其他开发者分支不属于本轮清理范围。
 
 多人协作按模块分配互不重叠的写入范围，交接列出基线、必读 README、允许改动的文件、共享依赖、验证结果和未解决事项。由一个集成人协调共享文件及 Git 操作；不让多个 agent 同时切分支或改索引。需要独立目录时可用 detached worktree 与补丁交接，不新增持久工作分支。
 
@@ -50,7 +50,7 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 
 验收项目：
 
-- 196 个 Arithmetic 文件全部归档，每目录一份 README，无平铺 Lean 遗留。
+- ECDSAAdd 下全部 217 个 Lean 文件归入 26 个功能目录，每目录一份 README，四个层级目录中无平铺 Lean 遗留。
 - 原有 Lean 文件与基线比较，只允许 import 路径变化，声明和证明主体保持一致。
 - 本地 import 和 Markdown 文件链接有目标，git diff --check 无错误。
 - 执行 [scripts/verify.sh](../scripts/verify.sh)：完整构建及选定公开定理的传递公理检查。
@@ -60,6 +60,10 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 
 ## 验证记录
 
-迁移后的 `lake --wfail build` 已通过（2,148 个构建任务）；随后完整 `scripts/verify.sh` 退出码为 0，选定公开定理的传递公理检查通过。另核验 219 个原有 Lean 文件（含根入口和构建配置）除 import 外内容保持不变；196 个文件迁移、14 份模块 README、本地 import 与 Markdown 文件目标检查通过。
+2026-09-14：Arithmetic 迁移后的完整 `scripts/verify.sh` 通过，196 个文件归入 14 个模块。
+
+2026-09-15：Math、Framework、Circuit 的 21 个文件迁入 12 个功能目录后，再次完整运行 `scripts/verify.sh`，退出码为 0；构建完成（2,148 个任务），选定公开定理的传递公理检查通过。
+
+相对本次基线核验 219 个原有 Lean 文件（含根入口和构建配置），除 import 外内容保持不变；26 份模块 README、353 处本地 import 和 323 处 Markdown 文件链接目标检查通过，`git diff --check` 无错误。工具链、依赖清单、CI 与验证脚本未变。
 
 此前 GitHub Actions 在启动 job 前失败，注释指向账户付款/消费限额问题，并非 Lean 编译错误。本轮不修改 CI 绕过限制；本地结果与远端 CI 状态分别记录。

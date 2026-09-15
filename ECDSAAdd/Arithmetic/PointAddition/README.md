@@ -28,7 +28,7 @@ XOR 输出要求保持 R，因此使用“计算候选 → 按分类写输出 �
 
 整个路径包含两次除法中各自的乘积，以及三个外部乘积。无穷远、倍点和互逆点通过互斥的常量写回处理；最后根据输出重算分类并清标志。控制为假时也必须证明最终所有数据和工作位恢复。C 为无穷远点时，受控原地入口在构造期直接给空程序。
 
-数学依据在 [AffineFormula.lean](../../Math/AffineFormula.lean) 和 [PointInPlace.lean](../../Math/PointInPlace.lean)：前者给完整 affine 群律，后者给原地更新与输出侧清理的等式。电路证明将这些等式、各算术模块的 Triple 和布局保持条件逐段组合。
+数学依据在 [AffineFormula.lean](../../Math/PointAddition/AffineFormula.lean) 和 [PointInPlace.lean](../../Math/PointAddition/PointInPlace.lean)：前者给完整 affine 群律，后者给原地更新与输出侧清理的等式。电路证明将这些等式、各算术模块的 Triple 和布局保持条件逐段组合。
 
 ## 模块内部文件地图
 

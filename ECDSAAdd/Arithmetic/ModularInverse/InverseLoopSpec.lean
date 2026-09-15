@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseLoopProof
-import ECDSAAdd.Math.KaliskiInverse
+import ECDSAAdd.Math.ModularInverse.KaliskiInverse
 
 namespace ECDSAAdd.Arithmetic
 

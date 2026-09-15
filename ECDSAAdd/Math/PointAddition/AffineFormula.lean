@@ -1,4 +1,4 @@
-import ECDSAAdd.Math.BitcoinPrimes
+import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 
 namespace ECDSAAdd
 namespace Secp256k1
