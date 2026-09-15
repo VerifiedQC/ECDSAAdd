@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2154项构建，以下318个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2159项构建，以下327个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -599,6 +599,15 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.terminalConstants_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.terminalConstants_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.terminalConstants_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.square_sum128_bound' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.square_sum128_square_bound' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquareClear_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquare_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquareClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquare_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.triangularSquare_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1156,3 +1165,12 @@ fieldInverse、Divide与独立XOR点加门列及资源保持3a值；公开contro
 ## Q1 循环接入
 
 一位记录正逆循环、旧分配中未用swap零值、精确支持和计数已证明；支持表只含首swap与512个subtract。原公开工作区全零规格保持。每次求逆增加1024 Toffoli、测量不变、减少511实际线。当前受控点加8,920,488/5,750,952/3,939，fieldInverse3,501,063/1,917,959/2,901；D1分批段为历史证据。完整verify退出0：2154项构建、318条实际公理输出，与上方公理块逐行一致，仅使用现有白名单。
+
+
+## K2 第一批：独立三角平方
+
+TriangularSquareSpec公开零目标平方与已知平方清理Triple，输入与pad/mask/carry/cin逐项保持；两个frame覆盖所有目标外线路。TriangularSquareProof按低位递推证明正反门列、全部测量记录的相位及工作区清理。Math/Square给129位和、258位平方界与Karatsuba恒等式。
+
+TriangularSquareResources证明同一程序每方向(m−1)(2m−1) Toffoli与测量，以及递归精确支持列表的集合等式；第二个目标位不触及，空/单比特边界明确。128/129位分别32,385/32,896。本批未接入Karatsuba重组/约减/点加；受控点加仍8,920,488/5,750,952/3,939。
+
+完整scripts/verify.sh退出0：2159构建项、327条实际公理输出，上方逐行收录，仅既有白名单；新增九个入口，无测试、新公理或证明限制变更。

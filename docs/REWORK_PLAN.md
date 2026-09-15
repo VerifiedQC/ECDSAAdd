@@ -2144,3 +2144,10 @@ S129使用padding后128位及2216；129位平方所需padding仅前128位，二�
 先实现独立三角平方/清理及数学引理，再做Karatsuba重组与约减、最后squareSub适配和点加接入。各批完整Triple/frame、全记录相位、清理、counts及实际wires一致；不增加Framework，不新增公理或放宽心跳限制。
 
 必须证明：129位和及平方界；mod2^512重组；c²+c−1<p、q≤c、V<2B及b/f两分支；每个补零源视图的Nodup；padding/进位/mask归零；λ=0、p−1，W=p，所有点加例外与control=false。最终公开点加规格逐字保持，删掉被替换平方步骤的旧复制，按最终主线重证支持并集。README当前资源与实际公理块只在实现完整验证后更新。
+
+
+### 28.7 第一批：三角平方与清理原语
+
+`Math/Square.lean`给低位递推、行更新界、129/258位界与Karatsuba恒等式。`TriangularSquare`递归先算高位平方，再加当前位交叉项，最后CX对角项；其效果与§28.1展开相同，清理使用独立前向减法程序。`TriangularSquareProof/Spec`给完整正反Triple和目标外frame，mask/padding/carry全部归零，覆盖空输入与单比特边界；`TriangularSquareResources`给每方向(m−1)(2m−1) T/M及递归精确支持列表。目标第二位不被门列触及，没有以目标分配长度冒充支持。
+
+本批不修改Karatsuba/约减或点加路径，当前资源保持8,920,488/5,750,952/3,939。新增九条公开验证入口，实际公理输出随完整验证披露。后续仅实现2217位首选方案；Q5/W5已取消，因此P仍为2603。
