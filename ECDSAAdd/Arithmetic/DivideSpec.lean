@@ -150,11 +150,11 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
     constructor
     · intro s m h
       have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
-        (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
+        (h.1.1.2.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1
       exact finish _ _ s m h hc.1
     · intro s m h
       have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
-        (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
+        (h.1.1.2.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1
       exact finish _ _ s m h hc.2
   have hload := (divideLoad_extra L hw hnd D E Z B).1
   have hadd := (((hload.seq (hinverse Z).1).seq hproduct.1).seq
@@ -223,7 +223,7 @@ theorem divide_frame (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     · exact (regValue_eq_iff _ _ _).mp (hc'.trans hc.symm) q hqw
     apply run_preserves_outside
     rw [hp]
-    have hi : q∉L.inner.usedCoreWires := fun h => hqw (L.inverse_used_subset h)
+    have hi : q∉L.inner.compactCoreWires := fun h => hqw (List.mem_append_left _ (L.inner.compactCore_sublist.subset h))
     simp [DivideLayout.usedWires,hqc,hqd,hqe,hq,hi]
   obtain ⟨_,ha⟩ := ht.1 s m ⟨⟨⟨⟨hb,hd⟩,he⟩,hz⟩,hc⟩
   obtain ⟨_,hs⟩ := ht.2 s m ⟨⟨⟨⟨hb,hd⟩,he⟩,hz⟩,hc⟩

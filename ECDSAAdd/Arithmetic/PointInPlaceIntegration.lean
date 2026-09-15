@@ -17,8 +17,8 @@ private theorem boundary_frame_values (L : ControlledPointLayout) (P : Program)
   · exact (regValue_eq_iff _ _ _).mp (ho.slope.trans hi.slope.symm) q hs
   by_cases hw : q∈L.inPlaceInverse.wires
   · exact (regValue_eq_iff _ _ _).mp (ho.clean.trans hi.clean.symm) q hw
-  have hu : q∉L.inPlaceInverse.usedCoreWires := fun h => hw
-    ((L.inPlaceDivide L.core.generic L.point.x L.point.y).inverse_used_subset h)
+  have hu : q∉L.inPlaceOuterCoreWires := fun h => hw
+    (L.inPlaceOuterCore_sublist.subset h)
   apply run_preserves_outside
   apply mt (@hP q)
   simp [inPlaceUsedWires,hp,hc,hf,hs,hu]

@@ -126,9 +126,9 @@ theorem poolInverse_work_perm (w : Nat → Wire) (x out : List Wire) (ho : out.l
 def poolInverseUsedWork (w : Nat → Wire) : List Wire :=
   wireBlock w 0 5 ++
     (List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires) ++
-    wireBlock w 2061 3638
+    wireBlock w 2061 1095 ++ wireBlock w 5698 1
 
-theorem poolInverseUsedWork_length (w : Nat → Wire) : (poolInverseUsedWork w).length=5442 := by
+theorem poolInverseUsedWork_length (w : Nat → Wire) : (poolInverseUsedWork w).length=2900 := by
   have hl (bs : List Nat) : (bs.flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires)).length=7*bs.length := by
     induction bs with
     | nil => rfl
@@ -160,26 +160,25 @@ theorem poolInverse_used_perm (w : Nat → Wire) (x out : List Wire) :
     simp only [poolInverse,List.flatMap_map,RoundRecord.wires]
     change ((List.range 512).flatMap (fun i => wireBlock w (2102+2*i) 2))=_
     exact wireBlock_flatMap _ _ _ _
-  have hj : wireBlock w 2061 41++wireBlock w 2102 1024++wireBlock w 3126 2058++
-      wireBlock w 5184 257++wireBlock w 5441 257++wireBlock w 5698 1=wireBlock w 2061 3638 := by
-    rw [wireBlock_append w 2061 41 1024,wireBlock_append w 2061 1065 2058,
-      wireBlock_append w 2061 3123 257,wireBlock_append w 2061 3380 257,
-      wireBlock_append w 2061 3637 1]
+  have hj : wireBlock w 2061 41++wireBlock w 2102 1024++wireBlock w 3126 30=wireBlock w 2061 1095 := by
+    rw [wireBlock_append w 2061 41 1024,wireBlock_append w 2061 1065 30]
   rw [InverseLayout.usedWires,InverseLoopLayout.usedWires,InverseLoopLayout.usedCoreWires,
     KaliskiRoundLayout.usedTapeWires,hr]
   change (x++(wireBlock w 2102 1024++(poolFirstRound w).usedSharedWires++
-    (wireBlock w 5184 257++wireBlock w 5441 257++(poolMod w 3126 256).wires)++
+    (poolMod w 3126 256).wires.take 30++
     (out++[w 5698]))).Perm _
   rw [KaliskiRoundLayout.usedSharedWires,RoundDataLayout.usedWires,hd,hc,
     List.flatMap_map,poolMod_wires]
-  simp only [List.append_assoc,List.cons_append,List.nil_append]
-  change (x++(wireBlock w 2102 1024++(wireBlock w 0 5++
-    ((List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires)++
-    (wireBlock w 2061 41++(wireBlock w 5184 257++(wireBlock w 5441 257++
-    (wireBlock w 3126 2058++(out++wireBlock w 5698 1))))))))).Perm _
-  rw [poolInverseUsedWork,← hj]
+  have ht : (wireBlock w 3126 2058).take 30=wireBlock w 3126 30 := by
+    rw [←wireBlock_append w 3126 30 2028]
+    simpa only [wireBlock_length] using List.take_left (l₁ := wireBlock w 3126 30) (l₂ := wireBlock w 3156 2028)
+  rw [ht,poolInverseUsedWork,←hj]
+  change (x++(wireBlock w 2102 1024++([w 0,w 1,w 2,w 3,w 4]++
+    ((List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires))++wireBlock w 2061 41)++
+    wireBlock w 3126 30++(out++[w 5698]))).Perm _
   apply List.perm_iff_count.mpr
   intro v
+  change _ = (x++out++([w 0,w 1,w 2,w 3,w 4]++(List.range 257).flatMap (fun i => (poolRoundBit w (5+8*i)).usedWires)++(wireBlock w 2061 41++wireBlock w 2102 1024++wireBlock w 3126 30)++[w 5698])).count v
   simp only [List.count_append]
   ac_rfl
 

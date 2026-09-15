@@ -72,4 +72,24 @@ theorem inverseNegative_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   exact ⟨hp,InverseMiddle.update_a L hnd z cs A _ s.basis _ h hkeep
     (by simpa [hR,he.2.2.1,negativeInit_value q z.r hq0] using hval)⟩
 
+theorem InversePhase.congr (L : InverseLoopLayout) (K A : Nat)
+    (s t : BasisState) (h : InversePhase L K A s) (he : ∀ w∈L.phaseWires,t w=s w) :
+    InversePhase L K A t := by
+  have keep (r : List Wire) (hr : r ⊆ L.phaseWires) : regValue r t=regValue r s :=
+    regValue_congr _ _ _ (fun w hw => he w (hr hw))
+  refine ⟨⟨(keep L.a (fun _ hw => L.a_mem_phase hw)).trans h.1.1,?_,?_⟩,
+    HalvingCounter.congr _ _ _ _ h.2 ?_⟩
+  · apply (he _ ?_).trans h.1.2.1
+    simp [InverseLoopLayout.phaseWires,KaliskiRoundLayout.counter,AdderLayout.wires]
+  · apply (keep (L.temp++L.arithmetic.wires) ?_).trans h.1.2.2
+    intro w hw
+    simp only [InverseLoopLayout.phaseWires,InverseLoopLayout.extra,List.mem_append] at hw ⊢
+    tauto
+  · intro w hw
+    apply he w
+    simp only [InverseLoopLayout.halving,HalvingLayout.counter,AdderLayout.wires,List.mem_cons] at hw
+    simp only [InverseLoopLayout.phaseWires,List.mem_append,List.mem_cons,
+      KaliskiRoundLayout.counter,AdderLayout.wires]
+    tauto
+
 end ECDSAAdd.Arithmetic

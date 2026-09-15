@@ -279,9 +279,12 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup
 #print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset
-#print axioms ECDSAAdd.Arithmetic.inverseScaling_values
+#print axioms ECDSAAdd.Arithmetic.compactScale_values
 #print axioms ECDSAAdd.Arithmetic.InverseScaledMiddle.congr
-#print axioms ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_fields
+#print axioms ECDSAAdd.Arithmetic.compactConstants_values
+#print axioms ECDSAAdd.Arithmetic.compactNeg_values
+#print axioms ECDSAAdd.Arithmetic.compactReady_iff
+#print axioms ECDSAAdd.Arithmetic.InverseScaleLayout.work_covered
 #print axioms ECDSAAdd.kaliski_terminal_even
 #print axioms ECDSAAdd.kaliski_terminal_values
 #print axioms ECDSAAdd.negative_even_value

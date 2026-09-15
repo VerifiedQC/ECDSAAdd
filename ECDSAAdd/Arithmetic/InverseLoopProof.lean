@@ -2,61 +2,91 @@ import ECDSAAdd.Arithmetic.InverseLoopSupport
 
 namespace ECDSAAdd.Arithmetic
 
-theorem InversePhase.congr (L : InverseLoopLayout) (K A : Nat)
-    (s t : BasisState) (h : InversePhase L K A s) (he : ∀ w∈L.phaseWires,t w=s w) :
-    InversePhase L K A t := by
-  have keep (r : List Wire) (hr : r ⊆ L.phaseWires) : regValue r t=regValue r s :=
-    regValue_congr _ _ _ (fun w hw => he w (hr hw))
-  refine ⟨⟨(keep L.a (fun _ hw => L.a_mem_phase hw)).trans h.1.1,?_,?_⟩,
-    HalvingCounter.congr _ _ _ _ h.2 ?_⟩
-  · apply (he _ ?_).trans h.1.2.1
-    simp [InverseLoopLayout.phaseWires,KaliskiRoundLayout.counter,AdderLayout.wires]
-  · apply (keep (L.temp++L.arithmetic.wires) ?_).trans h.1.2.2
-    intro w hw
-    simp only [InverseLoopLayout.phaseWires,InverseLoopLayout.extra,List.mem_append] at hw ⊢
-    tauto
-  · intro w hw
-    apply he w
-    simp only [InverseLoopLayout.halving,HalvingLayout.counter,AdderLayout.wires,List.mem_cons] at hw
-    simp only [InverseLoopLayout.phaseWires,List.mem_append,List.mem_cons,
-      KaliskiRoundLayout.counter,AdderLayout.wires]
-    tauto
-
 theorem InverseScaledMiddle.congr (L : InverseLoopLayout) (q : Nat) (z : KState)
     (cs : List (Bool×Bool)) (N : Nat) (s t : BasisState) (h : InverseScaledMiddle L q z cs N s)
     (he : ∀ w∈L.coreWires,t w=s w) : InverseScaledMiddle L q z cs N t := by
   have hd (w : Wire) (hw : w∈L.middle.data.wires) : t w=s w :=
     he w (L.rest_subset (List.mem_append_right _ hw))
-  have hr (f : RoundField) := regValue_congr (L.middle.data.reg f) t s
-    (fun w hw => hd w (L.middle.data.reg_mem f hw))
+  have hb (w : Wire) (hw : w∈L.compactBorrow) : t w=s w := by
+    simp only [InverseLoopLayout.compactBorrow,List.mem_append] at hw
+    rcases hw with (((hw|hw)|hw)|hw)|hw
+    · exact hd w (L.middle.data.reg_mem .u hw)
+    · exact hd w (L.middle.data.reg_mem .v hw)
+    · exact hd w (L.middle.data.reg_mem .s hw)
+    · exact hd w (L.middle.data.reg_mem .zero (List.mem_of_mem_drop hw))
+    · exact he w (List.mem_append_right _ (by
+        simp only [InverseLoopLayout.extra,List.mem_append]
+        exact Or.inr (List.mem_of_mem_take hw)))
+  have hl (w : Wire) (hw : w∈L.scaleLive) : t w=s w := hd w (L.compact_live_data hw)
   have hs (w : Wire) (hw : w∈L.restWires) := he w (L.rest_subset hw)
-  refine ⟨⟨⟨fun f => (hr f).trans (h.1.1.1 f),?_⟩,?_,?_,?_,?_⟩,
-    InversePhase.congr L _ _ s t h.2 (fun w hw => he w (L.phase_subset hw))⟩
-  · exact (hd _ (by simp [RoundDataLayout.wires])).trans h.1.1.2
-  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.1
-  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.2.1
-  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.1.2.2.2.1
-  · exact TapeValues.congr L.records cs s t h.1.2.2.2.2
-      (fun w hw => hs w (by simp [InverseLoopLayout.restWires,hw]))
+  have pk : regValue L.compactScaling.k t=regValue L.compactScaling.k s :=
+    regValue_congr _ _ _ (fun w hw => he w (L.phase_subset (by
+      have hc : w∈L.middle.counter.wires := by
+        obtain ⟨b,hb,rfl⟩ := List.mem_map.mp hw
+        exact List.mem_cons_of_mem _ (mem_addWires hb).1
+      simp [InverseLoopLayout.phaseWires,hc])))
+  have pl (r : List Wire) (hr : r⊆L.scaleLive) : regValue r t=regValue r s :=
+    regValue_congr _ _ _ (fun w hw => hl w (hr hw))
+  have pb (r : List Wire) (hr : r⊆L.compactBorrow) : regValue r t=regValue r s :=
+    regValue_congr _ _ _ (fun w hw => hb w (hr hw))
+  have acc : L.compactScaling.stage.acc⊆L.scaleLive := List.take_subset _ _
+  have hist : L.compactScaling.stage.history⊆L.scaleLive :=
+    fun _ hw => List.mem_of_mem_drop (List.mem_of_mem_take hw)
+  have fallback : t L.first.done=s L.first.done := he _ (List.mem_append_left _
+    (by simp [KaliskiRoundLayout.tapeWires,KaliskiRoundLayout.sharedWires]))
+  have getkeep (r : List Wire) (n : Nat) (hr : ∀ w∈r,t w=s w) :
+      t (r.getD n L.first.done)=s (r.getD n L.first.done) := by
+    by_cases hi : n<r.length
+    · rw [List.getD_eq_getElem _ _ hi]; exact hr _ (List.getElem_mem hi)
+    · rw [List.getD_eq_default (l := r) (d := L.first.done) (n := n) (by omega)]; exact fallback
+  have flag : t L.compactScaling.stage.flag=s L.compactScaling.stage.flag := getkeep L.scaleLive 517 hl
+  have pw : regValue L.compactScaling.work t=regValue L.compactScaling.work s := by
+    apply regValue_congr
+    intro w hw
+    simp only [InverseScaleLayout.work,List.mem_append] at hw
+    rcases hw with (hw|hw)|hw
+    · exact hb w (List.mem_of_mem_take hw)
+    · simp only [MontStageLayout.work,List.mem_append] at hw
+      rcases hw with ((((hw|hw)|hw)|hw)|hw)|hw
+      · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+      · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+      · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+      · have he : w=L.compactScaling.stage.cin := by simpa using hw
+        subst w; exact getkeep L.compactBorrow 1039 hb
+      · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+      · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+    · exact hb w (List.mem_of_mem_drop (List.mem_of_mem_take hw))
+  refine ⟨⟨pk.trans h.1.1,?_,(pl _ acc).trans h.1.2.2.1,(pl _ hist).trans h.1.2.2.2.1,
+    flag.trans h.1.2.2.2.2.1,pw.trans h.1.2.2.2.2.2⟩,(pb _ (fun _ hw => hw)).trans h.2.1,
+    InversePhase.congr L _ _ s t h.2.2.1 (fun w hw => he w (L.phase_subset hw)),
+    ?_,?_,?_,?_,?_,?_⟩
+  · exact (regValue_congr _ _ _ (fun w hw => hd w (L.middle.data.reg_mem .r hw))).trans h.1.2.1
+  · exact (regValue_congr _ _ _ (fun w hw => hd w (L.middle.data.reg_mem .out hw))).trans h.2.2.2.1
+  · exact (hd _ (by simp [RoundDataLayout.wires])).trans h.2.2.2.2.1
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.1
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.2.1
+  · exact (hs _ (by simp [InverseLoopLayout.restWires])).trans h.2.2.2.2.2.2.2.1
+  · exact TapeValues.congr _ _ _ _ h.2.2.2.2.2.2.2.2 (fun w hw => hs w (by simp [InverseLoopLayout.restWires,hw]))
 
 theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
-    (hlen : L.a.length=L.out.length) (q : Nat) (z : KState) (cs : List (Bool×Bool)) (N O : Nat) :
+    (hlen : L.middle.r.length=L.out.length) (q : Nat) (z : KState) (cs : List (Bool×Bool)) (N O : Nat) :
     Triple (fun s => InverseScaledMiddle L q z cs N s ∧ regValue L.out s=O)
-      (copyRegister none L.a L.out)
+      (copyRegister none L.middle.r L.out)
       (fun s => InverseScaledMiddle L q z cs N s ∧
         regValue L.out s=(O ^^^ (montgomeryValue q (inverseScaleFactor q z.k) N 64%q))) := by
   intro s m h
-  have hn : (L.a++L.out).Nodup := by
-    apply List.nodup_iff_count.mpr
-    intro w
-    have hh := List.nodup_iff_count.mp hnd w
-    simp only [InverseLoopLayout.wires,InverseLoopLayout.extra,List.count_append] at hh ⊢
-    omega
-  obtain ⟨hp,he,hz⟩ := copyRegister_correct none L.a L.out hlen hn (by simp) s m
+  have hn : (L.middle.r++L.out).Nodup := by
+    have hs := L.reg_first_used .r (by decide)
+    have hd := (List.nodup_append'.mp hnd).2.2
+    refine List.nodup_append'.mpr ⟨?_,(List.nodup_append'.mp hnd).2.1,?_⟩
+    · exact (L.compact_data_nodup hnd) |> fun hh => L.middle.data.reg_nodup hh .r
+    · exact List.disjoint_left.mpr (fun w hw ho => List.disjoint_left.mp hd
+        (List.mem_append_left _ ((L.first.usedTapeWires_sublist L.records).subset (hs hw))) ho)
+  obtain ⟨hp,he,hz⟩ := copyRegister_correct none L.middle.r L.out hlen hn (by simp) s m
   have hdis : L.coreWires.Disjoint L.out := (List.nodup_append'.mp hnd).2.2
   refine ⟨hp,InverseScaledMiddle.congr L q z cs N s.basis _ h.1 ?_,?_⟩
   · intro w hw; exact he w (List.disjoint_left.mp hdis hw)
-  · simpa only [copyValue,h.2,show regValue L.a s.basis=montgomeryValue q (inverseScaleFactor q z.k) N 64%q from h.1.2.1.1] using hz
+  · simpa only [copyValue,h.2,show regValue L.middle.r s.basis=montgomeryValue q (inverseScaleFactor q z.k) N 64%q from h.1.1.2.1] using hz
 
 /-- 保留初始化数据，XOR写入规范逆元，再清除全部第一阶段与缩放历史。 -/
 theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
@@ -87,7 +117,7 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     exact fun hh => List.disjoint_left.mp hdis (L.usedCoreWires_sublist.subset (List.mem_toFinset.mp hh)) hw
   have hf := hcompute.1.frame (frame _ hwires.1 O)
   have hb := hcompute.2.frame (frame _ hwires.2 (O ^^^ R))
-  have hc := inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O
+  have hc := inverseCopy_values L hnd (by change (L.middle.data.reg .r).length=L.out.length; rw [InverseLoopLayout.middle,loopEnd_data,L.first.data_reg_length,hl,hout]) q z cs N O
   have hall := (hf.seq hc).seq hb
   simpa only [heq] using hall
 

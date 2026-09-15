@@ -2,26 +2,18 @@ import ECDSAAdd.Arithmetic.InverseScaleState
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 准备逆元；第一阶段的数据与记录带保留，供结果使用后恢复。 -/
+/-- 原位写回r并清常量，518位历史跨中段存活，B归零供乘法借用。 -/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  -- 第一阶段：u/v/r/s/k 演化 512 轮，records 保存各轮分支。
-  kaliskiLoop L.first 0 L.records ++
-  -- 将 (−r) mod q 写入初始为零的 a；temp 与模算术工作区恢复为零。
-  negativeInit L.arithmetic q L.middle.r L.temp L.a ++
-  -- 第二阶段：十位k查表与单段Montgomery缩放；y/carry保存缩放历史，B清零。
-  L.scaling.prepare q
+  kaliskiLoop L.first 0 L.records ++ terminalConstants L q ++
+  negativeEven L.compactNeg q ++ L.compactScaling.prepare q
 
-/-- 逆元使用后的恢复；各段均执行显式前向门列，不倒放测量。 -/
+/-- 缩放恢复、完整r恢复、常量写回后，才进入Kaliski逆轮。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  -- 清除缩放历史，将a恢复为(−r) mod q，轮工作区重新全部为零。
-  L.scaling.restore q ++
-  -- negativeInit 是 XOR 模块：再写同一个值，将 a 清零。
-  negativeInit L.arithmetic q L.middle.r L.temp L.a ++
-  -- 利用保存的分支恢复第一阶段初值，同时清 records。
-  kaliskiUnloop L.first 0 L.records
+  L.compactScaling.restore q ++ restoreNegativeEven L.compactNeg q ++
+  terminalConstants L q ++ kaliskiUnloop L.first 0 L.records
 
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program :=
-  inverseCompute L q ++ copyRegister none L.a L.out ++ inverseUncompute L q
+  inverseCompute L q ++ copyRegister none L.middle.r L.out ++ inverseUncompute L q
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=
   (LoopState L.first (kaliskiInit q a) s ∧ TapeValues L.records (List.replicate L.records.length (false,false)) s) ∧
@@ -79,7 +71,7 @@ theorem inverseFirst_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
-    (ha : L.a.length=257) (ht : L.temp.length=257)
+    (_ha : L.a.length=257) (_ht : L.temp.length=257)
     (q a : Nat) (hq : q<2^256) (ho : q%16=15) (hx : a<q) (hcop : q.Coprime a) :
     let z := kaliskiStep^[512] (kaliskiInit q a)
     let cs := kaliskiCodes 512 (kaliskiInit q a)
@@ -91,21 +83,30 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   let z := kaliskiStep^[512] (kaliskiInit q a)
   let cs := kaliskiCodes 512 (kaliskiInit q a)
   let N := (-(z.r : ZMod q)).val
-  have hwidth : L.first.data.width=L.arithmetic.width+1 := by
-    simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl,hm]
-  have hbnd := kaliski_register_bounds q a 512 (by omega) hcop
-  have hr : z.r<2*q := hbnd.2.2.1
-  have hN : N<q := ZMod.val_lt _
+  have hq1 : 1<q := by omega
+  have hx0 : 0<a := by
+    by_contra hh
+    have he : a=0 := by omega
+    simp [he,Nat.Coprime] at hcop
+    omega
+  have ht := kaliski_terminal_values q a 256 hq1 (by omega) hq hx0 hx hcop
+  change z.u=1 ∧ z.v=0 ∧ z.s=q ∧ 0<z.r ∧ z.r<2*q ∧ z.r%2=0 at ht
+  have hz : z=⟨1,0,z.r,q,z.k⟩ := by
+    cases hz0 : z
+    simp only [KState.mk.injEq]
+    exact ⟨by simpa only [hz0] using ht.1,by simpa only [hz0] using ht.2.1,True.intro,
+      by simpa only [hz0] using ht.2.2.1,True.intro⟩
   have hfirst := inverseFirst_values L hnd hn hw q a (by omega) (by simpa only [hl] using hq) hx hcop
-  have hneg : Triple (InverseMiddle L z cs 0) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
-      (InverseMiddle L z cs N) := by
-    simpa only [Nat.zero_xor] using inverseNegative_values L hnd hwidth
-      (by omega) (by omega) q z cs 0 (by omega) (by simpa only [hm] using hq) hr
-  have hnegback : Triple (InverseMiddle L z cs N) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
-      (InverseMiddle L z cs 0) := by
-    simpa only [N,Nat.xor_self] using inverseNegative_values L hnd hwidth
-      (by omega) (by omega) q z cs N (by omega) (by simpa only [hm] using hq) hr
-  have hscale := inverseScaling_values L hnd hl hw ha ht hm q ho hq z cs N hN
-  exact ⟨(hfirst.1.seq hneg).seq hscale.1,(hscale.2.seq hnegback).seq hfirst.2⟩
+  have hc := compactConstants_values L hnd hl q z.r z.k hq cs
+  have hg := compactNeg_values L hnd hm hl q z.r z.k hq (by omega)
+    ht.2.2.2.1 ht.2.2.2.2.1 ht.2.2.2.2.2 cs
+  have hs := compactScale_values L hnd hm hl hw q z.k N ho hq (ZMod.val_lt _) cs
+  have hcs : Triple (InverseMiddle L z cs 0) (terminalConstants L q) (CompactReady L z.k z.r cs) := by
+    rw [congrArg (fun zz => InverseMiddle L zz cs 0) hz]
+    exact hc.1
+  have hcb : Triple (CompactReady L z.k z.r cs) (terminalConstants L q) (InverseMiddle L z cs 0) := by
+    rw [congrArg (fun zz => InverseMiddle L zz cs 0) hz]
+    exact hc.2
+  exact ⟨((hfirst.1.seq hcs).seq hg.1).seq hs.1,((hs.2.seq hg.2).seq hcb).seq hfirst.2⟩
 
 end ECDSAAdd.Arithmetic

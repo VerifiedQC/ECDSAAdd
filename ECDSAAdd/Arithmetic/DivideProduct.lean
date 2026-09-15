@@ -7,7 +7,7 @@ namespace ECDSAAdd.Arithmetic
 theorem divideProduct_correct (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (X Y Z : Nat) (B : Bool) (hX : X<p) (hY : Y<2^256) (hZ : Z<p)
     (s : State) (m : List Bool) (hb : s.basis L.control=B)
-    (hx : regValue L.inner.a s.basis=X) (hy : regValue L.numerator s.basis=Y)
+    (hx : regValue L.inner.middle.r s.basis=X) (hy : regValue L.numerator s.basis=Y)
     (hz : regValue L.acc s.basis=Z) (hc : regValue L.borrow s.basis=0) :
     ((run (montMulControlledAdd L.control L.multiply p) m s).phase=s.phase ∧
       regValue L.acc (run (montMulControlledAdd L.control L.multiply p) m s).basis=
