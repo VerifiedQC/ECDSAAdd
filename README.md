@@ -192,3 +192,4 @@ Q5的[完整mask复用审计](docs/REWORK_PLAN.md#q5-mask-audit)建议取消实�
 Q6轮工作字共用的[容量复核§27](docs/REWORK_PLAN.md#q6-round-sharing)尚未实现：轮内共享不能与Q5的整机节省直接相加，须先降低缩放历史或中段借用区容量；当前已证资源不变。
 
 专用平方[设计§28](docs/REWORK_PLAN.md#k2-special-square)尚未实现：首选2217位借用前缀、275,129 Toffoli/测量，另列更省空间的重算方案；所有新预算待证明，接入须核对Q5/W5后的实际P容量。
+W5的[五位窗口设计](docs/REWORK_PLAN.md#w5-window-design)按完整门列重算目标为8,867,944 Toffoli /5,698,408测量 /3,959线，全部待证明；净省52,544 T/M而非原0.3M粗估，保守映射增加20线。收益较小而数学及布局改动较大，建议取消W5实现；Current status不计此设计。
