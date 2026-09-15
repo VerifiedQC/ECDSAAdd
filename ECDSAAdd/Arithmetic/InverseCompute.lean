@@ -4,19 +4,19 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 原位写回r并清常量，518位历史跨中段存活，B归零供乘法借用。 -/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program :=
-  kaliskiLoop L.first 0 L.records ++ terminalConstants L q ++
+  oneBitRecordLoop L.first 0 L.records ++ terminalConstants L q ++
   negativeEven L.compactNeg q ++ L.compactScaling.prepare q
 
 /-- 缩放恢复、完整r恢复、常量写回后，才进入Kaliski逆轮。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program :=
   L.compactScaling.restore q ++ restoreNegativeEven L.compactNeg q ++
-  terminalConstants L q ++ kaliskiUnloop L.first 0 L.records
+  terminalConstants L q ++ oneBitRecordUnloop L.first 0 L.records
 
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program :=
   inverseCompute L q ++ copyRegister none L.middle.r L.out ++ inverseUncompute L q
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=
-  (LoopState L.first (kaliskiInit q a) s ∧ TapeValues L.records (List.replicate L.records.length (false,false)) s) ∧
+  (LoopState L.first (kaliskiInit q a) s ∧ OneBitRecordsValues L.records (List.replicate L.records.length (false,false)) s) ∧
     InverseExtra L 0 s
 
 theorem InverseExtra.congr (L : InverseLoopLayout) (A : Nat) (s t : BasisState)
@@ -29,11 +29,11 @@ theorem InverseExtra.congr (L : InverseLoopLayout) (A : Nat) (s t : BasisState)
 
 theorem inverseFirst_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
-    (q a : Nat) (hq0 : 0<q) (hq : q<2^L.first.low.length) (ha : a<q) (hcop : q.Coprime a) :
-    Triple (InverseInitial L q a) (kaliskiLoop L.first 0 L.records)
+    (q a : Nat) (hodd : q%2=1) (hq0 : 0<q) (hq : q<2^L.first.low.length) (ha : a<q) (hcop : q.Coprime a) :
+    Triple (InverseInitial L q a) (oneBitRecordLoop L.first 0 L.records)
       (InverseMiddle L (kaliskiStep^[512] (kaliskiInit q a)) (kaliskiCodes 512 (kaliskiInit q a)) 0) ∧
     Triple (InverseMiddle L (kaliskiStep^[512] (kaliskiInit q a)) (kaliskiCodes 512 (kaliskiInit q a)) 0)
-      (kaliskiUnloop L.first 0 L.records) (InverseInitial L q a) := by
+      (oneBitRecordUnloop L.first 0 L.records) (InverseInitial L q a) := by
   have hd : 2≤L.first.data.width := by
     have hpos : 0<L.first.low.length := by
       by_contra hh
@@ -42,23 +42,23 @@ theorem inverseFirst_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
       omega
     simp only [KaliskiRoundLayout.data,RoundDataLayout.width,List.length_append,List.length_cons,List.length_nil]
     omega
-  have hh := kaliskiLoop_correct L.first L.records 0 q a (kaliskiInit q a) (L.first_nodup hnd) hw hd
-    (by omega) (kaliski_round_count_init q a) (kaliski_init_invariant q a hq0 hcop) hq hq (lt_trans ha hq)
-  have hwire := kaliskiLoop_wires L.first L.records 0 hw hd
+  have hh := oneBitRecordLoop_correct L.first L.records 0 q a (kaliskiInit q a) (L.first_nodup hnd) hw hd
+    (by omega) (kaliski_round_count_init q a) (kaliski_init_invariant q a hq0 hcop) hodd hq hq (lt_trans ha hq)
+  have hwire := oneBitRecordLoop_wires L.first L.records 0 hw hd
   have hne : L.records.isEmpty=false := by
     cases he : L.records with
     | nil => rw [he] at hn; simp at hn
     | cons r rs => rfl
   simp only [hne] at hwire
   have hdis := (List.nodup_append'.mp (List.nodup_append'.mp hnd).1).2.2
-  have frame (circ : Program) (hc : wires circ=(L.first.usedTapeWires L.records).toFinset)
+  have frame (circ : Program) (hc : wires circ=(L.first.usedRecordTapeWires L.records).toFinset)
       (s t : BasisState) (he : ∀ w,w∉wires circ → s w=t w) (h : InverseExtra L 0 s) :
       InverseExtra L 0 t := by
     apply InverseExtra.congr L 0 s t h
     intro w hw
     apply (he w ?_).symm
     rw [hc]
-    exact fun hh => List.disjoint_left.mp hdis ((L.first.usedTapeWires_sublist L.records).subset (List.mem_toFinset.mp hh)) hw
+    exact fun hh => List.disjoint_left.mp hdis ((L.first.usedRecordTapeWires_sublist L.records).subset (List.mem_toFinset.mp hh)) hw
   have hf := hh.1.frame (frame _ hwire.1)
   have hb := hh.2.frame (frame _ hwire.2)
   have hm : loopEndLayout L.first 512=L.middle := by rw [InverseLoopLayout.middle,hn]
@@ -96,7 +96,7 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     simp only [KState.mk.injEq]
     exact ⟨by simpa only [hz0] using ht.1,by simpa only [hz0] using ht.2.1,True.intro,
       by simpa only [hz0] using ht.2.2.1,True.intro⟩
-  have hfirst := inverseFirst_values L hnd hn hw q a (by omega) (by simpa only [hl] using hq) hx hcop
+  have hfirst := inverseFirst_values L hnd hn hw q a (by omega) (by omega) (by simpa only [hl] using hq) hx hcop
   have hc := compactConstants_values L hnd hl q z.r z.k hq cs
   have hg := compactNeg_values L hnd hm hl q z.r z.k hq (by omega)
     ht.2.2.2.1 ht.2.2.2.2.1 ht.2.2.2.2.2 cs

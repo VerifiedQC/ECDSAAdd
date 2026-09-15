@@ -31,9 +31,9 @@ theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
 /-- 候选计算和按依赖逆序清理调用相同的前向模块，因此门数和测量数相同。 -/
 theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
     (cx cy : Fp) :
-    (toffoliCount (pointCandidateCompute L cx cy)=4646271 ∧
+    (toffoliCount (pointCandidateCompute L cx cy)=4647295 ∧
       measurementCount (pointCandidateCompute L cx cy)=3062399) ∧
-    (toffoliCount (pointCandidateClear L cx cy)=4646271 ∧
+    (toffoliCount (pointCandidateClear L cx cy)=4647295 ∧
       measurementCount (pointCandidateClear L cx cy)=3062399) := by
   obtain ⟨nDx,nDy,nOffset,nX,nDelta,nY,nSlope,nSquare,nProduct,nInverse⟩ :=
     L.candidate_interfaces_nodup hnd

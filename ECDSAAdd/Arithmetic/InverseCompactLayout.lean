@@ -18,7 +18,7 @@ def idleBorrow (I : InverseLoopLayout) : List Wire :=
 
 /-- D1目标支持列表；第一阶段记录保持两位版本。 -/
 def compactCoreWires (I : InverseLoopLayout) : List Wire :=
-  I.first.usedTapeWires I.records++I.compactBank
+  I.first.usedRecordTapeWires I.records++I.compactBank
 
 private theorem data_length (I : InverseLoopLayout) (hl : I.first.low.length=256) (f : RoundField) :
     (I.middle.data.reg f).length=257 := by
@@ -136,27 +136,27 @@ theorem idleBorrow_subset_wires (I : InverseLoopLayout) : I.idleBorrow⊆I.wires
 theorem compactCore_nodup (I : InverseLoopLayout) (hn : I.wires.Nodup) : I.compactCoreWires.Nodup := by
   apply List.nodup_iff_count.mpr; intro w
   have hh := List.nodup_iff_count.mp hn w
-  have hf := (I.first.usedTapeWires_sublist I.records).count_le w
+  have hf := (I.first.usedRecordTapeWires_sublist I.records).count_le w
   have hb := (List.take_sublist 804 I.arithmetic.wires).count_le w
   simp only [compactCoreWires,compactBank,wires,extra,List.count_append] at hh ⊢
   omega
 
-/-- 列表长度是未来点加支持证明的账本；尚不声明任何程序的qubitCount。 -/
+/-- 紧缩核心支持列表的长度；程序等式由后续组合定理给出。 -/
 theorem compactCore_length (I : InverseLoopLayout) (hn : I.records.length=512)
     (hk : I.first.counter.width=10) (hl : I.first.low.length=256) (hm : I.arithmetic.width=256) :
-    I.compactCoreWires.length=3673 := by
-  have recs (rs : List RoundRecord) : (rs.flatMap RoundRecord.wires).length=2*rs.length := by
-    induction rs with
-    | nil => rfl
-    | cons r rs ih => simp [RoundRecord.wires,ih]; omega
+    I.compactCoreWires.length=3162 := by
+  have recs : (oneBitRecordWires I.records).length=513 := by
+    cases he : I.records with
+    | nil => simp [he] at hn
+    | cons r rs => simp [oneBitRecordWires]; simp [he] at hn; omega
   have bits (bs : List RoundBit) : (bs.flatMap RoundBit.usedWires).length=7*bs.length := by
     induction bs with
     | nil => rfl
     | cons b bs ih => simp [RoundBit.usedWires,ih]; omega
   have hc : I.first.counter.bits.length=10 := hk
-  simp only [compactCoreWires,KaliskiRoundLayout.usedTapeWires,KaliskiRoundLayout.usedSharedWires,
+  simp only [compactCoreWires,KaliskiRoundLayout.usedRecordTapeWires,KaliskiRoundLayout.usedSharedWires,
     RoundDataLayout.usedWires,AdderLayout.wires,List.length_append,List.length_cons,List.length_nil,
-    recs,bits,addWires_length,I.bank_length hm,hn,hc]
+    recs,bits,addWires_length,I.bank_length hm,hc]
   simp [KaliskiRoundLayout.data,hl]
 
 theorem compact_middle_perm (I : InverseLoopLayout) :

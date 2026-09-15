@@ -26,7 +26,7 @@ theorem data_used_subset (L : DivideLayout) (f : RoundField) (hf : f≠.out) :
     L.inner.first.data.reg f ⊆ L.inner.usedCoreWires := by
   intro q h
   have hm := L.inner.first.data.reg_used_mem f hf h
-  simp only [InverseLoopLayout.usedCoreWires,KaliskiRoundLayout.usedTapeWires,
+  simp only [InverseLoopLayout.usedCoreWires,KaliskiRoundLayout.usedRecordTapeWires,
     KaliskiRoundLayout.usedSharedWires,List.mem_append]
   tauto
 
@@ -42,7 +42,7 @@ theorem usedWires_nodup (L : DivideLayout) (hnd : L.wires.Nodup) : L.usedWires.N
   have h := List.nodup_iff_count.mp hnd q
   have hi : L.inner.compactCoreWires.count q ≤ L.inner.wires.count q := by
     have hh := (List.take_sublist 804 L.inner.arithmetic.wires).count_le q
-    have hf := (L.inner.first.usedTapeWires_sublist L.inner.records).count_le q
+    have hf := (L.inner.first.usedRecordTapeWires_sublist L.inner.records).count_le q
     simp only [InverseLoopLayout.compactCoreWires,InverseLoopLayout.compactBank,
       InverseLoopLayout.wires,InverseLoopLayout.extra,List.count_append]
     omega
@@ -131,11 +131,11 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
     List.mem_cons,List.mem_append,DivideLayout.usedWires] at hm' hn' ha' cover ⊢
   clear hw hd hi hm hc hne hu hs heA heS
   grind only
-/-- 精确6210根实际支持线；原分配布局及未执行的out银行不算作门列支持。 -/
+/-- 精确3931根实际支持线；原分配布局及未执行的out银行不算作门列支持。 -/
 theorem divide_qubits (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    qubitCount (divideAdd L)=4442 ∧ qubitCount (divideSub L)=4442 := by
+    qubitCount (divideAdd L)=3931 ∧ qubitCount (divideSub L)=3931 := by
   have hl := L.inner.compactCore_length hw.inverse.records hw.inverse.counter hw.inverse.low hw.inverse.arithmetic
-  have hu : L.usedWires.length=4442 := by
+  have hu : L.usedWires.length=3931 := by
     simp only [DivideLayout.usedWires,List.length_cons,List.length_append,
       show L.denominator.length=256 from hw.inverse.input,hw.numerator,hw.acc,hl]
   simp only [qubitCount,(divide_wires L hw).1,(divide_wires L hw).2,

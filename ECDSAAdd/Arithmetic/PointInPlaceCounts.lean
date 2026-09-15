@@ -45,7 +45,7 @@ theorem pointInPlaceNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (h
 /-- 与§16逐门预算对应的普通分支精确门数；尚不替代其功能规格。 -/
 theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (cx cy lambdaStar : Fp) :
-    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=8915362 ∧
+    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=8917410 ∧
     measurementCount (pointInPlaceGeneric L cx cy lambdaStar)=5747874 := by
   have ha k := pointInPlaceConstantAdd_counts L hw hnd L.point.x (Or.inl rfl) k
   have hb k := pointInPlaceConstantAdd_counts L hw hnd L.point.y (Or.inr rfl) k
@@ -76,7 +76,7 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
 /-- 分类与输出清标志各做三次完整点检测；常量写回不含Toffoli。 -/
 theorem pointInPlaceFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointInPlaceFinite L C cx cy)=8918440 ∧
+    toffoliCount (pointInPlaceFinite L C cx cy)=8920488 ∧
     measurementCount (pointInPlaceFinite L C cx cy)=5750952 := by
   have hg := pointInPlaceGeneric_counts L hw hnd cx cy (exceptionalSlope C)
   have hz c t k := equalConstant_counts c t L.inPlacePointZero k

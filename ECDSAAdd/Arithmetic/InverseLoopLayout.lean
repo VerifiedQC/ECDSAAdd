@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.KaliskiLoopProof
+import ECDSAAdd.Arithmetic.OneBitRecords
 import ECDSAAdd.Arithmetic.HalvingLoop
 import ECDSAAdd.Arithmetic.NegativeInitResources
 
