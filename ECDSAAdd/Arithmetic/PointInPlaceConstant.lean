@@ -124,8 +124,11 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
     exact (List.take_sublist _ _).subset
   have clean := (regValue_zero _ _).mp hc
   have hhigh : s.basis (L.inPlaceBit 257)=false := clean _ (hs (by simp))
-  have hsource : regValue M.a s.basis=0 := (regValue_zero _ _).mpr
-    (fun q hq => clean q (hs (by simp only [List.mem_append,List.mem_cons]; exact Or.inl (Or.inl hq))))
+  have ha : M.a=L.inPlaceBorrow.take 257 := by simp only [M,inPlaceConstant]
+  have hsource : regValue M.a s.basis=0 := by
+    rw [ha]
+    exact (regValue_zero _ _).mpr
+      (fun q hq => clean q (hs (List.mem_append_left _ (List.mem_append_left _ hq))))
   have hwork : regValue M.work s.basis=0 := (regValue_zero _ _).mpr
     (fun q hq => clean q (hs (List.mem_append_right _ hq)))
   have hout : regValue M.z s.basis=Z := by
@@ -135,6 +138,9 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
   obtain ⟨hp,hv⟩ := constant_program_spec M L.core.generic k.val Z B hM hnm k.isLt hZ
     s m ⟨⟨⟨hb,hsource⟩,hout⟩,hwork⟩
   have keep := constant_program_frame M L.core.generic k.val Z B hM hnm k.isLt hZ s m hb hsource hout hwork
+  have hzView : M.z=r++[L.inPlaceBit 257] := by
+    simp only [M,inPlaceConstant,ModInPlaceLayout.z,ModUnaryLayout.core,inPlaceUnary,ModAddCoreLayout.z]
+  rw [hzView] at hv
   have hlow := (regValue_low_iff r [L.inPlaceBit 257]
     (run (pointInPlaceConstantAdd L r k) m s).basis ((Z+(if B then k.val else 0))%p)
     (by rw [hl]; exact (Nat.mod_lt _ (by norm_num [p])).trans (by norm_num [p]))).mp hv.1.2

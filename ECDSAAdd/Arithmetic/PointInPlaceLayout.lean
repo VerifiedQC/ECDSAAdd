@@ -16,10 +16,18 @@ def inPlaceInverse (L : ControlledPointLayout) : InverseLoopLayout :=
   (poolInverse L.core.poolWire L.core.divisor L.core.inverse).inner
 
 def inPlaceBorrow (L : ControlledPointLayout) : List Wire :=
-  L.inPlaceInverse.temp++L.inPlaceInverse.arithmetic.wires.take 1828
+  let D := L.inPlaceInverse.first.data
+  D.reg .u++D.reg .v++D.reg .r++D.reg .s++D.reg .y++D.reg .carry++D.reg .zero++
+    L.inPlaceInverse.compactBank
+
+theorem inPlaceBorrow_eq (L : ControlledPointLayout) : L.inPlaceBorrow=L.inPlaceInverse.idleBorrow := by
+  simp only [inPlaceBorrow,InverseLoopLayout.idleBorrow,KaliskiRoundLayout.u,
+    KaliskiRoundLayout.v,KaliskiRoundLayout.r,KaliskiRoundLayout.s,
+    InverseLoopLayout.middle,loopEnd_data,RoundDataLayout.u,RoundDataLayout.v,
+    RoundDataLayout.r,RoundDataLayout.s]
 
 def inPlaceOuterCoreWires (L : ControlledPointLayout) : List Wire :=
-  L.inPlaceInverse.first.usedTapeWires L.inPlaceInverse.records++L.inPlaceBorrow
+  L.inPlaceInverse.compactCoreWires
 
 def inPlaceBit (L : ControlledPointLayout) (i : Nat) : Wire :=
   L.inPlaceBorrow.getD i L.control
@@ -32,12 +40,12 @@ def inPlaceUnary (L : ControlledPointLayout) (low : List Wire) (high : Wire) (k 
 def inPlaceDivide (L : ControlledPointLayout) (c : Wire) (D E : List Wire) : DivideLayout :=
   ⟨c,D,E,L.inPlaceSlope,L.inPlaceInverse⟩
 
-/-- 两个外部乘积共用B[2…1828]，B[0]/B[1]为输入/输出高位。 -/
+/-- 两个外部乘积共用P[2…1828]，P[0]/P[1]为输入/输出高位。 -/
 def inPlaceMultiply (L : ControlledPointLayout) : MontLayout :=
   borrowedMont L.inPlaceBorrow L.control 2 (L.inPlaceSlope++[L.inPlaceBit 0])
     L.point.x (L.point.y++[L.inPlaceBit 1])
 
-/-- 平方只保留S=B[0…255]及两个扩展高位，工作区从258开始。 -/
+/-- 平方只保留S=P[0…255]及两个扩展高位，工作区从258开始。 -/
 def inPlaceSquare (L : ControlledPointLayout) : MontLayout :=
   borrowedMont L.inPlaceBorrow L.control 258 (L.inPlaceSlope++[L.inPlaceBit 256])
     (L.inPlaceBorrow.take 256) (L.point.x++[L.inPlaceBit 257])
@@ -69,22 +77,13 @@ theorem inPlaceDivide_widths (L : ControlledPointLayout) (hw : L.Widths)
   exact ⟨⟨hD,hi.records,hi.counter,hi.low,hi.arithmetic,hi.a,hi.temp,hi.output⟩,
     hE,L.inPlaceSlope_length hw⟩
 
-theorem inPlaceBorrow_length (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceBorrow.length=2085 := by
+theorem inPlaceBorrow_length (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceBorrow.length=2603 := by
   have hi := poolInverse_widths L.core.poolWire L.core.divisor L.core.inverse hw.divisor hw.inverse
-  have ht : L.inPlaceInverse.temp.length=257 := hi.temp
-  have hm : L.inPlaceInverse.arithmetic.width=256 := hi.arithmetic
-  have hbits (bs : List ModBit) : (bs.flatMap ModBit.all).length=8*bs.length := by
-    induction bs with
-    | nil => rfl
-    | cons b bs ih => simp [ModBit.all,ih]; omega
-  simp only [inPlaceBorrow,List.length_append,List.length_take,ht,ModLayout.wires,List.length_cons,
-    List.length_nil,hbits,ModLayout.bits,List.length_append,List.length_cons,List.length_nil]
-  change 257+min 1828 (8*(L.inPlaceInverse.arithmetic.width+1)+2)=2085
-  rw [hm]
-  rfl
+  rw [L.inPlaceBorrow_eq]
+  exact L.inPlaceInverse.idleBorrow_length hi.low hi.arithmetic
 
 theorem inPlaceUnary_widths (L : ControlledPointLayout) (hw : L.Widths)
-    (low : List Wire) (high : Wire) (k : Nat) (hl : low.length=256) (hk : k+772≤2085) :
+    (low : List Wire) (high : Wire) (k : Nat) (hl : low.length=256) (hk : k+772≤2603) :
     (L.inPlaceUnary low high k).Widths 256 := by
   constructor
   · exact hl

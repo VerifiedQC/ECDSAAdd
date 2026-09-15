@@ -696,10 +696,10 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,294,088 | 6,125,822 | 7,242 |
-| 有限 C 的 `controlledPointAdd` | 8,918,440 | 5,750,952 | 5,731 |
+| 有限 C 的 `controlledPointAdd` | 8,918,440 | 5,750,952 | 4,450 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持4,954位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
+`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持3,673位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
 
 独立XOR接口`controlledPointAddOut`仍保留，原地程序不再调用两次XOR加点交换；只服务旧组合的ControlledPointPair及装载/擦除组合已删除。所有Triple对任意相位和测量记录成立，平方有独立乘数副本，子视图均由全局Nodup证明互异。完整验证及实际公理输出见本文件公理块；本批新增说明见末尾改3节。
 
@@ -1116,7 +1116,7 @@ terminalConstants 使用 X 门清除终态 u=1/s=q，并按同一门列写回，
 完整 scripts/verify.sh 退出0：2148项构建、309条实际公理输出；17个新增入口与上方实际公理块同步。基于已合入Q1第一批的main，未放宽证明限制、未新增测试或公理。
 
 
-### D1 第三批a：紧缩求逆与必要的下游适配
+### D1 第三批a：紧缩求逆与必要的下游适配（中间阶段）
 
 inverseCompute现在执行正循环、清u/s常量、r上原地取负与紧缩缩放；inverseUncompute显式反向恢复这些阶段。CompactReady/CompactPrepared分别写明r、518位历史、1828位B和冻结的计数/记录/辅助位。使用段保持历史，B归零；恢复后重建旧InverseMiddle断言再进入逆循环。旧inverseScaling_values/scaling_fields由对应紧缩阶段证明替换，不保留双后端。
 
@@ -1135,3 +1135,14 @@ fieldInverse_spec、fieldInverse_xor_spec、divideAdd/Sub_spec、divide_frame与
 独立求逆只触银行前30位；除法中段触及804位；旧外层还触及temp与更长银行前缀，因此三种支持不能混用。求逆池支持2900、候选池并集3128，均有显式列表/置换/支持证明。点加4,450线目标待3b改借P后证明；本批T/M已完成切换，不把计划值写成已证值。
 
 完整scripts/verify.sh退出0：2151项构建、312条公理输出，实际输出逐行收录于上方。公开检查替换两个过期入口并净增3条；公理仅propext/Classical.choice/Quot.sound，无测试、额外公理或证明限制放宽。
+
+
+### D1 第三批b：外层P借用与完整4450线支持
+
+外层乘积、平方副本、常数加减、取负和相等检测统一使用P：u/v/r/s/y/carry/zero七组257位与银行前804位，共2603位。定义直接列首轮数据视图，inPlaceBorrow_eq通过loopEnd_data证明它等于已审idleBorrow；避免求值展开512轮，物理映射没有近似。
+
+所有外层阶段都在求逆历史不存在时使用P，进入/离开除法时工作区为零。P完全包含于compactCoreWires，不借记录带。pointInPlaceGeneric_wires、pointInPlaceFinite_wires与全局Nodup给出精确4450=777+3673。相对3a再少1281线，相对D1前总计少1768线；T/M保持8,918,440/5,750,952。C=O仍空程序。分配编号仍9817，不把分配数或最大同时存活数当作此静态支持。
+
+fieldInverse、Divide与独立XOR点加门列及资源保持3a值；公开controlledPointAdd_spec等数值规格原文不变。支持下界直接由Divide覆盖，已删除3a专用的旧外层覆盖辅助证明。无新框架、测试、公理或证明限制变更。
+
+完整scripts/verify.sh退出0：2151构建、312条公理输出，实际输出逐行收录。D1 Q2/Q3/Q4全部实现；D2一位记录尚未接入，未计其收益或门数代价。
