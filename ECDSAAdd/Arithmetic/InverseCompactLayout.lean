@@ -77,6 +77,14 @@ private theorem idle_count (I : InverseLoopLayout) (w : Wire) :
     KaliskiRoundLayout.r,KaliskiRoundLayout.s,List.count_append] at *
   omega
 
+theorem idleBorrow_count (I : InverseLoopLayout) (w : Wire) :
+    I.idleBorrow.count w≤I.wires.count w := by
+  have hp := I.middle_perm.count_eq w
+  have hi := I.idle_count w
+  simp only [wires,extra,KaliskiRoundLayout.tapeWires,KaliskiRoundLayout.sharedWires,
+    List.count_append,List.count_cons,List.count_nil] at hp ⊢
+  omega
+
 theorem idleBorrow_nodup (I : InverseLoopLayout) (hn : I.wires.Nodup) : I.idleBorrow.Nodup := by
   apply List.nodup_iff_count.mpr; intro w
   have hh := List.nodup_iff_count.mp hn w

@@ -9,7 +9,9 @@ def pointInPlaceCoreWires (L : ControlledPointLayout) : List Wire :=
 
 
 theorem ControlledPointLayout.inPlaceBorrow_used_subset (L : ControlledPointLayout) :
-    L.inPlaceBorrow ⊆ L.inPlaceOuterCoreWires := fun _ h => List.mem_append_right _ h
+    L.inPlaceBorrow ⊆ L.inPlaceOuterCoreWires := by
+  rw [L.inPlaceBorrow_eq]
+  exact L.inPlaceInverse.idleBorrow_subset
 
 
 private theorem modPrograms_not_mem (q c : Wire) (ng : q≠c) (M : ModInPlaceLayout) (hM : M.Widths 256) (hnM : q∉M.wires) :
@@ -75,7 +77,7 @@ private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : W
   have nslice (j n : Nat) : q∉(L.inPlaceBorrow.drop j).take n := by
     intro h; exact nb ((List.drop_sublist _ _).subset ((List.take_sublist _ _).subset h))
   have ntake (n : Nat) : q∉L.inPlaceBorrow.take n := fun h => nb ((List.take_sublist _ _).subset h)
-  have nbit (j : Nat) (hj : j<2085) : q≠L.inPlaceBit j := by
+  have nbit (j : Nat) (hj : j<2603) : q≠L.inPlaceBit j := by
     intro he
     apply nb
     rw [he,inPlaceBit,List.getD_eq_getElem _ _ (by rw [L.inPlaceBorrow_length hw]; exact hj)]
