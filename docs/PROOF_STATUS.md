@@ -801,25 +801,25 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
 
 ## 改 1 的准备与恢复接口
 
-`inversePrepare_spec` / `inverseRestore_spec` 直接写出 a 中得到数学逆元。共同前提是全局 Nodup、512 轮、10 位计数器、256 位 q、257 位内部数据，以及 q 奇、0<X<q、q 与 X 互素；secp256k1 的 p 自动满足相应模数条件。
+`inversePrepare_spec` / `inverseRestore_spec` 当前直接写出middle.r中得到数学逆元（D1后接口）。共同前提是全局 Nodup、512 轮、10 位计数器、256 位 q、257 位内部数据，以及q%16=15、0<X<q、q 与 X 互素；secp256k1 的 p 自动满足相应模数条件。
 
 ```lean
 -- inversePrepare_spec
 {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
    L.first.k=0, L.first.done=false, L.work=0 }} inverseCompute L q
-{{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0,
+{{ L.middle.r=((X : ZMod q)⁻¹).val, L.compactBorrow=0,
    InverseHistory L q X st }}
 
 -- inverseRestore_spec
-{{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0,
+{{ L.middle.r=((X : ZMod q)⁻¹).val, L.compactBorrow=0,
    InverseHistory L q X st }} inverseUncompute L q
 {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
    L.first.k=0, L.first.done=false, L.work=0 }}
 ```
 
-`InverseHistory` 只是既有第一阶段断言的命名组合，不含 a、temp 或模算术区，也没有新增状态框架。它完整保存输入 X 对应的 u/v/r/s、记录带、计数 k、计数工作区清零和 active=false；定义通过原有 `InverseRest` 与 `HalvingCounter` 给出精确状态，恢复段不能仅凭 a 的逆元值忽略历史。`inverseCompute_values` 仍作内部组合依据；新入口再用 `kaliski_correct` 将算法迭代结果改写为数学逆元。
+`InverseHistory`显式保存计数K、518位缩放累加器/商/flag及冻结的记录与辅助位。u/v/s在使用段归零并属于B；它们的终态常量在恢复后、进入逆循环前写回。使用段必须保持这些历史、归还r中的同一逆元并清B，不能仅凭逆元值执行恢复。外部fieldInverse规格保持不变。
 
-后续 divide 可以在这对准备/恢复接口之间使用逆元，但须保持 `InverseHistory`，归还 a 中的同一逆元，清零 temp 与模算术区后才能恢复。公开 `fieldInverse_spec` / `fieldInverse_xor_spec` 的陈述与资源不变。
+下面是改1历史资源；当前缩放/取负成本见I4与D1第三批a。
 
 原地轮的资源均为 `3w+20` Toffoli、`2w+19` 次测量；w=257 时为 791/533，512 轮单向为 404,992/272,896。`halveStep_wires` 与 `halveInPlace_wires` 从门列给出精确支持集；求逆借用 `ModLayout.reg .modulus`、`.carrySum`、`cinSum/cinDiff`，全局 Nodup 推出所有子程序的互异条件。
 
