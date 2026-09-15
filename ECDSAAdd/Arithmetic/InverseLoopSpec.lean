@@ -42,22 +42,31 @@ theorem InverseInitial.iff (L : InverseLoopLayout) (q a : Nat) (ha : 0<a) (s : B
   simp only [InverseLoopLayout.work,regValue_zero,List.mem_append,or_imp,forall_and]
   tauto
 
-/-- 保存第一阶段数据/记录、量子计数与缩放历史：y=N、carry为商和借位。
-不包含a、temp和模算术区；使用段必须同时保持这些显式历史值。 -/
+/-- 显式保留缩放历史与第一阶段控制/记录；中段不得修改这些值。 -/
 def InverseHistory (L : InverseLoopLayout) (q X : Nat) (s : BasisState) : Prop :=
   let z := kaliskiStep^[512] (kaliskiInit q X)
-  L.ScaledRest q z (kaliskiCodes 512 (kaliskiInit q X)) (-(z.r : ZMod q)).val s ∧
-    HalvingCounter L.halving.counter z.k s ∧ s L.middle.active=false
+  let N := (-(z.r : ZMod q)).val
+  regValue L.compactScaling.k s=z.k ∧ regValue L.compactScaling.stage.acc s=N ∧
+    regValue L.compactScaling.stage.history s=montgomeryQuotient q (inverseScaleFactor q z.k) N 64 ∧
+    s L.compactScaling.stage.flag=decide (montgomeryValue q (inverseScaleFactor q z.k) N 64<q) ∧
+    CompactFrozen L z.k (kaliskiCodes 512 (kaliskiInit q X)) s
 
-private theorem inverseScaled_history_iff (L : InverseLoopLayout) (q X : Nat) (s : BasisState) :
+private theorem inverseScaled_history_iff (L : InverseLoopLayout) (q X : Nat)
+    (hm : L.arithmetic.width=256) (hl : L.first.low.length=256) (s : BasisState) :
     let z := kaliskiStep^[512] (kaliskiInit q X)
     let N := (-(z.r : ZMod q)).val
     InverseScaledMiddle L q z (kaliskiCodes 512 (kaliskiInit q X)) N s ↔
-      (((regValue L.a s=montgomeryValue q (inverseScaleFactor q z.k) N 64%q ∧ regValue L.temp s=0) ∧
-        regValue L.arithmetic.wires s=0) ∧ InverseHistory L q X s) := by
+      ((regValue L.middle.r s=montgomeryValue q (inverseScaleFactor q z.k) N 64%q ∧
+        regValue L.compactBorrow s=0) ∧ InverseHistory L q X s) := by
   dsimp only
-  simp only [InverseScaledMiddle,InversePhase,InverseHistory,regValue_zero,List.mem_append,or_imp,forall_and]
-  tauto
+  have hb (hz : regValue L.compactBorrow s=0) : regValue L.compactScaling.work s=0 := by
+    rw [L.compactScaling_work hm hl]
+    exact (regValue_zero _ _).mpr (fun w hw => (regValue_zero _ _).mp hz w (List.mem_of_mem_take hw))
+  constructor
+  · rintro ⟨⟨hk,hr,ha,hh,hf,_⟩,hB,hF⟩
+    exact ⟨⟨hr,hB⟩,hk,ha,hh,hf,hF⟩
+  · rintro ⟨⟨hr,hB⟩,hk,ha,hh,hf,hF⟩
+    exact ⟨⟨hk,hr,ha,hh,hf,hb hB⟩,hB,hF⟩
 
 /-- 准备逆元，同时保留第一阶段和缩放历史，借用区为空。 -/
 theorem inversePrepare_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
@@ -67,9 +76,9 @@ theorem inversePrepare_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (q X : Nat) (hq : q<2^256) (ho : q%16=15) (hX0 : 0<X) (hX : X<q) (hcop : q.Coprime X) :
     {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
        L.first.k=0, L.first.done=false, L.work=0 }} inverseCompute L q
-    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }} := by
+    {{ L.middle.r=((X : ZMod q)⁻¹).val, L.compactBorrow=0, InverseHistory L q X st }} := by
   have hc := (inverseCompute_values L hnd hn hw hlow harith ha ht q X hq ho hX hcop).1
-  have hh (s : BasisState) := inverseScaled_history_iff L q X s
+  have hh (s : BasisState) := inverseScaled_history_iff L q X harith hlow s
   simp only [kaliski_montgomery_scale q X ho hq hX0 hX hcop] at hh
   exact Triple.conseq (fun s h => (InverseInitial.iff L q X hX0 s).mpr h) hc
     (fun s h => (hh s).mp h)
@@ -80,12 +89,12 @@ theorem inverseRestore_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
     (ha : L.a.length=257) (ht : L.temp.length=257)
     (q X : Nat) (hq : q<2^256) (ho : q%16=15) (hX0 : 0<X) (hX : X<q) (hcop : q.Coprime X) :
-    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }}
+    {{ L.middle.r=((X : ZMod q)⁻¹).val, L.compactBorrow=0, InverseHistory L q X st }}
       inverseUncompute L q
     {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
        L.first.k=0, L.first.done=false, L.work=0 }} := by
   have hc := (inverseCompute_values L hnd hn hw hlow harith ha ht q X hq ho hX hcop).2
-  have hh (s : BasisState) := inverseScaled_history_iff L q X s
+  have hh (s : BasisState) := inverseScaled_history_iff L q X harith hlow s
   simp only [kaliski_montgomery_scale q X ho hq hX0 hX hcop] at hh
   exact Triple.conseq (fun s h => (hh s).mpr h) hc
     (fun s h => (InverseInitial.iff L q X hX0 s).mp h)

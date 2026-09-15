@@ -13,9 +13,9 @@ theorem controlledPointOutput_counts (L : ControlledPointLayout) (h : L.Widths) 
 
 theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAddOut L (.some hc))=9321834 ∧
-    measurementCount (controlledPointAddOut L (.some hc))=6147424 ∧
-    qubitCount (controlledPointAddOut L (.some hc))=9784 := by
+    toffoliCount (controlledPointAddOut L (.some hc))=9294088 ∧
+    measurementCount (controlledPointAddOut L (.some hc))=6125822 ∧
+    qubitCount (controlledPointAddOut L (.some hc))=7242 := by
   have cc := pointCandidate_counts L.core h (L.core_nodup hn) cx cy
   have cf := pointFlags_counts L.core h cx cy
   have co := controlledPointOutput_counts L h (.some hc)
@@ -28,9 +28,9 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
 /-- 两次除法与五个乘积的同程序精确成本；线数来自实际支持等式。 -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=8946186 ∧
-    measurementCount (controlledPointAdd L (.some hc))=5772554 ∧
-    qubitCount (controlledPointAdd L (.some hc))=6218 := by
+    toffoliCount (controlledPointAdd L (.some hc))=8918440 ∧
+    measurementCount (controlledPointAdd L (.some hc))=5750952 ∧
+    qubitCount (controlledPointAdd L (.some hc))=5731 := by
   have hh := pointInPlaceFinite_counts L h hn (.some hc) cx cy
   exact ⟨hh.1,hh.2,pointInPlaceFinite_qubits L h hn (.some hc) cx cy⟩
 

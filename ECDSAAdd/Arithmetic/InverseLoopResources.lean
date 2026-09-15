@@ -9,25 +9,24 @@ theorem inverseLoop_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (ha : L.a.length=L.arithmetic.width+1)
     (ht : L.temp.length=L.arithmetic.width+1) (hout : L.out.length=L.arithmetic.width+1)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256) (q : Nat) :
-    toffoliCount (inverseLoop L q)=1024*(12*L.first.data.width+31)+60*L.first.data.width-12+308744 ∧
-    measurementCount (inverseLoop L q)=1024*(6*L.first.data.width+28)+48*L.first.data.width+308744 ∧
-    qubitCount (inverseLoop L q)=18*L.first.data.width+1072 := by
+    toffoliCount (inverseLoop L q)=1024*(12*L.first.data.width+31)+1535+308744 ∧
+    measurementCount (inverseLoop L q)=1024*(6*L.first.data.width+28)+1535+308744 ∧
+    qubitCount (inverseLoop L q)=8*L.first.data.width+1100 := by
   have hfirst := kaliskiLoop_counts L.first L.records 0 (L.first_nodup hnd) hw
-  have hextra := (List.nodup_append'.mp (List.nodup_append'.mp hnd).1).2.1
-  have hndArith := (List.nodup_append'.mp hextra).2.1
   have hrlen : L.middle.r.length=L.arithmetic.width+1 := by
     change (L.middle.data.reg .r).length=_
     rw [L.middle.data.reg_length,InverseLoopLayout.middle,loopEnd_data,hwidth]
-  have hneg := negativeInit_counts L.arithmetic q L.middle.r L.temp L.a hndArith hrlen ht ha
-  have hscale := L.scaling.counts q (L.scaling_widths (by omega) (by omega) harith hlow hw)
-  have hcopy := copyRegister_counts none L.a L.out (ha.trans hout.symm)
+  have hneg := negativeEven_counts L.compactNeg 256 q (L.compactNeg_widths harith hlow) (by omega)
+  have hscale := L.compactScaling.counts q (L.compactScaling_widths (by omega) harith hlow hw)
+  have hc := terminalConstants_resources L q
+  have hcopy := copyRegister_counts none L.middle.r L.out (hrlen.trans hout.symm)
   refine ⟨?_,?_,?_⟩
   · simp only [inverseLoop,inverseCompute,inverseUncompute,toffoliCount_append,
-      hfirst.1,hfirst.2.2.1,hneg.1,hscale.1.1,hscale.2.1,hcopy.1,
+      hfirst.1,hfirst.2.2.1,hneg.1,hneg.2.2.1,hc.1,hscale.1.1,hscale.2.1,hcopy.1,
       Option.isSome_none,Bool.false_eq_true,if_false,hn]
     omega
   · simp only [inverseLoop,inverseCompute,inverseUncompute,measurementCount_append,
-      hfirst.2.1,hfirst.2.2.2,hneg.2,hscale.1.2,hscale.2.2,hcopy.2,hn]
+      hfirst.2.1,hfirst.2.2.2,hneg.2.1,hneg.2.2.2,hc.2.1,hscale.1.2,hscale.2.2,hcopy.2,hn]
     omega
   · rw [qubitCount,inverseLoop_wires L hn hw hd hwidth ha ht hout hlow harith q,List.toFinset_card_of_nodup (L.usedWires_sublist.nodup hnd)]
     have hne : L.records≠[] := by intro h; rw [h] at hn; simp at hn
@@ -45,7 +44,7 @@ theorem inverseLoop_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     have hl : L.arithmetic.wires.length=8*(L.arithmetic.width+1)+2 := by
       simp [ModLayout.wires,ModLayout.bits,ModLayout.width,hm,ModBit.all]
       omega
-    simp only [InverseLoopLayout.usedWires,InverseLoopLayout.usedCoreWires,InverseLoopLayout.extra,List.length_append,ha,ht,hout,hl]
+    simp only [InverseLoopLayout.usedWires,InverseLoopLayout.usedCoreWires,List.length_append,List.length_take,hout,hl]
     omega
 
 /-- 257 位内部数据、512 轮的当前实现；计数银行、1024 根记录线和第二阶段工作区均计入。 -/
@@ -53,8 +52,8 @@ theorem inverseLoop_257_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
     (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257) (q : Nat) :
-    toffoliCount (inverseLoop L q)=3513912 ∧ measurementCount (inverseLoop L q)=1928760 ∧
-    qubitCount (inverseLoop L q)=5698 := by
+    toffoliCount (inverseLoop L q)=3500039 ∧ measurementCount (inverseLoop L q)=1917959 ∧
+    qubitCount (inverseLoop L q)=3156 := by
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hlow]
   simpa only [hd] using inverseLoop_resources L hnd hn hw (by omega) (by omega)
     (by omega) (by omega) (by omega) hlow harith q

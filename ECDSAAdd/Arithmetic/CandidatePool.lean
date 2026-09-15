@@ -14,9 +14,9 @@ private theorem usedBank_sublist (w : Nat → Wire) (a : Nat) :
 /-- 模减使用前1827位，补回求逆前228个银行的旧out；余29个out仍不触及。 -/
 def candidatePool (w : Nat → Wire) : List Wire :=
   wireBlock w 0 1829 ++ (List.range 29).flatMap (fun i => usedBank w (1829+8*i)) ++
-    wireBlock w 2061 3638
+    (wireBlock w 2061 1095++wireBlock w 5698 1)
 
-theorem candidatePool_length (w : Nat → Wire) : (candidatePool w).length=5670 := by
+theorem candidatePool_length (w : Nat → Wire) : (candidatePool w).length=3128 := by
   have hh (is : List Nat) : (is.flatMap (fun i => usedBank w (1829+8*i))).length=7*is.length := by
     induction is with
     | nil => rfl
@@ -29,7 +29,12 @@ theorem candidatePool_length (w : Nat → Wire) : (candidatePool w).length=5670 
 theorem candidatePool_sublist (w : Nat → Wire) : (candidatePool w).Sublist (wireBlock w 0 5699) := by
   have hm := List.Sublist.flatMap_right (List.range 29) (fun i _ => usedBank_sublist w (1829+8*i))
   rw [wireBlock_flatMap] at hm
-  have hh := (hm.append_left (wireBlock w 0 1829)).append_right (wireBlock w 2061 3638)
+  have tail : (wireBlock w 2061 1095++wireBlock w 5698 1).Sublist (wireBlock w 2061 3638) := by
+    have he : wireBlock w 2061 1095++wireBlock w 3156 2542++wireBlock w 5698 1=wireBlock w 2061 3638 := by
+      rw [wireBlock_append w 2061 1095 2542,wireBlock_append w 2061 3637 1]
+    rw [←he]
+    exact (List.sublist_append_left _ _).append_right _
+  have hh := (hm.append_left (wireBlock w 0 1829)).append tail
   rw [wireBlock_append w 0 1829 232,wireBlock_append w 0 2061 3638] at hh
   exact hh
 
@@ -51,7 +56,8 @@ private theorem bank_prefix (w : Nat → Wire) (i : Nat) (hi : i<228) :
 theorem candidatePool_union (w : Nat → Wire) :
     (candidatePool w).toFinset=(wireBlock w 0 1827).toFinset ∪ (poolInverseUsedWork w).toFinset := by
   have hi : poolInverseUsedWork w=wireBlock w 0 5++
-      (List.range 257).flatMap (fun i => usedBank w (5+8*i))++wireBlock w 2061 3638 := rfl
+      (List.range 257).flatMap (fun i => usedBank w (5+8*i))++(wireBlock w 2061 1095++wireBlock w 5698 1) := by
+    simp only [poolInverseUsedWork,List.append_assoc]; rfl
   ext q
   simp only [candidatePool,hi,List.mem_toFinset,Finset.mem_union,List.mem_append]
   constructor

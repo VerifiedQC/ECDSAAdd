@@ -15,13 +15,13 @@ theorem divideLoad_counts (L : DivideLayout) (hw : L.Widths) :
 
 /-- 同一除法门列的精确门数；支持集与公开 Triple 分别证明。 -/
 theorem divide_counts (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    toffoliCount (divideAdd L)=3895383 ∧ measurementCount (divideAdd L)=2309207 ∧
-    toffoliCount (divideSub L)=3895895 ∧ measurementCount (divideSub L)=2309719 := by
+    toffoliCount (divideAdd L)=3881510 ∧ measurementCount (divideAdd L)=2298406 ∧
+    toffoliCount (divideSub L)=3882022 ∧ measurementCount (divideSub L)=2298918 := by
   have hi := inverseLoop_257_resources L.inner (L.inner_nodup hnd) hw.inverse.records
     hw.inverse.counter hw.inverse.low hw.inverse.arithmetic hw.inverse.a hw.inverse.temp
     hw.inverse.output p
-  have hc := copyRegister_counts none L.inner.a L.inner.out
-    (hw.inverse.a.trans hw.inverse.output.symm)
+  have hc := copyRegister_counts none L.inner.middle.r L.inner.out
+    (by change (L.inner.middle.data.reg .r).length=L.inner.out.length; rw [InverseLoopLayout.middle,loopEnd_data,L.inner.first.data_reg_length]; have hl : L.inner.first.low.length=256 := hw.inverse.low; rw [hl]; exact hw.inverse.output.symm)
   have hm := montControlledAdapter_counts L.control L.multiply p (L.multiply_widths hw)
     (L.multiply_nodup hw hnd)
   have hl := divideLoad_counts L hw

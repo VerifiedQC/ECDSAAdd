@@ -35,7 +35,7 @@ theorem inPlace_interfaces_nodup (L : ControlledPointLayout) (hw : L.Widths) (hn
     List.count_append,List.count_cons,List.count_nil] at h hi ⊢
   omega
 
-theorem inPlaceBit_prefix (L : ControlledPointLayout) (hw : L.Widths) (i : Nat) (hi : i<2315) :
+theorem inPlaceBit_prefix (L : ControlledPointLayout) (hw : L.Widths) (i : Nat) (hi : i<2085) :
     L.inPlaceBorrow.take i++[L.inPlaceBit i]=L.inPlaceBorrow.take (i+1) := by
   have h : i<L.inPlaceBorrow.length := by rw [L.inPlaceBorrow_length hw]; exact hi
   change L.inPlaceBorrow.take i++[L.inPlaceBorrow.getD i L.control]=_
@@ -44,7 +44,7 @@ theorem inPlaceBit_prefix (L : ControlledPointLayout) (hw : L.Widths) (i : Nat) 
 
 /-- 固定scratch占借用区的连续772位；与前面的存活值不重复。 -/
 theorem inPlaceUnary_prefix (L : ControlledPointLayout) (hw : L.Widths)
-    (low : List Wire) (high : Wire) (k : Nat) (hk : k+772≤2315) :
+    (low : List Wire) (high : Wire) (k : Nat) (hk : k+772≤2085) :
     L.inPlaceBorrow.take k++(L.inPlaceUnary low high k).work=L.inPlaceBorrow.take (k+772) := by
   have one := L.inPlaceBit_prefix hw
   simp only [inPlaceUnary,ModUnaryLayout.work,ModUnaryLayout.core,ModAddCoreLayout.work]
@@ -55,8 +55,24 @@ theorem inPlaceUnary_prefix (L : ControlledPointLayout) (hw : L.Widths)
 
 theorem inPlaceBorrow_count (L : ControlledPointLayout) (q : Wire) :
     L.inPlaceBorrow.count q≤L.inPlaceInverse.wires.count q := by
+  have ht := (List.take_sublist 1828 L.inPlaceInverse.arithmetic.wires).count_le q
   simp only [inPlaceBorrow,InverseLoopLayout.wires,InverseLoopLayout.extra,List.count_append]
   omega
+
+theorem inPlaceOuterCore_sublist (L : ControlledPointLayout) :
+    L.inPlaceOuterCoreWires.Sublist L.inPlaceInverse.wires := by
+  apply List.Sublist.trans ?_ (List.sublist_append_left _ _)
+  exact (L.inPlaceInverse.first.usedTapeWires_sublist _).append
+    ((List.Sublist.refl L.inPlaceInverse.temp).append (List.take_sublist _ _) |>.trans
+      (by simpa only [InverseLoopLayout.extra,List.append_assoc] using
+        (List.sublist_append_right L.inPlaceInverse.a (L.inPlaceInverse.temp++L.inPlaceInverse.arithmetic.wires))))
+
+theorem compactCore_outer (L : ControlledPointLayout) : L.inPlaceInverse.compactCoreWires ⊆ L.inPlaceOuterCoreWires := by
+  intro q hq
+  rcases List.mem_append.mp hq with hq|hq
+  · exact List.mem_append_left _ hq
+  · exact List.mem_append_right _ (List.mem_append_right _
+      ((List.take_sublist_take_left (by omega : 804≤1828)).subset hq))
 
 theorem inPlaceDivide_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (c : Wire) (hc : c∈L.inPlaceFlags) :
@@ -157,7 +173,7 @@ theorem inPlaceSquare_borrow (L : ControlledPointLayout) (hw : L.Widths) :
   change (L.inPlaceBorrow.take 256++[L.inPlaceBit 256,L.inPlaceBit 257])++_=_
   rw [show [L.inPlaceBit 256,L.inPlaceBit 257]=[L.inPlaceBit 256]++[L.inPlaceBit 257] from rfl,
     ←List.append_assoc,h256,h257]
-  exact borrowedMont_prefix _ _ 258 _ _ _ (by rw [L.inPlaceBorrow_length hw]; omega)
+  exact borrowedMont_prefix _ _ 258 _ _ _ (by rw [L.inPlaceBorrow_length hw])
 
 theorem inPlaceSquare_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
     L.inPlaceSquare.wires.Nodup := by

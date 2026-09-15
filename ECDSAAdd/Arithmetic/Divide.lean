@@ -26,32 +26,28 @@ structure Widths (L : DivideLayout) : Prop where
   acc : L.acc.length=256
 
 /-- 准备后明确为零的两段，排除仍存活的历史和逆元 a。 -/
-def borrow (L : DivideLayout) : List Wire := L.inner.temp ++ L.inner.arithmetic.wires
+def borrow (L : DivideLayout) : List Wire := L.inner.compactBorrow
 
 /-- 位宽条件保证所有索引有效；done 只使坏布局上的定义全域成立。 -/
 def borrowedBit (L : DivideLayout) (i : Nat) : Wire := L.borrow.getD i L.inner.first.done
 
 /-- 输出高位为B[0]，Montgomery工作区借用B[1…1827]。 -/
 def multiply (L : DivideLayout) : MontLayout :=
-  borrowedMont L.borrow L.inner.first.done 1 L.inner.a L.numerator (L.acc++[L.borrowedBit 0])
+  borrowedMont L.borrow L.inner.first.done 1 L.inner.middle.r L.numerator (L.acc++[L.borrowedBit 0])
 
 def vLow (L : DivideLayout) : List Wire := L.inverseView.vLow
 def vBit (L : DivideLayout) : Wire := L.vLow.headD L.inner.first.high.v
 
-theorem borrow_length (L : DivideLayout) (hw : L.Widths) : L.borrow.length=2315 := by
-  have hb (bs : List ModBit) : (bs.flatMap ModBit.all).length=8*bs.length := by
-    induction bs with
-    | nil => simp
-    | cons b bs ih => simp [ModBit.all,ih]; omega
-  have ha : L.inner.arithmetic.width=256 := hw.inverse.arithmetic
-  have ht : L.inner.temp.length=257 := hw.inverse.temp
-  simp only [borrow, ModLayout.wires, List.length_append, List.length_cons,
-    hb, ModLayout.bits, List.length_cons, List.length_nil, ht]
-  simp only [ModLayout.width] at ha
-  omega
+theorem borrow_length (L : DivideLayout) (hw : L.Widths) : L.borrow.length=1828 :=
+  L.inner.compactBorrow_length hw.inverse.low hw.inverse.arithmetic
 
 theorem multiply_widths (L : DivideLayout) (hw : L.Widths) : L.multiply.Widths :=
-  borrowedMont_widths _ _ _ _ _ _ hw.inverse.a hw.numerator (by simp [hw.acc])
+  borrowedMont_widths _ _ _ _ _ _
+    (by change (L.inner.middle.data.reg .r).length=257
+        rw [InverseLoopLayout.middle,loopEnd_data,L.inner.first.data_reg_length]
+        have hh : L.inner.first.low.length=256 := hw.inverse.low
+        omega)
+    hw.numerator (by simp [hw.acc])
 
 theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
   simp only [vLow,InverseLayout.vLow,List.length_map]

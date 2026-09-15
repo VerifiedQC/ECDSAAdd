@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2148项构建，以下309个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2151项构建，以下312个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -554,9 +554,12 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_live' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.InverseLoopLayout.scaleLive_subset' depends on axioms: [propext]
-'ECDSAAdd.Arithmetic.inverseScaling_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compactScale_values' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.InverseScaledMiddle.congr' depends on axioms: [propext, Classical.choice, Quot.sound]
-'ECDSAAdd.Arithmetic.InverseLoopLayout.scaling_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compactConstants_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compactNeg_values' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.compactReady_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.InverseScaleLayout.work_covered' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.kaliski_terminal_even' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.kaliski_terminal_values' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.negative_even_value' depends on axioms: [propext, Quot.sound]
@@ -692,11 +695,11 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 8,946,186 | 5,772,554 | 6,218 |
+| 有限 C 的独立 `controlledPointAddOut` | 9,294,088 | 6,125,822 | 7,242 |
+| 有限 C 的 `controlledPointAdd` | 8,918,440 | 5,750,952 | 5,731 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
+`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持4,954位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
 
 独立XOR接口`controlledPointAddOut`仍保留，原地程序不再调用两次XOR加点交换；只服务旧组合的ControlledPointPair及装载/擦除组合已删除。所有Triple对任意相位和测量记录成立，平方有独立乘数副本，子视图均由全局Nodup证明互异。完整验证及实际公理输出见本文件公理块；本批新增说明见末尾改3节。
 
@@ -1111,3 +1114,24 @@ inverseCompute/Uncompute现只调用缩放prepare/restore，旧求逆半倍适�
 terminalConstants 使用 X 门清除终态 u=1/s=q，并按同一门列写回，双向寄存器 Triple、全测量记录相位及其它线路保持已证明；Toffoli/测量均为零。当前求逆、除法和点加门列与资源未改变。
 
 完整 scripts/verify.sh 退出0：2148项构建、309条实际公理输出；17个新增入口与上方实际公理块同步。基于已合入Q1第一批的main，未放宽证明限制、未新增测试或公理。
+
+
+### D1 第三批a：紧缩求逆与必要的下游适配
+
+inverseCompute现在执行正循环、清u/s常量、r上原地取负与紧缩缩放；inverseUncompute显式反向恢复这些阶段。CompactReady/CompactPrepared分别写明r、518位历史、1828位B和冻结的计数/记录/辅助位。使用段保持历史，B归零；恢复后重建旧InverseMiddle断言再进入逆循环。旧inverseScaling_values/scaling_fields由对应紧缩阶段证明替换，不保留双后端。
+
+fieldInverse_spec、fieldInverse_xor_spec、divideAdd/Sub_spec、divide_frame与controlledPointAdd_spec陈述逐字不变。Divide直接使用r及B；外层点加借用仍是旧temp与银行前1828位，尚未改借P。列表截断不改变既有子视图的物理索引；平方与乘积覆盖旧借用前2085位的下界已证明。B/P均不借记录带。
+
+| 同一程序 | Toffoli | 测量 | 实际支持线 |
+| --- | ---: | ---: | ---: |
+| inverseLoop | 3,500,039 | 1,917,959 | 3,156 |
+| fieldInverse | 3,500,039 | 1,917,959 | 3,412 |
+| divideAdd | 3,881,510 | 2,298,406 | 4,442 |
+| divideSub | 3,882,022 | 2,298,918 | 4,442 |
+| controlledPointAdd，有限C | 8,918,440 | 5,750,952 | 5,731 |
+| pointAddOut，有限C | 9,294,082 | 6,125,822 | 7,238 |
+| controlledPointAddOut，有限C | 9,294,088 | 6,125,822 | 7,242 |
+
+独立求逆只触银行前30位；除法中段触及804位；旧外层还触及temp与更长银行前缀，因此三种支持不能混用。求逆池支持2900、候选池并集3128，均有显式列表/置换/支持证明。点加4,450线目标待3b改借P后证明；本批T/M已完成切换，不把计划值写成已证值。
+
+完整scripts/verify.sh退出0：2151项构建、312条公理输出，实际输出逐行收录于上方。公开检查替换两个过期入口并净增3条；公理仅propext/Classical.choice/Quot.sound，无测试、额外公理或证明限制放宽。

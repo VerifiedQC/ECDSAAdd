@@ -5,17 +5,11 @@ open ControlledPointLayout
 
 /-- 普通分支的语法支持上界，仅计入实际使用的求逆核心。 -/
 def pointInPlaceCoreWires (L : ControlledPointLayout) : List Wire :=
-  L.point.x++L.point.y++L.inPlaceSlope++[L.core.generic,L.core.equalX,L.core.equalNegY]++L.inPlaceInverse.usedCoreWires
+  L.point.x++L.point.y++L.inPlaceSlope++[L.core.generic,L.core.equalX,L.core.equalNegY]++L.inPlaceOuterCoreWires
 
 
 theorem ControlledPointLayout.inPlaceBorrow_used_subset (L : ControlledPointLayout) :
-    L.inPlaceBorrow ⊆ L.inPlaceInverse.usedCoreWires := by
-  intro q hq
-  simp only [inPlaceBorrow,List.mem_append] at hq
-  simp only [InverseLoopLayout.usedCoreWires,InverseLoopLayout.extra,List.mem_append]
-  rcases hq with ht|ha
-  · exact Or.inr (Or.inl (Or.inr ht))
-  · exact Or.inr (Or.inr ha)
+    L.inPlaceBorrow ⊆ L.inPlaceOuterCoreWires := fun _ h => List.mem_append_right _ h
 
 
 private theorem modPrograms_not_mem (q c : Wire) (ng : q≠c) (M : ModInPlaceLayout) (hM : M.Widths 256) (hnM : q∉M.wires) :
@@ -59,14 +53,15 @@ private theorem zero_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : Wi
     simp [ng,ne,nx,ntake]
 
 private theorem divide_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : Wire)
-    (nx : q∉L.point.x) (ny : q∉L.point.y) (na : q∉L.inPlaceSlope) (ni : q∉L.inPlaceInverse.usedCoreWires)
+    (nx : q∉L.point.x) (ny : q∉L.point.y) (na : q∉L.inPlaceSlope) (ni : q∉L.inPlaceOuterCoreWires)
     (c : Wire) (nc : q≠c) :
     q∉wires (divideAdd (L.inPlaceDivide c L.point.x L.point.y)) ∧
     q∉wires (divideSub (L.inPlaceDivide c L.point.x L.point.y)) := by
   have hd := divide_wires (L.inPlaceDivide c L.point.x L.point.y)
     (L.inPlaceDivide_widths hw c _ _ hw.inputX hw.inputY)
   simp only [hd.1,hd.2]
-  simp [DivideLayout.usedWires,inPlaceDivide,nc,nx,ny,na,ni]
+  have nn : q∉L.inPlaceInverse.compactCoreWires := fun hh => ni (L.compactCore_outer hh)
+  simp [DivideLayout.usedWires,inPlaceDivide,nc,nx,ny,na,nn]
 
 private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : Wire)
     (hnot : q∉(pointInPlaceCoreWires L).toFinset) :
@@ -80,7 +75,7 @@ private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : W
   have nslice (j n : Nat) : q∉(L.inPlaceBorrow.drop j).take n := by
     intro h; exact nb ((List.drop_sublist _ _).subset ((List.take_sublist _ _).subset h))
   have ntake (n : Nat) : q∉L.inPlaceBorrow.take n := fun h => nb ((List.take_sublist _ _).subset h)
-  have nbit (j : Nat) (hj : j<2315) : q≠L.inPlaceBit j := by
+  have nbit (j : Nat) (hj : j<2085) : q≠L.inPlaceBit j := by
     intro he
     apply nb
     rw [he,inPlaceBit,List.getD_eq_getElem _ _ (by rw [L.inPlaceBorrow_length hw]; exact hj)]
@@ -178,8 +173,8 @@ private theorem generic_frame_values (L : ControlledPointLayout) (P : Program)
   · exact (regValue_eq_iff _ _ _).mp (ho.clean.trans hi.clean.symm) q hc
   apply run_preserves_outside
   apply mt (@hP q)
-  have hu : q∉L.inPlaceInverse.usedCoreWires := fun h => hc
-    ((L.inPlaceDivide L.core.generic L.point.x L.point.y).inverse_used_subset h)
+  have hu : q∉L.inPlaceOuterCoreWires := fun h => hc
+    (L.inPlaceOuterCore_sublist.subset h)
   simp [pointInPlaceCoreWires,hx,hy,ha,hg,he,hq,hu]
 
 theorem pointInPlaceGeneric_frame (L : ControlledPointLayout) (hw : L.Widths) (cx cy k : Fp)

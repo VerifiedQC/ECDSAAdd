@@ -16,7 +16,10 @@ def inPlaceInverse (L : ControlledPointLayout) : InverseLoopLayout :=
   (poolInverse L.core.poolWire L.core.divisor L.core.inverse).inner
 
 def inPlaceBorrow (L : ControlledPointLayout) : List Wire :=
-  L.inPlaceInverse.temp++L.inPlaceInverse.arithmetic.wires
+  L.inPlaceInverse.temp++L.inPlaceInverse.arithmetic.wires.take 1828
+
+def inPlaceOuterCoreWires (L : ControlledPointLayout) : List Wire :=
+  L.inPlaceInverse.first.usedTapeWires L.inPlaceInverse.records++L.inPlaceBorrow
 
 def inPlaceBit (L : ControlledPointLayout) (i : Nat) : Wire :=
   L.inPlaceBorrow.getD i L.control
@@ -66,12 +69,22 @@ theorem inPlaceDivide_widths (L : ControlledPointLayout) (hw : L.Widths)
   exact ⟨⟨hD,hi.records,hi.counter,hi.low,hi.arithmetic,hi.a,hi.temp,hi.output⟩,
     hE,L.inPlaceSlope_length hw⟩
 
-theorem inPlaceBorrow_length (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceBorrow.length=2315 :=
-  (L.inPlaceDivide L.core.generic L.point.x L.point.y).borrow_length
-    (L.inPlaceDivide_widths hw _ _ _ hw.inputX hw.inputY)
+theorem inPlaceBorrow_length (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceBorrow.length=2085 := by
+  have hi := poolInverse_widths L.core.poolWire L.core.divisor L.core.inverse hw.divisor hw.inverse
+  have ht : L.inPlaceInverse.temp.length=257 := hi.temp
+  have hm : L.inPlaceInverse.arithmetic.width=256 := hi.arithmetic
+  have hbits (bs : List ModBit) : (bs.flatMap ModBit.all).length=8*bs.length := by
+    induction bs with
+    | nil => rfl
+    | cons b bs ih => simp [ModBit.all,ih]; omega
+  simp only [inPlaceBorrow,List.length_append,List.length_take,ht,ModLayout.wires,List.length_cons,
+    List.length_nil,hbits,ModLayout.bits,List.length_append,List.length_cons,List.length_nil]
+  change 257+min 1828 (8*(L.inPlaceInverse.arithmetic.width+1)+2)=2085
+  rw [hm]
+  rfl
 
 theorem inPlaceUnary_widths (L : ControlledPointLayout) (hw : L.Widths)
-    (low : List Wire) (high : Wire) (k : Nat) (hl : low.length=256) (hk : k+772≤2315) :
+    (low : List Wire) (high : Wire) (k : Nat) (hl : low.length=256) (hk : k+772≤2085) :
     (L.inPlaceUnary low high k).Widths 256 := by
   constructor
   · exact hl
