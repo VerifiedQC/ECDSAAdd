@@ -188,6 +188,7 @@ D1第三批a已证明紧缩求逆、除法与资源传播；内部结果改写r�
 
 Q1循环接入已完成：保留旧记录分配及通用两位轮规格，生产求逆循环共用第一根swap，仅保存512根subtract，未使用swap尾部仍保持零。正逆循环完整Triple、精确支持及下游资源均随同一门列重证；相比D1净省511线，完整受控点加增加2048个Toffoli，测量不变。见[§24](docs/REWORK_PLAN.md#q1-one-bit-tape)。
 
+W5的[五位窗口设计](docs/REWORK_PLAN.md#w5-window-design)按完整门列重算目标为8,867,944 Toffoli /5,698,408测量 /3,959线，全部待证明；净省52,544 T/M而非原0.3M粗估，保守映射增加20线。Current status不计此设计。
 Q5的[完整mask复用审计](docs/REWORK_PLAN.md#q5-mask-audit)建议取消实现：单段可少261位，但受控适配器中段仍需独立零空间；现有原语的完整可构造方案仅净省19线，尚未实现，不计入Current status。
 Q6轮工作字共用的[容量复核§27](docs/REWORK_PLAN.md#q6-round-sharing)尚未实现：轮内共享不能与Q5的整机节省直接相加，须先降低缩放历史或中段借用区容量；当前已证资源不变。
 
