@@ -40,3 +40,6 @@ import ECDSAAdd.Arithmetic.InverseTerminalConstants
 import ECDSAAdd.Arithmetic.KaliskiLoopProof
 
 import ECDSAAdd.Arithmetic.TriangularSquareSpec
+
+import ECDSAAdd.Arithmetic.KaratsubaSquareState
+import ECDSAAdd.Arithmetic.SquareReduceSpec

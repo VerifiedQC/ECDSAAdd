@@ -334,6 +334,20 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.triangularSquareClear_frame
 #print axioms ECDSAAdd.Arithmetic.triangularSquare_counts
 #print axioms ECDSAAdd.Arithmetic.triangularSquare_wires
+#print axioms ECDSAAdd.Arithmetic.SquareReduction.reduced_square_word
+#print axioms ECDSAAdd.Arithmetic.squareFold_correct
+#print axioms ECDSAAdd.Arithmetic.squareFold_counts
+#print axioms ECDSAAdd.Arithmetic.squareFold_wires_subset
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquare_spec
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquareClear_spec
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquare_frame
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquareClear_frame
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquare_counts
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquare_wires_subset
+#print axioms ECDSAAdd.Arithmetic.squareReduce_correct
+#print axioms ECDSAAdd.Arithmetic.squareReduce_frame
+#print axioms ECDSAAdd.Arithmetic.squareReduce_counts
+#print axioms ECDSAAdd.Arithmetic.squareReduce_wires_subset
 LEAN
 )
 printf '%s\n' "$axioms"
