@@ -29,9 +29,9 @@ theorem oneBitRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   have h3 := kaliskiBodyProgram_state L hnd z z.k 0 A (decide (z.v=0)) code.1 code.2 hU hsub hR heven hfit
   change Triple _ _ (RoundState L (kaliskiBody A code z) z.k 0 A (decide (z.v=0)) code.1 code.2) at h3
   rw [kaliski_body_step] at h3
-  have hrec := recoverSwap_state L hnd (kaliskiStep z) z.k 0 A (decide (z.v=0)) code.1 code.2
+  have hrec := eraseSwap_state L hnd (kaliskiStep z) z.k 0 A (decide (z.v=0)) code.2
   have hcode : code.1 = (A && decide ((kaliskiStep z).r%2=0)) := kaliski_swap_from_r p a z hinv hodd
-  rw [← hcode,Bool.xor_self] at hrec
+  rw [← hcode] at hrec
   have h4 := counterInc_state L hnd hw (kaliskiStep z) z.k A (decide (z.v=0)) false code.2
   rw [hmod] at h4
   have h5 := zeroDone_state L hnd (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) false code.2

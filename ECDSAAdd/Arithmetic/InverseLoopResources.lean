@@ -9,8 +9,8 @@ theorem inverseLoop_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (ha : L.a.length=L.arithmetic.width+1)
     (ht : L.temp.length=L.arithmetic.width+1) (hout : L.out.length=L.arithmetic.width+1)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256) (q : Nat) :
-    toffoliCount (inverseLoop L q)=1024*(12*L.first.data.width+32)+1535+308744 ∧
-    measurementCount (inverseLoop L q)=1024*(6*L.first.data.width+28)+1535+308744 ∧
+    toffoliCount (inverseLoop L q)=512*(24*L.first.data.width+63)+1535+308744 ∧
+    measurementCount (inverseLoop L q)=512*(12*L.first.data.width+57)+1535+308744 ∧
     qubitCount (inverseLoop L q)=8*L.first.data.width+589 := by
   have hfirst := oneBitRecordLoop_counts L.first L.records 0 (L.first_nodup hnd) hw
   have hrlen : L.middle.r.length=L.arithmetic.width+1 := by
@@ -52,7 +52,7 @@ theorem inverseLoop_257_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hlow : L.first.low.length=256) (harith : L.arithmetic.width=256)
     (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257) (q : Nat) :
-    toffoliCount (inverseLoop L q)=3501063 ∧ measurementCount (inverseLoop L q)=1917959 ∧
+    toffoliCount (inverseLoop L q)=3500551 ∧ measurementCount (inverseLoop L q)=1918471 ∧
     qubitCount (inverseLoop L q)=2645 := by
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hlow]
   simpa only [hd] using inverseLoop_resources L hnd hn hw (by omega) (by omega)

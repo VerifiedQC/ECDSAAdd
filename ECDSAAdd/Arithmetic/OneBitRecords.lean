@@ -122,8 +122,8 @@ theorem oneBitRecordLoop_wires (L : KaliskiRoundLayout) (rs : List RoundRecord) 
 
 theorem oneBitRecordLoop_counts (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat)
     (hnd : (L.tapeWires rs).Nodup) (hw : L.counter.width=10) :
-    toffoliCount (oneBitRecordLoop L i rs)=rs.length*(12*L.data.width+32) ∧
-    measurementCount (oneBitRecordLoop L i rs)=rs.length*(6*L.data.width+28) ∧
+    toffoliCount (oneBitRecordLoop L i rs)=rs.length*(12*L.data.width+31) ∧
+    measurementCount (oneBitRecordLoop L i rs)=rs.length*(6*L.data.width+29) ∧
     toffoliCount (oneBitRecordUnloop L i rs)=rs.length*(12*L.data.width+32) ∧
     measurementCount (oneBitRecordUnloop L i rs)=rs.length*(6*L.data.width+28) := by
   cases rs with

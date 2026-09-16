@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.RoundSpec
+import ECDSAAdd.Arithmetic.EraseSwap
 import ECDSAAdd.Math.KaliskiOneBit
 
 namespace ECDSAAdd.Arithmetic
@@ -10,7 +11,7 @@ def recoverSwap (L : KaliskiRoundLayout) : Program :=
 /-- 一位历史正轮，交换条件只在本轮内存活。 -/
 def oneBitRound (L : KaliskiRoundLayout) (i : Nat) : Program :=
   loadActive L ++ recordRound L ++ kaliskiBodyProgram L.data L.active L.swap L.subtract ++
-  recoverSwap L ++ counterInc L.counter ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++
+  eraseSwap L ++ counterInc L.counter ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++
   roundActiveXor L i
 
 /-- 恢复交换条件后调用既有逆算术，最后清除减法历史。 -/
@@ -79,5 +80,28 @@ theorem recoverSwap_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     by_cases he : z.r%2=0 <;> simp [he]
   · intro w hw
     simp [recoverSwap,run,writeBit,hw]
+
+/-- 清理前提由更新后r的奇偶性给出；其余轮状态逐项保持。 -/
+theorem eraseSwap_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
+    (z : KState) (K N : Nat) (A D T : Bool) :
+    Triple (RoundState L z K N A D (A && decide (z.r%2=0)) T) (eraseSwap L)
+      (RoundState L z K N A D false T) := by
+  intro s m h
+  have hr : s.basis L.r.head! = decide (z.r%2≠0) := by
+    have hn : L.r≠[] := by
+      intro he
+      have hh := L.data_reg_length .r
+      change L.r.length = _ at hh
+      rw [he] at hh
+      simp at hh
+    have hv : regValue L.r s.basis=z.r := h.1.1 .r
+    simpa only [hv] using regValue_headBit L.r hn s.basis
+  have ht : s.basis L.swap=(s.basis L.active && !s.basis L.r.head!) := by
+    rw [h.2.swap,h.2.active,hr]
+    by_cases he : z.r%2=0 <;> simp [he]
+  rw [eraseSwap_correct L hnd s m ht]
+  refine ⟨rfl,swap_update L hnd z K N A D _ T false _ _ h ?_ ?_⟩
+  · simp [writeBit]
+  · intro w hw; simp [writeBit,hw]
 
 end ECDSAAdd.Arithmetic

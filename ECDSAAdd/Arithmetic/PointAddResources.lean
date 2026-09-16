@@ -7,8 +7,8 @@ open Secp256k1
 /-- 有限常量的同程序精确资源，包含计算、输出、全部清理及测量修正支持。 -/
 theorem pointAddOut_finite_resources (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (pointAddOut L (.some hc))=9296130 ∧
-    measurementCount (pointAddOut L (.some hc))=6125822 ∧
+    toffoliCount (pointAddOut L (.some hc))=9295106 ∧
+    measurementCount (pointAddOut L (.some hc))=6126846 ∧
     qubitCount (pointAddOut L (.some hc))=6727 := by
   have cc := pointCandidate_counts L h hn cx cy
   have cf := pointFlags_counts L h cx cy

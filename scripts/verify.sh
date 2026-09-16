@@ -357,6 +357,11 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_nodup
 #print axioms ECDSAAdd.Arithmetic.squareSub_correct
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceSquare_correct
+#print axioms ECDSAAdd.Arithmetic.eraseSwap_correct
+#print axioms ECDSAAdd.Arithmetic.eraseSwap_frame
+#print axioms ECDSAAdd.Arithmetic.eraseSwap_counts
+#print axioms ECDSAAdd.Arithmetic.eraseSwap_wires
+#print axioms ECDSAAdd.Arithmetic.eraseSwap_state
 LEAN
 )
 printf '%s\n' "$axioms"

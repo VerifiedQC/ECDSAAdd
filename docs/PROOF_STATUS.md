@@ -251,7 +251,7 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 第一阶段实际静态支持为7w+47+N；独立求逆额外只触及旧银行前30位，输出w位。B由u/v/s、zero高253位及银行组成；518位历史留在y/zero低4位/carry。a/temp退出实际支持，完整内核为8w+77+N=2645线；所有支持均为静态门列并集。
 
-[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **3,501,063 Toffoli、1,917,959 次测量、2,645 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改11已替换原地减半循环，未声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
+[InverseLoopResources](../ECDSAAdd/Arithmetic/InverseLoopResources.lean) 证明完整程序的 `wires` 恰好等于 `L.usedWires.toFinset`，再用 Nodup 求基数。`inverseLoop_257_resources` 给出 **3,500,551 Toffoli、1,918,471 次测量、2,645 根静态线路**。该实现空间 O(w+N)，不保存第二阶段数值链；改11已替换原地减半循环，未声称门数或空间最优。计数包含所有测量修正分支触及的线路，但不包含 I5 封装增加的外部输入线路。
 
 ## I5：外部输入封装与逆元契约
 
@@ -270,15 +270,15 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
 
 | 同一个 `fieldInverse L` | 精确资源 |
 | --- | --- |
-| Toffoli | 3,501,063 |
-| 测量 | 1,917,959 |
+| Toffoli | 3,500,551 |
+| 测量 | 1,918,471 |
 | 静态线路 | 2,901 |
 
 CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`InverseLayout.wires_perm` 证明公开 x/out/work 与 x 加内核完整线路的置换；`fieldInverse_wires` 从实际门列支持集导出等式，实际支持改用InverseLayout.usedWires（x加内核usedWires），再以其Nodup计数，得到256+2645=2901。内核输出高位仅重新归入工作区，没有重复计算。`fieldInverse_contract` 同时证明 `inverseContract L.x L.out L.work (fieldInverse L) 3501063 1917959 2901` 的正确性、三个资源等式和支持集包含关系。资源为已证内核的封装基线，不声称最优；没有新增测量或让测量结果选择算术。
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2177项构建，以下350个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2178项构建，以下355个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -631,6 +631,11 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.squareSub_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseSwap_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseSwap_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseSwap_counts' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.eraseSwap_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.eraseSwap_state' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -706,7 +711,7 @@ theorem pointAddOut_xor_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.N
 
 | 同一 `pointAddOut` 门列 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| C 有限 | 9,296,130 | 6,125,822 | 6,727 |
+| C 有限 | 9,295,106 | 6,126,846 | 6,727 |
 | C=O | 0 | 0 | 1,026 |
 
 有限分支的计数为两段候选 2×4,646,271，加标志计算/清理 2×514，加输出复制 512；测量为两段候选 2×3,062,399 加两次标志检测 2×512。常量写入和负控制包夹仅使用 X/CX。
@@ -733,8 +738,8 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
-| 有限 C 的独立 `controlledPointAddOut` | 9,296,136 | 6,125,822 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 8,814,658 | 5,645,122 | 3,939 |
+| 有限 C 的独立 `controlledPointAddOut` | 9,295,112 | 6,126,846 | 6,731 |
+| 有限 C 的 `controlledPointAdd` | 8,813,634 | 5,646,146 | 3,939 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持3,162位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -1215,3 +1220,12 @@ SquareSubLayout/Pool把输入256位、目标256位及2217位工作区映射到�
 点加直接调用squareSub，删除旧复制乘数与Montgomery平方视图。完整受控点加已证8,814,658 Toffoli /5,645,122测量 /3,939实际支持线；两项门数各少105,830，线路数不变。适配器支持给包含关系，整机保留精确支持等式；2217是工作分配长度，不冒报为其精确qubitCount。公开点加/求逆数值规格及全部几何分支保持，独立XOR点加路径不变。
 
 第三批完整验证：scripts/verify.sh退出0，2177项构建、350条实际公理输出；上方公理块逐行匹配。新增九条入口，无测试或证明限额放宽。
+
+
+### Q1交换位测量清理
+
+EraseSwap证明单次measureX的精确状态等式、目标外frame、0 Toffoli/1测量及三线支持。swap=active∧¬r₀的测量相位由CZ(active,r₀)和Z(active)共同抵消，覆盖所有记录。仅正轮替换，逆轮recoverSwap继续重算；oneBitRound/Unround公开数值陈述不变。正轮3,115/1,571、逆轮3,116/1,570，循环计数按方向分别传播。
+
+完整受控点加8,813,634/5,646,146/3,939；fieldInverse3,500,551/1,918,471/2,901；独立pointAddOut9,295,106/6,126,846/6,727。支持等式保持；C=O与非活动轮处理不变。五条新增入口记录实际公理输出。此前Q1/K2段为各阶段历史值。
+
+交换位清理完整验证退出0：2178项构建、355条公理实际输出与上方逐行一致，仅既有三项白名单。源码验证后未改，无测试或限额放宽。
