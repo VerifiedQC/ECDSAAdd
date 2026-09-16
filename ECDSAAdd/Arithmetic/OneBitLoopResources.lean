@@ -26,8 +26,8 @@ private theorem usedShared_swap (L : KaliskiRoundLayout) :
 
 theorem oneBitLoop_counts (L : KaliskiRoundLayout) (sw : Wire) (rs : List Wire) (i : Nat)
     (hnd : (L.oneBitTapeWires sw rs).Nodup) (hw : L.counter.width=10) :
-    toffoliCount (oneBitLoop L sw i rs)=rs.length*(12*L.data.width+32) ∧
-    measurementCount (oneBitLoop L sw i rs)=rs.length*(6*L.data.width+28) ∧
+    toffoliCount (oneBitLoop L sw i rs)=rs.length*(12*L.data.width+31) ∧
+    measurementCount (oneBitLoop L sw i rs)=rs.length*(6*L.data.width+29) ∧
     toffoliCount (oneBitUnloop L sw i rs)=rs.length*(12*L.data.width+32) ∧
     measurementCount (oneBitUnloop L sw i rs)=rs.length*(6*L.data.width+28) := by
   induction rs generalizing L i with
@@ -36,9 +36,9 @@ theorem oneBitLoop_counts (L : KaliskiRoundLayout) (sw : Wire) (rs : List Wire) 
     have hr := oneBitRound_counts (L.withRecord ⟨sw,r⟩) (L.oneBit_round_nodup sw r rs hnd) hw i
     have hnw : L.swapCounter.counter.width=10 := by rw [L.swapCounter_counter,L.counter.swapCounter_fields.2.2.2.2.2,hw]
     have ht := ih L.swapCounter (i+1) (L.oneBit_tail_nodup sw r rs hnd) hnw
-    change _=rs.length*(12*L.data.width+32) ∧ _=rs.length*(6*L.data.width+28) ∧
+    change _=rs.length*(12*L.data.width+31) ∧ _=rs.length*(6*L.data.width+29) ∧
       _=rs.length*(12*L.data.width+32) ∧ _=rs.length*(6*L.data.width+28) at ht
-    change _=12*L.data.width+32 ∧ _=6*L.data.width+28 ∧ _=12*L.data.width+32 ∧ _=6*L.data.width+28 at hr
+    change _=12*L.data.width+31 ∧ _=6*L.data.width+29 ∧ _=12*L.data.width+32 ∧ _=6*L.data.width+28 at hr
     simp only [oneBitLoop,oneBitUnloop,toffoliCount_append,measurementCount_append,hr.1,hr.2.1,
       hr.2.2.1,hr.2.2.2,ht.1,ht.2.1,ht.2.2.1,ht.2.2.2,List.length_cons,Nat.add_mul,Nat.one_mul]
     simp [Nat.add_comm]

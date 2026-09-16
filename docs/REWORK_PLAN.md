@@ -1900,11 +1900,11 @@ Q1在D1最终基线后接入。`oneBitRecordLoop`沿用原记录分配，取第�
 本节为Q1接入值；§23及§24前述阶段数字按各自基线解释，不重复扣减511线。
 
 <a id="q1-measured-swap"></a>
-### 24.8 交换位的测量清理（设计，待证明）
+### 24.8 交换位的测量清理（已实现）
 
 基线为K2已合入的main f0cf4e65，完整受控点加8,814,658 Toffoli /5,645,122测量 /3,939线。本项仅替换oneBitRound在算术体之后的recoverSwap；oneBitUnround的recoverSwap从零重算交换控制，必须保留，不能测量替代。两次调用虽同名，生命周期不同；先前−2,048 Toffoli/+1,024测量的粗估误将逆轮计算也算作可擦除，正确最小替换为−1,024/+1,024。
 
-**门列与相位。** 令a为仍有效的active，r₀为更新后r最低位，t为swap。已有kaliski_swap_from_r给t=a∧¬r₀，GF(2)中即t=a⊕a·r₀。旧清理是CX a t；CCX a r₀ t（1 Toffoli、0测量）。新eraseSwap拟为：
+**门列与相位。** 令a为仍有效的active，r₀为更新后r最低位，t为swap。已有kaliski_swap_from_r给t=a∧¬r₀，GF(2)中即t=a⊕a·r₀。旧清理是CX a t；CCX a r₀ t（1 Toffoli、0测量）。新eraseSwap为：
 
 ```lean
 [.measureX L.swap [] [.CZ L.active L.r.head!, .Z L.active]]
@@ -1912,23 +1912,27 @@ Q1在D1最终基线后接入。`oneBitRecordLoop`沿用原记录分配，取第�
 
 测量结果m的擦除相位为m·t；即时CZ和Z修正分别贡献m·a·r₀与m·a，三项异或为0。不能省略Z：a=1、r₀=0时t=1，单独CZ不抵消测量相位。依据现有measureAndCorrect语义，先取原t的相位再清零；a与r₀互异且均不是t，修正不改变基态。因此对任意记录（含空记录补false）相位精确保持，t=false，其余每根线保持。没有CCZ、新语法、跨测量记录依赖或倒放测量。
 
-**规格与替换点。** eraseSwap_correct的前提为三线互异与s.basis swap=(s.basis active && !s.basis r.head!)，后置为run结果等于原phase与仅把swap写false的basis。再给RoundState版本：保留数据、K/N、active/done/subtract以及其余工作位，只清swap。oneBitRound在kaliskiBodyProgram之后、counterInc之前调用新门列；由现有奇数模数不变量推导清理前提，随后计数、done与active清理顺序不变。终止轮仍使用旧活动位；结束后的恒等轮a=false，测量一个零位仍按静态门列记一次。逆轮重算交换位供kaliskiUnbodyProgram使用，恢复旧数据后仍由recordRound清交换与减法位，均不改动。通用kaliskiRound_spec与最终fieldInverse/点加Triple逐字保持；原recoverSwap_state保留其任意旧记录的XOR契约。
+**规格与替换点。** eraseSwap_correct的前提为全局Nodup导出的三线互异与s.basis swap=(s.basis active && !s.basis r.head!)，后置为run结果等于原phase与仅把swap写false的basis。再给RoundState版本：保留数据、K/N、active/done/subtract以及其余工作位，只清swap。oneBitRound在kaliskiBodyProgram之后、counterInc之前调用新门列；由现有奇数模数不变量推导清理前提，随后计数、done与active清理顺序不变。终止轮仍使用旧活动位；结束后的恒等轮a=false，测量一个零位仍按静态门列记一次。逆轮重算交换位供kaliskiUnbodyProgram使用，恢复旧数据后仍由recordRound清交换与减法位，均不改动。通用kaliskiRound_spec与最终fieldInverse/点加Triple逐字保持；原recoverSwap_state保留其任意旧记录的XOR契约。
 
-**逐项账本（均待同程序证明）。** 正轮从12w+32/6w+28改为12w+31/6w+29；逆轮仍12w+32/6w+28。w=257时正轮3,115/1,571，逆轮3,116/1,570。N轮正循环少N个Toffoli、多N次测量，逆循环不变；每次512轮计算/恢复对只省512门、多512测量。
+**逐项账本（已由同程序证明）。** 正轮从12w+32/6w+28改为12w+31/6w+29；逆轮仍12w+32/6w+28。w=257时正轮3,115/1,571，逆轮3,116/1,570。N轮正循环少N个Toffoli、多N次测量，逆循环不变；每次512轮计算/恢复对只省512门、多512测量。
 
-| 对象 | Toffoli目标 | 测量目标 | 实际线目标 |
+| 对象 | Toffoli（已证） | 测量（已证） | 实际线（已证） |
 |---|---:|---:|---:|
 | inverseLoop | 3,500,551 | 1,918,471 | 2,645 |
 | fieldInverse | 3,500,551 | 1,918,471 | 2,901 |
 | divideAdd | 3,882,022 | 2,298,918 | 3,931 |
 | divideSub | 3,882,534 | 2,299,430 | 3,931 |
 | controlledPointAdd，有限C（两次计算/恢复对） | 8,813,634 | 5,646,146 | 3,939 |
-| pointAddOut，有限C（四次计算/恢复对） | 9,294,082 | 6,127,870 | 6,727 |
-| controlledPointAddOut，有限C | 9,294,088 | 6,127,870 | 6,731 |
+| pointAddOut，有限C（两次计算/恢复对） | 9,295,106 | 6,126,846 | 6,727 |
+| controlledPointAddOut，有限C | 9,295,112 | 6,126,846 | 6,731 |
 
 新门列的静态支持仍为{swap,active,r₀}；不增加工作位，不改513位记录/共享交换映射，需重证单轮、循环与最终支持等式。C=O仍为空程序；控制false时静态轮数不减，不按有效轮数K少报测量。该方案以少1,024 Toffoli换多1,024测量，不声称总物理运行成本必然下降。
 
-**实现与验收。** 单独文件证明eraseSwap的精确相位、逐线保持、0/1计数与三线支持；仅修改正轮门列与对应组合证明，并传播正逆不对称的计数至循环、求逆、除法和两条点加路径。无需新框架或通用状态层。新增必要公开入口，完整verify及实际公理披露，README/PROOF_STATUS/PROVENANCE同步；不新增公理、测试或放宽资源限额。此PR只交设计，Current status与350条公理块不变；过审后实现。
+**实现与验收。** 单独文件证明eraseSwap的精确相位、逐线保持、0/1计数与三线支持；仅修改正轮门列与对应组合证明，并传播正逆不对称的计数至循环、求逆、除法和两条点加路径。无需新框架或通用状态层。新增必要公开入口，完整verify及实际公理披露，README/PROOF_STATUS/PROVENANCE同步；不新增公理、测试或放宽资源限额。设计阶段未更改Current status；实现现已完成，状态与实际公理块同步。
+
+实现记录：EraseSwap单文件给精确状态等式、frame、0/1计数及支持；OneBitRound用现有奇偶恢复引理建立擦除前提。仅正轮门列改变，逆轮源代码不变；正逆计数分别传播。上表全部数值和原静态支持等式已重证。无框架、公理或限额变更，未运行测试；公开点加/求逆/正逆轮数值规格保持。
+
+独立XOR路径在当前程序中只有两次fieldInverse调用（候选计算/清理各一次）；设计初稿所列四次已更正，因此该路径也只省1024门、多1024测量。
 
 <a id="q5-mask-audit"></a>
 

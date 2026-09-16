@@ -15,8 +15,8 @@ theorem divideLoad_counts (L : DivideLayout) (hw : L.Widths) :
 
 /-- 同一除法门列的精确门数；支持集与公开 Triple 分别证明。 -/
 theorem divide_counts (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    toffoliCount (divideAdd L)=3882534 ∧ measurementCount (divideAdd L)=2298406 ∧
-    toffoliCount (divideSub L)=3883046 ∧ measurementCount (divideSub L)=2298918 := by
+    toffoliCount (divideAdd L)=3882022 ∧ measurementCount (divideAdd L)=2298918 ∧
+    toffoliCount (divideSub L)=3882534 ∧ measurementCount (divideSub L)=2299430 := by
   have hi := inverseLoop_257_resources L.inner (L.inner_nodup hnd) hw.inverse.records
     hw.inverse.counter hw.inverse.low hw.inverse.arithmetic hw.inverse.a hw.inverse.temp
     hw.inverse.output p

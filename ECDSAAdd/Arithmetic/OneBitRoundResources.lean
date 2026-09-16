@@ -6,17 +6,18 @@ theorem recoverSwap_counts (L : KaliskiRoundLayout) :
     toffoliCount (recoverSwap L)=1 ∧ measurementCount (recoverSwap L)=0 := by
   exact ⟨rfl,rfl⟩
 
-/-- 共享临时位的擦除/恢复每方向只增加一个CCX。 -/
+/-- 正轮测量擦除，逆轮保留CCX重算，计数不再对称。 -/
 theorem oneBitRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     (hw : L.counter.width=10) (i : Nat) :
-    toffoliCount (oneBitRound L i)=12*L.data.width+32 ∧
-    measurementCount (oneBitRound L i)=6*L.data.width+28 ∧
+    toffoliCount (oneBitRound L i)=12*L.data.width+31 ∧
+    measurementCount (oneBitRound L i)=6*L.data.width+29 ∧
     toffoliCount (oneBitUnround L i)=12*L.data.width+32 ∧
     measurementCount (oneBitUnround L i)=6*L.data.width+28 := by
   have h := kaliskiRound_counts L hnd hw i
   have hr := recoverSwap_counts L
+  have he := eraseSwap_counts L
   simp only [kaliskiRound,kaliskiUnround,oneBitRound,oneBitUnround,
-    toffoliCount_append,measurementCount_append,hr.1,hr.2] at *
+    toffoliCount_append,measurementCount_append,hr.1,hr.2,he.1,he.2] at *
   omega
 
 private theorem recoverSwap_wires_subset (L : KaliskiRoundLayout) :
@@ -36,13 +37,17 @@ theorem oneBitRound_wires (L : KaliskiRoundLayout) (hw : L.counter.width=10)
     wires (oneBitRound L i)=L.usedWires.toFinset ∧
     wires (oneBitUnround L i)=L.usedWires.toFinset := by
   have h := kaliskiRound_wires L hw hd i
-  have hf : wires (oneBitRound L i)=wires (kaliskiRound L i) ∪ wires (recoverSwap L) := by
+  have hf : wires (oneBitRound L i)=wires (kaliskiRound L i) ∪ wires (eraseSwap L) := by
     simp only [oneBitRound,kaliskiRound,wires_append]
     ac_rfl
   have hb : wires (oneBitUnround L i)=wires (kaliskiUnround L i) ∪ wires (recoverSwap L) := by
     simp only [oneBitUnround,kaliskiUnround,wires_append]
     ac_rfl
-  rw [hf,hb,h.1,h.2,Finset.union_eq_left.mpr (recoverSwap_wires_subset L)]
+  have he : wires (eraseSwap L)=wires (recoverSwap L) := by
+    rw [eraseSwap_wires]
+    ext w
+    simp [recoverSwap,wires,Instr.wires,or_assoc,or_left_comm,or_comm]
+  rw [hf,hb,he,h.1,h.2,Finset.union_eq_left.mpr (recoverSwap_wires_subset L)]
   exact ⟨rfl,rfl⟩
 
 theorem oneBitRound_preserves (L : KaliskiRoundLayout) (hw : L.counter.width=10)
