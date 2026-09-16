@@ -4,9 +4,9 @@ namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
 
 /-- 普通分支恰好触及坐标、斜率、g/e/q及求逆实际核心。 -/
-theorem pointInPlaceGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (cx cy k : Fp) :
+theorem pointInPlaceGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) (cx cy k : Fp) :
     wires (pointInPlaceGeneric L cx cy k)=(pointInPlaceCoreWires L).toFinset := by
-  apply Finset.Subset.antisymm (pointInPlaceGeneric_wires_subset L hw cx cy k)
+  apply Finset.Subset.antisymm (pointInPlaceGeneric_wires_subset L hw hn cx cy k)
   have hd := (divide_wires (L.inPlaceDivide L.core.generic L.point.x L.point.y)
     (L.inPlaceDivide_widths hw _ _ _ hw.inputX hw.inputY)).1
   have hs := (divide_wires (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y)
@@ -43,9 +43,9 @@ private theorem genericFlag_wires (L : ControlledPointLayout) : wires (pointInPl
   tauto
 
 /-- 有限常量点加的完整实际支持等式，包括条件false时仍执行的门列。 -/
-theorem pointInPlaceFinite_wires (L : ControlledPointLayout) (hw : L.Widths) (C : Point) (cx cy : Fp) :
+theorem pointInPlaceFinite_wires (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
     wires (pointInPlaceFinite L C cx cy)=L.inPlaceUsedWires.toFinset := by
-  have hG := pointInPlaceGeneric_wires L hw cx cy (exceptionalSlope C)
+  have hG := pointInPlaceGeneric_wires L hw hn cx cy (exceptionalSlope C)
   have hE := equalPoint_wires L hw
   have hB : (L.inPlaceBorrow.take 513).toFinset⊆L.inPlaceUsedWires.toFinset := by
     intro q hq

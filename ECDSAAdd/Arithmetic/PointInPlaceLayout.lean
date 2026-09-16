@@ -45,11 +45,6 @@ def inPlaceMultiply (L : ControlledPointLayout) : MontLayout :=
   borrowedMont L.inPlaceBorrow L.control 2 (L.inPlaceSlope++[L.inPlaceBit 0])
     L.point.x (L.point.y++[L.inPlaceBit 1])
 
-/-- 平方只保留S=P[0…255]及两个扩展高位，工作区从258开始。 -/
-def inPlaceSquare (L : ControlledPointLayout) : MontLayout :=
-  borrowedMont L.inPlaceBorrow L.control 258 (L.inPlaceSlope++[L.inPlaceBit 256])
-    (L.inPlaceBorrow.take 256) (L.point.x++[L.inPlaceBit 257])
-
 /-- 常数源占前257位，目标高位257，scratch从258开始。 -/
 def inPlaceConstant (L : ControlledPointLayout) (r : List Wire) : ModInPlaceLayout :=
   let U := L.inPlaceUnary r (L.inPlaceBit 257) 258
@@ -91,10 +86,6 @@ theorem inPlaceUnary_widths (L : ControlledPointLayout) (hw : L.Widths)
 
 theorem inPlaceMultiply_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceMultiply.Widths :=
   borrowedMont_widths _ _ _ _ _ _ (by simp [L.inPlaceSlope_length hw]) hw.inputX (by simp [point,hw.inputY])
-
-theorem inPlaceSquare_widths (L : ControlledPointLayout) (hw : L.Widths) : L.inPlaceSquare.Widths :=
-  borrowedMont_widths _ _ _ _ _ _ (by simp [L.inPlaceSlope_length hw])
-    (by simp [L.inPlaceBorrow_length hw]) (by simp [point,hw.inputX])
 
 end ControlledPointLayout
 end ECDSAAdd.Arithmetic

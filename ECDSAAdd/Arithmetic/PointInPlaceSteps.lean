@@ -57,11 +57,10 @@ theorem pointStep_negate :
 
 theorem pointStep_square :
     Triple (PointInPlaceValues L X Y A G E Q)
-      (copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++ montMulSub L.inPlaceSquare p ++
-        copyRegister none L.inPlaceSlope L.inPlaceSquare.y)
+      (squareSub L.inPlaceKaratsuba)
       (PointInPlaceValues L (X-A*A) Y A G E Q) := by
   intro s m v
-  obtain ⟨hp,hx,hf⟩ := pointInPlaceSquare_correct L hw hn A.val X.val A.isLt X.isLt s m v.slope v.x v.borrow
+  obtain ⟨hp,hx,hf⟩ := pointInPlaceSquare_correct L hw hn A.val X.val X.isLt s m v.slope v.x v.borrow
   exact ⟨hp,v.withX hw hn (by simpa only [sub_val,ZMod.val_mul] using hx) hf⟩
 
 theorem pointStep_divideAdd (hX : G=true → X≠0) :

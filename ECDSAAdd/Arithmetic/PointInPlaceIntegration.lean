@@ -29,7 +29,7 @@ theorem pointInPlaceFinite_frame (L : ControlledPointLayout) (hw : L.Widths) (hn
     (q : Wire) (hq : q∉PointAddLayout.pointWires L.point) :
     (run (pointInPlaceFinite L (.some hc) cx cy) m s).basis q=s.basis q := by
   have ho := (pointInPlaceFinite_spec L hw hn R hc b s m hi).2
-  exact boundary_frame_values L _ (by rw [pointInPlaceFinite_wires L hw]) R _ b s m hi ho q hq
+  exact boundary_frame_values L _ (by rw [pointInPlaceFinite_wires L hw hn]) R _ b s m hi ho q hq
 
 private theorem boundary_work_subset (L : ControlledPointLayout) (hw : L.Widths) :
     L.inPlaceSlope++L.inPlaceFlags++L.inPlaceInverse.wires ⊆ L.work := by

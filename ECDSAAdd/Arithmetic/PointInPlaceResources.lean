@@ -22,7 +22,7 @@ theorem pointInPlaceFinite_qubits (L : ControlledPointLayout) (hw : L.Widths) (h
   change (L.core.generic::L.point.x++L.point.y++L.inPlaceSlope++L.inPlaceInverse.compactCoreWires).length=3931 at hq
   simp only [List.length_append,List.length_cons,show L.point.x.length=256 from hw.inputX,
     show L.point.y.length=256 from hw.inputY,L.inPlaceSlope_length hw] at hq
-  rw [qubitCount,pointInPlaceFinite_wires L hw,List.toFinset_card_of_nodup (L.inPlaceUsedWires_nodup hw hn)]
+  rw [qubitCount,pointInPlaceFinite_wires L hw hn,List.toFinset_card_of_nodup (L.inPlaceUsedWires_nodup hw hn)]
   simp only [inPlaceUsedWires,PointAddLayout.pointWires,inPlaceFlags,List.length_append,List.length_cons,List.length_nil,
     show L.point.x.length=256 from hw.inputX,show L.point.y.length=256 from hw.inputY,L.inPlaceSlope_length hw,
     inPlaceOuterCoreWires]
