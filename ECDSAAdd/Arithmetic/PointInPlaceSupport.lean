@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.PointInPlaceGeneric
+import ECDSAAdd.Arithmetic.SquareSubResources
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
@@ -67,7 +68,7 @@ private theorem divide_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : 
 
 private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : Wire)
     (hnot : q∉(pointInPlaceCoreWires L).toFinset) :
-    q∉L.inPlaceBorrow ∧ q∉L.inPlaceMultiply.wires ∧ q∉L.inPlaceSquare.wires ∧
+    q∉L.inPlaceBorrow ∧ q∉L.inPlaceMultiply.wires ∧
     q∉L.inPlaceNegate.wires ∧
     (∀ r : List Wire,q∉r → q∉(L.inPlaceConstant r).wires) := by
   have hn := hnot
@@ -88,18 +89,9 @@ private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : W
     have hh := L.inPlaceMultiply_borrow hw
     have hp : q∈L.inPlaceBorrow.take 1829 := hh ▸ List.mem_append_right _ h
     exact List.mem_of_mem_take hp
-  have nwS : q∉L.inPlaceSquare.work := by
-    intro h
-    apply nb
-    have hh := L.inPlaceSquare_borrow hw
-    have hp : q∈L.inPlaceBorrow.take 2085 := hh ▸ List.mem_append_right _ h
-    exact List.mem_of_mem_take hp
   have nM : q∉L.inPlaceMultiply.wires := by
     change q∉(L.inPlaceSlope++[L.inPlaceBit 0])++L.point.x++(L.point.y++[L.inPlaceBit 1])++L.inPlaceMultiply.work
     simp [na,nx,ny,nwM,nbit]
-  have nS : q∉L.inPlaceSquare.wires := by
-    change q∉(L.inPlaceSlope++[L.inPlaceBit 256])++L.inPlaceBorrow.take 256++(L.point.x++[L.inPlaceBit 257])++L.inPlaceSquare.work
-    simp [na,nx,nwS,ntake,nbit]
   have ntail : q∉L.inPlaceBorrow.tail.take 256 := by simpa only [List.drop_one] using nslice 1 256
   have nN : q∉L.inPlaceNegate.wires := by
     simp [inPlaceNegate,ModInPlaceLayout.wires,ModInPlaceLayout.z,ModInPlaceLayout.work,
@@ -107,9 +99,28 @@ private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : W
   have nConst (r : List Wire) (nr : q∉r) : q∉(L.inPlaceConstant r).wires := by
     simp [inPlaceConstant,ModInPlaceLayout.wires,ModInPlaceLayout.z,ModInPlaceLayout.work,
       inPlaceUnary,ModUnaryLayout.core,ModAddCoreLayout.z,ModAddCoreLayout.work,nr,nslice,ntake,nbit]
-  exact ⟨nb,nM,nS,nN,nConst⟩
+  exact ⟨nb,nM,nN,nConst⟩
+
+private theorem square_layout_not_mem (K : SquareSubLayout) (hw : K.Widths) (hn : K.wires.Nodup)
+    (q : Wire) (nx : q∉K.x) (no : q∉K.out) (nw : q∉K.work) : q∉wires (squareSub K) := by
+  intro hm
+  have hs:=List.mem_toFinset.mp (squareSub_wires_subset K hw hn hm)
+  simp only [SquareSubLayout.wires,List.mem_append,nx,no,nw,false_or] at hs
+
+private theorem karatsuba_out (L : ControlledPointLayout) : L.inPlaceKaratsuba.out=L.point.x := rfl
+
+private theorem square_not_mem (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
+    (q : Wire) (na : q∉L.inPlaceSlope) (nx : q∉L.point.x) (nb : q∉L.inPlaceBorrow) :
+    q∉wires (squareSub L.inPlaceKaratsuba) := by
+  apply square_layout_not_mem L.inPlaceKaratsuba (L.inPlaceKaratsuba_widths hw)
+    (L.inPlaceKaratsuba_nodup hw hnd) q
+  · rw [L.inPlaceKaratsuba_x hw]; exact na
+  · rw [karatsuba_out]; exact nx
+  · exact fun hm=>nb (L.inPlaceKaratsuba_work_subset hw hm)
+
 
 theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup)
     (cx cy k : Fp) : wires (pointInPlaceGeneric L cx cy k) ⊆ (pointInPlaceCoreWires L).toFinset := by
   intro q
   contrapose!
@@ -117,7 +128,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have hn := hnot
   simp only [pointInPlaceCoreWires,List.mem_toFinset,List.mem_append,List.mem_cons,not_or] at hn
   rcases hn with ⟨⟨⟨⟨nx,ny⟩,na⟩,ng,ne,nq,_⟩,ni⟩
-  obtain ⟨nb,nM,nS,nN,nConst⟩ := views_not_mem L hw q hnot
+  obtain ⟨nb,nM,nN,nConst⟩ := views_not_mem L hw q hnot
   have ntake (n : Nat) : q∉L.inPlaceBorrow.take n := fun h => nb ((List.take_sublist _ _).subset h)
   have nDivide := divide_not_mem L hw q nx ny na ni
   have nEq := zero_not_mem L hw q ng ne nx ntake
@@ -130,11 +141,6 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
     have ha : q∉(L.inPlaceConstant r).a := fun h => nm (by simp [ModInPlaceLayout.wires,h])
     simp only [pointInPlaceConstantAdd,wires_append,Finset.mem_union,not_or]
     exact ⟨⟨nMasked _ _ _ ng ha,(modPrograms_not_mem q L.core.generic ng _ (L.inPlaceConstant_widths hw r hr) nm).1⟩,nMasked _ _ _ ng ha⟩
-  have ncopy : q∉wires (copyRegister none L.inPlaceSlope L.inPlaceSquare.y) := by
-    rw [copyRegister_wires _ _ _ ((L.inPlaceSlope_length hw).trans (L.inPlaceSquare_widths hw).y.symm)]
-    split
-    · simp
-    · simp [inPlaceSquare,borrowedMont,poolMul,na,ntake]
   have nswap : q∉wires (swapRegisters L.core.generic L.point.x L.inPlaceNegate.low) := by
     intro h
     have h' := swapRegisters_wires _ _ _ (hw.inputX.trans (L.inPlaceNegate_widths hw).core.low.symm) h
@@ -142,7 +148,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
     change q∈(L.core.generic::L.point.x++L.inPlaceNegate.low).toFinset at h'
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,nx,nlow,or_false] at h'
   have hm := mont_not_mem q L.inPlaceMultiply (L.inPlaceMultiply_widths hw) nM
-  have hs := mont_not_mem q L.inPlaceSquare (L.inPlaceSquare_widths hw) nS
+  have nsquare := square_not_mem L hw hnd q na nx nb
   have hneg := modPrograms_not_mem q L.core.generic ng L.inPlaceNegate (L.inPlaceNegate_widths hw) nN
   simp only [pointInPlaceGeneric,pointInPlaceClearSlope,pointInPlaceNegate,wires_append,Finset.mem_union]
   have nmg := (nDivide L.core.generic ng).1
@@ -152,7 +158,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have ncy v := nCA L.point.y ny hw.inputY v
   have nCX : q∉wires [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] := by
     simp [wires,Instr.wires,ng,ne,nq]
-  simp only [ncx _,ncy _,nmg,nmq,hm.1,hm.2,hs.2,ncopy,nEq,nmask,nCX,hneg.2.2.1,hneg.2.2.2,
+  simp only [ncx _,ncy _,nmg,nmq,hm.1,hm.2,nsquare,nEq,nmask,nCX,hneg.2.2.1,hneg.2.2.2,
     nswap,false_or,not_false_eq_true]
 
 /-- 已恢复的λ/e/q及求逆工作位与语法支持上界共同给出完整逐线保持。 -/
@@ -179,12 +185,12 @@ private theorem generic_frame_values (L : ControlledPointLayout) (P : Program)
     (L.inPlaceOuterCore_sublist.subset h)
   simp [pointInPlaceCoreWires,hx,hy,ha,hg,he,hq,hu]
 
-theorem pointInPlaceGeneric_frame (L : ControlledPointLayout) (hw : L.Widths) (cx cy k : Fp)
+theorem pointInPlaceGeneric_frame (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) (cx cy k : Fp)
     (X Y X' Y' : Fp) (G : Bool) (s : State) (m : List Bool)
     (hi : PointInPlaceValues L X Y 0 G false false s.basis)
     (ho : PointInPlaceValues L X' Y' 0 G false false (run (pointInPlaceGeneric L cx cy k) m s).basis)
     (q : Wire) (hx : q∉L.point.x) (hy : q∉L.point.y) :
     (run (pointInPlaceGeneric L cx cy k) m s).basis q=s.basis q :=
-  generic_frame_values L _ (pointInPlaceGeneric_wires_subset L hw cx cy k) X Y X' Y' G s m hi ho q hx hy
+  generic_frame_values L _ (pointInPlaceGeneric_wires_subset L hw hn cx cy k) X Y X' Y' G s m hi ho q hx hy
 
 end ECDSAAdd.Arithmetic

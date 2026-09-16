@@ -348,6 +348,15 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.squareReduce_frame
 #print axioms ECDSAAdd.Arithmetic.squareReduce_counts
 #print axioms ECDSAAdd.Arithmetic.squareReduce_wires_subset
+#print axioms ECDSAAdd.Arithmetic.squareSub_spec
+#print axioms ECDSAAdd.Arithmetic.squareSub_frame
+#print axioms ECDSAAdd.Arithmetic.squareSub_counts
+#print axioms ECDSAAdd.Arithmetic.squareSub_wires_subset
+#print axioms ECDSAAdd.Arithmetic.SquareSubLayout.work_length
+#print axioms ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_work
+#print axioms ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_nodup
+#print axioms ECDSAAdd.Arithmetic.squareSub_correct
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceSquare_correct
 LEAN
 )
 printf '%s\n' "$axioms"

@@ -23,7 +23,7 @@ theorem pointInPlaceGeneric_point (L : ControlledPointLayout) (hw : L.Widths) (h
   cases G with
   | false =>
     obtain ⟨hphase,hv'⟩ := pointInPlaceGeneric_false L hw hn _ _ cx cy (exceptionalSlope (.some hc)) s m hv
-    have hf := pointInPlaceGeneric_frame L hw cx cy (exceptionalSlope (.some hc)) _ _ _ _ false s m hv hv'
+    have hf := pointInPlaceGeneric_frame L hw hn cx cy (exceptionalSlope (.some hc)) _ _ _ _ false s m hv hv'
     refine ⟨hphase,?_,fun q hq => hf q (outside q hq).1 (outside q hq).2⟩
     apply (point_holds _ _ _).mpr
     exact ⟨(hf _ hfinite.1 hfinite.2).trans ((point_holds _ _ _).mp hp).1,hv'.x,hv'.y⟩
@@ -35,7 +35,7 @@ theorem pointInPlaceGeneric_point (L : ControlledPointLayout) (hw : L.Widths) (h
       have hx : x≠cx := hh.2
       obtain ⟨hphase,hv'⟩ := pointInPlaceGeneric_true L hw hn x y cx cy (exceptionalSlope (.some hc)) hx
         (exceptional_slope_eq hr hc hx) s m hv
-      have hf := pointInPlaceGeneric_frame L hw cx cy (exceptionalSlope (.some hc)) _ _ _ _ true s m hv hv'
+      have hf := pointInPlaceGeneric_frame L hw hn cx cy (exceptionalSlope (.some hc)) _ _ _ _ true s m hv hv'
       refine ⟨hphase,?_,fun q hq => hf q (outside q hq).1 (outside q hq).2⟩
       simp only [if_true,← genericAdd_correct hr hc hx,genericAdd]
       apply (point_holds _ _ _).mpr

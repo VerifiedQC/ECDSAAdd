@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2172项构建，以下341个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2177项构建，以下350个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -622,6 +622,15 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.squareReduce_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.squareReduce_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.squareReduce_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareSub_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareSub_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.SquareSubLayout.work_length' depends on axioms: [propext]
+'ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_work' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.SquareSubLayout.fromPool_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareSub_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -725,7 +734,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,296,136 | 6,125,822 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 8,920,488 | 5,750,952 | 3,939 |
+| 有限 C 的 `controlledPointAdd` | 8,814,658 | 5,645,122 | 3,939 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持3,162位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -1178,7 +1187,7 @@ fieldInverse、Divide与独立XOR点加门列及资源保持3a值；公开contro
 
 ## Q1 循环接入
 
-一位记录正逆循环、旧分配中未用swap零值、精确支持和计数已证明；支持表只含首swap与512个subtract。原公开工作区全零规格保持。每次求逆增加1024 Toffoli、测量不变、减少511实际线。当前受控点加8,920,488/5,750,952/3,939，fieldInverse3,501,063/1,917,959/2,901；D1分批段为历史证据。完整verify退出0：2154项构建、318条实际公理输出，与上方公理块逐行一致，仅使用现有白名单。
+一位记录正逆循环、旧分配中未用swap零值、精确支持和计数已证明；支持表只含首swap与512个subtract。原公开工作区全零规格保持。每次求逆增加1024 Toffoli、测量不变、减少511实际线。Q1阶段受控点加8,920,488/5,750,952/3,939，fieldInverse3,501,063/1,917,959/2,901；D1分批段为历史证据。完整verify退出0：2154项构建、318条实际公理输出，与上方公理块逐行一致，仅使用现有白名单。
 
 
 ## K2 第一批：独立三角平方
@@ -1197,3 +1206,12 @@ KaratsubaSquare_spec/Clear_spec给出完整正反寄存器规格：保留低/高
 SquareReduce_correct给出正反Triple，Prepared断言保留q=U/B、b=[B≤V]、f=[p≤W]和规范结果；恢复按先规范化、第三折叠、第二折叠、第一折叠逆序使用前向门列，完整清除记录。每方向4,574 Toffoli/测量；静态支持有包含证明，未报虚假的精确分配线数。
 
 本批没有更换点加路径，当前8,920,488/5,750,952/3,939保持。完整scripts/verify.sh退出0：2172项构建、341条实际公理，逐行收录上方；新增十四入口，仅三项既有白名单，无测试、新公理或限额放宽。
+
+
+### K2 第三批：专用平方适配与点加接入
+
+SquareSubLayout/Pool把输入256位、目标256位及2217位工作区映射到既有P前缀，证明长度、切片等式与全局互异。squareSub_spec对任意256位输入及规范目标证明减平方，恢复A/D/Z、C/R复用区、q/b/f、所有高位和工作位；squareSub_frame对全部测量记录给精确相位及目标外逐线保持。275,129 Toffoli/测量来自相同计算/更新/清理门列。
+
+点加直接调用squareSub，删除旧复制乘数与Montgomery平方视图。完整受控点加已证8,814,658 Toffoli /5,645,122测量 /3,939实际支持线；两项门数各少105,830，线路数不变。适配器支持给包含关系，整机保留精确支持等式；2217是工作分配长度，不冒报为其精确qubitCount。公开点加/求逆数值规格及全部几何分支保持，独立XOR点加路径不变。
+
+第三批完整验证：scripts/verify.sh退出0，2177项构建、350条实际公理输出；上方公理块逐行匹配。新增九条入口，无测试或证明限额放宽。

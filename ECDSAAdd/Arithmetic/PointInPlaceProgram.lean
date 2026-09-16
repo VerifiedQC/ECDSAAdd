@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.PointInPlaceLayout
+import ECDSAAdd.Arithmetic.PointKaratsubaLayout
 import ECDSAAdd.Math.PointInPlace
 
 namespace ECDSAAdd.Arithmetic
@@ -30,9 +30,7 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
   pointInPlaceConstantAdd L L.point.y (-cy) ++
   divideAdd (L.inPlaceDivide L.core.generic L.point.x L.point.y) ++
   montMulSub L.inPlaceMultiply p ++
-  copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
-  montMulSub L.inPlaceSquare p ++
-  copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
+  squareSub L.inPlaceKaratsuba ++
   pointInPlaceConstantAdd L L.point.x (3*cx) ++
   montMulAdd L.inPlaceMultiply p ++
   pointInPlaceClearSlope L lambdaStar ++
