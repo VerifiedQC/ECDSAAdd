@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2159项构建，以下327个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2172项构建，以下341个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -608,6 +608,20 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.triangularSquareClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.triangularSquare_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.triangularSquare_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.SquareReduction.reduced_square_word' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareFold_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareFold_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareFold_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquare_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquareClear_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquare_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquareClear_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquare_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.karatsubaSquare_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareReduce_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareReduce_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareReduce_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.squareReduce_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1174,3 +1188,12 @@ TriangularSquareSpec公开零目标平方与已知平方清理Triple，输入与
 TriangularSquareResources证明同一程序每方向(m−1)(2m−1) Toffoli与测量，以及递归精确支持列表的集合等式；第二个目标位不触及，空/单比特边界明确。128/129位分别32,385/32,896。本批未接入Karatsuba重组/约减/点加；受控点加仍8,920,488/5,750,952/3,939。
 
 完整scripts/verify.sh退出0：2159构建项、327条实际公理输出，上方逐行收录，仅既有白名单；新增九个入口，无测试、新公理或证明限制变更。
+
+
+### K2 第二批：Karatsuba整数重组与三折叠约减
+
+KaratsubaSquare_spec/Clear_spec给出完整正反寄存器规格：保留低/高平方A/D并计算512位Z，恢复清除A/D/Z；129位和、C与所有借用区归零。独立frame证明目标集合之外逐线保持，含全部测量记录的精确相位。高384位中间回绕由模算术显式处理。每方向132,223 Toffoli/测量，已证程序支持包含于互异视图。
+
+SquareReduce_correct给出正反Triple，Prepared断言保留q=U/B、b=[B≤V]、f=[p≤W]和规范结果；恢复按先规范化、第三折叠、第二折叠、第一折叠逆序使用前向门列，完整清除记录。每方向4,574 Toffoli/测量；静态支持有包含证明，未报虚假的精确分配线数。
+
+本批没有更换点加路径，当前8,920,488/5,750,952/3,939保持。完整scripts/verify.sh退出0：2172项构建、341条实际公理，逐行收录上方；新增十四入口，仅三项既有白名单，无测试、新公理或限额放宽。
