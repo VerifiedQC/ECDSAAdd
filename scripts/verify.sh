@@ -369,6 +369,29 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.controlledUnary_counts
 #print axioms ECDSAAdd.Arithmetic.controlledUnary_wires
 #print axioms ECDSAAdd.Arithmetic.controlledUnary_qubits
+#print axioms ECDSAAdd.valueStep_projection
+#print axioms ECDSAAdd.valueIter_projection
+#print axioms ECDSAAdd.valueIter_terminal
+#print axioms ECDSAAdd.value_unstep_step
+#print axioms ECDSAAdd.valueReplayStep_add
+#print axioms ECDSAAdd.valueReplayStep_smul
+#print axioms ECDSAAdd.valueReplayUnstep_step
+#print axioms ECDSAAdd.valueReplayStep_unstep
+#print axioms ECDSAAdd.valueReplay_add
+#print axioms ECDSAAdd.valueReplay_smul
+#print axioms ECDSAAdd.valueReplayInverse_replay
+#print axioms ECDSAAdd.valueReplay_replayInverse
+#print axioms ECDSAAdd.valueReplay_trace
+#print axioms ECDSAAdd.valueReplay_terminal
+#print axioms ECDSAAdd.dialog_quotient
+#print axioms ECDSAAdd.dialog_product
+#print axioms ECDSAAdd.Arithmetic.valueRound_spec
+#print axioms ECDSAAdd.Arithmetic.valueUnround_spec
+#print axioms ECDSAAdd.Arithmetic.valueRound_frame
+#print axioms ECDSAAdd.Arithmetic.valueRound_counts
+#print axioms ECDSAAdd.Arithmetic.valueRound_wires
+#print axioms ECDSAAdd.Arithmetic.valueRound_qubits
+#print axioms ECDSAAdd.Arithmetic.valueRound_257_resources
 LEAN
 )
 printf '%s\n' "$axioms"

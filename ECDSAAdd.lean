@@ -45,3 +45,5 @@ import ECDSAAdd.Arithmetic.KaratsubaSquareState
 import ECDSAAdd.Arithmetic.SquareReduceSpec
 
 import ECDSAAdd.Arithmetic.ControlledUnaryResources
+import ECDSAAdd.Math.ValueReplay
+import ECDSAAdd.Arithmetic.ValueSpec
