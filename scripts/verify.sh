@@ -433,6 +433,17 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.dialog_qubits
 #print axioms ECDSAAdd.Arithmetic.dialog_resources
 #print axioms ECDSAAdd.Arithmetic.dialog_frame
+#print axioms ECDSAAdd.Secp256k1.dialog_generic_iff
+#print axioms ECDSAAdd.Secp256k1.dialog_denominators_ne_zero
+#print axioms ECDSAAdd.Secp256k1.dialog_exception_add
+#print axioms ECDSAAdd.Secp256k1.dialog_translated_exception
+#print axioms ECDSAAdd.Secp256k1.dialog_input_disjoint
+#print axioms ECDSAAdd.Secp256k1.dialog_translated_flags
+#print axioms ECDSAAdd.Secp256k1.dialog_output_disjoint
+#print axioms ECDSAAdd.Secp256k1.dialogOrdinary_true
+#print axioms ECDSAAdd.Secp256k1.dialogFlags_output
+#print axioms ECDSAAdd.Secp256k1.dialogCorners_nat
+#print axioms ECDSAAdd.Secp256k1.dialogCorners_bool
 LEAN
 )
 printf '%s\n' "$axioms"

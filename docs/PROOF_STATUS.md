@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2219项构建，以下426个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2221项构建，以下437个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -707,6 +707,17 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.dialog_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.dialog_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.dialog_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_generic_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_denominators_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_exception_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_translated_exception' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_input_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_translated_flags' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialog_output_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialogOrdinary_true' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialogFlags_output' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialogCorners_nat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Secp256k1.dialogCorners_bool' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1337,3 +1348,8 @@ replay512_counts已证1714688/1058304、1451520/795648（含每轮活动比较20
 同一门列的完整除法资源为3,591,168 Toffoli /2,140,672测量 /3,126实际支持线，乘法为3,328,000 /1,878,016 /3,126；`dialog_wires`是精确支持等式，`dialog_frame`给出布局外逐线保持。与§29账本零偏差。旧公开轮、求逆、点加规格及8,813,634 /5,646,146 /3,939均保持；六阶段点加和3,134线仍待批④。
 
 完整scripts/verify.sh退出0：2219项构建、426条实际公理输出，与上方逐行一致，仅三白名单；新增20个验证入口。验证后只更新文档，未改Lean源码或脚本。
+
+
+## 改12第四批独立角落数学
+
+DialogPoint/Flags已证明H几何排除、普通路径双分母非零、四类互斥与输出重算，以及Nat/Bool异或写回。完整verify退出0：2221构建、437条实际公理，披露逐行一致，仅三白名单；新增11入口，无门列或资源变化。C≠0为分类/写回前提，重复H及C=−C由经典使能处理；电路全记录组合与整机资源仍待后续集成。

@@ -2523,3 +2523,12 @@ ReplayCell按30.3直接组合两次低位交换、C1受控模减/加和受控半
 集成接口ReplayLayout包含payload、counter和active。payload.z/a分别对应第一/第二载荷；payload.work为772位。Valid要求counter.width=10、counter.y/carry/cin包含于payload.work、比较视图互异，以及active/K/记录带/payload全局互异。比较与载荷格按时序复用零工作区；mask在合法布局互异条件中保留，不能因单目阶段不访问mask就删其互异要求。§29第三批负责按既有三字+oddWork/carry末位构造具体映射及证明Valid，随后接完整乘除与点加；本批不宣称3134整机上界已证明。
 
 源码按低位交换、格定义/中间状态/规格/资源、循环定义/单轮规格/循环规格/资源、域函数对应分层；新增21个公开公理检查入口。旧公开点加、求逆、C1及值走陈述不变，当前整机仍8,813,634/5,646,146/3,939。
+
+<a id="opt12-dialog-corners"></a>
+### 29.9 第四批独立数学：第四角落及写回
+
+Math/DialogPoint定义H=−(C+C)，仅当H与0、C、−C互异时启用第四角落。dialog_generic_iff证明禁用重复类后的排除条件等价于R不属于这四点；dialog_denominators_ne_zero由已有仿射公式推出x≠cx以及cx−genericX≠0。H+C=−C给第四输出检测，四类输入及输出两两互斥。无需曲线群阶或无挠点假设；C=−C时倍点标志禁用，重复H由旧角落处理。
+
+Math/DialogPointFlags提供decide布尔桥：dialogOrdinary_true将四标志XOR余位化为普通分支条件；dialogFlags_output重算输出标志；dialogCorners_nat/bool将H与−C两次常量异或加入原三类写回等式。控制false、R=0/C/−C/H及重复类由同一证明覆盖，写回定理要求C≠0和f(0)=0（Bool为false）。C=0的空程序仍由电路层处理。
+
+本批仅新增两个Math文件、根导入与11项公开验证入口，不改门列、公开电路规格或当前资源；六阶段电路组合、E段和整机7,207,866/4,305,594/3,134仍由后续集成证明。
