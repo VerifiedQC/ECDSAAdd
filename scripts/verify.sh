@@ -413,6 +413,26 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.replayNatUnstep_field
 #print axioms ECDSAAdd.Arithmetic.replayNatLoop_field
 #print axioms ECDSAAdd.Arithmetic.replayNatUnloop_field
+#print axioms ECDSAAdd.valueStep_count
+#print axioms ECDSAAdd.valueIter_k_mono
+#print axioms ECDSAAdd.value_active_final
+#print axioms ECDSAAdd.Arithmetic.valueLoop_spec
+#print axioms ECDSAAdd.Arithmetic.valueUnloop_spec
+#print axioms ECDSAAdd.Arithmetic.valueLoop_counts
+#print axioms ECDSAAdd.Arithmetic.valueLoop_wires
+#print axioms ECDSAAdd.Arithmetic.valueLoop_qubits
+#print axioms ECDSAAdd.Arithmetic.replayControls_trace
+#print axioms ECDSAAdd.Arithmetic.dialogReplay_division
+#print axioms ECDSAAdd.Arithmetic.dialogReplay_multiplication
+#print axioms ECDSAAdd.Arithmetic.DialogLayout.replay_valid
+#print axioms ECDSAAdd.Arithmetic.dialogLoad_correct
+#print axioms ECDSAAdd.Arithmetic.dialogDivide_spec
+#print axioms ECDSAAdd.Arithmetic.dialogMultiply_spec
+#print axioms ECDSAAdd.Arithmetic.dialog_counts
+#print axioms ECDSAAdd.Arithmetic.dialog_wires
+#print axioms ECDSAAdd.Arithmetic.dialog_qubits
+#print axioms ECDSAAdd.Arithmetic.dialog_resources
+#print axioms ECDSAAdd.Arithmetic.dialog_frame
 LEAN
 )
 printf '%s\n' "$axioms"

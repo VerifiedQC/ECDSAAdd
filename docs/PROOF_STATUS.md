@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2201项构建，以下406个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2219项构建，以下426个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -687,6 +687,26 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.replayNatUnstep_field' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.replayNatLoop_field' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.replayNatUnloop_field' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueStep_count' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueIter_k_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.value_active_final' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueLoop_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueUnloop_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueLoop_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueLoop_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueLoop_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayControls_trace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialogReplay_division' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialogReplay_multiplication' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.DialogLayout.replay_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialogLoad_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialogDivide_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialogMultiply_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialog_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialog_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialog_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialog_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.dialog_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1306,3 +1326,14 @@ replayCell_spec/replayUncell_spec给两个规范载荷、三控制位和零工�
 replay512_counts已证1714688/1058304、1451520/795648（含每轮活动比较20/20）。replayLoop_wires给非空正回放支持等式，replay512_qubits得2321实际线与反回放≤2321；具体整机借用映射和点加资源传播仍待§29集成。新增21个验证入口，旧公开规格及整机8,813,634/5,646,146/3939保持。
 
 本批完整scripts/verify.sh退出0：2201项构建、406条实际公理输出，与上方逐行一致，仅三白名单；源码及脚本验证后未改。
+
+
+### 改12第三批：紧凑值走循环与完整原地乘除
+
+`valueLoop_spec/valueUnloop_spec`已去除旧out=0兼容前提：ValueLoopState只约束u/v/k及真实工作区。`ValueTrace`连接最终K与各轮活动性；两位物理记录与域回放一致，512轮恢复计数银行方向。
+
+`dialogDivide_spec/dialogMultiply_spec`保持控制和规范域X，开启时Y变为Y/X或YX，关闭时Y保持；仅开启分支要求X非零，允许Y=0，全部工作位归零。全相位和全部测量记录成立。旧r/s/out视图在紧凑布局中映射到X+控制、Y、Z；旧counter.y/carry分别放入回放constant/mask，互异、零值和生命周期均已证明，无幽灵分配收益。
+
+同一门列的完整除法资源为3,591,168 Toffoli /2,140,672测量 /3,126实际支持线，乘法为3,328,000 /1,878,016 /3,126；`dialog_wires`是精确支持等式，`dialog_frame`给出布局外逐线保持。与§29账本零偏差。旧公开轮、求逆、点加规格及8,813,634 /5,646,146 /3,939均保持；六阶段点加和3,134线仍待批④。
+
+完整scripts/verify.sh退出0：2219项构建、426条实际公理输出，与上方逐行一致，仅三白名单；新增20个验证入口。验证后只更新文档，未改Lean源码或脚本。

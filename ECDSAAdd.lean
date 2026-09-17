@@ -50,3 +50,5 @@ import ECDSAAdd.Arithmetic.ValueSpec
 
 import ECDSAAdd.Arithmetic.ReplayLoopResources
 import ECDSAAdd.Arithmetic.ReplayField
+
+import ECDSAAdd.Arithmetic.DialogResources

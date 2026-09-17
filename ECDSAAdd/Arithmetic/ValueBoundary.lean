@@ -148,7 +148,7 @@ private theorem value_reg_mem (L : RoundDataLayout) (f : RoundField)
   refine ⟨b,hb,?_⟩
   cases f <;> simp_all [RoundBit.valueUsedWires,RoundBit.get]
 
-private theorem ValueLoopState.congr (L : KaliskiRoundLayout) (z : ValueState) (s t : BasisState)
+theorem ValueLoopState.congr (L : KaliskiRoundLayout) (z : ValueState) (s t : BasisState)
     (h : ValueLoopState L z s) (he : ∀ w∈L.valueSharedWires, t w=s w) : ValueLoopState L z t := by
   have hd (f : RoundField) (hf : f ≠ .r ∧ f ≠ .s ∧ f ≠ .out) :
       regValue (L.data.reg f) t=regValue (L.data.reg f) s := by
