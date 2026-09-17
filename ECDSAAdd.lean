@@ -47,3 +47,6 @@ import ECDSAAdd.Arithmetic.SquareReduceSpec
 import ECDSAAdd.Arithmetic.ControlledUnaryResources
 import ECDSAAdd.Math.ValueReplay
 import ECDSAAdd.Arithmetic.ValueSpec
+
+import ECDSAAdd.Arithmetic.ReplayLoopResources
+import ECDSAAdd.Arithmetic.ReplayField

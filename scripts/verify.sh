@@ -392,6 +392,27 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.valueRound_wires
 #print axioms ECDSAAdd.Arithmetic.valueRound_qubits
 #print axioms ECDSAAdd.Arithmetic.valueRound_257_resources
+#print axioms ECDSAAdd.Arithmetic.replayCell_spec
+#print axioms ECDSAAdd.Arithmetic.replayUncell_spec
+#print axioms ECDSAAdd.Arithmetic.replayCell_frame
+#print axioms ECDSAAdd.Arithmetic.replayUncell_frame
+#print axioms ECDSAAdd.Arithmetic.replayCell_counts
+#print axioms ECDSAAdd.Arithmetic.replayCell_wires
+#print axioms ECDSAAdd.Arithmetic.replayCell_qubits
+#print axioms ECDSAAdd.Arithmetic.replayRound_spec
+#print axioms ECDSAAdd.Arithmetic.replayUnround_spec
+#print axioms ECDSAAdd.Arithmetic.replayLoop_spec
+#print axioms ECDSAAdd.Arithmetic.replayUnloop_spec
+#print axioms ECDSAAdd.Arithmetic.replay_padding
+#print axioms ECDSAAdd.Arithmetic.replayLoop_counts
+#print axioms ECDSAAdd.Arithmetic.replay512_counts
+#print axioms ECDSAAdd.Arithmetic.replayLoop_wires
+#print axioms ECDSAAdd.Arithmetic.replayLoop_wires_subset
+#print axioms ECDSAAdd.Arithmetic.replay512_qubits
+#print axioms ECDSAAdd.Arithmetic.replayNatStep_field
+#print axioms ECDSAAdd.Arithmetic.replayNatUnstep_field
+#print axioms ECDSAAdd.Arithmetic.replayNatLoop_field
+#print axioms ECDSAAdd.Arithmetic.replayNatUnloop_field
 LEAN
 )
 printf '%s\n' "$axioms"
