@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ControlledPointOutSpec
-import ECDSAAdd.Arithmetic.PointInPlaceIntegration
+import ECDSAAdd.Arithmetic.PointDialogIntegration
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -26,6 +26,6 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
     refine ⟨rfl,?_⟩
     change ((Holds.holds s.basis L.control b ∧ Holds.holds s.basis L.point (if b then R+0 else R)) ∧ _)
     simpa only [add_zero,ite_self] using hs
-  | some hp => exact pointInPlaceFinite_full_spec L h hn R hp b
+  | some hp => exact pointDialogFinite_full_spec L h hn R hp b
 
 end ECDSAAdd.Arithmetic

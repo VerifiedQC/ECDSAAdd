@@ -54,3 +54,5 @@ import ECDSAAdd.Arithmetic.ReplayField
 import ECDSAAdd.Arithmetic.DialogResources
 
 import ECDSAAdd.Math.DialogPointFlags
+
+import ECDSAAdd.Arithmetic.PointDialogResources

@@ -15,7 +15,7 @@ theorem ControlledPointLayout.inPlaceBorrow_used_subset (L : ControlledPointLayo
   exact L.inPlaceInverse.idleBorrow_subset
 
 
-private theorem modPrograms_not_mem (q c : Wire) (ng : q≠c) (M : ModInPlaceLayout) (hM : M.Widths 256) (hnM : q∉M.wires) :
+theorem modPrograms_not_mem (q c : Wire) (ng : q≠c) (M : ModInPlaceLayout) (hM : M.Widths 256) (hnM : q∉M.wires) :
       q∉wires (modAddInPlace M p) ∧ q∉wires (modSubInPlace M p) ∧
       q∉wires (controlledModAdd c M p) ∧ q∉wires (controlledModSub c M p) := by
     have hm : q∉M.maskedCore.wires := by
@@ -101,7 +101,7 @@ private theorem views_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : W
       inPlaceUnary,ModUnaryLayout.core,ModAddCoreLayout.z,ModAddCoreLayout.work,nr,nslice,ntake,nbit]
   exact ⟨nb,nM,nN,nConst⟩
 
-private theorem square_layout_not_mem (K : SquareSubLayout) (hw : K.Widths) (hn : K.wires.Nodup)
+theorem square_layout_not_mem (K : SquareSubLayout) (hw : K.Widths) (hn : K.wires.Nodup)
     (q : Wire) (nx : q∉K.x) (no : q∉K.out) (nw : q∉K.work) : q∉wires (squareSub K) := by
   intro hm
   have hs:=List.mem_toFinset.mp (squareSub_wires_subset K hw hn hm)

@@ -46,7 +46,7 @@ private theorem constant_add (M : ModInPlaceLayout) (c : Wire) (A Z : Nat) (B : 
   exact ⟨hf,⟨⟨keep.trans h.1.1.1,hv.1.1⟩,hv.1.2⟩,hv.2⟩
 
 /-- 掩码源在模加后仍保留，第二次CX序列将其清零。 -/
-private theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
+theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
     (hw : M.Widths 256) (hn : (c::M.wires).Nodup) (hk : k<p) (hZ : Z<p) :
     {{ c=B,M.a=0,M.z=Z,M.work=0 }}
       (maskedConstant c M.a k ++ modAddInPlace M p ++ maskedConstant c M.a k)
@@ -64,7 +64,7 @@ private theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : N
   have hc := constant_mask M c k (if B then k else 0) ((Z+(if B then k else 0))%p) B hn hkp
   simpa only [Nat.xor_self] using (ha.seq hb).seq hc
 
-private theorem constant_program_frame (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
+theorem constant_program_frame (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
     (hw : M.Widths 256) (hn : (c::M.wires).Nodup) (hk : k<p) (hZ : Z<p)
     (s : State) (m : List Bool) (hb : s.basis c=B) (ha : regValue M.a s.basis=0)
     (hz : regValue M.z s.basis=Z) (hc : regValue M.work s.basis=0)

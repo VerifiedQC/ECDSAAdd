@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2221项构建，以下437个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2243项构建，以下452个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -718,6 +718,21 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Secp256k1.dialogFlags_output' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.dialogCorners_nat' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Secp256k1.dialogCorners_bool' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.DialogLayout.fromPool_wires_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.ControlledPointLayout.dialogPort_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogConstantAdd_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogNegate_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialog_arithmetic_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogGeneric_true' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogGeneric_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_full_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogGeneric_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointDialogFinite_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -816,15 +831,15 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 
 `L.core` 复用完整点加布局；`L.point` 是输入点，`L.temporary` 是临时输出点。`L.work` 包括临时点的 513 位、全部算术工作区及三个输出选择位。唯一全局 `Nodup` 同时约束原布局、外部控制位和三个选择位；宽度条件复用已证完整点加。公开规格没有横坐标不同、非零纵坐标或结果有限等几何前提，覆盖 R/C/结果为 O、互逆点、倍点和控制为假。
 
-有限C的原地程序执行完整点相等检测，生成O、启用的倍点、相反点及普通分支标志；普通分支用两次保留历史的除法和另外三个乘积直接更新坐标。第二除数为零时用λ*清斜率，角落分支用四次常量XOR写回；从输出重算分类，再清全部七个标志。C=−C时禁用倍点标志，最终规格没有新增几何前提。
+有限C的六阶段程序生成O、启用的倍点、相反点、H=−(C+C)及普通分支标志；H与旧三类重合时禁用独立H分支。普通分支用一次dialogDivide、一次dialogMultiply及受控复制包裹的专用平方更新坐标；两个分母非零由分类推出。四类角落用六次常量XOR写回，从输出重算分类并清全部七个标志。C=−C时禁用倍点标志，最终规格没有新增几何前提。
 
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,295,112 | 6,126,846 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 8,813,634 | 5,646,146 | 3,939 |
+| 有限 C 的 `controlledPointAdd` | 7,207,866 | 4,305,594 | 3,134 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
-`controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和外层实际工作支持3,162位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
+`controlledPointAdd_finite_resources`复用相同`pointDialogFinite`门列的计数与支持定理。实际支持为点513位、控制1位、七个标志和共享池2,613位；没有独立斜率寄存器，平方与乘除按边界归零后复用同一池。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
 
 独立XOR接口`controlledPointAddOut`仍保留，原地程序不再调用两次XOR加点交换；只服务旧组合的ControlledPointPair及装载/擦除组合已删除。所有Triple对任意相位和测量记录成立，平方有独立乘数副本，子视图均由全局Nodup证明互异。完整验证及实际公理输出见本文件公理块；本批新增说明见末尾改3节。
 
@@ -1353,3 +1368,12 @@ replay512_counts已证1714688/1058304、1451520/795648（含每轮活动比较20
 ## 改12第四批独立角落数学
 
 DialogPoint/Flags已证明H几何排除、普通路径双分母非零、四类互斥与输出重算，以及Nat/Bool异或写回。完整verify退出0：2221构建、437条实际公理，披露逐行一致，仅三白名单；新增11入口，无门列或资源变化。C≠0为分类/写回前提，重复H及C=−C由经典使能处理；电路全记录组合与整机资源仍待后续集成。
+
+
+### 改12批④：六阶段点加完整接入
+
+PointDialogProgram以一次原地除法、一次原地乘法、K2专用平方及E段替换controlledPointAdd的有限常量分支；公开controlledPointAdd_spec陈述逐字不变。全记录Triple覆盖控制false、C=O、输入O、±C、倍点为O以及H=−(C+C)，四类角落互斥并从输出清全部七个标志。H禁用重复类，不使用群阶假设。
+
+DialogPool将旧池前2613位映射为紧凑值走/载荷/目标高位；五字物理位交错排列仅是索引置换，与§29容量一致。pointDialogFinite_wires证明实际支持精确等于点/控制/七标志/该前缀；Nodup给3134。全部旧分配工作位通过pointDialogFinite_frame恢复零，未用旧银行不计入qubitCount。
+
+同程序精确资源7,207,866 Toffoli /4,305,594测量 /3,134线，与设计零偏差。较上阶段少1,605,768门、1,340,552测量、805线。完整scripts/verify.sh退出0：2243项构建、452条实际公理输出，上方披露与日志逐行一致；新增15入口，仅既有白名单。未实现§30.8可选测量清复制；独立XOR点加及求逆规格/资源保持。
