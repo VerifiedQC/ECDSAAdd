@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2184项构建，以下362个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2191项构建，以下385个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -643,6 +643,29 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.controlledUnary_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledUnary_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledUnary_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueStep_projection' does not depend on any axioms
+'ECDSAAdd.valueIter_projection' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.valueIter_terminal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.value_unstep_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplayStep_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplayStep_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplayUnstep_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplayStep_unstep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplay_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplay_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplayInverse_replay' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplay_replayInverse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplay_trace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueReplay_terminal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.dialog_quotient' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.dialog_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueUnround_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueRound_257_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1251,3 +1274,5 @@ controlledHalf/controlledDouble完整Triple已证明，包含任意测量记录�
 `valueRound_spec` / `valueUnround_spec` 为全测量记录的寄存器Triple；只更新u/v与计数，正轮写两位记录、逆轮清除并恢复数据。`valueRound_frame`保持支持外每条线路。`valueRound_counts/wires/qubits`对应同一实际门列，每方向7w+33 Toffoli、4w+29测量、5w+48实际支持线；257位实例为1,832 /1,057 /1,333。
 
 沿用旧布局视图及其Nodup。r/s初值任意且保持，r/s/out不在新程序支持中；兼容旧状态证明暂保留scratch中out=0的前提。紧凑循环映射及完整点加3,134线尚未证明，后续需解除该要求或给出合法零值映射。旧公开轮、求逆和点加规格及当前资源保持。
+
+本批完整验证退出0：2,191项构建、385条实际公理输出（含PR70的七条与本批23条），与上方逐行一致；仅既有白名单。验证后未改变Lean源码或验证脚本。
