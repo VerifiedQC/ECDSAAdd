@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2191项构建，以下385个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2201项构建，以下406个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -666,6 +666,27 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.valueRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.valueRound_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.valueRound_257_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUncell_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUncell_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayRound_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUnround_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayLoop_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUnloop_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replay_padding' does not depend on any axioms
+'ECDSAAdd.Arithmetic.replayLoop_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replay512_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayLoop_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayLoop_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replay512_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatStep_field' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatUnstep_field' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatLoop_field' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatUnloop_field' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1276,3 +1297,12 @@ controlledHalf/controlledDouble完整Triple已证明，包含任意测量记录�
 沿用旧布局视图及其Nodup。r/s初值任意且保持，r/s/out不在新程序支持中；兼容旧状态证明暂保留scratch中out=0的前提。紧凑循环映射及完整点加3,134线尚未证明，后续需解除该要求或给出合法零值映射。旧公开轮、求逆和点加规格及当前资源保持。
 
 本批完整验证退出0：2,191项构建、385条实际公理输出（含PR70的七条与本批23条），与上方逐行一致；仅既有白名单。验证后未改变Lean源码或验证脚本。
+
+
+### 改12载荷回放组合
+
+replayCell_spec/replayUncell_spec给两个规范载荷、三控制位和零工作区的完整Triple；对应frame保持载荷以外所有物理位。格计数3329/2047、2815/1534，精确支持1289/1287。replayLoop_spec/replayUnloop_spec覆盖空至512轮，以ref保持K、记录带和全部载荷外线路；每轮活动位计算并清零。replayNatLoop_field/replayNatUnloop_field连接ValueReplay/Inverse，padding引理明确inactive与00时恒等。
+
+replay512_counts已证1714688/1058304、1451520/795648（含每轮活动比较20/20）。replayLoop_wires给非空正回放支持等式，replay512_qubits得2321实际线与反回放≤2321；具体整机借用映射和点加资源传播仍待§29集成。新增21个验证入口，旧公开规格及整机8,813,634/5,646,146/3939保持。
+
+本批完整scripts/verify.sh退出0：2201项构建、406条实际公理输出，与上方逐行一致，仅三白名单；源码及脚本验证后未改。
