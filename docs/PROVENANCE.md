@@ -152,3 +152,7 @@ Q1循环接入由本项目组合已证一位轮完成。共享交换位零值随
 ## Q1交换位测量清理
 
 基于本库kaliski_swap_from_r的布尔恒等式t=a∧¬r₀=a⊕a·r₀，将正轮交换临时位的CX/CCX清理替换为measureX及CZ+Z即时修正。相位抵消、精确状态与逐线保持为原始Lean证明，复用现有measureAndCorrect语义；逆轮重算不变。没有外部源码、CCZ或新语义。
+
+### 改12受控模半倍
+
+按REWORK_PLAN §30.4/30.5自有门列实现，复用本仓库C1常数加减、shiftRight/shiftLeft及比较器。奇偶/借位恢复的数学依据沿用ModHalf/ModDouble的规范模算术恒等式；新增控制false分支、全记录精确相位、frame与同程序支持/计数证明。未引入外部代码、CCZ或语义公理。

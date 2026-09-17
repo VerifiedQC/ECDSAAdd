@@ -201,3 +201,5 @@ Q1交换位测量清理[§24.8](docs/REWORK_PLAN.md#q1-measured-swap)已实现�
 
 改12载荷回放[设计§30](docs/REWORK_PLAN.md#opt12-payload-replay)列出受控模半倍、四分支及512轮正逆回放门列；预算与工作区均待证明，需与§29完整点加账本合审，不改变上述当前已证资源。
 改12的值走、原地乘除与六阶段接入设计见[§29](docs/REWORK_PLAN.md#dialog-value-walk-design)：目标7,207,866 Toffoli /4,305,594测量，支持上界3,134线，均待实现证明；当前已证值不变。
+
+改12回放原语第一批已实现受控模半倍：256位实例分别770/512和768/511 Toffoli/测量，具完整寄存器规格、逐线保持与精确支持（773/772线）。尚未组合回放格或替换点加，当前整机资源保持；见[§30.9](docs/REWORK_PLAN.md#opt12-controlled-unary)。

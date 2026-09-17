@@ -362,6 +362,13 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.eraseSwap_counts
 #print axioms ECDSAAdd.Arithmetic.eraseSwap_wires
 #print axioms ECDSAAdd.Arithmetic.eraseSwap_state
+#print axioms ECDSAAdd.Arithmetic.controlledHalf_spec
+#print axioms ECDSAAdd.Arithmetic.controlledDouble_spec
+#print axioms ECDSAAdd.Arithmetic.controlledHalf_frame
+#print axioms ECDSAAdd.Arithmetic.controlledDouble_frame
+#print axioms ECDSAAdd.Arithmetic.controlledUnary_counts
+#print axioms ECDSAAdd.Arithmetic.controlledUnary_wires
+#print axioms ECDSAAdd.Arithmetic.controlledUnary_qubits
 LEAN
 )
 printf '%s\n' "$axioms"

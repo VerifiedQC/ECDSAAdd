@@ -278,7 +278,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2178项构建，以下355个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+本分支 `scripts/verify.sh` 通过：`lake --wfail build` 完成2184项构建，以下362个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -636,6 +636,13 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.eraseSwap_counts' depends on axioms: [propext]
 'ECDSAAdd.Arithmetic.eraseSwap_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.eraseSwap_state' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledHalf_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledDouble_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledHalf_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledDouble_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledUnary_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledUnary_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.controlledUnary_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1229,3 +1236,10 @@ EraseSwap证明单次measureX的精确状态等式、目标外frame、0 Toffoli/
 完整受控点加8,813,634/5,646,146/3,939；fieldInverse3,500,551/1,918,471/2,901；独立pointAddOut9,295,106/6,126,846/6,727。支持等式保持；C=O与非活动轮处理不变。五条新增入口记录实际公理输出。此前Q1/K2段为各阶段历史值。
 
 交换位清理完整验证退出0：2178项构建、355条公理实际输出与上方逐行一致，仅既有三项白名单。源码验证后未改，无测试或限额放宽。
+
+
+## 改12回放原语第一批
+
+controlledHalf/controlledDouble完整Triple已证明，包含任意测量记录的精确相位与全部工作位归零，控制false保持规范目标；逐线frame、同程序计数与精确支持同步。n=256时半770T/512M/773线、倍768T/511M/772线；mask未触及不计支持。只增加独立原语，旧C1、求逆及点加公开规格与资源不变。
+
+完整scripts/verify.sh退出0：2184项构建、362条实际公理输出，上方逐行匹配；新增七入口，只依赖既有三白名单。无测试、语义扩展或限额放宽。四分支格与512轮组合尚待下一批。
