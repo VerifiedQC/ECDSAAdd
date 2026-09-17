@@ -43,3 +43,5 @@ import ECDSAAdd.Arithmetic.TriangularSquareSpec
 
 import ECDSAAdd.Arithmetic.KaratsubaSquareState
 import ECDSAAdd.Arithmetic.SquareReduceSpec
+
+import ECDSAAdd.Arithmetic.ControlledUnaryResources
