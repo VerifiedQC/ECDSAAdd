@@ -444,6 +444,21 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Secp256k1.dialogFlags_output
 #print axioms ECDSAAdd.Secp256k1.dialogCorners_nat
 #print axioms ECDSAAdd.Secp256k1.dialogCorners_bool
+#print axioms ECDSAAdd.Arithmetic.DialogLayout.fromPool_wires_perm
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.dialogPort_nodup
+#print axioms ECDSAAdd.Arithmetic.pointDialogConstantAdd_correct
+#print axioms ECDSAAdd.Arithmetic.pointDialogNegate_correct
+#print axioms ECDSAAdd.Arithmetic.pointDialog_arithmetic_correct
+#print axioms ECDSAAdd.Arithmetic.pointDialogSquare_correct
+#print axioms ECDSAAdd.Arithmetic.pointDialogGeneric_true
+#print axioms ECDSAAdd.Arithmetic.pointDialogGeneric_false
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_spec
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_full_spec
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_frame
+#print axioms ECDSAAdd.Arithmetic.pointDialogGeneric_counts
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_counts
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_wires
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_qubits
 LEAN
 )
 printf '%s\n' "$axioms"

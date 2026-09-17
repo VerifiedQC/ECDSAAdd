@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ControlledPointSupport
-import ECDSAAdd.Arithmetic.PointInPlaceResources
+import ECDSAAdd.Arithmetic.PointDialogResources
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -25,14 +25,14 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
   · rw [qubitCount,controlledPointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.used_nodup h hn)]
     simp [ControlledPointLayout.usedWires,ControlledPointLayout.extras,ControlledPointLayout.selectors,L.core.usedWires_length h]
 
-/-- 两次除法与五个乘积的同程序精确成本；线数来自实际支持等式。 -/
+/-- 一次原地除法、一次原地乘法、平方及四类角落的同程序精确成本；线数来自实际支持等式。 -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=8813634 ∧
-    measurementCount (controlledPointAdd L (.some hc))=5646146 ∧
-    qubitCount (controlledPointAdd L (.some hc))=3939 := by
-  have hh := pointInPlaceFinite_counts L h hn (.some hc) cx cy
-  exact ⟨hh.1,hh.2,pointInPlaceFinite_qubits L h hn (.some hc) cx cy⟩
+    toffoliCount (controlledPointAdd L (.some hc))=7207866 ∧
+    measurementCount (controlledPointAdd L (.some hc))=4305594 ∧
+    qubitCount (controlledPointAdd L (.some hc))=3134 := by
+  have hh := pointDialogFinite_counts L h hn (.some hc) cx cy
+  exact ⟨hh.1,hh.2,pointDialogFinite_qubits L h hn (.some hc) cx cy⟩
 
 /-- C=O 在构造期为空程序，故实际门数、测量和线路集合均为空。 -/
 theorem controlledPointAdd_zero_resources (L : ControlledPointLayout) :
