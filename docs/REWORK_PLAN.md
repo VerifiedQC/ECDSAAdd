@@ -1224,7 +1224,7 @@ n=256，固定求逆轮宽w=257；五个适配器均已含输出累加中段，�
 
 ### 18.1 目的、基线和公开契约
 
-本节根据本仓库 `Lookup.lean`、`MontPrepare.lean`、`MontLookup.lean` 与 `Framework/Execution/Semantics.lean` 的字面门列推导，不将文献的查表渐近数当作实现成本。基线main为3d1e8bd：每次lookup48 CCX/48测量，`montLookupAdd/Sub`以lookup加载、算术更新acc、再次lookup清table。方案1（§18.6）替换查表内部实现，保留任意旧目标XOR规格；方案2在此基础上替换最后一次清理。以下§18.1–18.5先完整展开MBU构造及独立账本，两方案最终比较见§18.7。
+本节根据本仓库 `Lookup.lean`、`MontPrepare.lean`、`MontLookup.lean` 与 `Framework/Semantics.lean` 的字面门列推导，不将文献的查表渐近数当作实现成本。基线main为3d1e8bd：每次lookup48 CCX/48测量，`montLookupAdd/Sub`以lookup加载、算术更新acc、再次lookup清table。方案1（§18.6）替换查表内部实现，保留任意旧目标XOR规格；方案2在此基础上替换最后一次清理。以下§18.1–18.5先完整展开MBU构造及独立账本，两方案最终比较见§18.7。
 
 新入口 `lookupErase` 的输入为四位地址addr=[a0,a1,a2,a3]、W位target、三位scratch=[u,v,e]和经典表F。要求 `(addr ++ scratch ++ target).Nodup`、`F(d)<2^W`（d<16），Triple为：
 

@@ -1,6 +1,6 @@
 # ECDSAAdd 可读性整理报告
 
-初稿日期：2026-09-14；更新：2026-09-15。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
+初稿日期：2026-09-14；更新：2026-09-18。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
 ## 目标与采用的方案
 
@@ -8,9 +8,11 @@
 
 根据后续讨论，采用“一个功能一个目录，每个目录一份 README”。原提案中的 Primitives、Modular 宽泛分组和独立 docs/modules 说明不再采用。196 个 Arithmetic Lean 文件已迁入 14 个功能子目录，清单见 [项目地图](MODULES.md)。求逆示范已迁至 [ModularInverse/README.md](../ECDSAAdd/Arithmetic/ModularInverse/README.md)，不保留重复副本。
 
-“单一功能”允许同一操作的逆操作与接口变体共处，例如加/减、模倍增/减半，以及模乘的 XOR、累加、受控形式。布局、辅助 lemma、状态、规格和资源证明随功能归档。共享数学基础、框架语义和测量 AND 原语分别保留在 Math、Framework、Circuit 层级；2026-09-15 继续将其中 21 个文件归入 12 个功能子目录，各补一份 README。连同 Arithmetic，全库共 26 个功能模块。
+“单一功能”允许同一操作的逆操作与接口变体共处，例如加/减、模倍增/减半，以及模乘的 XOR、累加、受控形式。布局、辅助 lemma、状态、规格和资源证明随功能归档。共享数学基础、框架语义和测量 AND 原语分别保留在 Math、Framework、Circuit 层级；2026-09-15 继续将其中 21 个文件归入 12 个功能子目录，各补一份 README。当时连同 Arithmetic 共 26 个功能模块。2026-09-18 按阅读反馈撤销 Framework 的四个子目录：四个 Lean 文件直接放在 Framework 下，共用一份简明 README；其他目录保持不变。
 
 ## 每份 README 的要求
+
+2026-09-18 的 Framework 修订优先采用更简洁的写法：先用一两句话介绍文件用途，再说明必要概念和定理结论；不重复直观代码、不举例、不复制文字已能简洁说明的代码，也不展开程序表示、辅助函数及宏实现。以下为此前通用写作原则，不能为了填满模板而加入读者不需要的内容。
 
 1. 说明完成什么操作，输入输出和不支持的情况。
 2. 指明公开接口，解释位宽、范围、线路互异和清零前提。
@@ -50,7 +52,7 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 
 验收项目：
 
-- ECDSAAdd 下全部 217 个 Lean 文件归入 26 个功能目录，每目录一份 README，四个层级目录中无平铺 Lean 遗留。
+- ECDSAAdd 下全部 217 个 Lean 文件保留；Arithmetic、Math、Circuit 按功能分目录，Framework 平铺四个文件。合计 23 份模块/框架 README，无重复的 Framework 子模块说明。
 - 原有 Lean 文件与基线比较，只允许 import 路径变化，声明和证明主体保持一致。
 - 本地 import 和 Markdown 文件链接有目标，git diff --check 无错误。
 - 执行 [scripts/verify.sh](../scripts/verify.sh)：完整构建及选定公开定理的传递公理检查。
@@ -64,6 +66,8 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 
 2026-09-15：Math、Framework、Circuit 的 21 个文件迁入 12 个功能目录后，再次完整运行 `scripts/verify.sh`，退出码为 0；构建完成（2,148 个任务），选定公开定理的传递公理检查通过。
 
-相对本次基线核验 219 个原有 Lean 文件（含根入口和构建配置），除 import 外内容保持不变；26 份模块 README、353 处本地 import 和 323 处 Markdown 文件链接目标检查通过，`git diff --check` 无错误。工具链、依赖清单、CI 与验证脚本未变。
+2026-09-15 的核验：219 个原有 Lean 文件（含根入口和构建配置）除 import 外内容保持不变；当时 26 份模块 README、353 处本地 import 和 323 处 Markdown 文件链接目标检查通过，`git diff --check` 无错误。工具链、依赖清单、CI 与验证脚本未变。
+
+2026-09-18：Framework 四个文件移回同一目录，四份旧说明合为一份简明 README。相对 `92d5179` 核验 219 个原有 Lean 文件，除 import 外内容保持不变；353 处本地 import、309 处 Markdown 文件链接目标和 Framework 目录结构检查通过。完整 `scripts/verify.sh` 退出码为 0，构建与选定公开定理的传递公理检查通过；本次没有修改证明、工具链、依赖或验证要求。
 
 此前 GitHub Actions 在启动 job 前失败，注释指向账户付款/消费限额问题，并非 Lean 编译错误。本轮不修改 CI 绕过限制；本地结果与远端 CI 状态分别记录。

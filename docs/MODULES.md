@@ -27,7 +27,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 8 |
 | [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 69 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 217 个 Lean 文件、26 个功能目录。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 217 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的四个文件集中说明。
 
 ## Math：数学结论模块
 
@@ -43,18 +43,13 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Framework：语义与证明工具模块
 
-| 模块说明 | 职责 | Lean 文件数 |
-| --- | --- | ---: |
-| [ProgramSyntax](../ECDSAAdd/Framework/ProgramSyntax/README.md) | 程序、指令与书写语法 | 1 |
-| [Execution](../ECDSAAdd/Framework/Execution/README.md) | 基态、相位与测量记录的执行规则 | 1 |
-| [HoareLogic](../ECDSAAdd/Framework/HoareLogic/README.md) | 寄存器断言与程序组合证明 | 1 |
-| [ResourceCounting](../ECDSAAdd/Framework/ResourceCounting/README.md) | 门数、测量数、实际线路支持及外部保持 | 1 |
+只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)，按 Syntax、Semantics、Hoare、Cost 四个文件介绍用途、必要概念和定理结论。四个 Lean 文件直接放在 Framework 下，不再拆分子模块。
 
 ## Circuit：测量 AND 模块
 
 [MeasuredAnd](../ECDSAAdd/Circuit/MeasuredAnd/README.md) 包含 And.lean，证明 AND 计算后测量清理能够恢复完整状态，并给出同程序资源。Circuit 当前只有这一项功能，不为凑数量继续拆分。
 
-各功能目录只有一份 README，作为人类阅读入口；进入源码只用于核对精确规格或修改证明。现有 Math/ModularAddition 仍依赖 Arithmetic 的 Reduction，HoareLogic 仍依赖曲线定义，本次未强行重排实际依赖层次。
+各功能目录只有一份 README，作为人类阅读入口；进入源码只用于核对精确规格或修改证明。现有 Math/ModularAddition 仍依赖 Arithmetic 的 Reduction，Hoare 仍依赖曲线定义，本次未强行重排实际依赖层次。
 
 ## 理解上层组合
 
@@ -75,7 +70,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | 历史 | 恢复程序仍需要的数据，不能因结果已得到而丢弃 |
 | Support / Resources | 程序实际触及的线路 / 同一程序的资源计数 |
 
-语义入口为 [Syntax](../ECDSAAdd/Framework/ProgramSyntax/Syntax.lean)、[Semantics](../ECDSAAdd/Framework/Execution/Semantics.lean)、[Hoare](../ECDSAAdd/Framework/HoareLogic/Hoare.lean) 和 [Cost](../ECDSAAdd/Framework/ResourceCounting/Cost.lean)。模型是带符号的计算基态分支，不在此扩展为一般量子态语义；静态线路支持大小也不同于布局分配数或最大同时存活数。
+语义入口为 [Syntax](../ECDSAAdd/Framework/Syntax.lean)、[Semantics](../ECDSAAdd/Framework/Semantics.lean)、[Hoare](../ECDSAAdd/Framework/Hoare.lean) 和 [Cost](../ECDSAAdd/Framework/Cost.lean)。模型是带符号的计算基态分支，不在此扩展为一般量子态语义；静态线路支持大小也不同于布局分配数或最大同时存活数。
 
 ## 修改与验证
 

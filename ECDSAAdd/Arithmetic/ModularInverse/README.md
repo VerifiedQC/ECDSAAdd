@@ -29,7 +29,7 @@ x=X, out=0, work=0
 x=X, out=X 在模 p 下的逆元, work=0
 ```
 
-XOR 形式允许任意可由输出寄存器表示的 `O`，但不是模加。零输入不在这两个规格的保证范围内。`Triple` 对任意初始相位和任意测量记录保证相位恢复；没有在这里增加完整量子态语义。额外状态的保持需要程序外线路条件，参见 [Cost.lean](../../Framework/ResourceCounting/Cost.lean) 的 `run_preserves_outside` 与 [Hoare.lean](../../Framework/HoareLogic/Hoare.lean) 的 `Triple.frame`。
+XOR 形式允许任意可由输出寄存器表示的 `O`，但不是模加。零输入不在这两个规格的保证范围内。`Triple` 对任意初始相位和任意测量记录保证相位恢复；没有在这里增加完整量子态语义。额外状态的保持需要程序外线路条件，参见 [Cost.lean](../../Framework/Cost.lean) 的 `run_preserves_outside` 与 [Hoare.lean](../../Framework/Hoare.lean) 的 `Triple.frame`。
 
 ## 想理解实现：按“装载、准备、使用、恢复、卸载”读
 

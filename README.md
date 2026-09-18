@@ -4,7 +4,7 @@
 
 ## 从哪里开始读
 
-先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。ECDSAAdd 下四个目录已按 26 个功能模块整理，每个模块一份人类阅读入口；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
+先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。Arithmetic、Math、Circuit 按功能提供 README；Framework 的四个文件共用一份[简明说明](ECDSAAdd/Framework/README.md)；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
 
 当前证明与资源证据见 [PROOF_STATUS](docs/PROOF_STATUS.md)，算法设计和历史见 [REWORK_PLAN](docs/REWORK_PLAN.md)。下面保留项目状态摘要；调用模块通常从地图中的公开规格开始。
 
@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | Bitcoin 数学基础 | 已证明 p 的素性、群与 G 的相关性质、完整 affine 群律规格；没有群阶证明 | [Math](ECDSAAdd/Math) |
 | 程序与语义 | 已实现 X/CX/CCX、测量及即时 Z/CZ 修正、monomial 执行和静态资源计数 | [Framework](ECDSAAdd/Framework) |
-| Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/HoareLogic/Hoare.lean) |
+| Hoare 规格 | 已实现寄存器断言与程序语法糖，证明 seq/conseq/frame | [Hoare.lean](ECDSAAdd/Framework/Hoare.lean) |
 | AND 测量反计算 | 已证明完整状态恢复，以及 1 Toffoli、1 次测量、3 根静态线路 | [And.lean](ECDSAAdd/Circuit/MeasuredAnd/And.lean) |
 | M2 加减法基础 | 已证明任意位宽加减法与任意初值输出 XOR 接口、同程序前向清理；输入、相位和工作位恢复 | [Layout.lean](ECDSAAdd/Arithmetic/Addition/Layout.lean) |
 | 模 p 加减 | 已证明保留输入、任意初值输出 XOR、全部工作位清零，以及同程序精确资源公式 | [FieldAddSub.lean](ECDSAAdd/Arithmetic/ModularAddition/FieldAddSub.lean) |

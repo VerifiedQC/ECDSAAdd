@@ -1,4 +1,4 @@
-import ECDSAAdd.Framework.HoareLogic.Hoare
+import ECDSAAdd.Framework.Hoare
 import Mathlib.Data.Nat.Bitwise
 
 namespace ECDSAAdd.Arithmetic
