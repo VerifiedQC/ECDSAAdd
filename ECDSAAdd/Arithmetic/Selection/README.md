@@ -10,8 +10,6 @@
 
 ## [Select.lean](Select.lean)
 
-这个文件定义受控二选一的 XOR 输出电路，证明选择结果和资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean

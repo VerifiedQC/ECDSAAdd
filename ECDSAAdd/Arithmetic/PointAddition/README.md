@@ -282,8 +282,6 @@
 
 ## [CandidatePool.lean](CandidatePool.lean)
 
-这个文件确定点加候选计算实际使用的共享池子集，并证明长度、包含及并集关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -336,8 +334,6 @@ theorem candidatePool_union (w : Nat → Wire)
 
 ## [ControlledPointAddSpec.lean](ControlledPointAddSpec.lean)
 
-这个文件给出受控点加的完整公开规格，连接控制状态与最终点加结果。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -355,8 +351,6 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 证明了完整受控原地点加：任意合法点与经典常量，包括 O、互逆点和倍点。 控制位保持；临时点、算术工作区及三个选择位全部归零；所有测量记录下相位恢复。
 
 ## [ControlledPointLayout.lean](ControlledPointLayout.lean)
-
-这个文件定义受控点加的选择、输出和完整入口程序，区分 XOR 与原地路径。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -392,8 +386,6 @@ def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program
 
 ## [ControlledPointOutSpec.lean](ControlledPointOutSpec.lean)
 
-这个文件定义受控 XOR 点加初态，并证明有限常量点的完整输出规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -413,8 +405,6 @@ theorem controlledPointAddOut_finite_ready (L : ControlledPointLayout) (h : L.Wi
 
 ## [ControlledPointOutput.lean](ControlledPointOutput.lean)
 
-这个文件证明受控输出选择的计算结果及其与核心寄存器的分离。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -433,8 +423,6 @@ theorem controlledPointOutput_correct (L : ControlledPointLayout) (h : L.Widths)
 证明了控制关闭时输出不变；控制开启时，按分类标志把普通候选、倍点常量和无穷远输入对应的常量点异或到输出，保持输出以外的状态并恢复相位。
 
 ## [ControlledPointPorts.lean](ControlledPointPorts.lean)
-
-这个文件定义受控点加布局及各视图，证明线路互异和选择布局前提。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -526,8 +514,6 @@ theorem extra_not_core (L : ControlledPointLayout) (hn : L.wires.Nodup) (w : Wir
 
 ## [ControlledPointResources.lean](ControlledPointResources.lean)
 
-这个文件证明受控点加输出及完整程序的资源，分别处理有限常量和无穷远常量。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -557,8 +543,6 @@ theorem controlledPointAdd_zero_resources (L : ControlledPointLayout)
 证明了C=O 在构造期为空程序，故实际门数、测量和线路集合均为空。
 
 ## [ControlledPointStages.lean](ControlledPointStages.lean)
-
-这个文件定义控制状态并证明受控点加各阶段的组合与保持关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -598,8 +582,6 @@ theorem controlledPointStage_output (L : ControlledPointLayout) (h : L.Widths) (
 
 ## [ControlledPointSupport.lean](ControlledPointSupport.lean)
 
-这个文件确定受控 XOR 点加实际使用的线路并证明其支持集。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -629,8 +611,6 @@ theorem controlledPointAddOut_support (L : ControlledPointLayout) (h : L.Widths)
 
 ## [FieldFrame.lean](FieldFrame.lean)
 
-这个文件将域减法、域乘法和求逆的规格提升为逐线状态保持结论。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -658,8 +638,6 @@ theorem fieldInverse_correct (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.W
 证明了求逆只改变输出位，全部借用工作位逐线恢复；定义域仍要求正的规范输入。
 
 ## [PointAddFrames.lean](PointAddFrames.lean)
-
-这个文件证明候选计算、标志和输出之间的线路分离及状态保持关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -701,8 +679,6 @@ theorem PointBoundary.pointOutput {L : PointAddLayout} (hn : L.wires.Nodup)
 证明了操作后满足对应的寄存器状态或保持断言：`PointBoundary L F EX EY D (OF^^A) (OX^^^X) (OY^^^Y) t.basis`。
 
 ## [PointAddLayout.lean](PointAddLayout.lean)
-
-这个文件定义点加输入、输出、候选寄存器及共享池布局，并给出位宽和分配长度。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -758,8 +734,6 @@ theorem allocated_length (L : PointAddLayout) (h : L.Widths)
 
 ## [PointAddResources.lean](PointAddResources.lean)
 
-这个文件证明 XOR 点加在有限常量和无穷远常量情况下的精确资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -776,8 +750,6 @@ theorem pointAddOut_zero_resources (L : PointAddLayout) (h : L.Widths) (hn : L.w
 证明了无穷远常量在构造期选择 513 个 CX，仅触及两个点寄存器。
 
 ## [PointAddSpec.lean](PointAddSpec.lean)
-
-这个文件组合所有点加阶段，证明 XOR 输出和零输出的完整点群加法规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -812,8 +784,6 @@ theorem pointAddOut_spec (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodup
 
 ## [PointAddStages.lean](PointAddStages.lean)
 
-这个文件定义点加阶段状态，并证明候选计算与输出阶段的状态衔接。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -842,8 +812,6 @@ theorem pointStage_output (L : PointAddLayout) (h : L.Widths) (hn : L.wires.Nodu
 证明了输出阶段把 R+C 的点编码异或到输出，同时保持点加中间态中的其他信息。
 
 ## [PointAddState.lean](PointAddState.lean)
-
-这个文件定义点加边界状态，并证明候选计算期间边界保持及初态转换。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -906,8 +874,6 @@ theorem point_initial_recover (L : PointAddLayout) (h : L.Widths) (R : Point) (G
 
 ## [PointAddSupport.lean](PointAddSupport.lean)
 
-这个文件证明完整 XOR 点加的实际支持集及线路数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -936,8 +902,6 @@ theorem pointAddOut_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp)
 证明了程序实际触及的线路集合：`wires (pointAddOut L (.some hc))=L.usedWires.toFinset`。
 
 ## [PointCandidate.lean](PointCandidate.lean)
-
-这个文件定义普通分支候选坐标的计算与清理程序，复用共享算术工作池。
 
 以下声明位于 `ECDSAAdd.Arithmetic.PointAddLayout` 命名空间。
 
@@ -987,8 +951,6 @@ def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program
 
 ## [PointCandidateBlocks.lean](PointCandidateBlocks.lean)
 
-这个文件证明候选计算中的常量减法与平方组合怎样更新寄存器。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1012,8 +974,6 @@ theorem CandidateValues.square (L : PointAddLayout) (h : L.Widths) (hnd : L.wire
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (CandidateValues L v G) (pointSquare L) (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G)`。
 
 ## [PointCandidateLayout.lean](PointCandidateLayout.lean)
-
-这个文件证明候选算术接口的输入长度、池前缀和线路互异性。
 
 以下声明位于 `ECDSAAdd.Arithmetic.PointAddLayout` 命名空间。
 
@@ -1058,8 +1018,6 @@ theorem poolInverse_nodup (L : PointAddLayout) (h : L.Widths) (x out : List Wire
 证明了 `(Arithmetic.poolInverse L.poolWire x out).wires` 中的线路互不重复。
 
 ## [PointCandidateProof.lean](PointCandidateProof.lean)
-
-这个文件证明候选计算与按依赖顺序清理的完整寄存器结果。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1113,8 +1071,6 @@ theorem pointCandidate_clear_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.w
 
 ## [PointCandidateResources.lean](PointCandidateResources.lean)
 
-这个文件证明候选计算、清理及辅助常量减法与平方的门数和测量数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1140,8 +1096,6 @@ theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires
 证明了候选计算和按依赖逆序清理调用相同的前向模块，因此门数和测量数相同。
 
 ## [PointCandidateSpec.lean](PointCandidateSpec.lean)
-
-这个文件把候选寄存器结果连接到域坐标公式，并给出计算和清理规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1180,8 +1134,6 @@ theorem pointCandidate_cleanup_spec (L : PointAddLayout) (h : L.Widths) (hnd : L
 证明了恢复所有候选零寄存器的命名接口。
 
 ## [PointCandidateState.lean](PointCandidateState.lean)
-
-这个文件定义候选寄存器字段与状态断言，并证明字段分离和状态更新。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1234,8 +1186,6 @@ theorem CandidateValues.update (L : PointAddLayout) (hnd : L.wires.Nodup)
 证明了操作后满足对应的寄存器状态或保持断言：`CandidateValues L (Function.update v f N) G t`。
 
 ## [PointCandidateSteps.lean](PointCandidateSteps.lean)
-
-这个文件证明候选计算中的减法、复制、求逆、乘法和安全分母步骤。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1298,8 +1248,6 @@ theorem CandidateValues.safe (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (CandidateValues L v G) (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail) (CandidateValues L (Function.update v .divisor (v .divisor ^^^ (if G then v .dx else 1))) G)`。
 
 ## [PointCandidateSupport.lean](PointCandidateSupport.lean)
-
-这个文件确定候选计算涉及的算术支持和共享池子集，并证明完整支持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1383,8 +1331,6 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp)
 
 ## [PointCandidateValues.lean](PointCandidateValues.lean)
 
-这个文件定义安全分母和候选坐标的数学值，证明非零性及普通分支公式。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1419,8 +1365,6 @@ theorem pointCandidateValues_generic (x y cx cy : Fp)
 证明了普通分支的候选横纵坐标与 secp256k1 普通点加公式一致。
 
 ## [PointClassification.lean](PointClassification.lean)
-
-这个文件将合法点分类为普通、倍点等分支，并证明分类与点加结果的关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1494,8 +1438,6 @@ theorem candidateResult_xy_lt (G : Bool) (X Y : Nat) (cx cy : Fp) (hx : X<p) (hy
 
 ## [PointConstantProof.lean](PointConstantProof.lean)
 
-这个文件证明受控点常量写入对有限标志和坐标的作用。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1514,8 +1456,6 @@ theorem maskedPointConstant_correct (c : Wire) (r : PointReg) (C : Point)
 证明了控制开启时将常量点 C 的完整编码异或到目标，关闭时不改变目标；目标外状态与相位保持不变。
 
 ## [PointCopyProof.lean](PointCopyProof.lean)
-
-这个文件证明点复制与普通候选输出的坐标更新及布局前提。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1553,8 +1493,6 @@ theorem pointCopy_correct (a b : PointReg) (hn : (PointAddLayout.pointWires a++P
 证明了点复制将源点的有限标志和两个坐标异或到目标，保持目标之外的状态与相位。
 
 ## [PointEffect.lean](PointEffect.lean)
-
-这个文件定义点输出的状态变化关系，并证明它的组合和逐字段更新性质。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1608,8 +1546,6 @@ theorem PointEffect.reg {r : PointReg} {F : Bool} {X Y : Nat} {s t : State}
 
 ## [PointEncoding.lean](PointEncoding.lean)
 
-这个文件定义完整点编码及相等检测，证明编码范围、单射性和检测正确性。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1659,8 +1595,6 @@ theorem equalPoint_correct (c t : Wire) (r : PointReg) (work : List Wire) (R C :
 证明了全点相等检测可以区分O与所有有限点，不需坐标非零假设。
 
 ## [PointFlagLayout.lean](PointFlagLayout.lean)
-
-这个文件连接点坐标零检测布局，定义输入分类标志的计算与清理程序。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1713,8 +1647,6 @@ def pointFlagsClear (L : PointAddLayout) (cx cy : Fp) : Program
 撤销分支组合和坐标检测，将点分类标志清零。
 
 ## [PointFlagProof.lean](PointFlagProof.lean)
-
-这个文件证明点分类标志的计算、保持、往返恢复和清理。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1809,8 +1741,6 @@ theorem pointFlagsClear_correct (L : PointAddLayout) (h : L.Widths) (hn : L.wire
 
 ## [PointFlagResources.lean](PointFlagResources.lean)
 
-这个文件证明点分类标志程序的门数、测量数与实际支持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1832,8 +1762,6 @@ theorem pointFlags_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp)
 证明了程序实际触及的线路集合：`wires (pointFlagsCompute L cx cy)= (L.input.finite::L.input.x++L.input.y++L.flags++L.pool.take 256).toFinset ∧ wires (pointFlagsClear L cx cy)= (L.input.finite::L.input.x++L.input.y++L.flags++L.pool.take 256).toFinset`。
 
 ## [PointFlagStages.lean](PointFlagStages.lean)
-
-这个文件连接点加初态、边界和分类标志，证明标志准备与清理阶段。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1879,8 +1807,6 @@ theorem pointStage_clearFlags (L : PointAddLayout) (h : L.Widths) (hn : L.wires.
 
 ## [PointFlags.lean](PointFlags.lean)
 
-这个文件定义从相等标志组合普通、倍点标志的门列，并证明结果和计数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1903,8 +1829,6 @@ theorem pointBranchFlags_counts (f ex ey g d : Wire)
 证明了所列程序的门数或测量次数满足 `toffoliCount (pointBranchFlags f ex ey g d)=2 ∧ measurementCount (pointBranchFlags f ex ey g d)=0`。
 
 ## [PointInPlaceBoundary.lean](PointInPlaceBoundary.lean)
-
-这个文件定义原地点加的边界断言，并证明点、标志和算术状态的更新关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1947,8 +1871,6 @@ theorem values (v : PointInPlaceBoundary L R b f s)
 
 ## [PointInPlaceBoundarySteps.lean](PointInPlaceBoundarySteps.lean)
 
-这个文件把原地点加的检测与普通分支步骤接到边界断言。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1981,8 +1903,6 @@ theorem pointBoundary_generic (R : Point) (b : Bool) (f : BasisState) {cx cy : F
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (PointInPlaceBoundary L R b f) (pointInPlaceGeneric L cx cy (exceptionalSlope (.some hc))) (PointInPlaceBoundary L (if f L.core.generic then R+.some hc else R) b f)`。
 
 ## [PointInPlaceClassification.lean](PointInPlaceClassification.lean)
-
-这个文件定义受控原地点加的特殊与普通分支，证明分类及输出侧标志关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2042,8 +1962,6 @@ theorem inPlaceCorners_bool (b : Bool) (R C : Point) (hc : C≠0) (f : Point →
 
 ## [PointInPlaceClearSlope.lean](PointInPlaceClearSlope.lean)
 
-这个文件证明原地点加用更新后的坐标清除斜率，包括例外分母情况。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2055,8 +1973,6 @@ theorem pointInPlaceClearSlope_spec (L : ControlledPointLayout) (hw : L.Widths) 
 证明了第二次除法与零除数例外共同清λ；e/q均由未变的x重算清除。
 
 ## [PointInPlaceConditions.lean](PointInPlaceConditions.lean)
-
-这个文件证明原地点加的零检测、商标志和斜率清理步骤。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2079,8 +1995,6 @@ theorem pointStep_clearSlope (k : Fp) (hA : A=(if E then k else 0))
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (PointInPlaceValues L X Y A G E Q) (maskedConstant L.core.equalX L.inPlaceSlope k.val) (PointInPlaceValues L X Y 0 G E Q)`。
 
 ## [PointInPlaceConstant.lean](PointInPlaceConstant.lean)
-
-这个文件证明原地点加的受控常量加法及其目标外保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2127,8 +2041,6 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
 
 ## [PointInPlaceCorners.lean](PointInPlaceCorners.lean)
 
-这个文件证明无穷远、倍点和互逆点等特殊分支的原地写回。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2149,8 +2061,6 @@ theorem pointBoundary_corners (L : ControlledPointLayout) (hw : L.Widths) (hn : 
 证明了输入分类确定的四次XOR将普通分支输出或角落输入统一写为受控平移结果。
 
 ## [PointInPlaceCounts.lean](PointInPlaceCounts.lean)
-
-这个文件汇总原地点加辅助程序、普通分支和完整有限常量程序的资源计数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2183,8 +2093,6 @@ theorem pointInPlaceFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
 
 ## [PointInPlaceFiniteSpec.lean](PointInPlaceFiniteSpec.lean)
 
-这个文件将分类、普通和特殊分支组合为有限常量点的原地点加规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2195,8 +2103,6 @@ theorem pointInPlaceFinite_spec (L : ControlledPointLayout) (hw : L.Widths) (hn 
 证明了有限常量的完整原地点加：包括输入分类、普通分支、角落写回和输出清标志。
 
 ## [PointInPlaceFlagGates.lean](PointInPlaceFlagGates.lean)
-
-这个文件证明原地点加普通分支标志及倍点使能标志的门列结果。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2221,8 +2127,6 @@ theorem pointInPlaceDoubleEnable_correct (L : ControlledPointLayout) (cy : Fp) (
 证明了执行后相位恢复，并满足所列寄存器更新和其他线路保持关系：`run (pointInPlaceDoubleEnable L cy) m s= ⟨s.phase,writeBit s.basis L.core.double (s.basis L.core.double ^^ (s.basis L.control && decide (cy≠-cy)))⟩`。
 
 ## [PointInPlaceFlagState.lean](PointInPlaceFlagState.lean)
-
-这个文件描述原地点加标志的状态更新，证明读值、清零及边界保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2276,8 +2180,6 @@ theorem PointInPlaceBoundary.congrFlags {L : ControlledPointLayout} {R : Point} 
 
 ## [PointInPlaceFlagSteps.lean](PointInPlaceFlagSteps.lean)
 
-这个文件证明原地点加对无穷远、倍点和互逆点的检测与标志组合步骤。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2318,8 +2220,6 @@ theorem pointFlag_equalI (R C : Point) (b O D I G H : Bool)
 
 ## [PointInPlaceGeneric.lean](PointInPlaceGeneric.lean)
 
-这个文件分别证明普通分支启用和禁用时的原地坐标更新与工作位恢复。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2339,8 +2239,6 @@ theorem pointInPlaceGeneric_false (L : ControlledPointLayout) (hw : L.Widths) (h
 
 ## [PointInPlaceGenericPoint.lean](PointInPlaceGenericPoint.lean)
 
-这个文件把普通分支的坐标计算结果连接到点群加法。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2355,8 +2253,6 @@ theorem pointInPlaceGeneric_point (L : ControlledPointLayout) (hw : L.Widths) (h
 证明了普通分支对合法点的语义；不选中时允许输入为O或任意角落点。
 
 ## [PointInPlaceIntegration.lean](PointInPlaceIntegration.lean)
-
-这个文件将局部有限点规格扩展到完整工作区，证明最终点更新和全部工作位清理。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2400,8 +2296,6 @@ theorem pointInPlaceFinite_full_spec (L : ControlledPointLayout) (hw : L.Widths)
 证明了公共布局的全部分配工作位恢复为零，包括本实现未使用的旧银行。
 
 ## [PointInPlaceLayout.lean](PointInPlaceLayout.lean)
-
-这个文件定义原地点加共享求逆、除法、模乘等接口，并证明基本长度和位宽。
 
 以下声明位于 `ECDSAAdd.Arithmetic.ControlledPointLayout` 命名空间。
 
@@ -2523,8 +2417,6 @@ theorem inPlaceSquare_widths (L : ControlledPointLayout) (hw : L.Widths)
 
 ## [PointInPlaceLayoutProof.lean](PointInPlaceLayoutProof.lean)
 
-这个文件证明原地点加各算术视图的工作区借用、线路互异和接口前提。
-
 以下声明位于 `ECDSAAdd.Arithmetic.ControlledPointLayout` 命名空间。
 
 ```lean
@@ -2635,8 +2527,6 @@ theorem inPlacePointZero_nodup (L : ControlledPointLayout) (hw : L.Widths) (hnd 
 
 ## [PointInPlaceNegate.lean](PointInPlaceNegate.lean)
 
-这个文件证明原地点加中坐标取负的规格及目标外保持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2664,8 +2554,6 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
 
 ## [PointInPlaceProduct.lean](PointInPlaceProduct.lean)
 
-这个文件证明原地点加中乘积累加的结果和共享工作区恢复。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2679,8 +2567,6 @@ theorem pointInPlaceProduct_correct (L : ControlledPointLayout) (hw : L.Widths)
 证明了外部乘加/乘减只改当前y；两个扩展高位和全部借用位在边界归零。
 
 ## [PointInPlaceProgram.lean](PointInPlaceProgram.lean)
-
-这个文件定义原地点加的常量操作、斜率清理、普通分支、特殊分支和完整门列。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2734,8 +2620,6 @@ def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Pr
 
 ## [PointInPlaceResources.lean](PointInPlaceResources.lean)
 
-这个文件证明受控原地点加实际使用线路互异，并给出精确线路数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2753,8 +2637,6 @@ theorem pointInPlaceFinite_qubits (L : ControlledPointLayout) (hw : L.Widths) (h
 证明了6218来自同一门列的支持等式，未重排原9817位分配。
 
 ## [PointInPlaceSquare.lean](PointInPlaceSquare.lean)
-
-这个文件证明通过复制斜率和模乘实现平方累减，并恢复临时副本。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2817,8 +2699,6 @@ theorem pointInPlaceSquare_correct (L : ControlledPointLayout) (hw : L.Widths) (
 
 ## [PointInPlaceState.lean](PointInPlaceState.lean)
 
-这个文件定义原地点加算术状态，证明借用区清零及各坐标和标志的局部更新。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2879,8 +2759,6 @@ theorem withQuotient {Q' : Bool} (hw : L.Widths) (hnd : L.wires.Nodup) (v : Poin
 
 ## [PointInPlaceSteps.lean](PointInPlaceSteps.lean)
 
-这个文件证明原地点加的坐标加法、乘积、取负、平方和除法各步状态变化。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2932,8 +2810,6 @@ theorem pointStep_divideSub (hX : Q=true → X≠0)
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (PointInPlaceValues L X Y A G E Q) (divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y)) (PointInPlaceValues L X Y (if Q then A-Y/X else A) G E Q)`。
 
 ## [PointInPlaceSupport.lean](PointInPlaceSupport.lean)
-
-这个文件证明原地点加普通分支的支持范围及范围外状态保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3014,8 +2890,6 @@ theorem pointInPlaceGeneric_frame (L : ControlledPointLayout) (hw : L.Widths) (c
 
 ## [PointInPlaceWires.lean](PointInPlaceWires.lean)
 
-这个文件确定普通分支和完整有限常量原地点加的精确线路支持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3049,8 +2923,6 @@ theorem pointInPlaceFinite_wires (L : ControlledPointLayout) (hw : L.Widths) (C 
 证明了有限常量点加的完整实际支持等式，包括条件false时仍执行的门列。
 
 ## [PointOutput.lean](PointOutput.lean)
-
-这个文件定义点常量写入、候选输出、点复制及完整 XOR 点加程序。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3092,8 +2964,6 @@ def pointAddOut (L : PointAddLayout) (C : Point) : Program
 
 ## [PointOutputProof.lean](PointOutputProof.lean)
 
-这个文件证明不同点分类分支合成后的输出编码结果。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3112,8 +2982,6 @@ theorem pointOutput_correct (L : PointAddLayout) (h : L.Widths) (hn : L.wires.No
 证明了按普通、倍点和无穷远输入标志，将相应候选或常量点的编码异或到输出，并保持其他状态与相位。
 
 ## [PointOutputResources.lean](PointOutputResources.lean)
-
-这个文件证明点输出与复制等程序的门数、测量数和支持集。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3174,8 +3042,6 @@ theorem pointCopy_support (a b : PointReg) (hx : a.x.length=256) (hy : a.y.lengt
 
 ## [PointSelectors.lean](PointSelectors.lean)
 
-这个文件证明外部控制与点分类组合后的输出选择标志及资源关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3225,8 +3091,6 @@ theorem pointSelectors_wires (L : ControlledPointLayout)
 
 ## [SafeDivisor.lean](SafeDivisor.lean)
 
-这个文件把非普通分支的除数安全地设为 1，并证明结果及资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3251,8 +3115,6 @@ theorem safeDivisor_counts (g : Wire) (src : List Wire) (head : Wire) (tail : Li
 证明了所列程序的门数或测量次数满足 `toffoliCount (safeDivisor g src head tail)=src.length ∧ measurementCount (safeDivisor g src head tail)=0`。
 
 ## [SelectedPointOutput.lean](SelectedPointOutput.lean)
-
-这个文件证明按已计算选择标志写出点加结果的正确性与资源。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

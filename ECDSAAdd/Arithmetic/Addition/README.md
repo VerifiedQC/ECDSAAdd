@@ -34,8 +34,6 @@
 
 ## [FullAdder.lean](FullAdder.lean)
 
-这个文件定义一位全加器和进位清理电路，证明它们的计算结果、状态保持性质和资源用量。
-
 ```lean
 def sumBit (a b c : Bool) : Bool
 ```
@@ -144,8 +142,6 @@ theorem fullAdder_bit_value (a b c : Bool)
 
 ## [RippleAdder.lean](RippleAdder.lean)
 
-这个文件将一位全加器组合成多位加法器，证明截断和、额外高位保存的完整和，以及进位清理与资源用量。
-
 ```lean
 structure AddBit
 ```
@@ -253,8 +249,6 @@ theorem rippleAdder_qubitCount (bs : List AddBit) (cin : Wire)
 
 ## [Subtractor.lean](Subtractor.lean)
 
-这个文件利用加法器构造减法器，将两个输入之差按输出位宽截断后异或到输出，并证明正确性及资源用量。
-
 ```lean
 def rippleSubtractor (bs : List AddBit) (cin : Wire) : Program
 ```
@@ -315,8 +309,6 @@ theorem rippleSubtractor_qubitCount (bs : List AddBit) (cin : Wire)
 证明了线路互异时，减法器使用 4 * bs.length + 1 根不同物理线路。
 
 ## [Layout.lean](Layout.lean)
-
-这个文件把逐位加法线路组织成统一布局，提供加减法、结果清理及资源定理。
 
 ```lean
 structure AdderLayout
@@ -419,8 +411,6 @@ theorem sub_resources (L : AdderLayout) (hnd : L.wires.Nodup)
 证明了 Toffoli 门数和测量次数均为 L.width，线路数为 4 * L.width + 1。
 
 ## [InPlaceAdder.lean](InPlaceAdder.lean)
-
-这个文件定义直接更新目标寄存器的加减法，以及受控常量和受控寄存器版本，证明结果、工作位清理与资源用量。
 
 ```lean
 def majority (a b cin carry : Wire) : Program
@@ -657,8 +647,6 @@ theorem maskedInPlace_wires_subset (c : Wire) (src t y carry : List Wire) (cin :
 
 ## [MeasuredMaskedAdder.lean](MeasuredMaskedAdder.lean)
 
-这个文件用测量和即时相位修正清除受控加减法的临时掩码，证明计算结果不变及对应的资源用量。
-
 ```lean
 def eraseMask (c : Wire) : List Wire → List Wire → Program
 ```
@@ -791,8 +779,6 @@ theorem measuredMaskedSubInPlace_frame (c cin : Wire) (src t y carry : List Wire
 证明了规定的工作区初始为零时，测量清掩码版本的受控减法不改变 y 以外的任何基态位。
 
 ## [Counter.lean](Counter.lean)
-
-这个文件提供 10 位受控加一、减一计数器，既支持 XOR 输出，也支持把结果写入另一寄存器后清零原计数。
 
 ```lean
 private theorem counter_perm (L : AdderLayout)

@@ -86,8 +86,6 @@
 
 ## [Accumulate.lean](Accumulate.lean)
 
-这个文件通过交换布局角色组合前向模加减，实现结果累加、撤销及旧寄存器清理。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -208,8 +206,6 @@ theorem unaccumulate_resources (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
 
 ## [ExternalMod.lean](ExternalMod.lean)
 
-这个文件证明外部寄存器与内部模算术寄存器之间的复制、清零及互不干扰性质。
-
 以下声明位于 `ECDSAAdd.Arithmetic.ExternalMod` 命名空间。
 
 ```lean
@@ -263,8 +259,6 @@ theorem zeros_iff (L : ModLayout) (st : BasisState)
 证明了两种条件等价，可在相应状态断言或数值条件之间转换：`ModValues L (fun _ => 0) st ↔ regValue L.wires st = 0`。
 
 ## [FieldAddSub.lean](FieldAddSub.lean)
-
-这个文件将通用模加减实例化到 secp256k1，给出零输出、XOR 输出及资源规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -333,8 +327,6 @@ theorem fieldSub_resources (L : ModLayout) (hnd : L.wires.Nodup) (hw : L.width =
 证明了所列程序的精确资源关系：`toffoliCount (fieldSub L) = 1284 ∧ measurementCount (fieldSub L) = 1028 ∧ qubitCount (fieldSub L) = 2057`。其中门数和测量数对应同一程序，qubitCount 按不同物理线路计数。
 
 ## [ModInPlace.lean](ModInPlace.lean)
-
-这个文件定义原地模加内核及其布局，逐段证明约减、借位清理、正确性和资源用量。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -469,8 +461,6 @@ theorem modAddCore_resources (L : ModAddCoreLayout) (n p : Nat)
 
 ## [ModInPlaceCopy.lean](ModInPlaceCopy.lean)
 
-这个文件证明受控复制低位寄存器时，数值更新与其他状态的保持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -483,8 +473,6 @@ theorem copyLow_correct (c : Wire) (src dst : List Wire) (n X V : Nat)
 证明了只复制低 n 位；规范输入与掩码的未复制高位保持零，输出仍按完整寄存器读取。
 
 ## [ModInPlaceNegate.lean](ModInPlaceNegate.lean)
-
-这个文件定义原始取负程序，证明各步骤、数值结果、状态保持及成本。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -556,8 +544,6 @@ theorem negRaw_counts (L : ModInPlaceLayout) (n p : Nat) (hw : L.Widths n)
 证明了所列程序的门数或测量次数满足 `toffoliCount (negRaw L p)=n ∧ measurementCount (negRaw L p)=n`。
 
 ## [ModInPlaceSubtract.lean](ModInPlaceSubtract.lean)
-
-这个文件定义普通和受控原地模减法，并证明规格、目标外保持及资源用量。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -645,8 +631,6 @@ theorem controlledModSub_resources (c : Wire) (L : ModInPlaceLayout) (n p : Nat)
 证明了所列程序的精确资源关系：`toffoliCount (controlledModSub c L p)=8*n-1 ∧ measurementCount (controlledModSub c L p)=6*n-1 ∧ qubitCount (controlledModSub c L p)=5*n+6`。其中门数和测量数对应同一程序，qubitCount 按不同物理线路计数。
 
 ## [ModInPlaceWrappers.lean](ModInPlaceWrappers.lean)
-
-这个文件封装普通和受控原地模加法，证明掩码清理、规格及资源用量。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -782,8 +766,6 @@ theorem controlledModAdd_resources (c : Wire) (L : ModInPlaceLayout) (n p : Nat)
 
 ## [Modular.lean](Modular.lean)
 
-这个文件定义 XOR 输出模加减程序，并给出寄存器值和完整程序规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -846,8 +828,6 @@ theorem modSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
 证明了模 q 减法：任意初值输出按位 XOR 更新，借位选择线随候选差一起清理。
 
 ## [ModularFrame.lean](ModularFrame.lean)
-
-这个文件证明模加减只更新输出，并建立布局覆盖和状态断言保持关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -919,8 +899,6 @@ theorem modActive_output (L : ModLayout)
 证明了 `L.activeWires.toFinset ∪ L.out.toFinset` 等于 `L.wires.toFinset`。
 
 ## [ModularLayout.lean](ModularLayout.lean)
-
-这个文件定义模加减的字段和寄存器布局，并证明加法器、选择器视图的长度与线路关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1194,8 +1172,6 @@ theorem ModLayout.flag_not_selector (L : ModLayout) (hnd : L.wires.Nodup)
 
 ## [ModularPorts.lean](ModularPorts.lean)
 
-这个文件将调用方输入输出和工作区连接为模加减布局，并证明端口、位宽和工作区对应。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1241,8 +1217,6 @@ theorem modPorts_work {n : Nat} (x y out : Fin (n+1) → Wire)
 证明了 `(modPorts x y out work a b).work` 等于 `List.ofFn (work 0)++List.ofFn (work 1)++List.ofFn (work 2)++ List.ofFn (work 3)++List.ofFn (work 4)++[a,b]`。
 
 ## [ModularResources.lean](ModularResources.lean)
-
-这个文件确定模加减的实际线路支持，并证明门数、测量数和线路数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1314,8 +1288,6 @@ theorem modSub_resources (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
 
 ## [ModularSteps.lean](ModularSteps.lean)
 
-这个文件定义模算术寄存器断言，并证明常量、加法、减法和选择步骤怎样更新这些断言。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1364,8 +1336,6 @@ theorem select_modValues (L : ModLayout) (hnd : L.wires.Nodup) (v : ModField →
 
 ## [ModularXorSteps.lean](ModularXorSteps.lean)
 
-这个文件证明模加减组合过程中允许已有输出值的 XOR 状态更新。
-
 以下声明位于 `ECDSAAdd.Arithmetic.ExternalMod` 命名空间。
 
 ```lean
@@ -1387,8 +1357,6 @@ theorem mod_sub (L : ModLayout) (src dst : List Wire)
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (Values L src dst X O v) (modSub L q) (Values L src dst X O (Function.update v .out (v .out ^^^ ((v .x+q-v .y)%q))))`。
 
 ## [PoolLayout.lean](PoolLayout.lean)
-
-这个文件从连续工作池构造模算术布局，并证明编号区间、位宽和总线路对应。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1454,8 +1422,6 @@ theorem poolMod_wires (w : Nat → Wire) (start width : Nat)
 
 ## [Reduction.lean](Reduction.lean)
 
-这个文件证明寄存器高低位读取及模加减一次约减所需的数值等式。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1496,8 +1462,6 @@ theorem subReduction (X Y q n : Nat) (hq0 : 0 < q) (hq : q < 2^n)
 证明了X,Y<q 时，借位的差加回 q；未借位则直接保留差。
 
 ## [SubtractPorts.lean](SubtractPorts.lean)
-
-这个文件把减法端口接入共享工作池，并证明输入、工作区、位宽和线路互异性。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1548,8 +1512,6 @@ theorem poolSub_nodup (w : Nat → Wire) (x y out : List Wire)
 
 ## [UnaryMod.lean](UnaryMod.lean)
 
-这个文件组合装载、模算术和卸载，提供约减及取负的 XOR 输出接口。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1597,8 +1559,6 @@ theorem negateXor_spec (L : ModLayout) (src dst : List Wire)
 证明了执行 `negateXor L q src dst` 时，寄存器初态满足 `src=X, dst=O, L.wires=0` 就能得到 `src=X, dst=(O ^^^ ((q-X)%q)), L.wires=0`，并恢复相位。
 
 ## [UnaryModResources.lean](UnaryModResources.lean)
-
-这个文件证明一元模运算的支持范围、计数，以及输出外状态保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

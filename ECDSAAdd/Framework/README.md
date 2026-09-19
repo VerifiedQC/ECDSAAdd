@@ -22,8 +22,6 @@
 
 ## [Syntax.lean](Syntax.lean)
 
-这个文件定义状态的表示和电路允许的操作。这里的状态是带正负相位的计算基态，不是一般叠加态。
-
 ```lean
 abbrev Wire := Nat
 ```
@@ -68,8 +66,6 @@ def measurementCount : Program → Nat
 
 ## [Semantics.lean](Semantics.lean)
 
-这个文件定义量子电路如何在上述状态表示下执行，并证明执行与相位修正的基本性质。
-
 ```lean
 def writeBit (bits : BasisState) (w : Wire) (v : Bool) : BasisState
 ```
@@ -113,8 +109,6 @@ theorem run_append (p q : Program) (m : List Bool) (s : State)
 证明了执行拼接的电路 p ++ q，等价于先执行 p 再执行 q；测量结果记录按 p 的测量次数分成两段，分别供 p 和 q 使用。
 
 ## [Hoare.lean](Hoare.lean)
-
-这个文件定义如何陈述电路的正确性，并证明如何组合已有的正确性结论。
 
 ```lean
 class Holds (α : Type) (β : Type) where
@@ -164,8 +158,6 @@ theorem frame (hc : Triple P c Q)
 证明了只依赖电路 c 未触及线路的额外条件 R，在执行后仍成立，因此可以同时加入前置条件和后置条件。
 
 ## [Cost.lean](Cost.lean)
-
-这个文件定义电路的资源计数和实际触及的线路，并证明电路拼接时的资源关系及外部线路保持性质。
 
 ```lean
 def toffoliCount : Program → Nat

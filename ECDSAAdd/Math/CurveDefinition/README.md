@@ -10,8 +10,6 @@
 
 ## [BitcoinCurve.lean](BitcoinCurve.lean)
 
-这个文件定义 secp256k1 的数学对象，证明生成元的坐标、曲线方程和非奇异性。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean

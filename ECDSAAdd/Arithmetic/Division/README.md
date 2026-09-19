@@ -38,8 +38,6 @@
 
 ## [Divide.lean](Divide.lean)
 
-这个文件定义除法布局、工作区借用、分母装载与卸载，以及受控除法累加和累减程序。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -150,8 +148,6 @@ acc 减去受控分子/分母；只替换累加中段，不倒放带测量的除
 
 ## [DivideLayoutProof.lean](DivideLayoutProof.lean)
 
-这个文件证明除法与所借用模乘布局之间的工作区对应及线路互异性。
-
 以下声明位于 `ECDSAAdd.Arithmetic.DivideLayout` 命名空间。
 
 ```lean
@@ -179,8 +175,6 @@ theorem inverse_nodup (L : DivideLayout) (hnd : L.wires.Nodup)
 证明了 `(L.control :: L.inverseView.wires)` 中的线路互不重复。
 
 ## [DivideLoad.lean](DivideLoad.lean)
-
-这个文件证明分母装载得到正确求逆初态，包括控制为假时使用安全分母 1。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -222,8 +216,6 @@ theorem divideLoad_values (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodu
 
 ## [DivideProduct.lean](DivideProduct.lean)
 
-这个文件证明使用已准备逆元执行受控乘积累加时的结果与非目标状态保持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -237,8 +229,6 @@ theorem divideProduct_correct (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.
 证明了归还借用的输出高位后，乘积组合只修改256位acc；整个求逆历史逐线保持。
 
 ## [DivideResources.lean](DivideResources.lean)
-
-这个文件证明分母装卸和完整除法程序的 Toffoli 门数及测量次数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -255,8 +245,6 @@ theorem divide_counts (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
 证明了同一除法门列的精确门数；支持集与公开 Triple 分别证明。
 
 ## [DivideSpec.lean](DivideSpec.lean)
-
-这个文件将装载、求逆、乘积和恢复组合成除法加减的完整规格与外部保持结论。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -307,8 +295,6 @@ theorem divide_frame (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
 证明了除法只改变acc；所有输入、控制和工作位逐线恢复。
 
 ## [DivideState.lean](DivideState.lean)
-
-这个文件连接除法与求逆的初态、中间态断言，并证明历史保持及装卸支持范围。
 
 以下声明位于 `ECDSAAdd.Arithmetic.DivideLayout` 命名空间。
 
@@ -372,8 +358,6 @@ theorem divideLoad_wires_subset (L : DivideLayout) (hw : L.Widths)
 证明了装载和卸载只触及控制线与求逆视图中的线路。
 
 ## [DivideSupport.lean](DivideSupport.lean)
-
-这个文件确定除法实际使用的线路，证明支持集、互异性和精确线路数。
 
 以下声明位于 `ECDSAAdd.Arithmetic.DivideLayout` 命名空间。
 

@@ -30,8 +30,6 @@
 
 ## [InverseScaleFactor.lean](InverseScaleFactor.lean)
 
-这个文件定义计数驱动的逆元缩放因子，证明单段 Montgomery 缩放得到普通逆元。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean
@@ -81,8 +79,6 @@ theorem kaliski_montgomery_scale (q X : Nat) (hq16 : q%16=15) (hq : q<2^256)
 证明了与原求逆数学陈述对接；新因子加单段Montgomery返回域逆元。
 
 ## [Kaliski.lean](Kaliski.lean)
-
-这个文件定义 Kaliski 数学状态和迭代，证明不变量、固定轮终止及寄存器范围。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 
@@ -179,8 +175,6 @@ theorem kaliski_register_bounds (p a t : Nat) (hp0 : 0<p) (hcop : p.Coprime a)
 
 ## [KaliskiInverse.lean](KaliskiInverse.lean)
 
-这个文件连接 Kaliski 终态和减半缩放，证明模逆元结果及 secp256k1 实例。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean
@@ -204,8 +198,6 @@ theorem kaliski_inverse_p (a : Nat) (ha0 : 0<a) (ha : a<p)
 
 ## [KaliskiOneBit.lean](KaliskiOneBit.lean)
 
-这个文件证明可以由更新后的系数奇偶重建 Kaliski 的交换分支。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean
@@ -216,8 +208,6 @@ theorem kaliski_swap_from_r (p a : Nat) (z : KState)
 证明了奇数模数下，更新后的系数奇偶决定交换分支；终止后的恒等轮由活动位排除。
 
 ## [KaliskiRound.lean](KaliskiRound.lean)
-
-这个文件定义 Kaliski 分支编码和逆向恢复，证明计数活动性、单轮分解及范围。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 
@@ -295,8 +285,6 @@ theorem kaliski_code_bits (z : KState)
 证明了电路的两个 XOR 记录函数就是数学层的四分支编码。
 
 ## [KaliskiTerminal.lean](KaliskiTerminal.lean)
-
-这个文件证明 Kaliski 终态的常量、范围和偶性，以及利用这些条件的取负恢复等式。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 

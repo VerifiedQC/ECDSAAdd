@@ -14,8 +14,6 @@
 
 ## [Rotate.lean](Rotate.lean)
 
-这个文件定义无控制位交换和寄存器循环移动，证明数值变化、恢复及支持。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -92,8 +90,6 @@ theorem rotate_wires (r : List Wire)
 证明了寄存器或线路列表的长度关系：`wires (rotateRight r)=(if r.length<2 then ∅ else r.toFinset) ∧ wires (rotateLeft r)=(if r.length<2 then ∅ else r.toFinset)`。
 
 ## [Shift.lean](Shift.lean)
-
-这个文件定义受控位交换与循环移动，证明算术边界条件下的移位结果及资源。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

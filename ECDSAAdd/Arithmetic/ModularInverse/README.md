@@ -194,8 +194,6 @@
 
 ## [Borrow.lean](Borrow.lean)
 
-这个文件用计数比较计算某轮是否活动，并证明控制标志的 XOR 更新。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -213,8 +211,6 @@ theorem counterActiveXor_spec (L : AdderLayout) (target : Wire)
 证明了执行 `counterActiveXor L target i` 时，寄存器初态满足 `target=T, L.x=K, L.y=0, L.cin=false, L.carry=0` 就能得到 `target=(T ^^ decide (i < K)), L.x=K, L.y=0, L.cin=false, L.carry=0`，并恢复相位。
 
 ## [BorrowFrame.lean](BorrowFrame.lean)
-
-这个文件证明活动计数比较的线路支持、非目标保持和资源计数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -241,8 +237,6 @@ theorem counterActiveXor_counts (L : AdderLayout) (target : Wire) (i : Nat)
 证明了所列程序的门数或测量次数满足 `toffoliCount (counterActiveXor L target i)=L.width ∧ measurementCount (counterActiveXor L target i)=L.width`。
 
 ## [HalveInPlace.lean](HalveInPlace.lean)
-
-这个文件定义按轮号受控的模减半与逆向倍增步骤，证明状态更新和计数保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -485,8 +479,6 @@ theorem doubleStep_spec (L : HalvingLayout) (hnd : L.wires.Nodup) (hw : L.Widths
 
 ## [HalvingLoop.lean](HalvingLoop.lean)
 
-这个文件组合固定轮数的减半与恢复过程，证明与数学迭代一致及相应资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -574,8 +566,6 @@ theorem halveInPlace_wires (L : HalvingLayout) (hw : L.Widths) (q i n : Nat)
 证明了程序实际触及的线路集合：`wires (halveInPlace L q i n) = (if n=0 then ∅ else L.usedWires.toFinset) ∧ wires (restoreInPlace L q i n) = (if n=0 then ∅ else L.usedWires.toFinset)`。
 
 ## [InverseCompactLayout.lean](InverseCompactLayout.lean)
-
-这个文件划分求逆紧凑布局中的数据、计数和可借用空间，证明长度、分区与互异性。
 
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
@@ -717,8 +707,6 @@ theorem compactBorrow_subset (I : InverseLoopLayout)
 
 ## [InverseCompactViews.lean](InverseCompactViews.lean)
 
-这个文件在紧凑借用区上构造缩放和取负视图，并证明位宽、支持划分及互异性。
-
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
 ```lean
@@ -796,8 +784,6 @@ theorem compactNeg_nodup (I : InverseLoopLayout) (hn : I.wires.Nodup)
 
 ## [InverseCompute.lean](InverseCompute.lean)
 
-这个文件组合 Kaliski、取负和缩放，定义求逆准备、恢复及 XOR 输出循环并证明中间值。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -851,8 +837,6 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 ## [InverseContract.lean](InverseContract.lean)
 
-这个文件定义外部逆元电路应满足的正确性及资源契约；契约本身不是实现。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -863,8 +847,6 @@ def inverseContract (x out work : List Wire) (c : Program)
 secp256k1 求逆的接口要求；具体实现及满足证明见 fieldInverse_contract。 输入明确排除零，两个数值寄存器均为 256 位；工作位清零、相位恢复。 资源等式和线路包含关系约束同一个程序。
 
 ## [InverseLayout.lean](InverseLayout.lean)
-
-这个文件定义外部求逆布局、输入装卸和完整求逆程序，并连接外部与内部线路。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -964,8 +946,6 @@ secp256k1 非零输入的具体求逆电路。
 
 ## [InverseLoad.lean](InverseLoad.lean)
 
-这个文件定义外部求逆寄存器断言，证明常量和输入装载如何建立求逆初态。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1045,8 +1025,6 @@ theorem inverseLoad_values (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Wid
 证明了装载把内部三个数据值从零设为 p、X、1，卸载再清零；两者保持外部输入 X 和输出 O，并恢复相位。
 
 ## [InverseLoopLayout.lean](InverseLoopLayout.lean)
-
-这个文件定义求逆循环及阶段布局，证明循环终态视图和数据、工作区的划分关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1150,8 +1128,6 @@ theorem rest_phase_disjoint (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 ## [InverseLoopProof.lean](InverseLoopProof.lean)
 
-这个文件证明复制逆元到输出后仍可恢复历史，得到完整求逆循环的数值结论。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1188,8 +1164,6 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 ## [InverseLoopResources.lean](InverseLoopResources.lean)
 
-这个文件证明求逆循环的一般及 257 位实例的门数、测量数和线路数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1213,8 +1187,6 @@ theorem inverseLoop_257_resources (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 证明了257 位内部数据、512 轮的当前实现；计数银行、1024 根记录线和第二阶段工作区均计入。
 
 ## [InverseLoopSpec.lean](InverseLoopSpec.lean)
-
-这个文件将求逆内部断言改写为直接寄存器条件，给出准备、恢复及 XOR/零输出规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1302,8 +1274,6 @@ theorem inverseLoop_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 ## [InverseLoopState.lean](InverseLoopState.lean)
 
-这个文件定义求逆历史、中间结果与计数状态断言，并证明保持和展开关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1345,8 +1315,6 @@ theorem InverseMiddle.iff (L : InverseLoopLayout) (z : KState) (cs : List (Bool�
 证明了两种条件等价，可在相应状态断言或数值条件之间转换：`InverseMiddle L z cs A s ↔ LoopState L.middle z s ∧ TapeValues L.records cs s ∧ InverseExtra L A s`。
 
 ## [InverseLoopSupport.lean](InverseLoopSupport.lean)
-
-这个文件确定求逆循环实际触及的线路，证明各阶段支持范围及完整支持集。
 
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
@@ -1455,8 +1423,6 @@ theorem inverseLoop_wires (L : InverseLoopLayout)
 
 ## [InverseMiddle.lean](InverseMiddle.lean)
 
-这个文件证明求逆第一阶段后的规范化取负更新及其布局安全性。
-
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
 ```lean
@@ -1492,8 +1458,6 @@ theorem inverseNegative_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (InverseMiddle L z cs A) (negativeInit L.arithmetic q L.middle.r L.temp L.a) (InverseMiddle L z cs (A ^^^ (-(z.r : ZMod q)).val))`。
 
 ## [InversePorts.lean](InversePorts.lean)
-
-这个文件把求逆的轮、计数和内部工作区接到调用方池中，并证明位宽和线路对应。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1597,8 +1561,6 @@ theorem poolInverse_nodup (w : Nat → Wire) (x out : List Wire) (ho : out.lengt
 
 ## [InverseResources.lean](InverseResources.lean)
 
-这个文件证明外部求逆的装卸成本、实际支持、精确资源及契约满足性。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1644,8 +1606,6 @@ theorem fieldInverse_contract (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.
 证明了求逆接口的具体实现证明；正确性、精确资源和支持集均指向 fieldInverse L。
 
 ## [InverseScale.lean](InverseScale.lean)
-
-这个文件定义计数查表与单段 Montgomery 缩放，证明准备、恢复、历史和共享工作区条件。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1874,8 +1834,6 @@ theorem counts (L : InverseScaleLayout) (q : Nat) (hw : L.Widths)
 
 ## [InverseScaleBorrow.lean](InverseScaleBorrow.lean)
 
-这个文件从求逆循环中划分缩放借用区和存活历史，证明布局长度、对应及互异性。
-
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
 ```lean
@@ -1962,8 +1920,6 @@ theorem scaleLive_subset (I : InverseLoopLayout)
 证明了历史只借用原轮工作位，因而正轮结束的零断言足以初始化缩放。
 
 ## [InverseScaleState.lean](InverseScaleState.lean)
-
-这个文件连接缩放前后的求逆寄存器状态，证明缩放与恢复时历史和其他字段的保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic.InverseLoopLayout` 命名空间。
 
@@ -2096,8 +2052,6 @@ theorem inverseScaling_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
 
 ## [InverseSpec.lean](InverseSpec.lean)
 
-这个文件将内部求逆结论接到外部寄存器，证明完整逆元的 XOR 输出和零输出规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2141,8 +2095,6 @@ theorem fieldInverse_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widt
 
 ## [InverseTerminalConstants.lean](InverseTerminalConstants.lean)
 
-这个文件利用 Kaliski 终态已知常量构造清理程序，并证明恢复及资源性质。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2172,8 +2124,6 @@ theorem terminalConstants_resources (I : InverseLoopLayout) (q : Nat)
 证明了所列程序的门数或测量次数满足 `toffoliCount (terminalConstants I q)=0 ∧ measurementCount (terminalConstants I q)=0 ∧ wires (terminalConstants I q)⊆(I.middle.u++I.middle.s).toFinset`。
 
 ## [KaliskiLoop.lean](KaliskiLoop.lean)
-
-这个文件定义带记录带的 Kaliski 正向循环和恢复循环，以及终态布局和分支历史。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2288,8 +2238,6 @@ theorem TapeValues.congr (rs : List RoundRecord) (cs : List (Bool×Bool)) (s t :
 
 ## [KaliskiLoopProof.lean](KaliskiLoopProof.lean)
 
-这个文件按轮组合单轮证明，得到整个 Kaliski 循环及恢复的状态结论。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2322,8 +2270,6 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
 证明了固定长度正逆循环：每轮独占记录对，递归部分保留先前记录，逆向则全部清零。
 
 ## [KaliskiLoopResources.lean](KaliskiLoopResources.lean)
-
-这个文件证明 Kaliski 循环的门数、测量数及实际线路支持和线路数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2379,8 +2325,6 @@ theorem kaliskiLoop_qubits (L : KaliskiRoundLayout) (rs : List RoundRecord) (i :
 证明了所列程序的精确资源关系：`qubitCount (kaliskiLoop L i rs)=7*L.data.width+46+2*rs.length ∧ qubitCount (kaliskiUnloop L i rs)=7*L.data.width+46+2*rs.length`。其中门数和测量数对应同一程序，qubitCount 按不同物理线路计数。
 
 ## [KaliskiLoopState.lean](KaliskiLoopState.lean)
-
-这个文件连接循环边界与单轮状态断言，并证明记录带在正轮和恢复轮中的更新。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2441,8 +2385,6 @@ theorem kaliskiUnround_tape (L : KaliskiRoundLayout) (r : RoundRecord) (rs : Lis
 证明了单轮撤销恢复上一轮状态，并将该轮保存的交换与减法记录清零。
 
 ## [KaliskiRound.lean](KaliskiRound.lean)
-
-这个文件定义 Kaliski 单轮布局、活动控制、记录和正反轮程序，并证明所用视图的安全性。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2614,8 +2556,6 @@ def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program
 
 ## [KaliskiRoundProof.lean](KaliskiRoundProof.lean)
 
-这个文件组合算术体、计数和状态标志，证明 Kaliski 单轮及恢复轮的完整状态更新。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2659,8 +2599,6 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 证明了一轮完整逆向规格：由更新后 k 恢复活动性，清除保存的两位记录并恢复旧状态。
 
 ## [MaskedAdder.lean](MaskedAdder.lean)
-
-这个文件通过双寄存器布局实现受控加减和旧数据清理，证明接口、保持和资源。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2773,8 +2711,6 @@ theorem AdderLayout.masked_frame (L : AdderLayout) (src : List Wire) (c : Wire)
 
 ## [NegativeEven.lean](NegativeEven.lean)
 
-这个文件利用正偶数范围实现取负与恢复，并证明结果、状态保持及资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic.ModInPlaceLayout` 命名空间。
 
 ```lean
@@ -2864,8 +2800,6 @@ theorem negativeEven_wires (L : ModInPlaceLayout) (n q : Nat)
 
 ## [NegativeInit.lean](NegativeInit.lean)
 
-这个文件构造求逆终态系数的规范化取负程序，并证明执行结果。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2886,8 +2820,6 @@ theorem negativeInit_correct (L : ModLayout) (q : Nat) (src temp dst : List Wire
 证明了先将源值对 q 约减，再把其模负值异或到目标，保持目标外基态位与相位。
 
 ## [NegativeInitResources.lean](NegativeInitResources.lean)
-
-这个文件给出规范化取负的数值规格、线路支持及门数与测量数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2922,8 +2854,6 @@ theorem negativeInit_spec (L : ModLayout) (q : Nat) (src temp dst : List Wire)
 证明了执行 `negativeInit L q src temp dst` 时，寄存器初态满足 `src=X, temp=0, dst=O, L.wires=0` 就能得到 `src=X, temp=0, dst=(O ^^^ (-(X : ZMod q)).val), L.wires=0`，并恢复相位。
 
 ## [OneBitRound.lean](OneBitRound.lean)
-
-这个文件定义只保留一位分支记录的轮程序及交换标志重建，并证明重建步骤。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -2963,8 +2893,6 @@ theorem recoverSwap_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 
 ## [OneBitRoundProof.lean](OneBitRoundProof.lean)
 
-这个文件证明一位记录正轮和恢复轮的完整状态关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -2988,8 +2916,6 @@ theorem oneBitUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 证明了一轮完整逆向规格：由更新后 k 恢复活动性，重算交换条件并清除减法记录并恢复旧状态。
 
 ## [OneBitRoundResources.lean](OneBitRoundResources.lean)
-
-这个文件证明一位记录轮的门数、测量数、支持范围及线路数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3036,8 +2962,6 @@ theorem oneBitRound_qubits (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 
 ## [OneBitRoundSpec.lean](OneBitRoundSpec.lean)
 
-这个文件将一位记录轮的内部状态结论写成公开程序规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3059,8 +2983,6 @@ theorem oneBitUnround_spec (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 证明了公开逆轮规格：恢复旧数据/计数/done，清除减法历史和全部工作区。
 
 ## [RecordRound.lean](RecordRound.lean)
-
-这个文件证明 Kaliski 分支比较与记录程序的结果、非目标保持及布局前提。
 
 以下声明位于 `ECDSAAdd.Arithmetic.KaliskiRoundLayout` 命名空间。
 
@@ -3132,8 +3054,6 @@ theorem recordRound_frame (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (RoundFrame L.data (roundDataValues z) base) (recordRound L) (RoundFrame L.data (roundDataValues z) (recordState L z base))`。
 
 ## [RoundBody.lean](RoundBody.lean)
-
-这个文件定义 Kaliski 单轮的算术体与恢复算术体，并证明寄存器更新和控制保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3210,8 +3130,6 @@ theorem kaliskiUnbodyProgram_frame (L : RoundDataLayout) (active swap subtract :
 
 ## [RoundControls.lean](RoundControls.lean)
 
-这个文件证明单轮活动性、完成标志和计数比较的状态更新。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3257,8 +3175,6 @@ theorem roundActiveXor_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (RoundState L z 0 K A D S T) (roundActiveXor L i) (RoundState L z 0 K (A ^^ decide (i < K)) D S T)`。
 
 ## [RoundFrame.lean](RoundFrame.lean)
-
-这个文件定义单轮数据保持关系，并证明移位、交换、加减和复制如何更新指定寄存器。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3343,8 +3259,6 @@ theorem subtract (L : RoundDataLayout) (hnd : L.wires.Nodup) (v : RoundField →
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (RoundFrame L v base) (sub (L.adder f)) (RoundFrame L (Function.update v .out (v .out ^^^ ((v f+2^L.width-v .y)%2^L.width))) base)`。
 
 ## [RoundLayout.lean](RoundLayout.lean)
-
-这个文件定义 Kaliski 数据字段和逐位布局，连接加法、移位及零检测视图。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3548,8 +3462,6 @@ theorem RoundValues.update_two (L : RoundDataLayout) (hnd : L.wires.Nodup)
 
 ## [RoundResources.lean](RoundResources.lean)
 
-这个文件证明 Kaliski 单轮各段及完整正反轮的 Toffoli 和测量计数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -3584,8 +3496,6 @@ theorem kaliskiRound_counts (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw :
 证明了正逆轮使用相同次数的 CCX 与测量；每轮复用数据宽度 w 的算术工作区。
 
 ## [RoundSpec.lean](RoundSpec.lean)
-
-这个文件将 Kaliski 单轮的完整状态结论整理为前后寄存器规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3627,8 +3537,6 @@ theorem kaliskiRound_257_resources (L : KaliskiRoundLayout) (hnd : L.wires.Nodup
 证明了secp256k1 使用 257 位数据/工作寄存器；这里仅计一轮，不是完整逆元成本。
 
 ## [RoundState.lean](RoundState.lean)
-
-这个文件定义 Kaliski 单轮的寄存器状态，并证明局部操作后的状态保持和重组。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -3745,8 +3653,6 @@ theorem counterDec_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup) (hw : L.
 证明了所列程序满足该前后状态规格并恢复相位：`Triple (RoundState L z 0 K A D S T) (counterDec L.counter.swapCounter) (RoundState L z ((K+1024-A.toNat)%1024) 0 A D S T)`。
 
 ## [RoundWires.lean](RoundWires.lean)
-
-这个文件确定单轮实际使用的线路，并证明算术体、正反轮的支持和线路数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

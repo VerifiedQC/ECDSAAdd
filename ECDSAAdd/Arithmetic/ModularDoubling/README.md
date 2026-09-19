@@ -22,8 +22,6 @@
 
 ## [ModDouble.lean](ModDouble.lean)
 
-这个文件证明原地模倍增的旋转、约减和清理步骤，汇总为完整规格。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -56,8 +54,6 @@ theorem dblInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
 证明了规范模加倍；借位从结果奇偶清除，外层 mask/flag 均归零。
 
 ## [ModHalf.lean](ModHalf.lean)
-
-这个文件证明原地模减半的奇偶处理、加模数、旋转和标志清理。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -107,8 +103,6 @@ theorem halfInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
 证明了规范模减半，所有 scratch 清零；奇偶由结果大小恢复并擦除。
 
 ## [ModUnary.lean](ModUnary.lean)
-
-这个文件定义模倍增与减半的布局和程序，并证明基本布局条件及资源关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -207,8 +201,6 @@ theorem modUnary_wires (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn : 
 证明了资源按实际支持计：加倍不触及 mask/flag，减半不触及 mask。
 
 ## [ModUnaryResources.lean](ModUnaryResources.lean)
-
-这个文件证明模倍增、减半的目标外保持及精确资源用量。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

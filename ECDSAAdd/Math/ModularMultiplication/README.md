@@ -18,8 +18,6 @@
 
 ## [HornerMultiply.lean](HornerMultiply.lean)
 
-这个文件证明逐位 Horner 模乘前缀的初值、递推、结果及恢复关系。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean
@@ -59,8 +57,6 @@ theorem hornerValue_unstep (p X Y i : Nat) (hp : p%2=1) (hX : X<p)
 证明了减去本位贡献再模减半，恢复上一前缀；不用倒放带测量的门列。
 
 ## [Montgomery.lean](Montgomery.lean)
-
-这个文件定义四位 Montgomery 数学递推，证明精确约减、范围、不变量及结果转换。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 
@@ -152,8 +148,6 @@ theorem montgomery_standard_conversion {q : Nat} [Fact q.Prime]
 证明了Montgomery中间值的标准表示转换，不向外部坐标暴露Montgomery表示。
 
 ## [MontgomeryConversion.lean](MontgomeryConversion.lean)
-
-这个文件定义 Montgomery 基数和转换常量，证明两段计算得到标准模积。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 

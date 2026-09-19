@@ -14,8 +14,6 @@
 
 ## [EqualConstant.lean](EqualConstant.lean)
 
-这个文件通过常量掩码和零检测判断寄存器是否等于常量，并证明结果及资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -51,8 +49,6 @@ theorem equalConstant_wires (control target : Wire) (bs : List ZeroBit) (k : Nat
 证明了常量的取值不改变实际支持：零检测本身已经触及全部布局线。
 
 ## [ZeroControl.lean](ZeroControl.lean)
-
-这个文件定义受控零检测及测量清理，证明检测标志、输入保持和资源用量。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

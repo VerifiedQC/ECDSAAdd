@@ -10,8 +10,6 @@
 
 ## [BitcoinPrimes.lean](BitcoinPrimes.lean)
 
-这个文件以 Lucas 素性判据和分层证书证明域模数 p 是素数。
-
 以下声明位于 `ECDSAAdd.Secp256k1` 命名空间。
 
 ```lean

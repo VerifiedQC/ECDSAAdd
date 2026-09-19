@@ -118,8 +118,6 @@
 
 ## [ConstDigit.lean](ConstDigit.lean)
 
-这个文件证明常数 Montgomery 窗口内查表加减的数值和保持关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -150,8 +148,6 @@ theorem constDigitSub_correct (L : MontStageLayout) (y : List Wire) (i K Y A : N
 
 ## [ConstRounds.lean](ConstRounds.lean)
 
-这个文件证明常数 Montgomery 多轮计算与恢复对应数学递推。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -176,8 +172,6 @@ theorem constRestoreRounds_correct (L : MontStageLayout) (y : List Wire) (p k X 
 证明了以同一 a_k/Q_k 关系为前提逆序执行，清空累加器与整条历史。
 
 ## [ConstStageSpec.lean](ConstStageSpec.lean)
-
-这个文件给出常数 Montgomery 整段准备与恢复的正确性规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -259,8 +253,6 @@ theorem constRestore_spec (L : MontStageLayout) (y : List Wire) (p X Y : Nat)
 
 ## [ConstWindow.lean](ConstWindow.lean)
 
-这个文件证明单个常数 Montgomery 窗口的计算和恢复关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -284,8 +276,6 @@ theorem constMontRestoreWindow_correct (L : MontStageLayout) (y : List Wire) (p 
 证明了恢复窗口以累加器与整条历史的精确关系为前提。
 
 ## [FieldMultiply.lean](FieldMultiply.lean)
-
-这个文件把标准模乘实例化到 secp256k1，证明零输出、XOR 输出及资源结论。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -316,8 +306,6 @@ theorem fieldMul_resources (L : MontLayout) (hnd : L.wires.Nodup) (hw : L.Widths
 证明了所列程序的精确资源关系：`toffoliCount (fieldMul L)=379424 ∧ measurementCount (fieldMul L)=379424 ∧ qubitCount (fieldMul L)=2596`。其中门数和测量数对应同一程序，qubitCount 按不同物理线路计数。
 
 ## [MontAdapterFrame.lean](MontAdapterFrame.lean)
-
-这个文件证明模乘输出适配器只改变指定输出，保留输入和恢复所需的准备态。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -389,8 +377,6 @@ theorem montMulControlledSub_frame (c : Wire) (B : Bool) (M : MontLayout) (p X Y
 证明了 `(run (montMulControlledSub c M p) m s).basis q` 等于 `s.basis q`。
 
 ## [MontAdapterLayout.lean](MontAdapterLayout.lean)
-
-这个文件连接模乘结果与输出工作区，定义 XOR、累加、累减及受控适配程序。
 
 以下声明位于 `ECDSAAdd.Arithmetic.MontLayout` 命名空间。
 
@@ -496,8 +482,6 @@ def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program
 
 ## [MontAdapterResources.lean](MontAdapterResources.lean)
 
-这个文件证明各模乘输出适配器的门数、测量数、支持集和线路数。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -545,8 +529,6 @@ theorem montControlledAdapter_qubits (c : Wire) (M : MontLayout) (p : Nat)
 证明了所列程序的精确资源关系：`qubitCount (montMulControlledAdd c M p)=2597 ∧ qubitCount (montMulControlledSub c M p)=2597`。其中门数和测量数对应同一程序，qubitCount 按不同物理线路计数。
 
 ## [MontAdapterSpec.lean](MontAdapterSpec.lean)
-
-这个文件证明两段准备和恢复之间的输出更新，给出五种标准模乘适配器规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -630,8 +612,6 @@ theorem montMulControlledSub_spec (c : Wire) (B : Bool) (M : MontLayout) (p X Y 
 
 ## [MontBorrow.lean](MontBorrow.lean)
 
-这个文件从连续借用空间构造 Montgomery 布局，并证明端口、位宽和线路互异性。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -655,8 +635,6 @@ theorem borrowedMont_prefix (B : List Wire) (fallback : Wire) (k : Nat) (x y out
 证明了 `B.take k ++ (borrowedMont B fallback k x y out).work` 等于 `B.take (k+1827)`。
 
 ## [MontConstant.lean](MontConstant.lean)
-
-这个文件证明 Montgomery 累加器与经典常量加减时的结果和状态保持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -694,8 +672,6 @@ theorem montConstantSub_correct (L : MontStageLayout) (K : Nat)
 证明了累加器减去 K 后按位宽截断，累加器外基态位与相位保持不变。
 
 ## [MontCounts.lean](MontCounts.lean)
-
-这个文件证明 Montgomery 查询、窗口、轮次和规范化步骤的门数与测量数。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -779,8 +755,6 @@ theorem montPQ_counts (M : MontLayout) (p : Nat) (hw : M.Widths)
 证明了P/Q 同一前向门列的精确计数，包含全部标准表示转换和恢复。
 
 ## [MontDigit.lean](MontDigit.lean)
-
-这个文件证明变量 Montgomery 窗口的逐位受控加减与掩码清理。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -887,8 +861,6 @@ theorem montSubDigit_correct (L : MontStageLayout) (x y : List Wire)
 
 ## [MontHistory.lean](MontHistory.lean)
 
-这个文件证明 Montgomery 商记录的读取、写入及恢复所需的数值关系。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -911,8 +883,6 @@ theorem montgomeryQuotient_bound (p X Y k : Nat)
 证明了前 k 个四位记录的整数恰为已定义的修正系数 Q_k，始终装得下 k 个窗口。
 
 ## [MontLayout.lean](MontLayout.lean)
-
-这个文件定义两段 Montgomery 的共享工作区和独立历史，及完整准备、恢复程序。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1043,8 +1013,6 @@ def montQ (M : MontLayout) (p : Nat) : Program
 
 ## [MontLookup.lean](MontLookup.lean)
 
-这个文件证明四位查表及其加减组合的结果、清理和保持性质。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1098,8 +1066,6 @@ theorem montLookupSub_correct (L : MontStageLayout) (addr : List Wire) (K : Nat)
 
 ## [MontNormalize.lean](MontNormalize.lean)
 
-这个文件证明 Montgomery 最终约减到规范范围及其逆向恢复。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1151,8 +1117,6 @@ theorem montDenormalize_correct (L : MontStageLayout) (p A : Nat)
 
 ## [MontPQ.lean](MontPQ.lean)
 
-这个文件组合两段 Montgomery，证明得到普通模积并能按历史恢复工作区。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1187,8 +1151,6 @@ theorem montQ_spec (M : MontLayout) (p X Y : Nat) [Fact p.Prime]
 证明了Q 只消费准备契约，不要求输出寄存器为零，供五个适配器共同复用。
 
 ## [MontPrepare.lean](MontPrepare.lean)
-
-这个文件定义单段 Montgomery 的布局、窗口、规范化和准备恢复程序。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1372,8 +1334,6 @@ def constRestore (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program
 
 ## [MontReduce.lean](MontReduce.lean)
 
-这个文件证明四位约减的商记录、模数修正、旋转与恢复步骤。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1414,8 +1374,6 @@ theorem montRestoreReduce_correct (L : MontStageLayout) (p i U : Nat)
 
 ## [MontResources.lean](MontResources.lean)
 
-这个文件汇总两段 Montgomery 准备和恢复的精确资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1431,8 +1389,6 @@ theorem montPQ_resources (M : MontLayout) (p : Nat) (hw : M.Widths) (hnd : M.wir
 证明了输出字不计入 P/Q 的实际支持；布局中的高位 X 也不计入。
 
 ## [MontRotate.lean](MontRotate.lean)
-
-这个文件证明 Montgomery 约减使用的循环位移及高低位数值关系。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1476,8 +1432,6 @@ theorem rotateLeftBits_spec (r : List Wire) (k X : Nat) (hnd : r.Nodup)
 
 ## [MontRounds.lean](MontRounds.lean)
 
-这个文件证明变量 Montgomery 多轮计算和恢复符合数学递推。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1502,8 +1456,6 @@ theorem montRestoreRounds_correct (L : MontStageLayout) (x y : List Wire) (p k X
 证明了以同一 a_k/Q_k 关系为前提逆序执行，清空累加器与整条历史。
 
 ## [MontStagePorts.lean](MontStagePorts.lean)
-
-这个文件证明单段 Montgomery 布局中各算术接口的位宽、互异性和保持范围。
 
 以下声明位于 `ECDSAAdd.Arithmetic.MontStageLayout` 命名空间。
 
@@ -1576,8 +1528,6 @@ theorem stable_disjoint (L : MontStageLayout) (x y : List Wire) (hnd : (x++y++L.
 证明了准备/恢复只允许 acc、history、flag 改变。
 
 ## [MontStageSpec.lean](MontStageSpec.lean)
-
-这个文件给出变量 Montgomery 前缀及完整阶段的准备、恢复规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1659,8 +1609,6 @@ theorem montRestore_spec (L : MontStageLayout) (x y : List Wire) (p X Y : Nat)
 
 ## [MontWindow.lean](MontWindow.lean)
 
-这个文件证明变量 Montgomery 单个窗口的计算与恢复结果。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -1684,8 +1632,6 @@ theorem montRestoreWindow_correct (L : MontStageLayout) (x y : List Wire) (p i X
 证明了恢复窗口以累加器与整条历史的精确关系为前提。
 
 ## [MontWires.lean](MontWires.lean)
-
-这个文件证明 Montgomery 各步骤和完整两段程序的实际线路支持。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -1803,8 +1749,6 @@ theorem montPQ_wires (M : MontLayout) (p : Nat) (hw : M.Widths)
 证明了输出字和 X 的高位从未被 P/Q 触及；实际支持为两个输入低256位和全部工作区。
 
 ## [MultiplyPorts.lean](MultiplyPorts.lean)
-
-这个文件将模乘输入输出接入调用方工作池，并证明端口对应、位宽和互异性。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

@@ -14,8 +14,6 @@
 
 ## [AffineFormula.lean](AffineFormula.lean)
 
-这个文件定义普通点加、倍点和完整分情况坐标公式，证明它们与曲线群加法一致。
-
 以下声明位于 `ECDSAAdd.Secp256k1` 命名空间。
 
 ```lean
@@ -297,8 +295,6 @@ theorem affineAdd_correct (P Q : Point)
 证明了 `affineAdd P Q` 等于 `P + Q`。
 
 ## [PointInPlace.lean](PointInPlace.lean)
-
-这个文件证明原地点加的分类、坐标更新及从输出恢复斜率所需的数学关系。
 
 以下声明位于 `ECDSAAdd.Secp256k1` 命名空间。
 

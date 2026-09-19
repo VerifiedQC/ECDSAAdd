@@ -10,8 +10,6 @@
 
 ## [ModInPlace.lean](ModInPlace.lean)
 
-这个文件证明原地模加减中低位约减、借位清理及取负恢复所需的数值等式。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean

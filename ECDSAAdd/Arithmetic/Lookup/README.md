@@ -10,8 +10,6 @@
 
 ## [Lookup.lean](Lookup.lean)
 
-这个文件定义经典表的受控查询，证明四位和十位地址接口的正确性、清理及资源性质。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean

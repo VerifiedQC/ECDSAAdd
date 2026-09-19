@@ -26,8 +26,6 @@
 
 ## [ConditionalXor.lean](ConditionalXor.lean)
 
-这个文件通过临时掩码实现条件 XOR，证明目标更新、临时位恢复及资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -100,8 +98,6 @@ theorem conditionalXor_wires (kernel : Program) (c : Wire) (src temp dst : List 
 
 ## [Constant.lean](Constant.lean)
 
-这个文件定义经典常量的 XOR 写入，证明数值更新、状态保持和支持范围。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -136,8 +132,6 @@ theorem xorConstant_wires_subset (r : List Wire) (k : Nat)
 证明了常量 XOR 只触碰常量寄存器；实际支持集可能更小，因为 0 位不施门。
 
 ## [Copy.lean](Copy.lean)
-
-这个文件定义普通和受控寄存器 XOR 复制，并证明结果、输入保持和资源。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
@@ -204,8 +198,6 @@ theorem copyRegister_resources (control : Option Wire) (src dst : List Wire)
 
 ## [MaskedConstant.lean](MaskedConstant.lean)
 
-这个文件定义受控常量 XOR，证明执行结果、状态保持及资源性质。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
@@ -241,8 +233,6 @@ theorem maskedConstant_wires_subset (c : Wire) (r : List Wire) (k : Nat)
 证明了 `wires (maskedConstant c r k)` 包含的线路都在 `(c::r).toFinset` 中。
 
 ## [Registers.lean](Registers.lean)
-
-这个文件证明寄存器读取、取反、范围和逐位关系，并给出寄存器取反电路规格。
 
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 

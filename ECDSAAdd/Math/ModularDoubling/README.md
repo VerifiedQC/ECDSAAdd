@@ -14,8 +14,6 @@
 
 ## [HalvingBijection.lean](HalvingBijection.lean)
 
-这个文件证明规范代表元上的模倍增和模减半互相撤销。
-
 以下声明位于 `ECDSAAdd` 命名空间。
 
 ```lean
@@ -31,8 +29,6 @@ theorem halve_double_mod (p r : Nat) (hp : p%2=1) (hr : r<p)
 证明了规范代表元上的模减半撤销模加倍。
 
 ## [ModularHalving.lean](ModularHalving.lean)
-
-这个文件定义奇模数下的减半和固定轮迭代，证明范围、数值关系及奇偶标志。
 
 以下声明位于 `ECDSAAdd` 命名空间。
 

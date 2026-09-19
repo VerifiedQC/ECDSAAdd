@@ -10,8 +10,6 @@
 
 ## [SwapRegisters.lean](SwapRegisters.lean)
 
-这个文件定义普通和受控寄存器交换，证明交换结果、状态保持及资源。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean

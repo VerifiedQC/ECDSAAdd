@@ -10,8 +10,6 @@
 
 ## [Compare.lean](Compare.lean)
 
-这个文件定义寄存器及常量比较电路，证明比较标志、输入和工作位恢复，并给出资源用量。
-
 以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
 ```lean
