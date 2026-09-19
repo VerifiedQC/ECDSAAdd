@@ -97,10 +97,11 @@ theorem run_append (p q : Program) (m : List Bool) (s : State)
 这个文件定义如何陈述电路的正确性，并证明如何组合已有的正确性结论。
 
 ```lean
-class Holds (α : Type) (β : Type)
+class Holds (α : Type) (β : Type) where
+  holds : BasisState → α → β → Prop
 ```
 
-Holds 表示寄存器取值的断言，由 holds 这一部分定义：在给定计算基态下，α 类型的寄存器是否保存 β 类型的值。
+Holds.holds st a b 给出命题：在计算基态 st 中，α 类型的寄存器 a 保存的值是否是 β 类型的 b。
 
 ```lean
 def regValue (r : List Wire) (st : BasisState) : Nat
