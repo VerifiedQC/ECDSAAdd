@@ -1,5 +1,5 @@
 import ECDSAAdd.Math.PointAddition.AffineFormula
-import ECDSAAdd.Circuit.MeasuredAnd.And
+import ECDSAAdd.Circuit.And
 import ECDSAAdd.Arithmetic.ModularInverse.InverseContract
 import ECDSAAdd.Arithmetic.ModularAddition.FieldAddSub
 import ECDSAAdd.Arithmetic.ModularMultiplication.FieldMultiply

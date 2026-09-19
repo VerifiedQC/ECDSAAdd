@@ -1435,7 +1435,7 @@ for i = 0 .. W-1:
   measureX t[i]; if outcome = 1 then CZ c src[i]
 ```
 
-每次测量把 t[i] 置零，产生的相位为 `outcome AND t[i]`；同一条指令的 CZ 修正产生 `outcome AND c AND src[i]`，由掩码关系相消。此前清掉的位不影响 c 或任何 src 位，故归纳覆盖任意测量记录。控制为 false 时 t 全零，CZ 的控制 c 为零，相位也保持。该构造直接复用本库 `Circuit/MeasuredAnd/And.lean` 的 AND 清理原理；不扩展语法、不用 CCZ、不要求倒放测量。
+每次测量把 t[i] 置零，产生的相位为 `outcome AND t[i]`；同一条指令的 CZ 修正产生 `outcome AND c AND src[i]`，由掩码关系相消。此前清掉的位不影响 c 或任何 src 位，故归纳覆盖任意测量记录。控制为 false 时 t 全零，CZ 的控制 c 为零，相位也保持。该构造直接复用本库 `Circuit/And.lean` 的 AND 清理原理；不扩展语法、不用 CCZ、不要求倒放测量。
 
 ### 20.2 接口与证明义务
 

@@ -47,7 +47,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Circuit：测量 AND 模块
 
-[MeasuredAnd](../ECDSAAdd/Circuit/MeasuredAnd/README.md) 包含 And.lean，证明 AND 计算后测量清理能够恢复完整状态，并给出同程序资源。Circuit 当前只有这一项功能，不为凑数量继续拆分。
+[Circuit](../ECDSAAdd/Circuit/README.md) 包含 And.lean，证明 AND 计算后测量清理能够恢复完整状态，并给出同程序资源。Circuit 当前只有一个 Lean 文件，因此 And.lean 与 README.md 直接放在 Circuit 下。
 
 各功能目录只有一份 README，作为人类阅读入口；进入源码只用于核对精确规格或修改证明。现有 Math/ModularAddition 仍依赖 Arithmetic 的 Reduction，Hoare 仍依赖曲线定义，本次未强行重排实际依赖层次。
 
