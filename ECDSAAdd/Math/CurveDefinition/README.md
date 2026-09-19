@@ -1,19 +1,149 @@
 # secp256k1 数学对象
 
-本模块定义项目究竟在哪个域、哪条曲线上讨论点加。不构造电路，也不声称证明了曲线群阶。
+本模块定义 secp256k1 的域、曲线、点与生成元，并证明生成元及坐标的基本性质；不证明曲线群阶。
 
-## 接口与范围
+## 文件目录
 
-唯一源码是 [BitcoinCurve.lean](BitcoinCurve.lean)：定义模数 `p=2^256−2^32−977`、`Fp=ZMod p`、曲线 `y²=x³+7`、点类型 `Secp256k1.Point`、标准生成元 G 与坐标读取函数 coordinates。order 是指定的阶常量，不是群阶定理。
+[BitcoinCurve.lean](#bitcoincurvelean)
 
-文件证明生成元坐标范围、曲线判别式非零、生成元满足方程且非奇异，以及 G 非零。无穷远点的 coordinates 为 none，有限点为 some；这里尚未选择线路编码。
+这个文件定义 secp256k1 的数学对象，证明生成元的坐标、曲线方程和非奇异性。
 
-## 为什么正确
+## [BitcoinCurve.lean](BitcoinCurve.lean)
 
-具体常量通过核验等式、模运算与非奇异条件构造数学点，再使用 Mathlib 的椭圆曲线点类型。不要把 G 满足曲线方程理解成 G 的阶已经得到证明。模数素性另由 [FieldPrimality](../FieldPrimality/README.md) 提供。
+这个文件定义 secp256k1 的数学对象，证明生成元的坐标、曲线方程和非奇异性。
 
-## 修改影响与验证
+以下声明位于 `ECDSAAdd` 命名空间。
 
-该模块被点加数学、Hoare 点断言及算术模数实例使用；改 p、曲线或坐标定义会影响几乎所有上层规格。依赖 Mathlib，不依赖项目电路。运行仓库根目录的 `scripts/verify.sh`，检查曲线与生成元相关公开入口；新结论需按现有规则补入公理检查。
+```lean
+def p : ℕ
+```
 
-[返回项目地图](../../../docs/MODULES.md)。
+定义 secp256k1 的域模数 p = 2^256 − 2^32 − 977。
+
+```lean
+def curveA : ℕ
+```
+
+定义 secp256k1 曲线方程中的系数 a = 0。
+
+```lean
+def curveB : ℕ
+```
+
+定义 secp256k1 曲线方程中的系数 b = 7。
+
+```lean
+abbrev Fp := ZMod p
+```
+
+表示 secp256k1 使用的模 p 有限域。
+
+```lean
+def order : Nat
+```
+
+定义 secp256k1 标准群阶常量 n；这里只给出常量，不证明曲线点数等于 n。
+
+以下声明位于 `ECDSAAdd.Secp256k1` 命名空间。
+
+```lean
+def generatorX : Nat
+```
+
+给出标准生成元横坐标的自然数表示。
+
+```lean
+def generatorY : Nat
+```
+
+给出标准生成元纵坐标的自然数表示。
+
+```lean
+def curve : WeierstrassCurve Fp
+```
+
+定义有限域 Fp 上的 secp256k1 曲线 y² = x³ + 7。
+
+```lean
+abbrev Point := curve.toAffine.Point
+```
+
+表示 secp256k1 曲线点的数学类型，包括无穷远点。
+
+```lean
+theorem generatorX_lt_p
+```
+
+证明了生成元横坐标的自然数表示小于 p。
+
+```lean
+theorem generatorY_lt_p
+```
+
+证明了生成元纵坐标的自然数表示小于 p。
+
+```lean
+theorem generatorX_val
+```
+
+证明了将生成元横坐标转为域元素后再取标准代表元，仍得到原自然数坐标。
+
+```lean
+theorem generatorY_val
+```
+
+证明了将生成元纵坐标转为域元素后再取标准代表元，仍得到原自然数坐标。
+
+```lean
+theorem curve_discriminant_ne_zero
+```
+
+证明了 secp256k1 曲线判别式在 Fp 中非零。
+
+```lean
+theorem generator_equation
+```
+
+证明了标准生成元坐标满足 secp256k1 曲线方程。
+
+```lean
+theorem generator_nonsingular
+```
+
+证明了标准生成元是非奇异仿射点。
+
+```lean
+def G : Point
+```
+
+将标准生成元定义为 Point 类型的曲线点。
+
+```lean
+def coordinates : Point → Option (Fp × Fp)
+```
+
+读取有限点的横纵坐标，无穷远点返回 none。
+
+```lean
+theorem coordinates_zero
+```
+
+证明了 `coordinates (0 : Point)` 等于 `none`。
+
+```lean
+theorem coordinates_some {x y : Fp} (h : curve.toAffine.Nonsingular x y)
+```
+
+证明了 `coordinates (.some h)` 等于 `some (x, y)`。
+
+```lean
+theorem coordinates_G
+```
+
+证明了读取 G 得到的正是标准生成元坐标。
+
+```lean
+theorem G_ne_zero
+```
+
+证明了标准生成元不是无穷远点。

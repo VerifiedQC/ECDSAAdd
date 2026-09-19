@@ -1,19 +1,272 @@
 # 域模数的素性证明
 
-本模块只负责证明 secp256k1 的域模数 p 是素数，供 ZMod p 的域运算使用。不证明曲线群阶或生成元阶。
+本模块通过素性证书证明 secp256k1 的域模数 p 是素数。
 
-## 接口
+## 文件目录
 
-[BitcoinPrimes.lean](BitcoinPrimes.lean) 的 `Secp256k1.p_prime : Nat.Prime p` 是主要结论；文件还提供其对应实例。需要本项目模数素性时，从此入口使用，不必逐个阅读内部证书。
+[BitcoinPrimes.lean](#bitcoinprimeslean)
 
-## 证明思路
+这个文件以 Lucas 素性判据和分层证书证明域模数 p 是素数。
 
-内部 lucasFromFactors 将 n−1 的完整因子分解、因子素性、模幂等式和排除条件接到 Mathlib 的 Lucas 素性判据。较小素数证书逐层支撑较大的证书，最终得到 p_prime；常量运算由 Lean 检查，不是假设一个外部测试结果。
+## [BitcoinPrimes.lean](BitcoinPrimes.lean)
 
-定义的 p 来自 [CurveDefinition](../CurveDefinition/README.md)。更换模数需要重新建立证书及下游域前提，不能仅替换常量或引入新公理。
+这个文件以 Lucas 素性判据和分层证书证明域模数 p 是素数。
 
-## 修改影响与验证
+以下声明位于 `ECDSAAdd.Secp256k1` 命名空间。
 
-主要影响点加数学、secp256k1 求逆实例及依赖域性质的算术证明。运行 `scripts/verify.sh`，其中包含 p_prime 的传递公理检查；允许的公理仍只有 propext、Classical.choice、Quot.sound。
+```lean
+theorem lucasFromFactors (n a : Nat) (factors : List Nat)
+    (ha : (a : ZMod n) ^ (n - 1) = 1)
+    (hn1 : n - 1 ≠ 0)
+    (hprod : factors.prod = n - 1)
+    (hprime : ∀ q ∈ factors, Nat.Prime q)
+    (hpow : ∀ q ∈ factors, (a : ZMod n) ^ ((n - 1) / q) ≠ 1)
+```
 
-[返回项目地图](../../../docs/MODULES.md)。
+证明了 `n` 是素数。
+
+```lean
+theorem prime_cert_01
+```
+
+证明了 `13` 是素数。
+
+```lean
+theorem prime_cert_02
+```
+
+证明了 `17` 是素数。
+
+```lean
+theorem prime_cert_03
+```
+
+证明了 `19` 是素数。
+
+```lean
+theorem prime_cert_05
+```
+
+证明了 `29` 是素数。
+
+```lean
+theorem prime_cert_06
+```
+
+证明了 `31` 是素数。
+
+```lean
+theorem prime_cert_08
+```
+
+证明了 `41` 是素数。
+
+```lean
+theorem prime_cert_09
+```
+
+证明了 `53` 是素数。
+
+```lean
+theorem prime_cert_11
+```
+
+证明了 `67` 是素数。
+
+```lean
+theorem prime_cert_13
+```
+
+证明了 `83` 是素数。
+
+```lean
+theorem prime_cert_14
+```
+
+证明了 `97` 是素数。
+
+```lean
+theorem prime_cert_15
+```
+
+证明了 `101` 是素数。
+
+```lean
+theorem prime_cert_16
+```
+
+证明了 `103` 是素数。
+
+```lean
+theorem prime_cert_19
+```
+
+证明了 `131` 是素数。
+
+```lean
+theorem prime_cert_22
+```
+
+证明了 `239` 是素数。
+
+```lean
+theorem prime_cert_23
+```
+
+证明了 `271` 是素数。
+
+```lean
+theorem prime_cert_25
+```
+
+证明了 `419` 是素数。
+
+```lean
+theorem prime_cert_26
+```
+
+证明了 `443` 是素数。
+
+```lean
+theorem prime_cert_30
+```
+
+证明了 `887` 是素数。
+
+```lean
+theorem prime_cert_31
+```
+
+证明了 `971` 是素数。
+
+```lean
+theorem prime_cert_32
+```
+
+证明了 `1373` 是素数。
+
+```lean
+theorem prime_cert_34
+```
+
+证明了 `1627` 是素数。
+
+```lean
+theorem prime_cert_37
+```
+
+证明了 `2621` 是素数。
+
+```lean
+theorem prime_cert_38
+```
+
+证明了 `2657` 是素数。
+
+```lean
+theorem prime_cert_42
+```
+
+证明了 `4423` 是素数。
+
+```lean
+theorem prime_cert_43
+```
+
+证明了 `5323` 是素数。
+
+```lean
+theorem prime_cert_44
+```
+
+证明了 `7723` 是素数。
+
+```lean
+theorem prime_cert_46
+```
+
+证明了 `13441` 是素数。
+
+```lean
+theorem prime_cert_48
+```
+
+证明了 `20113` 是素数。
+
+```lean
+theorem prime_cert_49
+```
+
+证明了 `24809` 是素数。
+
+```lean
+theorem prime_cert_51
+```
+
+证明了 `41201` 是素数。
+
+```lean
+theorem prime_cert_53
+```
+
+证明了 `96557` 是素数。
+
+```lean
+theorem prime_cert_56
+```
+
+证明了 `1206781` 是素数。
+
+```lean
+theorem prime_cert_59
+```
+
+证明了 `7240687` 是素数。
+
+```lean
+theorem prime_cert_60
+```
+
+证明了 `13331831` 是素数。
+
+```lean
+theorem prime_cert_62
+```
+
+证明了 `107590001` 是素数。
+
+```lean
+theorem prime_cert_66
+```
+
+证明了 `173378833005251801` 是素数。
+
+```lean
+theorem prime_cert_68
+```
+
+证明了 `22149492674086928081353` 是素数。
+
+```lean
+theorem prime_cert_69
+```
+
+证明了 `132896956044521568488119` 是素数。
+
+```lean
+theorem prime_cert_72
+```
+
+证明了 `255515944373312847190720520512484175977` 是素数。
+
+```lean
+theorem prime_cert_73
+```
+
+证明了 `205115282021455665897114700593932402728804164701536103180137503955397371` 是素数。
+
+```lean
+theorem p_prime
+```
+
+证明了 `p` 是素数。

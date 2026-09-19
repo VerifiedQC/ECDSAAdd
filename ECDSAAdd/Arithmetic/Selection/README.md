@@ -1,17 +1,67 @@
 # 条件选择
 
-本模块根据一个控制位，在两个寄存器之间选择一个值并 XOR 到输出：`out ^= if flag then yes else no`。两个候选寄存器和选择位保持。
+本模块根据控制位在两组输入中选择一个值，将它异或到输出，并证明输入保持与资源性质。
 
-## 契约
+## 文件目录
 
-[Select.lean](Select.lean) 的 `SelectBit` 将对应位置的 `no/yes/out` 三根线组成一组；列表天然给出相同位宽。`selectXor_correct` 要求列表中的线路互异，且 `flag` 不属于这些线路。输出可以有任意初值，不要求额外工作寄存器。
+[Select.lean](#selectlean)
 
-## 算法与证明
+这个文件定义受控二选一的 XOR 输出电路，证明选择结果和资源。
 
-布尔选择可以写为 `no XOR (flag AND (yes XOR no))`。电路临时构造候选差，使用一次受控写入，再恢复临时修改的输入。每位证得这一恒等式后，按位列表归纳得到整个寄存器的 XOR 结果；控制和候选输入不会被后续位破坏。
+## [Select.lean](Select.lean)
 
-电路没有测量；相位保持由门语义直接推出。该模块主要为模加减提供“原值或约减候选”的选择，而不是直接控制整个算术程序。
+这个文件定义受控二选一的 XOR 输出电路，证明选择结果和资源。
 
-## 修改与验证
+以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
-全部内容在 `Select.lean`，资源与实际支持为 `selectXor_counts`、`selectXor_wires`。依赖 [RegisterXor](../RegisterXor/README.md) 的读值引理。修改选择方向时检查 [ModularAddition](../ModularAddition/README.md) 中借位对应的候选顺序，并在仓库根目录运行 `scripts/verify.sh`。
+```lean
+structure SelectBit
+```
+
+两个候选值与输出位，均按小端排列。 `SelectBit` 定义为 `no`、`yes`、`out` 各部分。
+
+```lean
+def selectWires : List SelectBit → List Wire
+```
+
+列出该布局包含的各条线路。
+
+```lean
+def selectXor : List SelectBit → Wire → Program
+```
+
+输出异或 (if flag then yes else no)。暂时将 yes XOR 到 no， 用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。
+
+```lean
+theorem mem_selectWires {bs : List SelectBit} {b : SelectBit} (hb : b ∈ bs)
+```
+
+证明了每个逐位选择布局的 no、yes、out 都在选择器的线路列表中。
+
+```lean
+theorem selectStep_correct (a b out flag : Wire)
+    (ha : a ≠ out) (hb : b ≠ out) (hab : a ≠ b) (hf : flag ≠ out) (hfa : flag ≠ a)
+    (s : State) (m : List Bool)
+```
+
+证明了 `run (prog { Instr.CX a out; Instr.CX b a; Instr.CCX flag a out; Instr.CX b a }) m s` 等于 `⟨s.phase, writeBit s.basis out (s.basis out ^^ (if s.basis flag then s.basis b else s.basis a))⟩`。
+
+```lean
+theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
+    (hnd : (selectWires bs).Nodup) (hflag : flag ∉ selectWires bs)
+    (s : State) (m : List Bool)
+```
+
+证明了两个输入寄存器和选择位保持，任意输出初值按选择结果 XOR 更新。
+
+```lean
+theorem selectXor_counts (bs : List SelectBit) (flag : Wire)
+```
+
+证明了每位一次 Toffoli，整个选择没有测量。
+
+```lean
+theorem selectXor_wires (b : SelectBit) (bs : List SelectBit) (flag : Wire)
+```
+
+证明了非空选择的支持集是输入、输出线路与选择位的并集。

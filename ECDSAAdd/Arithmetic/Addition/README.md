@@ -1,5 +1,37 @@
 # Addition
 
+本模块提供固定位宽的二进制加减法、受控加减法和计数器，并证明计算结果、工作位清理及资源用量。
+
+## 文件目录
+
+[FullAdder.lean](#fulladderlean)
+
+这个文件定义一位全加器和进位清理电路，证明它们的计算结果、状态保持性质和资源用量。
+
+[RippleAdder.lean](#rippleadderlean)
+
+这个文件将一位全加器组合成多位加法器，证明截断和、额外高位保存的完整和，以及进位清理与资源用量。
+
+[Subtractor.lean](#subtractorlean)
+
+这个文件利用加法器构造减法器，将两个输入之差按输出位宽截断后异或到输出，并证明正确性及资源用量。
+
+[Layout.lean](#layoutlean)
+
+这个文件把逐位加法线路组织成统一布局，提供加减法、结果清理及资源定理。
+
+[InPlaceAdder.lean](#inplaceadderlean)
+
+这个文件定义直接更新目标寄存器的加减法，以及受控常量和受控寄存器版本，证明结果、工作位清理与资源用量。
+
+[MeasuredMaskedAdder.lean](#measuredmaskedadderlean)
+
+这个文件用测量和即时相位修正清除受控加减法的临时掩码，证明计算结果不变及对应的资源用量。
+
+[Counter.lean](#counterlean)
+
+这个文件提供 10 位受控加一、减一计数器，既支持 XOR 输出，也支持把结果写入另一寄存器后清零原计数。
+
 ## [FullAdder.lean](FullAdder.lean)
 
 这个文件定义一位全加器和进位清理电路，证明它们的计算结果、状态保持性质和资源用量。

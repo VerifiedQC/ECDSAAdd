@@ -1,23 +1,59 @@
 # AND 计算与测量清理
 
-本模块展示怎样计算一个 AND 辅助位，再通过测量和即时相位修正将它清零，同时恢复完整状态。它不是返回 AND 值的永久输出接口。
+本模块计算 AND 辅助位后用测量与即时修正将其清零，证明完整状态恢复及同程序资源。
 
-## 接口与前提
+## 文件目录
 
-[And.lean](And.lean) 的 andComputeErase 先执行 CCX a b anc，再测量 anc：结果为 1 时做 CZ a b，为 0 时不修正。
+[And.lean](#andlean)
 
-andComputeErase_spec 要求三条线互异、anc 初始为 false；对任意输入 A、B，结束时二者保持且 anc=false，Triple 同时保证相位恢复。更底层 andComputeErase_correct 要求两个控制分别不同于 anc，直接证明对任意测量记录完整 State 恢复。
+这个文件定义 AND 计算后立即测量清理的电路，证明完整状态恢复及资源用量。
 
-## 为什么正确
+## [And.lean](And.lean)
 
-CCX 将 A AND B 写入零辅助位。测量清零引入的相位恰由结果为 1 时的 CZ 抵消；控制位未被改动，所以这项修正使用的仍是同一个 AND。证明展开执行语义，分别处理两种测量结果，并证明所有线路及相位恢复。
+这个文件定义 AND 计算后立即测量清理的电路，证明完整状态恢复及资源用量。
 
-同程序资源定理给出 1 个 Toffoli、1 次测量，三线互异时静态线路数为 3。不能由本示范推断任意带测量程序都可倒放来清理。
+以下声明位于 `ECDSAAdd` 命名空间。
 
-## 依赖、修改与验证
+```lean
+def andComputeErase (a b anc : Wire) : Program
+```
 
-依赖 [Framework](../../Framework/README.md) 中的 Hoare 证明与执行语义。Arithmetic 中相关测量清理证明必须满足各自适用的不变量，不能省略相位条件。
+AND 计算后立即测量反计算：结果 1 时做 CZ，结果 0 时不修正。
 
-运行 `scripts/verify.sh`；其中检查本模块的完整恢复、Triple 和资源定理。该目录仅此功能，因此只保留这一份 README。
+```lean
+theorem andComputeErase_correct (a b anc : Wire)
+    (ha : a ≠ anc) (hb : b ≠ anc) (s : State) (hclean : s.basis anc = false)
+    (m : List Bool)
+```
 
-[返回项目地图](../../../docs/MODULES.md)。
+证明了辅助位初始为零时，程序恢复整个状态，包括相位和所有外部线路。
+
+```lean
+theorem andComputeErase_spec (a b anc : Wire) (hnd : [a, b, anc].Nodup) (A B : Bool)
+```
+
+证明了三线互异：任意 A、B 的 AND 计算与测量反计算保持数据，辅助位归零。 Triple 的定义还保证初始相位恢复，并覆盖所有测量结果。
+
+```lean
+theorem andComputeErase_toffoliCount (a b anc : Wire)
+```
+
+证明了同一程序恰好使用一个 Toffoli。
+
+```lean
+theorem andComputeErase_measurementCount (a b anc : Wire)
+```
+
+证明了同一程序恰好测量一次。
+
+```lean
+theorem andComputeErase_wires (a b anc : Wire)
+```
+
+证明了程序实际触及的线路集合：`wires (andComputeErase a b anc) = {a, b, anc}`。
+
+```lean
+theorem andComputeErase_qubitCount (a b anc : Wire) (hnd : [a, b, anc].Nodup)
+```
+
+证明了三线互异时，静态物理线路数恰好为 3。

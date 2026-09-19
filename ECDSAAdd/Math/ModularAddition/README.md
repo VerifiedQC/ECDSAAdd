@@ -1,25 +1,40 @@
 # 模加减的数值与清理等式
 
-本模块提供原地模加减电路需要的自然数等式，尤其是如何从约减后的值恢复并清除借位信息。
+本模块证明原地模加减所需的约减、取负及借位清理等式。
 
-## 接口
+## 文件目录
 
-[ModInPlace.lean](ModInPlace.lean) 中：
+[ModInPlace.lean](#modinplacelean)
 
-- modAddCore_cleanup：当 A≤p、Z<p 时，用约减后的结果与 A 比较恢复是否减过 p。
-- modAddCore_low：扩宽减 p 后按借位加回 p，低 n 位得到规范余数；要求正模数、p<2^n、t<2p。
-- negRaw_range_restore、modSubCore_value：连接取负恢复和减法的自然数表达式。
+这个文件证明原地模加减中低位约减、借位清理及取负恢复所需的数值等式。
 
-这些是数值等式，不单独保证电路工作位清零或相位恢复；后者由 [Arithmetic/ModularAddition](../../Arithmetic/ModularAddition/README.md) 的程序规格证明。
+## [ModInPlace.lean](ModInPlace.lean)
 
-## 证明思路与依赖
+这个文件证明原地模加减中低位约减、借位清理及取负恢复所需的数值等式。
 
-按是否发生一次约减分情况，用范围条件把取模展开为原值或减 p，再证明比较等价。不能把 A≤p 随意扩大到任意自然数。
+以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
 
-现有文件依赖 Arithmetic 中的 Reduction 与 [ModularDoubling](../ModularDoubling/README.md)。因此 Math 在实际 import 图中并非完全独立的底层；本次仅移动路径，不重构这条依赖或重命名现有 ECDSAAdd.Arithmetic namespace。
+```lean
+theorem modAddCore_cleanup (A Z p : Nat) (hA : A ≤ p) (hZ : Z < p)
+```
 
-## 修改与验证
+证明了扩展源范围允许 A=p；一次约减后与源比较，恰好恢复减 p 时的借位。
 
-改范围、借位或高低位解释时复查 ModInPlace 电路及其上层 Montgomery 适配器。运行 `scripts/verify.sh`；具体前提以链接文件为准。
+```lean
+theorem modAddCore_low (t p n : Nat) (hp : 0 < p) (hpn : p < 2^n)
+    (ht : t < 2*p)
+```
 
-[返回项目地图](../../../docs/MODULES.md)。
+证明了扩宽减 p 后，仅向低 n 位加回 p 即可约减；最高位暂时保留借位供比较清理。
+
+```lean
+theorem negRaw_range_restore (A p : Nat) (hA : A ≤ p)
+```
+
+证明了取负源包装中的 p−A 仍在扩展源范围内，第二次取负恢复原源。
+
+```lean
+theorem modSubCore_value (A Z p : Nat) (hA : A ≤ p)
+```
+
+证明了将扩展源 p−A 加到规范目标上，就是自然数表示的模减。
