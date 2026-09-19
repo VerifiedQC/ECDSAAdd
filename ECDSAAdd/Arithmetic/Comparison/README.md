@@ -4,9 +4,21 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [Compare.lean](#comparelean)
 
 这个文件定义寄存器及常量比较电路，证明比较标志、输入和工作位恢复，并给出资源用量。
+
+- 规格：将 `X<Y` 或 `X<K` 的判断异或到目标标志，受控版本再与控制值做 AND；保持输入和控制，并将常量临时寄存器及进位工作区恢复为零。
+- 正确性：compareLt 仅把受控的 X<Y 判断异或到目标，目标以外的位及相位不变；比较链中间引理对应“无最终进位”的判断。
+- 资源：control.isSome 表示有控制，control.toList.length 在无控制/有控制时分别为 0/1；线路数还需互异及等长条件。
+
+  - `flipBelow control top t`：T = `(if control.isSome then 1 else 0)`，M = `0`。
+  - `compareChain control x y carry cin target` / `compareLtConst control x y carry cin target K`：T = `y.length + (if control.isSome then 1 else 0)`，M = `y.length`。
+  - `compareLt control x y carry cin target`：T = `y.length + (if control.isSome then 1 else 0)`，M = `y.length`，Q = `3 * y.length + 2 + control.toList.length`。
 
 ## [Compare.lean](Compare.lean)
 

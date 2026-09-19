@@ -4,6 +4,10 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [CandidatePool.lean](#candidatepoollean)
 
 这个文件确定点加候选计算实际使用的共享池子集，并证明长度、包含及并集关系。
@@ -11,6 +15,8 @@
 [ControlledPointAddSpec.lean](#controlledpointaddspeclean)
 
 这个文件给出受控点加的完整公开规格，连接控制状态与最终点加结果。
+
+- 规格：合法点 R、控制 b 和零工作区下，原地点变为 `if b then R+C else R`，控制保持，工作区恢复零；覆盖有限常量点和无穷远常量点。
 
 [ControlledPointLayout.lean](#controlledpointlayoutlean)
 
@@ -24,6 +30,8 @@
 
 这个文件证明受控输出选择的计算结果及其与核心寄存器的分离。
 
+- 正确性：控制关闭不改输出，开启时把普通候选、倍点常量和无穷远输入对应常量点的选定编码异或到输出；输出之外的位及相位不变。该文件证明输出阶段，不单独证明完整点加。
+
 [ControlledPointPorts.lean](#controlledpointportslean)
 
 这个文件定义受控点加布局及各视图，证明线路互异和选择布局前提。
@@ -31,6 +39,13 @@
 [ControlledPointResources.lean](#controlledpointresourceslean)
 
 这个文件证明受控点加输出及完整程序的资源，分别处理有限常量和无穷远常量。
+
+- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，不是有限点 (0,0)。
+
+  - `controlledPointOutput L C`：T = `518`，M = `0`。
+  - `controlledPointAddOut L (.some hc)`：T = `9321834`，M = `6147424`，Q = `9784`。
+  - `controlledPointAdd L (.some hc)`：T = `8946186`，M = `5772554`，Q = `6218`。
+  - `controlledPointAdd L 0`：T = `0`，M = `0`，Q = `0`。
 
 [ControlledPointStages.lean](#controlledpointstageslean)
 
@@ -44,6 +59,8 @@
 
 这个文件将域减法、域乘法和求逆的规格提升为逐线状态保持结论。
 
+- 正确性：域减法、乘法和非零输入求逆分别把相应结果异或到输出；每种操作都保持输出之外的所有基态位与相位。
+
 [PointAddFrames.lean](#pointaddframeslean)
 
 这个文件证明候选计算、标志和输出之间的线路分离及状态保持关系。
@@ -56,9 +73,16 @@
 
 这个文件证明 XOR 点加在有限常量和无穷远常量情况下的精确资源。
 
+- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，其分支仍需点复制线路。
+
+  - `pointAddOut L (.some hc)`：T = `9321828`，M = `6147424`，Q = `9780`。
+  - `pointAddOut L 0`：T = `0`，M = `0`，Q = `1026`。
+
 [PointAddSpec.lean](#pointaddspeclean)
 
 这个文件组合所有点加阶段，证明 XOR 输出和零输出的完整点群加法规格。
+
+- 规格：将 R+C 的有限点标志与两个坐标分别异或到输出编码，保持输入 R 并恢复零工作区；输出初始编码无穷远点时，最终直接编码 R+C。
 
 [PointAddStages.lean](#pointaddstageslean)
 
@@ -88,13 +112,23 @@
 
 这个文件证明候选计算与按依赖顺序清理的完整寄存器结果。
 
+- 规格：在 CandidateValues 断言下，compute 从输入 X、Y 和零候选区得到 candidateResult 指定的差值、逆元、斜率与候选坐标，clear 将它们清零；保持输入及普通分支标志。
+
 [PointCandidateResources.lean](#pointcandidateresourceslean)
 
 这个文件证明候选计算、清理及辅助常量减法与平方的门数和测量数。
 
+- 资源：
+
+  - `pointSubConstant L x out k`：T = `1284`，M = `1028`。
+  - `pointSquare L`：T = `379424`，M = `379424`。
+  - `pointCandidateCompute L cx cy` / `pointCandidateClear L cx cy`：T = `4660144`，M = `3073200`。
+
 [PointCandidateSpec.lean](#pointcandidatespeclean)
 
 这个文件把候选寄存器结果连接到域坐标公式，并给出计算和清理规格。
+
+- 规格：逐寄存器给出候选计算与清理的前后值：compute 保留候选坐标及其差值、斜率、逆元等中间量，常量寄存器和共享池清零；clear 再清零全部候选中间量，输入和普通分支标志保持。
 
 [PointCandidateState.lean](#pointcandidatestatelean)
 
@@ -120,9 +154,13 @@
 
 这个文件证明受控点常量写入对有限标志和坐标的作用。
 
+- 正确性：控制开启时将点常量 C 的完整编码异或到目标，关闭则不变；目标外所有位与相位保持。
+
 [PointCopyProof.lean](#pointcopyprooflean)
 
 这个文件证明点复制与普通候选输出的坐标更新及布局前提。
+
+- 正确性：点复制异或源点的有限标志和坐标；普通候选输出仅在 generic 开启时异或候选低 256 位坐标和有限标志。两者都保持输出外所有位与相位。
 
 [PointEffect.lean](#pointeffectlean)
 
@@ -132,6 +170,8 @@
 
 这个文件定义完整点编码及相等检测，证明编码范围、单射性和检测正确性。
 
+- 正确性：只把 `控制 AND (R=C)` 异或到目标位，保持其他所有基态位与相位。
+
 [PointFlagLayout.lean](#pointflaglayoutlean)
 
 这个文件连接点坐标零检测布局，定义输入分类标志的计算与清理程序。
@@ -140,9 +180,13 @@
 
 这个文件证明点分类标志的计算、保持、往返恢复和清理。
 
+- 正确性：比较端口只写目标相等标志；分类计算得到 equalX、equalNegY、generic、double 四位，清理将四位恢复为零，其他基态位与相位不变。
+
 [PointFlagResources.lean](#pointflagresourceslean)
 
 这个文件证明点分类标志程序的门数、测量数与实际支持。
+
+- 资源：`pointFlagsCompute L cx cy` / `pointFlagsClear L cx cy`：T = `514`，M = `512`。
 
 [PointFlagStages.lean](#pointflagstageslean)
 
@@ -151,6 +195,9 @@
 [PointFlags.lean](#pointflagslean)
 
 这个文件定义从相等标志组合普通、倍点标志的门列，并证明结果和计数。
+
+- 正确性：只将 `finite AND NOT equalX` 异或到 generic，将 `equalX AND NOT equalNegY` 异或到 double，其他基态位与相位不变。
+- 资源：`pointBranchFlags f ex ey g d`：T = `2`，M = `0`。
 
 [PointInPlaceBoundary.lean](#pointinplaceboundarylean)
 
@@ -168,6 +215,8 @@
 
 这个文件证明原地点加用更新后的坐标清除斜率，包括例外分母情况。
 
+- 规格：在斜率与输出坐标满足给定关系的前提下，把斜率 A 清零，保持 X、Y、普通分支标志和两个为假的辅助标志。
+
 [PointInPlaceConditions.lean](#pointinplaceconditionslean)
 
 这个文件证明原地点加的零检测、商标志和斜率清理步骤。
@@ -175,6 +224,9 @@
 [PointInPlaceConstant.lean](#pointinplaceconstantlean)
 
 这个文件证明原地点加的受控常量加法及其目标外保持。
+
+- 规格：控制 B 开启时将 k 模加到 Z，关闭时 Z 不变；装载常量的寄存器和工作区从零恢复为零，控制保持。
+- 正确性：指定目标 r 变为 `(Z+(if B then k.val else 0)) mod p`，r 之外的所有基态位及相位不变。
 
 [PointInPlaceCorners.lean](#pointinplacecornerslean)
 
@@ -184,13 +236,24 @@
 
 这个文件汇总原地点加辅助程序、普通分支和完整有限常量程序的资源计数。
 
+- 资源：
+
+  - `pointInPlaceConstantAdd L r k`：T = `1023`，M = `1023`。
+  - `pointInPlaceNegate L`：T = `3838`，M = `2558`。
+  - `pointInPlaceGeneric L cx cy lambdaStar`：T = `8943108`，M = `5769476`。
+  - `pointInPlaceFinite L C cx cy`：T = `8946186`，M = `5772554`。
+
 [PointInPlaceFiniteSpec.lean](#pointinplacefinitespeclean)
 
 这个文件将分类、普通和特殊分支组合为有限常量点的原地点加规格。
 
+- 规格：在 PointInPlaceBoundary 边界状态断言下，对有限常量点 C 原地执行受控 R+C，保留控制，最终各标志恢复为零。
+
 [PointInPlaceFlagGates.lean](#pointinplaceflaggateslean)
 
 这个文件证明原地点加普通分支标志及倍点使能标志的门列结果。
+
+- 正确性：generic 异或外部控制与三个选择标志；double 异或 `控制 AND (cy≠−cy)`。每个门只修改其目标标志，其余基态位和相位不变。
 
 [PointInPlaceFlagState.lean](#pointinplaceflagstatelean)
 
@@ -212,6 +275,8 @@
 
 这个文件将局部有限点规格扩展到完整工作区，证明最终点更新和全部工作位清理。
 
+- 规格：完整寄存器规格为：控制 b 与点 R 保持约定编码，点更新为 `if b then R+C else R`，整个工作区从零恢复为零。
+
 [PointInPlaceLayout.lean](#pointinplacelayoutlean)
 
 这个文件定义原地点加共享求逆、除法、模乘等接口，并证明基本长度和位宽。
@@ -224,9 +289,14 @@
 
 这个文件证明原地点加中坐标取负的规格及目标外保持。
 
+- 规格：普通分支标志 B 开启时把 A 变为 `(p−A) mod p`，否则保持 A；标志保持，辅助目标与工作区从零恢复为零。
+- 正确性：横坐标在普通分支开启时变为 `(p−A) mod p`，关闭时不变；横坐标之外所有位与相位保持。
+
 [PointInPlaceProduct.lean](#pointinplaceproductlean)
 
 这个文件证明原地点加中乘积累加的结果和共享工作区恢复。
+
+- 正确性：纵坐标分别变为 `(Y+(A·X mod p)) mod p` 或 `(Y+p−(A·X mod p)) mod p`；纵坐标之外所有位与相位保持。
 
 [PointInPlaceProgram.lean](#pointinplaceprogramlean)
 
@@ -236,9 +306,14 @@
 
 这个文件证明受控原地点加实际使用线路互异，并给出精确线路数。
 
+- 资源：`pointInPlaceFinite L C cx cy`：Q = `6218`。
+
 [PointInPlaceSquare.lean](#pointinplacesquarelean)
 
 这个文件证明通过复制斜率和模乘实现平方累减，并恢复临时副本。
+
+- 规格：保留斜率 A，把目标 X 更新为 `(X+p−(A·A mod p)) mod p`，复制斜率用的寄存器与工作区从零恢复为零。
+- 正确性：横坐标变为 `(X+p−(A² mod p)) mod p`，横坐标之外所有位与相位不变，包括恢复斜率副本和工作区。
 
 [PointInPlaceState.lean](#pointinplacestatelean)
 
@@ -264,21 +339,37 @@
 
 这个文件证明不同点分类分支合成后的输出编码结果。
 
+- 正确性：负控制常量输出只在控制为假时异或点常量；完整输出阶段按普通、倍点、无穷远输入标志异或对应编码。输出外所有位和相位保持。
+
 [PointOutputResources.lean](#pointoutputresourceslean)
 
 这个文件证明点输出与复制等程序的门数、测量数和支持集。
+
+- 资源：
+
+  - `maskedPointConstant c r C` / `negativePointConstant c r C` / `pointCopy a b`：T = `0`，M = `0`。
+  - `pointGenericOutput L` / `pointOutput L C`：T = `512`，M = `0`。
 
 [PointSelectors.lean](#pointselectorslean)
 
 这个文件证明外部控制与点分类组合后的输出选择标志及资源关系。
 
+- 正确性：三个选择位分别异或外部控制与普通、倍点、输入无穷远条件的 AND；其余所有基态位与相位不变。
+- 资源：`pointSelectors L`：T = `3`，M = `0`。
+
 [SafeDivisor.lean](#safedivisorlean)
 
 这个文件把非普通分支的除数安全地设为 1，并证明结果及资源。
 
+- 正确性：目标异或普通分支的源值，非普通分支则异或 1；目标外所有位与相位不变。只有目标初始为零时，它才直接保存这个安全分母。
+- 资源：`safeDivisor g src head tail`：T = `src.length`，M = `0`。
+
 [SelectedPointOutput.lean](#selectedpointoutputlean)
 
 这个文件证明按已计算选择标志写出点加结果的正确性与资源。
+
+- 正确性：按三个选择位异或普通候选、倍点常量及无穷远输入对应常量点的编码，保持输出外所有位和相位。
+- 资源：`selectedPointOutput L C`：T = `512`，M = `0`。
 
 ## [CandidatePool.lean](CandidatePool.lean)
 

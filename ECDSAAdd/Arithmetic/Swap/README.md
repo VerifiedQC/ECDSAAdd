@@ -4,9 +4,20 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [SwapRegisters.lean](#swapregisterslean)
 
 这个文件定义普通和受控寄存器交换，证明交换结果、状态保持及资源。
+
+- 规格：受控交换在 C 为真时交换 A、B，否则保留原值，控制不变；无控制交换直接互换两寄存器。
+- 正确性：受控交换后两寄存器读值符合控制选择，两组寄存器外的所有基态位及相位不变。
+- 资源：
+
+  - `swapRegisters c a b`：T = `a.length`，M = `0`，Q = `(if a.isEmpty then 0 else 2*a.length+1)`。
+  - `exchangeRegisters a b`：T = `0`，M = `0`，Q = `2*a.length`。
 
 ## [SwapRegisters.lean](SwapRegisters.lean)
 

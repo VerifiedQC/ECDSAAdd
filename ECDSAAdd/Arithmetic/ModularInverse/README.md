@@ -4,21 +4,37 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [Borrow.lean](#borrowlean)
 
 这个文件用计数比较计算某轮是否活动，并证明控制标志的 XOR 更新。
+
+- 规格：将 `i<K` 的判断异或到目标标志，保持计数 K，辅助寄存器、进位输入及工作位恢复零。
 
 [BorrowFrame.lean](#borrowframelean)
 
 这个文件证明活动计数比较的线路支持、非目标保持和资源计数。
 
+- 资源：`counterActiveXor L target i`：T = `L.width`，M = `L.width`。
+
 [HalveInPlace.lean](#halveinplacelean)
 
 这个文件定义按轮号受控的模减半与逆向倍增步骤，证明状态更新和计数保持。
 
+- 规格：在 `i<K` 时执行一次模减半或模倍增，否则数据 X 不变；计数 K 保持，工作区从零恢复为零。
+
 [HalvingLoop.lean](#halvinglooplean)
 
 这个文件组合固定轮数的减半与恢复过程，证明与数学迭代一致及相应资源。
+
+- 规格：在 K 的规定范围内，512 个固定步骤恰好执行 K 次有效模减半；恢复程序从该结果还原 X，计数 K 保持且工作区恢复零。
+- 资源：这里 n 是执行步骤数，不是寄存器位宽；数据位宽是 L.data.length。
+
+  - `halveStep L q i` / `doubleStep L q i`：T = `3*L.data.length+20`，M = `2*L.data.length+19`。
+  - `halveInPlace L q i n` / `restoreInPlace L q i n`：T = `n*(3*L.data.length+20)`，M = `n*(2*L.data.length+19)`。
 
 [InverseCompactLayout.lean](#inversecompactlayoutlean)
 
@@ -56,9 +72,16 @@
 
 这个文件证明求逆循环的一般及 257 位实例的门数、测量数和线路数。
 
+- 资源：公式形式与数值形式都在 512 条记录、10 位计数器、256 位低位输入与算术布局等前提下成立，不是任意位宽的通用资源定理。
+
+  - `inverseLoop L q`（公式形式）：T = `1024*(12*L.first.data.width+31)+60*L.first.data.width-12+308744`，M = `1024*(6*L.first.data.width+28)+48*L.first.data.width+308744`，Q = `18*L.first.data.width+1072`。
+  - `inverseLoop L q`（数值形式）：T = `3513912`，M = `1928760`，Q = `5698`。
+
 [InverseLoopSpec.lean](#inverseloopspeclean)
 
 这个文件将求逆内部断言改写为直接寄存器条件，给出准备、恢复及 XOR/零输出规格。
+
+- 规格：从 Kaliski 初态准备逆元 `X⁻¹ mod q`，临时算术工作区清零，但保留 InverseHistory 供撤销；恢复程序还原初态。完整循环将逆元异或到 O（或写入零输出），同时恢复初始数据和工作区。
 
 [InverseLoopState.lean](#inverseloopstatelean)
 
@@ -80,9 +103,21 @@
 
 这个文件证明外部求逆的装卸成本、实际支持、精确资源及契约满足性。
 
+- 资源：
+
+  - `inverseLoad L` / `inverseUnload L`：T = `0`，M = `0`。
+  - `fieldInverse L`：T = `3513912`，M = `1928760`，Q = `5954`。
+
 [InverseScale.lean](#inversescalelean)
 
 这个文件定义计数查表与单段 Montgomery 缩放，证明准备、恢复、历史和共享工作区条件。
+
+- 规格：从逆元中间值 N、计数 K 及零历史/工作区出发，prepare 将 a 更新为 `montgomeryValue q (inverseScaleFactor q K) N 64 mod q`，保持 K，并保留原 N、商记录和规范化标志；工作区清零。restore 利用这些历史恢复 N、K，并清零历史/工作区。
+- 资源：
+
+  - `L.lookup q`：T = `1022`，M = `1022`。
+  - `L.exchange`：T = `0`，M = `0`。
+  - `L.prepare q` / `L.restore q`：T = `154372`，M = `154372`。
 
 [InverseScaleBorrow.lean](#inversescaleborrowlean)
 
@@ -96,9 +131,15 @@
 
 这个文件将内部求逆结论接到外部寄存器，证明完整逆元的 XOR 输出和零输出规格。
 
+- 规格：非零域输入 X 与零工作区下，将 `((X : Fp)⁻¹).val` 异或到 O；零输出版本直接得到逆元，保持 X，工作区恢复零。
+
 [InverseTerminalConstants.lean](#inverseterminalconstantslean)
 
 这个文件利用 Kaliski 终态已知常量构造清理程序，并证明恢复及资源性质。
+
+- 规格：终态寄存器 `(u=1,s=q)` 与 `(u=0,s=0)` 之间可双向转换。
+- 正确性：只把常量 1 异或到 u、常量 q 异或到 s；这两组寄存器之外的位与相位不变。
+- 资源：`terminalConstants I q`：T = `0`，M = `0`。
 
 [KaliskiLoop.lean](#kaliskilooplean)
 
@@ -108,9 +149,13 @@
 
 这个文件按轮组合单轮证明，得到整个 Kaliski 循环及恢复的状态结论。
 
+- 正确性：正向循环得到相同次数的数学 kaliskiStep 迭代及对应分支记录；反向从该记录恢复原状态并清零记录带。这是两个 Triple 前后状态结论，而非仅凭 `_correct` 后缀就能推出任意外部位保持。
+
 [KaliskiLoopResources.lean](#kaliskiloopresourceslean)
 
 这个文件证明 Kaliski 循环的门数、测量数及实际线路支持和线路数。
+
+- 资源：rs.length 是循环轮数；公式要求 10 位计数器，精确线路数还要求记录列表非空。 `kaliskiLoop L i rs` / `kaliskiUnloop L i rs`：T = `rs.length*(12*L.data.width+31)`，M = `rs.length*(6*L.data.width+28)`，Q = `7*L.data.width+46+2*rs.length`。
 
 [KaliskiLoopState.lean](#kaliskiloopstatelean)
 
@@ -128,17 +173,32 @@
 
 这个文件通过双寄存器布局实现受控加减和旧数据清理，证明接口、保持和资源。
 
+- 规格：把旧值 A 与受控源 X 的和/差截断到位宽后写入初始为零的 out，同时将旧值寄存器清零；源 X、控制保持，掩码及进位工作区恢复零。
+- 资源：`maskedAdd L src c` / `maskedSub L src c`：T = `4*L.width`，M = `2*L.width`，Q = `5*L.width+2`。
+
 [NegativeEven.lean](#negativeevenlean)
 
 这个文件利用正偶数范围实现取负与恢复，并证明结果、状态保持及资源。
+
+- 规格：在定理给出的偶性与范围条件下，把 R 原地变为模 q 的负值，恢复程序还原 R；保留另一寄存器 Z，工作区恢复零。
+- 正确性：正向得到 R 的模 q 负值，反向恢复 R；两者仅改变 a，a 之外的所有基态位及相位不变。
+- 资源：n 是 Widths n 指定的低位数据位宽。
+
+  - `negativeEven L q`：T = `3*n-1`，M = `3*n-1`。
+  - `restoreNegativeEven L q`：T = `3*n`，M = `3*n`。
 
 [NegativeInit.lean](#negativeinitlean)
 
 这个文件构造求逆终态系数的规范化取负程序，并证明执行结果。
 
+- 正确性：目标异或 `(q−(X mod q)) mod q`，目标之外的所有基态位与相位不变，包括恢复临时工作区。
+
 [NegativeInitResources.lean](#negativeinitresourceslean)
 
 这个文件给出规范化取负的数值规格、线路支持及门数与测量数。
+
+- 规格：将源值 X 的模 q 负值异或到输出 O，保持源值，临时寄存器与模算术工作区从零恢复为零。
+- 资源：`negativeInit L q src temp dst`：T = `30*L.width+24`，M = `24*(L.width+1)`。
 
 [OneBitRound.lean](#onebitroundlean)
 
@@ -152,13 +212,23 @@
 
 这个文件证明一位记录轮的门数、测量数、支持范围及线路数。
 
+- 资源：
+
+  - `recoverSwap L`：T = `1`，M = `0`。
+  - `oneBitRound L i` / `oneBitUnround L i`：T = `12*L.data.width+32`，M = `6*L.data.width+28`，Q = `7*L.data.width+48`。
+
 [OneBitRoundSpec.lean](#onebitroundspeclean)
 
 这个文件将一位记录轮的内部状态结论写成公开程序规格。
 
+- 规格：正向得到数学状态 kaliskiStep z，把计数移至 kNext、旧 k 清零，只保留减法分支位，交换位与临时区清零；反向还原 z 并清零该分支记录。
+
 [RecordRound.lean](#recordroundlean)
 
 这个文件证明 Kaliski 分支比较与记录程序的结果、非目标保持及布局前提。
+
+- 规格：根据活动标志、u/v 奇偶性及 v<u，分别异或交换和减法分支标志；数据和活动标志保持，奇偶比较临时位与进位工作区恢复零。
+- 正确性：只按活动性、奇偶及大小关系异或更新 swap、subtract 两位，其他基态位和相位不变。
 
 [RoundBody.lean](#roundbodylean)
 
@@ -180,9 +250,21 @@
 
 这个文件证明 Kaliski 单轮各段及完整正反轮的 Toffoli 和测量计数。
 
+- 资源：
+
+  - `swapRegisters c a b`：T = `a.length`，M = `0`。
+  - `exchangeRegisters a b`：T = `0`，M = `0`。
+  - `inplaceArithmetic L f g c neg`：T = `2*L.width-1`，M = `2*L.width-1`。
+  - `kaliskiBodyProgram L a sw su` / `kaliskiUnbodyProgram L a sw su`：T = `10*L.width-4`，M = `4*L.width-2`。
+  - `recordRound L`：T = `L.data.width+5`，M = `L.data.width`。
+  - `kaliskiRound L i` / `kaliskiUnround L i`：T = `12*L.data.width+31`，M = `6*L.data.width+28`。
+
 [RoundSpec.lean](#roundspeclean)
 
 这个文件将 Kaliski 单轮的完整状态结论整理为前后寄存器规格。
+
+- 规格：正向把 z 更新为 kaliskiStep z，计数移至 kNext、旧 k 清零，保存交换与减法两位历史，临时区清零；反向利用记录恢复 z，并清零 kNext 和分支历史。
+- 资源：这里取 257 位轮数据和 10 位计数器。 `kaliskiRound L i` / `kaliskiUnround L i`：T = `3115`，M = `1570`，Q = `1847`。
 
 [RoundState.lean](#roundstatelean)
 
@@ -191,6 +273,11 @@
 [RoundWires.lean](#roundwireslean)
 
 这个文件确定单轮实际使用的线路，并证明算术体、正反轮的支持和线路数。
+
+- 资源：
+
+  - `recordRound L`：Q = `3*L.data.width+6`。
+  - `kaliskiRound L i` / `kaliskiUnround L i`：Q = `7*L.data.width+48`。
 
 ## [Borrow.lean](Borrow.lean)
 

@@ -4,9 +4,16 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [Accumulate.lean](#accumulatelean)
 
 这个文件通过交换布局角色组合前向模加减，实现结果累加、撤销及旧寄存器清理。
+
+- 规格：从 `(x=A,y=B,out=0,work=0)` 得到 `(x=0,y=B,out=(A+B) mod q,work=0)`；unaccumulate 从这个结果恢复原状态。
+- 资源：`accumulate L q` / `unaccumulate L q`：T = `10*L.width+8`，M = `8*(L.width+1)`，Q = `8*(L.width+1)+2`。
 
 [ExternalMod.lean](#externalmodlean)
 
@@ -16,33 +23,61 @@
 
 这个文件将通用模加减实例化到 secp256k1，给出零输出、XOR 输出及资源规格。
 
+- 规格：将 `(X+Y) mod p` 或 `(X+p−Y) mod p` 异或到输出 O；零输出版本直接得到域加减结果，输入保持且工作区恢复零。
+- 资源：`fieldAdd L` / `fieldSub L`：T = `1284`，M = `1028`，Q = `2057`。
+
 [ModInPlace.lean](#modinplacelean)
 
 这个文件定义原地模加内核及其布局，逐段证明约减、借位清理、正确性和资源用量。
+
+- 规格：在 `0<p<2^n`、`A≤p`、`Z<p` 且工作区为零的前提下，将目标 Z 原地更新为 `(A+Z) mod p`，保持 A，工作区恢复零。
+- 资源：n 是 Widths n 指定的低位数据位宽。 `modAddCore L p`：T = `4*n-1`，M = `4*n-1`，Q = `4*n+4`。
 
 [ModInPlaceCopy.lean](#modinplacecopylean)
 
 这个文件证明受控复制低位寄存器时，数值更新与其他状态的保持。
 
+- 正确性：受控复制只改变目标低 n 位，目标全值更新为 `V XOR (if control then X else 0)`；其余基态位和相位保持。
+
 [ModInPlaceNegate.lean](#modinplacenegatelean)
 
 这个文件定义原始取负程序，证明各步骤、数值结果、状态保持及成本。
+
+- 规格：将 A 更新为自然数 `p−A`，保留 Z 并恢复零工作区；这里不是再对 p 取模，因此 A=0 时结果为 p。
+- 正确性：a 的读值变为自然数 p−A，a 以外的所有基态位及相位保持不变。
+- 资源：n 是 Widths n 指定的低位数据位宽。 `negRaw L p`：T = `n`，M = `n`。
 
 [ModInPlaceSubtract.lean](#modinplacesubtractlean)
 
 这个文件定义普通和受控原地模减法，并证明规格、目标外保持及资源用量。
 
+- 规格：原地模减将 Z 更新为 `(Z+p−A) mod p`；受控版本关闭时不改变 Z，保持 A、控制及零工作区。辅助 negRaw 规格将 A 变为 p−A，同时保持外部控制。
+- 资源：n 是 Widths n 指定的低位数据位宽。
+
+  - `modSubInPlace L p`：T = `6*n-1`，M = `6*n-1`，Q = `4*n+4`。
+  - `controlledModSub c L p`：T = `8*n-1`，M = `6*n-1`，Q = `5*n+6`。
+
 [ModInPlaceWrappers.lean](#modinplacewrapperslean)
 
 这个文件封装普通和受控原地模加法，证明掩码清理、规格及资源用量。
+
+- 规格：原地模加将 Z 更新为 `(Z+A) mod p`；受控版本只在控制开启时更新，保持 A、控制及零工作区。
+- 资源：n 是 Widths n 指定的低位数据位宽。
+
+  - `modAddInPlace L p`：T = `4*n-1`，M = `4*n-1`，Q = `4*n+4`。
+  - `controlledModAdd c L p`：T = `6*n-1`，M = `4*n-1`，Q = `5*n+5`。
 
 [Modular.lean](#modularlean)
 
 这个文件定义 XOR 输出模加减程序，并给出寄存器值和完整程序规格。
 
+- 规格：在各自范围前提下，把 `(X+Y) mod q` 或 `(X+q−Y) mod q` 异或到输出 O，输入保持、工作区从零恢复为零；bounded 版本单独给出允许的范围条件。
+
 [ModularFrame.lean](#modularframelean)
 
 这个文件证明模加减只更新输出，并建立布局覆盖和状态断言保持关系。
+
+- 正确性：输出读值恰好异或模和或模差，输出之外的所有基态位与相位不变；各版本分别要求其定理给出的输入范围和零工作区条件。
 
 [ModularLayout.lean](#modularlayoutlean)
 
@@ -55,6 +90,8 @@
 [ModularResources.lean](#modularresourceslean)
 
 这个文件确定模加减的实际线路支持，并证明门数、测量数和线路数。
+
+- 资源：`modAdd L q` / `modSub L q`：T = `5 * L.width + 4`，M = `4 * (L.width + 1)`，Q = `8 * L.width + 9`。
 
 [ModularSteps.lean](#modularstepslean)
 
@@ -80,9 +117,14 @@
 
 这个文件组合装载、模算术和卸载，提供约减及取负的 XOR 输出接口。
 
+- 规格：约减将 `X mod q` 异或到 O，模取负将 `(q−X) mod q` 异或到 O；保持源 X，算术工作区从零恢复为零。
+
 [UnaryModResources.lean](#unarymodresourceslean)
 
 这个文件证明一元模运算的支持范围、计数，以及输出外状态保持。
+
+- 正确性：目标分别异或 X mod q 或 (q−X) mod q，目标之外的所有基态位与相位不变。
+- 资源：`unaryModXor L f operation src dst`：T = `2*toffoliCount operation`，M = `2*measurementCount operation`。
 
 ## [Accumulate.lean](Accumulate.lean)
 

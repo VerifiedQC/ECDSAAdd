@@ -4,13 +4,24 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [EqualConstant.lean](#equalconstantlean)
 
 这个文件通过常量掩码和零检测判断寄存器是否等于常量，并证明结果及资源。
 
+- 正确性：仅把 `控制 AND (输入值=k)` 异或到目标位，其余基态位与相位完全不变。
+- 资源：`equalConstant control target bs k`：T = `bs.length`，M = `bs.length`。
+
 [ZeroControl.lean](#zerocontrollean)
 
 这个文件定义受控零检测及测量清理，证明检测标志、输入保持和资源用量。
+
+- 规格：工作区初始为零时，将 `C AND (X=0)` 异或到目标 T，保持输入 X 与控制 C，并恢复零工作区。
+- 正确性：仅把 `控制 AND 所有输入位为零` 异或到目标位，其余基态位与相位完全不变。
+- 资源：`zeroControlled c target bs`：T = `bs.length`，M = `bs.length`，Q = `2*bs.length+2`。
 
 ## [EqualConstant.lean](EqualConstant.lean)
 

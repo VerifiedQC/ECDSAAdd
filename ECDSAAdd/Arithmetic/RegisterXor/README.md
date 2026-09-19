@@ -4,25 +4,47 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [ConditionalXor.lean](#conditionalxorlean)
 
 这个文件通过临时掩码实现条件 XOR，证明目标更新、临时位恢复及资源。
+
+- 正确性：目标在控制开启时异或 F(X)，关闭时异或 X（不是保持目标不变）；目标外所有基态位与相位不变。
+- 资源：`conditionalXor kernel c src temp dst`：T = `2*toffoliCount kernel + 2*dst.length`，M = `2*measurementCount kernel`。
 
 [Constant.lean](#constantlean)
 
 这个文件定义经典常量的 XOR 写入，证明数值更新、状态保持和支持范围。
 
+- 规格：寄存器值从 X 更新为 `X XOR k`。
+- 正确性：只将目标读值异或常量 k，目标外所有基态位与相位不变。
+- 资源：`xorConstant r k`：T = `0`，M = `0`。
+
 [Copy.lean](#copylean)
 
 这个文件定义普通和受控寄存器 XOR 复制，并证明结果、输入保持和资源。
+
+- 规格：无控制时将源 X 异或到目标 O；有控制时仅在控制开启时异或。保持源和控制，不要求目标初始为零。
+- 正确性：目标异或有效源值：无控制或控制开启时为源值，控制关闭时为零；目标之外所有基态位与相位不变。
+- 资源：`copyRegister control src dst`：T = `(if control.isSome then src.length else 0)`，M = `0`，Q = `(if src.isEmpty then 0 else 2*src.length+control.toList.length)`。
 
 [MaskedConstant.lean](#maskedconstantlean)
 
 这个文件定义受控常量 XOR，证明执行结果、状态保持及资源性质。
 
+- 正确性：控制开启时目标异或 k，关闭时不变；目标外所有基态位与相位不变。
+- 资源：`maskedConstant c r k`：T = `0`，M = `0`。
+
 [Registers.lean](#registerslean)
 
 这个文件证明寄存器读取、取反、范围和逐位关系，并给出寄存器取反电路规格。
+
+- 规格：逐位取反，将 n 位寄存器值 X 更新为 `2^n−1−X`。
+- 正确性：恰好翻转寄存器内每一位，寄存器外所有基态位与相位不变。
+- 资源：`notRegister r`：T = `0`，M = `0`，Q = `r.length`。
 
 ## [ConditionalXor.lean](ConditionalXor.lean)
 

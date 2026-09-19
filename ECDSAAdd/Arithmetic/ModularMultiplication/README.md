@@ -4,25 +4,41 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [ConstDigit.lean](#constdigitlean)
 
 这个文件证明常数 Montgomery 窗口内查表加减的数值和保持关系。
+
+- 正确性：按第 i 个四位窗口 d 累加或累减 K·d，通用结论按 261 位截断；不溢出时加法得到 A+K·d，匹配的减法恢复 A。只有累加器改变，相位不变。
 
 [ConstRounds.lean](#constroundslean)
 
 这个文件证明常数 Montgomery 多轮计算与恢复对应数学递推。
 
+- 正确性：正向 k 个常量窗口得到 `montgomeryValue p X Y k` 和 `montgomeryQuotient p X Y k`，逆向将累加器与历史清零；累加器和历史之外的所有位及相位保持。这里尚未执行最终模 p 规范化。
+
 [ConstStageSpec.lean](#conststagespeclean)
 
 这个文件给出常数 Montgomery 整段准备与恢复的正确性规格。
+
+- 规格：常量 Montgomery 阶段从零累加器、历史、标志及工作区出发，保存 k 个窗口后的 `montgomeryValue p X Y k mod p`、商记录和标志（规范化前的值小于 p 时为真）；完整版本 k=64。恢复阶段利用该历史将累加器、历史和标志清零，输入保持。
+- 正确性：上述结果对所有测量结果成立，且累加器、历史和规范化标志以外的所有基态位及相位不变；准备阶段保留历史，恢复阶段才清零。
 
 [ConstWindow.lean](#constwindowlean)
 
 这个文件证明单个常数 Montgomery 窗口的计算和恢复关系。
 
+- 正确性：令 d 为乘数第 i 个四位窗口、U=A+X·d，单个常量窗口将累加器更新为 `(U+(U mod 16)·p)/16`，历史更新为 `H+16^i·(U mod 16)`；逆向恢复 A、H，累加器与历史之外的所有基态位和相位不变。
+
 [FieldMultiply.lean](#fieldmultiplylean)
 
 这个文件把标准模乘实例化到 secp256k1，证明零输出、XOR 输出及资源结论。
+
+- 规格：将 `X·Y mod p` 异或到 O，零输出版本直接得到域乘积；保持两输入，工作区从零恢复为零。
+- 资源：`fieldMul L`：T = `379424`，M = `379424`，Q = `2596`。
 
 [MontAdapterFrame.lean](#montadapterframelean)
 
@@ -36,9 +52,19 @@
 
 这个文件证明各模乘输出适配器的门数、测量数、支持集和线路数。
 
+- 资源：
+
+  - `montMulXor M p`：T = `379424`，M = `379424`，Q = `2596`。
+  - `montMulAdd M p`：T = `380447`，M = `380447`，Q = `2596`。
+  - `montMulSub M p`：T = `380959`，M = `380959`，Q = `2596`。
+  - `montMulControlledAdd c M p`：T = `380959`，M = `380447`，Q = `2597`。
+  - `montMulControlledSub c M p`：T = `381471`，M = `380959`，Q = `2597`。
+
 [MontAdapterSpec.lean](#montadapterspeclean)
 
 这个文件证明两段准备和恢复之间的输出更新，给出五种标准模乘适配器规格。
+
+- 规格：在准备—使用—恢复的组合中，将标准表示乘积 `X·Y mod p` 异或到 O，或模加到/模减自 O；受控加减仅在控制开启时更新。输入、控制保持，内部历史与工作区最终清零。
 
 [MontBorrow.lean](#montborrowlean)
 
@@ -48,13 +74,31 @@
 
 这个文件证明 Montgomery 累加器与经典常量加减时的结果和状态保持。
 
+- 正确性：向累加器加上或减去经典常量 K，按累加器位宽截断；累加器之外的位及相位不变。
+
 [MontCounts.lean](#montcountslean)
 
 这个文件证明 Montgomery 查询、窗口、轮次和规范化步骤的门数与测量数。
 
+- 资源：使用 MontStageLayout.Widths / MontLayout.Widths 规定的固定布局；查表地址为 4 位，轮数 k≤64，完整阶段为 64 个窗口。
+
+  - `montLookup L addr K`：T = `14`，M = `14`。
+  - `montLookupAdd L addr K` / `montLookupSub L addr K` / `montReduce L p i` / `montRestoreReduce L p i`：T = `288`，M = `288`。
+  - `montNormalize L p` / `montDenormalize L p`：T = `520`，M = `520`。
+  - `montAddDigit L x y i` / `montSubDigit L x y i`：T = `2084`，M = `2084`。
+  - `montWindow L x y p i` / `montRestoreWindow L x y p i`：T = `2372`，M = `2372`。
+  - `constMontWindow L y p K i` / `constMontRestoreWindow L y p K i`：T = `576`，M = `576`。
+  - `montPrepareRounds L x y p k` / `montRestoreRounds L x y p k`：T = `2372*k`，M = `2372*k`。
+  - `constPrepareRounds L y p K k` / `constRestoreRounds L y p K k`：T = `576*k`，M = `576*k`。
+  - `montPrepare L x y p` / `montRestore L x y p`：T = `152328`，M = `152328`。
+  - `constPrepare L y p K` / `constRestore L y p K`：T = `37384`，M = `37384`。
+  - `montP M p` / `montQ M p`：T = `189712`，M = `189712`。
+
 [MontDigit.lean](#montdigitlean)
 
 这个文件证明变量 Montgomery 窗口的逐位受控加减与掩码清理。
+
+- 正确性：受控位贡献为 X·2^j 乘相应乘数位；累积窗口前 k 位得到 `U+X·((Y/2^(4i)) mod 2^k)`，完整四位窗口取 k=4，逆序减法恢复 U。通用受控加减按位宽截断，累加器外所有位与相位保持。
 
 [MontHistory.lean](#monthistorylean)
 
@@ -68,13 +112,20 @@
 
 这个文件证明四位查表及其加减组合的结果、清理和保持性质。
 
+- 正确性：查表、加减、清表的组合将地址值乘 K 加到或减自累加器，并按位宽截断；累加器外所有位与相位不变。
+
 [MontNormalize.lean](#montnormalizelean)
 
 这个文件证明 Montgomery 最终约减到规范范围及其逆向恢复。
 
+- 正确性：规范化得到 A mod p，并把标志置为 A<p；反向利用该标志恢复 A、清零标志。累加器与标志之外的位及相位保持。
+
 [MontPQ.lean](#montpqlean)
 
 这个文件组合两段 Montgomery，证明得到普通模积并能按历史恢复工作区。
+
+- 规格：montP 从两输入和零工作区得到 MontPrepared，包含标准模积及两段恢复历史；montQ 从该中间态恢复两输入和全零工作区。准备本身不清空历史。
+- 正确性：准备满足 MontPrepared，恢复还原 X、Y 并清空工作区；两阶段均保持工作区以外的每一位及相位。
 
 [MontPrepare.lean](#montpreparelean)
 
@@ -84,17 +135,26 @@
 
 这个文件证明四位约减的商记录、模数修正、旋转与恢复步骤。
 
+- 正确性：一次四位约减将 U 变为 `(U+(U mod 16)·p)/16`，记录 U mod 16；恢复得到 U 并清零该记录，累加器和当前记录外的位及相位不变。
+
 [MontResources.lean](#montresourceslean)
 
 这个文件汇总两段 Montgomery 准备和恢复的精确资源。
+
+- 资源：`montP M p` / `montQ M p`：T = `189712`，M = `189712`，Q = `2339`。
 
 [MontRotate.lean](#montrotatelean)
 
 这个文件证明 Montgomery 约减使用的循环位移及高低位数值关系。
 
+- 规格：满足低 k 位为零时，右循环移位 k 位的读值为 `X/2^k`；满足高位空间足够时，左循环移位 k 位的读值为 `2^k·X`。
+- 资源：`rotateRightBits r k` / `rotateLeftBits r k`：T = `0`，M = `0`。
+
 [MontRounds.lean](#montroundslean)
 
 这个文件证明变量 Montgomery 多轮计算和恢复符合数学递推。
+
+- 正确性：正向 k 个变量窗口得到 `montgomeryValue p X Y k` 和 `montgomeryQuotient p X Y k`，逆向将累加器与历史清零；累加器和历史之外的所有位及相位保持。这里尚未执行最终模 p 规范化。
 
 [MontStagePorts.lean](#montstageportslean)
 
@@ -104,9 +164,14 @@
 
 这个文件给出变量 Montgomery 前缀及完整阶段的准备、恢复规格。
 
+- 规格：变量 Montgomery 阶段从零累加器、历史、标志及工作区出发，保存 k 个窗口后的 `montgomeryValue p X Y k mod p`、商记录和标志（规范化前的值小于 p 时为真）；完整版本 k=64。恢复阶段利用该历史将累加器、历史和标志清零，输入保持。
+- 正确性：上述结果对所有测量结果成立，且累加器、历史和规范化标志以外的所有基态位及相位不变；准备阶段保留历史，恢复阶段才清零。
+
 [MontWindow.lean](#montwindowlean)
 
 这个文件证明变量 Montgomery 单个窗口的计算与恢复结果。
+
+- 正确性：令 d 为乘数第 i 个四位窗口、U=A+X·d，单个变量窗口将累加器更新为 `(U+(U mod 16)·p)/16`，历史更新为 `H+16^i·(U mod 16)`；逆向恢复 A、H，累加器与历史之外的所有基态位和相位不变。
 
 [MontWires.lean](#montwireslean)
 

@@ -4,6 +4,10 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [Divide.lean](#dividelean)
 
 这个文件定义除法布局、工作区借用、分母装载与卸载，以及受控除法累加和累减程序。
@@ -20,13 +24,23 @@
 
 这个文件证明使用已准备逆元执行受控乘积累加时的结果与非目标状态保持。
 
+- 正确性：已准备乘数 X、Y 时，控制开启把 X·Y mod p 模加到或模减自累加器，关闭则累加器不变；累加器外所有位和相位不变。
+
 [DivideResources.lean](#divideresourceslean)
 
 这个文件证明分母装卸和完整除法程序的 Toffoli 门数及测量次数。
 
+- 资源：
+
+  - `divideLoad L` / `divideUnload L`：T = `256`，M = `0`。
+  - `divideAdd L`：T = `3895383`，M = `2309207`。
+  - `divideSub L`：T = `3895895`，M = `2309719`。
+
 [DivideSpec.lean](#dividespeclean)
 
 这个文件将装载、求逆、乘积和恢复组合成除法加减的完整规格与外部保持结论。
+
+- 规格：分母满足相应非零条件、工作区初始为零时，控制开启将 `D⁻¹·E mod p` 加到或减自 Z，关闭则 Z 不变；保留控制、分母 D 和分子 E，并清零整个工作区。
 
 [DivideState.lean](#dividestatelean)
 
@@ -35,6 +49,8 @@
 [DivideSupport.lean](#dividesupportlean)
 
 这个文件确定除法实际使用的线路，证明支持集、互异性和精确线路数。
+
+- 资源：`divideAdd L` / `divideSub L`：Q = `6210`。
 
 ## [Divide.lean](Divide.lean)
 

@@ -4,33 +4,78 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [FullAdder.lean](#fulladderlean)
 
 这个文件定义一位全加器和进位清理电路，证明它们的计算结果、状态保持性质和资源用量。
+
+- 规格：输入位 A、B、C 保持不变，和位异或到 out，进位异或到 carry；当 carry 保存正确进位时，清理程序将其置零。
+- 正确性：对任意测量结果，计算只更新 out 与 carry；清理只把已有正确进位的 carry 置零。其他基态位与相位完全不变。
+- 资源：
+
+  - `fullAdder a b cin out carry`：T = `1`，M = `0`，Q = `5`。
+  - `eraseCarry a b cin carry`：T = `0`，M = `1`，Q = `4`。
 
 [RippleAdder.lean](#rippleadderlean)
 
 这个文件将一位全加器组合成多位加法器，证明截断和、额外高位保存的完整和，以及进位清理与资源用量。
 
+- 规格：进位工作区初始为零，将 `(X+Y+C.toNat) mod 2^n` 异或到输出 O；零输出版本直接得到该和，增加一位且满足输入范围时得到不截断的完整和。输入与进位输入保持，工作区恢复零。
+- 正确性：输出等于原输出 XOR 截断和（零输出时即截断和），所有输出以外的基态位及相位不变，因而也恢复进位工作区。
+- 资源：n 为逐位布局数量 bs.length；增加一位时资源公式中的长度也相应增加。 `rippleAdder bs cin`：T = `bs.length`，M = `bs.length`，Q = `if bs.isEmpty then 0 else 4 * bs.length + 1`。
+
 [Subtractor.lean](#subtractorlean)
 
 这个文件利用加法器构造减法器，将两个输入之差按输出位宽截断后异或到输出，并证明正确性及资源用量。
+
+- 规格：进位输入及工作区为零时，将 `(X+2^n−Y) mod 2^n` 异或到输出；零输出版本直接得到该差，两个输入保持、工作区恢复零。
+- 正确性：输出等于原输出 XOR 截断差，所有输出以外的基态位及相位不变。
+- 资源：n 为 bs.length；即使 bs 为空，减法程序仍使用 cin，因此 Q=1。 `rippleSubtractor bs cin`：T = `bs.length`，M = `bs.length`，Q = `4 * bs.length + 1`。
 
 [Layout.lean](#layoutlean)
 
 这个文件把逐位加法线路组织成统一布局，提供加减法、结果清理及资源定理。
 
+- 规格：`add` 将截断和异或到 O，`sub` 将截断差异或到 O，保持输入并恢复进位工作区；若输出原本就是该结果，再执行一次将其清零，连续两次 add 恢复原输出。
+- 资源：n 为 L.width；空布局的 add 不使用线路，sub 仍使用 cin。
+
+  - `add L`：T = `L.width`，M = `L.width`，Q = `if L.bits.isEmpty then 0 else 4 * L.width + 1`。
+  - `sub L`：T = `L.width`，M = `L.width`，Q = `4 * L.width + 1`。
+
 [InPlaceAdder.lean](#inplaceadderlean)
 
 这个文件定义直接更新目标寄存器的加减法，以及受控常量和受控寄存器版本，证明结果、工作位清理与资源用量。
+
+- 规格：`addInPlace` 将 y 更新为 `(X+Y+C.toNat) mod 2^n`，`subInPlace` 将其更新为 `(Y+2^n−X) mod 2^n`；受控常量和寄存器版本仅在控制开启时加减，保持源与控制，零掩码和进位工作区最终仍为零。还给出复制及保留外部源的组合规格。
+- 正确性：majority 只异或更新进位；addInPlace 只将 y 更新为截断和，y 之外的基态位与相位不变。这里的 `_correct` 不把其他受控包装程序混作同一个结论。
+- 资源：n 为目标位宽 y.length；精确线路数要求 n≥1。
+
+  - `addInPlace x y carry cin` / `subInPlace x y carry cin`：T = `y.length - 1`，M = `y.length - 1`，Q = `3 * y.length`。
+  - `maskedAddInPlace c src t y carry cin` / `maskedSubInPlace c src t y carry cin`：T = `3*y.length-1`，M = `y.length-1`。
 
 [MeasuredMaskedAdder.lean](#measuredmaskedadderlean)
 
 这个文件用测量和即时相位修正清除受控加减法的临时掩码，证明计算结果不变及对应的资源用量。
 
+- 规格：掩码等于受控源值时可被测量清零；令 V 为控制开启时的源 S（否则为零），加法将 y 更新为 `(Y+V) mod 2^n`，减法更新为 `(Y+2^n−V) mod 2^n`；保持源与控制，将掩码和进位工作区恢复为零。
+- 正确性：掩码满足受控复制关系时，eraseMask 把其全部清零，保持掩码之外的所有基态位及相位，且对任意测量结果成立。
+- 资源：n 为目标位宽 y.length；精确线路数使用定理中的非空、互异条件。
+
+  - `eraseMask c src dst`：T = `0`，M = `dst.length`。
+  - `measuredMaskedAddInPlace c src t y carry cin` / `measuredMaskedSubInPlace c src t y carry cin`：T = `2*y.length-1`，M = `2*y.length-1`，Q = `4*y.length+1`。
+
 [Counter.lean](#counterlean)
 
 这个文件提供 10 位受控加一、减一计数器，既支持 XOR 输出，也支持把结果写入另一寄存器后清零原计数。
+
+- 规格：10 位计数器分别得到 `(K+C.toNat) mod 1024` 或 `(K+1024−C.toNat) mod 1024`；XOR 版本保持 K 并将结果异或到输出 O，转移版本要求输出初始为零，写入结果同时清零旧 K。两者保持控制并清理工作位；counterFlip 仅翻转辅助寄存器与进位位。
+- 资源：
+
+  - `counterIncXor L` / `counterDecXor L`：T = `10`，M = `10`，Q = `41`。
+  - `counterInc L` / `counterDec L`：T = `20`，M = `20`，Q = `41`。
 
 ## [FullAdder.lean](FullAdder.lean)
 

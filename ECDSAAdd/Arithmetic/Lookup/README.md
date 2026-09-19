@@ -4,9 +4,21 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [Lookup.lean](#lookuplean)
 
 这个文件定义经典表的受控查询，证明四位和十位地址接口的正确性、清理及资源性质。
+
+- 规格：4 位和 10 位地址的规格均为：地址 D 不变，目标从 T 变为 `T XOR table(D)`，临时工作区从零恢复为零。
+- 正确性：目标读值恰好异或指定地址的表值，目标以外的位与相位不变；lookupWalk 的局部结论另受根控制 a 限制，完整 lookup 不需要额外外部控制。
+- 资源：
+
+  - `lookupWalk a controls scratch target table`：T = `2^controls.length-1`，M = `2^controls.length-1`。
+  - `lookup a controls scratch target table`（4 位地址）：T = `14`，M = `14`。
+  - `lookup a controls scratch target table`（10 位地址）：T = `1022`，M = `1022`。
 
 ## [Lookup.lean](Lookup.lean)
 

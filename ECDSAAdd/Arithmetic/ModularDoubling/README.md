@@ -4,21 +4,39 @@
 
 ## 文件目录
 
+以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+
+资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+
 [ModDouble.lean](#moddoublelean)
 
 这个文件证明原地模倍增的旋转、约减和清理步骤，汇总为完整规格。
+
+- 规格：奇模数和规定范围下，将 Z 更新为 `2Z mod p`，工作区从零恢复为零。
 
 [ModHalf.lean](#modhalflean)
 
 这个文件证明原地模减半的奇偶处理、加模数、旋转和标志清理。
 
+- 规格：奇模数和规定范围下，将 Z 更新为 `halveMod p Z`：偶数除以 2，奇数先加 p 再除以 2；工作区从零恢复为零。
+
 [ModUnary.lean](#modunarylean)
 
 这个文件定义模倍增与减半的布局和程序，并证明基本布局条件及资源关系。
 
+- 资源：n 是 Widths n 指定的低位数据位宽。
+
+  - `dblInPlace U p`：T = `2*n-1`，M = `2*n-1`。
+  - `halfInPlace U p`：T = `2*n`，M = `2*n`。
+
 [ModUnaryResources.lean](#modunaryresourceslean)
 
 这个文件证明模倍增、减半的目标外保持及精确资源用量。
+
+- 资源：n 是 Widths n 指定的低位数据位宽。
+
+  - `dblInPlace U p`：T = `2*n-1`，M = `2*n-1`，Q = `3*n+3`。
+  - `halfInPlace U p`：T = `2*n`，M = `2*n`，Q = `3*n+4`。
 
 ## [ModDouble.lean](ModDouble.lean)
 
