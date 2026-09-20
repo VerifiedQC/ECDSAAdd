@@ -2,938 +2,661 @@
 
 本模块提供固定位宽的二进制加减法、受控加减法和计数器，并证明计算结果、工作位清理及资源用量。
 
-## 文件目录
+这里只介绍 `_spec` 与 `_correct` 定理，资源统一列在末尾。下文 `{前置条件} 程序 {后置条件}` 是 Hoare triple 的可读写法：对任意初始状态和任意预先给定的测量结果都成立，并保持相位。所有三元组都以各项列出的适用前提为条件。
 
-以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+`s₀`、`s₁` 分别表示运行前后完整状态；`s₀[w]` 是初始位值，`val₀(r)` 是初始寄存器读值，后缀 ₁ 同理。普通断言中的 `r=X` 按寄存器类型读取位、整数或点；XOR 是异或。命名状态断言沿用源码，不自动意味着未提及的线路也保持不变。
 
-资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+## [FullAdder.lean](FullAdder.lean)
 
-[FullAdder.lean](#fulladderlean)
+该文件实现量子 full adder，以及计算后清除进位辅助位的电路。输入为三个位 A、B、C，和位与进位分别为：
 
-这个文件定义一位全加器和进位清理电路，证明它们的计算结果、状态保持性质和资源用量。
+```text
+SUM(A,B,C)   = A XOR B XOR C
+CARRY(A,B,C) = (A AND B) XOR (A AND C) XOR (B AND C)
+```
 
-- 规格：输入位 A、B、C 保持不变，和位异或到 out，进位异或到 carry；当 carry 保存正确进位时，清理程序将其置零。
-- 正确性：对任意测量结果，计算只更新 out 与 carry；清理只把已有正确进位的 carry 置零。其他基态位与相位完全不变。
+### fullAdder
+
+从 [fullAdder_spec](FullAdder.lean#L59) 可以看出：当 out 和 carry 初始化为 0 时，电路把和位写入 out、进位写入 carry，保持三个输入。假设 a、b、cin、out、carry 是五根互不相同的 wire：
+
+```text
+{ a=A, b=B, cin=C, out=0, carry=0 }
+fullAdder a b cin out carry
+{ a=A, b=B, cin=C, out=SUM(A,B,C), carry=CARRY(A,B,C) }
+```
+
+规格实际还允许任意输出初值 O、K：结果分别是 `O XOR SUM(A,B,C)` 和 `K XOR CARRY(A,B,C)`。
+
+文件通过 [fullAdder_correct](FullAdder.lean#L22) 证明完整状态层面的正确性。对于任意初始状态 s₀ 和任意预先提供的测量结果 m，在上述五线互异的前提下，令 `A=s₀[a]`、`B=s₀[b]`、`C=s₀[cin]`，运行后的状态 s₁ 满足：
+
+```text
+{ 初始状态为 s₀ }
+fullAdder a b cin out carry
+{ s₁[out]   = s₀[out]   XOR SUM(A,B,C)
+  ∧ s₁[carry] = s₀[carry] XOR CARRY(A,B,C)
+  ∧ s₁.phase = s₀.phase
+  ∧ 对所有 w∉{out,carry}，s₁[w]=s₀[w] }
+```
+
+也就是说，不仅三个输入保持不变，其他所有 wire 的值和整体相位也保持不变；正确性不要求 out、carry 的初值为零。
+
+### eraseCarry
+
+从 [eraseCarry_spec](FullAdder.lean#L73) 可以看出：如果 carry 已保存这三个输入对应的进位，电路将它清零，并保留输入。这里的规格要求 a、b、cin、carry 四线互异：
+
+```text
+{ a=A, b=B, cin=C, carry=CARRY(A,B,C) }
+eraseCarry a b cin carry
+{ a=A, b=B, cin=C, carry=0 }
+```
+
+[eraseCarry_correct](FullAdder.lean#L45) 进一步给出逐线保持的结论。它只要求 a、b、cin 各自不等于 carry；不要求三根输入线彼此不同。对于任意测量结果：
+
+```text
+{ 初始状态为 s₀
+  ∧ s₀[carry]=CARRY(s₀[a],s₀[b],s₀[cin]) }
+eraseCarry a b cin carry
+{ s₁[carry]=0
+  ∧ s₁.phase=s₀.phase
+  ∧ 对所有 w≠carry，s₁[w]=s₀[w] }
+```
+
+因此，测量清理既归零进位，也恢复相位，且不改变其他 wire。
+
+## [RippleAdder.lean](RippleAdder.lean)
+
+这里 n=bs.length。进位工作区初始为零，将 `(X+Y+C.toNat) mod 2^n` 异或到输出 O；零输出版本直接得到该和，增加一位且满足输入范围时得到不截断的完整和。输入与进位输入保持，工作区恢复零。
+
+### rippleAdder_xor
+
+实现约定：[rippleAdder_xor_spec](RippleAdder.lean#L191)。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C, bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }
+rippleAdder bs cin
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C, bs.map AddBit.out = (O XOR ((X + Y + C.toNat) %
+    2^bs.length)), bs.map AddBit.carry = (0 : Nat) }
+```
+
+正确性由 [rippleAdder_xor_correct](RippleAdder.lean#L52) 证明：
+
+进位工作位初始为零时，程序将两输入及输入进位之和的低 bs.length 位异或到输出；输出以外的基态位保持不变，且相位恢复。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ b ∈ bs, s₀[b.carry] = false) }
+rippleAdder bs cin
+{ s₁.phase = s₀.phase
+  ∧ (∀ w, w ∉ bs.map AddBit.out → s₁[w] = s₀[w])
+  ∧ val₁(bs.map AddBit.out) = val₀(bs.map AddBit.out) XOR ((val₀(bs.map AddBit.x) + val₀(bs.map AddBit.y) +
+    (s₀[cin]).toNat) % 2^bs.length) }
+```
+
+### rippleAdder
+
+实现约定：[rippleAdder_spec](RippleAdder.lean#L224)。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C, bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 :
+    Nat) }
+rippleAdder bs cin
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C, bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
+    bs.map AddBit.carry = (0 : Nat) }
+```
+
+正确性由 [rippleAdder_correct](RippleAdder.lean#L152) 证明：
+
+输出和进位工作位初始为零时，输出得到两输入及输入进位之和的低 bs.length 位；输出以外的基态位保持不变，且相位恢复。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ b ∈ bs, s₀[b.out] = false ∧ s₀[b.carry] = false) }
+rippleAdder bs cin
+{ s₁.phase = s₀.phase
+  ∧ (∀ w, w ∉ bs.map AddBit.out → s₁[w] = s₀[w])
+  ∧ val₁(bs.map AddBit.out) = (val₀(bs.map AddBit.x) + val₀(bs.map AddBit.y) + (s₀[cin]).toNat) % 2^bs.length
+    }
+```
+
+### rippleAdder_wide
+
+实现约定：[rippleAdder_wide_spec](RippleAdder.lean#L235)。
+
+适用前提：
+
+- `cin :: addWires (bs ++ [high])` 中的 wire 互不相同。
+- `X < 2^bs.length`。
+- `Y < 2^bs.length`。
+
+```text
+{ (bs ++ [high]).map AddBit.x = X, (bs ++ [high]).map AddBit.y = Y, cin = C, (bs ++ [high]).map AddBit.out =
+    (0 : Nat), (bs ++ [high]).map AddBit.carry = (0 : Nat) }
+rippleAdder (bs ++ [high]) cin
+{ (bs ++ [high]).map AddBit.x = X, (bs ++ [high]).map AddBit.y = Y, cin = C, (bs ++ [high]).map AddBit.out =
+    (X + Y + C.toNat), (bs ++ [high]).map AddBit.carry = (0 : Nat) }
+```
+
+## [Subtractor.lean](Subtractor.lean)
+
+这里 n=bs.length。进位输入及工作区为零时，将 `(X+2^n−Y) mod 2^n` 异或到输出；零输出版本直接得到该差，两个输入保持、工作区恢复零。
+
+### rippleSubtractor_xor
+
+实现约定：[rippleSubtractor_xor_spec](Subtractor.lean#L125)。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false, bs.map AddBit.out = O, bs.map AddBit.carry = (0 :
+    Nat) }
+rippleSubtractor bs cin
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false, bs.map AddBit.out = (O XOR ((X + 2^bs.length - Y) %
+    2^bs.length)), bs.map AddBit.carry = (0 : Nat) }
+```
+
+正确性由 [rippleSubtractor_xor_correct](Subtractor.lean#L36) 证明：
+
+ cin 和进位工作位初始为零时，输出异或上 (X+2^bs.length−Y) % 2^bs.length；输出以外的基态位保持不变，且相位恢复。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ 初始状态 = s₀ ∧ (s₀[cin] = false) ∧ (∀ b ∈ bs, s₀[b.carry] = false) }
+rippleSubtractor bs cin
+{ s₁.phase = s₀.phase
+  ∧ (∀ w, w ∉ bs.map AddBit.out → s₁[w] = s₀[w])
+  ∧ val₁(bs.map AddBit.out) = val₀(bs.map AddBit.out) XOR ((val₀(bs.map AddBit.x) + 2^bs.length - val₀(bs.map
+    AddBit.y)) % 2^bs.length) }
+```
+
+### rippleSubtractor
+
+实现约定：[rippleSubtractor_spec](Subtractor.lean#L155)。
+
+适用前提：
+
+- `cin :: addWires bs` 中的 wire 互不相同。
+
+```text
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false, bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry =
+    (0 : Nat) }
+rippleSubtractor bs cin
+{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false, bs.map AddBit.out = ((X + 2^bs.length - Y) %
+    2^bs.length), bs.map AddBit.carry = (0 : Nat) }
+```
+
+## [Layout.lean](Layout.lean)
+
+`add` 将截断和异或到 O，`sub` 将截断差异或到 O，保持输入并恢复进位工作区；若输出原本就是该结果，再执行一次将其清零，连续两次 add 恢复原输出。
+
+### add
+
+实现约定：[add_spec](Layout.lean#L25)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }
+add L
+{ L.x = X, L.y = Y, L.cin = C, L.out = (O XOR ((X + Y + C.toNat) % 2^L.width)), L.carry = 0 }
+```
+
+### sub
+
+实现约定：[sub_spec](Layout.lean#L32)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x = X, L.y = Y, L.cin = false, L.out = O, L.carry = 0 }
+sub L
+{ L.x = X, L.y = Y, L.cin = false, L.out = (O XOR ((X + 2^L.width - Y) % 2^L.width)), L.carry = 0 }
+```
+
+### add_erase
+
+实现约定：[add_erase_spec](Layout.lean#L39)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x = X, L.y = Y, L.cin = C, L.out = ((X + Y + C.toNat) % 2^L.width), L.carry = 0 }
+add L
+{ L.x = X, L.y = Y, L.cin = C, L.out = 0, L.carry = 0 }
+```
+
+### sub_erase
+
+实现约定：[sub_erase_spec](Layout.lean#L46)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x = X, L.y = Y, L.cin = false, L.out = ((X + 2^L.width - Y) % 2^L.width), L.carry = 0 }
+sub L
+{ L.x = X, L.y = Y, L.cin = false, L.out = 0, L.carry = 0 }
+```
+
+### add_twice
+
+实现约定：[add_twice_spec](Layout.lean#L53)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }
+(add L ++ add L)
+{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }
+```
+
+## [InPlaceAdder.lean](InPlaceAdder.lean)
+
+这里 n=y.length。`addInPlace` 将 y 更新为 `(X+Y+C.toNat) mod 2^n`，`subInPlace` 将其更新为 `(Y+2^n−X) mod 2^n`；受控常量和寄存器版本仅在控制开启时加减，保持源与控制，零掩码和进位工作区最终仍为零。还给出复制及保留外部源的组合规格。
+
+### majority
+
+正确性由 [majority_correct](InPlaceAdder.lean#L24) 证明：
+
+程序只更新 carry，将其与三个输入的进位异或，其他基态位和相位保持不变。
+
+适用前提：
+
+- `[a, b, cin, carry]` 中的 wire 互不相同。
+
+```text
+{ 初始状态 = s₀ }
+majority a b cin carry
+{ s₁.phase=s₀.phase
+  ∧ s₁[carry] = s₀[carry] XOR carryBit (s₀[a]) (s₀[b]) (s₀[cin])
+  ∧ (∀ w, w ∉ {carry} → s₁[w] = s₀[w]) }
+```
+
+### addInPlace
+
+实现约定：[addInPlace_spec](InPlaceAdder.lean#L196)。
+
+适用前提：
+
+- `cin :: (x ++ y ++ carry)` 中的 wire 互不相同。
+- `x.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ x = X, y = Y, cin = C, carry = 0 }
+addInPlace x y carry cin
+{ x = X, y = ((X + Y + C.toNat) % 2^y.length), cin = C, carry = 0 }
+```
+
+正确性由 [addInPlace_correct](InPlaceAdder.lean#L45) 证明：
+
+位宽匹配、进位工作位初始为零时，y 得到 (X+Y+C.toNat) % 2^y.length；y 以外的基态位保持不变，且相位恢复。
+
+适用前提：
+
+- `cin :: (x ++ y ++ carry)` 中的 wire 互不相同。
+- `x.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ w ∈ carry, s₀[w] = false) }
+addInPlace x y carry cin
+{ s₁.phase = s₀.phase
+  ∧ (∀ w, w ∉ y → s₁[w] = s₀[w])
+  ∧ val₁(y) = (val₀(x) + val₀(y) + (s₀[cin]).toNat) % 2^y.length }
+```
+
+### subInPlace
+
+实现约定：[subInPlace_spec](InPlaceAdder.lean#L253)。
+
+适用前提：
+
+- `cin :: (x ++ y ++ carry)` 中的 wire 互不相同。
+- `x.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ x = X, y = Y, cin = false, carry = 0 }
+subInPlace x y carry cin
+{ x = X, y = ((Y + 2^y.length - X) % 2^y.length), cin = false, carry = 0 }
+```
+
+### maskedAddConst
+
+实现约定：[maskedAddConst_spec](InPlaceAdder.lean#L440)。
+
+适用前提：
+
+- `c :: cin :: (T ++ y ++ carry)` 中的 wire 互不相同。
+- `T.length = y.length`。
+- `carry.length + 1 = y.length`。
+- `K < 2^T.length`。
+
+```text
+{ c = C, T = 0, y = Y, cin = false, carry = 0 }
+maskedAddConst c T y carry cin K
+{ c = C, T = 0, y = ((Y + (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+### maskedSubConst
+
+实现约定：[maskedSubConst_spec](InPlaceAdder.lean#L453)。
+
+适用前提：
+
+- `c :: cin :: (T ++ y ++ carry)` 中的 wire 互不相同。
+- `T.length = y.length`。
+- `carry.length + 1 = y.length`。
+- `K < 2^T.length`。
+
+```text
+{ c = C, T = 0, y = Y, cin = false, carry = 0 }
+maskedSubConst c T y carry cin K
+{ c = C, T = 0, y = ((Y + 2^y.length - (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+### maskedCopyWithFrame
+
+实现约定：[maskedCopyWithFrame_spec](InPlaceAdder.lean#L465)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+
+```text
+{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }
+copyRegister (some c) src t
+{ c = C, src = S, t = (V XOR (if C then S else 0)), y = Y, cin = false, carry = 0 }
+```
+
+### addInPlaceWithSource
+
+实现约定：[addInPlaceWithSource_spec](InPlaceAdder.lean#L498)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }
+addInPlace t y carry cin
+{ c = C, src = S, t = V, y = ((Y + V) % 2^y.length), cin = false, carry = 0 }
+```
+
+### subInPlaceWithSource
+
+实现约定：[subInPlaceWithSource_spec](InPlaceAdder.lean#L527)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = V, y = Y, cin = false, carry = 0 }
+subInPlace t y carry cin
+{ c = C, src = S, t = V, y = ((Y + 2^y.length - V) % 2^y.length), cin = false, carry = 0 }
+```
+
+### maskedAddInPlace
+
+实现约定：[maskedAddInPlace_spec](InPlaceAdder.lean#L557)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }
+maskedAddInPlace c src t y carry cin
+{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+### maskedSubInPlace
+
+实现约定：[maskedSubInPlace_spec](InPlaceAdder.lean#L570)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }
+maskedSubInPlace c src t y carry cin
+{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+## [MeasuredMaskedAdder.lean](MeasuredMaskedAdder.lean)
+
+这里 n=y.length。掩码等于受控源值时可被测量清零；令 V 为控制开启时的源 S（否则为零），加法将 y 更新为 `(Y+V) mod 2^n`，减法更新为 `(Y+2^n−V) mod 2^n`；保持源与控制，将掩码和进位工作区恢复为零。
+
+### eraseMask
+
+正确性由 [eraseMask_correct](MeasuredMaskedAdder.lean#L16) 证明：
+
+ dst 保存由 c 控制的 src 掩码时，eraseMask 将 dst 清零，dst 以外的基态位保持不变，且相位恢复。
+
+适用前提：
+
+- `src.length=dst.length`。
+- `c::(src++dst)` 中的 wire 互不相同。
+
+```text
+{ 初始状态 = s₀ ∧ (val₀(dst) = if s₀[c] then val₀(src) else 0) }
+eraseMask c src dst
+{ s₁.phase=s₀.phase
+  ∧ (∀ w, w∉dst → s₁[w]=s₀[w])
+  ∧ val₁(dst)=0 }
+```
+
+### eraseMask_frame
+
+实现约定：[eraseMask_frame_spec](MeasuredMaskedAdder.lean#L98)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+
+```text
+{ c = C, src = S, t = (if C then S else 0), y = Y, cin = false, carry = 0 }
+eraseMask c src t
+{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }
+```
+
+### measuredMaskedAddInPlace
+
+实现约定：[measuredMaskedAddInPlace_spec](MeasuredMaskedAdder.lean#L118)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }
+measuredMaskedAddInPlace c src t y carry cin
+{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+### measuredMaskedSubInPlace
+
+实现约定：[measuredMaskedSubInPlace_spec](MeasuredMaskedAdder.lean#L130)。
+
+适用前提：
+
+- `c :: cin :: (src ++ t ++ y ++ carry)` 中的 wire 互不相同。
+- `src.length = t.length`。
+- `t.length = y.length`。
+- `carry.length + 1 = y.length`。
+
+```text
+{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }
+measuredMaskedSubInPlace c src t y carry cin
+{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }
+```
+
+## [Counter.lean](Counter.lean)
+
+10 位计数器分别得到 `(K+C.toNat) mod 1024` 或 `(K+1024−C.toNat) mod 1024`；XOR 版本保持 K 并将结果异或到输出 O，转移版本要求输出初始为零，写入结果同时清零旧 K。两者保持控制并清理工作位；counterFlip 仅翻转辅助寄存器与进位位。
+
+### counterFlip
+
+实现约定：[counterFlip_spec](Counter.lean#L26)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+
+```text
+{ L.x=K, L.y=Y, L.cin=C, L.out=O, L.carry=0 }
+counterFlip L
+{ L.x=K, L.y=(2^L.width-1-Y), L.cin=(!C), L.out=O, L.carry=0 }
+```
+
+### counterIncXor
+
+实现约定：[counterIncXor_spec](Counter.lean#L55)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+- `L.width=10`。
+
+```text
+{ L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 }
+counterIncXor L
+{ L.x=K, L.y=0, L.cin=C, L.out=(O XOR ((K+C.toNat)%1024)), L.carry=0 }
+```
+
+### counterDecXor
+
+实现约定：[counterDecXor_spec](Counter.lean#L61)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+- `L.width=10`。
+
+```text
+{ L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 }
+counterDecXor L
+{ L.x=K, L.y=0, L.cin=C, L.out=(O XOR ((K+1024-C.toNat)%1024)), L.carry=0 }
+```
+
+### counterInc
+
+实现约定：[counterInc_spec](Counter.lean#L136)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+- `L.width=10`。
+
+```text
+{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }
+counterInc L
+{ L.x=0, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }
+```
+
+### counterDec
+
+实现约定：[counterDec_spec](Counter.lean#L162)。
+
+适用前提：
+
+- `L.wires` 中的 wire 互不相同。
+- `L.width=10`。
+
+```text
+{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }
+counterDec L
+{ L.x=0, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }
+```
+
+## 资源用量
+
+T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数。以下保持原有计数及适用条件；未列出的项不是零，T=0 不代表没有其他门。公式中的 Nat 减法按自然数截断。
+
+### [FullAdder.lean](FullAdder.lean)
+
 - 资源：
 
   - `fullAdder a b cin out carry`：T = `1`，M = `0`，Q = `5`。
   - `eraseCarry a b cin carry`：T = `0`，M = `1`，Q = `4`。
 
-[RippleAdder.lean](#rippleadderlean)
+### [RippleAdder.lean](RippleAdder.lean)
 
-这个文件将一位全加器组合成多位加法器，证明截断和、额外高位保存的完整和，以及进位清理与资源用量。
-
-- 规格：进位工作区初始为零，将 `(X+Y+C.toNat) mod 2^n` 异或到输出 O；零输出版本直接得到该和，增加一位且满足输入范围时得到不截断的完整和。输入与进位输入保持，工作区恢复零。
-- 正确性：输出等于原输出 XOR 截断和（零输出时即截断和），所有输出以外的基态位及相位不变，因而也恢复进位工作区。
 - 资源：n 为逐位布局数量 bs.length；增加一位时资源公式中的长度也相应增加。 `rippleAdder bs cin`：T = `bs.length`，M = `bs.length`，Q = `if bs.isEmpty then 0 else 4 * bs.length + 1`。
 
-[Subtractor.lean](#subtractorlean)
+### [Subtractor.lean](Subtractor.lean)
 
-这个文件利用加法器构造减法器，将两个输入之差按输出位宽截断后异或到输出，并证明正确性及资源用量。
-
-- 规格：进位输入及工作区为零时，将 `(X+2^n−Y) mod 2^n` 异或到输出；零输出版本直接得到该差，两个输入保持、工作区恢复零。
-- 正确性：输出等于原输出 XOR 截断差，所有输出以外的基态位及相位不变。
 - 资源：n 为 bs.length；即使 bs 为空，减法程序仍使用 cin，因此 Q=1。 `rippleSubtractor bs cin`：T = `bs.length`，M = `bs.length`，Q = `4 * bs.length + 1`。
 
-[Layout.lean](#layoutlean)
+### [Layout.lean](Layout.lean)
 
-这个文件把逐位加法线路组织成统一布局，提供加减法、结果清理及资源定理。
-
-- 规格：`add` 将截断和异或到 O，`sub` 将截断差异或到 O，保持输入并恢复进位工作区；若输出原本就是该结果，再执行一次将其清零，连续两次 add 恢复原输出。
 - 资源：n 为 L.width；空布局的 add 不使用线路，sub 仍使用 cin。
 
   - `add L`：T = `L.width`，M = `L.width`，Q = `if L.bits.isEmpty then 0 else 4 * L.width + 1`。
   - `sub L`：T = `L.width`，M = `L.width`，Q = `4 * L.width + 1`。
 
-[InPlaceAdder.lean](#inplaceadderlean)
+### [InPlaceAdder.lean](InPlaceAdder.lean)
 
-这个文件定义直接更新目标寄存器的加减法，以及受控常量和受控寄存器版本，证明结果、工作位清理与资源用量。
-
-- 规格：`addInPlace` 将 y 更新为 `(X+Y+C.toNat) mod 2^n`，`subInPlace` 将其更新为 `(Y+2^n−X) mod 2^n`；受控常量和寄存器版本仅在控制开启时加减，保持源与控制，零掩码和进位工作区最终仍为零。还给出复制及保留外部源的组合规格。
-- 正确性：majority 只异或更新进位；addInPlace 只将 y 更新为截断和，y 之外的基态位与相位不变。这里的 `_correct` 不把其他受控包装程序混作同一个结论。
 - 资源：n 为目标位宽 y.length；精确线路数要求 n≥1。
 
   - `addInPlace x y carry cin` / `subInPlace x y carry cin`：T = `y.length - 1`，M = `y.length - 1`，Q = `3 * y.length`。
   - `maskedAddInPlace c src t y carry cin` / `maskedSubInPlace c src t y carry cin`：T = `3*y.length-1`，M = `y.length-1`。
 
-[MeasuredMaskedAdder.lean](#measuredmaskedadderlean)
+### [MeasuredMaskedAdder.lean](MeasuredMaskedAdder.lean)
 
-这个文件用测量和即时相位修正清除受控加减法的临时掩码，证明计算结果不变及对应的资源用量。
-
-- 规格：掩码等于受控源值时可被测量清零；令 V 为控制开启时的源 S（否则为零），加法将 y 更新为 `(Y+V) mod 2^n`，减法更新为 `(Y+2^n−V) mod 2^n`；保持源与控制，将掩码和进位工作区恢复为零。
-- 正确性：掩码满足受控复制关系时，eraseMask 把其全部清零，保持掩码之外的所有基态位及相位，且对任意测量结果成立。
 - 资源：n 为目标位宽 y.length；精确线路数使用定理中的非空、互异条件。
 
   - `eraseMask c src dst`：T = `0`，M = `dst.length`。
   - `measuredMaskedAddInPlace c src t y carry cin` / `measuredMaskedSubInPlace c src t y carry cin`：T = `2*y.length-1`，M = `2*y.length-1`，Q = `4*y.length+1`。
 
-[Counter.lean](#counterlean)
+### [Counter.lean](Counter.lean)
 
-这个文件提供 10 位受控加一、减一计数器，既支持 XOR 输出，也支持把结果写入另一寄存器后清零原计数。
-
-- 规格：10 位计数器分别得到 `(K+C.toNat) mod 1024` 或 `(K+1024−C.toNat) mod 1024`；XOR 版本保持 K 并将结果异或到输出 O，转移版本要求输出初始为零，写入结果同时清零旧 K。两者保持控制并清理工作位；counterFlip 仅翻转辅助寄存器与进位位。
 - 资源：
 
   - `counterIncXor L` / `counterDecXor L`：T = `10`，M = `10`，Q = `41`。
   - `counterInc L` / `counterDec L`：T = `20`，M = `20`，Q = `41`。
-
-## [FullAdder.lean](FullAdder.lean)
-
-```lean
-def sumBit (a b c : Bool) : Bool
-```
-
-计算三个输入位相加得到的和位。
-
-```lean
-def carryBit (a b c : Bool) : Bool
-```
-
-计算三个输入位相加得到的进位。
-
-```lean
-def fullAdder (a b cin out carry : Wire) : Program
-```
-
-一位全加器：将和位异或到 out，将进位异或到 carry，保留三个输入位。
-
-```lean
-def eraseCarry (a b cin carry : Wire) : Program
-```
-
-通过测量和即时相位修正清除已计算的进位。
-
-```lean
-theorem fullAdder_correct (a b cin out carry : Wire)
-    (hdisjoint : [a, b, cin, out, carry].Nodup)
-    (s : State) (m : List Bool)
-```
-
-证明了在线路互异时，全加器只将和位、进位分别异或到 out、carry，其他基态位及相位保持不变。
-
-```lean
-theorem eraseCarry_correct (a b cin carry : Wire)
-    (ha : a ≠ carry) (hb : b ≠ carry) (hc : cin ≠ carry)
-    (s : State)
-    (hcarry : s.basis carry = carryBit (s.basis a) (s.basis b) (s.basis cin))
-    (m : List Bool)
-```
-
-证明了 carry 保存正确进位且不与输入重叠时，清理程序将 carry 置零，其他基态位及相位保持不变。
-
-```lean
-theorem fullAdder_spec (a b cin out carry : Wire)
-    (hnd : [a, b, cin, out, carry].Nodup) (A B C O K : Bool)
-```
-
-证明了全加器保持 A、B、C，将输出 O 更新为 O XOR sumBit A B C，将进位 K 更新为 K XOR carryBit A B C，并保持相位。
-
-```lean
-theorem eraseCarry_spec (a b cin carry : Wire)
-    (hnd : [a, b, cin, carry].Nodup) (A B C : Bool)
-```
-
-证明了输入保持不变，正确的进位被清零，且对所有测量结果恢复相位。
-
-```lean
-theorem fullAdder_toffoliCount (a b cin out carry : Wire)
-```
-
-证明了全加器使用 1 个 Toffoli 门。
-
-```lean
-theorem fullAdder_measurementCount (a b cin out carry : Wire)
-```
-
-证明了全加器不使用测量。
-
-```lean
-theorem eraseCarry_resources (a b cin carry : Wire)
-```
-
-证明了进位清理不使用 Toffoli 门，只使用 1 次测量。
-
-```lean
-theorem fullAdder_wires (a b cin out carry : Wire)
-```
-
-证明了全加器的线路支持恰为 a、b、cin、out、carry 的集合。
-
-```lean
-theorem eraseCarry_wires (a b cin carry : Wire)
-```
-
-证明了进位清理的线路支持恰为 a、b、cin、carry 的集合。
-
-```lean
-theorem fullAdder_qubitCount (a b cin out carry : Wire)
-    (hnd : [a, b, cin, out, carry].Nodup)
-```
-
-证明了线路互异时，全加器使用 5 根不同物理线路。
-
-```lean
-theorem eraseCarry_qubitCount (a b cin carry : Wire)
-    (hnd : [a, b, cin, carry].Nodup)
-```
-
-证明了线路互异时，进位清理使用 4 根不同物理线路。
-
-```lean
-theorem fullAdder_bit_value (a b c : Bool)
-```
-
-证明了和位加上两倍进位，等于三个输入位的数值之和。
-
-## [RippleAdder.lean](RippleAdder.lean)
-
-```lean
-structure AddBit
-```
-
-一位加法的布局 AddBit 定义为两个输入位 x、y，输出位 out 和进位工作位 carry 四部分。
-
-```lean
-def addWires : List AddBit → List Wire
-```
-
-列出逐位加法布局包含的全部线路。
-
-```lean
-def rippleAdder : List AddBit → Wire → Program
-```
-
-按低位到高位传递进位，将加法结果异或到输出，并清理临时进位。
-
-```lean
-theorem mem_addWires {bs : List AddBit} {b : AddBit} (h : b ∈ bs)
-```
-
-证明了布局中的任意一位，其 x、y、out、carry 都属于总线路列表。
-
-```lean
-theorem sum_value_step (A B C : Bool) (X Y n : Nat)
-```
-
-证明了当前和位与高位加法结果组合后，等于整个加法结果的低 n+1 位。
-
-```lean
-theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
-    (hclean : ∀ b ∈ bs, s.basis b.carry = false)
-```
-
-证明了进位工作位初始为零时，程序将两输入及输入进位之和的低 bs.length 位异或到输出；输出以外的基态位保持不变，且相位恢复。
-
-```lean
-theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
-    (hclean : ∀ b ∈ bs, s.basis b.out = false ∧ s.basis b.carry = false)
-```
-
-证明了输出和进位工作位初始为零时，输出得到两输入及输入进位之和的低 bs.length 位；输出以外的基态位保持不变，且相位恢复。
-
-```lean
-theorem inputs_not_output (bs : List AddBit) (hnd : (addWires bs).Nodup)
-```
-
-证明了总线路互异时，任何输入位或进位工作位都不属于输出寄存器。
-
-```lean
-theorem rippleAdder_xor_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat) (C : Bool)
-```
-
-证明了输出由 O 更新为 O XOR ((X+Y+C.toNat) % 2^bs.length)，输入保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) (C : Bool)
-```
-
-证明了零输出得到 (X+Y+C.toNat) % 2^bs.length，输入保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem rippleAdder_wide_spec (bs : List AddBit) (high : AddBit) (cin : Wire)
-    (hnd : (cin :: addWires (bs ++ [high])).Nodup) (X Y : Nat) (C : Bool)
-    (hX : X < 2^bs.length) (hY : Y < 2^bs.length)
-```
-
-证明了额外增加一位、且 X 和 Y 均可由原位宽表示时，零输出得到完整整数和 X+Y+C.toNat，不再截断；输入保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem rippleAdder_toffoliCount (bs : List AddBit) (cin : Wire)
-```
-
-证明了 Toffoli 门数等于加法位数 bs.length。
-
-```lean
-theorem rippleAdder_measurementCount (bs : List AddBit) (cin : Wire)
-```
-
-证明了测量次数等于加法位数 bs.length。
-
-```lean
-theorem addWires_length (bs : List AddBit)
-```
-
-证明了总线路列表长度为 4 * bs.length。
-
-```lean
-theorem rippleAdder_wires (b : AddBit) (bs : List AddBit) (cin : Wire)
-```
-
-证明了非空加法器的线路支持恰为 cin 与各位布局线路的集合。
-
-```lean
-theorem rippleAdder_qubitCount (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup)
-```
-
-证明了线路互异时，空加法器使用 0 根线路，非空加法器使用 4 * bs.length + 1 根线路。
-
-## [Subtractor.lean](Subtractor.lean)
-
-```lean
-def rippleSubtractor (bs : List AddBit) (cin : Wire) : Program
-```
-
-将输入 y 和 cin 取反、执行加法、再恢复取反；在 cin 初始为零时，将 X−Y 的截断结果异或到输出。
-
-```lean
-private theorem y_sublist (bs : List AddBit)
-```
-
-证明了 y 寄存器的线路列表是全部加法线路列表的子列表。
-
-```lean
-private theorem not_y (bs : List AddBit) (hnd : (addWires bs).Nodup)
-```
-
-证明了总线路互异时，x、out 和 carry 中的线路都不属于 y 寄存器。
-
-```lean
-theorem rippleSubtractor_xor_correct (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
-    (hc : s.basis cin = false) (hclean0 : ∀ b ∈ bs, s.basis b.carry = false)
-```
-
-证明了 cin 和进位工作位初始为零时，输出异或上 (X+2^bs.length−Y) % 2^bs.length；输出以外的基态位保持不变，且相位恢复。
-
-```lean
-theorem rippleSubtractor_xor_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat)
-```
-
-证明了输出由 O 更新为 O XOR ((X+2^bs.length−Y) % 2^bs.length)，输入保持，cin 和进位工作区归零，且相位恢复。
-
-```lean
-theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup) (X Y : Nat)
-```
-
-证明了零输出得到 (X+2^bs.length−Y) % 2^bs.length，输入保持，cin 和进位工作区归零，且相位恢复。
-
-```lean
-theorem rippleSubtractor_counts (bs : List AddBit) (cin : Wire)
-```
-
-证明了 Toffoli 门数和测量次数均为 bs.length。
-
-```lean
-theorem rippleSubtractor_wires (bs : List AddBit) (cin : Wire)
-```
-
-证明了减法器的线路支持恰为 cin 与各位布局线路的集合。
-
-```lean
-theorem rippleSubtractor_qubitCount (bs : List AddBit) (cin : Wire)
-    (hnd : (cin :: addWires bs).Nodup)
-```
-
-证明了线路互异时，减法器使用 4 * bs.length + 1 根不同物理线路。
-
-## [Layout.lean](Layout.lean)
-
-```lean
-structure AdderLayout
-```
-
-加法器布局 AdderLayout 定义为逐位布局列表 bits 和输入进位 cin 两部分。
-
-以下 width、x、y、out、carry、wires 位于 AdderLayout 命名空间。
-
-```lean
-def width (L : AdderLayout) : Nat
-```
-
-给出加法器的位宽。
-
-```lean
-def x (L : AdderLayout) : List Wire
-```
-
-取出第一个输入寄存器的线路。
-
-```lean
-def y (L : AdderLayout) : List Wire
-```
-
-取出第二个输入寄存器的线路。
-
-```lean
-def out (L : AdderLayout) : List Wire
-```
-
-取出输出寄存器的线路。
-
-```lean
-def carry (L : AdderLayout) : List Wire
-```
-
-取出进位工作寄存器的线路。
-
-```lean
-def wires (L : AdderLayout) : List Wire
-```
-
-列出包含输入进位在内的全部布局线路。
-
-以下声明回到 ECDSAAdd.Arithmetic 命名空间。
-
-```lean
-def add (L : AdderLayout) : Program
-```
-
-在给定布局上执行 XOR 输出加法。
-
-```lean
-def sub (L : AdderLayout) : Program
-```
-
-在给定布局上执行 XOR 输出减法。
-
-```lean
-theorem add_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) (C : Bool)
-```
-
-证明了输出由 O 更新为 O XOR ((X+Y+C.toNat) % 2^L.width)，输入保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem sub_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat)
-```
-
-证明了 cin 初始为零时，输出由 O 更新为 O XOR ((X+2^L.width−Y) % 2^L.width)，输入保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem add_erase_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y : Nat) (C : Bool)
-```
-
-证明了输出已经保存同一加法结果时，再执行一次 add 可将输出清零，保持输入、零进位工作区及相位。
-
-```lean
-theorem sub_erase_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y : Nat)
-```
-
-证明了输出已经保存同一减法结果且 cin 为零时，再执行一次 sub 可将输出清零，保持输入、零进位工作区及相位。
-
-```lean
-theorem add_twice_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) (C : Bool)
-```
-
-证明了进位工作区初始为零时，连续执行两次 add 会恢复原输出 O，并保持输入、零进位工作区及相位。
-
-```lean
-theorem add_resources (L : AdderLayout) (hnd : L.wires.Nodup)
-```
-
-证明了 Toffoli 门数和测量次数均为 L.width；空布局使用 0 根线路，非空布局使用 4 * L.width + 1 根线路。
-
-```lean
-theorem sub_resources (L : AdderLayout) (hnd : L.wires.Nodup)
-```
-
-证明了 Toffoli 门数和测量次数均为 L.width，线路数为 4 * L.width + 1。
-
-## [InPlaceAdder.lean](InPlaceAdder.lean)
-
-```lean
-def majority (a b cin carry : Wire) : Program
-```
-
-将三个输入位的进位异或到 carry，不写和位。
-
-```lean
-def addInPlace : List Wire → List Wire → List Wire → Wire → Program
-```
-
-将 x 与输入进位加到 y 中，结果按 y 的位宽截断，并清理临时进位。
-
-```lean
-theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
-    (s : State) (m : List Bool)
-```
-
-证明了程序只更新 carry，将其与三个输入的进位异或，其他基态位和相位保持不变。
-
-```lean
-theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
-    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
-    (hc : carry.length + 1 = y.length) (s : State) (m : List Bool)
-    (hclean : ∀ w ∈ carry, s.basis w = false)
-```
-
-证明了位宽匹配、进位工作位初始为零时，y 得到 (X+Y+C.toNat) % 2^y.length；y 以外的基态位保持不变，且相位恢复。
-
-```lean
-theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
-    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
-    (hc : carry.length + 1 = y.length) (X Y : Nat) (C : Bool)
-```
-
-证明了 y 原地更新为 (X+Y+C.toNat) % 2^y.length，x 和 cin 保持，进位工作区归零，且相位恢复。
-
-```lean
-def subInPlace (x y carry : List Wire) (cin : Wire) : Program
-```
-
-在 y 取反前后夹入原地加法；cin 为零时，从 y 中减去 x，结果按 y 的位宽截断。
-
-```lean
-private theorem flip_y (x y carry : List Wire) (cin : Wire)
-    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (X Y K : Nat) (C : Bool)
-```
-
-证明了对 y 取反将其值变为 2^y.length−1−Y，同时保持 x、cin、进位寄存器及相位。
-
-```lean
-private theorem complement_sub (X Y N : Nat) (hN : 0 < N) (hX : X < N) (hY : Y < N)
-```
-
-证明了范围内的数经过“取反、加法取模、再取反”，得到 (Y+N−X) % N。
-
-```lean
-theorem subInPlace_spec (x y carry : List Wire) (cin : Wire)
-    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
-    (hc : carry.length + 1 = y.length) (X Y : Nat)
-```
-
-证明了 cin 初始为零时，y 更新为 (Y+2^y.length−X) % 2^y.length，x 保持，cin 和进位工作区归零，且相位恢复。
-
-```lean
-theorem addInPlace_counts (x y carry : List Wire) (cin : Wire)
-    (hx : x.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了位宽匹配时，原地加法的 Toffoli 门数和测量次数均为 y.length−1。
-
-```lean
-theorem subInPlace_counts (x y carry : List Wire) (cin : Wire)
-    (hx : x.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了位宽匹配时，原地减法的 Toffoli 门数和测量次数均为 y.length−1。
-
-```lean
-theorem addInPlace_wires (x y carry : List Wire) (cin : Wire)
-    (hx : x.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了原地加法的线路支持恰为 cin、x、y 和 carry 的线路集合。
-
-```lean
-theorem subInPlace_wires (x y carry : List Wire) (cin : Wire)
-    (hx : x.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了原地减法的线路支持恰为 cin、x、y 和 carry 的线路集合。
-
-```lean
-theorem addInPlace_resources (x y carry : List Wire) (cin : Wire)
-    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
-    (hc : carry.length + 1 = y.length)
-```
-
-证明了线路互异、位宽匹配时，原地加法和减法各使用 y.length−1 个 Toffoli 门、同样次数的测量，以及 3 * y.length 根线路。
-
-```lean
-def maskedAddConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program
-```
-
-按控制位将常量 K 加到 y，并清理临时常量寄存器 T。
-
-```lean
-def maskedSubConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program
-```
-
-按控制位从 y 减去常量 K，并清理临时常量寄存器 T。
-
-```lean
-def maskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program
-```
-
-按控制位将 src 加到 y，使用 t 保存临时掩码，最后清理 t。
-
-```lean
-def maskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program
-```
-
-按控制位从 y 减去 src，使用 t 保存临时掩码，最后清理 t。
-
-```lean
-private theorem masked_load (c cin : Wire) (T y carry : List Wire)
-    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (K : Nat) (hK : K < 2^T.length)
-    (C : Bool) (V Y : Nat)
-```
-
-证明了常量装载把 T 从 V 更新为 V XOR (if C then K else 0)，并保持控制、y、零输入进位、零进位工作区及相位。
-
-```lean
-private theorem masked_add (c cin : Wire) (T y carry : List Wire)
-    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
-    (hc : carry.length + 1 = y.length) (C : Bool) (V Y : Nat)
-```
-
-证明了将 T 中的 V 原地加到 y 时，控制和 T 保持，进位工作区归零，且相位恢复。
-
-```lean
-private theorem masked_sub (c cin : Wire) (T y carry : List Wire)
-    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
-    (hc : carry.length + 1 = y.length) (C : Bool) (V Y : Nat)
-```
-
-证明了从 y 原地减去 T 中的 V 时，控制和 T 保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem maskedAddConst_spec (c cin : Wire) (T y carry : List Wire)
-    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
-    (hc : carry.length + 1 = y.length) (K : Nat) (hK : K < 2^T.length) (C : Bool) (Y : Nat)
-```
-
-证明了控制为真时 y 加上 K，为假时 y 不变，结果按位宽截断；控制保持，T、cin 和 carry 归零，且相位恢复。
-
-```lean
-theorem maskedSubConst_spec (c cin : Wire) (T y carry : List Wire)
-    (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
-    (hc : carry.length + 1 = y.length) (K : Nat) (hK : K < 2^T.length) (C : Bool) (Y : Nat)
-```
-
-证明了控制为真时 y 减去 K，为假时 y 不变，结果按位宽截断；控制保持，T、cin 和 carry 归零，且相位恢复。
-
-```lean
-theorem maskedCopyWithFrame_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (C : Bool) (S V Y : Nat)
-```
-
-证明了受控复制把 t 从 V 更新为 V XOR (if C then S else 0)，并保持控制、src、y、零输入进位、零进位工作区及相位。
-
-```lean
-theorem addInPlaceWithSource_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (ht : t.length = y.length)
-    (hc : carry.length + 1 = y.length) (C : Bool) (S V Y : Nat)
-```
-
-证明了将 t 中的 V 加到 y 时，额外的控制位和 src 也保持不变；t 保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem subInPlaceWithSource_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (ht : t.length = y.length)
-    (hc : carry.length + 1 = y.length) (C : Bool) (S V Y : Nat)
-```
-
-证明了从 y 减去 t 中的 V 时，额外的控制位和 src 也保持不变；t 保持，进位工作区归零，且相位恢复。
-
-```lean
-theorem maskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat)
-```
-
-证明了控制为真时 y 加上 S，为假时 y 不变，结果按位宽截断；控制和 src 保持，t、cin、carry 归零，且相位恢复。
-
-```lean
-theorem maskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat)
-```
-
-证明了控制为真时 y 减去 S，为假时 y 不变，结果按位宽截断；控制和 src 保持，t、cin、carry 归零，且相位恢复。
-
-```lean
-theorem maskedInPlace_counts (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hs : src.length = t.length) (ht : t.length = y.length)
-    (hc : carry.length + 1 = y.length)
-```
-
-证明了受控寄存器加法和减法各使用 3 * y.length−1 个 Toffoli 门、y.length−1 次测量。
-
-```lean
-theorem maskedInPlace_wires (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hs : src.length = t.length) (ht : t.length = y.length)
-    (hc : carry.length + 1 = y.length)
-```
-
-证明了受控寄存器加法和减法的线路支持均恰为 c、cin、src、t、y、carry 的线路集合。
-
-```lean
-theorem maskedConst_wires_subset (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat)
-    (hT : T.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了受控常量加法和减法不会触及 c、cin、T、y、carry 之外的线路；这里只给支持集上界。
-
-```lean
-theorem maskedInPlace_wires_subset (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hs : src.length = t.length) (ht : t.length = y.length) (hc : carry.length + 1 = y.length)
-```
-
-证明了受控寄存器加法和减法不会触及 c、cin、src、t、y、carry 之外的线路。
-
-## [MeasuredMaskedAdder.lean](MeasuredMaskedAdder.lean)
-
-```lean
-def eraseMask (c : Wire) : List Wire → List Wire → Program
-```
-
-通过测量和即时相位修正清除目标寄存器中的受控源掩码。
-
-```lean
-private theorem eraseMask_bit (c a b : Wire) (hc : c≠b) (ha : a≠b)
-    (s : State) (h : s.basis b = (s.basis c && s.basis a)) (v : Bool)
-```
-
-证明了目标位 b 保存 c AND a 时，一次测量及对应 CZ 修正可清零 b，其他基态位及相位保持不变。
-
-```lean
-theorem eraseMask_correct (c : Wire) (src dst : List Wire)
-    (hlen : src.length=dst.length) (hnd : (c::(src++dst)).Nodup)
-    (s : State) (m : List Bool)
-    (hmask : regValue dst s.basis = if s.basis c then regValue src s.basis else 0)
-```
-
-证明了 dst 保存由 c 控制的 src 掩码时，eraseMask 将 dst 清零，dst 以外的基态位保持不变，且相位恢复。
-
-```lean
-theorem eraseMask_eq_copy (c : Wire) (src dst : List Wire)
-    (hlen : src.length=dst.length) (hnd : (c::(src++dst)).Nodup)
-    (s : State) (m : List Bool)
-    (hm : regValue dst s.basis = if s.basis c then regValue src s.basis else 0)
-```
-
-证明了在 dst 保存正确掩码的前提下，测量清掩码与再次执行受控复制得到相同的完整状态；不是对任意 dst 都成立。
-
-```lean
-def measuredMaskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program
-```
-
-按控制位将 src 加到 y，最后通过测量清理临时掩码 t。
-
-```lean
-def measuredMaskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program
-```
-
-按控制位从 y 减去 src，最后通过测量清理临时掩码 t。
-
-```lean
-private theorem eraseMask_frame_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (C : Bool) (S Y : Nat)
-```
-
-证明了清理正确掩码 t 时，控制、src、y、零输入进位和零进位工作区保持，t 归零，且相位恢复。
-
-```lean
-theorem measuredMaskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat)
-```
-
-证明了控制为真时 y 加上 S，为假时 y 不变，结果按位宽截断；控制和 src 保持，t、cin、carry 归零，且相位恢复。
-
-```lean
-theorem measuredMaskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
-    (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat)
-```
-
-证明了控制为真时 y 减去 S，为假时 y 不变，结果按位宽截断；控制和 src 保持，t、cin、carry 归零，且相位恢复。
-
-```lean
-theorem eraseMask_counts (c : Wire) (src dst : List Wire) (hlen : src.length=dst.length)
-```
-
-证明了掩码清理不使用 Toffoli 门，测量次数为 dst.length。
-
-```lean
-theorem eraseMask_wires_subset (c : Wire) (src dst : List Wire)
-```
-
-证明了掩码清理只触及 c、src、dst 中的线路。
-
-```lean
-theorem measuredMaskedInPlace_counts (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hs : src.length=t.length) (ht : t.length=y.length) (hc : carry.length+1=y.length)
-```
-
-证明了测量清掩码版本的受控加法和减法各使用 2 * y.length−1 个 Toffoli 门及同样次数的测量。
-
-```lean
-theorem measuredMaskedInPlace_wires (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hs : src.length=t.length) (ht : t.length=y.length) (hc : carry.length+1=y.length)
-```
-
-证明了这两个程序的线路支持均恰为 c、cin、src、t、y、carry 的线路集合。
-
-```lean
-theorem measuredMaskedInPlace_qubits (c : Wire) (src t y carry : List Wire) (cin : Wire)
-    (hnd : (c::cin::(src++t++y++carry)).Nodup)
-    (hs : src.length=t.length) (ht : t.length=y.length) (hc : carry.length+1=y.length)
-```
-
-证明了线路互异、位宽匹配时，这两个程序各使用 4 * y.length+1 根不同物理线路。
-
-```lean
-private theorem mask_frame (c cin : Wire) (src t y carry : List Wire) (s u : BasisState)
-    (hc : u c=s c) (hi : u cin=s cin)
-    (hs : regValue src u=regValue src s) (ht : regValue t u=regValue t s)
-    (hk : regValue carry u=regValue carry s)
-    (he : ∀ w, w∉c::cin::(src++t++y++carry) → u w=s w)
-```
-
-证明了控制、输入进位及各非目标寄存器的值保持，且布局外线路保持时，y 以外的每个基态位都保持不变。
-
-```lean
-theorem measuredMaskedAddInPlace_frame (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length=t.length)
-    (ht : t.length=y.length) (hc : carry.length+1=y.length)
-    (s : State) (m : List Bool) (vt : regValue t s.basis=0)
-    (vi : s.basis cin=false) (vk : regValue carry s.basis=0)
-```
-
-证明了规定的工作区初始为零时，测量清掩码版本的受控加法不改变 y 以外的任何基态位。
-
-```lean
-theorem measuredMaskedSubInPlace_frame (c cin : Wire) (src t y carry : List Wire)
-    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length=t.length)
-    (ht : t.length=y.length) (hc : carry.length+1=y.length)
-    (s : State) (m : List Bool) (vt : regValue t s.basis=0)
-    (vi : s.basis cin=false) (vk : regValue carry s.basis=0)
-```
-
-证明了规定的工作区初始为零时，测量清掩码版本的受控减法不改变 y 以外的任何基态位。
-
-## [Counter.lean](Counter.lean)
-
-```lean
-private theorem counter_perm (L : AdderLayout)
-```
-
-证明了把 cin、y 放在前面，再接 x、out、carry，只是对布局总线路列表重新排序。
-
-```lean
-private def counterFlip (L : AdderLayout) : Program
-```
-
-对输入进位 cin 和寄存器 y 取反。
-
-```lean
-private theorem counterFlip_spec (L : AdderLayout) (hnd : L.wires.Nodup)
-    (K Y O : Nat) (C : Bool)
-```
-
-证明了取反把 y 更新为 2^L.width−1−Y、将控制进位 C 变为非 C，并保持 x、out、零进位工作区及相位。
-
-```lean
-def counterIncXor (L : AdderLayout) : Program
-```
-
-将计数加法结果异或到 out；计数接口使用零 y 和作为加一控制的 cin。
-
-```lean
-def counterDecXor (L : AdderLayout) : Program
-```
-
-将计数减法结果异或到 out；计数接口使用零 y 和作为减一控制的 cin。
-
-```lean
-theorem counterIncXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K O : Nat) (C : Bool)
-```
-
-证明了 10 位计数器的输出由 O 更新为 O XOR ((K+C.toNat) % 1024)，原计数和控制保持，y、carry 归零，且相位恢复。
-
-```lean
-theorem counterDecXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K O : Nat) (C : Bool)
-```
-
-证明了 10 位计数器的输出由 O 更新为 O XOR ((K+1024−C.toNat) % 1024)，原计数和控制保持，y、carry 归零，且相位恢复。
-
-```lean
-private theorem counter_wires (L : AdderLayout) (hw : L.width=10)
-```
-
-证明了 10 位计数器的两种 XOR 程序都恰好触及布局的全部线路。
-
-```lean
-theorem counterXor_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-```
-
-证明了两种 10 位 XOR 计数程序各使用 10 个 Toffoli 门、10 次测量、41 根线路。
-
-```lean
-def AdderLayout.swapCounter (L : AdderLayout) : AdderLayout
-```
-
-交换布局中 x 和 out 的角色；这里只改变布局视图，不执行物理交换电路。
-
-```lean
-theorem AdderLayout.swapCounter_fields (L : AdderLayout)
-```
-
-证明了交换后的 x、out 分别是原 out、x，y、carry、cin 和位宽保持不变。
-
-```lean
-theorem AdderLayout.swapCounter_perm (L : AdderLayout)
-```
-
-证明了交换布局视图只重新排列线路，不增加或丢失线路。
-
-```lean
-def counterInc (L : AdderLayout) : Program
-```
-
-将加一后的计数写入另一寄存器，再清零原计数寄存器；cin 为假时数值不变，但存放位置仍改变。
-
-```lean
-def counterDec (L : AdderLayout) : Program
-```
-
-将减一后的计数写入另一寄存器，再清零原计数寄存器；cin 为假时数值不变，但存放位置仍改变。
-
-```lean
-theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K : Nat) (C : Bool)
-```
-
-证明了 10 位计数由 x 中的 K 移到 out 中的 (K+C.toNat) % 1024，x、y、carry 归零，控制保持，且相位恢复。
-
-```lean
-theorem counterDec_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K : Nat) (C : Bool)
-```
-
-证明了 10 位计数由 x 中的 K 移到 out 中的 (K+1024−C.toNat) % 1024，x、y、carry 归零，控制保持，且相位恢复。
-
-```lean
-theorem counter_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-```
-
-证明了两种带清理的 10 位计数程序各使用 20 个 Toffoli 门、20 次测量、41 根线路。
-
-```lean
-theorem counterMove_wires (L : AdderLayout) (hw : L.width=10)
-```
-
-证明了两种带清理的 10 位计数程序都恰好触及布局的全部线路。

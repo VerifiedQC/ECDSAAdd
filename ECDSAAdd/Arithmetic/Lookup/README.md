@@ -2,175 +2,114 @@
 
 本模块按量子寄存器中的地址查询经典常量表，将结果异或到输出，并证明查询正确性及工作位清理。
 
-## 文件目录
+这里只介绍 `_spec` 与 `_correct` 定理，资源统一列在末尾。下文 `{前置条件} 程序 {后置条件}` 是 Hoare triple 的可读写法：对任意初始状态和任意预先给定的测量结果都成立，并保持相位。所有三元组都以各项列出的适用前提为条件。
 
-以下只列本文件证明的项目，均以对应定理的线路互异、位宽、数值范围和工作区初态等条件为前提。`_spec` 保证对任意测量结果满足后置断言并保持相位；未提及的线路是否保持，需看相应结论。
+`s₀`、`s₁` 分别表示运行前后完整状态；`s₀[w]` 是初始位值，`val₀(r)` 是初始寄存器读值，后缀 ₁ 同理。普通断言中的 `r=X` 按寄存器类型读取位、整数或点；XOR 是异或。命名状态断言沿用源码，不自动意味着未提及的线路也保持不变。
 
-资源中 T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数；未列出的项不代表零，T=0 也不代表没有其他门。资源公式保留源码参数名，其中 Nat 减法按自然数截断。
+## [Lookup.lean](Lookup.lean)
 
-[Lookup.lean](#lookuplean)
+4 位和 10 位地址的规格均为：地址 D 不变，目标从 T 变为 `T XOR table(D)`，临时工作区从零恢复为零。
 
-这个文件定义经典表的受控查询，证明四位和十位地址接口的正确性、清理及资源性质。
+### lookupWalk
 
-- 规格：4 位和 10 位地址的规格均为：地址 D 不变，目标从 T 变为 `T XOR table(D)`，临时工作区从零恢复为零。
-- 正确性：目标读值恰好异或指定地址的表值，目标以外的位与相位不变；lookupWalk 的局部结论另受根控制 a 限制，完整 lookup 不需要额外外部控制。
+正确性由 [lookupWalk_correct](Lookup.lean#L29) 证明：
+
+控制 a 开启时，将地址对应的表值异或到目标；关闭时目标不变，目标外基态位与相位保持不变。
+
+适用前提：
+
+- `a::(controls++scratch++target)` 中的 wire 互不相同。
+- `scratch.length=controls.length`。
+- `∀ d<2^controls.length, table d<2^target.length`。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
+lookupWalk a controls scratch target table
+{ s₁.phase=s₀.phase
+  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
+  ∧ val₁(target) = val₀(target) XOR (if s₀[a] then table (val₀(controls)) else 0) }
+```
+
+### lookup
+
+实现约定：[lookup_spec](Lookup.lean#L229)。
+
+适用前提：
+
+- `a::(controls++scratch++target)` 中的 wire 互不相同。
+- `controls.length=3`。
+- `scratch.length=3`。
+- `∀ j<16, table j<2^target.length`。
+
+```text
+{ (a::controls) = D, target = T, scratch = 0 }
+lookup a controls scratch target table
+{ (a::controls) = D, target = (T XOR table D), scratch = 0 }
+```
+
+正确性由 [lookup_correct](Lookup.lean#L216) 证明：
+
+将完整地址对应的表值异或到目标寄存器，保持目标外基态位与相位。
+
+适用前提：
+
+- `a::(controls++scratch++target)` 中的 wire 互不相同。
+- `controls.length=3`。
+- `scratch.length=3`。
+- `∀ j<16, table j<2^target.length`。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
+lookup a controls scratch target table
+{ s₁.phase=s₀.phase
+  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
+  ∧ val₁(target) = val₀(target) XOR table (val₀(a::controls)) }
+```
+
+### lookup10
+
+实现约定：[lookup10_spec](Lookup.lean#L371)。
+
+适用前提：
+
+- `a::(controls++scratch++target)` 中的 wire 互不相同。
+- `controls.length=9`。
+- `scratch.length=9`。
+- `∀ j<1024, table j<2^target.length`。
+
+```text
+{ (a::controls) = D, target = T, scratch = 0 }
+lookup a controls scratch target table
+{ (a::controls) = D, target = (T XOR table D), scratch = 0 }
+```
+
+正确性由 [lookup10_correct](Lookup.lean#L358) 证明：
+
+十位计数查表：同一递归门列，九根scratch。
+
+适用前提：
+
+- `a::(controls++scratch++target)` 中的 wire 互不相同。
+- `controls.length=9`。
+- `scratch.length=9`。
+- `∀ j<1024, table j<2^target.length`。
+
+```text
+{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
+lookup a controls scratch target table
+{ s₁.phase=s₀.phase
+  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
+  ∧ val₁(target) = val₀(target) XOR table (val₀(a::controls)) }
+```
+
+## 资源用量
+
+T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数。以下保持原有计数及适用条件；未列出的项不是零，T=0 不代表没有其他门。公式中的 Nat 减法按自然数截断。
+
+### [Lookup.lean](Lookup.lean)
+
 - 资源：
 
   - `lookupWalk a controls scratch target table`：T = `2^controls.length-1`，M = `2^controls.length-1`。
   - `lookup a controls scratch target table`（4 位地址）：T = `14`，M = `14`。
   - `lookup a controls scratch target table`（10 位地址）：T = `1022`，M = `1022`。
-
-## [Lookup.lean](Lookup.lean)
-
-以下声明位于 `ECDSAAdd.Arithmetic` 命名空间。
-
-```lean
-def lookupWalk (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program
-```
-
-正分支返回后，以CX切到负分支；子树共用后续scratch，最后清负AND。
-
-```lean
-theorem eraseNegative_run (a b q : Wire) (hab : a≠b) (hbq : b≠q) (haq : a≠q)
-    (s : State) (m : List Bool) (hq : s.basis q=(s.basis a && !s.basis b))
-```
-
-证明了 `run [X b,measureX q [] [CZ a b],X b] m s` 等于 `⟨s.phase,writeBit s.basis q false⟩`。
-
-```lean
-theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hlen : scratch.length=controls.length)
-    (ht : ∀ d<2^controls.length, table d<2^target.length)
-    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false)
-```
-
-证明了控制 a 开启时，将地址对应的表值异或到目标；关闭时目标不变，目标外基态位与相位保持不变。
-
-```lean
-def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program
-```
-
-无外部控制：a本身使能第一半表，翻转a使能第二半表，末尾还原。
-
-```lean
-theorem lookup_correct_length (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hlen : scratch.length=controls.length)
-    (ht : ∀ j<2^(controls.length+1), table j<2^target.length)
-    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false)
-```
-
-证明了查表保持地址与目标外所有线路，对全部测量记录恢复相位。
-
-```lean
-theorem lookup_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=3) (hs : scratch.length=3)
-    (ht : ∀ j<16, table j<2^target.length)
-    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false)
-```
-
-证明了将完整地址对应的表值异或到目标寄存器，保持目标外基态位与相位。
-
-```lean
-theorem lookup_spec (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=3) (hs : scratch.length=3)
-    (ht : ∀ j<16, table j<2^target.length) (D T : Nat)
-```
-
-证明了公开寄存器接口；工作辅助位初末均为零。
-
-```lean
-theorem lookupWalk_counts (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hlen : scratch.length=controls.length)
-```
-
-证明了所列程序的门数或测量次数满足 `toffoliCount (lookupWalk a controls scratch target table)=2^controls.length-1 ∧ measurementCount (lookupWalk a controls scratch target table)=2^controls.length-1`。
-
-```lean
-theorem lookup_counts (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hc : controls.length=3) (hs : scratch.length=3)
-```
-
-证明了两半表各七个前缀AND；加载与重跑清理都是同一14/14门列。
-
-```lean
-theorem lookupWalk_wires_subset (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-```
-
-证明了 `wires (lookupWalk a controls scratch target table)` 包含的线路都在 `(a::controls++scratch++target).toFinset` 中。
-
-```lean
-theorem lookup_core_wires (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hc : controls.length=3) (hs : scratch.length=3)
-```
-
-证明了与表项无关，单迭代门列触及全部地址和三根scratch。
-
-```lean
-theorem lookup_wires_subset (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-```
-
-证明了目标中恒零的表列不一定触及；只承诺实际支持的包含关系。
-
-```lean
-theorem lookup_frame (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=3) (hs : scratch.length=3)
-    (ht : ∀ j<16, table j<2^target.length)
-    (s : State) (m : List Bool) (hz : regValue scratch s.basis=0) (w : Wire) (hw : w∉target)
-```
-
-证明了比支持集更强的frame：所有目标外线路（包括控制与scratch）初末相同。
-
-```lean
-theorem lookupWalk_core (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hlen : scratch.length=controls.length)
-```
-
-证明了 `(controls++scratch).toFinset` 包含的线路都在 `wires (lookupWalk a controls scratch target table)` 中。
-
-```lean
-theorem lookup10_core_wires (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hc : controls.length=9) (hs : scratch.length=9)
-```
-
-证明了十位地址和九根scratch均在实际支持内，与表值无关。
-
-```lean
-theorem lookup10_correct (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=9) (hs : scratch.length=9)
-    (ht : ∀ j<1024, table j<2^target.length)
-    (s : State) (m : List Bool) (hz : ∀ w∈scratch, s.basis w=false)
-```
-
-证明了十位计数查表：同一递归门列，九根scratch。
-
-```lean
-theorem lookup10_spec (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=9) (hs : scratch.length=9)
-    (ht : ∀ j<1024, table j<2^target.length) (D T : Nat)
-```
-
-证明了执行 `lookup a controls scratch target table` 时，寄存器初态满足 `(a::controls) = D, target = T, scratch = 0` 就能得到 `(a::controls) = D, target = (T ^^^ table D), scratch = 0`，并恢复相位。
-
-```lean
-theorem lookup10_counts (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hc : controls.length=9) (hs : scratch.length=9)
-```
-
-证明了所列程序的门数或测量次数满足 `toffoliCount (lookup a controls scratch target table)=1022 ∧ measurementCount (lookup a controls scratch target table)=1022`。
-
-```lean
-theorem lookup10_frame (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
-    (hnd : (a::(controls++scratch++target)).Nodup)
-    (hc : controls.length=9) (hs : scratch.length=9)
-    (ht : ∀ j<1024, table j<2^target.length)
-    (s : State) (m : List Bool) (hz : regValue scratch s.basis=0) (w : Wire) (hw : w∉target)
-```
-
-证明了 `(run (lookup a controls scratch target table) m s).basis w` 等于 `s.basis w`。
