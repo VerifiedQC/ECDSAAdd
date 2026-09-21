@@ -24,16 +24,6 @@ montMulControlledAdd ｜ montMulControlledSub
 
 acc 以外的 wire 和相位保持不变。这一步假定乘数 X 已经准备好，不单独负责求逆。
 
-## [DivideResources.lean](DivideResources.lean)
-
-L 是受控模除法电路的寄存器布局。
-
-- 资源：
-
-  - `divideLoad L` / `divideUnload L`：T = `256`，M = `0`。
-  - `divideAdd L`：T = `3895383`，M = `2309207`。
-  - `divideSub L`：T = `3895895`，M = `2309719`。
-
 ## [DivideSpec.lean](DivideSpec.lean)
 
 该文件实现受控模除法的累加与累减。
@@ -50,6 +40,16 @@ divideAdd L ｜ divideSub L
 ```
 
 布局满足 L.Widths、线路互异时，这些结论对任意测量结果成立，并保持相位。
+
+## [DivideResources.lean](DivideResources.lean)
+
+L 是受控模除法电路的寄存器布局。
+
+- 资源：
+
+  - `divideLoad L` / `divideUnload L`：T = `256`，M = `0`。
+  - `divideAdd L`：T = `3895383`，M = `2309207`。
+  - `divideSub L`：T = `3895895`，M = `2309719`。
 
 ## [DivideSupport.lean](DivideSupport.lean)
 

@@ -38,17 +38,6 @@ controlledPointOutput L C
 
 output 以外的 wire 和相位保持不变，因此选择位恢复零。
 
-## [ControlledPointResources.lean](ControlledPointResources.lean)
-
-L 是受控原地点加电路的寄存器布局。
-
-- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，不是有限点 (0,0)。
-
-  - `controlledPointOutput L C`：T = `518`，M = `0`。
-  - `controlledPointAddOut L (.some hc)`：T = `9321834`，M = `6147424`，Q = `9784`。
-  - `controlledPointAdd L (.some hc)`：T = `8946186`，M = `5772554`，Q = `6218`。
-  - `controlledPointAdd L 0`：T = `0`，M = `0`，Q = `0`。
-
 ## [FieldFrame.lean](FieldFrame.lean)
 
 该文件证明点加所调用的域运算只改变输出。
@@ -66,15 +55,6 @@ fieldInverse
 ```
 
 减法要求 X、Y<p，乘法要求 X<p，求逆要求 0<X<p。各操作都保持 out 以外的 wire 和相位。
-
-## [PointAddResources.lean](PointAddResources.lean)
-
-L 是独立输出点加电路的寄存器布局。
-
-- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，其分支仍需点复制线路。
-
-  - `pointAddOut L (.some hc)`：T = `9321828`，M = `6147424`，Q = `9780`。
-  - `pointAddOut L 0`：T = `0`，M = `0`，Q = `1026`。
 
 ## [PointAddSpec.lean](PointAddSpec.lean)
 
@@ -107,16 +87,6 @@ pointCandidateCompute L cx cy
 candidateResult 保存差值、斜率、逆元与候选坐标。令 d=if G then X−cx else 1，域中的计算为 `λ=(Y−cy)/d`、`x′=λ²−X−cx`、`y′=(X−x′)λ−Y`；各结果保存为 [0,p) 中的整数。
 
 `pointCandidateClear L cx cy` 清零所有候选中间量，保留输入和 G；两个方向都保持相位。这里只证明候选计算，不包含完整分支选择。
-
-## [PointCandidateResources.lean](PointCandidateResources.lean)
-
-L 是独立输出点加电路的寄存器布局。
-
-- 资源：
-
-  - `pointSubConstant L x out k`：T = `1284`，M = `1028`。
-  - `pointSquare L`：T = `379424`，M = `379424`。
-  - `pointCandidateCompute L cx cy` / `pointCandidateClear L cx cy`：T = `4660144`，M = `3073200`。
 
 ## [PointCandidateSpec.lean](PointCandidateSpec.lean)
 
@@ -199,12 +169,6 @@ pointFlagsCompute L cx cy
 
 `equalPorts_correct` 是底层比较：等宽 src/work、参与线路互异、k 能放入 src、work=0 时，仅将 `控制 AND (src=k)` 异或到目标。
 
-## [PointFlagResources.lean](PointFlagResources.lean)
-
-L 是独立输出点加电路的寄存器布局。
-
-- 资源：`pointFlagsCompute L cx cy` / `pointFlagsClear L cx cy`：T = `514`，M = `512`。
-
 ## [PointFlags.lean](PointFlags.lean)
 
 该文件由有限点与相等标志生成两个分支标志。源码参数 f、ex、ey 分别是有限点、横坐标相等、纵坐标互为负数的标志；g、d 是普通分支与倍点分支标志。它们的初值依次记作 F、EX、EY、G、D。五根线路互异时，`pointBranchFlags_correct` 证明：
@@ -250,17 +214,6 @@ pointInPlaceConstantAdd L r k
 ```
 
 r 以外的 wire 和相位保持不变。`constant_program_spec` 证明其内部“装载常量—模加—清除常量”过程，装载寄存器和工作区均从零恢复到零。
-
-## [PointInPlaceCounts.lean](PointInPlaceCounts.lean)
-
-L 是受控原地点加电路的寄存器布局。
-
-- 资源：
-
-  - `pointInPlaceConstantAdd L r k`：T = `1023`，M = `1023`。
-  - `pointInPlaceNegate L`：T = `3838`，M = `2558`。
-  - `pointInPlaceGeneric L cx cy lambdaStar`：T = `8943108`，M = `5769476`。
-  - `pointInPlaceFinite L C cx cy`：T = `8946186`，M = `5772554`。
 
 ## [PointInPlaceFiniteSpec.lean](PointInPlaceFiniteSpec.lean)
 
@@ -334,12 +287,6 @@ montMulAdd L.inPlaceMultiply p ｜ montMulSub L.inPlaceMultiply p
 
 point.y 以外的 wire 和相位保持不变。
 
-## [PointInPlaceResources.lean](PointInPlaceResources.lean)
-
-L 是受控原地点加电路的寄存器布局。
-
-- 资源：`pointInPlaceFinite L C cx cy`：Q = `6218`。
-
 ## [PointInPlaceSquare.lean](PointInPlaceSquare.lean)
 
 该文件从横坐标减去斜率平方。
@@ -373,15 +320,6 @@ pointOutput L C
 output 以外的 wire 和相位保持不变。这是输出阶段的结论，须配合分支标志与候选计算才能得到完整点加。
 
 `negativePointConstant_correct` 证明负控制常量输出：目标坐标各 256 位、线路互异且控制不与目标重叠时，仅在控制为 0 时异或 encode(C)，目标外的 wire 与相位保持。
-
-## [PointOutputResources.lean](PointOutputResources.lean)
-
-L 是独立输出点加电路的寄存器布局。
-
-- 资源：
-
-  - `maskedPointConstant c r C` / `negativePointConstant c r C` / `pointCopy a b`：T = `0`，M = `0`。
-  - `pointGenericOutput L` / `pointOutput L C`：T = `512`，M = `0`。
 
 ## [PointSelectors.lean](PointSelectors.lean)
 
@@ -436,3 +374,65 @@ selectedPointOutput L C
 output 以外的 wire 和相位保持不变；这里证明选定编码的异或，不单独证明完整点加。
 
 - 资源：`selectedPointOutput L C`：T = `512`，M = `0`。
+
+## [ControlledPointResources.lean](ControlledPointResources.lean)
+
+L 是受控原地点加电路的寄存器布局。
+
+- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，不是有限点 (0,0)。
+
+  - `controlledPointOutput L C`：T = `518`，M = `0`。
+  - `controlledPointAddOut L (.some hc)`：T = `9321834`，M = `6147424`，Q = `9784`。
+  - `controlledPointAdd L (.some hc)`：T = `8946186`，M = `5772554`，Q = `6218`。
+  - `controlledPointAdd L 0`：T = `0`，M = `0`，Q = `0`。
+
+## [PointAddResources.lean](PointAddResources.lean)
+
+L 是独立输出点加电路的寄存器布局。
+
+- 资源：`.some hc` 表示有限常量点；常量 0 表示无穷远点，其分支仍需点复制线路。
+
+  - `pointAddOut L (.some hc)`：T = `9321828`，M = `6147424`，Q = `9780`。
+  - `pointAddOut L 0`：T = `0`，M = `0`，Q = `1026`。
+
+## [PointCandidateResources.lean](PointCandidateResources.lean)
+
+L 是独立输出点加电路的寄存器布局。
+
+- 资源：
+
+  - `pointSubConstant L x out k`：T = `1284`，M = `1028`。
+  - `pointSquare L`：T = `379424`，M = `379424`。
+  - `pointCandidateCompute L cx cy` / `pointCandidateClear L cx cy`：T = `4660144`，M = `3073200`。
+
+## [PointFlagResources.lean](PointFlagResources.lean)
+
+L 是独立输出点加电路的寄存器布局。
+
+- 资源：`pointFlagsCompute L cx cy` / `pointFlagsClear L cx cy`：T = `514`，M = `512`。
+
+## [PointInPlaceCounts.lean](PointInPlaceCounts.lean)
+
+L 是受控原地点加电路的寄存器布局。
+
+- 资源：
+
+  - `pointInPlaceConstantAdd L r k`：T = `1023`，M = `1023`。
+  - `pointInPlaceNegate L`：T = `3838`，M = `2558`。
+  - `pointInPlaceGeneric L cx cy lambdaStar`：T = `8943108`，M = `5769476`。
+  - `pointInPlaceFinite L C cx cy`：T = `8946186`，M = `5772554`。
+
+## [PointInPlaceResources.lean](PointInPlaceResources.lean)
+
+L 是受控原地点加电路的寄存器布局。
+
+- 资源：`pointInPlaceFinite L C cx cy`：Q = `6218`。
+
+## [PointOutputResources.lean](PointOutputResources.lean)
+
+L 是独立输出点加电路的寄存器布局。
+
+- 资源：
+
+  - `maskedPointConstant c r C` / `negativePointConstant c r C` / `pointCopy a b`：T = `0`，M = `0`。
+  - `pointGenericOutput L` / `pointOutput L C`：T = `512`，M = `0`。

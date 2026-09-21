@@ -90,18 +90,6 @@ Y 由 256 位寄存器承载，不必额外要求 Y<p。`fieldMul_zero_spec` 是
 
 - 资源：`fieldMul L`：T = `379424`，M = `379424`，Q = `2596`。
 
-## [MontAdapterResources.lean](MontAdapterResources.lean)
-
-M 是完整模乘电路的输入、输出和工作区布局。
-
-- 资源：
-
-  - `montMulXor M p`：T = `379424`，M = `379424`，Q = `2596`。
-  - `montMulAdd M p`：T = `380447`，M = `380447`，Q = `2596`。
-  - `montMulSub M p`：T = `380959`，M = `380959`，Q = `2596`。
-  - `montMulControlledAdd c M p`：T = `380959`，M = `380447`，Q = `2597`。
-  - `montMulControlledSub c M p`：T = `381471`，M = `380959`，Q = `2597`。
-
 ## [MontAdapterSpec.lean](MontAdapterSpec.lean)
 
 该文件将 Montgomery 准备与恢复封装成标准模乘接口。
@@ -135,24 +123,6 @@ montConstantAdd L K ｜ montConstantSub L K
 ```
 
 acc 以外的 wire 和相位保持不变。
-
-## [MontCounts.lean](MontCounts.lean)
-
-L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局；M 是完整模乘电路的输入、输出和工作区布局。
-
-- 资源：使用 MontStageLayout.Widths / MontLayout.Widths 规定的固定布局；查表地址为 4 位，轮数 k≤64，完整阶段为 64 个窗口。
-
-  - `montLookup L addr K`：T = `14`，M = `14`。
-  - `montLookupAdd L addr K` / `montLookupSub L addr K` / `montReduce L p i` / `montRestoreReduce L p i`：T = `288`，M = `288`。
-  - `montNormalize L p` / `montDenormalize L p`：T = `520`，M = `520`。
-  - `montAddDigit L x y i` / `montSubDigit L x y i`：T = `2084`，M = `2084`。
-  - `montWindow L x y p i` / `montRestoreWindow L x y p i`：T = `2372`，M = `2372`。
-  - `constMontWindow L y p K i` / `constMontRestoreWindow L y p K i`：T = `576`，M = `576`。
-  - `montPrepareRounds L x y p k` / `montRestoreRounds L x y p k`：T = `2372*k`，M = `2372*k`。
-  - `constPrepareRounds L y p K k` / `constRestoreRounds L y p K k`：T = `576*k`，M = `576*k`。
-  - `montPrepare L x y p` / `montRestore L x y p`：T = `152328`，M = `152328`。
-  - `constPrepare L y p K` / `constRestore L y p K`：T = `37384`，M = `37384`。
-  - `montP M p` / `montQ M p`：T = `189712`，M = `189712`。
 
 ## [MontDigit.lean](MontDigit.lean)
 
@@ -236,12 +206,6 @@ montReduce L p i
 
 `montRestoreReduce L p i` 恢复 U 并清零这条记录。acc 和当前记录以外的 wire 与相位保持不变。
 
-## [MontResources.lean](MontResources.lean)
-
-M 是完整模乘电路的输入、输出和工作区布局。
-
-- 资源：`montP M p` / `montQ M p`：T = `189712`，M = `189712`，Q = `2339`。
-
 ## [MontRotate.lean](MontRotate.lean)
 
 该文件将循环移位用于乘除 2^k。
@@ -311,3 +275,39 @@ montWindow
 ```
 
 `montRestoreWindow` 恢复 A、H；acc、history 以外的 wire 和相位保持不变。
+
+## [MontAdapterResources.lean](MontAdapterResources.lean)
+
+M 是完整模乘电路的输入、输出和工作区布局。
+
+- 资源：
+
+  - `montMulXor M p`：T = `379424`，M = `379424`，Q = `2596`。
+  - `montMulAdd M p`：T = `380447`，M = `380447`，Q = `2596`。
+  - `montMulSub M p`：T = `380959`，M = `380959`，Q = `2596`。
+  - `montMulControlledAdd c M p`：T = `380959`，M = `380447`，Q = `2597`。
+  - `montMulControlledSub c M p`：T = `381471`，M = `380959`，Q = `2597`。
+
+## [MontCounts.lean](MontCounts.lean)
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局；M 是完整模乘电路的输入、输出和工作区布局。
+
+- 资源：使用 MontStageLayout.Widths / MontLayout.Widths 规定的固定布局；查表地址为 4 位，轮数 k≤64，完整阶段为 64 个窗口。
+
+  - `montLookup L addr K`：T = `14`，M = `14`。
+  - `montLookupAdd L addr K` / `montLookupSub L addr K` / `montReduce L p i` / `montRestoreReduce L p i`：T = `288`，M = `288`。
+  - `montNormalize L p` / `montDenormalize L p`：T = `520`，M = `520`。
+  - `montAddDigit L x y i` / `montSubDigit L x y i`：T = `2084`，M = `2084`。
+  - `montWindow L x y p i` / `montRestoreWindow L x y p i`：T = `2372`，M = `2372`。
+  - `constMontWindow L y p K i` / `constMontRestoreWindow L y p K i`：T = `576`，M = `576`。
+  - `montPrepareRounds L x y p k` / `montRestoreRounds L x y p k`：T = `2372*k`，M = `2372*k`。
+  - `constPrepareRounds L y p K k` / `constRestoreRounds L y p K k`：T = `576*k`，M = `576*k`。
+  - `montPrepare L x y p` / `montRestore L x y p`：T = `152328`，M = `152328`。
+  - `constPrepare L y p K` / `constRestore L y p K`：T = `37384`，M = `37384`。
+  - `montP M p` / `montQ M p`：T = `189712`，M = `189712`。
+
+## [MontResources.lean](MontResources.lean)
+
+M 是完整模乘电路的输入、输出和工作区布局。
+
+- 资源：`montP M p` / `montQ M p`：T = `189712`，M = `189712`，Q = `2339`。

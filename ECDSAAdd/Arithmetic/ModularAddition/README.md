@@ -160,12 +160,6 @@ modAdd L q ｜ modSub L q
 
 out 以外的所有 wire 和相位保持不变。`modAdd_bounded_correct` 同样允许 X+Y<2q，而不要求两个输入分别小于 q。
 
-## [ModularResources.lean](ModularResources.lean)
-
-L 是模运算电路的寄存器布局。
-
-- 资源：`modAdd L q` / `modSub L q`：T = `5 * L.width + 4`，M = `4 * (L.width + 1)`，Q = `8 * L.width + 9`。
-
 ## [UnaryMod.lean](UnaryMod.lean)
 
 该文件将约减或模取负的结果异或到输出。
@@ -197,3 +191,9 @@ reduceXor ｜ negateXor
 dst 以外的 wire 和相位保持不变。
 
 - 资源：`unaryModXor L f operation src dst`：T = `2*toffoliCount operation`，M = `2*measurementCount operation`。
+
+## [ModularResources.lean](ModularResources.lean)
+
+L 是模运算电路的寄存器布局。
+
+- 资源：`modAdd L q` / `modSub L q`：T = `5 * L.width + 4`，M = `4 * (L.width + 1)`，Q = `8 * L.width + 9`。

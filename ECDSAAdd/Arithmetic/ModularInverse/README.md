@@ -22,12 +22,6 @@ counterActiveXor L target i
 
 相位保持不变。
 
-## [BorrowFrame.lean](BorrowFrame.lean)
-
-L 是加减法电路的寄存器布局。
-
-- 资源：`counterActiveXor L target i`：T = `L.width`，M = `L.width`。
-
 ## [HalveInPlace.lean](HalveInPlace.lean)
 
 该文件按计数 K 决定是否执行一次模减半或模倍增。
@@ -66,15 +60,6 @@ halveInPlace L q 0 512
   - `halveStep L q i` / `doubleStep L q i`：T = `3*L.data.length+20`，M = `2*L.data.length+19`。
   - `halveInPlace L q i n` / `restoreInPlace L q i n`：T = `n*(3*L.data.length+20)`，M = `n*(2*L.data.length+19)`。
 
-## [InverseLoopResources.lean](InverseLoopResources.lean)
-
-L 是求逆循环的数据、历史记录和工作区布局。
-
-- 资源：公式形式与数值形式都在 512 条记录、10 位计数器、256 位低位输入与算术布局等前提下成立，不是任意位宽的通用资源定理。
-
-  - `inverseLoop L q`（公式形式）：T = `1024*(12*L.first.data.width+31)+60*L.first.data.width-12+308744`，M = `1024*(6*L.first.data.width+28)+48*L.first.data.width+308744`，Q = `18*L.first.data.width+1072`。
-  - `inverseLoop L q`（数值形式）：T = `3513912`，M = `1928760`，Q = `5698`。
-
 ## [InverseLoopSpec.lean](InverseLoopSpec.lean)
 
 该文件实现求逆核心的准备、恢复及完整异或输出。
@@ -100,15 +85,6 @@ inverseLoop L q
 ```
 
 其中源码以 `kaliskiInverse q X 256` 表示该逆元。`inverseLoop_spec` 是 O=0 的情形；上述规格都保持相位。
-
-## [InverseResources.lean](InverseResources.lean)
-
-L 是域求逆电路的寄存器布局。
-
-- 资源：
-
-  - `inverseLoad L` / `inverseUnload L`：T = `0`，M = `0`。
-  - `fieldInverse L`：T = `3513912`，M = `1928760`，Q = `5954`。
 
 ## [InverseScale.lean](InverseScale.lean)
 
@@ -177,12 +153,6 @@ kaliskiLoop L i rs
 ```
 
 `kaliskiUnloop L i rs` 从后置状态恢复 z 并清零记录带。两个方向都保持相位；这里证明的是这些状态断言，不额外声称任意外部 wire 的保持性。
-
-## [KaliskiLoopResources.lean](KaliskiLoopResources.lean)
-
-L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
-
-- 资源：rs.length 是循环轮数；公式要求 10 位计数器，精确线路数还要求记录列表非空。 `kaliskiLoop L i rs` / `kaliskiUnloop L i rs`：T = `rs.length*(12*L.data.width+31)`，M = `rs.length*(6*L.data.width+28)`，Q = `7*L.data.width+46+2*rs.length`。
 
 ## [MaskedAdder.lean](MaskedAdder.lean)
 
@@ -254,15 +224,6 @@ negativeInit L q src temp dst
 
 - 资源：`negativeInit L q src temp dst`：T = `30*L.width+24`，M = `24*(L.width+1)`。
 
-## [OneBitRoundResources.lean](OneBitRoundResources.lean)
-
-L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
-
-- 资源：
-
-  - `recoverSwap L`：T = `1`，M = `0`。
-  - `oneBitRound L i` / `oneBitUnround L i`：T = `12*L.data.width+32`，M = `6*L.data.width+28`，Q = `7*L.data.width+48`。
-
 ## [OneBitRoundSpec.lean](OneBitRoundSpec.lean)
 
 该文件证明一轮 Kaliski 运算及其恢复，只保留一位减法历史。
@@ -295,19 +256,6 @@ recordRound L
 
 swap、subtract 以外的 wire 和相位保持不变。
 
-## [RoundResources.lean](RoundResources.lean)
-
-L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
-
-- 资源：
-
-  - `swapRegisters c a b`：T = `a.length`，M = `0`。
-  - `exchangeRegisters a b`：T = `0`，M = `0`。
-  - `inplaceArithmetic L f g c neg`：T = `2*L.width-1`，M = `2*L.width-1`。
-  - `kaliskiBodyProgram L a sw su` / `kaliskiUnbodyProgram L a sw su`：T = `10*L.width-4`，M = `4*L.width-2`。
-  - `recordRound L`：T = `L.data.width+5`，M = `L.data.width`。
-  - `kaliskiRound L i` / `kaliskiUnround L i`：T = `12*L.data.width+31`，M = `6*L.data.width+28`。
-
 ## [RoundSpec.lean](RoundSpec.lean)
 
 该文件证明一轮 Kaliski 运算及其恢复，保留交换与减法两位历史。
@@ -326,6 +274,58 @@ kaliskiRound L i
 `kaliskiUnround L i` 从后置状态恢复 z，同时清零 kNext 和分支记录；两个方向都保持相位。
 
 - 资源：这里取 257 位轮数据和 10 位计数器。 `kaliskiRound L i` / `kaliskiUnround L i`：T = `3115`，M = `1570`，Q = `1847`。
+
+## [BorrowFrame.lean](BorrowFrame.lean)
+
+L 是加减法电路的寄存器布局。
+
+- 资源：`counterActiveXor L target i`：T = `L.width`，M = `L.width`。
+
+## [InverseLoopResources.lean](InverseLoopResources.lean)
+
+L 是求逆循环的数据、历史记录和工作区布局。
+
+- 资源：公式形式与数值形式都在 512 条记录、10 位计数器、256 位低位输入与算术布局等前提下成立，不是任意位宽的通用资源定理。
+
+  - `inverseLoop L q`（公式形式）：T = `1024*(12*L.first.data.width+31)+60*L.first.data.width-12+308744`，M = `1024*(6*L.first.data.width+28)+48*L.first.data.width+308744`，Q = `18*L.first.data.width+1072`。
+  - `inverseLoop L q`（数值形式）：T = `3513912`，M = `1928760`，Q = `5698`。
+
+## [InverseResources.lean](InverseResources.lean)
+
+L 是域求逆电路的寄存器布局。
+
+- 资源：
+
+  - `inverseLoad L` / `inverseUnload L`：T = `0`，M = `0`。
+  - `fieldInverse L`：T = `3513912`，M = `1928760`，Q = `5954`。
+
+## [KaliskiLoopResources.lean](KaliskiLoopResources.lean)
+
+L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
+
+- 资源：rs.length 是循环轮数；公式要求 10 位计数器，精确线路数还要求记录列表非空。 `kaliskiLoop L i rs` / `kaliskiUnloop L i rs`：T = `rs.length*(12*L.data.width+31)`，M = `rs.length*(6*L.data.width+28)`，Q = `7*L.data.width+46+2*rs.length`。
+
+## [OneBitRoundResources.lean](OneBitRoundResources.lean)
+
+L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
+
+- 资源：
+
+  - `recoverSwap L`：T = `1`，M = `0`。
+  - `oneBitRound L i` / `oneBitUnround L i`：T = `12*L.data.width+32`，M = `6*L.data.width+28`，Q = `7*L.data.width+48`。
+
+## [RoundResources.lean](RoundResources.lean)
+
+L 是一轮 Kaliski 电路的数据、计数器、分支标志和工作区布局。
+
+- 资源：
+
+  - `swapRegisters c a b`：T = `a.length`，M = `0`。
+  - `exchangeRegisters a b`：T = `0`，M = `0`。
+  - `inplaceArithmetic L f g c neg`：T = `2*L.width-1`，M = `2*L.width-1`。
+  - `kaliskiBodyProgram L a sw su` / `kaliskiUnbodyProgram L a sw su`：T = `10*L.width-4`，M = `4*L.width-2`。
+  - `recordRound L`：T = `L.data.width+5`，M = `L.data.width`。
+  - `kaliskiRound L i` / `kaliskiUnround L i`：T = `12*L.data.width+31`，M = `6*L.data.width+28`。
 
 ## [RoundWires.lean](RoundWires.lean)
 
