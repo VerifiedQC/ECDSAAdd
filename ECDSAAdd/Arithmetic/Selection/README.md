@@ -8,7 +8,9 @@
 
 ## [Select.lean](Select.lean)
 
-该文件将两个输入中的一个异或到输出。参与线路互异，flag 不与布局重叠时，`selectXor_correct` 证明：
+该文件将两个输入中的一个异或到输出。
+
+bs 是逐位选择单元列表，每个单元含 no、yes 两个输入位和 out 输出位；下文同名寄存器由 `bs.map SelectBit.no/yes/out` 分别组成。输入 no、yes 的初值为 X、Y，输出 out 初始化为 O；flag 是选择位，初值为 C。参与线路互异，flag 不与布局重叠时，`selectXor_correct` 证明：
 
 ```text
 { flag=C, no=X, yes=Y, out=O }

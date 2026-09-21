@@ -8,7 +8,9 @@
 
 ## [EqualConstant.lean](EqualConstant.lean)
 
-该文件实现受控常量相等检测。输入为 n 位，k<2^n，参与线路互异，工作位初始为零。
+该文件实现受控常量相等检测。
+
+bs 是零检测单元列表，每个单元含 input 输入位与 work 工作位，n 是 bs 的长度。下文 input、work 分别简写 `bs.map ZeroBit.input`、`bs.map ZeroBit.work`；输入 input、控制 control 和目标 target 的初值分别为 X、C、T，k 是待比较常量。k<2^n，参与线路互异，工作位初始为零。
 
 `equalConstant_correct` 证明：
 
@@ -24,7 +26,9 @@ target 以外的 wire 和相位保持不变。
 
 ## [ZeroControl.lean](ZeroControl.lean)
 
-该文件实现受控零检测。`zeroControlled_spec` 和 `zeroControlled_correct` 证明：线路互异、工作位初始为零时，
+该文件实现受控零检测。
+
+bs 是零检测单元列表，每个单元含 input 输入位与 work 工作位。下文 input、work 是各单元同名字段组成的寄存器；输入 input、控制 c 和目标 target 的初值分别为 X、C、T，work 初始化为 0。`zeroControlled_spec` 和 `zeroControlled_correct` 证明：线路互异、工作位初始为零时，
 
 ```text
 { c=C, input=X, target=T, work=0 }

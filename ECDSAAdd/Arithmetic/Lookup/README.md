@@ -8,7 +8,9 @@
 
 ## [Lookup.lean](Lookup.lean)
 
-该文件将经典查找表的值异或到目标寄存器。地址 D 为 4 位或 10 位，对应 3 位或 9 位零工作区；表值须能放入目标寄存器，参与线路互异。
+该文件将经典查找表的值异或到目标寄存器。
+
+a 与 controls 共同组成地址寄存器 `a::controls`（下文记作 address），其初值为 D；target 是输出寄存器，初始化为 T，scratch 是零工作区，table 是“地址到表值”的经典函数。地址寄存器 a::controls 为 4 位或 10 位，对应 3 位或 9 位零工作区；表值须能放入目标寄存器，参与线路互异。
 
 `lookup_spec`、`lookup_correct` 证明 4 位版本，`lookup10_spec`、`lookup10_correct` 证明 10 位版本：
 

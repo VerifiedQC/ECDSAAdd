@@ -8,7 +8,9 @@
 
 ## [Rotate.lean](Rotate.lean)
 
-该文件实现无控制循环移位。r 内线路互异时，`rotateRight_spec`、`rotateLeft_spec` 证明：
+该文件实现无控制循环移位。
+
+r 是按低位到高位排列的 wire 列表，表示待移位寄存器，初值为 X；底层交换使用 a、b 两根 wire。r 内线路互异时，`rotateRight_spec`、`rotateLeft_spec` 证明：
 
 ```text
 { r=X, X 为偶数 }
@@ -28,7 +30,9 @@ rotateLeft r
 
 ## [Shift.lean](Shift.lean)
 
-该文件实现受控交换与受控移位。参与线路互异时，`cswap_spec` 和 `cswap_correct` 证明：
+该文件实现受控交换与受控移位。
+
+c 是控制 wire，初值为 C；a、b 是待交换的 wire，初值为 A、B。移位接口中的 r 是按低位到高位排列的 wire 列表，表示初值为 X 的寄存器。参与线路互异时，`cswap_spec` 和 `cswap_correct` 证明：
 
 ```text
 { c=C, a=A, b=B }

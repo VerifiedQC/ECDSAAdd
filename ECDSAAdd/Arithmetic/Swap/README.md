@@ -8,7 +8,9 @@
 
 ## [SwapRegisters.lean](SwapRegisters.lean)
 
-该文件实现等宽寄存器交换。参与线路互异时，`swapRegisters_spec` 和 `swapRegisters_correct` 证明：
+该文件实现等宽寄存器交换。
+
+a、b 是待交换寄存器，初值为 A、B；c 是控制 wire，初值为 C。参与线路互异时，`swapRegisters_spec` 和 `swapRegisters_correct` 证明：
 
 ```text
 { c=C, a=A, b=B }

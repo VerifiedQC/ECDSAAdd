@@ -8,7 +8,9 @@
 
 ## [ConditionalXor.lean](ConditionalXor.lean)
 
-该文件在原值 X 与函数值 F(X) 之间选择，再异或到目标。假设 kernel 已被证明只将 F(X) 异或到 temp、保持其他 wire 和相位；src、temp、dst 等宽，参与线路互异，X<q。
+该文件在原值 X 与函数值 F(X) 之间选择，再异或到目标。
+
+src 是输入，初值为 X；dst 是输出，初始化为 O；c 是控制位，初值为 C；temp、work 是零工作区。kernel 是实现函数 F 的电路，q 是其允许的输入值上界。假设 kernel 已被证明只将 F(X) 异或到 temp、保持其他 wire 和相位；src、temp、dst 等宽，参与线路互异，X<q。
 
 `conditionalXor_correct` 证明：
 
@@ -24,7 +26,9 @@ dst 以外的 wire 和相位保持不变。控制为 0 时异或的是 X，并�
 
 ## [Constant.lean](Constant.lean)
 
-该文件将常量 k 异或到寄存器。r 内线路互异、k<2^r.length 时，`xorConstant_spec` 和 `xorConstant_correct` 证明：
+该文件将常量 k 异或到寄存器。
+
+r 是目标寄存器的 wire 列表，初值为 X，n 是其位数。k 是待异或的常量。r 内线路互异、k<2^r.length 时，`xorConstant_spec` 和 `xorConstant_correct` 证明：
 
 ```text
 { r=X }
@@ -38,7 +42,9 @@ r 以外的 wire 和相位保持不变。
 
 ## [Copy.lean](Copy.lean)
 
-该文件将源寄存器异或到目标，不要求目标初始为零。src、dst 等宽且线路互异，控制不与 dst 重叠。
+该文件将源寄存器异或到目标，不要求目标初始为零。
+
+src 是输入寄存器，初值为 X；dst 是目标，初始化为 O；control 是可选控制 wire，受控接口中的控制参数名为 c，其值记作 C。src、dst 等宽且线路互异，控制不与 dst 重叠。
 
 `copyRegister_spec`、`maskedCopy_spec` 和 `copyRegister_correct` 证明：
 
@@ -54,7 +60,9 @@ copyRegister control src dst
 
 ## [MaskedConstant.lean](MaskedConstant.lean)
 
-该文件实现受控常量异或。r 内线路互异，控制不在 r 中，k<2^r.length 时，`maskedConstant_correct` 证明：
+该文件实现受控常量异或。
+
+r 是目标寄存器的 wire 列表，初值为 X，n 是其位数。c 是控制 wire，初值为 C；k 是待异或的常量。r 内线路互异，控制不在 r 中，k<2^r.length 时，`maskedConstant_correct` 证明：
 
 ```text
 { c=C, r=X }
@@ -68,7 +76,9 @@ r 以外的 wire 和相位保持不变。
 
 ## [Registers.lean](Registers.lean)
 
-该文件实现寄存器逐位取反。n=r.length，r 内线路互异时，`notRegister_spec` 和 `notRegister_correct` 证明：
+该文件实现寄存器逐位取反。
+
+r 是目标寄存器的 wire 列表，初值为 X，n 是其位数。n=r.length，r 内线路互异时，`notRegister_spec` 和 `notRegister_correct` 证明：
 
 ```text
 { r=X }

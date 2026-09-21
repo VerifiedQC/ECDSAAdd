@@ -2,13 +2,17 @@
 
 本模块通过 Montgomery 窗口运算实现标准表示的模乘及受控累加等接口，并证明结果、历史恢复和资源用量。
 
+下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
+
 下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。`{前置条件} 程序 {后置条件}` 对任意满足前提的初始状态和预先给定的测量结果成立；`｜` 按顺序分隔不同程序及其对应结果。
 
 资源 T、M、Q 分别为 Toffoli 门数、测量次数、不同物理线路数，未列出的项不代表零；T=0 不表示没有其他门。资源沿用对应定理的位宽和线路条件，Nat 减法按自然数截断。
 
 ## [ConstDigit.lean](ConstDigit.lean)
 
-该文件累加或累减一个四位窗口的常量乘积。布局满足 L.Widths、线路互异，y 至少 256 位，i<64、K<2^256，令 d=(Y/16^i) mod 16。
+该文件累加或累减一个四位窗口的常量乘积。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。y 是输入乘数寄存器，初值为 Y；K 是经典常量乘数。L.acc 是累加器，初值为 A，L.work 是零工作区；i 是四位窗口编号。下文 acc、history、work 等布局字段省略 L. 前缀。布局满足 L.Widths、线路互异，y 至少 256 位，i<64、K<2^256，令 d=(Y/16^i) mod 16。
 
 `constDigit_correct` 证明：
 
@@ -22,7 +26,9 @@ acc 以外的 wire 和相位保持不变。`constDigitAdd_correct`、`constDigit
 
 ## [ConstRounds.lean](ConstRounds.lean)
 
-该文件证明连续 k 个常量乘法窗口。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，k≤64。
+该文件证明连续 k 个常量乘法窗口。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。y 是输入乘数寄存器，初值为 Y；X 是经典常量乘数。L.acc 是累加器，L.history 保存约减记录，L.work 是零工作区；k 是处理的四位窗口数，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，k≤64。
 
 `constPrepareRounds_correct`、`constRestoreRounds_correct` 证明：
 
@@ -36,7 +42,9 @@ constPrepareRounds（k 个窗口）
 
 ## [ConstStageSpec.lean](ConstStageSpec.lean)
 
-该文件证明完整常量 Montgomery 阶段：64 个窗口后再做规范化。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，令 V=montgomeryValue(p,X,Y,64)、H=montgomeryQuotient(p,X,Y,64)。
+该文件证明完整常量 Montgomery 阶段：64 个窗口后再做规范化。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。y 是输入乘数寄存器，初值为 Y；X 是经典常量乘数。L.acc 是累加器，L.history 保存约减记录，L.flag 保存规范化标志，L.work 是零工作区；k 是处理的四位窗口数，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，令 V=montgomeryValue(p,X,Y,64)、H=montgomeryQuotient(p,X,Y,64)。
 
 `constPrepare_spec`、`constPrepare_correct` 与 `constRestore_spec`、`constRestore_correct` 证明：
 
@@ -52,7 +60,9 @@ constPrepare
 
 ## [ConstWindow.lean](ConstWindow.lean)
 
-该文件证明一个常量乘法窗口。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，i<64、A<2p、H<16^i，令 d=(Y/16^i) mod 16、U=A+X·d。
+该文件证明一个常量乘法窗口。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。y 是输入乘数寄存器，初值为 Y；X 是经典常量乘数。L.acc 是累加器，初值为 A；L.history 保存约减记录，初值为 H；L.work 是零工作区，i 是四位窗口编号，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，y 至少 256 位，X<p<2^256、p mod 16=15，i<64、A<2p、H<16^i，令 d=(Y/16^i) mod 16、U=A+X·d。
 
 `constMontWindow_correct`、`constMontRestoreWindow_correct` 证明：
 
@@ -66,7 +76,9 @@ constMontWindow
 
 ## [FieldMultiply.lean](FieldMultiply.lean)
 
-该文件提供域乘法接口。L.Widths、线路互异，X<p 时，`fieldMul_spec` 证明：
+该文件提供域乘法接口。
+
+L 是完整模乘电路的输入、输出和工作区布局。L.x、L.y 是输入寄存器，初值为 X、Y；L.out 是输出，初始化为 O；L.work 是初始化为 0 的内部工作区。下文 x、y、out、work 省略 L. 前缀。L.Widths、线路互异，X<p 时，`fieldMul_spec` 证明：
 
 ```text
 { x=X, y=Y, out=O, work=0 }
@@ -80,6 +92,8 @@ Y 由 256 位寄存器承载，不必额外要求 Y<p。`fieldMul_zero_spec` 是
 
 ## [MontAdapterResources.lean](MontAdapterResources.lean)
 
+M 是完整模乘电路的输入、输出和工作区布局。
+
 - 资源：
 
   - `montMulXor M p`：T = `379424`，M = `379424`，Q = `2596`。
@@ -90,7 +104,9 @@ Y 由 256 位寄存器承载，不必额外要求 Y<p。`fieldMul_zero_spec` 是
 
 ## [MontAdapterSpec.lean](MontAdapterSpec.lean)
 
-该文件将 Montgomery 准备与恢复封装成标准模乘接口。M.Widths、参与线路互异，p 为素数、p<2^256、p mod 16=15，X<p、Y<2^256。令 V=(X·Y) mod p。
+该文件将 Montgomery 准备与恢复封装成标准模乘接口。
+
+M 是完整模乘电路的输入、输出和工作区布局。M.x、M.y 是输入寄存器，初值为 X、Y；M.out 是输出，初始化为 O；M.work 是初始化为 0 的内部工作区。下文 x、y、out、work 省略 M. 前缀。M.Widths、参与线路互异，p 为素数、p<2^256、p mod 16=15，X<p、Y<2^256。令 V=(X·Y) mod p。
 
 `montMulXor_spec`、`montMulAdd_spec`、`montMulSub_spec` 证明：
 
@@ -106,7 +122,9 @@ montMulXor ｜ montMulAdd ｜ montMulSub
 
 ## [MontConstant.lean](MontConstant.lean)
 
-该文件向累加器加减常量。acc、table 均为 n 位，carry 为 n−1 位，参与线路互异，K<2^n。
+该文件向累加器加减常量。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。L.acc 是累加器，初值为 A；L.table 暂存常量 K，L.carry 和 L.cin 是进位工作区，均初始化为 0。n 是累加器的位数；下文省略 L. 前缀。acc、table 均为 n 位，carry 为 n−1 位，参与线路互异，K<2^n。
 
 `montConstantUpdate_correct`、`montConstantAdd_correct`、`montConstantSub_correct` 证明：
 
@@ -119,6 +137,8 @@ montConstantAdd L K ｜ montConstantSub L K
 acc 以外的 wire 和相位保持不变。
 
 ## [MontCounts.lean](MontCounts.lean)
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局；M 是完整模乘电路的输入、输出和工作区布局。
 
 - 资源：使用 MontStageLayout.Widths / MontLayout.Widths 规定的固定布局；查表地址为 4 位，轮数 k≤64，完整阶段为 64 个窗口。
 
@@ -136,7 +156,9 @@ acc 以外的 wire 和相位保持不变。
 
 ## [MontDigit.lean](MontDigit.lean)
 
-该文件累加一个四位窗口的变量乘积。使用 261 位 acc/mask、260 位 carry、5 位 pad；x 至少 256 位，y 包含所需窗口，参与线路互异。令 d=(Y/16^i) mod 16，X<2^256、U+16X<2^261。
+该文件累加一个四位窗口的变量乘积。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。x、y 是输入乘数寄存器，初值分别为 X、Y。L.acc 是累加器，初值为 U；L.mask 是掩码，L.pad 是补高位，L.carry、L.cin 是进位工作区，均初始化为 0；i 是窗口编号，k 是该窗口内处理的位数。下文 acc、history、work 等布局字段省略 L. 前缀。使用 261 位 acc/mask、260 位 carry、5 位 pad；x 至少 256 位，y 包含所需窗口，参与线路互异。令 d=(Y/16^i) mod 16，X<2^256、U+16X<2^261。
 
 `montAddDigit_correct`、`montSubDigit_correct` 证明：
 
@@ -152,7 +174,9 @@ montAddDigit L x y i
 
 ## [MontLookup.lean](MontLookup.lean)
 
-该文件通过查表累加或累减 K 倍的四位地址值。addr 为 4 位、scratch 为 3 位，acc/table 为 n 位、carry 为 n−1 位，参与线路互异，所有 d<16 都满足 dK<2^n。
+该文件通过查表累加或累减 K 倍的四位地址值。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。addr 是地址寄存器，初值为 D，K 是常量乘数；L.acc 是累加器，初值为 A；L.table 暂存查表结果，L.scratch、L.carry、L.cin 是零工作区，n 是累加器的位数。下文布局字段省略 L. 前缀。addr 为 4 位、scratch 为 3 位，acc/table 为 n 位、carry 为 n−1 位，参与线路互异，所有 d<16 都满足 dK<2^n。
 
 `montLookupUpdate_correct`、`montLookupAdd_correct`、`montLookupSub_correct` 证明：
 
@@ -166,7 +190,9 @@ acc 以外的 wire 和相位保持不变。
 
 ## [MontNormalize.lean](MontNormalize.lean)
 
-该文件将累加器规范化到 [0,p)，并保留恢复标志。acc/table 为 261 位、carry 为 260 位，线路互异，p<2^256、A<2p。
+该文件将累加器规范化到 [0,p)，并保留恢复标志。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。L.acc 是累加器，初值为 A；L.flag 保存恢复标志，L.table、L.carry、L.cin 是工作区，均初始化为 0；p 是模数。下文省略 L. 前缀。acc/table 为 261 位、carry 为 260 位，线路互异，p<2^256、A<2p。
 
 `montNormalize_correct`、`montDenormalize_correct` 证明：
 
@@ -180,7 +206,9 @@ montNormalize L p
 
 ## [MontPQ.lean](MontPQ.lean)
 
-该文件准备标准表示的模乘积，并在使用后恢复工作区。M.Widths、线路互异，p 为素数、p<2^256、p mod 16=15，X<p、Y<2^256。
+该文件准备标准表示的模乘积，并在使用后恢复工作区。
+
+M 是完整模乘电路的输入、输出和工作区布局。M.x、M.y 是输入寄存器，初值为 X、Y；M.out 是供后续使用的输出寄存器；M.work 是初始化为 0 的内部工作区。下文 x、y、out、work 省略 M. 前缀。M.Widths、线路互异，p 为素数、p<2^256、p mod 16=15，X<p、Y<2^256。
 
 `montP_spec`、`montP_correct` 与 `montQ_spec`、`montQ_correct` 证明：
 
@@ -194,7 +222,9 @@ MontPrepared 保存标准模积 (X·Y) mod p 及两段恢复历史；`montQ M p`
 
 ## [MontReduce.lean](MontReduce.lean)
 
-该文件执行一次四位 Montgomery 约减并记录低四位。acc/table 为 261 位、carry 为 260 位、record 为 4 位、scratch 为 3 位，参与线路互异；p mod 16=15，所有 d<16 满足 dp<2^261，且 U+(U mod 16)p<2^261。
+该文件执行一次四位 Montgomery 约减并记录低四位。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。L.acc 是累加器，初值为 U；L.record i 是第 i 个窗口的记录寄存器，初始为 0；L.table、L.scratch、L.carry、L.cin 是零工作区，p 是模数。下文省略 L. 前缀。acc/table 为 261 位、carry 为 260 位、record 为 4 位、scratch 为 3 位，参与线路互异；p mod 16=15，所有 d<16 满足 dp<2^261，且 U+(U mod 16)p<2^261。
 
 `montReduce_correct`、`montRestoreReduce_correct` 证明：
 
@@ -208,11 +238,15 @@ montReduce L p i
 
 ## [MontResources.lean](MontResources.lean)
 
+M 是完整模乘电路的输入、输出和工作区布局。
+
 - 资源：`montP M p` / `montQ M p`：T = `189712`，M = `189712`，Q = `2339`。
 
 ## [MontRotate.lean](MontRotate.lean)
 
-该文件将循环移位用于乘除 2^k。r 内线路互异时，`rotateRightBits_spec`、`rotateLeftBits_spec` 证明：
+该文件将循环移位用于乘除 2^k。
+
+r 是按低位到高位排列的 wire 列表，表示待移位寄存器，初值为 X；k 是移位位数。r 内线路互异时，`rotateRightBits_spec`、`rotateLeftBits_spec` 证明：
 
 ```text
 { r=X, X mod 2^k=0 }
@@ -230,7 +264,9 @@ rotateLeftBits r k
 
 ## [MontRounds.lean](MontRounds.lean)
 
-该文件证明连续 k 个变量乘法窗口。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，k≤64。
+该文件证明连续 k 个变量乘法窗口。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。x、y 是输入乘数寄存器，初值分别为 X、Y。L.acc 是累加器，L.history 保存约减记录，L.work 是零工作区；k 是处理的四位窗口数，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，k≤64。
 
 `montPrepareRounds_correct`、`montRestoreRounds_correct` 证明：
 
@@ -244,7 +280,9 @@ montPrepareRounds（k 个窗口）
 
 ## [MontStageSpec.lean](MontStageSpec.lean)
 
-该文件证明完整变量 Montgomery 阶段：64 个窗口后再做规范化。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，令 V=montgomeryValue(p,X,Y,64)、H=montgomeryQuotient(p,X,Y,64)。
+该文件证明完整变量 Montgomery 阶段：64 个窗口后再做规范化。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。x、y 是输入乘数寄存器，初值分别为 X、Y。L.acc 是累加器，L.history 保存约减记录，L.flag 保存规范化标志，L.work 是零工作区；k 是处理的四位窗口数，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，令 V=montgomeryValue(p,X,Y,64)、H=montgomeryQuotient(p,X,Y,64)。
 
 `montPrepare_spec`、`montPrepare_correct` 与 `montRestore_spec`、`montRestore_correct` 证明：
 
@@ -260,7 +298,9 @@ montPrepare
 
 ## [MontWindow.lean](MontWindow.lean)
 
-该文件证明一个变量乘法窗口。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，i<64、A<2p、H<16^i，令 d=(Y/16^i) mod 16、U=A+X·d。
+该文件证明一个变量乘法窗口。
+
+L 是单个 Montgomery 阶段的累加器、历史记录和工作区布局。x、y 是输入乘数寄存器，初值分别为 X、Y。L.acc 是累加器，初值为 A；L.history 保存约减记录，初值为 H；L.work 是零工作区，i 是四位窗口编号，p 是模数。下文 acc、history、work 等布局字段省略 L. 前缀。L.Widths、参与线路互异，x、y 至少 256 位，X<p<2^256、p mod 16=15，i<64、A<2p、H<16^i，令 d=(Y/16^i) mod 16、U=A+X·d。
 
 `montWindow_correct`、`montRestoreWindow_correct` 证明：
 

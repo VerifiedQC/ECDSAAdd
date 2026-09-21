@@ -6,7 +6,9 @@
 
 ## [FullAdder.lean](FullAdder.lean)
 
-该文件实现量子 full adder。给定输入 A、B、C，当 out 和 carry 初始化为 0 时，电路计算：
+该文件实现量子 full adder。
+
+输入 wire a、b、cin 的初值分别为 A、B、C；out 保存和位，carry 保存进位。当 out 和 carry 初始化为 0 时，电路计算：
 
 ```text
 out   = A ⊕ B ⊕ C
@@ -43,7 +45,9 @@ eraseCarry a b cin carry
 
 ## [RippleAdder.lean](RippleAdder.lean)
 
-该文件实现 n 位加法器，n=bs.length。输入为 X、Y 和进位 C，进位工作区初始为零，输出初值为 O。
+该文件实现 n 位加法器。
+
+n 是逐位加法单元列表 bs 的长度。下文 x、y、out、carry 分别指 `bs.map AddBit.x`、`bs.map AddBit.y`、`bs.map AddBit.out`、`bs.map AddBit.carry`。给定输入 x、y 和进位输入 cin，其初值分别为 X、Y、C；输出 out 初始化为 O，进位工作区 carry 初始化为 0。
 
 `rippleAdder_xor_spec` 和 `rippleAdder_xor_correct` 证明：布局中的线路互异时，对任意测量结果，
 
@@ -61,7 +65,11 @@ rippleAdder bs cin
 
 ## [Subtractor.lean](Subtractor.lean)
 
-该文件实现 n 位减法器，n=bs.length。`rippleSubtractor_xor_spec` 和 `rippleSubtractor_xor_correct` 证明：线路互异，cin 和进位工作区初始为零时，对任意测量结果，
+该文件实现 n 位减法器。
+
+n 是逐位加法单元列表 bs 的长度；x、y、out、carry 分别是 bs 中各单元的同名字段组成的寄存器。输入 x、y 的初值为 X、Y，输出 out 初始化为 O，进位输入 cin 与进位工作区 carry 初始化为 0。
+
+`rippleSubtractor_xor_spec` 和 `rippleSubtractor_xor_correct` 证明：线路互异，cin 和进位工作区初始为零时，对任意测量结果，
 
 ```text
 { x=X, y=Y, cin=0, out=O, carry=0 }
@@ -75,7 +83,11 @@ rippleSubtractor bs cin
 
 ## [Layout.lean](Layout.lean)
 
-该文件为加减法提供统一寄存器接口，n=L.width。`add_spec`、`sub_spec` 证明：L.wires 互异、进位工作区初始为零时，
+该文件为加减法提供统一寄存器接口。
+
+L 是加减法电路的寄存器布局。n 是布局 L 的位宽 L.width，也就是逐位单元列表 L.bits 的长度。输入 L.x、L.y 的初值为 X、Y，进位输入 L.cin 的初值为 C；输出 L.out 初始化为 O，工作区 L.carry 初始化为 0。下文 x、y、cin、out、carry 是这些字段的简写。
+
+`add_spec`、`sub_spec` 证明：L.wires 互异、进位工作区初始为零时，
 
 ```text
 { x=X, y=Y, cin=C, out=O, carry=0 }
@@ -93,7 +105,9 @@ sub L
 
 ## [InPlaceAdder.lean](InPlaceAdder.lean)
 
-该文件实现直接更新 y 的加减法。x、y 均为 n 位，carry 有 n−1 位，所有参与线路互异。
+该文件实现直接更新 y 的加减法。
+
+x 是加数寄存器，y 是原地更新的目标，cin 是进位输入，carry 是进位工作区；初值分别记作 X、Y、C、0，n 是 x 的位数。受控版本的控制 wire 为 c，初值记作 B；src 是源寄存器，初值为 S，t 是寄存器版本的临时掩码；常量版本中该临时寄存器名为 T。x、y 均为 n 位，carry 有 n−1 位，所有参与线路互异。
 
 `addInPlace_spec` 和 `addInPlace_correct` 证明：carry 初始为零时，对任意测量结果，
 
@@ -105,13 +119,13 @@ addInPlace x y carry cin
 
 y 之外的 wire 和相位保持不变。`subInPlace_spec` 给出 cin=0 时的减法：y 变为 `(Y+2^n−X) mod 2^n`，x、cin 和零进位工作区保持，相位恢复。
 
-受控版本只在控制 B=1 时加减。对于位宽匹配、线路互异的布局，`maskedAddConst_spec`、`maskedSubConst_spec` 处理常量 K<2^n；`maskedAddInPlace_spec`、`maskedSubInPlace_spec` 处理源寄存器值 S。令 V 为控制开启时的 K 或 S，否则为零：
+受控版本只在控制 c 的值 B=1 时加减。对于位宽匹配、线路互异的布局，`maskedAddConst_spec`、`maskedSubConst_spec` 处理常量 K<2^n；`maskedAddInPlace_spec`、`maskedSubInPlace_spec` 处理源寄存器值 S。令 V 为控制开启时的 K 或 S，否则为零。下面写寄存器版本；常量版本将 t 换为源码中的 T：
 
 ```text
-{ control=B, y=Y, 临时寄存器=0, cin=0, carry=0 }
+{ c=B, y=Y, t=0, cin=0, carry=0 }
 受控加法 / 受控减法
 { y=(Y+V) mod 2^n / y=(Y+2^n−V) mod 2^n,
-  临时寄存器=0, cin=0, carry=0 }
+  t=0, cin=0, carry=0 }
 ```
 
 控制与源保持，相位恢复。用于组合的 `maskedCopyWithFrame_spec` 证明受控复制只向临时寄存器异或源值；`addInPlaceWithSource_spec`、`subInPlaceWithSource_spec` 证明用临时值加减 y 时，外部源与控制保持。
@@ -124,10 +138,12 @@ y 之外的 wire 和相位保持不变。`subInPlace_spec` 给出 cin=0 时的�
 
 该文件用测量清除受控加减法的临时掩码。
 
+c 是控制 wire，src 是源寄存器，初值分别为 B、S；eraseMask 的 dst 是待清理的掩码寄存器。加减版本用 t 存放掩码，y 是原地更新的目标，初值为 Y；cin、carry 是进位输入和工作区，n 是 src 的位数。
+
 `eraseMask_correct` 证明：src 与 dst 等长，且控制、源、目标线路互异时，对任意测量结果，
 
 ```text
-{ control=B, src=S, dst=(if B then S else 0) }
+{ c=B, src=S, dst=(if B then S else 0) }
 eraseMask c src dst
 { dst=0 }
 ```
@@ -137,9 +153,9 @@ dst 以外的 wire 和相位保持不变。`eraseMask_frame_spec` 将此结论�
 `measuredMaskedAddInPlace_spec`、`measuredMaskedSubInPlace_spec` 证明：src、t、y 均为 n 位，carry 有 n−1 位，线路互异时，令 V 为 B=1 时的源值 S，否则为零，
 
 ```text
-{ control=B, src=S, t=0, y=Y, cin=0, carry=0 }
+{ c=B, src=S, t=0, y=Y, cin=0, carry=0 }
 measuredMaskedAddInPlace / measuredMaskedSubInPlace
-{ control=B, src=S, t=0,
+{ c=B, src=S, t=0,
   y=(Y+V) mod 2^n / y=(Y+2^n−V) mod 2^n, cin=0, carry=0 }
 ```
 
@@ -149,7 +165,9 @@ measuredMaskedAddInPlace / measuredMaskedSubInPlace
 
 ## [Counter.lean](Counter.lean)
 
-该文件实现 10 位受控加一、减一计数器，要求布局线路互异。令
+该文件实现 10 位受控加一、减一计数器，要求布局线路互异。
+
+L 是加减法电路的寄存器布局。L.x 保存旧计数 K，L.cin 保存是否加减一的控制值 C；L.out 初始化为 O（转移版本为 0），L.y 和 L.carry 初始化为 0。下文 x、cin、out、y、carry 是这些字段的简写。令
 
 ```text
 K₊ = (K+C) mod 1024

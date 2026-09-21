@@ -8,7 +8,9 @@
 
 ## [Compare.lean](Compare.lean)
 
-该文件将“小于”的判断异或到目标位。x、y、carry 均为 n 位，参与线路互异，cin 和 carry 初始为零。
+该文件将“小于”的判断异或到目标位。
+
+x、y 是待比较的输入寄存器，初值为 X、Y；target 是结果标志，初值为 T；cin、carry 是进位输入和工作区。n 是 x 的位数，control 是可选控制 wire。常量版本的 K 是比较阈值，临时寄存器在源码中名为 T，不要与这里的目标初值 T 混淆。x、y、carry 均为 n 位，参与线路互异，cin 和 carry 初始为零。
 
 `compareLt_spec`、`maskedCompareLt_spec` 和 `compareLt_correct` 证明：
 
