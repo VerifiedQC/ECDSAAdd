@@ -2,111 +2,25 @@
 
 本模块按量子寄存器中的地址查询经典常量表，将结果异或到输出，并证明查询正确性及工作位清理。
 
-这里只介绍 `_spec` 与 `_correct` 定理，资源统一列在末尾。下文 `{前置条件} 程序 {后置条件}` 是 Hoare triple 的可读写法：对任意初始状态和任意预先给定的测量结果都成立，并保持相位。所有三元组都以各项列出的适用前提为条件。
+下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。`{前置条件} 程序 {后置条件}` 对任意满足前提的初始状态和预先给定的测量结果成立；`｜` 按顺序分隔不同程序及其对应结果。
 
-`s₀`、`s₁` 分别表示运行前后完整状态；`s₀[w]` 是初始位值，`val₀(r)` 是初始寄存器读值，后缀 ₁ 同理。普通断言中的 `r=X` 按寄存器类型读取位、整数或点；XOR 是异或。命名状态断言沿用源码，不自动意味着未提及的线路也保持不变。
+资源 T、M、Q 分别为 Toffoli 门数、测量次数、不同物理线路数，未列出的项不代表零；T=0 不表示没有其他门。资源沿用对应定理的位宽和线路条件，Nat 减法按自然数截断。
 
 ## [Lookup.lean](Lookup.lean)
 
-4 位和 10 位地址的规格均为：地址 D 不变，目标从 T 变为 `T XOR table(D)`，临时工作区从零恢复为零。
+该文件将经典查找表的值异或到目标寄存器。地址 D 为 4 位或 10 位，对应 3 位或 9 位零工作区；表值须能放入目标寄存器，参与线路互异。
 
-### lookupWalk
-
-正确性由 [lookupWalk_correct](Lookup.lean#L29) 证明：
-
-控制 a 开启时，将地址对应的表值异或到目标；关闭时目标不变，目标外基态位与相位保持不变。
-
-适用前提：
-
-- `a::(controls++scratch++target)` 中的 wire 互不相同。
-- `scratch.length=controls.length`。
-- `∀ d<2^controls.length, table d<2^target.length`。
+`lookup_spec`、`lookup_correct` 证明 4 位版本，`lookup10_spec`、`lookup10_correct` 证明 10 位版本：
 
 ```text
-{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
-lookupWalk a controls scratch target table
-{ s₁.phase=s₀.phase
-  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
-  ∧ val₁(target) = val₀(target) XOR (if s₀[a] then table (val₀(controls)) else 0) }
-```
-
-### lookup
-
-实现约定：[lookup_spec](Lookup.lean#L229)。
-
-适用前提：
-
-- `a::(controls++scratch++target)` 中的 wire 互不相同。
-- `controls.length=3`。
-- `scratch.length=3`。
-- `∀ j<16, table j<2^target.length`。
-
-```text
-{ (a::controls) = D, target = T, scratch = 0 }
+{ address=D, target=T, scratch=0 }
 lookup a controls scratch target table
-{ (a::controls) = D, target = (T XOR table D), scratch = 0 }
+{ target=T ⊕ table(D) }
 ```
 
-正确性由 [lookup_correct](Lookup.lean#L216) 证明：
+target 以外的 wire 和相位保持不变。
 
-将完整地址对应的表值异或到目标寄存器，保持目标外基态位与相位。
-
-适用前提：
-
-- `a::(controls++scratch++target)` 中的 wire 互不相同。
-- `controls.length=3`。
-- `scratch.length=3`。
-- `∀ j<16, table j<2^target.length`。
-
-```text
-{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
-lookup a controls scratch target table
-{ s₁.phase=s₀.phase
-  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
-  ∧ val₁(target) = val₀(target) XOR table (val₀(a::controls)) }
-```
-
-### lookup10
-
-实现约定：[lookup10_spec](Lookup.lean#L371)。
-
-适用前提：
-
-- `a::(controls++scratch++target)` 中的 wire 互不相同。
-- `controls.length=9`。
-- `scratch.length=9`。
-- `∀ j<1024, table j<2^target.length`。
-
-```text
-{ (a::controls) = D, target = T, scratch = 0 }
-lookup a controls scratch target table
-{ (a::controls) = D, target = (T XOR table D), scratch = 0 }
-```
-
-正确性由 [lookup10_correct](Lookup.lean#L358) 证明：
-
-十位计数查表：同一递归门列，九根scratch。
-
-适用前提：
-
-- `a::(controls++scratch++target)` 中的 wire 互不相同。
-- `controls.length=9`。
-- `scratch.length=9`。
-- `∀ j<1024, table j<2^target.length`。
-
-```text
-{ 初始状态 = s₀ ∧ (∀ w∈scratch, s₀[w]=false) }
-lookup a controls scratch target table
-{ s₁.phase=s₀.phase
-  ∧ (∀ w, w∉target → s₁[w]=s₀[w])
-  ∧ val₁(target) = val₀(target) XOR table (val₀(a::controls)) }
-```
-
-## 资源用量
-
-T 为 Toffoli 门数，M 为测量次数，Q 为实际使用的不同物理线路数。以下保持原有计数及适用条件；未列出的项不是零，T=0 不代表没有其他门。公式中的 Nat 减法按自然数截断。
-
-### [Lookup.lean](Lookup.lean)
+`lookupWalk_correct` 是内部受控版本：地址为 controls，scratch 与 controls 等长；根控制 a=1 时异或表值，a=0 时不改目标。
 
 - 资源：
 
