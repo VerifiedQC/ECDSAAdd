@@ -26,8 +26,17 @@ compareLt control x y carry cin target
 
 `flipBelow_correct` 证明目标异或 `C AND NOT top`；`compareChain_correct` 证明目标异或 `C AND (X+Y+cin<2^n)`。两者都只改变目标位。
 
-- 资源：control.isSome 表示有控制，control.toList.length 在无控制/有控制时分别为 0/1；线路数还需互异及等长条件。
+### 资源用量
 
-  - `flipBelow control top t`：T = `(if control.isSome then 1 else 0)`，M = `0`。
-  - `compareChain control x y carry cin target` / `compareLtConst control x y carry cin target K`：T = `y.length + (if control.isSome then 1 else 0)`，M = `y.length`。
-  - `compareLt control x y carry cin target`：T = `y.length + (if control.isSome then 1 else 0)`，M = `y.length`，Q = `3 * y.length + 2 + control.toList.length`。
+n 是被比较寄存器的位数。x、y、carry 均为 n 位；常量版本用 n 位临时寄存器装载 K，代替 y。下面将无控制与有控制的情况分开列出：
+
+| 操作 | Toffoli 门数 | 测量次数 | 物理线路数 |
+| --- | --- | --- | --- |
+| 两寄存器比较 `compareLt`，无控制 | n | n | 3n+2 |
+| 两寄存器比较 `compareLt`，有控制 | n+1 | n | 3n+3 |
+| 寄存器与常量比较 `compareLtConst`，无控制 | n | n | 3n+2 |
+| 寄存器与常量比较 `compareLtConst`，有控制 | n+1 | n | 3n+3 |
+
+线路数要求参与线路互异：两组 n 位数据线路（常量版本包含装载 K 的临时寄存器）、n 位 carry，加上 cin 和 target，共 3n+2 根；受控版本再加一根控制 wire。常量版本的线路集合与两寄存器版本相同，由 `compareLt_wires` 给出。
+
+内部比较链 `compareChain` 的 Toffoli 门数和测量次数与上表相同。末尾的标志更新 `flipBelow` 无控制时需要 0 个 Toffoli 门，有控制时需要 1 个，两者都不需要测量；这些用量已包含在完整比较器的计数中，不需额外相加。

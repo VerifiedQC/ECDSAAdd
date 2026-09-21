@@ -59,7 +59,9 @@ rippleAdder bs cin
 
 输出寄存器以外的 wire 和相位保持不变，因此输入保留、进位工作区仍为零。
 
-`rippleAdder_spec`、`rippleAdder_correct` 是 O=0 的情形，直接得到截断和。`rippleAdder_wide_spec` 证明：增加一位并令 X、Y<2^n，输出和工作区初始为零时，输出得到完整的 X+Y+C，不再截断。
+`rippleAdder_spec`、`rippleAdder_correct` 是 O=0 的情形，直接得到截断和。
+
+`rippleAdder_wide_spec` 证明：在输入寄存器 x、y 的最高位各补一位 0，使它们从 n 位扩为 n+1 位，保存的值仍为 X、Y（X、Y<2^n）；输出 out 和进位工作区 carry 也各扩为 n+1 位，并全部初始化为 0。源码用 `bs ++ [high]` 表示扩宽后的逐位单元列表，新增单元 high 包含这四根高位 wire。运行后，out 保存完整的 X+Y+C，最高位可以接住原 n 位加法溢出的进位，因此不再截断。
 
 资源：T=n、M=n；n>0 时 Q=4n+1，n=0 时 Q=0。扩宽版本按扩宽后的位数计数。
 
