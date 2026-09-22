@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 lake --wfail build
+lake env lean tests/ProgSyntax.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -50,6 +51,7 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.counterDec_spec
 #print axioms ECDSAAdd.Arithmetic.counter_resources
 #print axioms ECDSAAdd.Arithmetic.addInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.addInPlace_correct
 #print axioms ECDSAAdd.Arithmetic.subInPlace_spec
 #print axioms ECDSAAdd.Arithmetic.addInPlace_resources
 #print axioms ECDSAAdd.Arithmetic.maskedAddConst_spec

@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Addition.RippleAdder
 import ECDSAAdd.Arithmetic.RegisterXor.MaskedConstant
 import ECDSAAdd.Arithmetic.RegisterXor.Copy
+import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
 open Instr
@@ -10,15 +11,73 @@ def majority (a b cin carry : Wire) : Program := prog {
   CX a b; CX a cin; CCX b cin carry; CX a carry; CX a cin; CX a b
 }
 
-/-- 原地加法 y ← (x + y + cin) mod 2^n：每位先算进位、递归处理高位，
-再用现有 eraseCarry 擦除本位进位（此时 x、y、cin 仍是原值），最后把和位写回 y。
-最高位只写和位，不算进位，进位链比位宽少一根。 -/
-def addInPlace : List Wire → List Wire → List Wire → Wire → Program
+local macro_rules
+  | `(tactic| get_elem_tactic) =>
+      `(tactic| (simp_all +zetaDelta only [List.length_append, List.length_cons, List.length_nil]
+                 omega))
+
+/-- 原地加法：先由低到高计算进位，再由高到低清理进位并写回和位。
+输入 x、y 等宽，carry 比它们少一位；不满足此布局条件时返回空电路。 -/
+def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
+  if h : x.length = y.length ∧ carry.length + 1 = y.length then
+    prog {
+      let n := x.length;
+      let c := [cin] ++ carry;
+      for i in range(n - 1) {
+        majority(x[i], y[i], c[i], c[i + 1]);
+      };
+      CX(x[n - 1], y[n - 1]);
+      CX(c[n - 1], y[n - 1]);
+      for i in reversed(range(n - 1)) {
+        eraseCarry(x[i], y[i], c[i], c[i + 1]);
+        CX(x[i], y[i]);
+        CX(c[i], y[i]);
+      };
+    }
+  else []
+
+/-- 仅用于结构归纳的参考电路；实际 addInPlace 由上面的循环生成。 -/
+private def addInPlaceRecursive : List Wire → List Wire → List Wire → Wire → Program
   | a :: (a' :: as), b :: (b' :: bs), c :: cs, cin =>
-      majority a b cin c ++ addInPlace (a' :: as) (b' :: bs) cs c ++
+      majority a b cin c ++ addInPlaceRecursive (a' :: as) (b' :: bs) cs c ++
         eraseCarry a b cin c ++ [CX a b, CX cin b]
   | [a], [b], _, cin => [CX a b, CX cin b]
   | _, _, _, _ => []
+
+/-- 合法布局下，循环版与参考电路的指令列表逐项相同。 -/
+private theorem addInPlace_eq_recursive (x y carry : List Wire) (cin : Wire)
+    (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
+    addInPlace x y carry cin = addInPlaceRecursive x y carry cin := by
+  induction y generalizing x carry cin with
+  | nil => simp at hc
+  | cons b bs ih =>
+    cases x with
+    | nil => simp at hx
+    | cons a as =>
+      cases bs with
+      | nil =>
+        have ha : as = [] := by simpa using hx
+        have hca : carry = [] := by simpa using hc
+        subst ha; subst hca
+        simp [addInPlace, addInPlaceRecursive, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram]
+      | cons b' bs =>
+        cases as with
+        | nil => simp at hx
+        | cons a' as =>
+          cases carry with
+          | nil => simp at hc
+          | cons c cs =>
+            have hx' : (a'::as).length = (b'::bs).length := by simpa using hx
+            have hc' : cs.length + 1 = (b'::bs).length := by simpa using hc
+            have hi := ih (a'::as) cs c hx' hc'
+            simp [addInPlace, hx', hc'] at hi
+            simp [addInPlace, hx, addInPlaceRecursive, List.ofFn_succ, List.reverse_cons,
+              List.flatten_append, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram,
+              List.append_assoc] at hi ⊢
+            have hcs : cs.length = bs.length := by simpa using hc'
+            simp only [hcs, dite_true]
+            rw [← hi]
+            simp only [List.append_assoc, List.cons_append]
 
 /-- 进位异或写入 carry，其余状态保持。 -/
 theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
@@ -42,13 +101,13 @@ theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
     cases s.basis carry <;> simp_all
 
 /-- 进位链初始为零时：x、cin 保持，y 原地得到低 n 位的和，进位链归零，相位对所有测量记录恢复。 -/
-theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
+private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
     (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
     (hc : carry.length + 1 = y.length) (s : State) (m : List Bool)
     (hclean : ∀ w ∈ carry, s.basis w = false) :
-    (run (addInPlace x y carry cin) m s).phase = s.phase ∧
-    (∀ w, w ∉ y → (run (addInPlace x y carry cin) m s).basis w = s.basis w) ∧
-    regValue y (run (addInPlace x y carry cin) m s).basis =
+    (run (addInPlaceRecursive x y carry cin) m s).phase = s.phase ∧
+    (∀ w, w ∉ y → (run (addInPlaceRecursive x y carry cin) m s).basis w = s.basis w) ∧
+    regValue y (run (addInPlaceRecursive x y carry cin) m s).basis =
       (regValue x s.basis + regValue y s.basis + (s.basis cin).toNat) % 2^y.length := by
   induction y generalizing x carry cin s m with
   | nil => simp at hc
@@ -75,7 +134,7 @@ theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
       have hx0 : as = [] := List.eq_nil_of_length_eq_zero (by simpa using hx)
       have hc0 : carry = [] := List.eq_nil_of_length_eq_zero (by simpa using hc)
       subst hx0 hc0
-      simp only [addInPlace, run]
+      simp only [addInPlaceRecursive, run]
       refine ⟨trivial, ?_, ?_⟩
       · intro w hw
         have hwb : w ≠ b := by simpa using hw
@@ -133,7 +192,7 @@ theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
         exact hclean d (by simp [hd])
       -- 第二步：高位递归
       obtain ⟨hphase, hsame, hsum⟩ := ih (a' :: as') cs c hnd' hx' hc' s1 m hclean'
-      set t := run (addInPlace (a' :: as') (b' :: bs') cs c) m s1 with ht
+      set t := run (addInPlaceRecursive (a' :: as') (b' :: bs') cs c) m s1 with ht
       have heq (w : Wire) (hw : w ∉ b' :: bs') : t.basis w = s1.basis w := hsame w hw
       have htA : t.basis a = A := by rw [heq a habs, hs1 a hac]
       have htB : t.basis b = B := by rw [heq b hbbs, hs1 b hbc]
@@ -159,7 +218,7 @@ theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
         · simp [writeBit, Function.update, hwb]
       -- 组合：按右结合展开，各段记录由 run_take 收回
       have hm0 : measurementCount (majority a b cin c) = 0 := rfl
-      simp only [addInPlace, List.append_assoc, run_append, run_take, hm0, List.take_zero,
+      simp only [addInPlaceRecursive, List.append_assoc, run_append, run_take, hm0, List.take_zero,
         List.drop_zero]
       rw [hfirst, ← ht, herase, hlast]
       refine ⟨hphase, ?_, ?_⟩
@@ -191,8 +250,19 @@ theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
         simp only [List.length_cons] at hnum
         simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hnum
 
+/-- 循环版正确性：借助指令列表等价性，保留输入、相位并恢复零进位链。 -/
+theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
+    (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
+    (hc : carry.length + 1 = y.length) (s : State) (m : List Bool)
+    (hclean : ∀ w ∈ carry, s.basis w = false) :
+    (run (addInPlace x y carry cin) m s).phase = s.phase ∧
+    (∀ w, w ∉ y → (run (addInPlace x y carry cin) m s).basis w = s.basis w) ∧
+    regValue y (run (addInPlace x y carry cin) m s).basis =
+      (regValue x s.basis + regValue y s.basis + (s.basis cin).toNat) % 2^y.length := by
+  simpa only [addInPlace_eq_recursive x y carry cin hx hc] using
+    addInPlaceRecursive_run x y carry cin hnd hx hc s m hclean
 
-/-- x、cin 保持，y 原地得到低 n 位的和，进位链归零。 -/
+/-- 循环版接口：x、cin 保持，y 原地得到低 n 位的和，进位链归零。 -/
 theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
     (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
     (hc : carry.length + 1 = y.length) (X Y : Nat) (C : Bool) :
@@ -272,10 +342,10 @@ theorem subInPlace_spec (x y carry : List Wire) (cin : Wire)
   rw [subInPlace, List.append_assoc]
   exact hall s m h
 
-theorem addInPlace_counts (x y carry : List Wire) (cin : Wire)
+private theorem addInPlaceRecursive_counts (x y carry : List Wire) (cin : Wire)
     (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
-    toffoliCount (addInPlace x y carry cin) = y.length - 1 ∧
-    measurementCount (addInPlace x y carry cin) = y.length - 1 := by
+    toffoliCount (addInPlaceRecursive x y carry cin) = y.length - 1 ∧
+    measurementCount (addInPlaceRecursive x y carry cin) = y.length - 1 := by
   induction y generalizing x carry cin with
   | nil => simp at hc
   | cons b bs ih =>
@@ -286,7 +356,7 @@ theorem addInPlace_counts (x y carry : List Wire) (cin : Wire)
     | nil =>
       have hx0 : as = [] := List.eq_nil_of_length_eq_zero (by simpa using hx)
       subst hx0
-      simp [addInPlace, toffoliCount, measurementCount]
+      simp [addInPlaceRecursive, toffoliCount, measurementCount]
     | cons b' bs' =>
       cases as with
       | nil => simp at hx
@@ -295,9 +365,16 @@ theorem addInPlace_counts (x y carry : List Wire) (cin : Wire)
       | nil => simp at hc
       | cons c cs =>
       have := ih (a' :: as') cs c (by simpa using hx) (by simpa using hc)
-      simp only [addInPlace, toffoliCount_append, measurementCount_append, this.1, this.2,
+      simp only [addInPlaceRecursive, toffoliCount_append, measurementCount_append, this.1, this.2,
         eraseCarry, majority, toffoliCount, measurementCount, List.length_cons]
       omega
+
+theorem addInPlace_counts (x y carry : List Wire) (cin : Wire)
+    (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
+    toffoliCount (addInPlace x y carry cin) = y.length - 1 ∧
+    measurementCount (addInPlace x y carry cin) = y.length - 1 := by
+  simpa only [addInPlace_eq_recursive x y carry cin hx hc] using
+    addInPlaceRecursive_counts x y carry cin hx hc
 
 theorem subInPlace_counts (x y carry : List Wire) (cin : Wire)
     (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
@@ -308,9 +385,9 @@ theorem subInPlace_counts (x y carry : List Wire) (cin : Wire)
     (notRegister_counts y).1, (notRegister_counts y).2, h.1, h.2, Nat.zero_add, Nat.add_zero, and_self]
 
 /-- 非空寄存器时，程序恰好触及 cin、x、y 与进位链。 -/
-theorem addInPlace_wires (x y carry : List Wire) (cin : Wire)
+private theorem addInPlaceRecursive_wires (x y carry : List Wire) (cin : Wire)
     (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
-    wires (addInPlace x y carry cin) = (cin :: (x ++ y ++ carry)).toFinset := by
+    wires (addInPlaceRecursive x y carry cin) = (cin :: (x ++ y ++ carry)).toFinset := by
   induction y generalizing x carry cin with
   | nil => simp at hc
   | cons b bs ih =>
@@ -323,7 +400,7 @@ theorem addInPlace_wires (x y carry : List Wire) (cin : Wire)
       have hc0 : carry = [] := List.eq_nil_of_length_eq_zero (by simpa using hc)
       subst hx0 hc0
       ext w
-      simp [addInPlace, wires, Instr.wires]
+      simp [addInPlaceRecursive, wires, Instr.wires]
     | cons b' bs' =>
       cases as with
       | nil => simp at hx
@@ -334,11 +411,17 @@ theorem addInPlace_wires (x y carry : List Wire) (cin : Wire)
       have := ih (a' :: as') cs c (by simpa using hx) (by simpa using hc)
       have hm : wires (majority a b cin c) = {a, b, cin, c} := by
         ext w; simp [majority, wires, Instr.wires]; tauto
-      simp only [addInPlace, wires_append, this, hm, eraseCarry_wires]
+      simp only [addInPlaceRecursive, wires_append, this, hm, eraseCarry_wires]
       ext w
       simp only [wires, Instr.wires, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton,
         List.mem_toFinset, List.mem_cons, List.mem_append, Finset.notMem_empty, or_false]
       tauto
+
+theorem addInPlace_wires (x y carry : List Wire) (cin : Wire)
+    (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
+    wires (addInPlace x y carry cin) = (cin :: (x ++ y ++ carry)).toFinset := by
+  simpa only [addInPlace_eq_recursive x y carry cin hx hc] using
+    addInPlaceRecursive_wires x y carry cin hx hc
 
 theorem subInPlace_wires (x y carry : List Wire) (cin : Wire)
     (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :

@@ -64,6 +64,19 @@ def measurementCount : Program → Nat
 
 计算一个量子电路中测量的数量。
 
+```lean
+class CircuitDSL.ToProgram (α : Type) where
+  toProgram : α → Program
+```
+
+统一电路语句的结果：Instr 的 instance 将一个门变成单元素指令列表，Program 的 instance 保留整段子电路。因此新 `prog` 可以用相同的 `CX(a,b)`、`majority(a,b,cin,carry)` 调用格式，按顺序加入门或子电路。
+
+```lean
+def CircuitDSL.emit {α : Type} [CircuitDSL.ToProgram α] (value : α) : Program
+```
+
+通过对应 instance 将 value 转成指令列表。新 `prog` 还支持局部 `let`、`for i in range(n)` 和 `for i in reversed(range(n))`；循环在生成电路时展开，并保留索引范围证明。原来的 `prog { CX a b; ... }` 写法不变。
+
 ## [Semantics.lean](Semantics.lean)
 
 ```lean

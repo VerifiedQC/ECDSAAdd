@@ -44,4 +44,49 @@ syntax "prog" "{" sepBy(term, ";", ";", allowTrailingSep) "}" : term
 macro_rules
   | `(prog { $ss;* }) => `(([$ss,*] : Program))
 
+namespace CircuitDSL
+
+/-- A circuit statement can emit either one instruction or a whole subcircuit. -/
+class ToProgram (α : Type) where
+  toProgram : α → Program
+
+instance : ToProgram Instr := ⟨fun gate => [gate]⟩
+instance : ToProgram Program := ⟨fun circuit => circuit⟩
+
+def emit {α : Type} [ToProgram α] (value : α) : Program :=
+  ToProgram.toProgram value
+
+end CircuitDSL
+
+/-- Structured circuit notation; the original semicolon-separated gate notation remains valid. -/
+declare_syntax_cat circuitStmt
+syntax ident "(" term,* ")" ";" : circuitStmt
+syntax "let " ident " := " term ";" : circuitStmt
+syntax "for " ident " in " "range" "(" term ")" "{" circuitStmt* "}" ";" : circuitStmt
+syntax "for " ident " in " "reversed" "(" "range" "(" term ")" ")"
+  "{" circuitStmt* "}" ";" : circuitStmt
+syntax (name := circuitBlock) (priority := high) "prog" "{" circuitStmt* "}" : term
+
+macro_rules (kind := circuitBlock)
+  | `(prog {}) => `(([] : Program))
+  | `(prog { $f:ident($args:term,*); $rest:circuitStmt* }) => do
+      let mut call : TSyntax `term := ⟨f.raw⟩
+      for arg in args.getElems do
+        call ← `($call $arg)
+      `(CircuitDSL.emit $call ++ prog { $rest* })
+  | `(prog { let $name:ident := $value:term; $rest:circuitStmt* }) =>
+      `(let $name := $value; prog { $rest* })
+  | `(prog { for $i:ident in range($n:term) { $body:circuitStmt* };
+        $rest:circuitStmt* }) =>
+      `((List.ofFn (fun (j : Fin $n) =>
+          let $i := j.val
+          have _h : $i < $n := j.isLt
+          prog { $body* })).flatten ++ prog { $rest* })
+  | `(prog { for $i:ident in reversed(range($n:term)) { $body:circuitStmt* };
+        $rest:circuitStmt* }) =>
+      `((List.ofFn (fun (j : Fin $n) =>
+          let $i := j.val
+          have _h : $i < $n := j.isLt
+          prog { $body* })).reverse.flatten ++ prog { $rest* })
+
 end ECDSAAdd
