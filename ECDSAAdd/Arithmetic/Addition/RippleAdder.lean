@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.Addition.FullAdder
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
+import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
 
@@ -14,12 +15,36 @@ def addWires : List AddBit → List Wire
   | [] => []
   | b :: bs => b.x :: b.y :: b.out :: b.carry :: addWires bs
 
-/-- 正向计算各位，递归返回时按逆序测量清理进位。 -/
-def rippleAdder : List AddBit → Wire → Program
-  | [], _ => []
-  | b :: bs, cin =>
+local macro_rules
+  | `(tactic| get_elem_tactic) =>
+      `(tactic| (simp_all +zetaDelta only
+          [List.length_append, List.length_cons, List.length_nil, List.length_map]
+                 omega))
+
+/-- 由低到高计算各位的和与进位，再由高到低测量清理进位。
+c 将输入进位 cin 与各位的进位线连成一条链；它只组织已有线路，不分配新线。 -/
+def rippleAdder (bs : List AddBit) (cin : Wire) : Program := prog {
+  let n := bs.length;
+  let c := [cin] ++ bs.map AddBit.carry;
+  for i in range(n) {
+    let b := bs[i];
+    fullAdder(b.x, b.y, c[i], b.out, b.carry);
+  };
+  for i in reversed(range(n)) {
+    let b := bs[i];
+    eraseCarry(b.x, b.y, c[i], b.carry);
+  };
+}
+
+private theorem rippleAdder_nil (cin : Wire) : rippleAdder [] cin = [] := rfl
+
+/-- 循环生成的门列满足原来的递归分解，包含相同的测量顺序。 -/
+private theorem rippleAdder_cons (b : AddBit) (bs : List AddBit) (cin : Wire) :
+    rippleAdder (b :: bs) cin =
       fullAdder b.x b.y cin b.out b.carry ++ rippleAdder bs b.carry ++
-        eraseCarry b.x b.y cin b.carry
+        eraseCarry b.x b.y cin b.carry := by
+  simp [rippleAdder, List.ofFn_succ, List.reverse_cons, List.flatten_append,
+    CircuitDSL.emit, CircuitDSL.ToProgram.toProgram, List.append_assoc]
 
 theorem mem_addWires {bs : List AddBit} {b : AddBit} (h : b ∈ bs) :
     b.x ∈ addWires bs ∧ b.y ∈ addWires bs ∧
@@ -59,7 +84,7 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
       ((regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
         (s.basis cin).toNat) % 2^bs.length) := by
   induction bs generalizing cin s m with
-  | nil => simp [rippleAdder, run, regValue, Nat.mod_one]
+  | nil => simp [rippleAdder_nil, run, regValue, Nat.mod_one]
   | cons b bs ih =>
     have hn := hnd
     simp only [addWires, List.nodup_cons, List.mem_cons, not_or] at hn
@@ -103,7 +128,7 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
     have herase (record : List Bool) : run (eraseCarry b.x b.y cin b.carry) record t =
         ⟨t.phase, writeBit t.basis b.carry false⟩ :=
       eraseCarry_correct _ _ _ _ hxk hyk hck t (by rw [htX, htY, htC, htK]) record
-    simp only [rippleAdder, run_append, run_take]
+    simp only [rippleAdder_cons, run_append, run_take]
     rw [hfirst]
     simp only [measurementCount_append, fullAdder_measurementCount, zero_add,
       List.drop_zero]
@@ -253,7 +278,7 @@ theorem rippleAdder_toffoliCount (bs : List AddBit) (cin : Wire) :
   induction bs generalizing cin with
   | nil => rfl
   | cons b bs ih =>
-    simp [rippleAdder, toffoliCount_append, fullAdder_toffoliCount,
+    simp [rippleAdder_cons, toffoliCount_append, fullAdder_toffoliCount,
       eraseCarry, toffoliCount, ih, Nat.add_comm]
 
 /-- 每位一次测量，记录消费数与输入值无关。 -/
@@ -262,7 +287,7 @@ theorem rippleAdder_measurementCount (bs : List AddBit) (cin : Wire) :
   induction bs generalizing cin with
   | nil => rfl
   | cons b bs ih =>
-    simp [rippleAdder, measurementCount_append, fullAdder_measurementCount,
+    simp [rippleAdder_cons, measurementCount_append, fullAdder_measurementCount,
       eraseCarry, measurementCount, ih]
 
 theorem addWires_length (bs : List AddBit) : (addWires bs).length = 4 * bs.length := by
@@ -276,10 +301,10 @@ theorem rippleAdder_wires (b : AddBit) (bs : List AddBit) (cin : Wire) :
   induction bs generalizing b cin with
   | nil =>
     ext w
-    simp [rippleAdder, wires_append, fullAdder_wires, eraseCarry_wires, addWires]
+    simp [rippleAdder_cons, rippleAdder_nil, wires_append, fullAdder_wires, eraseCarry_wires, addWires]
     tauto
   | cons d ds ih =>
-    rw [rippleAdder, wires_append, wires_append, fullAdder_wires, ih, eraseCarry_wires]
+    rw [rippleAdder_cons, wires_append, wires_append, fullAdder_wires, ih, eraseCarry_wires]
     ext w
     simp [addWires]
     tauto

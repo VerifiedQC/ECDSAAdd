@@ -17,6 +17,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Triple.frame
 #print axioms ECDSAAdd.Arithmetic.fullAdder_spec
 #print axioms ECDSAAdd.Arithmetic.eraseCarry_spec
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_xor_correct
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_correct
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_xor_spec
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_spec
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_wide_spec
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_toffoliCount
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_measurementCount
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_qubitCount
 #print axioms ECDSAAdd.Arithmetic.notRegister_spec
 #print axioms ECDSAAdd.Arithmetic.add_spec
 #print axioms ECDSAAdd.Arithmetic.sub_spec

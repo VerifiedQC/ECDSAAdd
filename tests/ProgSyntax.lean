@@ -48,7 +48,18 @@ example (_x : List Wire) : True := by
     have _bad : Program := prog { X(_x[_x.length]); }
   trivial
 
--- One-bit base case and a three-bit instruction-order regression.
+-- Ripple addition: empty/one-bit cases and forward computation followed by reverse cleanup.
+example (cin : Wire) : rippleAdder [] cin = [] := rfl
+
+example (b : AddBit) (cin : Wire) : rippleAdder [b] cin =
+    fullAdder b.x b.y cin b.out b.carry ++ eraseCarry b.x b.y cin b.carry := by
+  simp [rippleAdder, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram]
+
+example : rippleAdder [⟨0, 3, 6, 9⟩, ⟨1, 4, 7, 10⟩, ⟨2, 5, 8, 11⟩] 12 =
+    fullAdder 0 3 12 6 9 ++ fullAdder 1 4 9 7 10 ++ fullAdder 2 5 10 8 11 ++
+    eraseCarry 2 5 10 11 ++ eraseCarry 1 4 9 10 ++ eraseCarry 0 3 12 9 := by decide
+
+-- In-place addition: one-bit base case and a three-bit instruction-order regression.
 example : addInPlace [0] [1] [] 2 = [CX 0 1, CX 2 1] := by decide
 
 example : addInPlace [0, 1, 2] [3, 4, 5] [6, 7] 8 =

@@ -49,6 +49,8 @@ eraseCarry a b cin carry
 
 n 是逐位加法单元列表 bs 的长度。下文 x、y、out、carry 分别指 `bs.map AddBit.x`、`bs.map AddBit.y`、`bs.map AddBit.out`、`bs.map AddBit.carry`。给定输入 x、y 和进位输入 cin，其初值分别为 X、Y、C；输出 out 初始化为 O，进位工作区 carry 初始化为 0。
 
+`rippleAdder` 用两个 `for` 循环表示电路：先从低位到高位调用 `fullAdder`，再从高位到低位调用 `eraseCarry`。`c = [cin] ++ bs.map AddBit.carry` 连接已有进位线，第 i 位读取 `c[i]` 作为输入进位，不额外分配线路。循环版保持原来的门和测量顺序，包括空列表的情形。
+
 `rippleAdder_xor_spec` 和 `rippleAdder_xor_correct` 证明：布局中的线路互异时，对任意测量结果，
 
 ```text
