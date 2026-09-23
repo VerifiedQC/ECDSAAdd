@@ -107,7 +107,7 @@ theorem recordRound_wires (L : KaliskiRoundLayout) :
   have hc := (compareLt_wires (some L.bothWork) L.v L.u (L.data.reg .carry) L.cin L.swap
     (by simp [KaliskiRoundLayout.v,KaliskiRoundLayout.u,RoundDataLayout.v,RoundDataLayout.u,L.data.reg_length])
     (by simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data.reg_length])).1
-  rw [recordRound,wires_append,wires_append,hc]
+  rw [recordRound_program,wires_append,wires_append,hc]
   ext w
   have hu : w=L.u.head! → w∈L.u := fun he => he ▸ L.head_mem .u
   have hv : w=L.v.head! → w∈L.v := fun he => he ▸ L.head_mem .v

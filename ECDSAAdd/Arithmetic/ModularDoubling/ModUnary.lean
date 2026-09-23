@@ -53,18 +53,34 @@ theorem bit_value (U : ModUnaryLayout) (n : Nat) (hw : U.Widths n) (hn : 0<n) (s
 end ModUnaryLayout
 
 /-- 左旋得到 2Z，试减 p、借位低位加回，最后由结果奇偶清借位。 -/
-def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program :=
+def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
+  rotateLeft(U.z);
+  xorConstant(U.constant, p);
+  subInPlace(U.constant, U.z, U.carry, U.cin);
+  xorConstant(U.constant, p);
+  maskedAddConst(U.high, (U.constant.take U.low.length), U.low, (U.carry.take (U.low.length-1)), U.cin, p);
+  Instr.X(U.high);
+  Instr.CX(U.bit, U.high);
+}
+
+/-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
+theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
+    dblInPlace U p =
   rotateLeft U.z ++ xorConstant U.constant p ++ subInPlace U.constant U.z U.carry U.cin ++
   xorConstant U.constant p ++
   maskedAddConst U.high (U.constant.take U.low.length) U.low
-    (U.carry.take (U.low.length-1)) U.cin p ++ [.X U.high,.CX U.bit U.high]
+    (U.carry.take (U.low.length-1)) U.cin p ++ [.X U.high,.CX U.bit U.high] := by
+  simp only [dblInPlace, List.append_assoc]
+  rfl
 
 /-- 保存奇偶，奇数加 p 后右旋，由减半结果与 (p+1)/2 比较清奇偶位。 -/
-def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program :=
-  [.CX U.bit U.flag] ++ maskedAddConst U.flag U.constant U.z U.carry U.cin p ++
-  rotateRight U.z ++
-  compareLtConst none U.low (U.constant.take U.low.length) U.carry U.cin U.flag ((p+1)/2) ++
-  [.X U.flag]
+def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
+  Instr.CX(U.bit, U.flag);
+  maskedAddConst(U.flag, U.constant, U.z, U.carry, U.cin, p);
+  rotateRight(U.z);
+  compareLtConst(none, U.low, (U.constant.take U.low.length), U.carry, U.cin, U.flag, ((p+1)/2));
+  Instr.X(U.flag);
+}
 
 /-- 半倍门列均复用 scratch，不增加量子控制或历史寄存器。 -/
 theorem modUnary_counts (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn : 0<n) :
@@ -83,7 +99,7 @@ theorem modUnary_counts (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn :
   have hm := compareLt_counts none U.low (U.constant.take U.low.length) U.carry U.cin U.flag
     (hw.low.trans ht.symm) (hw.carry.trans ht.symm)
   simp only [hw.low] at hl hm
-  simp only [dblInPlace,halfInPlace,maskedAddConst,compareLtConst,toffoliCount_append,measurementCount_append,
+  simp only [dblInPlace_program,halfInPlace,maskedAddConst,compareLtConst,toffoliCount_append,measurementCount_append,
     (rotate_counts U.z).1,(rotate_counts U.z).2.1,(rotate_counts U.z).2.2.1,(rotate_counts U.z).2.2.2,
     (xorConstant_counts _ _).1,(xorConstant_counts _ _).2,(maskedConstant_counts _ _ _).1,
     (maskedConstant_counts _ _ _).2,ha.1,ha.2,hs.1,hs.2,hl.1,hl.2,hm.1,hm.2.1,
@@ -112,7 +128,7 @@ theorem modUnary_wires (U : ModUnaryLayout) (n p : Nat) (hw : U.Widths n) (hn : 
     ext q; simp [wires,Instr.wires]
   have hend : wires [.X U.flag]=[U.flag].toFinset := by simp [wires,Instr.wires]
   constructor
-  · simp only [dblInPlace,wires_append,(rotate_wires U.z).2,hlen,if_false,hs,hdend]
+  · simp only [dblInPlace_program,wires_append,(rotate_wires U.z).2,hlen,if_false,hs,hdend]
     ext q
     have hx : q∈wires (xorConstant U.constant p) → q∈U.constant :=
       fun hh => List.mem_toFinset.mp (xorConstant_wires_subset U.constant p hh)

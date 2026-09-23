@@ -3,6 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 lake --wfail build
 lake env lean tests/ProgSyntax.lean
+lake env lean tests/ReadablePrograms.lean
+lake env lean tests/ReadableLoops.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'

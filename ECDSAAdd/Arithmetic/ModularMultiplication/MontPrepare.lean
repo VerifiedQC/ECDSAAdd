@@ -48,86 +48,170 @@ def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
   lookup (addr.headD L.flag) addr.tail L.scratch L.table (fun d => d*K)
 
 /-- 查表值加进累加器，再用同一前向查表清空 table。 -/
-def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
-  montLookup L addr K ++ addInPlace L.table L.acc L.carry L.cin ++ montLookup L addr K
+def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+  montLookup(L, addr, K);
+  addInPlace(L.table, L.acc, L.carry, L.cin);
+  montLookup(L, addr, K);
+}
 
-def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
-  montLookup L addr K ++ subInPlace L.table L.acc L.carry L.cin ++ montLookup L addr K
+def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+  montLookup(L, addr, K);
+  subInPlace(L.table, L.acc, L.carry, L.cin);
+  montLookup(L, addr, K);
+}
 
 /-- 保存约减系数，加入 m*p 后物理右旋四位。 -/
-def montReduce (L : MontStageLayout) (p i : Nat) : Program :=
-  copyRegister none (L.acc.take 4) (L.record i) ++
-  montLookupAdd L (L.record i) p ++ rotateRightBits L.acc 4
+def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
+  copyRegister(none, (L.acc.take 4), (L.record i));
+  montLookupAdd(L, (L.record i), p);
+  rotateRightBits(L.acc, 4);
+}
 
 /-- 左旋恢复和，减去记录的 m*p，随后由恢复的低四位清记录。 -/
-def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program :=
-  rotateLeftBits L.acc 4 ++ montLookupSub L (L.record i) p ++
-  copyRegister none (L.acc.take 4) (L.record i)
+def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
+  rotateLeftBits(L.acc, 4);
+  montLookupSub(L, (L.record i), p);
+  copyRegister(none, (L.acc.take 4), (L.record i));
+}
 
 /-- 逐位加入一个变量四位窗口；控制值不改变门列。 -/
-def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program :=
-  (List.range 4).flatMap (fun j =>
-    measuredMaskedAddInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
+  for j in (List.range 4) {
+    measuredMaskedAddInPlace(y.getD (4*i+j) L.flag, L.source x j, L.mask, L.acc, L.carry, L.cin);
+  };
+}
 
 /-- 按 j=3..0 执行前向减法，并非反转测量。 -/
-def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program :=
-  (List.range 4).reverse.flatMap (fun j =>
-    measuredMaskedSubInPlace (y.getD (4*i+j) L.flag) (L.source x j) L.mask L.acc L.carry L.cin)
+def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
+  for j in ((List.range 4).reverse) {
+    measuredMaskedSubInPlace(y.getD (4*i+j) L.flag, L.source x j, L.mask, L.acc, L.carry, L.cin);
+  };
+}
 
-def montWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program :=
-  montAddDigit L x y i ++ montReduce L p i
+def montWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program := prog {
+  montAddDigit(L, x, y, i);
+  montReduce(L, p, i);
+}
 
-def montRestoreWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program :=
-  montRestoreReduce L p i ++ montSubDigit L x y i
+def montRestoreWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program := prog {
+  montRestoreReduce(L, p, i);
+  montSubDigit(L, x, y, i);
+}
 
-def constMontWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program :=
-  montLookupAdd L ((y.drop (4*i)).take 4) K ++ montReduce L p i
+def constMontWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
+  montLookupAdd(L, ((y.drop (4*i)).take 4), K);
+  montReduce(L, p, i);
+}
 
-def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program :=
-  montRestoreReduce L p i ++ montLookupSub L ((y.drop (4*i)).take 4) K
+def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
+  montRestoreReduce(L, p, i);
+  montLookupSub(L, ((y.drop (4*i)).take 4), K);
+}
 
-def montConstantAdd (L : MontStageLayout) (K : Nat) : Program :=
-  xorConstant L.table K ++ addInPlace L.table L.acc L.carry L.cin ++ xorConstant L.table K
+def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
+  xorConstant(L.table, K);
+  addInPlace(L.table, L.acc, L.carry, L.cin);
+  xorConstant(L.table, K);
+}
 
-def montConstantSub (L : MontStageLayout) (K : Nat) : Program :=
-  xorConstant L.table K ++ subInPlace L.table L.acc L.carry L.cin ++ xorConstant L.table K
+def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
+  xorConstant(L.table, K);
+  subInPlace(L.table, L.acc, L.carry, L.cin);
+  xorConstant(L.table, K);
+}
 
 /-- 减 p 后保存借位，条件加回 p；保留 flag 到清理阶段。 -/
-def montNormalize (L : MontStageLayout) (p : Nat) : Program :=
-  montConstantSub L p ++ [.CX (L.acc.getD 260 L.flag) L.flag] ++
-  maskedAddConst L.flag L.table L.acc L.carry L.cin p
+def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
+  montConstantSub(L, p);
+  Instr.CX((L.acc.getD 260 L.flag), L.flag);
+  maskedAddConst(L.flag, L.table, L.acc, L.carry, L.cin, p);
+}
 
 /-- 先按保留借位减 p，再清 flag、加 p，恢复未经约减的累加器。 -/
-def montDenormalize (L : MontStageLayout) (p : Nat) : Program :=
-  maskedSubConst L.flag L.table L.acc L.carry L.cin p ++
-  [.CX (L.acc.getD 260 L.flag) L.flag] ++ montConstantAdd L p
+def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
+  maskedSubConst(L.flag, L.table, L.acc, L.carry, L.cin, p);
+  Instr.CX((L.acc.getD 260 L.flag), L.flag);
+  montConstantAdd(L, p);
+}
 
-def montPrepareRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) : Nat → Program
-  | 0 => []
-  | k+1 => montPrepareRounds L x y p k ++ montWindow L x y p k
+def montPrepareRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) : Program := prog {
+  for i in range(k) {
+    montWindow(L, x, y, p, i);
+  };
+}
 
-def montRestoreRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) : Nat → Program
-  | 0 => []
-  | k+1 => montRestoreWindow L x y p k ++ montRestoreRounds L x y p k
+theorem montPrepareRounds_zero (L : MontStageLayout) (x y : List Wire) (p : Nat) : montPrepareRounds L x y p 0 = [] := rfl
 
-def constPrepareRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) : Nat → Program
-  | 0 => []
-  | k+1 => constPrepareRounds L y p K k ++ constMontWindow L y p K k
+theorem montPrepareRounds_succ (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) :
+    montPrepareRounds L x y p (k+1) =
+      montPrepareRounds L x y p k ++ montWindow L x y p k := by
+  simp only [montPrepareRounds]
+  rw [List.ofFn_succ']
+  simp [List.concat_eq_append]
 
-def constRestoreRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) : Nat → Program
-  | 0 => []
-  | k+1 => constMontRestoreWindow L y p K k ++ constRestoreRounds L y p K k
+def montRestoreRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) : Program := prog {
+  for i in reversed(range(k)) {
+    montRestoreWindow(L, x, y, p, i);
+  };
+}
 
-def montPrepare (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program :=
-  montPrepareRounds L x y p 64 ++ montNormalize L p
+theorem montRestoreRounds_zero (L : MontStageLayout) (x y : List Wire) (p : Nat) : montRestoreRounds L x y p 0 = [] := rfl
 
-def montRestore (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program :=
-  montDenormalize L p ++ montRestoreRounds L x y p 64
+theorem montRestoreRounds_succ (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) :
+    montRestoreRounds L x y p (k+1) =
+      montRestoreWindow L x y p k ++ montRestoreRounds L x y p k := by
+  simp only [montRestoreRounds]
+  rw [List.ofFn_succ']
+  simp [List.concat_eq_append]
 
-def constPrepare (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program :=
-  constPrepareRounds L y p K 64 ++ montNormalize L p
+def constPrepareRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) : Program := prog {
+  for i in range(k) {
+    constMontWindow(L, y, p, K, i);
+  };
+}
 
-def constRestore (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program :=
-  montDenormalize L p ++ constRestoreRounds L y p K 64
+theorem constPrepareRounds_zero (L : MontStageLayout) (y : List Wire) (p K : Nat) : constPrepareRounds L y p K 0 = [] := rfl
+
+theorem constPrepareRounds_succ (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) :
+    constPrepareRounds L y p K (k+1) =
+      constPrepareRounds L y p K k ++ constMontWindow L y p K k := by
+  simp only [constPrepareRounds]
+  rw [List.ofFn_succ']
+  simp [List.concat_eq_append]
+
+def constRestoreRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) : Program := prog {
+  for i in reversed(range(k)) {
+    constMontRestoreWindow(L, y, p, K, i);
+  };
+}
+
+theorem constRestoreRounds_zero (L : MontStageLayout) (y : List Wire) (p K : Nat) : constRestoreRounds L y p K 0 = [] := rfl
+
+theorem constRestoreRounds_succ (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) :
+    constRestoreRounds L y p K (k+1) =
+      constMontRestoreWindow L y p K k ++ constRestoreRounds L y p K k := by
+  simp only [constRestoreRounds]
+  rw [List.ofFn_succ']
+  simp [List.concat_eq_append]
+
+def montPrepare (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program := prog {
+  montPrepareRounds(L, x, y, p, 64);
+  montNormalize(L, p);
+}
+
+def montRestore (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program := prog {
+  montDenormalize(L, p);
+  montRestoreRounds(L, x, y, p, 64);
+}
+
+def constPrepare (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program := prog {
+  constPrepareRounds(L, y, p, K, 64);
+  montNormalize(L, p);
+}
+
+def constRestore (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program := prog {
+  montDenormalize(L, p);
+  constRestoreRounds(L, y, p, K, 64);
+}
 
 end ECDSAAdd.Arithmetic

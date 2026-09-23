@@ -28,10 +28,11 @@ end ModInPlaceLayout
 def modAddInPlace (L : ModInPlaceLayout) (p : Nat) : Program := modAddCore L.toModAddCoreLayout p
 
 /-- 装载受控源，计算模和，再清源掩码；mask 必须存活到核比较清借位之后。 -/
-def controlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program :=
-  copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length) ++
-  modAddCore L.maskedCore p ++
-  copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
+def controlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
+  copyRegister((some c), (L.a.take L.low.length), (L.mask.take L.low.length));
+  modAddCore(L.maskedCore, p);
+  copyRegister((some c), (L.a.take L.low.length), (L.mask.take L.low.length));
+}
 
 private theorem outer_core_nodup (L : ModInPlaceLayout) (hnd : L.wires.Nodup) :
     L.toModAddCoreLayout.wires.Nodup := by

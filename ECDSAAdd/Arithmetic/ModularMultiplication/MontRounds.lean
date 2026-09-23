@@ -28,7 +28,7 @@ theorem montPrepareRounds_correct (L : MontStageLayout) (x y : List Wire) (p k X
       s1 m1 ((keep1 x (by intro w hh; simp [hh])).trans vx)
       ((keep1 y (by intro w hh; simp [hh])).trans vy) h1.2.2.1 h1.2.2.2
       ((keep1 L.work (by intro w hh; simp [hh])).trans vw)
-    rw [montPrepareRounds,run_append,run_take]
+    rw [montPrepareRounds_succ,run_append,run_take]
     exact ⟨h2.1.trans h1.1,fun w ha hh => (h2.2.1 w ha hh).trans (h1.2.1 w ha hh),h2.2.2.1,h2.2.2.2⟩
 
 /-- 以同一 a_k/Q_k 关系为前提逆序执行，清空累加器与整条历史。 -/
@@ -58,7 +58,7 @@ theorem montRestoreRounds_correct (L : MontStageLayout) (x y : List Wire) (p k X
     have h2 := ih (by omega) s1 m1 ((keep1 x (by intro w hh; simp [hh])).trans vx)
       ((keep1 y (by intro w hh; simp [hh])).trans vy) h1.2.2.1 h1.2.2.2
       ((keep1 L.work (by intro w hh; simp [hh])).trans vw)
-    rw [montRestoreRounds,run_append,run_take]
+    rw [montRestoreRounds_succ,run_append,run_take]
     exact ⟨h2.1.trans h1.1,fun w ha hh => (h2.2.1 w ha hh).trans (h1.2.1 w ha hh),h2.2.2.1,h2.2.2.2⟩
 
 end ECDSAAdd.Arithmetic

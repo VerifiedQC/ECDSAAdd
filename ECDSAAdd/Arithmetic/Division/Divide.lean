@@ -60,25 +60,48 @@ theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
 end DivideLayout
 
 /-- 将安全分母直接写入 Kaliski v：控制为假时写1，不另占Dsafe字。 -/
-def divideLoad (L : DivideLayout) : Program :=
-  [.X L.vBit,.CX L.control L.vBit] ++
-  copyRegister (some L.control) L.denominator L.vLow ++
-  xorConstant L.inner.first.u p ++ xorConstant L.inner.first.s 1
+def divideLoad (L : DivideLayout) : Program := prog {
+  Instr.X(L.vBit);
+  Instr.CX(L.control, L.vBit);
+  copyRegister((some L.control), L.denominator, L.vLow);
+  xorConstant(L.inner.first.u, p);
+  xorConstant(L.inner.first.s, 1);
+}
 
 /-- 恢复阶段归还同一分母后才能卸载；这里只反排无测量的装载门。 -/
-def divideUnload (L : DivideLayout) : Program :=
+def divideUnload (L : DivideLayout) : Program := prog {
+  xorConstant(L.inner.first.s, 1);
+  xorConstant(L.inner.first.u, p);
+  copyRegister((some L.control), L.denominator, L.vLow);
+  Instr.CX(L.control, L.vBit);
+  Instr.X(L.vBit);
+}
+
+/-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
+theorem divideUnload_program (L : DivideLayout) :
+    divideUnload L =
   xorConstant L.inner.first.s 1 ++ xorConstant L.inner.first.u p ++
   copyRegister (some L.control) L.denominator L.vLow ++
-  [.CX L.control L.vBit,.X L.vBit]
+  [.CX L.control L.vBit,.X L.vBit] := by
+  simp only [divideUnload, List.append_assoc]
+  rfl
 
 /-- acc 加上受控分子/分母；准备、乘积清理、恢复均为显式前向程序。 -/
-def divideAdd (L : DivideLayout) : Program :=
-  divideLoad L ++ inverseCompute L.inner p ++ montMulControlledAdd L.control L.multiply p ++
-  inverseUncompute L.inner p ++ divideUnload L
+def divideAdd (L : DivideLayout) : Program := prog {
+  divideLoad(L);
+  inverseCompute(L.inner, p);
+  montMulControlledAdd(L.control, L.multiply, p);
+  inverseUncompute(L.inner, p);
+  divideUnload(L);
+}
 
 /-- acc 减去受控分子/分母；只替换累加中段，不倒放带测量的除法。 -/
-def divideSub (L : DivideLayout) : Program :=
-  divideLoad L ++ inverseCompute L.inner p ++ montMulControlledSub L.control L.multiply p ++
-  inverseUncompute L.inner p ++ divideUnload L
+def divideSub (L : DivideLayout) : Program := prog {
+  divideLoad(L);
+  inverseCompute(L.inner, p);
+  montMulControlledSub(L.control, L.multiply, p);
+  inverseUncompute(L.inner, p);
+  divideUnload(L);
+}
 
 end ECDSAAdd.Arithmetic

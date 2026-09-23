@@ -37,6 +37,6 @@ theorem pointInPlaceClearSlope_spec (L : ControlledPointLayout) (hw : L.Widths) 
   have hE : (E ^^ (G && decide (X=0)))=false := by simp [E]
   rw [hE] at h6
   have h := ((((h1.seq h2).seq h3).seq h4).seq h5).seq h6
-  simpa only [pointInPlaceClearSlope,List.append_assoc] using h
+  simpa only [pointInPlaceClearSlope_program,List.append_assoc] using h
 
 end ECDSAAdd.Arithmetic

@@ -121,6 +121,7 @@ theorem montWindow_wires (L : MontStageLayout) (x y : List Wire) (p i : Nat)
   have hd := montDigit_wires L x y i hw hx (by omega)
   have hr := montReduce_wires L p i hw hi
   simp only [montWindow,montRestoreWindow,wires_append,hd.1,hd.2,hr.1,hr.2]
+  clear hd hr
   constructor <;> ext w <;> simp only [MontStageLayout.work,Finset.mem_union,List.mem_toFinset,
     List.mem_append,List.mem_cons,List.not_mem_nil] <;> tauto
 
@@ -142,12 +143,11 @@ theorem montRounds_wires (L : MontStageLayout) (x y : List Wire) (p k : Nat)
     wires (montPrepareRounds L x y p k)=(if k=0 then ∅ else (x.take 256++y.take (4*k)++L.history.take (4*k)++L.acc++L.work).toFinset) ∧
     wires (montRestoreRounds L x y p k)=(if k=0 then ∅ else (x.take 256++y.take (4*k)++L.history.take (4*k)++L.acc++L.work).toFinset) := by
   induction k with
-  | zero => simp [montPrepareRounds,montRestoreRounds,wires]
+  | zero => simp [montPrepareRounds_zero,montRestoreRounds_zero,wires]
   | succ k ih =>
     have h := ih (by omega)
     have hwin := montWindow_wires L x y p k hw hx hy (by omega)
-    change wires (montPrepareRounds L x y p k ++ montWindow L x y p k)=_ ∧
-      wires (montRestoreWindow L x y p k ++ montRestoreRounds L x y p k)=_
+    rw [montPrepareRounds_succ, montRestoreRounds_succ]
     simp only [wires_append,h.1,h.2,hwin.1,hwin.2,Nat.add_eq_zero_iff,one_ne_zero,and_false,if_false]
     have hychunk := @List.take_add Wire y (4*k) 4
     have hhchunk := @List.take_add Wire L.history (4*k) 4
@@ -167,12 +167,11 @@ theorem constRounds_wires (L : MontStageLayout) (y : List Wire) (p K k : Nat)
     wires (constPrepareRounds L y p K k)=(if k=0 then ∅ else (y.take (4*k)++L.history.take (4*k)++L.acc++L.table++L.carry++[L.cin]++L.scratch).toFinset) ∧
     wires (constRestoreRounds L y p K k)=(if k=0 then ∅ else (y.take (4*k)++L.history.take (4*k)++L.acc++L.table++L.carry++[L.cin]++L.scratch).toFinset) := by
   induction k with
-  | zero => simp [constPrepareRounds,constRestoreRounds,wires]
+  | zero => simp [constPrepareRounds_zero,constRestoreRounds_zero,wires]
   | succ k ih =>
     have h := ih (by omega)
     have hwin := constWindow_wires L y p K k hw hy (by omega)
-    change wires (constPrepareRounds L y p K k ++ constMontWindow L y p K k)=_ ∧
-      wires (constMontRestoreWindow L y p K k ++ constRestoreRounds L y p K k)=_
+    rw [constPrepareRounds_succ, constRestoreRounds_succ]
     simp only [wires_append,h.1,h.2,hwin.1,hwin.2,Nat.add_eq_zero_iff,one_ne_zero,and_false,if_false]
     have hychunk := @List.take_add Wire y (4*k) 4
     have hhchunk := @List.take_add Wire L.history (4*k) 4

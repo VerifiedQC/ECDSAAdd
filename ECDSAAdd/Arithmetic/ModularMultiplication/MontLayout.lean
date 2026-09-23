@@ -78,10 +78,14 @@ structure MontPrepared (M : MontLayout) (p X Y : Nat) (s : BasisState) : Prop wh
   fZ : s M.fZ=decide (montgomeryValue p (montgomeryConversion p) (montgomeryValue p X Y 64%p) 64<p)
   shared : regValue M.shared s=0
 
-def montP (M : MontLayout) (p : Nat) : Program :=
-  montPrepare M.first M.x M.y p ++ constPrepare M.second M.a p (montgomeryConversion p)
+def montP (M : MontLayout) (p : Nat) : Program := prog {
+  montPrepare(M.first, M.x, M.y, p);
+  constPrepare(M.second, M.a, p, (montgomeryConversion p));
+}
 
-def montQ (M : MontLayout) (p : Nat) : Program :=
-  constRestore M.second M.a p (montgomeryConversion p) ++ montRestore M.first M.x M.y p
+def montQ (M : MontLayout) (p : Nat) : Program := prog {
+  constRestore(M.second, M.a, p, (montgomeryConversion p));
+  montRestore(M.first, M.x, M.y, p);
+}
 
 end ECDSAAdd.Arithmetic

@@ -142,6 +142,7 @@ theorem recordRound_correct (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
       by_cases hw : w=L.swap
       · subst w; simpa [writeBit,controlValue,hv,hu] using ht
       · simpa [writeBit,hw] using he w hw
+  rw [recordRound_program]
   change run (p ++ q ++ _) m s = _
   rw [run_append,run_take,run_append,run_take]
   simp only [show measurementCount p=0 from rfl, List.drop_zero]

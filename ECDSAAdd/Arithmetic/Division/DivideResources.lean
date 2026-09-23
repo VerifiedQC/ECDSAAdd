@@ -10,7 +10,7 @@ theorem divideLoad_counts (L : DivideLayout) (hw : L.Widths) :
     (hw.inverse.input.trans (L.vLow_length hw).symm)
   have hd : L.denominator.length=256 := hw.inverse.input
   simp only [Option.isSome_some,if_true,hd] at hc
-  simp [divideLoad,divideUnload,toffoliCount_append,measurementCount_append,
+  simp [divideLoad,divideUnload_program,toffoliCount_append,measurementCount_append,
     hc.1,hc.2,(xorConstant_counts _ _).1,(xorConstant_counts _ _).2,toffoliCount,measurementCount]
 
 /-- 同一除法门列的精确门数；支持集与公开 Triple 分别证明。 -/

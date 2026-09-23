@@ -87,19 +87,34 @@ theorem controlled_add_nodup (c : Wire) (M : MontLayout) (hw : M.Widths)
 
 end MontLayout
 
-def montMulXor (M : MontLayout) (p : Nat) : Program :=
-  montP M p ++ copyRegister none M.product M.out ++ montQ M p
+def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
+  montP(M, p);
+  copyRegister(none, M.product, M.out);
+  montQ(M, p);
+}
 
-def montMulAdd (M : MontLayout) (p : Nat) : Program :=
-  montP M p ++ modAddInPlace M.addView p ++ montQ M p
+def montMulAdd (M : MontLayout) (p : Nat) : Program := prog {
+  montP(M, p);
+  modAddInPlace(M.addView, p);
+  montQ(M, p);
+}
 
-def montMulSub (M : MontLayout) (p : Nat) : Program :=
-  montP M p ++ modSubInPlace M.addView p ++ montQ M p
+def montMulSub (M : MontLayout) (p : Nat) : Program := prog {
+  montP(M, p);
+  modSubInPlace(M.addView, p);
+  montQ(M, p);
+}
 
-def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program :=
-  montP M p ++ controlledModAdd c M.addView p ++ montQ M p
+def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
+  montP(M, p);
+  controlledModAdd(c, M.addView, p);
+  montQ(M, p);
+}
 
-def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program :=
-  montP M p ++ controlledModSub c M.addView p ++ montQ M p
+def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
+  montP(M, p);
+  controlledModSub(c, M.addView, p);
+  montQ(M, p);
+}
 
 end ECDSAAdd.Arithmetic

@@ -119,7 +119,7 @@ private theorem double_core (U : ModUnaryLayout) (n p Z : Nat)
       · have hy : 2*Z<p := he.mp hv
         simp only [B,decide_eq_true hy]
     exact ⟨⟨⟨h.1.1,hl⟩,hb⟩,h.2⟩) (fun _ h => h)
-  simpa only [dblInPlace,ModUnaryLayout.core,ModAddCoreLayout.z,R,List.append_assoc] using hfirst.seq hrest
+  simpa only [dblInPlace_program,ModUnaryLayout.core,ModAddCoreLayout.z,R,List.append_assoc] using hfirst.seq hrest
 
 /-- 规范模加倍；借位从结果奇偶清除，外层 mask/flag 均归零。 -/
 theorem dblInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)

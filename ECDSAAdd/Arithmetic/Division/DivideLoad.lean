@@ -127,11 +127,11 @@ theorem divideLoad_values (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodu
   all_goals constructor
   · simpa only [divideLoad,List.append_assoc,List.singleton_append] using
       ((((hv' 0 0 0).seq (hm 0 1 0)).seq (hc 0 1 0)).seq (hu' 0 1 0)).seq (hs' p 1 0)
-  · simpa only [divideUnload,List.append_assoc,List.singleton_append] using
+  · simpa only [divideUnload_program,List.append_assoc,List.singleton_append] using
       ((((hs' p 1 1).seq (hu' p 1 0)).seq (hc 0 1 0)).seq (hm 0 1 0)).seq (hv' 0 1 0)
   · simpa only [divideLoad,List.append_assoc,List.singleton_append] using
       ((((hv' 0 0 0).seq (hm 0 1 0)).seq hc0).seq (hu' 0 D 0)).seq (hs' p D 0)
-  · simpa only [divideUnload,List.append_assoc,List.singleton_append] using
+  · simpa only [divideUnload_program,List.append_assoc,List.singleton_append] using
       ((((hs' p D 1).seq (hu' p D 0)).seq hcD).seq (hm 0 0 0)).seq (hv' 0 1 0)
 
 end ECDSAAdd.Arithmetic

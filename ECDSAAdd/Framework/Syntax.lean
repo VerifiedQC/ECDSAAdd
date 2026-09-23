@@ -58,6 +58,17 @@ def emit {α : Type} [ToProgram α] (value : α) : Program :=
 
 end CircuitDSL
 
+/-- Erase notation adapters during elaboration, keeping named subcircuits visible to proofs. -/
+elab "circuitEmit% " t:term : term => do
+  let e ← Lean.Elab.Term.elabTerm t none
+  let ty ← Lean.Meta.inferType e
+  if ← Lean.Meta.isDefEq ty (mkConst ``Program) then
+    return e
+  else if ← Lean.Meta.isDefEq ty (mkConst ``Instr) then
+    Lean.Meta.mkListLit (mkConst ``Instr) [e]
+  else
+    Lean.Meta.mkAppM ``CircuitDSL.emit #[e]
+
 /-- Structured circuit notation; the original semicolon-separated gate notation remains valid. -/
 declare_syntax_cat circuitStmt
 syntax ident "(" term,* ")" ";" : circuitStmt
@@ -65,28 +76,45 @@ syntax "let " ident " := " term ";" : circuitStmt
 syntax "for " ident " in " "range" "(" term ")" "{" circuitStmt* "}" ";" : circuitStmt
 syntax "for " ident " in " "reversed" "(" "range" "(" term ")" ")"
   "{" circuitStmt* "}" ";" : circuitStmt
+syntax "for " ident " in " term:max "{" circuitStmt* "}" ";" : circuitStmt
 syntax (name := circuitBlock) (priority := high) "prog" "{" circuitStmt* "}" : term
+syntax "circuitSeq% " term:max "{" circuitStmt* "}" : term
+
+macro_rules
+  | `(circuitSeq% $acc {}) => `($acc)
+  | `(circuitSeq% $acc { let $name:ident := $value:term; $rest:circuitStmt* }) =>
+      `($acc ++ (let $name := $value; prog { $rest* }))
+  | `(circuitSeq% $acc { $first:circuitStmt $rest:circuitStmt* }) =>
+      `(circuitSeq% ($acc ++ prog { $first }) { $rest* })
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
+  | `(prog { $f:ident($args:term,*); }) => do
+      let mut call : TSyntax `term := ⟨f.raw⟩
+      for arg in args.getElems do
+        call ← `($call $arg)
+      `(circuitEmit% $call)
   | `(prog { $f:ident($args:term,*); $rest:circuitStmt* }) => do
       let mut call : TSyntax `term := ⟨f.raw⟩
       for arg in args.getElems do
         call ← `($call $arg)
-      `(CircuitDSL.emit $call ++ prog { $rest* })
+      `(circuitSeq% (circuitEmit% $call) { $rest* })
   | `(prog { let $name:ident := $value:term; $rest:circuitStmt* }) =>
       `(let $name := $value; prog { $rest* })
   | `(prog { for $i:ident in range($n:term) { $body:circuitStmt* };
         $rest:circuitStmt* }) =>
-      `((List.ofFn (fun (j : Fin $n) =>
+      `(circuitSeq% ((List.ofFn (fun (j : Fin $n) =>
           let $i := j.val
           have _h : $i < $n := j.isLt
-          prog { $body* })).flatten ++ prog { $rest* })
+          prog { $body* })).flatten) { $rest* })
   | `(prog { for $i:ident in reversed(range($n:term)) { $body:circuitStmt* };
         $rest:circuitStmt* }) =>
-      `((List.ofFn (fun (j : Fin $n) =>
+      `(circuitSeq% ((List.ofFn (fun (j : Fin $n) =>
           let $i := j.val
           have _h : $i < $n := j.isLt
-          prog { $body* })).reverse.flatten ++ prog { $rest* })
+          prog { $body* })).reverse.flatten) { $rest* })
+  | `(prog { for $item:ident in $items:term { $body:circuitStmt* };
+        $rest:circuitStmt* }) =>
+      `(circuitSeq% (($items).flatMap (fun $item => prog { $body* })) { $rest* })
 
 end ECDSAAdd

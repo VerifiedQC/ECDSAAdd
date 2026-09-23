@@ -32,16 +32,25 @@ def lookup (L : InverseScaleLayout) (q : Nat) : Program :=
   Arithmetic.lookup (L.k.headD L.stage.flag) L.k.tail L.scratch L.factor (inverseScaleFactor q)
 
 /-- 三次无控制CX复制交换a与累加器低257位；高4位保持。 -/
-def exchange (L : InverseScaleLayout) : Program :=
-  copyRegister none L.a (L.stage.acc.take 257) ++
-  copyRegister none (L.stage.acc.take 257) L.a ++
-  copyRegister none L.a (L.stage.acc.take 257)
+def exchange (L : InverseScaleLayout) : Program := prog {
+  copyRegister(none, L.a, (L.stage.acc.take 257));
+  copyRegister(none, (L.stage.acc.take 257), L.a);
+  copyRegister(none, L.a, (L.stage.acc.take 257));
+}
 
-def prepare (L : InverseScaleLayout) (q : Nat) : Program :=
-  L.lookup q ++ montPrepare L.stage L.factor (L.a.take 256) q ++ L.exchange ++ L.lookup q
+def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
+  L.lookup(q);
+  montPrepare(L.stage, L.factor, (L.a.take 256), q);
+  L.exchange();
+  L.lookup(q);
+}
 
-def restore (L : InverseScaleLayout) (q : Nat) : Program :=
-  L.lookup q ++ L.exchange ++ montRestore L.stage L.factor (L.a.take 256) q ++ L.lookup q
+def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
+  L.lookup(q);
+  L.exchange();
+  montRestore(L.stage, L.factor, (L.a.take 256), q);
+  L.lookup(q);
+}
 
 /-- 使用逆元期间仅保留N、Montgomery商和借位，所有借用工作区为空。 -/
 def Prepared (L : InverseScaleLayout) (q K N : Nat) (s : BasisState) : Prop :=

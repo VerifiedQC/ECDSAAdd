@@ -9,22 +9,51 @@ def flipBelow : Option Wire → Wire → Wire → Program
   | none, top, t => [.X t, .CX top t]
   | some c, top, t => [.CX c t, .CCX c top t]
 
-/-- Gidney 比较链：每位用 majority 算进位、递归到最高位，递归到底时 cin 就是最高进位，
-读出后按相反顺序用现有 eraseCarry 擦除。三个输入寄存器全程不变。 -/
-def compareChain (control : Option Wire) : List Wire → List Wire → List Wire → Wire → Wire → Program
-  | a :: as, b :: bs, c :: cs, cin, target =>
-      majority a b cin c ++ compareChain control as bs cs c target ++ eraseCarry a b cin c
-  | [], [], [], cin, target => flipBelow control cin target
-  | _, _, _, _, _ => []
+local macro_rules
+  | `(tactic| get_elem_tactic) =>
+      `(tactic| (simp_all +zetaDelta only [List.length_cons]; omega))
+
+/-- 正向生成进位链，读出最高进位，再反向清理；不生成差寄存器。
+合法布局中三个列表等长；不等长时保留原程序的公共前缀计算/清理行为，不读出结果。 -/
+def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program :=
+  let n := min x.length (min y.length carry.length)
+  let c := cin :: carry
+  let readout := if x.length = y.length ∧ y.length = carry.length then
+      flipBelow control c[n] target else []
+  prog {
+    for i in range(n) {
+      majority(x[i], y[i], c[i], carry[i]);
+    };
+    readout();
+    for i in reversed(range(n)) {
+      eraseCarry(x[i], y[i], c[i], carry[i]);
+    };
+  }
+
+private theorem compareChain_nil (control : Option Wire) (cin target : Wire) :
+    compareChain control [] [] [] cin target = flipBelow control cin target := by simp [compareChain]
+
+private theorem compareChain_cons (control : Option Wire) (a b c cin target : Wire)
+    (as bs cs : List Wire) :
+    compareChain control (a :: as) (b :: bs) (c :: cs) cin target =
+      majority a b cin c ++ compareChain control as bs cs c target ++ eraseCarry a b cin c := by
+  simp [compareChain, Nat.succ_min_succ, List.ofFn_succ, List.reverse_cons,
+    List.flatten_append, List.append_assoc]
 
 /-- target ^= [x < y]（有 control 时为 control ∧ [x < y]）：y 按位取反、cin 置 1，
 进位链算的是 x + ¬y + 1，最高进位 = [x ≥ y]；读出后擦除并还原 y、cin。 -/
-def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program :=
-  notRegister (cin :: y) ++ compareChain control x y carry cin target ++ notRegister (cin :: y)
+def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program := prog {
+  notRegister(cin :: y);
+  compareChain(control, x, y, carry, cin, target);
+  notRegister(cin :: y);
+}
 
 /-- 与经典常量比较：常量装进零寄存器 T，比较后再卸载。 -/
-def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program :=
-  xorConstant T K ++ compareLt control x T carry cin target ++ xorConstant T K
+def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program := prog {
+  xorConstant(T, K);
+  compareLt(control, x, T, carry, cin, target);
+  xorConstant(T, K);
+}
 
 /-- 控制位的值：无控制视为真。 -/
 def controlValue : Option Wire → BasisState → Bool
@@ -83,7 +112,7 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
     have hnt : target ≠ cin := by
       have := (List.nodup_cons.mp hnd).1; simpa using this
     have hct : ∀ c ∈ control, c ≠ target := fun c hc' hh => hctl c hc' (by simp [hh])
-    simp only [compareChain]
+    simp only [compareChain_nil]
     rw [flipBelow_correct control cin target hnt hct]
     refine ⟨rfl, ?_, ?_⟩
     · intro w hw; simp [writeBit, hw]
@@ -156,7 +185,7 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
         ⟨t.phase, writeBit t.basis c false⟩ :=
       eraseCarry_correct _ _ _ _ hac hbc hcc t (by rw [htA, htB, htC, htK]) record
     have hm0 : measurementCount (majority a b cin c) = 0 := rfl
-    simp only [compareChain, List.append_assoc, run_append, run_take, hm0, List.take_zero, List.drop_zero]
+    simp only [compareChain_cons, List.append_assoc, run_append, run_take, hm0, List.take_zero, List.drop_zero]
     rw [hfirst, ← ht, herase]
     refine ⟨hp, ?_, ?_⟩
     · intro w hw
@@ -383,7 +412,7 @@ theorem compareChain_counts (control : Option Wire) (x y carry : List Wire) (cin
     have hx0 : x = [] := List.eq_nil_of_length_eq_zero hx
     have hc0 : carry = [] := List.eq_nil_of_length_eq_zero hc
     subst hx0 hc0
-    simpa [compareChain] using flipBelow_counts control cin target
+    simpa [compareChain_cons, compareChain_nil] using flipBelow_counts control cin target
   | cons b bs ih =>
     cases x with
     | nil => simp at hx
@@ -392,7 +421,7 @@ theorem compareChain_counts (control : Option Wire) (x y carry : List Wire) (cin
     | nil => simp at hc
     | cons c cs =>
     have := ih as cs c (by simpa using hx) (by simpa using hc)
-    simp only [compareChain, toffoliCount_append, measurementCount_append, this.1, this.2,
+    simp only [compareChain_cons, toffoliCount_append, measurementCount_append, this.1, this.2,
       majority, eraseCarry, toffoliCount, measurementCount, List.length_cons]
     omega
 
@@ -425,7 +454,7 @@ theorem compareChain_wires (control : Option Wire) (x y carry : List Wire) (cin 
     have hx0 : x = [] := List.eq_nil_of_length_eq_zero hx
     have hc0 : carry = [] := List.eq_nil_of_length_eq_zero hc
     subst hx0 hc0
-    rw [compareChain, flipBelow_wires]
+    rw [compareChain_nil, flipBelow_wires]
     ext w; simp; tauto
   | cons b bs ih =>
     cases x with
@@ -437,7 +466,7 @@ theorem compareChain_wires (control : Option Wire) (x y carry : List Wire) (cin 
     have := ih as cs c (by simpa using hx) (by simpa using hc)
     have hm : wires (majority a b cin c) = {a, b, cin, c} := by
       ext w; simp [majority, wires, Instr.wires]; tauto
-    simp only [compareChain, wires_append, this, hm, eraseCarry_wires]
+    simp only [compareChain_cons, wires_append, this, hm, eraseCarry_wires]
     ext w
     simp only [Finset.mem_union, Finset.mem_insert, Finset.mem_singleton, List.mem_toFinset,
       List.mem_cons, List.mem_append]

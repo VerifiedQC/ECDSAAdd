@@ -85,7 +85,7 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
       have h2 : Triple PM (kaliskiLoop L.swapCounter (i+1) rs) PF := hf2.conseq (fun _ h => h)
         (fun st h => ⟨h.1.1,h.2.1,h.2.2,h.1.2⟩)
       have h := h1.seq h2
-      simpa only [P0,PF,kaliskiLoop,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+      simpa only [P0,PF,kaliskiLoop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
         loopEndLayout,Function.iterate_succ_apply] using h
     · have h1 : Triple PF (kaliskiUnloop L.swapCounter (i+1) rs) PB := hb1.conseq
         (fun st h => ⟨⟨h.1,h.2.2.2⟩,h.2.1,h.2.2.1⟩)
@@ -93,7 +93,7 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
       have h2 : Triple PB (kaliskiUnround (L.withRecord r) i) P0 := hb2.conseq (fun _ h => h)
         (fun st h => ⟨h.1.1,h.1.2.1,h.1.2.2,h.2⟩)
       have h := h1.seq h2
-      simpa only [P0,PF,kaliskiUnloop,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+      simpa only [P0,PF,kaliskiUnloop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
         loopEndLayout,Function.iterate_succ_apply] using h
 
 end ECDSAAdd.Arithmetic

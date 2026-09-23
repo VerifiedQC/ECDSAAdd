@@ -3,12 +3,18 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceNegate
 namespace ECDSAAdd.Arithmetic
 
 /-- 源扩宽取负、模加、再取负恢复；临时 p 是合法的核输入。 -/
-def modSubInPlace (L : ModInPlaceLayout) (p : Nat) : Program :=
-  negRaw L p ++ modAddInPlace L p ++ negRaw L p
+def modSubInPlace (L : ModInPlaceLayout) (p : Nat) : Program := prog {
+  negRaw(L, p);
+  modAddInPlace(L, p);
+  negRaw(L, p);
+}
 
 /-- 两次源取负无条件执行，只有模加受控；控制为零时目标保持。 -/
-def controlledModSub (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program :=
-  negRaw L p ++ controlledModAdd c L p ++ negRaw L p
+def controlledModSub (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
+  negRaw(L, p);
+  controlledModAdd(c, L, p);
+  negRaw(L, p);
+}
 
 theorem modSubInPlace_spec (L : ModInPlaceLayout) (n p A Z : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)

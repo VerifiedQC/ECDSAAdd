@@ -3,18 +3,32 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularSteps
 namespace ECDSAAdd.Arithmetic
 
 /-- 保留输入的模加 XOR：载入 q，计算和与候选差，选择后按前向 XOR 清理。 -/
-def modAdd (L : ModLayout) (q : Nat) : Program :=
-  let load := xorConstant (L.reg .modulus) q
-  let sum := add (L.adder .x .y .total .carrySum L.cinSum)
-  let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)
-  load ++ sum ++ difference ++ selectXor L.selector L.high.diff ++ difference ++ sum ++ load
+def modAdd (L : ModLayout) (q : Nat) : Program := prog {
+  let load := xorConstant (L.reg .modulus) q;
+  let sum := add (L.adder .x .y .total .carrySum L.cinSum);
+  let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff);
+  load();
+  sum();
+  difference();
+  selectXor(L.selector, L.high.diff);
+  difference();
+  sum();
+  load();
+}
 
 /-- 保留输入的模减 XOR：借位时选择加回 q 的候选，随后清理全部工作寄存器。 -/
-def modSub (L : ModLayout) (q : Nat) : Program :=
-  let load := xorConstant (L.reg .modulus) q
-  let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff)
-  let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum)
-  load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load
+def modSub (L : ModLayout) (q : Nat) : Program := prog {
+  let load := xorConstant (L.reg .modulus) q;
+  let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff);
+  let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum);
+  load();
+  difference();
+  correction();
+  selectXor(L.selector, L.high.diff);
+  correction();
+  difference();
+  load();
+}
 
 def ModValues.clean (X Y O : Nat) : ModField → Nat
   | .x => X | .y => Y | .out => O | _ => 0

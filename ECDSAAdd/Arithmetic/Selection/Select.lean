@@ -14,10 +14,21 @@ def selectWires : List SelectBit → List Wire
 
 /-- 输出异或 (if flag then yes else no)。暂时将 yes XOR 到 no，
 用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。 -/
-def selectXor : List SelectBit → Wire → Program
-  | [], _ => []
-  | b :: bs, flag => prog { Instr.CX b.no b.out;
-      Instr.CX b.yes b.no; Instr.CCX flag b.no b.out; Instr.CX b.yes b.no } ++ selectXor bs flag
+def selectXor (bs : List SelectBit) (flag : Wire) : Program := prog {
+  for b in bs {
+    Instr.CX(b.no, b.out);
+    Instr.CX(b.yes, b.no);
+    Instr.CCX(flag, b.no, b.out);
+    Instr.CX(b.yes, b.no);
+  };
+}
+
+private theorem selectXor_nil (flag : Wire) : selectXor [] flag = [] := rfl
+
+private theorem selectXor_cons (b : SelectBit) (bs : List SelectBit) (flag : Wire) :
+    selectXor (b :: bs) flag =
+      [Instr.CX b.no b.out, Instr.CX b.yes b.no, Instr.CCX flag b.no b.out,
+        Instr.CX b.yes b.no] ++ selectXor bs flag := rfl
 
 private theorem mem_selectWires {bs : List SelectBit} {b : SelectBit} (hb : b ∈ bs) :
     b.no ∈ selectWires bs ∧ b.yes ∈ selectWires bs ∧ b.out ∈ selectWires bs := by
@@ -61,7 +72,7 @@ theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
         (if s.basis flag then regValue (bs.map SelectBit.yes) s.basis
          else regValue (bs.map SelectBit.no) s.basis) := by
   induction bs generalizing s with
-  | nil => simp [selectXor, run, regValue]
+  | nil => simp [selectXor_nil, run, regValue]
   | cons b bs ih =>
     simp only [selectWires, List.nodup_cons, List.mem_cons, not_or] at hnd
     obtain ⟨⟨hny, hno, hnr⟩, ⟨hyo, hyr⟩, hor, hr⟩ := hnd
@@ -79,7 +90,7 @@ theorem selectXor_correct (bs : List SelectBit) (flag : Wire)
       obtain ⟨d, hd, heq⟩ := List.mem_map.mp hw
       exact hor (heq ▸ (mem_selectWires hd).2.2)
     have htO : t.basis b.out = s1.basis b.out := he _ ho
-    simp only [selectXor, run_append, run_take]
+    simp only [selectXor_cons, run_append, run_take]
     rw [selectStep_correct _ _ _ _ hno hyo hny hf.2.2.1 hf.1]
     change (run (selectXor bs flag) (m.drop 0) s1).phase = _ ∧ _
     rw [List.drop_zero]
@@ -119,7 +130,7 @@ theorem selectXor_counts (bs : List SelectBit) (flag : Wire) :
   induction bs with
   | nil => exact ⟨rfl, rfl⟩
   | cons b bs ih =>
-    simp only [selectXor, toffoliCount_append, measurementCount_append,
+    simp only [selectXor_cons, toffoliCount_append, measurementCount_append,
       toffoliCount, measurementCount, List.length_cons, ih.1, ih.2]
     exact ⟨by omega, trivial⟩
 
@@ -129,10 +140,10 @@ theorem selectXor_wires (b : SelectBit) (bs : List SelectBit) (flag : Wire) :
   induction bs generalizing b with
   | nil =>
     ext w
-    simp [selectXor, wires, Instr.wires, selectWires]
+    simp [selectXor_nil, selectXor_cons, wires, Instr.wires, selectWires]
     tauto
   | cons c cs ih =>
-    rw [selectXor, wires_append, ih]
+    rw [selectXor_cons, wires_append, ih]
     ext w
     simp [wires, Instr.wires, selectWires]
     tauto

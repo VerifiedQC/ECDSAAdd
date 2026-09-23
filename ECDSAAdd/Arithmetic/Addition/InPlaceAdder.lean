@@ -59,7 +59,7 @@ private theorem addInPlace_eq_recursive (x y carry : List Wire) (cin : Wire)
         have ha : as = [] := by simpa using hx
         have hca : carry = [] := by simpa using hc
         subst ha; subst hca
-        simp [addInPlace, addInPlaceRecursive, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram]
+        simp [addInPlace, addInPlaceRecursive]
       | cons b' bs =>
         cases as with
         | nil => simp at hx
@@ -72,7 +72,7 @@ private theorem addInPlace_eq_recursive (x y carry : List Wire) (cin : Wire)
             have hi := ih (a'::as) cs c hx' hc'
             simp [addInPlace, hx', hc'] at hi
             simp [addInPlace, hx, addInPlaceRecursive, List.ofFn_succ, List.reverse_cons,
-              List.flatten_append, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram,
+              List.flatten_append,
               List.append_assoc] at hi ⊢
             have hcs : cs.length = bs.length := by simpa using hc'
             simp only [hcs, dite_true]

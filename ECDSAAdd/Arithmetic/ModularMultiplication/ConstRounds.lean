@@ -27,7 +27,7 @@ theorem constPrepareRounds_correct (L : MontStageLayout) (y : List Wire) (p k X 
       hw hnd hy (by omega) hp hp16 hX (montgomeryValue_bound p X Y k hX) (montgomeryQuotient_bound p X Y k)
       s1 m1 ((keep1 y (by intro w hh; simp [hh])).trans vy) h1.2.2.1 h1.2.2.2
       ((keep1 L.work (by intro w hh; simp [hh])).trans vw)
-    rw [constPrepareRounds,run_append,run_take]
+    rw [constPrepareRounds_succ,run_append,run_take]
     exact ⟨h2.1.trans h1.1,fun w ha hh => (h2.2.1 w ha hh).trans (h1.2.1 w ha hh),h2.2.2.1,h2.2.2.2⟩
 
 /-- 以同一 a_k/Q_k 关系为前提逆序执行，清空累加器与整条历史。 -/
@@ -56,7 +56,7 @@ theorem constRestoreRounds_correct (L : MontStageLayout) (y : List Wire) (p k X 
       exact h1.2.1 w (fun hm => hh (List.mem_append_left _ hm)) (fun hm => hh (List.mem_append_right _ hm))
     have h2 := ih (by omega) s1 m1 ((keep1 y (by intro w hh; simp [hh])).trans vy) h1.2.2.1 h1.2.2.2
       ((keep1 L.work (by intro w hh; simp [hh])).trans vw)
-    rw [constRestoreRounds,run_append,run_take]
+    rw [constRestoreRounds_succ,run_append,run_take]
     exact ⟨h2.1.trans h1.1,fun w ha hh => (h2.2.1 w ha hh).trans (h1.2.1 w ha hh),h2.2.2.1,h2.2.2.2⟩
 
 end ECDSAAdd.Arithmetic

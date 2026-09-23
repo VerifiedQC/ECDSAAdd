@@ -47,7 +47,7 @@ theorem recordRound_counts (L : KaliskiRoundLayout) :
   have h := compareLt_counts (some L.bothWork) L.v L.u (L.data.reg .carry) L.cin L.swap
     (by simp [KaliskiRoundLayout.v,KaliskiRoundLayout.u,RoundDataLayout.v,RoundDataLayout.u,L.data.reg_length])
     (by simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data.reg_length])
-  simp only [recordRound,toffoliCount_append,measurementCount_append,h.1,h.2.1]
+  simp only [recordRound_program,toffoliCount_append,measurementCount_append,h.1,h.2.1]
   simp [KaliskiRoundLayout.u,RoundDataLayout.u,L.data.reg_length,toffoliCount,measurementCount]
   omega
 

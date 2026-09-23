@@ -82,7 +82,7 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
       (montMulControlledSub L.control L.multiply p) ++
       inverseUncompute L.inner p ++ divideUnload L := by simp only [divideSub,List.append_assoc]
   rw [heA,heS]
-  simp only [wires_append,hi.1,hi.2,hm.1,hm.2,divideLoad,divideUnload,wires_append,hc,
+  simp only [wires_append,hi.1,hi.2,hm.1,hm.2,divideLoad,divideUnload_program,wires_append,hc,
     wires,Instr.wires,Finset.union_empty]
   constructor <;> ext q
   all_goals

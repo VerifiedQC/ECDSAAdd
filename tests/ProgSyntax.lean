@@ -39,6 +39,34 @@ example : prog {
   } = [CX 0 1, CX 0 0, CX 1 1, CX 1 0] := by decide
 
 -- Loop bounds support safe indexing, without fallback wires.
+example : prog {
+    for w in ([4, 1, 7] : List Wire) { X(w); };
+    for w in ([] : List Wire) { X(w); };
+  } = [X 4, X 1, X 7] := rfl
+
+-- A later let must not capture variables in earlier statements.
+example : prog {
+    let w := 2;
+    X(w);
+    let w := 5;
+    CX(w, 9);
+    for w in ([8] : List Wire) { X(w); };
+    X(w);
+  } = [X 2, CX 5 9, X 8, X 5] := rfl
+
+-- Program-valued statements stay visible to existing rewrite proofs.
+example (p q r : Program) : prog { p(); q(); r(); } = (p ++ q) ++ r := rfl
+
+-- Custom statement types still use their ToProgram instance.
+private structure GatePair where
+  first : Instr
+  second : Instr
+
+private instance : CircuitDSL.ToProgram GatePair := ⟨fun p => [p.first, p.second]⟩
+
+example (p : GatePair) : prog { p(); } = [p.first, p.second] := rfl
+
+-- Loop bounds support safe indexing, without fallback wires.
 example (x : List Wire) : Program := prog {
   for i in range(x.length) { X(x[i]); };
 }
@@ -53,7 +81,7 @@ example (cin : Wire) : rippleAdder [] cin = [] := rfl
 
 example (b : AddBit) (cin : Wire) : rippleAdder [b] cin =
     fullAdder b.x b.y cin b.out b.carry ++ eraseCarry b.x b.y cin b.carry := by
-  simp [rippleAdder, CircuitDSL.emit, CircuitDSL.ToProgram.toProgram]
+  simp [rippleAdder]
 
 example : rippleAdder [⟨0, 3, 6, 9⟩, ⟨1, 4, 7, 10⟩, ⟨2, 5, 8, 11⟩] 12 =
     fullAdder 0 3 12 6 9 ++ fullAdder 1 4 9 7 10 ++ fullAdder 2 5 10 8 11 ++

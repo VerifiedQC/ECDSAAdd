@@ -26,7 +26,7 @@ theorem pointSelectors_correct (L : ControlledPointLayout) (hn : L.wires.Nodup)
     List.nodup_nil,not_false_eq_true,and_true] at hh
   rcases hh with ⟨⟨hbg,hbd,hbf,hbG,hbD,hbO⟩,⟨hgd,hgf,hgG,hgD,hgO⟩,
     ⟨hdf,hdG,hdD,hdO⟩,⟨hfG,hfD,hfO⟩,⟨hGD,hGO⟩,hDO⟩
-  simp only [pointSelectors,run]
+  simp only [pointSelectors]
   apply congrArg (State.mk s.phase)
   funext w
   by_cases hG : w=L.genericSelect

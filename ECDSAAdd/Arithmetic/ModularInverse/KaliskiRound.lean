@@ -98,11 +98,25 @@ theorem regValue_headBit (r : List Wire) (hn : r≠[]) (s : BasisState) :
 
 
 /-- 先保存奇偶条件，直接把受控比较 XOR 到记录位，再清条件；不生成差寄存器。 -/
-def recordRound (L : KaliskiRoundLayout) : Program :=
+def recordRound (L : KaliskiRoundLayout) : Program := prog {
+  Instr.CCX(L.active, L.u.head!, L.oddWork);
+  Instr.CCX(L.oddWork, L.v.head!, L.bothWork);
+  Instr.CX(L.bothWork, L.subtract);
+  Instr.CX(L.oddWork, L.swap);
+  compareLt((some L.bothWork), L.v, L.u, (L.data.reg .carry), L.cin, L.swap);
+  Instr.CCX(L.oddWork, L.v.head!, L.bothWork);
+  Instr.CCX(L.active, L.u.head!, L.oddWork);
+}
+
+/-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
+theorem recordRound_program (L : KaliskiRoundLayout) :
+    recordRound L =
   [.CCX L.active L.u.head! L.oddWork, .CCX L.oddWork L.v.head! L.bothWork,
    .CX L.bothWork L.subtract, .CX L.oddWork L.swap] ++
   compareLt (some L.bothWork) L.v L.u (L.data.reg .carry) L.cin L.swap ++
-  [.CCX L.oddWork L.v.head! L.bothWork, .CCX L.active L.u.head! L.oddWork]
+  [.CCX L.oddWork L.v.head! L.bothWork, .CCX L.active L.u.head! L.oddWork] := by
+  simp only [recordRound, List.append_assoc]
+  rfl
 
 /-- 只翻转活动辅助位，既用于装入 !done，也用于恢复 done 后的清理。 -/
 def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]
@@ -111,14 +125,23 @@ def roundActiveXor (L : KaliskiRoundLayout) (i : Nat) : Program :=
   counterActiveXor L.comparator L.active i
 
 /-- 终止轮先更新并计数，再改变 done；最后用 i<新 k 清理活动工作位。 -/
-def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program :=
-  loadActive L ++ recordRound L ++ kaliskiBodyProgram L.data L.active L.swap L.subtract ++
-  counterInc L.counter ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++ roundActiveXor L i
+def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
+  loadActive(L);
+  recordRound(L);
+  kaliskiBodyProgram(L.data, L.active, L.swap, L.subtract);
+  counterInc(L.counter);
+  zeroControlled(L.active, L.done, (L.data.zeroBits .v));
+  roundActiveXor(L, i);
+}
 
 /-- 逆轮先由新 k 恢复活动位和旧 done，再恢复数据/计数，最后清两位记录。 -/
-def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program :=
-  roundActiveXor L i ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++
-  kaliskiUnbodyProgram L.data L.active L.swap L.subtract ++ counterDec L.counter.swapCounter ++
-  recordRound L ++ loadActive L
+def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
+  roundActiveXor(L, i);
+  zeroControlled(L.active, L.done, (L.data.zeroBits .v));
+  kaliskiUnbodyProgram(L.data, L.active, L.swap, L.subtract);
+  counterDec(L.counter.swapCounter);
+  recordRound(L);
+  loadActive(L);
+}
 
 end ECDSAAdd.Arithmetic

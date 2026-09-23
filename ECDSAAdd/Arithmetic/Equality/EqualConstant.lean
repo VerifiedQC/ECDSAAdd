@@ -14,9 +14,11 @@ private theorem zeroBit_count (bs : List ZeroBit) (w : Wire) :
     omega
 
 /-- 保留输入，XOR 写入 control ∧ (input = k)；同一组零检测工作位前后均为零。 -/
-def equalConstant (control target : Wire) (bs : List ZeroBit) (k : Nat) : Program :=
-  xorConstant (bs.map ZeroBit.input) k ++ zeroControlled control target bs ++
-    xorConstant (bs.map ZeroBit.input) k
+def equalConstant (control target : Wire) (bs : List ZeroBit) (k : Nat) : Program := prog {
+  xorConstant((bs.map ZeroBit.input), k);
+  zeroControlled(control, target, bs);
+  xorConstant((bs.map ZeroBit.input), k);
+}
 
 theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : Nat)
     (hnd : (control::target::bs.flatMap ZeroBit.wires).Nodup) (hk : k<2^bs.length)

@@ -57,19 +57,40 @@ theorem tail_nodup (L : KaliskiRoundLayout) (r : RoundRecord) (rs : List RoundRe
 
 end KaliskiRoundLayout
 
-/-- 固定门列按记录带长度展开；银行交替与 i 都由程序构造决定。 -/
-def kaliskiLoop (L : KaliskiRoundLayout) (i : Nat) : List RoundRecord → Program
-  | [] => []
-  | r::rs => kaliskiRound (L.withRecord r) i ++ kaliskiLoop L.swapCounter (i+1) rs
-
-/-- 先恢复后面的轮，再以前向逆轮清除当前两位记录。 -/
-def kaliskiUnloop (L : KaliskiRoundLayout) (i : Nat) : List RoundRecord → Program
-  | [] => []
-  | r::rs => kaliskiUnloop L.swapCounter (i+1) rs ++ kaliskiUnround (L.withRecord r) i
-
 def loopEndLayout (L : KaliskiRoundLayout) : Nat → KaliskiRoundLayout
   | 0 => L
   | n+1 => loopEndLayout L.swapCounter n
+
+/-- 固定门列按记录带长度展开；银行交替与 i 都由程序构造决定。 -/
+def kaliskiLoop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
+  for j in range(rs.length) {
+    let round := (loopEndLayout L j).withRecord rs[j];
+    kaliskiRound(round, i+j);
+  };
+}
+
+theorem kaliskiLoop_nil (L : KaliskiRoundLayout) (i : Nat) : kaliskiLoop L i [] = [] := rfl
+
+theorem kaliskiLoop_cons (L : KaliskiRoundLayout) (i : Nat) (r : RoundRecord) (rs : List RoundRecord) :
+    kaliskiLoop L i (r :: rs) =
+      kaliskiRound (L.withRecord r) i ++ kaliskiLoop L.swapCounter (i+1) rs := by
+  simp [kaliskiLoop, List.ofFn_succ, loopEndLayout, Nat.add_comm, Nat.add_left_comm]
+
+/-- 先恢复后面的轮，再以前向逆轮清除当前两位记录。 -/
+def kaliskiUnloop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
+  for j in reversed(range(rs.length)) {
+    let round := (loopEndLayout L j).withRecord rs[j];
+    kaliskiUnround(round, i+j);
+  };
+}
+
+theorem kaliskiUnloop_nil (L : KaliskiRoundLayout) (i : Nat) : kaliskiUnloop L i [] = [] := rfl
+
+theorem kaliskiUnloop_cons (L : KaliskiRoundLayout) (i : Nat) (r : RoundRecord) (rs : List RoundRecord) :
+    kaliskiUnloop L i (r :: rs) =
+      kaliskiUnloop L.swapCounter (i+1) rs ++ kaliskiUnround (L.withRecord r) i := by
+  simp [kaliskiUnloop, List.ofFn_succ, loopEndLayout, List.reverse_cons, List.flatten_append,
+    Nat.add_comm, Nat.add_left_comm]
 
 def kaliskiCodes : Nat → KState → List (Bool×Bool)
   | 0,_ => []

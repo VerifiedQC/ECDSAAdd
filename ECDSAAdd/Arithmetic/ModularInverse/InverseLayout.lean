@@ -82,14 +82,23 @@ theorem inner_nodup (L : InverseLayout) (hnd : L.wires.Nodup) : L.inner.wires.No
 end InverseLayout
 
 /-- 装入外部输入及常数；卸载使用同样的 XOR 门，按相反次序执行。 -/
-def inverseLoad (L : InverseLayout) : Program :=
-  copyRegister none L.x L.vLow ++ xorConstant L.inner.first.u p ++ xorConstant L.inner.first.s 1
+def inverseLoad (L : InverseLayout) : Program := prog {
+  copyRegister(none, L.x, L.vLow);
+  xorConstant(L.inner.first.u, p);
+  xorConstant(L.inner.first.s, 1);
+}
 
-def inverseUnload (L : InverseLayout) : Program :=
-  xorConstant L.inner.first.s 1 ++ xorConstant L.inner.first.u p ++ copyRegister none L.x L.vLow
+def inverseUnload (L : InverseLayout) : Program := prog {
+  xorConstant(L.inner.first.s, 1);
+  xorConstant(L.inner.first.u, p);
+  copyRegister(none, L.x, L.vLow);
+}
 
 /-- secp256k1 非零输入的具体求逆电路。 -/
-def fieldInverse (L : InverseLayout) : Program :=
-  inverseLoad L ++ inverseLoop L.inner p ++ inverseUnload L
+def fieldInverse (L : InverseLayout) : Program := prog {
+  inverseLoad(L);
+  inverseLoop(L.inner, p);
+  inverseUnload(L);
+}
 
 end ECDSAAdd.Arithmetic

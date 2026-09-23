@@ -6,14 +6,24 @@ def copyGate (control : Option Wire) (a b : Wire) : Instr :=
   match control with | none => Instr.CX a b | some c => Instr.CCX c a b
 
 /-- 普通复制用 CX；受控复制逐位用 CCX。两者都按 XOR 更新目标。 -/
-def copyRegister (control : Option Wire) : List Wire → List Wire → Program
-  | a :: src, b :: dst =>
-      [copyGate control a b] ++
-        copyRegister control src dst
-  | _, _ => []
+def copyRegister (control : Option Wire) (src dst : List Wire) : Program := prog {
+  for pair in (src.zip dst) {
+    copyGate(control, pair.1, pair.2);
+  };
+}
 
 def copyValue (control : Option Wire) (st : BasisState) (X : Nat) : Nat :=
   match control with | none => X | some c => if st c then X else 0
+
+private theorem copyRegister_nil (control : Option Wire) (dst : List Wire) :
+    copyRegister control [] dst = [] := rfl
+
+private theorem copyRegister_nil_right (control : Option Wire) (src : List Wire) :
+    copyRegister control src [] = [] := by simp [copyRegister]
+
+private theorem copyRegister_cons (control : Option Wire) (a b : Wire) (src dst : List Wire) :
+    copyRegister control (a :: src) (b :: dst) =
+      [copyGate control a b] ++ copyRegister control src dst := rfl
 
 theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
     (hlen : src.length = dst.length) (hnd : (src ++ dst).Nodup)
@@ -26,7 +36,7 @@ theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
   | nil =>
     have hd : dst = [] := List.eq_nil_of_length_eq_zero hlen.symm
     subst dst
-    cases control <;> simp [copyRegister, copyValue, run, regValue]
+    cases control <;> simp [copyRegister_nil_right, copyValue, run, regValue]
   | cons a src ih =>
     cases dst with
     | nil => simp at hlen
@@ -51,7 +61,7 @@ theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
         cases control <;> rfl
       have hs1 (w : Wire) (hw : w ≠ b) : s1.basis w = s.basis w := by simp [s1, writeBit, hw]
       obtain ⟨hp, he, hv⟩ := ih dst hlen' ht hc' s1
-      simp only [copyRegister]
+      simp only [copyRegister_cons]
       rw [run_append, run_take, hm0, List.drop_zero, hfirst]
       refine ⟨hp, ?_, ?_⟩
       · intro w hw
@@ -111,26 +121,26 @@ theorem copyRegister_counts (control : Option Wire) (src dst : List Wire)
     toffoliCount (copyRegister control src dst) = (if control.isSome then src.length else 0) ∧
     measurementCount (copyRegister control src dst) = 0 := by
   induction src generalizing dst with
-  | nil => cases dst <;> simp_all [copyRegister, toffoliCount, measurementCount]
+  | nil => cases dst <;> simp_all [copyRegister_nil_right, toffoliCount, measurementCount]
   | cons a src ih =>
     cases dst with
     | nil => simp at hlen
     | cons b dst =>
       have ht := ih dst (by simpa using hlen)
-      cases control <;> simp_all [copyRegister, copyGate, toffoliCount, measurementCount, Nat.add_comm]
+      cases control <;> simp_all [copyRegister_cons, copyGate, toffoliCount, measurementCount, Nat.add_comm]
 
 theorem copyRegister_wires (control : Option Wire) (src dst : List Wire)
     (hlen : src.length = dst.length) :
     wires (copyRegister control src dst) =
       if src.isEmpty then ∅ else (control.toList ++ src ++ dst).toFinset := by
   induction src generalizing dst with
-  | nil => cases dst <;> simp_all [copyRegister, wires]
+  | nil => cases dst <;> simp_all [copyRegister_nil_right, wires]
   | cons a src ih =>
     cases dst with
     | nil => simp at hlen
     | cons b dst =>
       have ht := ih dst (by simpa using hlen)
-      simp only [copyRegister, wires_append, ht, List.isEmpty_cons, Bool.false_eq_true, if_false]
+      simp only [copyRegister_cons, wires_append, ht, List.isEmpty_cons, Bool.false_eq_true, if_false]
       cases src with
       | nil =>
         have hd : dst = [] := List.eq_nil_of_length_eq_zero (by simpa using hlen.symm)

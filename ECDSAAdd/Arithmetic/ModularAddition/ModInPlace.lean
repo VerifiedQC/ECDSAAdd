@@ -30,17 +30,19 @@ end ModAddCoreLayout
 
 /-- 四个可辨认阶段：计算扩宽和、试减 p、借位时低位加回 p、由结果与源比较清借位。
 constant/carry/cin 初末零；核源可以是外层已装载的 mask，不能提前清该源。 -/
-def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program :=
+def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
   -- 1. 高位初始零；扩宽寄存器容纳完整 A+Z。
-  addInPlace L.a L.z L.carry L.cin ++
+  addInPlace(L.a, L.z, L.carry, L.cin);
   -- 2. 试减 p；结果最高位记录 A+Z<p。装卸常数不影响该标志。
-  xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++
-  xorConstant L.constant p ++
+  xorConstant(L.constant, p);
+  subInPlace(L.constant, L.z, L.carry, L.cin);
+  xorConstant(L.constant, p);
   -- 3. 借位为真时只向低位加回 p，最高位保持直到最后比较。
-  maskedAddConst L.high (L.constant.take L.low.length) L.low
-    (L.carry.take (L.low.length-1)) L.cin p ++
+  maskedAddConst(L.high, (L.constant.take L.low.length), L.low, (L.carry.take (L.low.length-1)), L.cin, p);
   -- 4. 规范结果小于源当且仅当曾约减；比较后 X 清原借位。
-  compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high]
+  compareLt(none, L.low, (L.a.take L.low.length), L.carry, L.cin, L.high);
+  Instr.X(L.high);
+}
 
 /-- 同一核门列的计数，不把尚未证明的正确性或支持集作为假设。 -/
 theorem modAddCore_counts (L : ModAddCoreLayout) (n p : Nat)

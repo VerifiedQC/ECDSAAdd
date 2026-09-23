@@ -34,7 +34,7 @@ theorem kaliskiLoop_counts (L : KaliskiRoundLayout) (rs : List RoundRecord) (i :
     toffoliCount (kaliskiUnloop L i rs)=rs.length*(12*L.data.width+31) ∧
     measurementCount (kaliskiUnloop L i rs)=rs.length*(6*L.data.width+28) := by
   induction rs generalizing L i with
-  | nil => simp [kaliskiLoop,kaliskiUnloop,toffoliCount,measurementCount]
+  | nil => simp [kaliskiLoop_nil,kaliskiUnloop_nil,toffoliCount,measurementCount]
   | cons r rs ih =>
     have hr := kaliskiRound_counts (L.withRecord r) (L.withRecord_nodup r rs hnd) hw i
     have hnw : L.swapCounter.counter.width=10 := by rw [L.swapCounter_counter,L.counter.swapCounter_fields.2.2.2.2.2,hw]
@@ -42,7 +42,7 @@ theorem kaliskiLoop_counts (L : KaliskiRoundLayout) (rs : List RoundRecord) (i :
     change _=rs.length*(12*L.data.width+31) ∧ _=rs.length*(6*L.data.width+28) ∧
       _=rs.length*(12*L.data.width+31) ∧ _=rs.length*(6*L.data.width+28) at ht
     change _=12*L.data.width+31 ∧ _=6*L.data.width+28 ∧ _=12*L.data.width+31 ∧ _=6*L.data.width+28 at hr
-    simp only [kaliskiLoop,kaliskiUnloop,toffoliCount_append,measurementCount_append,hr.1,hr.2.1,
+    simp only [kaliskiLoop_cons,kaliskiUnloop_cons,toffoliCount_append,measurementCount_append,hr.1,hr.2.1,
       hr.2.2.1,hr.2.2.2,ht.1,ht.2.1,ht.2.2.1,ht.2.2.2,List.length_cons,Nat.add_mul,Nat.one_mul]
     simp [Nat.add_comm]
 
@@ -52,7 +52,7 @@ theorem kaliskiLoop_wires (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : 
     wires (kaliskiLoop L i rs)=(if rs.isEmpty then ∅ else (L.usedTapeWires rs).toFinset) ∧
     wires (kaliskiUnloop L i rs)=(if rs.isEmpty then ∅ else (L.usedTapeWires rs).toFinset) := by
   induction rs generalizing L i with
-  | nil => simp [kaliskiLoop,kaliskiUnloop,wires]
+  | nil => simp [kaliskiLoop_nil,kaliskiUnloop_nil,wires]
   | cons r rs ih =>
     have hr := kaliskiRound_wires (L.withRecord r) hw hd i
     have hnw : L.swapCounter.counter.width=10 := by rw [L.swapCounter_counter,L.counter.swapCounter_fields.2.2.2.2.2,hw]
@@ -61,7 +61,7 @@ theorem kaliskiLoop_wires (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : 
       ext w; simpa only [List.mem_toFinset] using (usedRecord_perm L r).mem_iff (a:=w)
     have hs : L.swapCounter.usedSharedWires.toFinset=L.usedSharedWires.toFinset := by
       ext w; simpa only [List.mem_toFinset] using (usedShared_swap L).mem_iff (a:=w)
-    simp only [kaliskiLoop,kaliskiUnloop,wires_append,hr.1,hr.2,ht.1,ht.2,hp,List.isEmpty_cons,Bool.false_eq_true,if_false]
+    simp only [kaliskiLoop_cons,kaliskiUnloop_cons,wires_append,hr.1,hr.2,ht.1,ht.2,hp,List.isEmpty_cons,Bool.false_eq_true,if_false]
     cases rs with
     | nil => simp [KaliskiRoundLayout.usedTapeWires]
     | cons r' rs =>

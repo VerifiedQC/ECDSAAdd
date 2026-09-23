@@ -29,24 +29,46 @@ private theorem swapBits_twice (a b : Wire) (hab : a≠b) (s : State) (m : List 
     exact (e2 q ha hb).trans (e1 q ha hb)
 
 /-- 小端寄存器右旋：原最低位经相邻交换移动到最高位。 -/
-def rotateRight : List Wire → Program
-  | a::b::bs => swapBits a b ++ rotateRight (b::bs)
-  | _ => []
+def rotateRight (r : List Wire) : Program := prog {
+  for pair in (r.zip r.tail) {
+    swapBits(pair.1, pair.2);
+  };
+}
 
 /-- 左旋按逆序执行无测量的相邻交换；固定物理寄存器不换视图。 -/
-def rotateLeft : List Wire → Program
-  | a::b::bs => rotateLeft (b::bs) ++ swapBits a b
-  | _ => []
+def rotateLeft (r : List Wire) : Program := prog {
+  for pair in ((r.zip r.tail).reverse) {
+    swapBits(pair.1, pair.2);
+  };
+}
+
+private theorem rotateRight_nil : rotateRight [] = [] := rfl
+
+private theorem rotateRight_single (a : Wire) : rotateRight [a] = [] := rfl
+
+private theorem rotateRight_cons (a b : Wire) (bs : List Wire) :
+    rotateRight (a :: b :: bs) =
+      swapBits a b ++ rotateRight (b :: bs) := by
+  rfl
+
+private theorem rotateLeft_nil : rotateLeft [] = [] := rfl
+
+private theorem rotateLeft_single (a : Wire) : rotateLeft [a] = [] := rfl
+
+private theorem rotateLeft_cons (a b : Wire) (bs : List Wire) :
+    rotateLeft (a :: b :: bs) =
+      rotateLeft (b :: bs) ++ swapBits a b := by
+  simp [rotateLeft, List.reverse_cons, List.flatMap_append]
 
 theorem rotate_counts (r : List Wire) :
     toffoliCount (rotateRight r)=0 ∧ measurementCount (rotateRight r)=0 ∧
     toffoliCount (rotateLeft r)=0 ∧ measurementCount (rotateLeft r)=0 := by
   induction r with
-  | nil => simp [rotateRight,rotateLeft,toffoliCount,measurementCount]
+  | nil => simp [rotateRight_nil, rotateLeft_nil, toffoliCount,measurementCount]
   | cons a r ih =>
     cases r with
-    | nil => simp [rotateRight,rotateLeft,toffoliCount,measurementCount]
-    | cons b bs => simp [rotateRight,rotateLeft,toffoliCount_append,measurementCount_append,
+    | nil => simp [rotateRight_single, rotateLeft_single, toffoliCount,measurementCount]
+    | cons b bs => simp [rotateRight_cons,rotateLeft_cons,toffoliCount_append,measurementCount_append,
         swapBits,toffoliCount,measurementCount,ih]
 
 theorem rotate_frame (r : List Wire) (s : State) (m : List Bool) :
@@ -55,12 +77,12 @@ theorem rotate_frame (r : List Wire) (s : State) (m : List Bool) :
     (run (rotateLeft r) m s).phase=s.phase ∧
     (∀ q, q∉r → (run (rotateLeft r) m s).basis q=s.basis q) := by
   induction r generalizing s with
-  | nil => simp [rotateRight,rotateLeft,run]
+  | nil => simp [rotateRight_nil, rotateLeft_nil, run]
   | cons a r ih =>
     cases r with
-    | nil => simp [rotateRight,rotateLeft,run]
+    | nil => simp [rotateRight_single, rotateLeft_single, run]
     | cons b bs =>
-      simp only [rotateRight,rotateLeft]
+      simp only [rotateRight_cons,rotateLeft_cons]
       rw [run_append,run_append,run_take,run_take,
         show measurementCount (swapBits a b)=0 from rfl,(rotate_counts (b::bs)).2.2.2,List.drop_zero]
       have hR := ih (run (swapBits a b) m s)
@@ -79,7 +101,7 @@ private theorem rotateRight_value (a : Wire) (bs : List Wire) (hnd : (a::bs).Nod
     regValue (a::bs) (run (rotateRight (a::bs)) m s).basis=
       regValue bs s.basis+2^bs.length*(s.basis a).toNat := by
   induction bs generalizing a s with
-  | nil => simp [rotateRight,run,regValue,Bool.toNat]
+  | nil => simp [rotateRight_single, run,regValue,Bool.toNat]
   | cons b bs ih =>
     have ha := (List.nodup_cons.mp hnd).1
     have ht := (List.nodup_cons.mp hnd).2
@@ -112,6 +134,7 @@ theorem rotateRight_left_cancel (r : List Wire) (hnd : r.Nodup) (s : State) (m :
     | cons b bs =>
       have ht := (List.nodup_cons.mp hnd).2
       have hab : a≠b := fun hh => (List.nodup_cons.mp hnd).1 (by simp [hh])
+      rw [rotateRight_cons, rotateLeft_cons]
       change run (swapBits a b ++ rotateRight (b::bs)) m
         (run (rotateLeft (b::bs) ++ swapBits a b) m s)=s
       rw [run_append,run_take,run_append,run_take,(rotate_counts (b::bs)).2.2.2,
@@ -159,12 +182,12 @@ theorem rotate_wires (r : List Wire) :
     wires (rotateRight r)=(if r.length<2 then ∅ else r.toFinset) ∧
     wires (rotateLeft r)=(if r.length<2 then ∅ else r.toFinset) := by
   induction r with
-  | nil => simp [rotateRight,rotateLeft,wires]
+  | nil => simp [rotateRight_nil, rotateLeft_nil, wires]
   | cons a r ih =>
     cases r with
-    | nil => simp [rotateRight,rotateLeft,wires]
+    | nil => simp [rotateRight_single, rotateLeft_single, wires]
     | cons b bs =>
-      simp only [rotateRight,rotateLeft,wires_append,ih.1,ih.2]
+      simp only [rotateRight_cons,rotateLeft_cons,wires_append,ih.1,ih.2]
       cases bs with
       | nil => simp [swapBits,wires,Instr.wires,Finset.union_comm]
       | cons d ds =>

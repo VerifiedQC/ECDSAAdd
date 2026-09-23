@@ -123,7 +123,7 @@ theorem divideLoad_wires_subset (L : DivideLayout) (hw : L.Widths) :
     L.inverseView.wires_perm.mem_iff.mpr (List.mem_append_left _ hq)
   constructor <;> intro q hq
   all_goals
-    simp only [divideLoad,divideUnload,wires_append,hc,wires,Instr.wires,Finset.union_empty,
+    simp only [divideLoad,divideUnload_program,wires_append,hc,wires,Instr.wires,Finset.union_empty,
       Finset.mem_union,Finset.mem_insert,Finset.mem_singleton,List.mem_toFinset,List.mem_cons,List.mem_append] at hq ⊢
     have hvb' := hv _ hvb
     have hv' := hv q

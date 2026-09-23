@@ -45,24 +45,46 @@ theorem cswap_twice (c a b : Wire) (hnd : [c,a,b].Nodup) (s : State) (m : List B
     · exact (e2 w ha hb).trans (e1 w ha hb)
 
 /-- 右移网络实际是循环移位；规格中的偶数前提保证移出的最低位为零。 -/
-def shiftRight (c : Wire) : List Wire → Program
-  | a::b::bs => cswap c a b ++ shiftRight c (b::bs)
-  | _ => []
+def shiftRight (c : Wire) (r : List Wire) : Program := prog {
+  for pair in (r.zip r.tail) {
+    cswap(c, pair.1, pair.2);
+  };
+}
 
 /-- 左移按相反顺序执行同一组 CSWAP；只重排无测量交换门。 -/
-def shiftLeft (c : Wire) : List Wire → Program
-  | a::b::bs => shiftLeft c (b::bs) ++ cswap c a b
-  | _ => []
+def shiftLeft (c : Wire) (r : List Wire) : Program := prog {
+  for pair in ((r.zip r.tail).reverse) {
+    cswap(c, pair.1, pair.2);
+  };
+}
+
+private theorem shiftRight_nil (c : Wire) : shiftRight c [] = [] := rfl
+
+private theorem shiftRight_single (c : Wire) (a : Wire) : shiftRight c [a] = [] := rfl
+
+private theorem shiftRight_cons (c : Wire) (a b : Wire) (bs : List Wire) :
+    shiftRight c (a :: b :: bs) =
+      cswap c a b ++ shiftRight c (b :: bs) := by
+  rfl
+
+private theorem shiftLeft_nil (c : Wire) : shiftLeft c [] = [] := rfl
+
+private theorem shiftLeft_single (c : Wire) (a : Wire) : shiftLeft c [a] = [] := rfl
+
+private theorem shiftLeft_cons (c : Wire) (a b : Wire) (bs : List Wire) :
+    shiftLeft c (a :: b :: bs) =
+      shiftLeft c (b :: bs) ++ cswap c a b := by
+  simp [shiftLeft, List.reverse_cons, List.flatMap_append]
 
 theorem shift_counts (c : Wire) (r : List Wire) :
     toffoliCount (shiftRight c r) = r.length-1 ∧ measurementCount (shiftRight c r) = 0 ∧
     toffoliCount (shiftLeft c r) = r.length-1 ∧ measurementCount (shiftLeft c r) = 0 := by
   induction r with
-  | nil => simp [shiftRight, shiftLeft, toffoliCount, measurementCount]
+  | nil => simp [shiftRight_nil, shiftLeft_nil, toffoliCount, measurementCount]
   | cons a r ih =>
     cases r with
-    | nil => simp [shiftRight, shiftLeft, toffoliCount, measurementCount]
-    | cons b bs => simp [shiftRight, shiftLeft, toffoliCount_append, measurementCount_append,
+    | nil => simp [shiftRight_single, shiftLeft_single, toffoliCount, measurementCount]
+    | cons b bs => simp [shiftRight_cons, shiftLeft_cons, toffoliCount_append, measurementCount_append,
         cswap, toffoliCount, measurementCount, ih]; omega
 
 theorem shift_frame (c : Wire) (r : List Wire) (s : State) (m : List Bool) :
@@ -71,13 +93,13 @@ theorem shift_frame (c : Wire) (r : List Wire) (s : State) (m : List Bool) :
     (run (shiftLeft c r) m s).phase = s.phase ∧
     (∀ w, w ∉ r → (run (shiftLeft c r) m s).basis w = s.basis w) := by
   induction r generalizing s with
-  | nil => simp [shiftRight, shiftLeft, run]
+  | nil => simp [shiftRight_nil, shiftLeft_nil, run]
   | cons a r ih =>
     cases r with
-    | nil => simp [shiftRight, shiftLeft, run]
+    | nil => simp [shiftRight_single, shiftLeft_single, run]
     | cons b bs =>
       have hc : measurementCount (cswap c a b) = 0 := rfl
-      simp only [shiftRight, shiftLeft]
+      simp only [shiftRight_cons, shiftLeft_cons]
       rw [run_append, run_append, run_take, run_take, hc, (shift_counts c (b::bs)).2.2.2, List.drop_zero]
       have hR := ih (run (cswap c a b) m s)
       have hL := ih s
@@ -97,7 +119,7 @@ theorem shiftRight_value (c a : Wire) (bs : List Wire) (hnd : (c::a::bs).Nodup)
       if s.basis c then regValue bs s.basis + 2^bs.length*(s.basis a).toNat
       else regValue (a::bs) s.basis := by
   induction bs generalizing a s with
-  | nil => cases s.basis c <;> simp [shiftRight, run, regValue, Bool.toNat]
+  | nil => cases s.basis c <;> simp [shiftRight_single, run, regValue, Bool.toNat]
   | cons b bs ih =>
     have hab : a ≠ b := by have h := hnd; simp at h; tauto
     have ha : a ∉ b::bs := (List.nodup_cons.mp (List.nodup_cons.mp hnd).2).1
@@ -149,6 +171,7 @@ theorem shiftRight_left_cancel (c : Wire) (r : List Wire) (hnd : (c::r).Nodup)
         have h := hnd
         simp only [List.nodup_cons, List.mem_cons, not_or] at h
         simp [h.1.1, h.1.2.1, h.2.1.1]
+      rw [shiftRight_cons, shiftLeft_cons]
       change run (cswap c a b ++ shiftRight c (b::bs)) m
         (run (shiftLeft c (b::bs) ++ cswap c a b) m s) = s
       rw [run_append, run_take, run_append, run_take, (shift_counts c (b::bs)).2.2.2,
@@ -209,13 +232,12 @@ theorem shift_wires (c : Wire) (r : List Wire) :
     wires (shiftRight c r) = (if r.length<2 then ∅ else (c::r).toFinset) ∧
     wires (shiftLeft c r) = (if r.length<2 then ∅ else (c::r).toFinset) := by
   induction r with
-  | nil => simp [shiftRight, shiftLeft, wires]
+  | nil => simp [shiftRight_nil, shiftLeft_nil, wires]
   | cons a r ih =>
     cases r with
-    | nil => simp [shiftRight, shiftLeft, wires]
+    | nil => simp [shiftRight_single, shiftLeft_single, wires]
     | cons b bs =>
-      change wires (cswap c a b ++ shiftRight c (b::bs)) = _ ∧
-        wires (shiftLeft c (b::bs) ++ cswap c a b) = _
+      rw [shiftRight_cons, shiftLeft_cons]
       simp only [wires_append, ih.1, ih.2]
       cases bs with
       | nil => simp [cswap, wires, Instr.wires, Finset.union_comm]

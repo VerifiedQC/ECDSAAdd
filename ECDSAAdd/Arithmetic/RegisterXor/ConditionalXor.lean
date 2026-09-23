@@ -3,9 +3,13 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 namespace ECDSAAdd.Arithmetic
 
 /-- 先计算候选，再 XOR 选择候选或原值，最后用同一核清空候选。 -/
-def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program :=
-  kernel ++ copyRegister none src dst ++ copyRegister (some c) src dst ++
-  copyRegister (some c) temp dst ++ kernel
+def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
+  kernel();
+  copyRegister(none, src, dst);
+  copyRegister((some c), src, dst);
+  copyRegister((some c), temp, dst);
+  kernel();
+}
 
 /-- 两个可变寄存器以外逐线保持初始状态。 -/
 def PairFrame (temp dst : List Wire) (base : BasisState) (T O : Nat) (st : BasisState) : Prop :=

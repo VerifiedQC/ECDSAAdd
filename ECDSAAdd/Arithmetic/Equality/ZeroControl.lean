@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
+import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
 
@@ -14,10 +15,32 @@ private def negAnd (c a t : Wire) : Program := [.X a, .CCX c a t, .X a]
 private def negAndErase (c a t : Wire) : Program :=
   [.X a, .measureX t [] [.CZ c a], .X a]
 
-/-- XOR 写入“控制为真且整段为零”；测量清理AND链并修正相位。 -/
-def zeroControlled (c target : Wire) : List ZeroBit → Program
-  | [] => [.CX c target]
-  | b::bs => negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work
+local macro_rules
+  | `(tactic| get_elem_tactic) =>
+      `(tactic| (simp_all +zetaDelta only
+          [List.length_cons, List.length_map]
+                 omega))
+
+/-- 先生成零检测链，读出最终标志，再反向测量清理链上的工作位。 -/
+def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
+  let n := bs.length;
+  let chain := c :: bs.map ZeroBit.work;
+  for i in range(n) {
+    negAnd(chain[i], bs[i].input, bs[i].work);
+  };
+  Instr.CX(chain[n], target);
+  for i in reversed(range(n)) {
+    negAndErase(chain[i], bs[i].input, bs[i].work);
+  };
+}
+
+private theorem zeroControlled_nil (c target : Wire) :
+    zeroControlled c target [] = [.CX c target] := rfl
+
+private theorem zeroControlled_cons (c target : Wire) (b : ZeroBit) (bs : List ZeroBit) :
+    zeroControlled c target (b :: bs) =
+      negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work := by
+  simp [zeroControlled, List.ofFn_succ, List.reverse_cons, List.flatten_append, List.append_assoc]
 
 private theorem negAnd_run (c a t : Wire) (hca : c≠a) (hat : a≠t)
     (s : State) (m : List Bool) :
@@ -49,9 +72,9 @@ theorem zeroControlled_counts (c target : Wire) (bs : List ZeroBit) :
     toffoliCount (zeroControlled c target bs) = bs.length ∧
     measurementCount (zeroControlled c target bs) = bs.length := by
   induction bs generalizing c with
-  | nil => simp [zeroControlled, toffoliCount, measurementCount]
+  | nil => simp [zeroControlled_nil, toffoliCount, measurementCount]
   | cons b bs ih =>
-    simp [zeroControlled, negAnd, negAndErase, toffoliCount_append, measurementCount_append,
+    simp [zeroControlled_cons, negAnd, negAndErase, toffoliCount_append, measurementCount_append,
       toffoliCount, measurementCount, ih]; omega
 
 /-- 完整状态公式：只有目标翻转，包含所有借用工作位和控制位的恢复。 -/
@@ -62,7 +85,7 @@ theorem zeroControlled_correct (c target : Wire) (bs : List ZeroBit)
       ⟨s.phase, writeBit s.basis target
         (s.basis target ^^ (s.basis c && bs.all (fun b => !s.basis b.input)))⟩ := by
   induction bs generalizing c s m with
-  | nil => simp [zeroControlled, run]
+  | nil => simp [zeroControlled_nil, run]
   | cons b bs ih =>
     have hnames : (c::target::b.input::b.work::bs.flatMap ZeroBit.wires).Nodup := hnd
     have hni := hnames
@@ -91,6 +114,7 @@ theorem zeroControlled_correct (c target : Wire) (bs : List ZeroBit)
       apply Bool.eq_iff_iff.mpr
       simp only [List.all_eq_true]
       constructor <;> intro h d hd <;> simpa [t, writeBit, (htail d hd).2] using h d hd
+    rw [zeroControlled_cons]
     change run (negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work) m s = _
     rw [run_append, run_take, run_append, run_take]
     simp only [measurementCount_append, (zeroControlled_counts b.work target bs).2,
@@ -151,9 +175,9 @@ theorem zeroControlled_spec (c target : Wire) (bs : List ZeroBit)
 theorem zeroControlled_wires (c target : Wire) (bs : List ZeroBit) :
     wires (zeroControlled c target bs) = (c::target::bs.flatMap ZeroBit.wires).toFinset := by
   induction bs generalizing c with
-  | nil => simp [zeroControlled, wires, Instr.wires]
+  | nil => simp [zeroControlled_nil, wires, Instr.wires]
   | cons b bs ih =>
-    rw [zeroControlled, wires_append, wires_append, ih]
+    rw [zeroControlled_cons, wires_append, wires_append, ih]
     ext w
     simp [negAnd, negAndErase, wires, Instr.wires, correctionWires, ZeroBit.wires, or_comm, or_left_comm]
 

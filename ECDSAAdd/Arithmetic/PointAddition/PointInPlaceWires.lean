@@ -13,7 +13,7 @@ theorem pointInPlaceGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (c
     (L.inPlaceDivide_widths hw _ _ _ hw.inputX hw.inputY)).2
   have he := equalConstant_wires L.core.generic L.core.equalX L.inPlaceXZero 0
   intro q
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope,wires_append,hd,hs,he]
+  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,wires_append,hd,hs,he]
   simp only [Finset.mem_union,pointInPlaceCoreWires,DivideLayout.usedWires,inPlaceDivide,
     List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,or_false]
   clear hd hs he hw
@@ -37,7 +37,7 @@ private theorem equalPoint_wires (L : ControlledPointLayout) (hw : L.Widths) (c 
 private theorem genericFlag_wires (L : ControlledPointLayout) : wires (pointInPlaceGenericFlag L)=
     [L.control,L.infinitySelect,L.doubleSelect,L.genericSelect,L.core.generic].toFinset := by
   ext q
-  simp only [pointInPlaceGenericFlag,wires,Instr.wires,Finset.mem_union,Finset.mem_insert,
+  simp only [pointInPlaceGenericFlag,wires_append,wires,Instr.wires,Finset.mem_union,Finset.mem_insert,
     Finset.mem_singleton,Finset.notMem_empty,List.mem_toFinset,List.mem_cons,List.not_mem_nil,or_false]
   tauto
 

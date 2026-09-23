@@ -147,7 +147,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have hm := mont_not_mem q L.inPlaceMultiply (L.inPlaceMultiply_widths hw) nM
   have hs := mont_not_mem q L.inPlaceSquare (L.inPlaceSquare_widths hw) nS
   have hneg := modPrograms_not_mem q L.core.generic ng L.inPlaceNegate (L.inPlaceNegate_widths hw) nN
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope,pointInPlaceNegate,wires_append,Finset.mem_union]
+  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,pointInPlaceNegate,wires_append,Finset.mem_union]
   have nmg := (nDivide L.core.generic ng).1
   have nmq := (nDivide L.core.equalNegY nq).2
   have nmask := nMasked L.core.equalX L.inPlaceSlope k.val ne na

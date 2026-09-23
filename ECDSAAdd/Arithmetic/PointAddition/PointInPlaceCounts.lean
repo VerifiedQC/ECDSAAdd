@@ -67,7 +67,7 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     simpa only [List.length_map,show L.point.x.length=256 from hw.inputX] using hh
   rw [hzl] at hz
   have hn := pointInPlaceNegate_counts L hw hnd
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope,toffoliCount_append,measurementCount_append,
+  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hdg.1,hdg.2.1,hdq.2.2.1,hdq.2.2.2,
     hm.2.1.1,hm.2.1.2,hm.2.2.1,hm.2.2.2,hs.2.2.1,hs.2.2.2,
     hcopy.1,hcopy.2,hz.1,hz.2,hn.1,hn.2,(maskedConstant_counts _ _ _).1,(maskedConstant_counts _ _ _).2]

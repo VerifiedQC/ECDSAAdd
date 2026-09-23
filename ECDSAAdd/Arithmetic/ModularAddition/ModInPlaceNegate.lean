@@ -3,9 +3,12 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceWrappers
 namespace ECDSAAdd.Arithmetic
 
 /-- 扩宽源取补后加 p+1；0 暂时映为 p，不归一化，第二次调用恢复原值。 -/
-def negRaw (L : ModInPlaceLayout) (p : Nat) : Program :=
-  notRegister L.a ++ xorConstant L.constant (p+1) ++
-  addInPlace L.constant L.a L.carry L.cin ++ xorConstant L.constant (p+1)
+def negRaw (L : ModInPlaceLayout) (p : Nat) : Program := prog {
+  notRegister(L.a);
+  xorConstant(L.constant, (p+1));
+  addInPlace(L.constant, L.a, L.carry, L.cin);
+  xorConstant(L.constant, (p+1));
+}
 
 private theorem negRaw_nodup (L : ModInPlaceLayout) (hnd : L.wires.Nodup) :
     (L.cin::L.constant++L.a++L.carry).Nodup := by

@@ -13,8 +13,10 @@ private theorem data_updates (z : KState) (X : Nat) :
     Function.update (roundDataValues z) .s X = roundDataValues {z with s:=X} := by
   refine ⟨?_,?_,?_⟩ <;> funext f <;> cases f <;> rfl
 
-def swapDataPairs (L : RoundDataLayout) (c : Wire) : Program :=
-  swapRegisters c L.u L.v ++ swapRegisters c L.r L.s
+def swapDataPairs (L : RoundDataLayout) (c : Wire) : Program := prog {
+  swapRegisters(c, L.u, L.v);
+  swapRegisters(c, L.r, L.s);
+}
 
 private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
     (z : KState) (base : BasisState) :
@@ -32,16 +34,24 @@ private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.w
   simpa only [swapDataPairs, RoundDataLayout.u,RoundDataLayout.v,RoundDataLayout.r,RoundDataLayout.s,he] using h
 
 /-- 四分支统一为交换、减/加、移位和交换回来；控制值不改变门或测量的顺序。 -/
-def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
-  swapDataPairs L swap ++ inplaceArithmetic L .u .v subtract true ++
-  inplaceArithmetic L .r .s subtract false ++ shiftRight active L.u ++ shiftLeft active L.s ++
-  swapDataPairs L swap
+def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
+  swapDataPairs(L, swap);
+  inplaceArithmetic(L, .u, .v, subtract, true);
+  inplaceArithmetic(L, .r, .s, subtract, false);
+  shiftRight(active, L.u);
+  shiftLeft(active, L.s);
+  swapDataPairs(L, swap);
+}
 
 /-- 逆体使用前向加减与反向交换网络；不逆序执行任何测量指令。 -/
-def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
-  swapDataPairs L swap ++ shiftRight active L.s ++ shiftLeft active L.u ++
-  inplaceArithmetic L .r .s subtract true ++ inplaceArithmetic L .u .v subtract false ++
-  swapDataPairs L swap
+def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
+  swapDataPairs(L, swap);
+  shiftRight(active, L.s);
+  shiftLeft(active, L.u);
+  inplaceArithmetic(L, .r, .s, subtract, true);
+  inplaceArithmetic(L, .u, .v, subtract, false);
+  swapDataPairs(L, swap);
+}
 
 private theorem control_nodup (L : RoundDataLayout) (cs : List Wire)
     (hnd : (cs++L.wires).Nodup) (c : Wire) (hc : c∈cs) : (c::L.wires).Nodup := by

@@ -75,7 +75,7 @@ class CircuitDSL.ToProgram (α : Type) where
 def CircuitDSL.emit {α : Type} [CircuitDSL.ToProgram α] (value : α) : Program
 ```
 
-通过对应 instance 将 value 转成指令列表。新 `prog` 还支持局部 `let`、`for i in range(n)` 和 `for i in reversed(range(n))`；循环在生成电路时展开，并保留索引范围证明。原来的 `prog { CX a b; ... }` 写法不变。
+通过对应 instance 将 value 转成指令列表。`prog` 对 Instr 和 Program 直接生成门列表或保留子程序调用；其他类型使用对应 instance。它还支持局部 `let`、`for i in range(n)`、`for i in reversed(range(n))` 和 `for item in items`（遍历列表）。循环在生成电路时展开，range 保留索引范围证明；倒序循环倒序调用子程序，不会倒放子程序中的门或测量。原来的 `prog { CX a b; ... }` 写法不变。
 
 ## [Semantics.lean](Semantics.lean)
 

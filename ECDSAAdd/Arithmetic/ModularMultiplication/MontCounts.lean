@@ -84,11 +84,11 @@ theorem montRounds_counts (L : MontStageLayout) (x y : List Wire) (p k : Nat)
     (toffoliCount (montPrepareRounds L x y p k)=2372*k ∧ measurementCount (montPrepareRounds L x y p k)=2372*k) ∧
     (toffoliCount (montRestoreRounds L x y p k)=2372*k ∧ measurementCount (montRestoreRounds L x y p k)=2372*k) := by
   induction k with
-  | zero => simp [montPrepareRounds,montRestoreRounds,toffoliCount,measurementCount]
+  | zero => simp [montPrepareRounds_zero,montRestoreRounds_zero,toffoliCount,measurementCount]
   | succ k ih =>
     have h := ih (by omega)
     have hwin := montWindow_counts L x y p k hw hx (by omega)
-    simp [montPrepareRounds,montRestoreRounds,toffoliCount_append,measurementCount_append,
+    simp [montPrepareRounds_succ,montRestoreRounds_succ,toffoliCount_append,measurementCount_append,
       h.1.1,h.1.2,h.2.1,h.2.2,hwin.1.1,hwin.1.2,hwin.2.1,hwin.2.2,Nat.mul_add,Nat.add_comm]
 
 theorem constRounds_counts (L : MontStageLayout) (y : List Wire) (p K k : Nat)
@@ -96,11 +96,11 @@ theorem constRounds_counts (L : MontStageLayout) (y : List Wire) (p K k : Nat)
     (toffoliCount (constPrepareRounds L y p K k)=576*k ∧ measurementCount (constPrepareRounds L y p K k)=576*k) ∧
     (toffoliCount (constRestoreRounds L y p K k)=576*k ∧ measurementCount (constRestoreRounds L y p K k)=576*k) := by
   induction k with
-  | zero => simp [constPrepareRounds,constRestoreRounds,toffoliCount,measurementCount]
+  | zero => simp [constPrepareRounds_zero,constRestoreRounds_zero,toffoliCount,measurementCount]
   | succ k ih =>
     have h := ih (by omega)
     have hwin := constWindow_counts L y p K k hw hy (by omega)
-    simp [constPrepareRounds,constRestoreRounds,toffoliCount_append,measurementCount_append,
+    simp [constPrepareRounds_succ,constRestoreRounds_succ,toffoliCount_append,measurementCount_append,
       h.1.1,h.1.2,h.2.1,h.2.2,hwin.1.1,hwin.1.2,hwin.2.1,hwin.2.2,Nat.mul_add,Nat.add_comm]
 
 

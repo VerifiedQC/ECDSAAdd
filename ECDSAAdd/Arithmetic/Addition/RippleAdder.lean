@@ -44,7 +44,7 @@ private theorem rippleAdder_cons (b : AddBit) (bs : List AddBit) (cin : Wire) :
       fullAdder b.x b.y cin b.out b.carry ++ rippleAdder bs b.carry ++
         eraseCarry b.x b.y cin b.carry := by
   simp [rippleAdder, List.ofFn_succ, List.reverse_cons, List.flatten_append,
-    CircuitDSL.emit, CircuitDSL.ToProgram.toProgram, List.append_assoc]
+    List.append_assoc]
 
 theorem mem_addWires {bs : List AddBit} {b : AddBit} (h : b ∈ bs) :
     b.x ∈ addWires bs ∧ b.y ∈ addWires bs ∧

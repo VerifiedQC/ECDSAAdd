@@ -8,11 +8,24 @@ open Instr Correction
 private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program :=
   match controls, scratch with
   | [], _ => maskedConstant a target (table 0)
-  | b::bs, q::qs =>
+  | b::bs, q::qs => prog {
+      CCX(a, b, q);
+      lookupWalk(q, bs, qs, target, fun d => table (1+2*d));
+      CX(a, q);
+      lookupWalk(q, bs, qs, target, fun d => table (2*d));
+      X(b);
+      measureX(q, [], [CZ a b]);
+      X(b);
+    }
+  | _::_, [] => []
+
+private theorem lookupWalk_cons (a b q : Wire) (bs qs target : List Wire) (table : Nat → Nat) :
+    lookupWalk a (b::bs) (q::qs) target table =
       [CCX a b q] ++ lookupWalk q bs qs target (fun d => table (1+2*d)) ++
       [CX a q] ++ lookupWalk q bs qs target (fun d => table (2*d)) ++
-      [X b, measureX q [] [CZ a b], X b]
-  | _::_, [] => []
+      [X b, measureX q [] [CZ a b], X b] := by
+  simp only [lookupWalk, List.append_assoc]
+  rfl
 
 private theorem eraseNegative_run (a b q : Wire) (hab : a≠b) (hbq : b≠q) (haq : a≠q)
     (s : State) (m : List Bool) (hq : s.basis q=(s.basis a && !s.basis b)) :
@@ -110,7 +123,7 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
       have first (records : List Bool) : run [CCX a b q] records s=s1 := by simp [run,s1,hz q (by simp)]
       have hrun : run (lookupWalk a (b::bs) (q::qs) target table) m s =
           ⟨s.phase,writeBit v.basis q false⟩ := by
-        change run ([CCX a b q] ++ p ++ [CX a q] ++ r ++ [X b,measureX q [] [CZ a b],X b]) m s = _
+        rw [lookupWalk_cons]
         simp only [List.append_assoc,run_append,run_take,measurementCount,List.drop_zero]
         rw [first]
         change run [X b,measureX q [] [CZ a b],X b] (m2.drop (measurementCount r)) v = _
@@ -140,9 +153,12 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
         cases ha : s.basis a <;> cases hb : s.basis b <;> simp [hb,regValue]
 
 /-- 无外部控制：a本身使能第一半表，翻转a使能第二半表，末尾还原。 -/
-def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program :=
-  lookupWalk a controls scratch target (fun d => table (1+2*d)) ++ [X a] ++
-  lookupWalk a controls scratch target (fun d => table (2*d)) ++ [X a]
+def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program := prog {
+  lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));
+  X(a);
+  lookupWalk(a, controls, scratch, target, fun d => table (2*d));
+  X(a);
+}
 
 /-- 查表保持地址与目标外所有线路，对全部测量记录恢复相位。 -/
 private theorem lookup_correct_length (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat)
