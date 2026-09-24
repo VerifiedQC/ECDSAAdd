@@ -61,20 +61,26 @@ end DivideLayout
 
 /-- 将安全分母直接写入 Kaliski v：控制为假时写1，不另占Dsafe字。 -/
 def divideLoad (L : DivideLayout) : Program := prog {
-  Instr.X(L.vBit);
-  Instr.CX(L.control, L.vBit);
-  copyRegister((some L.control), L.denominator, L.vLow);
-  xorConstant(L.inner.first.u, p);
-  xorConstant(L.inner.first.s, 1);
+  let denominatorCopy := L.vLow;
+  let leastBit := L.vBit;
+  let u := L.inner.first.u;
+  let s := L.inner.first.s;
+  Instr.X(leastBit);
+  Instr.CX(L.control, leastBit);                         -- control=0 时 denominatorCopy=1
+  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时复制真实分母
+  xorConstant(u, p);                                    -- Kaliski 初值 u=p
+  xorConstant(s, 1);                                    -- Kaliski 初值 s=1，其余工作位为零
 }
 
 /-- 恢复阶段归还同一分母后才能卸载；这里只反排无测量的装载门。 -/
 def divideUnload (L : DivideLayout) : Program := prog {
-  xorConstant(L.inner.first.s, 1);
-  xorConstant(L.inner.first.u, p);
-  copyRegister((some L.control), L.denominator, L.vLow);
-  Instr.CX(L.control, L.vBit);
-  Instr.X(L.vBit);
+  let denominatorCopy := L.vLow;
+  let leastBit := L.vBit;
+  xorConstant(L.inner.first.s, 1);                      -- s: 1 → 0
+  xorConstant(L.inner.first.u, p);                      -- u: p → 0
+  copyRegister(some L.control, L.denominator, denominatorCopy); -- 清真实分母分支
+  Instr.CX(L.control, leastBit);
+  Instr.X(leastBit);                                    -- 清安全分母 1 的分支
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -88,20 +94,24 @@ theorem divideUnload_program (L : DivideLayout) :
 
 /-- acc 加上受控分子/分母；准备、乘积清理、恢复均为显式前向程序。 -/
 def divideAdd (L : DivideLayout) : Program := prog {
-  divideLoad(L);
-  inverseCompute(L.inner, p);
-  montMulControlledAdd(L.control, L.multiply, p);
-  inverseUncompute(L.inner, p);
-  divideUnload(L);
+  let inverse := L.inner;    -- 逆元结果保存在 inverse.a；历史由 inverse 一并保留。
+  let product := L.multiply; -- 输入为 inverse.a 和 numerator，累加目标是 acc。
+  divideLoad(L);                                  -- v = control ? denominator : 1；u=p，s=1
+  inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
+  montMulControlledAdd(L.control, product, p);      -- control=1 时 acc += numerator/denominator
+  inverseUncompute(inverse, p);                    -- 逆元与历史恢复到求逆前
+  divideUnload(L);                                -- 清 v/u/s，归还全部工作位
 }
 
 /-- acc 减去受控分子/分母；只替换累加中段，不倒放带测量的除法。 -/
 def divideSub (L : DivideLayout) : Program := prog {
-  divideLoad(L);
-  inverseCompute(L.inner, p);
-  montMulControlledSub(L.control, L.multiply, p);
-  inverseUncompute(L.inner, p);
-  divideUnload(L);
+  let inverse := L.inner;
+  let product := L.multiply; -- 输入为 inverse.a 和 numerator，累减目标是 acc。
+  divideLoad(L);                                  -- v = control ? denominator : 1
+  inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
+  montMulControlledSub(L.control, product, p);      -- control=1 时 acc -= numerator/denominator
+  inverseUncompute(inverse, p);                    -- 恢复求逆前状态
+  divideUnload(L);                                -- 清工作位；分子、分母保持
 }
 
 end ECDSAAdd.Arithmetic

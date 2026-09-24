@@ -31,17 +31,23 @@ end ModAddCoreLayout
 /-- 四个可辨认阶段：计算扩宽和、试减 p、借位时低位加回 p、由结果与源比较清借位。
 constant/carry/cin 初末零；核源可以是外层已装载的 mask，不能提前清该源。 -/
 def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
-  -- 1. 高位初始零；扩宽寄存器容纳完整 A+Z。
-  addInPlace(L.a, L.z, L.carry, L.cin);
-  -- 2. 试减 p；结果最高位记录 A+Z<p。装卸常数不影响该标志。
-  xorConstant(L.constant, p);
-  subInPlace(L.constant, L.z, L.carry, L.cin);
-  xorConstant(L.constant, p);
-  -- 3. 借位为真时只向低位加回 p，最高位保持直到最后比较。
-  maskedAddConst(L.high, (L.constant.take L.low.length), L.low, (L.carry.take (L.low.length-1)), L.cin, p);
-  -- 4. 规范结果小于源当且仅当曾约减；比较后 X 清原借位。
-  compareLt(none, L.low, (L.a.take L.low.length), L.carry, L.cin, L.high);
-  Instr.X(L.high);
+  let source := L.a;
+  let target := L.z;                    -- low 加上一根 high，容纳完整的和。
+  let borrow := L.high;
+  let n := L.low.length;
+  let lowConstant := L.constant.take n;
+  let lowCarry := L.carry.take (n-1);
+  let lowSource := source.take n;
+
+  addInPlace(source, target, L.carry, L.cin);         -- target += source
+  xorConstant(L.constant, p);                        -- constant = p
+  subInPlace(L.constant, target, L.carry, L.cin);     -- target -= p；borrow = [原和 < p]
+  xorConstant(L.constant, p);                        -- constant 清零
+  maskedAddConst(borrow, lowConstant, L.low, lowCarry, L.cin, p); -- 有借位则低 n 位加回 p
+
+  -- 原和发生约减 iff 结果 < source；与原借位相反，故最后 X 后 borrow=0。
+  compareLt(none, L.low, lowSource, L.carry, L.cin, borrow);
+  Instr.X(borrow);
 }
 
 /-- 同一核门列的计数，不把尚未证明的正确性或支持集作为假设。 -/

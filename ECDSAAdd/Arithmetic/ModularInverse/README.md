@@ -2,6 +2,10 @@
 
 本模块实现 Kaliski 模逆元电路，包括固定轮循环、缩放、结果输出和历史恢复，并提供相关布局与资源证明。
 
+算法入口是 [InverseCompute.lean](InverseCompute.lean)：固定轮 Kaliski 循环 → 将 −r mod q 写入逆元寄存器 a → 按计数 k 缩放，得到逆元；`inverseUncompute` 按依赖逆序恢复。循环历史、计数和缩放历史要保留到恢复阶段，不能作为已清零工作区借用。
+
+单轮在 [KaliskiRound.lean](KaliskiRound.lean) 中保存 swap/subtract 条件；[RoundBody.lean](RoundBody.lean) 直接列出 u、v、r、s，展示交换、u−=v、r+=s 和移位。条件由量子门计算，不是读取量子位后执行 Lean 的 if；对应的恢复程序负责清掉记录。[InverseScale.lean](InverseScale.lean) 明确标出查表因子、缩放结果和为恢复保留的原值。
+
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 
 下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。`{前置条件} 程序 {后置条件}` 对任意满足前提的初始状态和预先给定的测量结果成立；`｜` 按顺序分隔不同程序及其对应结果。

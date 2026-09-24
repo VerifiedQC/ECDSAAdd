@@ -148,4 +148,8 @@ theorem selectXor_wires (b : SelectBit) (bs : List SelectBit) (flag : Wire) :
     simp [wires, Instr.wires, selectWires]
     tauto
 
+/-- out ^= (if flag then whenOne else whenZero)；只更新 out，三个列表等长。 -/
+def chooseXor (flag : Wire) (whenZero whenOne out : List Wire) : Program :=
+  selectXor (List.zipWith (fun ab o => ⟨ab.1, ab.2, o⟩) (whenZero.zip whenOne) out) flag
+
 end ECDSAAdd.Arithmetic

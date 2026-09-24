@@ -4,11 +4,11 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 先计算候选，再 XOR 选择候选或原值，最后用同一核清空候选。 -/
 def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
-  kernel();
-  copyRegister(none, src, dst);
-  copyRegister((some c), src, dst);
-  copyRegister((some c), temp, dst);
-  kernel();
+  kernel();                          -- 按调用契约：temp = f(src)，再次运行可清零
+  copyRegister(none, src, dst);       -- dst ^= src
+  copyRegister(some c, src, dst);     -- c=1 时撤销 src 的贡献
+  copyRegister(some c, temp, dst);    -- c=1 时改为 XOR temp；c=0 时保留 src
+  kernel();                          -- temp 清零，最终 dst ^= (c ? f(src) : src)
 }
 
 /-- 两个可变寄存器以外逐线保持初始状态。 -/

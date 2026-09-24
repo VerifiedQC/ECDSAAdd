@@ -22,11 +22,11 @@ def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : W
       flipBelow control c[n] target else []
   prog {
     for i in range(n) {
-      majority(x[i], y[i], c[i], carry[i]);
+      majority(x[i], y[i], c[i], carry[i]); -- carry[i] 保存 x[i]+y[i]+c[i] 的进位。
     };
-    readout();
+    readout(); -- target ^= NOT c[n]；有控制位时再与 control 相与。
     for i in reversed(range(n)) {
-      eraseCarry(x[i], y[i], c[i], carry[i]);
+      eraseCarry(x[i], y[i], c[i], carry[i]); -- 反向清零进位，保留 x/y/cin。
     };
   }
 

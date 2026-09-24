@@ -35,23 +35,49 @@ private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.w
 
 /-- 四分支统一为交换、减/加、移位和交换回来；控制值不改变门或测量的顺序。 -/
 def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
-  swapDataPairs(L, swap);
-  inplaceArithmetic(L, .u, .v, subtract, true);
-  inplaceArithmetic(L, .r, .s, subtract, false);
-  shiftRight(active, L.u);
-  shiftLeft(active, L.s);
-  swapDataPairs(L, swap);
+  let u := L.u;
+  let v := L.v;
+  let r := L.r;
+  let s := L.s;
+  let mask := L.reg .y;                     -- 两次受控加减复用的零工作寄存器。
+  let carry := (L.reg .carry).take (L.width-1);
+  swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s
+  measuredMaskedSubInPlace(subtract, v, mask, u, carry, L.cin); -- subtract=1 时 u -= v
+  measuredMaskedAddInPlace(subtract, s, mask, r, carry, L.cin); -- subtract=1 时 r += s
+  shiftRight(active, u);                     -- active=1 时，偶数 u /= 2
+  shiftLeft(active, s);                      -- active=1 时 s *= 2
+  swapDataPairs(L, swap);                    -- 将寄存器角色交换回来
 }
 
 /-- 逆体使用前向加减与反向交换网络；不逆序执行任何测量指令。 -/
 def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
-  swapDataPairs(L, swap);
-  shiftRight(active, L.s);
-  shiftLeft(active, L.u);
-  inplaceArithmetic(L, .r, .s, subtract, true);
-  inplaceArithmetic(L, .u, .v, subtract, false);
-  swapDataPairs(L, swap);
+  let u := L.u;
+  let v := L.v;
+  let r := L.r;
+  let s := L.s;
+  let mask := L.reg .y;
+  let carry := (L.reg .carry).take (L.width-1);
+  swapDataPairs(L, swap);                    -- 重建正向运算时的寄存器角色
+  shiftRight(active, s);                     -- 撤销 s *= 2
+  shiftLeft(active, u);                      -- 撤销 u /= 2
+  measuredMaskedSubInPlace(subtract, s, mask, r, carry, L.cin); -- 撤销 r += s
+  measuredMaskedAddInPlace(subtract, v, mask, u, carry, L.cin); -- 撤销 u -= v
+  swapDataPairs(L, swap);                    -- u/v/r/s 恢复轮前值
 }
+
+/-- 供既有证明使用；直接寄存器接口与原布局调用生成同一门列。 -/
+theorem kaliskiBodyProgram_program (L : RoundDataLayout) (active swap subtract : Wire) :
+    kaliskiBodyProgram L active swap subtract =
+      swapDataPairs L swap ++ inplaceArithmetic L .u .v subtract true ++
+      inplaceArithmetic L .r .s subtract false ++ shiftRight active L.u ++
+      shiftLeft active L.s ++ swapDataPairs L swap := rfl
+
+/-- 供既有证明使用；直接寄存器接口与原布局调用生成同一门列。 -/
+theorem kaliskiUnbodyProgram_program (L : RoundDataLayout) (active swap subtract : Wire) :
+    kaliskiUnbodyProgram L active swap subtract =
+      swapDataPairs L swap ++ shiftRight active L.s ++ shiftLeft active L.u ++
+      inplaceArithmetic L .r .s subtract true ++ inplaceArithmetic L .u .v subtract false ++
+      swapDataPairs L swap := rfl
 
 private theorem control_nodup (L : RoundDataLayout) (cs : List Wire)
     (hnd : (cs++L.wires).Nodup) (c : Wire) (hc : c∈cs) : (c::L.wires).Nodup := by

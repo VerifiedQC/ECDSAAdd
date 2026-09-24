@@ -2,33 +2,95 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularSteps
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 保留输入的模加 XOR：载入 q，计算和与候选差，选择后按前向 XOR 清理。 -/
+/- 下列注释沿用原规格：0<q<2^n、x,y<q、各线路互异、工作区初始为零。
+   n=L.width；x/y/total/modulus/diff 是 n+1 位，最高位用于溢出或借位。
+   加减法按 n+1 位补码运算，选择只写 out 的低 n 位。
+   所有操作都是 XOR 写入：同样的输入再次调用，会清除先前算出的结果。 -/
+
+/-- out ^= (x+y) mod q；保留 x/y，恢复全部工作位。 -/
 def modAdd (L : ModLayout) (q : Nat) : Program := prog {
-  let load := xorConstant (L.reg .modulus) q;
-  let sum := add (L.adder .x .y .total .carrySum L.cinSum);
-  let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff);
-  load();
-  sum();
-  difference();
-  selectXor(L.selector, L.high.diff);
-  difference();
-  sum();
-  load();
+  let total := L.reg .total;
+  let modulus := L.reg .modulus;
+  let diff := L.reg .diff;
+  let carrySum := L.reg .carrySum;
+  let carryDiff := L.reg .carryDiff;
+  let borrow := L.high.diff;
+
+  xorConstant(modulus, q);                         -- modulus = q
+  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total = x+y
+  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff = total-q
+
+  -- 借位为 0：total≥q，选 diff；借位为 1：total<q，选 total。
+  chooseXor(borrow, diff.take L.width, total.take L.width, L.lowReg .out);
+
+  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff 清零
+  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total 清零
+  xorConstant(modulus, q);                         -- modulus 清零
 }
 
-/-- 保留输入的模减 XOR：借位时选择加回 q 的候选，随后清理全部工作寄存器。 -/
+/-- out ^= (x-y) mod q；保留 x/y，恢复全部工作位。 -/
 def modSub (L : ModLayout) (q : Nat) : Program := prog {
-  let load := xorConstant (L.reg .modulus) q;
-  let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff);
-  let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum);
-  load();
-  difference();
-  correction();
-  selectXor(L.selector, L.high.diff);
-  correction();
-  difference();
-  load();
+  let diff := L.reg .diff;
+  let modulus := L.reg .modulus;
+  let corrected := L.reg .total; -- 模减时，total 寄存器保存加回 q 后的候选值。
+  let carrySum := L.reg .carrySum;
+  let carryDiff := L.reg .carryDiff;
+  let borrow := L.high.diff;
+
+  xorConstant(modulus, q);                              -- modulus = q
+  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff = x-y
+  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected = diff+q
+
+  -- 借位为 0：x≥y，选 diff；借位为 1：x<y，选 corrected。
+  chooseXor(borrow, diff.take L.width, corrected.take L.width, L.lowReg .out);
+
+  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected 清零
+  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff 清零
+  xorConstant(modulus, q);                              -- modulus 清零
 }
+
+private theorem registerAdderBits_map (bs : List ModBit) (a b target c : ModField) :
+    registerAdderBits (bs.map (·.get a)) (bs.map (·.get b))
+      (bs.map (·.get target)) (bs.map (·.get c)) =
+      bs.map (fun bit => ⟨bit.get a, bit.get b, bit.get target, bit.get c⟩) := by
+  induction bs with
+  | nil => rfl
+  | cons bit bs ih =>
+    simpa [registerAdderBits] using congrArg (AddBit.mk (bit.get a) (bit.get b) (bit.get target) (bit.get c) :: ·) ih
+
+private theorem take_reg (L : ModLayout) (f : ModField) :
+    (L.reg f).take L.width = L.lowReg f := by
+  simp [ModLayout.reg, ModLayout.bits, ModLayout.width, ModLayout.lowReg]
+
+private theorem selector_map (bs : List ModBit) :
+    List.zipWith (fun ab o => SelectBit.mk ab.1 ab.2 o)
+      ((bs.map (·.diff)).zip (bs.map (·.total))) (bs.map (·.out)) =
+      bs.map (fun b => ⟨b.diff, b.total, b.out⟩) := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp [ih]
+
+/-- 供证明使用的展开式；算法阅读可跳过。 -/
+theorem modAdd_program (L : ModLayout) (q : Nat) : modAdd L q =
+  let load := xorConstant (L.reg .modulus) q
+  let sum := add (L.adder .x .y .total .carrySum L.cinSum)
+  let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)
+  load ++ sum ++ difference ++ selectXor L.selector L.high.diff ++ difference ++ sum ++ load := by
+  simp only [modAdd, take_reg]
+  simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
+  simp only [registerAdderBits_map, add, sub, ModLayout.adder]
+  simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map, ModLayout.selector]
+
+/-- 供证明使用的展开式；算法阅读可跳过。 -/
+theorem modSub_program (L : ModLayout) (q : Nat) : modSub L q =
+  let load := xorConstant (L.reg .modulus) q
+  let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff)
+  let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum)
+  load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load := by
+  simp only [modSub, take_reg]
+  simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
+  simp only [registerAdderBits_map, add, sub, ModLayout.adder]
+  simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map, ModLayout.selector]
 
 def ModValues.clean (X Y O : Nat) : ModField → Nat
   | .x => X | .y => Y | .out => O | _ => 0
@@ -110,7 +172,7 @@ private theorem modAdd_bounded_values (L : ModLayout) (hnd : L.wires.Nodup) (q :
   have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
     funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
   have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
-  simpa only [modAdd, List.append_assoc, hv7, v0, R, S] using h
+  simpa only [modAdd_program, List.append_assoc, hv7, v0, R, S] using h
 
 /-- 模 q 加法：任意初值输出按位 XOR 更新，输入、相位和全部工作线恢复。
 q 是编译期常量，X、Y 是寄存器中的变量；额外高位只属于实现布局。 -/
@@ -173,7 +235,7 @@ private theorem modSub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
     funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
   have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
-  simpa only [modSub, List.append_assoc, hv7, v0, R] using h
+  simpa only [modSub_program, List.append_assoc, hv7, v0, R] using h
 
 /-- 模 q 减法：任意初值输出按位 XOR 更新，借位选择线随候选差一起清理。 -/
 theorem modSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)

@@ -4,28 +4,29 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 准备逆元；第一阶段的数据与记录带保留，供结果使用后恢复。 -/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  -- 第一阶段：u/v/r/s/k 演化 512 轮，records 保存各轮分支。
-  kaliskiLoop(L.first, 0, L.records);
-  -- 将 (−r) mod q 写入初始为零的 a；temp 与模算术工作区恢复为零。
-  negativeInit(L.arithmetic, q, L.middle.r, L.temp, L.a);
-  -- 第二阶段：十位k查表与单段Montgomery缩放；y/carry保存缩放历史，B清零。
-  L.scaling.prepare(q);
+  let records := L.records;       -- 每轮保存 swap/subtract 两位，最终规格要求共 512 轮。
+  let r := L.middle.r;            -- 循环结束后的 Kaliski 系数寄存器。
+  let inverse := L.a;             -- 本函数的逆元结果寄存器；不直接写外部 out。
+  let scaling := L.scaling;       -- 用计数 k 修正比例，a 同时是缩放输入/输出。
+  kaliskiLoop(L.first, 0, records);              -- 演化 u/v/r/s/k，保存各轮分支
+  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- inverse = (-r) mod q
+  scaling.prepare(q);                           -- inverse = 原输入的逆元；保留恢复所需历史
 }
 
 /-- 逆元使用后的恢复；各段均执行显式前向门列，不倒放测量。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  -- 清除缩放历史，将a恢复为(−r) mod q，轮工作区重新全部为零。
-  L.scaling.restore(q);
-  -- negativeInit 是 XOR 模块：再写同一个值，将 a 清零。
-  negativeInit(L.arithmetic, q, L.middle.r, L.temp, L.a);
-  -- 利用保存的分支恢复第一阶段初值，同时清 records。
-  kaliskiUnloop(L.first, 0, L.records);
+  let r := L.middle.r;
+  let inverse := L.a;
+  let scaling := L.scaling;
+  scaling.restore(q);                              -- inverse 恢复成 (-r) mod q；清缩放历史
+  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- 同值 XOR，使 inverse 清零
+  kaliskiUnloop(L.first, 0, L.records);              -- 借助分支记录恢复 u/v/r/s/k，并清记录
 }
 
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  inverseCompute(L, q);
-  copyRegister(none, L.a, L.out);
-  inverseUncompute(L, q);
+  inverseCompute(L, q);             -- a = 输入的逆元；保留恢复历史
+  copyRegister(none, L.a, L.out);    -- out ^= a
+  inverseUncompute(L, q);           -- a 清零，内部初态恢复；out 保留
 }
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=

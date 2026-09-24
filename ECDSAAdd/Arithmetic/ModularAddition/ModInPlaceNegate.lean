@@ -4,10 +4,11 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 扩宽源取补后加 p+1；0 暂时映为 p，不归一化，第二次调用恢复原值。 -/
 def negRaw (L : ModInPlaceLayout) (p : Nat) : Program := prog {
-  notRegister(L.a);
-  xorConstant(L.constant, (p+1));
-  addInPlace(L.constant, L.a, L.carry, L.cin);
-  xorConstant(L.constant, (p+1));
+  let source := L.a;
+  notRegister(source);                             -- source = 2^位宽-1-A
+  xorConstant(L.constant, p+1);                     -- constant = p+1
+  addInPlace(L.constant, source, L.carry, L.cin);    -- source = p-A（按位宽截断后）
+  xorConstant(L.constant, p+1);                     -- constant 清零；A=0 时 source=p，不是 0
 }
 
 private theorem negRaw_nodup (L : ModInPlaceLayout) (hnd : L.wires.Nodup) :

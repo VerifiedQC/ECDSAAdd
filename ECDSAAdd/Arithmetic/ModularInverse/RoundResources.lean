@@ -36,7 +36,7 @@ private theorem body_counts (L : RoundDataLayout) (a sw su : Wire) (hw : 0<L.wid
   have hmRi := inplace_counts L .r .s su true hw
   have hsu := shift_counts a L.u
   have hss := shift_counts a L.s
-  simp only [kaliskiBodyProgram,kaliskiUnbodyProgram,swapDataPairs,toffoliCount_append,measurementCount_append,
+  simp only [kaliskiBodyProgram_program,kaliskiUnbodyProgram_program,swapDataPairs,toffoliCount_append,measurementCount_append,
     huv.1,huv.2.1,hrs.1,hrs.2.1,hmU.1,hmU.2,hmR.1,hmR.2,hmUi.1,hmUi.2,hmRi.1,hmRi.2,
     hsu.1,hsu.2.1,hsu.2.2.1,hsu.2.2.2,hss.1,hss.2.1,hss.2.2.1,hss.2.2.2]
   simp only [RoundDataLayout.u,RoundDataLayout.r,RoundDataLayout.s,L.reg_length]

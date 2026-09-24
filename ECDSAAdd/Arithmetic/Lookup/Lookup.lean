@@ -9,11 +9,11 @@ private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table :
   match controls, scratch with
   | [], _ => maskedConstant a target (table 0)
   | b::bs, q::qs => prog {
-      CCX(a, b, q);
+      CCX(a, b, q); -- q = a AND b，先处理当前地址位为 1 的子表。
       lookupWalk(q, bs, qs, target, fun d => table (1+2*d));
-      CX(a, q);
+      CX(a, q); -- q = a AND NOT b，复用工作位处理当前地址位为 0 的子表。
       lookupWalk(q, bs, qs, target, fun d => table (2*d));
-      X(b);
+      X(b); -- 清零负 AND，并恢复输入位 b 和相位。
       measureX(q, [], [CZ a b]);
       X(b);
     }

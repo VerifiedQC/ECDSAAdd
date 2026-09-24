@@ -10,8 +10,10 @@ structure ZeroBit where
 
 def ZeroBit.wires (b : ZeroBit) : List Wire := [b.input,b.work]
 
+/-- t ^= c AND NOT a；输入保持。 -/
 private def negAnd (c a t : Wire) : Program := [.X a, .CCX c a t, .X a]
 
+/-- 已知 t = c AND NOT a 时，测量清零 t 并恢复相位。 -/
 private def negAndErase (c a t : Wire) : Program :=
   [.X a, .measureX t [] [.CZ c a], .X a]
 
@@ -26,9 +28,9 @@ def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
   let n := bs.length;
   let chain := c :: bs.map ZeroBit.work;
   for i in range(n) {
-    negAnd(chain[i], bs[i].input, bs[i].work);
+    negAnd(chain[i], bs[i].input, bs[i].work); -- chain[i+1] = c AND 前 i+1 个输入均为零。
   };
-  Instr.CX(chain[n], target);
+  Instr.CX(chain[n], target); -- target ^= c AND 全部输入为零。
   for i in reversed(range(n)) {
     negAndErase(chain[i], bs[i].input, bs[i].work);
   };

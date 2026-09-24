@@ -39,17 +39,21 @@ def exchange (L : InverseScaleLayout) : Program := prog {
 }
 
 def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
-  L.lookup(q);
-  montPrepare(L.stage, L.factor, (L.a.take 256), q);
-  L.exchange();
-  L.lookup(q);
+  let stage := L.stage;
+  let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
+  L.lookup(q);            -- factor = inverseScaleFactor(q,k)
+  montPrepare(stage, factor, L.a.take 256, q); -- stage.acc = factor*a/R mod q
+  L.exchange();          -- a 得到缩放结果；原值 N 留在 stage.acc 供恢复
+  L.lookup(q);            -- factor 清零，k 不变
 }
 
 def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
-  L.lookup(q);
-  L.exchange();
-  montRestore(L.stage, L.factor, (L.a.take 256), q);
-  L.lookup(q);
+  let stage := L.stage;
+  let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
+  L.lookup(q);            -- factor = inverseScaleFactor(q,k)
+  L.exchange();          -- 将未缩放值 N 放回 a，将缩放结果放回 stage.acc
+  montRestore(stage, factor, L.a.take 256, q); -- 清 stage.acc 及历史
+  L.lookup(q);            -- factor 清零，k 不变
 }
 
 /-- 使用逆元期间仅保留N、Montgomery商和借位，所有借用工作区为空。 -/

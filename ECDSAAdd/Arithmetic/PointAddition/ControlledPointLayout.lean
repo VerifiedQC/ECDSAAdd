@@ -21,9 +21,9 @@ def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := pro
 }
 
 def controlledPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
-  pointSelectors(L);
-  selectedPointOutput(L, C);
-  pointSelectors(L);
+  pointSelectors(L);              -- 外部 control 与普通/倍点/无穷远条件分别 AND
+  selectedPointOutput(L, C);       -- 将被选择的结果 XOR 到 core.output
+  pointSelectors(L);              -- 输入和条件未改变，重新计算以清零三个选择位
 }
 
 /-- 控制为假的分支也计算并清理候选，只抑制最终输出。 -/

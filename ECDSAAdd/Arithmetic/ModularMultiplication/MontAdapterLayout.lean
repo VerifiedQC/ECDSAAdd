@@ -88,33 +88,38 @@ theorem controlled_add_nodup (c : Wire) (M : MontLayout) (hw : M.Widths)
 end MontLayout
 
 def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
-  montP(M, p);
-  copyRegister(none, M.product, M.out);
-  montQ(M, p);
+  let product := M.product; -- 内部 z 的低 257 位。
+  montMulCompute(M, p);                      -- 生成模积，保留历史
+  copyRegister(none, product, M.out);      -- out ^= x*y mod p
+  montMulUncompute(M, p);                    -- 清除模积与历史，输入 x/y 不变
 }
 
 def montMulAdd (M : MontLayout) (p : Nat) : Program := prog {
-  montP(M, p);
-  modAddInPlace(M.addView, p);
-  montQ(M, p);
+  let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
+  montMulCompute(M, p);                      -- 生成模积，保留历史
+  modAddInPlace(accumulate, p); -- out += x*y (mod p)
+  montMulUncompute(M, p);                    -- 清除模积与历史，输入 x/y 不变
 }
 
 def montMulSub (M : MontLayout) (p : Nat) : Program := prog {
-  montP(M, p);
-  modSubInPlace(M.addView, p);
-  montQ(M, p);
+  let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
+  montMulCompute(M, p);                      -- 生成模积，保留历史
+  modSubInPlace(accumulate, p); -- out -= x*y (mod p)
+  montMulUncompute(M, p);                    -- 清除模积与历史，输入 x/y 不变
 }
 
 def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
-  montP(M, p);
-  controlledModAdd(c, M.addView, p);
-  montQ(M, p);
+  let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
+  montMulCompute(M, p);                      -- 生成模积，保留历史
+  controlledModAdd(c, accumulate, p); -- c=1 时 out += x*y (mod p)
+  montMulUncompute(M, p);                    -- 清除模积与历史，输入 x/y 不变
 }
 
 def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
-  montP(M, p);
-  controlledModSub(c, M.addView, p);
-  montQ(M, p);
+  let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
+  montMulCompute(M, p);                      -- 生成模积，保留历史
+  controlledModSub(c, accumulate, p); -- c=1 时 out -= x*y (mod p)
+  montMulUncompute(M, p);                    -- 清除模积与历史，输入 x/y 不变
 }
 
 end ECDSAAdd.Arithmetic

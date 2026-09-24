@@ -47,7 +47,7 @@ example (L : ModLayout) (q : Nat) :
   let load := xorConstant (L.reg .modulus) q
   let sum := add (L.adder .x .y .total .carrySum L.cinSum)
   let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)
-  load ++ sum ++ difference ++ selectXor L.selector L.high.diff ++ difference ++ sum ++ load := by rfl
+  load ++ sum ++ difference ++ selectXor L.selector L.high.diff ++ difference ++ sum ++ load := by rw [modAdd_program]
 
 -- ModularAddition/Modular.lean: modSub
 example (L : ModLayout) (q : Nat) :
@@ -55,7 +55,7 @@ example (L : ModLayout) (q : Nat) :
   let load := xorConstant (L.reg .modulus) q
   let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff)
   let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum)
-  load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load := by rfl
+  load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load := by rw [modSub_program]
 
 -- ModularAddition/ModInPlaceWrappers.lean: controlledModAdd
 example (c : Wire) (L : ModInPlaceLayout) (p : Nat) :
@@ -117,6 +117,18 @@ example (L : MontStageLayout) (p i : Nat) :
     montRestoreReduce L p i =
   rotateLeftBits L.acc 4 ++ montLookupSub L (L.record i) p ++
   copyRegister none (L.acc.take 4) (L.record i) := by rfl
+
+-- ModularMultiplication/MontPrepare.lean: montAddDigit / montSubDigit
+-- 局部 bit/shiftedX 别名不改变逐位的受控加减门列。
+example (L : MontStageLayout) (x y : List Wire) (i : Nat) :
+    montAddDigit L x y i = (List.range 4).flatMap (fun j =>
+      measuredMaskedAddInPlace (y.getD (4*i+j) L.flag)
+        (L.source x j) L.mask L.acc L.carry L.cin) := by rfl
+
+example (L : MontStageLayout) (x y : List Wire) (i : Nat) :
+    montSubDigit L x y i = (List.range 4).reverse.flatMap (fun j =>
+      measuredMaskedSubInPlace (y.getD (4*i+j) L.flag)
+        (L.source x j) L.mask L.acc L.carry L.cin) := by rfl
 
 -- ModularMultiplication/MontPrepare.lean: montWindow
 example (L : MontStageLayout) (x y : List Wire) (p i : Nat) :

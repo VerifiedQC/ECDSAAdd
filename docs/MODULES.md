@@ -55,7 +55,9 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 模乘使用 Montgomery 计算和输出适配器。求逆使用 Kaliski 循环，并调用 Montgomery 缩放消去逆元的缩放因子。除法准备逆元、保留恢复历史、借用已清零工作区做乘积累加，再恢复。点加组合这些算术接口与曲线数学，并覆盖特殊点分支。
 
-需要查看算法时，优先读下列程序定义即可，不必从头读完证明文件。这些主体使用 `prog` 的顺序调用或循环；递归查表保留树形结构。
+需要查看算法时，优先读下列程序定义即可，不必从头读完证明文件。这些主体使用 `prog` 的顺序调用或循环；递归查表保留树形结构。此表也是持续维护的改写清单，不依赖聊天记录。
+
+算法主体直接列出输入/输出寄存器，较复杂布局旁注明连接关系；行内注释说明数值更新、选择方向和清理目的。`let` 只组织已有 wire，不分配新量子位。`Xor` 接口把结果异或到目标，不能当成覆盖赋值；写成“中间量=结果”的注释以规格要求的零初值为前提。
 
 | 模块 | 算法阅读入口 |
 | --- | --- |
@@ -69,12 +71,14 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | Lookup | [Lookup.lean](../ECDSAAdd/Arithmetic/Lookup/Lookup.lean)：`lookupWalk`、`lookup` |
 | ModularAddition | [ModInPlace.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlace.lean)：`modAddCore`；[Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean)：`modAdd`、`modSub` |
 | ModularDoubling | [ModUnary.lean](../ECDSAAdd/Arithmetic/ModularDoubling/ModUnary.lean)：`dblInPlace`、`halfInPlace` |
-| ModularMultiplication | [MontPrepare.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPrepare.lean)：`montWindow`、`montPrepareRounds`、`montPrepare` 及对应恢复程序；[MontLayout.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontLayout.lean)：`montP`、`montQ` |
+| ModularMultiplication | [MontPrepare.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPrepare.lean)：`montWindow`、`montPrepareRounds`、`montPrepare` 及对应恢复程序；[MontLayout.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontLayout.lean)：`montMulCompute/montMulUncompute`（兼容旧名 `montP/montQ`）；[MontAdapterLayout.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterLayout.lean)：输出适配器 |
 | ModularInverse | [InverseCompute.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseCompute.lean)：`inverseCompute`、`inverseUncompute`；[KaliskiLoop.lean](../ECDSAAdd/Arithmetic/ModularInverse/KaliskiLoop.lean)：`kaliskiLoop`、`kaliskiUnloop`；单轮见 [KaliskiRound.lean](../ECDSAAdd/Arithmetic/ModularInverse/KaliskiRound.lean) 和 [RoundBody.lean](../ECDSAAdd/Arithmetic/ModularInverse/RoundBody.lean) |
 | Division | [Divide.lean](../ECDSAAdd/Arithmetic/Division/Divide.lean)：`divideAdd`、`divideSub` 及装载/恢复程序 |
-| PointAddition | [PointInPlaceProgram.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceProgram.lean)：`pointInPlaceGeneric`、`pointInPlaceFinite`；XOR 输出接口见 [PointOutput.lean](../ECDSAAdd/Arithmetic/PointAddition/PointOutput.lean)：`pointAddOut` |
+| PointAddition | [PointCandidate.lean](../ECDSAAdd/Arithmetic/PointAddition/PointCandidate.lean)：`pointCandidateCompute/pointCandidateClear`；[PointInPlaceProgram.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceProgram.lean)：`pointInPlaceGeneric`、`pointInPlaceClearSlope`、`pointInPlaceFinite`；XOR 输出接口见 [PointOutput.lean](../ECDSAAdd/Arithmetic/PointAddition/PointOutput.lean)：`pointAddOut` |
 
 循环在构造电路时展开，不依赖运行时量子位的值。反向清理调用显式恢复子程序，不反转子程序内部的门或测量。定义后的 `_program`、`_cons`、`_succ` 等引理连接可读程序与归纳证明，可在理解算法时跳过。
+
+本轮已逐项复查上述入口：保留已经直观的 Addition 主体及复制、选择、交换、移位；比较、判等、查表补充关键条件和清理说明；模加减、倍增/减半、模乘、求逆、除法和点加显式化寄存器与算术步骤。规格、正确性和资源结论不变，改写前后的指令列表另有等价性检查。
 
 这不是完整 import 图。功能目录不保证完全独立：历史布局与适配证明仍可能跨目录引用。修改共享布局或资源时，沿模块说明指出的调用者复查，不要只凭目录边界判断影响范围。
 
@@ -99,6 +103,6 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 本轮只用 `new-temp` 累积报告、文档和源码整理，`new` 留作最终验收后的集成分支。多人协作按模块划定写入范围，由一个集成人负责共享文件和 Git 操作。接口、算法、历史寿命或文件归属变化时，同步修改模块 README。
 
-仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
+仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，以及 `tests/ModularReadable.lean` 中显式寄存器接口的回归检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
 
 当前证明与资源证据见 [PROOF_STATUS](PROOF_STATUS.md)，算法历史见 [REWORK_PLAN](REWORK_PLAN.md)，来源见 [PROVENANCE](PROVENANCE.md)，整理范围和验收记录见 [READABILITY_REPORT](READABILITY_REPORT.md)。

@@ -21,6 +21,18 @@ end AdderLayout
 def add (L : AdderLayout) : Program := rippleAdder L.bits L.cin
 def sub (L : AdderLayout) : Program := rippleSubtractor L.bits L.cin
 
+/-- 将等长寄存器按位接到全加器；只组织线路编号，不产生门或新 wire。 -/
+def registerAdderBits (x y out carry : List Wire) : List AddBit :=
+  List.zipWith (fun xy oc => ⟨xy.1, xy.2, oc.1, oc.2⟩) (x.zip y) (out.zip carry)
+
+/-- out ^= (x+y+cin) mod 2^n；输入保留，零 carry 恢复为零。四个列表等长。 -/
+def addXor (x y out carry : List Wire) (cin : Wire) : Program :=
+  rippleAdder (registerAdderBits x y out carry) cin
+
+/-- out ^= (x-y) mod 2^n；输入保留，cin=0、carry=0 在调用后恢复。四个列表等长。 -/
+def subXor (x y out carry : List Wire) (cin : Wire) : Program :=
+  rippleSubtractor (registerAdderBits x y out carry) cin
+
 /-- 任意输出初值均可：异或写入模 2^n 的和，恢复输入、相位和进位工作线。 -/
 theorem add_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) (C : Bool) :
     {{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }} add L

@@ -54,13 +54,18 @@ end ModUnaryLayout
 
 /-- 左旋得到 2Z，试减 p、借位低位加回，最后由结果奇偶清借位。 -/
 def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
-  rotateLeft(U.z);
-  xorConstant(U.constant, p);
-  subInPlace(U.constant, U.z, U.carry, U.cin);
-  xorConstant(U.constant, p);
-  maskedAddConst(U.high, (U.constant.take U.low.length), U.low, (U.carry.take (U.low.length-1)), U.cin, p);
-  Instr.X(U.high);
-  Instr.CX(U.bit, U.high);
+  let target := U.z;
+  let borrow := U.high;
+  let leastBit := U.bit;
+  let lowConstant := U.constant.take U.low.length;
+  let lowCarry := U.carry.take (U.low.length-1);
+  rotateLeft(target);                                  -- 零 high 移到最低位：target = 2Z
+  xorConstant(U.constant, p);                           -- constant = p
+  subInPlace(U.constant, target, U.carry, U.cin);        -- target -= p；borrow = [2Z < p]
+  xorConstant(U.constant, p);                           -- constant 清零
+  maskedAddConst(borrow, lowConstant, U.low, lowCarry, U.cin, p); -- 有借位则加回 p
+  Instr.X(borrow);                                     -- p 为奇数，结果奇偶记录是否约减。
+  Instr.CX(leastBit, borrow);                           -- borrow 清零
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -75,11 +80,14 @@ theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
 
 /-- 保存奇偶，奇数加 p 后右旋，由减半结果与 (p+1)/2 比较清奇偶位。 -/
 def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
-  Instr.CX(U.bit, U.flag);
-  maskedAddConst(U.flag, U.constant, U.z, U.carry, U.cin, p);
-  rotateRight(U.z);
-  compareLtConst(none, U.low, (U.constant.take U.low.length), U.carry, U.cin, U.flag, ((p+1)/2));
-  Instr.X(U.flag);
+  let target := U.z;
+  let wasOdd := U.flag;
+  let lowConstant := U.constant.take U.low.length;
+  Instr.CX(U.bit, wasOdd);                             -- wasOdd = Z mod 2
+  maskedAddConst(wasOdd, U.constant, target, U.carry, U.cin, p); -- 奇数时 target += p
+  rotateRight(target);                                -- 偶数右旋：target /= 2
+  compareLtConst(none, U.low, lowConstant, U.carry, U.cin, wasOdd, (p+1)/2);
+  Instr.X(wasOdd);                                     -- 原 Z 为奇数 iff 新值 ≥ (p+1)/2，清零标志。
 }
 
 /-- 半倍门列均复用 scratch，不增加量子控制或历史寄存器。 -/

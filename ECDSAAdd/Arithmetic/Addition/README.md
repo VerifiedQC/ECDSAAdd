@@ -89,6 +89,8 @@ rippleSubtractor bs cin
 
 该文件为加减法提供统一寄存器接口。
 
+调用时也可直接写 `addXor x y out carry cin` 或 `subXor x y out carry cin`，明确列出输入、XOR 输出和进位工作区；它们只是把等长寄存器连接到同一加减法电路，规格与资源不变。减法要求 cin=0。
+
 L 是加减法电路的寄存器布局。n 是布局 L 的位宽 L.width，也就是逐位单元列表 L.bits 的长度。输入 L.x、L.y 的初值为 X、Y，进位输入 L.cin 的初值为 C；输出 L.out 初始化为 O，工作区 L.carry 初始化为 0。下文 x、y、cin、out、carry 是这些字段的简写。
 
 `add_spec`、`sub_spec` 证明：L.wires 互异、进位工作区初始为零时，

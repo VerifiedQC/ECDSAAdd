@@ -18,48 +18,70 @@ def extendedY (L : PointAddLayout) : List Wire := L.input.y++[L.inputYHigh]
 
 end PointAddLayout
 
+/- 直接接收输入/输出寄存器；pool 只决定共用工作位的位置，不是算术输入。
+   以下都是 XOR 输出接口，输入保持不变；对同样输入再调用一次可清除结果。
+   位宽、互异和零工作位条件沿用 poolSub/poolMul/poolInverse 的规格。 -/
+abbrev fieldSubXor (pool : Nat → Wire) (x y out : List Wire) : Program :=
+  fieldSub (poolSub pool x y out)
+
+abbrev fieldMulXor (pool : Nat → Wire) (x y out : List Wire) : Program :=
+  fieldMul (poolMul pool x y out)
+
+abbrev fieldInverseXor (pool : Nat → Wire) (x out : List Wire) : Program :=
+  fieldInverse (poolInverse pool x out)
+
 /-- 常量工作字装载后立即卸载；输入输出直接连接模减法接口。 -/
 def pointSubConstant (L : PointAddLayout) (x out : List Wire) (k : Nat) : Program := prog {
-  xorConstant(L.constant, k);
-  fieldSub(poolSub L.poolWire x L.constant out);
-  xorConstant(L.constant, k);
+  xorConstant(L.constant, k);                    -- constant = k
+  fieldSubXor(L.poolWire, x, L.constant, out);     -- out ^= (x-k) mod p
+  xorConstant(L.constant, k);                    -- constant 清零
 }
 
 /-- 平方使用独立乘数副本，避免重复控制线；复制前后不计 Toffoli。 -/
 def pointSquare (L : PointAddLayout) : Program := prog {
-  copyRegister(none, L.slope, L.constant);
-  fieldMul((poolMul L.poolWire L.slope (L.constant.take 256) L.square));
-  copyRegister(none, L.slope, L.constant);
+  let slope := L.slope;
+  let copy := L.constant;
+  copyRegister(none, slope, copy);                      -- 独立副本 copy = slope
+  fieldMulXor(L.poolWire, slope, copy.take 256, L.square); -- square ^= slope² mod p
+  copyRegister(none, slope, copy);                      -- copy 清零
 }
 
-/-- 普通候选在每一条分支上计算。分支标志预先确定，安全除数保证求逆定义域。 -/
+/-- 普通候选在每一条分支上计算。分支标志预先确定，安全除数保证求逆定义域。
+候选区和工作区初始为零；下面的算术等式均按模 p 理解。只有普通分支选用此候选。 -/
 def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog {
-  pointSubConstant(L, L.extendedX, L.dx, cx.val);
-  pointSubConstant(L, L.extendedY, L.dy, cy.val);
-  safeDivisor(L.generic, (L.dx.take 256), L.divisor.head!, L.divisor.tail);
-  fieldInverse(poolInverse L.poolWire L.divisor L.inverse);
-  fieldMul(poolMul L.poolWire L.dy L.inverse L.slope);
-  pointSquare(L);
-  fieldSub(poolSub L.poolWire L.square L.extendedX L.offset);
-  pointSubConstant(L, L.offset, L.candidateX, cx.val);
-  fieldSub(poolSub L.poolWire L.extendedX L.candidateX L.delta);
-  fieldMul((poolMul L.poolWire L.delta (L.slope.take 256) L.product));
-  fieldSub(poolSub L.poolWire L.product L.extendedY L.candidateY);
+  let x := L.extendedX; -- 输入坐标扩展为 257 位，最高位为零。
+  let y := L.extendedY;
+  let pool := L.poolWire;
+  pointSubConstant(L, x, L.dx, cx.val);                         -- dx = x-cx
+  pointSubConstant(L, y, L.dy, cy.val);                         -- dy = y-cy
+  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);
+  -- 普通分支 divisor=dx；其他分支 divisor=1，保证每条分支上都能求逆。
+  fieldInverseXor(pool, L.divisor, L.inverse);                  -- inverse = 1/divisor
+  fieldMulXor(pool, L.dy, L.inverse, L.slope);                  -- slope = dy/divisor
+  pointSquare(L);                                             -- square = slope²
+  fieldSubXor(pool, L.square, x, L.offset);                     -- offset = slope²-x
+  pointSubConstant(L, L.offset, L.candidateX, cx.val);           -- candidateX = slope²-x-cx
+  fieldSubXor(pool, x, L.candidateX, L.delta);                   -- delta = x-candidateX
+  fieldMulXor(pool, L.delta, L.slope.take 256, L.product);       -- product = slope*delta
+  fieldSubXor(pool, L.product, y, L.candidateY);                 -- candidateY = slope*delta-y
 }
 
 /-- 按依赖的逆序重新执行前向 XOR 模块；没有反转测量程序或依赖测量结果选路。 -/
 def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog {
-  fieldSub(poolSub L.poolWire L.product L.extendedY L.candidateY);
-  fieldMul((poolMul L.poolWire L.delta (L.slope.take 256) L.product));
-  fieldSub(poolSub L.poolWire L.extendedX L.candidateX L.delta);
-  pointSubConstant(L, L.offset, L.candidateX, cx.val);
-  fieldSub(poolSub L.poolWire L.square L.extendedX L.offset);
-  pointSquare(L);
-  fieldMul(poolMul L.poolWire L.dy L.inverse L.slope);
-  fieldInverse(poolInverse L.poolWire L.divisor L.inverse);
-  safeDivisor(L.generic, (L.dx.take 256), L.divisor.head!, L.divisor.tail);
-  pointSubConstant(L, L.extendedY, L.dy, cy.val);
-  pointSubConstant(L, L.extendedX, L.dx, cx.val);
+  let x := L.extendedX;
+  let y := L.extendedY;
+  let pool := L.poolWire;
+  fieldSubXor(pool, L.product, y, L.candidateY);            -- candidateY 清零
+  fieldMulXor(pool, L.delta, L.slope.take 256, L.product);  -- product 清零
+  fieldSubXor(pool, x, L.candidateX, L.delta);              -- delta 清零
+  pointSubConstant(L, L.offset, L.candidateX, cx.val);     -- candidateX 清零
+  fieldSubXor(pool, L.square, x, L.offset);                -- offset 清零
+  pointSquare(L);                                        -- square 清零
+  fieldMulXor(pool, L.dy, L.inverse, L.slope);             -- slope 清零
+  fieldInverseXor(pool, L.divisor, L.inverse);             -- inverse 清零
+  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail); -- divisor 清零
+  pointSubConstant(L, y, L.dy, cy.val);                    -- dy 清零
+  pointSubConstant(L, x, L.dx, cx.val);                    -- dx 清零
 }
 
 end ECDSAAdd.Arithmetic

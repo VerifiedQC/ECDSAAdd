@@ -79,7 +79,7 @@ private theorem body_wires (L : RoundDataLayout) (a sw su : Wire) (hw : 2≤L.wi
   have hiUi := inplace_wires L .u .v su false hp
   have hiRi := inplace_wires L .r .s su true hp
   constructor <;>
-    simp only [kaliskiBodyProgram,kaliskiUnbodyProgram,swapDataPairs,wires_append,
+    simp only [kaliskiBodyProgram_program,kaliskiUnbodyProgram_program,swapDataPairs,wires_append,
       huv,hrs,hru.1,hru.2,hrs'.1,hrs'.2,hiU,hiR,hiUi,hiRi]
   all_goals
     ext w

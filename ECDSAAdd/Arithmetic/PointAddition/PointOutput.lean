@@ -27,9 +27,10 @@ def negativePointConstant (c : Wire) (r : PointReg) (C : Point) : Program := pro
 
 /-- 三个互斥的输出贡献；互逆点不写入任何位。 -/
 def pointOutput (L : PointAddLayout) (C : Point) : Program := prog {
-  pointGenericOutput(L);
-  maskedPointConstant(L.double, L.output, (C+C));
-  negativePointConstant(L.input.finite, L.output, C);
+  pointGenericOutput(L);                              -- 普通分支：输出 XOR 候选坐标
+  maskedPointConstant(L.double, L.output, C+C);         -- 输入为 C：输出 XOR 2C
+  negativePointConstant(L.input.finite, L.output, C);   -- 输入为 O：输出 XOR C
+  -- 输入为 -C 时结果是 O；O 的编码全零，无需写入任何位。
 }
 
 /-- C=O 的构造期分支仅复制输入。 -/

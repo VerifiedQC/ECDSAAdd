@@ -49,63 +49,75 @@ def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
 
 /-- 查表值加进累加器，再用同一前向查表清空 table。 -/
 def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
-  montLookup(L, addr, K);
-  addInPlace(L.table, L.acc, L.carry, L.cin);
-  montLookup(L, addr, K);
+  montLookup(L, addr, K);                           -- table = 地址值*常量 K
+  addInPlace(L.table, L.acc, L.carry, L.cin); -- acc += table
+  montLookup(L, addr, K);                           -- table 清零；地址不变
 }
 
 def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
-  montLookup(L, addr, K);
-  subInPlace(L.table, L.acc, L.carry, L.cin);
-  montLookup(L, addr, K);
+  montLookup(L, addr, K);                           -- table = 地址值*常量 K
+  subInPlace(L.table, L.acc, L.carry, L.cin); -- acc -= table
+  montLookup(L, addr, K);                           -- table 清零；地址不变
 }
 
 /-- 保存约减系数，加入 m*p 后物理右旋四位。 -/
 def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
-  copyRegister(none, (L.acc.take 4), (L.record i));
-  montLookupAdd(L, (L.record i), p);
-  rotateRightBits(L.acc, 4);
+  let digit := L.acc.take 4;
+  let history := L.record i; -- 第 i 轮独占的四根历史位，保存 m。
+  copyRegister(none, digit, history); -- m = acc mod 16
+  montLookupAdd(L, history, p);       -- acc += m*p；p mod 16=15 时低四位全零
+  rotateRightBits(L.acc, 4);          -- acc /= 16；保留 m 供恢复使用
 }
 
 /-- 左旋恢复和，减去记录的 m*p，随后由恢复的低四位清记录。 -/
 def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
-  rotateLeftBits(L.acc, 4);
-  montLookupSub(L, (L.record i), p);
-  copyRegister(none, (L.acc.take 4), (L.record i));
+  let digit := L.acc.take 4;
+  let history := L.record i;
+  rotateLeftBits(L.acc, 4);          -- acc *= 16，恢复约减前的和
+  montLookupSub(L, history, p);       -- acc -= m*p
+  copyRegister(none, digit, history); -- 原低四位重新等于 m，故 history 清零
 }
 
 /-- 逐位加入一个变量四位窗口；控制值不改变门列。 -/
 def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
   for j in (List.range 4) {
-    measuredMaskedAddInPlace(y.getD (4*i+j) L.flag, L.source x j, L.mask, L.acc, L.carry, L.cin);
+    let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
+    let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
+    measuredMaskedAddInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);
+    -- bit=1 时 acc += x*2^j；mask/carry 在每次调用后清零。
   };
 }
 
 /-- 按 j=3..0 执行前向减法，并非反转测量。 -/
 def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
   for j in ((List.range 4).reverse) {
-    measuredMaskedSubInPlace(y.getD (4*i+j) L.flag, L.source x j, L.mask, L.acc, L.carry, L.cin);
+    let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
+    let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
+    measuredMaskedSubInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);
+    -- bit=1 时 acc -= x*2^j；mask/carry 在每次调用后清零。
   };
 }
 
 def montWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program := prog {
-  montAddDigit(L, x, y, i);
-  montReduce(L, p, i);
+  montAddDigit(L, x, y, i); -- 设 d 为 y 的第 i 个四位窗口：acc += d*x
+  montReduce(L, p, i);     -- m = acc mod 16；acc = (acc+m*p)/16，m 留在第 i 轮记录中
 }
 
 def montRestoreWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Program := prog {
-  montRestoreReduce(L, p, i);
-  montSubDigit(L, x, y, i);
+  montRestoreReduce(L, p, i); -- 撤销除 16 和 m*p，并清除该轮记录
+  montSubDigit(L, x, y, i);   -- acc -= d*x，恢复上一轮累加器
 }
 
 def constMontWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
-  montLookupAdd(L, ((y.drop (4*i)).take 4), K);
-  montReduce(L, p, i);
+  let digit := (y.drop (4*i)).take 4;
+  montLookupAdd(L, digit, K);        -- acc += digit*K
+  montReduce(L, p, i);              -- 约减一轮并保存四位历史
 }
 
 def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
-  montRestoreReduce(L, p, i);
-  montLookupSub(L, ((y.drop (4*i)).take 4), K);
+  let digit := (y.drop (4*i)).take 4;
+  montRestoreReduce(L, p, i);       -- 撤销约减，清除第 i 轮记录
+  montLookupSub(L, digit, K);        -- acc -= digit*K
 }
 
 def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
@@ -122,16 +134,21 @@ def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
 
 /-- 减 p 后保存借位，条件加回 p；保留 flag 到清理阶段。 -/
 def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
-  montConstantSub(L, p);
-  Instr.CX((L.acc.getD 260 L.flag), L.flag);
-  maskedAddConst(L.flag, L.table, L.acc, L.carry, L.cin, p);
+  let borrow := L.flag;
+  let high := L.acc.getD 260 L.flag;
+  montConstantSub(L, p);                               -- acc -= p
+  Instr.CX(high, borrow);                              -- 保存原 acc<p 的借位条件
+  maskedAddConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位时加回 p，得到 [0,p) 中的值
+  -- borrow 是恢复所需历史，此时不能清除。
 }
 
 /-- 先按保留借位减 p，再清 flag、加 p，恢复未经约减的累加器。 -/
 def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
-  maskedSubConst(L.flag, L.table, L.acc, L.carry, L.cin, p);
-  Instr.CX((L.acc.getD 260 L.flag), L.flag);
-  montConstantAdd(L, p);
+  let borrow := L.flag;
+  let high := L.acc.getD 260 L.flag;
+  maskedSubConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位分支减回 p
+  Instr.CX(high, borrow);                                 -- high 重现原借位，清零 borrow
+  montConstantAdd(L, p);                                  -- acc 恢复到归一化前的值
 }
 
 def montPrepareRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) : Program := prog {

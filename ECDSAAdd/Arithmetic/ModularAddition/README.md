@@ -134,6 +134,10 @@ modAddInPlace L p
 
 该文件将模和或模差异或到输出。
 
+算法入口是 `modAdd`、`modSub`。前者先算 total=x+y，再试减 q，通过借位选择 total 或 total−q；后者准备差与差+q 两个候选，再通过借位选择。选中结果 XOR 到 out 后，按依赖的逆序清除中间结果。
+
+代码直接列出寄存器：`addXor/subXor(x, y, out, carry, cin)` 表示加减结果 XOR 到 out；`chooseXor(flag, whenZero, whenOne, out)` 明确两个选择方向。这里的 `let` 只给现有 wire 起名，不增加量子位；精确前提与结果见下方规格。
+
 L 是模运算电路的寄存器布局。输入 L.x、L.y 的初值为 X、Y，输出 L.out 初始化为 O，工作区 L.work 初始化为 0。下文 x、y、out、work 是这些字段的简写；n 是布局的位宽 L.width。设 n=L.width，0<q<2^n，X、Y<q，布局线路互异。
 
 `modAdd_spec`、`modSub_spec` 证明：

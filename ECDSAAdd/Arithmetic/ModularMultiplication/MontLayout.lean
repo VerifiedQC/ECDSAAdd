@@ -79,13 +79,22 @@ structure MontPrepared (M : MontLayout) (p X Y : Nat) (s : BasisState) : Prop wh
   shared : regValue M.shared s=0
 
 def montP (M : MontLayout) (p : Nat) : Program := prog {
-  montPrepare(M.first, M.x, M.y, p);
-  constPrepare(M.second, M.a, p, (montgomeryConversion p));
+  let conversion := montgomeryConversion p; -- R² mod p，R=2^256。
+  montPrepare(M.first, M.x, M.y, p);         -- a = x*y/R mod p
+  constPrepare(M.second, M.a, p, conversion); -- z = conversion*a/R = x*y mod p
+  -- a/z 及两段历史保留；shared 已清零，可以借给输出阶段。
 }
 
 def montQ (M : MontLayout) (p : Nat) : Program := prog {
-  constRestore(M.second, M.a, p, (montgomeryConversion p));
-  montRestore(M.first, M.x, M.y, p);
+  let conversion := montgomeryConversion p;
+  constRestore(M.second, M.a, p, conversion); -- 清 z 及第二段历史；仍需要 a
+  montRestore(M.first, M.x, M.y, p);          -- 清 a 及第一段历史；x/y 保持
 }
+
+/-- z 得到标准模积 x*y mod p；保留恢复历史，shared 清零。 -/
+abbrev montMulCompute := montP
+
+/-- 使用未改变的 x/y 及历史清除模积和全部内部状态。 -/
+abbrev montMulUncompute := montQ
 
 end ECDSAAdd.Arithmetic

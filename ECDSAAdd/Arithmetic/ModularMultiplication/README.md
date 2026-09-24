@@ -2,6 +2,10 @@
 
 本模块通过 Montgomery 窗口运算实现标准表示的模乘及受控累加等接口，并证明结果、历史恢复和资源用量。
 
+算法从 [MontPrepare.lean](MontPrepare.lean) 的 `montWindow` 读起：向 acc 加入 x 乘以当前四位数 d，记录 m=acc mod 16，再令 acc=(acc+m·p)/16。m 保存在 history 中，恢复时先乘回 16、减去 m·p，再清除记录。
+
+[MontLayout.lean](MontLayout.lean) 的 `montMulCompute`（原名 `montP`）串联两次 Montgomery 阶段：先得 x·y/R，再乘 R² 并除 R，得到标准模积，R=2^256。`montMulUncompute`（原名 `montQ`）负责恢复。[MontAdapterLayout.lean](MontAdapterLayout.lean) 的输出接口统一是“计算模积 → XOR/加减到 out → 恢复”；历史在恢复前保留，只有 shared 工作区可在输出阶段借用。
+
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 
 下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。`{前置条件} 程序 {后置条件}` 对任意满足前提的初始状态和预先给定的测量结果成立；`｜` 按顺序分隔不同程序及其对应结果。
