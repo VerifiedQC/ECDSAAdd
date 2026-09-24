@@ -5,6 +5,7 @@ import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 import ECDSAAdd.Math.ModularMultiplication.Montgomery
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 一个 Montgomery 段；另一段复用 table/mask/carry/pad/scratch，保留各自 acc/history/flag。 -/
 structure MontStageLayout where
@@ -137,7 +138,7 @@ def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
   let borrow := L.flag;
   let high := L.acc.getD 260 L.flag;
   montConstantSub(L, p);                               -- acc -= p
-  Instr.CX(high, borrow);                              -- 保存原 acc<p 的借位条件
+  CX high borrow;                              -- 保存原 acc<p 的借位条件
   maskedAddConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位时加回 p，得到 [0,p) 中的值
   -- borrow 是恢复所需历史，此时不能清除。
 }
@@ -147,7 +148,7 @@ def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
   let borrow := L.flag;
   let high := L.acc.getD 260 L.flag;
   maskedSubConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位分支减回 p
-  Instr.CX(high, borrow);                                 -- high 重现原借位，清零 borrow
+  CX high borrow;                                 -- high 重现原借位，清零 borrow
   montConstantAdd(L, p);                                  -- acc 恢复到归一化前的值
 }
 

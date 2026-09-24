@@ -72,6 +72,8 @@ elab "circuitEmit% " t:term : term => do
 /-- Structured circuit notation; the original semicolon-separated gate notation remains valid. -/
 declare_syntax_cat circuitStmt
 syntax ident "(" term,* ")" ";" : circuitStmt
+-- 接受普通 Lean 调用；不将 X 等名称注册成关键字，以免影响数学变量名。
+syntax (name := circuitApply) (priority := low) ident term:max* ";" : circuitStmt
 syntax "let " ident " := " term ";" : circuitStmt
 syntax "for " ident " in " "range" "(" term ")" "{" circuitStmt* "}" ";" : circuitStmt
 syntax "for " ident " in " "reversed" "(" "range" "(" term ")" ")"
@@ -89,6 +91,11 @@ macro_rules
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
+  | `(prog { $f:ident $args:term*; $rest:circuitStmt* }) => do
+      let mut call : TSyntax `term := ⟨f.raw⟩
+      for arg in args do
+        call ← `($call $arg)
+      `(circuitSeq% (circuitEmit% $call) { $rest* })
   | `(prog { $f:ident($args:term,*); }) => do
       let mut call : TSyntax `term := ⟨f.raw⟩
       for arg in args.getElems do

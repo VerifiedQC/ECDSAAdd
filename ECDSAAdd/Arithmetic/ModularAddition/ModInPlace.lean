@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.Comparison.Compare
 import ECDSAAdd.Math.ModularAddition.ModInPlace
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 模加核的固定线路：最高位借作约减标志；mask/flag 属于外层，不放入核工作区。 -/
 structure ModAddCoreLayout where
@@ -47,7 +48,7 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
 
   -- 原和发生约减 iff 结果 < source；与原借位相反，故最后 X 后 borrow=0。
   compareLt(none, L.low, lowSource, L.carry, L.cin, borrow);
-  Instr.X(borrow);
+  X borrow;
 }
 
 /-- 同一核门列的计数，不把尚未证明的正确性或支持集作为假设。 -/

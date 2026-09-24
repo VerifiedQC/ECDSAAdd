@@ -2,16 +2,17 @@ import ECDSAAdd.Arithmetic.PointAddition.ControlledPointPorts
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceProgram
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 open Secp256k1
 
 
 /-- 控制只进入三个最终输出标志，候选算术及测量序列不依赖控制值。 -/
 def pointSelectors (L : ControlledPointLayout) : Program := prog {
-  Instr.CCX(L.control, L.core.generic, L.genericSelect);
-  Instr.CCX(L.control, L.core.double, L.doubleSelect);
-  Instr.X(L.core.input.finite);
-  Instr.CCX(L.control, L.core.input.finite, L.infinitySelect);
-  Instr.X(L.core.input.finite);
+  CCX L.control L.core.generic L.genericSelect;
+  CCX L.control L.core.double L.doubleSelect;
+  X L.core.input.finite;
+  CCX L.control L.core.input.finite L.infinitySelect;
+  X L.core.input.finite;
 }
 
 def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {

@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
 import ECDSAAdd.Arithmetic.Shift.Rotate
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 单目模算术借用同一目标与 scratch；mask 在半倍期间保持零。 -/
 structure ModUnaryLayout where
@@ -64,8 +65,8 @@ def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   subInPlace(U.constant, target, U.carry, U.cin);        -- target -= p；borrow = [2Z < p]
   xorConstant(U.constant, p);                           -- constant 清零
   maskedAddConst(borrow, lowConstant, U.low, lowCarry, U.cin, p); -- 有借位则加回 p
-  Instr.X(borrow);                                     -- p 为奇数，结果奇偶记录是否约减。
-  Instr.CX(leastBit, borrow);                           -- borrow 清零
+  X borrow;                                     -- p 为奇数，结果奇偶记录是否约减。
+  CX leastBit borrow;                           -- borrow 清零
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -83,11 +84,11 @@ def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;
   let wasOdd := U.flag;
   let lowConstant := U.constant.take U.low.length;
-  Instr.CX(U.bit, wasOdd);                             -- wasOdd = Z mod 2
+  CX U.bit wasOdd;                             -- wasOdd = Z mod 2
   maskedAddConst(wasOdd, U.constant, target, U.carry, U.cin, p); -- 奇数时 target += p
   rotateRight(target);                                -- 偶数右旋：target /= 2
   compareLtConst(none, U.low, lowConstant, U.carry, U.cin, wasOdd, (p+1)/2);
-  Instr.X(wasOdd);                                     -- 原 Z 为奇数 iff 新值 ≥ (p+1)/2，清零标志。
+  X wasOdd;                                     -- 原 Z 为奇数 iff 新值 ≥ (p+1)/2，清零标志。
 }
 
 /-- 半倍门列均复用 scratch，不增加量子控制或历史寄存器。 -/

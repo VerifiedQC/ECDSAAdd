@@ -59,6 +59,8 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 算法主体直接列出输入/输出寄存器，较复杂布局旁注明连接关系；行内注释说明数值更新、选择方向和清理目的。`let` 只组织已有 wire，不分配新量子位。`Xor` 接口把结果异或到目标，不能当成覆盖赋值；写成“中间量=结果”的注释以规格要求的零初值为前提。
 
+`prog` 中直接门统一写作 `X target;`、`CX control target;`、`CCX a b target;`，子电路保留 `fullAdder(...);` 形式，循环内外一致。通过文件级 `open Instr` 省略门名的前缀；旧括号式门调用仍兼容。
+
 | 模块 | 算法阅读入口 |
 | --- | --- |
 | RegisterXor | [Copy.lean](../ECDSAAdd/Arithmetic/RegisterXor/Copy.lean)：`copyRegister`；[ConditionalXor.lean](../ECDSAAdd/Arithmetic/RegisterXor/ConditionalXor.lean)：`conditionalXor` |

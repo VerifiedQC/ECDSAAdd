@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 两个候选值与输出位，均按小端排列。 -/
 structure SelectBit where
@@ -16,10 +17,10 @@ def selectWires : List SelectBit → List Wire
 用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。 -/
 def selectXor (bs : List SelectBit) (flag : Wire) : Program := prog {
   for b in bs {
-    Instr.CX(b.no, b.out);
-    Instr.CX(b.yes, b.no);
-    Instr.CCX(flag, b.no, b.out);
-    Instr.CX(b.yes, b.no);
+    CX b.no b.out;
+    CX b.yes b.no;
+    CCX flag b.no b.out;
+    CX b.yes b.no;
   };
 }
 

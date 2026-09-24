@@ -69,13 +69,13 @@ class CircuitDSL.ToProgram (α : Type) where
   toProgram : α → Program
 ```
 
-统一电路语句的结果：Instr 的 instance 将一个门变成单元素指令列表，Program 的 instance 保留整段子电路。因此新 `prog` 可以用相同的 `CX(a,b)`、`majority(a,b,cin,carry)` 调用格式，按顺序加入门或子电路。
+统一电路语句的结果：Instr 的 instance 将一个门变成单元素指令列表，Program 的 instance 保留整段子电路。`prog` 中直接门使用 `CX a b;`、`CCX a b target;`，子电路使用 `majority(a,b,cin,carry);`；两种写法可在循环中混用。文件中 `open Instr` 后即可省略门名的 `Instr.` 前缀，原有括号调用仍兼容。
 
 ```lean
 def CircuitDSL.emit {α : Type} [CircuitDSL.ToProgram α] (value : α) : Program
 ```
 
-通过对应 instance 将 value 转成指令列表。`prog` 对 Instr 和 Program 直接生成门列表或保留子程序调用；其他类型使用对应 instance。它还支持局部 `let`、`for i in range(n)`、`for i in reversed(range(n))` 和 `for item in items`（遍历列表）。循环在生成电路时展开，range 保留索引范围证明；倒序循环倒序调用子程序，不会倒放子程序中的门或测量。原来的 `prog { CX a b; ... }` 写法不变。
+通过对应 instance 将 value 转成指令列表。`prog` 对 Instr 和 Program 直接生成门列表或保留子程序调用；其他类型使用对应 instance。它还支持局部 `let`、`for i in range(n)`、`for i in reversed(range(n))` 和 `for item in items`（遍历列表）。循环在生成电路时展开，range 保留索引范围证明；倒序循环倒序调用子程序，不会倒放子程序中的门或测量。`X`、`CX`、`CCX`、`measureX` 的普通 Lean 调用在循环内外均可使用，复合参数按 Lean 规则加括号。
 
 ## [Semantics.lean](Semantics.lean)
 

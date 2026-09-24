@@ -66,6 +66,62 @@ private instance : CircuitDSL.ToProgram GatePair := ⟨fun p => [p.first, p.seco
 
 example (p : GatePair) : prog { p(); } = [p.first, p.second] := rfl
 
+-- 普通 Lean 门写法可与子电路、let 和正反向循环混用，且保持相同的拼接方式。
+example (x : List Wire) (cin : Wire) : prog {
+    let n := x.length;
+    for i in range(n) {
+      CX x[i] cin;
+      majority(x[i], cin, 2, 3);
+    };
+    for i in reversed(range(n)) { CCX x[i] cin (i + 4); };
+    X cin;
+  } = prog {
+    let n := x.length;
+    for i in range(n) {
+      CX(x[i], cin);
+      majority(x[i], cin, 2, 3);
+    };
+    for i in reversed(range(n)) { CCX(x[i], cin, (i + 4)); };
+    X(cin);
+  } := rfl
+
+example (a b flag out : Wire) : prog {
+    for pair in [(a, b)] {
+      CX pair.1 out;
+      CX pair.2 pair.1;
+      CCX flag pair.1 out;
+      CX pair.2 pair.1;
+    };
+  } = [CX a out, CX b a, CCX flag a out, CX b a] := rfl
+
+-- 测量及修正列表也可使用无括号调用。
+example : prog {
+    for i in range(2) {
+      measureX i [] [Correction.CZ 3 4];
+    };
+  } = [measureX 0 [] [Correction.CZ 3 4], measureX 1 [] [Correction.CZ 3 4]] := by decide
+
+-- X 仍能作数学变量名；门名不是全局关键字。
+example (X Y : Nat) : prog {
+    for w in ([X, Y] : List Wire) { Instr.X w; };
+  } = [Instr.X X, Instr.X Y] := rfl
+
+example : prog {
+    let w := 2;
+    X w;
+    let w := 5;
+    for w in ([8] : List Wire) { CX w 9; };
+    X w;
+  } = [X 2, CX 8 9, X 5] := rfl
+
+example (p q r : Program) : prog { p; q(); r; } = (p ++ q) ++ r := rfl
+example (p : GatePair) : prog { p; } = [p.first, p.second] := rfl
+
+example (_x : List Wire) : True := by
+  fail_if_success
+    have _bad : Program := prog { for i in range(_x.length) { CX _x[_x.length] i; }; }
+  trivial
+
 -- Loop bounds support safe indexing, without fallback wires.
 example (x : List Wire) : Program := prog {
   for i in range(x.length) { X(x[i]); };

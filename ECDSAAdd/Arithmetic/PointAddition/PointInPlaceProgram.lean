@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayout
 import ECDSAAdd.Math.PointAddition.PointInPlace
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 open Secp256k1
 
 /-- 受控常数模加：掩码源、无控制模加、清源。 -/
@@ -29,12 +30,12 @@ def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Progr
   let slope := L.inPlaceSlope;
   let division := L.inPlaceDivide divideEnabled L.point.x L.point.y;
   equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- xIsZero = enabled AND (x=0)
-  Instr.CX(enabled, divideEnabled);
-  Instr.CX(xIsZero, divideEnabled);                  -- divideEnabled = enabled AND (x≠0)
+  CX enabled divideEnabled;
+  CX xIsZero divideEnabled;                  -- divideEnabled = enabled AND (x≠0)
   divideSub(division);                              -- x≠0 分支：slope -= y/x → 0
   maskedConstant(xIsZero, slope, lambdaStar.val);     -- x=0 分支：slope ^= 预先算好的例外斜率 → 0
-  Instr.CX(enabled, divideEnabled);                  -- 清除两个临时条件位
-  Instr.CX(xIsZero, divideEnabled);
+  CX enabled divideEnabled;                  -- 清除两个临时条件位
+  CX xIsZero divideEnabled;
   equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);
 }
 
@@ -78,10 +79,10 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
 
 /-- g=b XOR o XOR d XOR i；同一CX序列装载与清理。 -/
 def pointInPlaceGenericFlag (L : ControlledPointLayout) : Program := prog {
-  Instr.CX(L.control, L.core.generic);
-  Instr.CX(L.infinitySelect, L.core.generic);
-  Instr.CX(L.doubleSelect, L.core.generic);
-  Instr.CX(L.genericSelect, L.core.generic);
+  CX L.control L.core.generic;
+  CX L.infinitySelect L.core.generic;
+  CX L.doubleSelect L.core.generic;
+  CX L.genericSelect L.core.generic;
 }
 
 /-- h=b∧[cy≠−cy]，条件是编译期常量，不添加几何前提。 -/

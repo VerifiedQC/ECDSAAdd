@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.PointAddition.PointFlagLayout
 import ECDSAAdd.Arithmetic.RegisterXor.MaskedConstant
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 open Secp256k1
 
 /-- 经典点编码只在非零常量位上施 CX。 -/
@@ -14,15 +15,15 @@ def maskedPointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog 
 
 /-- 普通结果按低 256 位复制，有限位直接异或分支标志。 -/
 def pointGenericOutput (L : PointAddLayout) : Program := prog {
-  Instr.CX(L.generic, L.output.finite);
+  CX L.generic L.output.finite;
   copyRegister((some L.generic), (L.candidateX.take 256), L.output.x);
   copyRegister((some L.generic), (L.candidateY.take 256), L.output.y);
 }
 
 def negativePointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog {
-  Instr.X(c);
+  X c;
   maskedPointConstant(c, r, C);
-  Instr.X(c);
+  X c;
 }
 
 /-- 三个互斥的输出贡献；互逆点不写入任何位。 -/
@@ -35,7 +36,7 @@ def pointOutput (L : PointAddLayout) (C : Point) : Program := prog {
 
 /-- C=O 的构造期分支仅复制输入。 -/
 def pointCopy (a b : PointReg) : Program := prog {
-  Instr.CX(a.finite, b.finite);
+  CX a.finite b.finite;
   copyRegister(none, a.x, b.x);
   copyRegister(none, a.y, b.y);
 }

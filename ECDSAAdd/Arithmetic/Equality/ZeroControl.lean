@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 每个被检测的输入位配一根可复用的零工作位。 -/
 structure ZeroBit where
@@ -30,7 +31,7 @@ def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
   for i in range(n) {
     negAnd(chain[i], bs[i].input, bs[i].work); -- chain[i+1] = c AND 前 i+1 个输入均为零。
   };
-  Instr.CX(chain[n], target); -- target ^= c AND 全部输入为零。
+  CX chain[n] target; -- target ^= c AND 全部输入为零。
   for i in reversed(range(n)) {
     negAndErase(chain[i], bs[i].input, bs[i].work);
   };

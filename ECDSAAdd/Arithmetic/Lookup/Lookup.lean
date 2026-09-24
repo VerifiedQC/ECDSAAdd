@@ -9,13 +9,13 @@ private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table :
   match controls, scratch with
   | [], _ => maskedConstant a target (table 0)
   | b::bs, q::qs => prog {
-      CCX(a, b, q); -- q = a AND b，先处理当前地址位为 1 的子表。
+      CCX a b q; -- q = a AND b，先处理当前地址位为 1 的子表。
       lookupWalk(q, bs, qs, target, fun d => table (1+2*d));
-      CX(a, q); -- q = a AND NOT b，复用工作位处理当前地址位为 0 的子表。
+      CX a q; -- q = a AND NOT b，复用工作位处理当前地址位为 0 的子表。
       lookupWalk(q, bs, qs, target, fun d => table (2*d));
-      X(b); -- 清零负 AND，并恢复输入位 b 和相位。
-      measureX(q, [], [CZ a b]);
-      X(b);
+      X b; -- 清零负 AND，并恢复输入位 b 和相位。
+      measureX q [] [CZ a b];
+      X b;
     }
   | _::_, [] => []
 
@@ -155,9 +155,9 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
 /-- 无外部控制：a本身使能第一半表，翻转a使能第二半表，末尾还原。 -/
 def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program := prog {
   lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));
-  X(a);
+  X a;
   lookupWalk(a, controls, scratch, target, fun d => table (2*d));
-  X(a);
+  X a;
 }
 
 /-- 查表保持地址与目标外所有线路，对全部测量记录恢复相位。 -/

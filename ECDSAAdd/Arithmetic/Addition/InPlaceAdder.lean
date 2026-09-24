@@ -26,12 +26,12 @@ def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
       for i in range(n - 1) {
         majority(x[i], y[i], c[i], c[i + 1]);
       };
-      CX(x[n - 1], y[n - 1]);
-      CX(c[n - 1], y[n - 1]);
+      CX x[n - 1] y[n - 1];
+      CX c[n - 1] y[n - 1];
       for i in reversed(range(n - 1)) {
         eraseCarry(x[i], y[i], c[i], c[i + 1]);
-        CX(x[i], y[i]);
-        CX(c[i], y[i]);
+        CX x[i] y[i];
+        CX c[i] y[i];
       };
     }
   else []

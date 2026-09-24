@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.RoundBody
 import ECDSAAdd.Arithmetic.ModularInverse.Borrow
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 单轮布局：数据、共享工作区、双银行计数器、两位记录与常数个控制工作位。 -/
 structure KaliskiRoundLayout where
@@ -104,14 +105,14 @@ def recordRound (L : KaliskiRoundLayout) : Program := prog {
   let activeUOdd := L.oddWork;
   let bothOdd := L.bothWork;
   let carry := L.data.reg .carry;
-  Instr.CCX(L.active, uOdd, activeUOdd);         -- activeUOdd = active AND (u 为奇数)
-  Instr.CCX(activeUOdd, vOdd, bothOdd);          -- bothOdd = active AND (u、v 均为奇数)
-  Instr.CX(bothOdd, L.subtract);                -- 保存本轮是否需要相减
-  Instr.CX(activeUOdd, L.swap);
+  CCX L.active uOdd activeUOdd;         -- activeUOdd = active AND (u 为奇数)
+  CCX activeUOdd vOdd bothOdd;          -- bothOdd = active AND (u、v 均为奇数)
+  CX bothOdd L.subtract;                -- 保存本轮是否需要相减
+  CX activeUOdd L.swap;
   compareLt(some bothOdd, L.v, L.u, carry, L.cin, L.swap);
   -- swap = activeUOdd XOR (bothOdd AND v<u)，决定先交换哪组数据。
-  Instr.CCX(activeUOdd, vOdd, bothOdd);          -- 临时条件清零；swap/subtract 保留
-  Instr.CCX(L.active, uOdd, activeUOdd);
+  CCX activeUOdd vOdd bothOdd;          -- 临时条件清零；swap/subtract 保留
+  CCX L.active uOdd activeUOdd;
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/

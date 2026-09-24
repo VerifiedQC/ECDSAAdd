@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.InverseResources
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontBorrow
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- 除法保留分母/分子，只累加到 acc；inner 的历史保存到乘积清理后。
 §16.2 的直接门列；完整规格、逐线保持和资源见 DivideSpec/DivideSupport。 -/
@@ -65,8 +66,8 @@ def divideLoad (L : DivideLayout) : Program := prog {
   let leastBit := L.vBit;
   let u := L.inner.first.u;
   let s := L.inner.first.s;
-  Instr.X(leastBit);
-  Instr.CX(L.control, leastBit);                         -- control=0 时 denominatorCopy=1
+  X leastBit;
+  CX L.control leastBit;                         -- control=0 时 denominatorCopy=1
   copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时复制真实分母
   xorConstant(u, p);                                    -- Kaliski 初值 u=p
   xorConstant(s, 1);                                    -- Kaliski 初值 s=1，其余工作位为零
@@ -79,8 +80,8 @@ def divideUnload (L : DivideLayout) : Program := prog {
   xorConstant(L.inner.first.s, 1);                      -- s: 1 → 0
   xorConstant(L.inner.first.u, p);                      -- u: p → 0
   copyRegister(some L.control, L.denominator, denominatorCopy); -- 清真实分母分支
-  Instr.CX(L.control, leastBit);
-  Instr.X(leastBit);                                    -- 清安全分母 1 的分支
+  CX L.control leastBit;
+  X leastBit;                                    -- 清安全分母 1 的分支
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
