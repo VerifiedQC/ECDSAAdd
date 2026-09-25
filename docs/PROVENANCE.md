@@ -189,3 +189,5 @@ Deutsch 按已复审的 §30.8/§30.11 门列，复用本仓库 `eraseMask_eq_co
 没有复制外部代码或新增抽象、公理、测试、语义扩展、证明限额调整。
 仅新增独立 measuredControlledModAdd/Sub，旧入口及整机不变；资源为
 5n−1/5n−1/5n+5 与 7n−1/7n−1/5n+6，均指同一门列。
+
+本批在合入 `9bd65f9` 后完整运行 `scripts/verify.sh`，退出0：2,244项构建、468条公理实际输出；脚本入口、PROOF_STATUS 公理块与日志逐项一致。
