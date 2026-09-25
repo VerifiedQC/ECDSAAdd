@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.ModInPlace
 import ECDSAAdd.Arithmetic.ModInPlaceCopy
+import ECDSAAdd.Arithmetic.MeasuredMaskedAdder
 
 namespace ECDSAAdd.Arithmetic
 
@@ -273,6 +274,175 @@ theorem controlledModAdd_resources (c : Wire) (L : ModInPlaceLayout) (n p : Nat)
         ModAddCoreLayout.z,List.count_append,List.count_cons,List.count_nil] at hh ⊢
       omega
     rw [qubitCount,controlledModAdd_wires c L n p hw hn,List.toFinset_card_of_nodup hsub]
+    simp only [ModInPlaceLayout.maskedCore,ModAddCoreLayout.wires,ModAddCoreLayout.work,
+      ModAddCoreLayout.z,List.length_cons,List.length_nil,List.length_append,
+      List.length_take,hw.core.a,hw.core.low,hw.mask,hw.core.constant,hw.core.carry]
+    omega
+
+
+/-- 只将末次受控复制换成测量清掩码；中间核保持其与源的逐位关系。 -/
+def measuredControlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program :=
+  copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length) ++
+  modAddCore L.maskedCore p ++
+  eraseMask c (L.a.take L.low.length) (L.mask.take L.low.length)
+
+private theorem outer_mask_erase (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : p<2^n) (hA : A≤p) :
+    {{ c=B, L.a=A, L.z=Z, L.mask=(if B then A else 0), L.toModAddCoreLayout.work=0, L.flag=false }}
+      eraseMask c (L.a.take L.low.length) (L.mask.take L.low.length)
+    {{ c=B, L.a=A, L.z=Z, L.mask=0, L.toModAddCoreLayout.work=0, L.flag=false }} := by
+  have hs : (L.a.take L.low.length).length=n := by simp [hw.core.low,hw.core.a]
+  have hd : (L.mask.take L.low.length).length=n := by simp [hw.core.low,hw.mask]
+  have hst : (c::(L.a.take L.low.length ++ L.mask.take L.low.length)).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := List.nodup_iff_count.mp hnd q
+    have ha := (List.take_sublist L.low.length L.a).count_le q
+    have hm := (List.take_sublist L.low.length L.mask).count_le q
+    simp only [ModInPlaceLayout.wires,ModInPlaceLayout.work,List.count_cons,
+      List.count_append,List.count_nil] at h ⊢
+    omega
+  intro s m h
+  simp only [Holds.holds] at h ⊢
+  have low (r : List Wire) (N : Nat) (hr : n≤r.length)
+      (hv : regValue r s.basis=N) (hb : N<2^n) : regValue (r.take n) s.basis=N := by
+    have hh := regValue_append (r.take n) (r.drop n) s.basis
+    rw [List.take_append_drop,List.length_take,Nat.min_eq_left hr,hv] at hh
+    have hn : 0<2^n := by positivity
+    have hz : regValue (r.drop n) s.basis=0 := by
+      by_contra h
+      have : 1≤regValue (r.drop n) s.basis := by omega
+      nlinarith
+    simpa [hz] using hh.symm
+  have ha := low L.a A (by rw [hw.core.a]; omega) h.1.1.1.1.2 (by omega)
+  have hm := low L.mask (if B then A else 0) (by rw [hw.mask]; omega) h.1.1.2
+    (by split <;> omega)
+  have rel : regValue (L.mask.take L.low.length) s.basis =
+      if s.basis c then regValue (L.a.take L.low.length) s.basis else 0 := by
+    rw [hw.core.low,ha,hm,h.1.1.1.1.1]
+  rw [eraseMask_eq_copy c _ _ (hs.trans hd.symm) hst s m rel]
+  have hc := outer_mask_copy c L n p A Z (if B then A else 0) B hw hnd hp hA
+    (by split <;> omega) s m h
+  simpa only [Holds.holds,Nat.xor_self] using hc
+
+/-- 控制与源保持；测量清理恢复全部工作位和任意测量记录下的符号。 -/
+theorem measuredControlledModAdd_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ c=B, L.a=A, L.z=Z, L.work=0 }} measuredControlledModAdd c L p
+    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }} := by
+  let V := if B then A else 0
+  have hV : V≤p := by dsimp [V]; split <;> omega
+  have h1 := outer_mask_copy c L n p A Z 0 B hw hnd hpn hA (by positivity)
+  have h2 := outer_mask_core c L n p A Z V B hw hnd hp hpn hV hZ
+  have h3 := outer_mask_erase c L n p A ((Z+V)%p) B hw hnd hpn hA
+  simp only [Nat.zero_xor] at h1
+  have hall := (h1.seq h2).seq h3
+  intro s m h
+  simp only [Holds.holds] at h ⊢
+  have clean := (regValue_zero L.work s.basis).mp h.2
+  have hm : regValue L.mask s.basis=0 := (regValue_zero _ _).mpr
+    (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
+  have hk : regValue L.toModAddCoreLayout.work s.basis=0 := (regValue_zero _ _).mpr
+    (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
+  obtain ⟨hf,hv⟩ := hall s m ⟨⟨⟨h.1,hm⟩,hk⟩,clean L.flag (by simp [ModInPlaceLayout.work])⟩
+  simp only [Holds.holds, V] at hv
+  refine ⟨hf, ⟨hv.1.1.1.1,?_⟩,?_⟩
+  · cases B <;> simpa [measuredControlledModAdd, V,Nat.mod_eq_of_lt hZ] using hv.1.1.1.2
+  · apply (regValue_zero _ _).mpr
+    intro q hq
+    simp only [ModInPlaceLayout.work,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hq
+    rcases hq with (hq | hq) | hq
+    · exact (regValue_zero _ _).mp hv.1.2 q hq
+    · exact (regValue_zero _ _).mp hv.1.1.2 q hq
+    · subst q; exact hv.2
+
+theorem measuredControlledModAdd_wires (c : Wire) (L : ModInPlaceLayout) (n p : Nat)
+    (hw : L.Widths n) (hn : 0<n) :
+    wires (measuredControlledModAdd c L p) =
+      (c :: L.a.take n ++ L.maskedCore.wires).toFinset := by
+  have hs : (L.a.take L.low.length).length=n := by simp [hw.core.low,hw.core.a]
+  have hd : (L.mask.take L.low.length).length=n := by simp [hw.core.low,hw.mask]
+  have hc := copyRegister_wires (some c) (L.a.take L.low.length)
+    (L.mask.take L.low.length) (hs.trans hd.symm)
+  have hne : (L.a.take L.low.length).isEmpty=false := by
+    cases h : L.a.take L.low.length with
+    | nil => simp [h] at hs; omega
+    | cons a as => rfl
+  rw [hne] at hc
+  simp only [Bool.false_eq_true,if_false,Option.toList_some] at hc
+  have hk := modAddCore_wires L.maskedCore n p
+    ⟨hw.mask,hw.core.low,hw.core.constant,hw.core.carry⟩ hn
+  simp only [hw.core.low] at hc
+  have he := eraseMask_wires_subset c (L.a.take n) (L.mask.take n)
+  simp only [measuredControlledModAdd,wires_append,hw.core.low,hc,hk]
+  ext q
+  have heq := @he q
+  have hm : q∈L.mask.take n → q∈L.mask := fun hh => (List.take_sublist n L.mask).subset hh
+  simp only [Finset.mem_union,List.mem_toFinset,List.mem_cons,List.mem_append,
+    List.not_mem_nil,or_false,ModAddCoreLayout.wires,ModInPlaceLayout.maskedCore] at heq ⊢
+  tauto
+
+theorem measuredControlledModAdd_frame (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) (s : State) (m : List Bool)
+    (hb : s.basis c=B) (ha : regValue L.a s.basis=A) (hz : regValue L.z s.basis=Z)
+    (hc : regValue L.work s.basis=0) (q : Wire) (hq : q∉L.z) :
+    (run (measuredControlledModAdd c L p) m s).basis q=s.basis q := by
+  obtain ⟨_,h⟩ := measuredControlledModAdd_spec c L n p A Z B hw hnd hp hpn hA hZ
+    s m ⟨⟨⟨hb,ha⟩,hz⟩,hc⟩
+  simp only [Holds.holds] at h
+  by_cases he : q=c
+  · subst q; exact h.1.1.1.trans hb.symm
+  by_cases hqa : q∈L.a
+  · exact (regValue_eq_iff _ _ _).mp (h.1.1.2.trans ha.symm) q hqa
+  by_cases hqc : q∈L.work
+  · exact (regValue_eq_iff _ _ _).mp (h.2.trans hc.symm) q hqc
+  apply run_preserves_outside
+  have hn : 0<n := by
+    by_contra hh
+    have hn0 : n=0 := by omega
+    rw [hn0] at hpn
+    simp at hpn
+    omega
+  rw [measuredControlledModAdd_wires c L n p hw hn]
+  intro hh
+  have ha' : q∉L.a.take n := fun hh => hqa ((List.take_sublist n L.a).subset hh)
+  simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ModAddCoreLayout.wires,
+    ModInPlaceLayout.maskedCore,ModAddCoreLayout.z,ModAddCoreLayout.work,
+    List.not_mem_nil,or_false] at hh
+  simp only [ModInPlaceLayout.work,ModAddCoreLayout.work,List.mem_append,List.mem_cons,
+    List.not_mem_nil,or_false] at hqc
+  simp only [ModInPlaceLayout.z,ModAddCoreLayout.z,List.mem_append,List.mem_cons,
+    List.not_mem_nil,or_false] at hq
+  tauto
+
+theorem measuredControlledModAdd_resources (c : Wire) (L : ModInPlaceLayout) (n p : Nat)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hn : 0<n) :
+    toffoliCount (measuredControlledModAdd c L p)=5*n-1 ∧
+    measurementCount (measuredControlledModAdd c L p)=5*n-1 ∧
+    qubitCount (measuredControlledModAdd c L p)=5*n+5 := by
+  have hs : (L.a.take L.low.length).length=n := by simp [hw.core.low,hw.core.a]
+  have hd : (L.mask.take L.low.length).length=n := by simp [hw.core.low,hw.mask]
+  have hc := copyRegister_counts (some c) (L.a.take L.low.length)
+    (L.mask.take L.low.length) (hs.trans hd.symm)
+  have he := eraseMask_counts c (L.a.take L.low.length)
+    (L.mask.take L.low.length) (hs.trans hd.symm)
+  have hk := modAddCore_counts L.maskedCore n p
+    ⟨hw.mask,hw.core.low,hw.core.constant,hw.core.carry⟩ hn
+  simp only [Option.isSome_some,if_true,hs] at hc
+  refine ⟨?_,?_,?_⟩
+  · simp only [measuredControlledModAdd,toffoliCount_append,hc.1,hk.1,he.1]; omega
+  · simp only [measuredControlledModAdd,measurementCount_append,hc.2,hk.2,he.2,hd]; omega
+  · have hsub : (c::L.a.take n++L.maskedCore.wires).Nodup := by
+      apply List.nodup_iff_count.mpr; intro q
+      have hh := List.nodup_iff_count.mp hnd q
+      have ht := (List.take_sublist n L.a).count_le q
+      simp only [ModInPlaceLayout.wires,ModInPlaceLayout.work,ModInPlaceLayout.z,
+        ModInPlaceLayout.maskedCore,ModAddCoreLayout.wires,ModAddCoreLayout.work,
+        ModAddCoreLayout.z,List.count_append,List.count_cons,List.count_nil] at hh ⊢
+      omega
+    rw [qubitCount,measuredControlledModAdd_wires c L n p hw hn,List.toFinset_card_of_nodup hsub]
     simp only [ModInPlaceLayout.maskedCore,ModAddCoreLayout.wires,ModAddCoreLayout.work,
       ModAddCoreLayout.z,List.length_cons,List.length_nil,List.length_append,
       List.length_take,hw.core.a,hw.core.low,hw.mask,hw.core.constant,hw.core.carry]

@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-本文件区分当前源码的定理索引与历史交付记录。代码核对基线为 `85530a6`（PR75 合并）；正文中的批次验证数字是该次交付的历史证据，不能当成本次重新运行。当前公理披露保留 PR75 的实际输出：2,243 项构建、452 个选定入口。此次文档核查不改 Lean，也未重跑验证。
+本文件区分当前源码的定理索引与历史交付记录。当前代码为 `9bd65f9` 加本批独立测量模加减；正文中的旧批次验证数字仅为历史证据。当前公理披露来自本批重新运行 `scripts/verify.sh`：2,244 项构建、468 个选定入口，均通过白名单检查。
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -27,6 +27,8 @@
 | `squareSub`（当前中空间模块） | 275,129 / 275,129 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
 | 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,813,634 / 5,646,146 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
 | 保留的 `divideAdd`；`divideSub`（非 dialog 入口） | 3,882,022 / 2,298,918 / —；3,882,534 / 2,299,430 / — | [divide_counts](../ECDSAAdd/Arithmetic/DivideResources.lean#L17) |
+| `measuredControlledModAdd`，n>0 | 5n−1 / 5n−1 / 5n+5 | [measuredControlledModAdd_resources](../ECDSAAdd/Arithmetic/ModInPlaceWrappers.lean) |
+| `measuredControlledModSub`，n>0 | 7n−1 / 7n−1 / 5n+6 | [measuredControlledModSub_resources](../ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
 | `equalConstant`，n 位输入 | n / n / — | [equalConstant_counts](../ECDSAAdd/Arithmetic/EqualConstant.lean#L102) |
 
 本索引不把独立模块的资源相加当作整机结果。当前整机支持等式另见 [pointDialogFinite_wires](../ECDSAAdd/Arithmetic/PointDialogWires.lean#L26)。布局仍分配 9,817 位，实际触及 3,134 位，两数口径不同。
@@ -330,7 +332,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-**历史验证证据（PR75，代码基线 85530a6）**：`scripts/verify.sh` 通过：`lake --wfail build` 完成2243项构建，以下452个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+**本批实际验证证据**：在合入 `9bd65f9` 的实现版本运行 `scripts/verify.sh`，退出0；`lake --wfail build` 完成2,244项构建，以下468个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -407,6 +409,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.controlledModSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledModSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.controlledModSub_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModAdd_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModAdd_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModAdd_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModAdd_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModSub_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModSub_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModSub_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.measuredControlledModSub_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.rotateRight_spec' depends on axioms: [propext, Quot.sound]
 'ECDSAAdd.Arithmetic.rotateLeft_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.rotate_frame' depends on axioms: [propext, Quot.sound]
@@ -785,6 +795,14 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.pointDialogFinite_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointDialogFinite_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointDialogFinite_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatUnstep_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatStep_unstep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatUnloop_loop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatLoop_unloop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUncell_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayLoop_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUnloop_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## M3 第一部分：共享工作池与候选计算
@@ -1503,3 +1521,38 @@ PointDialogProgram以一次原地除法、一次原地乘法、K2专用平方及
 DialogPool将旧池前2613位映射为紧凑值走/载荷/目标高位；五字物理位交错排列仅是索引置换，与§29容量一致。pointDialogFinite_wires证明实际支持精确等于点/控制/七标志/该前缀；Nodup给3134。全部旧分配工作位通过pointDialogFinite_frame恢复零，未用旧银行不计入qubitCount。
 
 同程序精确资源7,207,866 Toffoli /4,305,594测量 /3,134线，与设计零偏差。较上阶段少1,605,768门、1,340,552测量、805线。完整scripts/verify.sh退出0：2243项构建、452条实际公理输出，上方披露与日志逐行一致；新增15入口，仅既有白名单。未实现§30.8可选测量清复制；独立XOR点加及求逆规格/资源保持。
+
+
+<a id="measured-controlled-mod"></a>
+## §30.8 独立受控模加减的测量清掩码
+
+`measuredControlledModAdd` 以受控低位复制、`modAddCore L.maskedCore p`、
+`eraseMask` 组成；`measuredControlledModSub` 在该包装前后各执行一次 `negRaw`。
+清理发生在第二次取负前，不读取恢复后的不同源值。公开规格为：
+
+```lean
+theorem measuredControlledModAdd_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ c=B, L.a=A, L.z=Z, L.work=0 }} measuredControlledModAdd c L p
+    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }}
+
+theorem measuredControlledModSub_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ c=B,L.a=A,L.z=Z,L.work=0 }} measuredControlledModSub c L p
+    {{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }}
+```
+
+两项对任意测量记录恢复精确相位、源、控制和全部工作区；各自的 `_frame`
+证明目标寄存器外逐线保持。`A≤p` 覆盖 A=0 时减法中间源为 p 的情况；
+不要求 p 素数或奇数。所需 mask 低位关系由完整寄存器值及范围证明，未增加为公开前提。
+
+`_wires` 分别等于 `(c :: L.a.take n ++ L.maskedCore.wires).toFinset` 与
+`(c :: L.a ++ L.maskedCore.wires).toFinset`，与原入口相同。n>0 时
+`_resources` 分别为 `(5n−1,5n−1,5n+5)`、`(7n−1,7n−1,5n+6)`；
+n=256 时为 1279/1279/1285、1791/1791/1286。工作区和完整支持均为 O(n)，未声称最优。
+源高位不参与加法支持，但减法取负使用源高位；flag 均不在支持中。
+旧受控入口、回放、乘除和整机调用未改，点加仍为 7,207,866/4,305,594/3,134。
+
+本批新增八条公开公理检查。合入 `9bd65f9` 后完整验证退出0：2,244项构建、468条实际公理输出；与上方披露及脚本入口逐项一致，不新增公理、测试或证明资源限制。

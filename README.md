@@ -6,7 +6,7 @@
 
 ## Current status
 
-本节的“当前已证”以代码基线 `85530a6`（PR75 合并）为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
+本节的“当前已证”以代码基线 `9bd65f9` 加本批独立测量模加减为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
 
 **当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **7,207,866 Toffoli / 4,305,594 次测量 / 3,134 根实际静态线路**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
 
@@ -56,6 +56,8 @@ M3 完整 `pointAddOut` 对有限经典常量使用 **9,295,106 个 Toffoli、6,
 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **7,207,866 个 Toffoli、4,305,594 次测量、3,134 根实际静态线路**。一次原地除法和一次原地乘法沿已证512轮Kaliski值走记录回放，专用平方前后受控复制并清理；斜率直接存于当前y，不另分配。输入分类与输出重算恢复七个标志，覆盖O、互逆点、倍点、C=−C、H=−(C+C)与控制false，重复H由旧角落处理。C=O在构造期为空程序，三项资源均为零。`pointDialogFinite_wires` 与全局互异证明给出实际支持，公共布局仍分配9,817位，未用工作位也恢复零。独立XOR点加接口继续保留。
 
 基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路（受控版本为 3n+3）。求逆第二阶段已复用常数加减与受控比较器；其它原语供后续改动组合。
+
+§30.8 的独立测量清掩码包装 `measuredControlledModAdd/Sub` 已证明完整 Triple、目标外逐线保持及同程序精确支持/资源；前提与原受控模加减一致，包括 `A≤p`。n>0 时，加法资源为 `(5n−1,5n−1,5n+5)`，减法为 `(7n−1,7n−1,5n+6)`，依次为 Toffoli、测量及实际支持线。n=256 时分别为 `1279/1279/1285` 和 `1791/1791/1286`。这两个独立入口尚未接入回放或整机，当前点加仍为 **7,207,866 / 4,305,594 / 3,134**。见[证明状态](docs/PROOF_STATUS.md#measured-controlled-mod)。
 
 ## 优化进度与下一步计划
 
