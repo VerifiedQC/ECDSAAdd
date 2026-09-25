@@ -80,6 +80,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.controlledModSub_spec
 #print axioms ECDSAAdd.Arithmetic.controlledModSub_frame
 #print axioms ECDSAAdd.Arithmetic.controlledModSub_resources
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModAdd_spec
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModAdd_frame
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModAdd_wires
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModAdd_resources
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModSub_spec
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModSub_frame
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModSub_wires
+#print axioms ECDSAAdd.Arithmetic.measuredControlledModSub_resources
 #print axioms ECDSAAdd.Arithmetic.rotateRight_spec
 #print axioms ECDSAAdd.Arithmetic.rotateLeft_spec
 #print axioms ECDSAAdd.Arithmetic.rotate_frame
