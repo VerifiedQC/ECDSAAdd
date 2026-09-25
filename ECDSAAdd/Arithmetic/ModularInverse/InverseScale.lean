@@ -33,27 +33,27 @@ def lookup (L : InverseScaleLayout) (q : Nat) : Program :=
 
 /-- 三次无控制CX复制交换a与累加器低257位；高4位保持。 -/
 def exchange (L : InverseScaleLayout) : Program := prog {
-  copyRegister(none, L.a, (L.stage.acc.take 257));
-  copyRegister(none, (L.stage.acc.take 257), L.a);
-  copyRegister(none, L.a, (L.stage.acc.take 257));
+  copyRegister(none, L.a, (L.stage.acc.take 257));  -- acc 的低 257 位 ^= a，暂存两者的逐位差。
+  copyRegister(none, (L.stage.acc.take 257), L.a);  -- a ^= acc 的低 257 位，使 a 得到原 acc 的低 257 位。
+  copyRegister(none, L.a, (L.stage.acc.take 257));  -- acc 的低 257 位再异或当前 a，得到原 a，完成交换。
 }
 
 def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
-  L.lookup(q);            -- factor = inverseScaleFactor(q,k)
+  L.lookup(q);            -- factor ^= R*2^(-k) mod q；从零装入缩放因子，R=2^256。
   montPrepare(stage, factor, L.a.take 256, q); -- stage.acc = factor*a/R mod q
   L.exchange();          -- a 得到缩放结果；原值 N 留在 stage.acc 供恢复
-  L.lookup(q);            -- factor 清零，k 不变
+  L.lookup(q);            -- factor 再异或同一 R*2^(-k) mod q，清零；k 不变。
 }
 
 def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
-  L.lookup(q);            -- factor = inverseScaleFactor(q,k)
+  L.lookup(q);            -- factor ^= R*2^(-k) mod q；重新装入相同因子，R=2^256。
   L.exchange();          -- 将未缩放值 N 放回 a，将缩放结果放回 stage.acc
   montRestore(stage, factor, L.a.take 256, q); -- 清 stage.acc 及历史
-  L.lookup(q);            -- factor 清零，k 不变
+  L.lookup(q);            -- factor 再异或同一 R*2^(-k) mod q，清零；k 不变。
 }
 
 /-- 使用逆元期间仅保留N、Montgomery商和借位，所有借用工作区为空。 -/

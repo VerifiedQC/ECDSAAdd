@@ -47,14 +47,14 @@ theorem cswap_twice (c a b : Wire) (hnd : [c,a,b].Nodup) (s : State) (m : List B
 /-- 右移网络实际是循环移位；规格中的偶数前提保证移出的最低位为零。 -/
 def shiftRight (c : Wire) (r : List Wire) : Program := prog {
   for pair in (r.zip r.tail) {
-    cswap(c, pair.1, pair.2);
+    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位，逐步右旋；原最低位为零时就是除以 2。
   };
 }
 
 /-- 左移按相反顺序执行同一组 CSWAP；只重排无测量交换门。 -/
 def shiftLeft (c : Wire) (r : List Wire) : Program := prog {
   for pair in ((r.zip r.tail).reverse) {
-    cswap(c, pair.1, pair.2);
+    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位，逆序完成左旋；原最高位为零时就是乘以 2。
   };
 }
 

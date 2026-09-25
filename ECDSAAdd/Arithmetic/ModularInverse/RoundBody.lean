@@ -14,8 +14,8 @@ private theorem data_updates (z : KState) (X : Nat) :
   refine ⟨?_,?_,?_⟩ <;> funext f <;> cases f <;> rfl
 
 def swapDataPairs (L : RoundDataLayout) (c : Wire) : Program := prog {
-  swapRegisters(c, L.u, L.v);
-  swapRegisters(c, L.r, L.s);
+  swapRegisters(c, L.u, L.v);  -- c=1 时 u↔v，否则两者保持。
+  swapRegisters(c, L.r, L.s);  -- c=1 时 r↔s，使系数与 u/v 的角色同步交换。
 }
 
 private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)

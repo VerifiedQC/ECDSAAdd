@@ -87,7 +87,7 @@ def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   CX U.bit wasOdd;                             -- wasOdd = Z mod 2
   maskedAddConst(wasOdd, U.constant, target, U.carry, U.cin, p); -- 奇数时 target += p
   rotateRight(target);                                -- 偶数右旋：target /= 2
-  compareLtConst(none, U.low, lowConstant, U.carry, U.cin, wasOdd, (p+1)/2);
+  compareLtConst(none, U.low, lowConstant, U.carry, U.cin, wasOdd, (p+1)/2);  -- wasOdd ^= [减半后的 low<(p+1)/2]，随后 X 将其清零。
   X wasOdd;                                     -- 原 Z 为奇数 iff 新值 ≥ (p+1)/2，清零标志。
 }
 

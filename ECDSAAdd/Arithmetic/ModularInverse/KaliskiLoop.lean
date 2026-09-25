@@ -65,7 +65,7 @@ def loopEndLayout (L : KaliskiRoundLayout) : Nat → KaliskiRoundLayout
 def kaliskiLoop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in range(rs.length) {
     let round := (loopEndLayout L j).withRecord rs[j];
-    kaliskiRound(round, i+j);
+    kaliskiRound(round, i+j);  -- 执行第 i+j 轮：按条件更新 u/v/r/s、有效轮计数 k 和 done，分支存入 rs[j]。
   };
 }
 
@@ -80,7 +80,7 @@ theorem kaliskiLoop_cons (L : KaliskiRoundLayout) (i : Nat) (r : RoundRecord) (r
 def kaliskiUnloop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in reversed(range(rs.length)) {
     let round := (loopEndLayout L j).withRecord rs[j];
-    kaliskiUnround(round, i+j);
+    kaliskiUnround(round, i+j);  -- 恢复第 i+j 轮之前的 u/v/r/s/k/done，并清零 rs[j] 的两位分支记录。
   };
 }
 

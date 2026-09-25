@@ -43,16 +43,16 @@ private theorem compareChain_cons (control : Option Wire) (a b c cin target : Wi
 /-- target ^= [x < y]（有 control 时为 control ∧ [x < y]）：y 按位取反、cin 置 1，
 进位链算的是 x + ¬y + 1，最高进位 = [x ≥ y]；读出后擦除并还原 y、cin。 -/
 def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program := prog {
-  notRegister(cin :: y);
-  compareChain(control, x, y, carry, cin, target);
-  notRegister(cin :: y);
+  notRegister(cin :: y);  -- 翻转 y 的每一位，并将零 cin 置 1；准备 x+¬y+1。
+  compareChain(control, x, y, carry, cin, target);  -- target ^= [x<原 y]；有控制位时再与 control 相与，carry 清零。
+  notRegister(cin :: y);  -- 再次翻转 y 和 cin，恢复原输入与零进位位。
 }
 
 /-- 与经典常量比较：常量装进零寄存器 T，比较后再卸载。 -/
 def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program := prog {
-  xorConstant(T, K);
-  compareLt(control, x, T, carry, cin, target);
-  xorConstant(T, K);
+  xorConstant(T, K);  -- T ^= K；从零装入比较常量 K。
+  compareLt(control, x, T, carry, cin, target);  -- target ^= [x<K]；有控制位时再与 control 相与，输入和进位工作区恢复。
+  xorConstant(T, K);  -- T 再异或 K，清零常量寄存器。
 }
 
 /-- 控制位的值：无控制视为真。 -/

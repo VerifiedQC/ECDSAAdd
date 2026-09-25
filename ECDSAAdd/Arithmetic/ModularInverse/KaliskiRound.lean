@@ -109,7 +109,7 @@ def recordRound (L : KaliskiRoundLayout) : Program := prog {
   CCX activeUOdd vOdd bothOdd;          -- bothOdd = active AND (u、v 均为奇数)
   CX bothOdd L.subtract;                -- 保存本轮是否需要相减
   CX activeUOdd L.swap;
-  compareLt(some bothOdd, L.v, L.u, carry, L.cin, L.swap);
+  compareLt(some bothOdd, L.v, L.u, carry, L.cin, L.swap);  -- swap ^= bothOdd AND [v<u]；输入与进位工作区恢复。
   -- swap = activeUOdd XOR (bothOdd AND v<u)，决定先交换哪组数据。
   CCX activeUOdd vOdd bothOdd;          -- 临时条件清零；swap/subtract 保留
   CCX L.active uOdd activeUOdd;

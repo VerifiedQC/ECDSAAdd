@@ -47,7 +47,7 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
   maskedAddConst(borrow, lowConstant, L.low, lowCarry, L.cin, p); -- 有借位则低 n 位加回 p
 
   -- 原和发生约减 iff 结果 < source；与原借位相反，故最后 X 后 borrow=0。
-  compareLt(none, L.low, lowSource, L.carry, L.cin, borrow);
+  compareLt(none, L.low, lowSource, L.carry, L.cin, borrow);  -- borrow ^= [low<lowSource]；即异或“原和曾约减”的标志。
   X borrow;
 }
 

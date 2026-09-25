@@ -16,9 +16,9 @@ def pointSelectors (L : ControlledPointLayout) : Program := prog {
 }
 
 def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
-  pointGenericOutput(L.selected);
-  maskedPointConstant(L.doubleSelect, L.core.output, (C+C));
-  maskedPointConstant(L.infinitySelect, L.core.output, C);
+  pointGenericOutput(L.selected);  -- genericSelect=1 时，将普通候选点的编码 XOR 到 core.output。
+  maskedPointConstant(L.doubleSelect, L.core.output, (C+C));  -- doubleSelect=1 时，将 2C 的编码 XOR 到 core.output。
+  maskedPointConstant(L.infinitySelect, L.core.output, C);  -- infinitySelect=1 时，将 C 的编码 XOR 到 core.output。
 }
 
 def controlledPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
@@ -31,19 +31,19 @@ def controlledPointOutput (L : ControlledPointLayout) (C : Point) : Program := p
 def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => copyRegister (some L.control) (PointAddLayout.pointWires L.core.input)
-      (PointAddLayout.pointWires L.core.output)
+      (PointAddLayout.pointWires L.core.output) -- C=O：control=1 时 output 的编码 ^= 输入点编码。
   | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => prog {
-      pointFlagsCompute(L.core, cx, cy);
-      pointCandidateCompute(L.core, cx, cy);
-      controlledPointOutput(L, C);
-      pointCandidateClear(L.core, cx, cy);
-      pointFlagsClear(L.core, cx, cy);
+      pointFlagsCompute(L.core, cx, cy);  -- 根据输入点计算判等及普通/倍点标志，不受外部 control 限制。
+      pointCandidateCompute(L.core, cx, cy);  -- 计算安全斜率和候选坐标；control=0 时也执行并保留待清理量。
+      controlledPointOutput(L, C);  -- control=1 时 output ^= encode(R+C)，否则 output 不变。
+      pointCandidateClear(L.core, cx, cy);  -- 清除候选坐标、斜率及中间量，保留 output。
+      pointFlagsClear(L.core, cx, cy);  -- 用未变的输入重算并清零全部分支标志。
     }
 
 /-- 除法中心原地点加；有限常量执行固定门列，C=O时构造为空。 -/
 def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => []
-  | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => pointInPlaceFinite L C cx cy
+  | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => pointInPlaceFinite L C cx cy -- control=1 时 point ← point+C，否则保持；工作区清零。
 
 end ECDSAAdd.Arithmetic

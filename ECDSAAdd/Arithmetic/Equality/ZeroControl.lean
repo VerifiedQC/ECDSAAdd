@@ -33,7 +33,7 @@ def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
   };
   CX chain[n] target; -- target ^= c AND 全部输入为零。
   for i in reversed(range(n)) {
-    negAndErase(chain[i], bs[i].input, bs[i].work);
+    negAndErase(chain[i], bs[i].input, bs[i].work);  -- 清零 work=chain[i] AND NOT input，并修正测量相位。
   };
 }
 

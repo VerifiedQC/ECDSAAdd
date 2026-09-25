@@ -24,12 +24,12 @@ def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
       let n := x.length;
       let c := [cin] ++ carry;
       for i in range(n - 1) {
-        majority(x[i], y[i], c[i], c[i + 1]);
+        majority(x[i], y[i], c[i], c[i + 1]);  -- c[i+1] 写入 x[i]+y[i]+c[i] 的进位；输入位保持。
       };
       CX x[n - 1] y[n - 1];
       CX c[n - 1] y[n - 1];
       for i in reversed(range(n - 1)) {
-        eraseCarry(x[i], y[i], c[i], c[i + 1]);
+        eraseCarry(x[i], y[i], c[i], c[i + 1]);  -- 趁 y[i] 仍是原输入，清零进位 c[i+1] 并恢复相位。
         CX x[i] y[i];
         CX c[i] y[i];
       };

@@ -83,22 +83,22 @@ end InverseLayout
 
 /-- 装入外部输入及常数；卸载使用同样的 XOR 门，按相反次序执行。 -/
 def inverseLoad (L : InverseLayout) : Program := prog {
-  copyRegister(none, L.x, L.vLow);
-  xorConstant(L.inner.first.u, p);
-  xorConstant(L.inner.first.s, 1);
+  copyRegister(none, L.x, L.vLow);  -- vLow ^= x；从零复制待求逆输入，x 保持。
+  xorConstant(L.inner.first.u, p);  -- u ^= p；从零装入 Kaliski 初值 u=p。
+  xorConstant(L.inner.first.s, 1);  -- s ^= 1；从零装入 Kaliski 初值 s=1。
 }
 
 def inverseUnload (L : InverseLayout) : Program := prog {
-  xorConstant(L.inner.first.s, 1);
-  xorConstant(L.inner.first.u, p);
-  copyRegister(none, L.x, L.vLow);
+  xorConstant(L.inner.first.s, 1);  -- s 再异或 1，从恢复后的初值 1 清零。
+  xorConstant(L.inner.first.u, p);  -- u 再异或 p，从恢复后的初值 p 清零。
+  copyRegister(none, L.x, L.vLow);  -- vLow 再异或未变的 x，清零分母副本。
 }
 
 /-- secp256k1 非零输入的具体求逆电路。 -/
 def fieldInverse (L : InverseLayout) : Program := prog {
-  inverseLoad(L);
-  inverseLoop(L.inner, p);
-  inverseUnload(L);
+  inverseLoad(L);  -- 准备 Kaliski 初值 v=x、u=p、s=1。
+  inverseLoop(L.inner, p);  -- out ^= x⁻¹ mod p；计算后清逆元及历史，恢复 u/v/s 的初值。
+  inverseUnload(L);  -- 从 u=p、v=x、s=1 清回零，保留输入 x 和输出 out。
 }
 
 end ECDSAAdd.Arithmetic

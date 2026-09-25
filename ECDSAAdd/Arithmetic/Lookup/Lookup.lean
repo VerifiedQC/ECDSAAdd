@@ -10,9 +10,9 @@ private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table :
   | [], _ => maskedConstant a target (table 0)
   | b::bs, q::qs => prog {
       CCX a b q; -- q = a AND b，先处理当前地址位为 1 的子表。
-      lookupWalk(q, bs, qs, target, fun d => table (1+2*d));
+      lookupWalk(q, bs, qs, target, fun d => table (1+2*d));  -- q=1 时 target ^= table(1+2*bs的值)，处理当前地址位为 1 的子表。
       CX a q; -- q = a AND NOT b，复用工作位处理当前地址位为 0 的子表。
-      lookupWalk(q, bs, qs, target, fun d => table (2*d));
+      lookupWalk(q, bs, qs, target, fun d => table (2*d));  -- q=1 时 target ^= table(2*bs的值)，处理当前地址位为 0 的子表。
       X b; -- 清零负 AND，并恢复输入位 b 和相位。
       measureX q [] [CZ a b];
       X b;
@@ -154,9 +154,9 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
 
 /-- 无外部控制：a本身使能第一半表，翻转a使能第二半表，末尾还原。 -/
 def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program := prog {
-  lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));
+  lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));  -- 原 a=1 时 target ^= table(1+2*controls的值)，scratch 恢复零。
   X a;
-  lookupWalk(a, controls, scratch, target, fun d => table (2*d));
+  lookupWalk(a, controls, scratch, target, fun d => table (2*d));  -- a 已翻转：原 a=0 时 target ^= table(2*controls的值)，scratch 恢复零。
   X a;
 }
 

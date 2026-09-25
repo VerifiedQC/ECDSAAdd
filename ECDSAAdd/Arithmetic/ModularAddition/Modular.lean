@@ -21,11 +21,11 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog {
   subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff = total-q
 
   -- 借位为 0：total≥q，选 diff；借位为 1：total<q，选 total。
-  chooseXor(borrow, diff.take L.width, total.take L.width, L.lowReg .out);
+  chooseXor(borrow, diff.take L.width, total.take L.width, L.lowReg .out);  -- out 的低 n 位 ^= (borrow=1 ? total : diff) 的低 n 位。
 
-  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff 清零
-  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total 清零
-  xorConstant(modulus, q);                         -- modulus 清零
+  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff 再异或 total-q，清零（按 n+1 位补码）。
+  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total 再异或 x+y，清零。
+  xorConstant(modulus, q);                         -- modulus 再异或 q，清零。
 }
 
 /-- out ^= (x-y) mod q；保留 x/y，恢复全部工作位。 -/
@@ -42,11 +42,11 @@ def modSub (L : ModLayout) (q : Nat) : Program := prog {
   addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected = diff+q
 
   -- 借位为 0：x≥y，选 diff；借位为 1：x<y，选 corrected。
-  chooseXor(borrow, diff.take L.width, corrected.take L.width, L.lowReg .out);
+  chooseXor(borrow, diff.take L.width, corrected.take L.width, L.lowReg .out);  -- out 的低 n 位 ^= (borrow=1 ? corrected : diff) 的低 n 位。
 
-  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected 清零
-  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff 清零
-  xorConstant(modulus, q);                              -- modulus 清零
+  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected 再异或 diff+q，清零（按 n+1 位截断）。
+  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff 再异或 x-y，清零（按 n+1 位补码）。
+  xorConstant(modulus, q);                              -- modulus 再异或 q，清零。
 }
 
 private theorem registerAdderBits_map (bs : List ModBit) (a b target c : ModField) :

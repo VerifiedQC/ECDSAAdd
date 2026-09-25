@@ -60,13 +60,13 @@ theorem PointAddLayout.flag_interfaces (L : PointAddLayout) (hn : L.wires.Nodup)
     omega
 
 def pointFlagsCompute (L : PointAddLayout) (cx cy : Fp) : Program :=
-  equalConstant L.input.finite L.equalX L.zeroX cx.val++
-  equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++
-  pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double
+  equalConstant L.input.finite L.equalX L.zeroX cx.val++ -- equalX ^= finite AND [x=cx]。
+  equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++ -- equalNegY ^= finite AND [y=-cy]。
+  pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double -- generic ^= finite AND NOT equalX；double ^= equalX AND NOT equalNegY。
 
 def pointFlagsClear (L : PointAddLayout) (cx cy : Fp) : Program :=
-  pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double++
-  equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++
-  equalConstant L.input.finite L.equalX L.zeroX cx.val
+  pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double++ -- 重算并异或同样的分支条件，清 generic/double。
+  equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++ -- equalNegY 再异或 finite AND [y=-cy]，清零。
+  equalConstant L.input.finite L.equalX L.zeroX cx.val -- equalX 再异或 finite AND [x=cx]，清零。
 
 end ECDSAAdd.Arithmetic

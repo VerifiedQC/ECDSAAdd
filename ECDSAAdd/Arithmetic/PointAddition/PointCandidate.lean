@@ -54,8 +54,7 @@ def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog {
   let pool := L.poolWire;
   pointSubConstant(L, x, L.dx, cx.val);                         -- dx = x-cx
   pointSubConstant(L, y, L.dy, cy.val);                         -- dy = y-cy
-  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);
-  -- 普通分支 divisor=dx；其他分支 divisor=1，保证每条分支上都能求逆。
+  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);  -- divisor ^= (generic=1 ? dx : 1)，从零得到非零的安全分母。
   fieldInverseXor(pool, L.divisor, L.inverse);                  -- inverse = 1/divisor
   fieldMulXor(pool, L.dy, L.inverse, L.slope);                  -- slope = dy/divisor
   pointSquare(L);                                             -- square = slope²
@@ -71,17 +70,17 @@ def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog {
   let x := L.extendedX;
   let y := L.extendedY;
   let pool := L.poolWire;
-  fieldSubXor(pool, L.product, y, L.candidateY);            -- candidateY 清零
-  fieldMulXor(pool, L.delta, L.slope.take 256, L.product);  -- product 清零
-  fieldSubXor(pool, x, L.candidateX, L.delta);              -- delta 清零
-  pointSubConstant(L, L.offset, L.candidateX, cx.val);     -- candidateX 清零
-  fieldSubXor(pool, L.square, x, L.offset);                -- offset 清零
-  pointSquare(L);                                        -- square 清零
-  fieldMulXor(pool, L.dy, L.inverse, L.slope);             -- slope 清零
-  fieldInverseXor(pool, L.divisor, L.inverse);             -- inverse 清零
-  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail); -- divisor 清零
-  pointSubConstant(L, y, L.dy, cy.val);                    -- dy 清零
-  pointSubConstant(L, x, L.dx, cx.val);                    -- dx 清零
+  fieldSubXor(pool, L.product, y, L.candidateY);            -- candidateY ^= (product-y) mod p，清零。
+  fieldMulXor(pool, L.delta, L.slope.take 256, L.product);  -- product ^= delta*slope mod p，清零。
+  fieldSubXor(pool, x, L.candidateX, L.delta);              -- delta ^= (x-candidateX) mod p，清零。
+  pointSubConstant(L, L.offset, L.candidateX, cx.val);     -- candidateX ^= (offset-cx) mod p，清零。
+  fieldSubXor(pool, L.square, x, L.offset);                -- offset ^= (square-x) mod p，清零。
+  pointSquare(L);                                        -- square ^= slope² mod p，清零。
+  fieldMulXor(pool, L.dy, L.inverse, L.slope);             -- slope ^= dy*inverse mod p，清零。
+  fieldInverseXor(pool, L.divisor, L.inverse);             -- inverse ^= divisor⁻¹ mod p，清零。
+  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);  -- divisor 再异或 (generic=1 ? dx : 1)，清零安全分母。
+  pointSubConstant(L, y, L.dy, cy.val);                    -- dy ^= (y-cy) mod p，清零。
+  pointSubConstant(L, x, L.dx, cx.val);                    -- dx ^= (x-cx) mod p，清零。
 }
 
 end ECDSAAdd.Arithmetic

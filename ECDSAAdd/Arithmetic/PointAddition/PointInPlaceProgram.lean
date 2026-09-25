@@ -7,10 +7,10 @@ open Secp256k1
 
 /-- 受控常数模加：掩码源、无控制模加、清源。 -/
 def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program := prog {
-  let M := L.inPlaceConstant r;
-  maskedConstant(L.core.generic, M.a, k.val);
-  modAddInPlace(M, p);
-  maskedConstant(L.core.generic, M.a, k.val);
+  let M := L.inPlaceConstant r;  -- M.low 接目标 r，M.a 是初始为零的临时常数寄存器。
+  maskedConstant(L.core.generic, M.a, k.val);  -- M.a ^= (generic=1 ? k.val : 0)，从零装入受控常数。
+  modAddInPlace(M, p);  -- r ← (r + M.a) mod p：generic=1 时加 k，否则 r 不变。
+  maskedConstant(L.core.generic, M.a, k.val);  -- M.a 再异或同一受控常数，清零；r 保留计算结果。
 }
 
 /-- 规范取负，两个高位在调用边界均零。 -/
@@ -29,14 +29,14 @@ def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Progr
   let divideEnabled := L.core.equalNegY;
   let slope := L.inPlaceSlope;
   let division := L.inPlaceDivide divideEnabled L.point.x L.point.y;
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- xIsZero = enabled AND (x=0)
+  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);  -- xIsZero = enabled AND (x=0)。
   CX enabled divideEnabled;
   CX xIsZero divideEnabled;                  -- divideEnabled = enabled AND (x≠0)
   divideSub(division);                              -- x≠0 分支：slope -= y/x → 0
   maskedConstant(xIsZero, slope, lambdaStar.val);     -- x=0 分支：slope ^= 预先算好的例外斜率 → 0
   CX enabled divideEnabled;                  -- 清除两个临时条件位
   CX xIsZero divideEnabled;
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);
+  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);  -- xIsZero ^= enabled AND (x=0)，重算原条件以清零 xIsZero。
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -66,9 +66,9 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
   pointInPlaceConstantAdd(L, y, -cy);           -- y ← y-cy
   divideAdd(division);                         -- slope = y/x
   montMulSub(product, p);                      -- y -= slope*x，故 y=0
-  copyRegister(none, slope, slopeCopy);        -- 准备独立乘数
+  copyRegister(none, slope, slopeCopy);  -- slopeCopy ^= slope；从零得到独立乘数副本。
   montMulSub(square, p);                       -- x -= slope²
-  copyRegister(none, slope, slopeCopy);        -- slopeCopy 清零
+  copyRegister(none, slope, slopeCopy);  -- slopeCopy 再异或未变的 slope，清零乘数副本。
   pointInPlaceConstantAdd(L, x, 3*cx);          -- x = cx-结果横坐标
   montMulAdd(product, p);                      -- y = slope*x
   pointInPlaceClearSlope(L, lambdaStar);       -- 从当前 x/y 重算并清除 slope
@@ -91,10 +91,10 @@ def pointInPlaceDoubleEnable (L : ControlledPointLayout) (cy : Fp) : Program :=
 
 /-- 互斥角落的四次XOR：O→C、C→2C、−C→O。 -/
 def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program := prog {
-  maskedPointConstant(L.infinitySelect, L.point, C);
-  maskedPointConstant(L.doubleSelect, L.point, C);
-  maskedPointConstant(L.doubleSelect, L.point, (C+C));
-  maskedPointConstant(L.genericSelect, L.point, (-C));
+  maskedPointConstant(L.infinitySelect, L.point, C);  -- 输入为 O 的分支：point 的编码 XOR C，得到 C。
+  maskedPointConstant(L.doubleSelect, L.point, C);  -- 输入为 C 的倍点分支：point 的编码 XOR C，先清为 O。
+  maskedPointConstant(L.doubleSelect, L.point, (C+C));  -- 倍点分支：再 XOR 2C 的编码，point 得到 2C。
+  maskedPointConstant(L.genericSelect, L.point, (-C));  -- 输入为 -C 的分支：XOR -C 的编码，将 point 清为 O。
 }
 
 /-- 输入分类、普通分支、三个互斥角落写回，再从输出清除分类位。 -/
@@ -106,17 +106,17 @@ def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Pr
   let isInverse := L.genericSelect;    -- 原地版本中该旧字段保存 [输入点=-C]，不是普通分支。
   let doubleEnabled := L.core.double;
   pointInPlaceDoubleEnable(L, cy);     -- doubleEnabled = enabled AND (C≠-C)
-  equalConstant(enabled, isInfinity, pointBits, pointCode 0);
-  equalConstant(doubleEnabled, isDouble, pointBits, pointCode C);
-  equalConstant(enabled, isInverse, pointBits, pointCode (-C));
+  equalConstant(enabled, isInfinity, pointBits, pointCode 0);  -- isInfinity = enabled AND (point=O)。
+  equalConstant(doubleEnabled, isDouble, pointBits, pointCode C);  -- isDouble = doubleEnabled AND (point=C)。
+  equalConstant(enabled, isInverse, pointBits, pointCode (-C));  -- isInverse = enabled AND (point=-C)。
   pointInPlaceGenericFlag(L);          -- 普通分支 = enabled XOR 三个互斥角落标志
   pointInPlaceGeneric(L, cx, cy, exceptionalSlope C); -- 普通分支更新坐标并清斜率
   pointInPlaceCorners(L, C);           -- 角落分支：O→C、C→2C、-C→O
   pointInPlaceGenericFlag(L);          -- 清普通分支标志
   -- 输出已改变，改用输出侧谓词重算旧标志，而不能再次检测输入侧的 0/C/-C。
-  equalConstant(enabled, isInfinity, pointBits, pointCode C);
-  equalConstant(doubleEnabled, isDouble, pointBits, pointCode (C+C));
-  equalConstant(enabled, isInverse, pointBits, pointCode 0);
+  equalConstant(enabled, isInfinity, pointBits, pointCode C);  -- enabled=1 时，输出为 C iff 原输入为 O；异或该条件，清 isInfinity。
+  equalConstant(doubleEnabled, isDouble, pointBits, pointCode (C+C));  -- 倍点使能下，输出为 2C iff 原输入为 C；清 isDouble。
+  equalConstant(enabled, isInverse, pointBits, pointCode 0);  -- enabled=1 时，输出为 O iff 原输入为 -C；异或该条件，清 isInverse。
   pointInPlaceDoubleEnable(L, cy);     -- 清 doubleEnabled；全部工作位归零
 }
 

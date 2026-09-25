@@ -31,14 +31,14 @@ private theorem swapBits_twice (a b : Wire) (hab : a≠b) (s : State) (m : List 
 /-- 小端寄存器右旋：原最低位经相邻交换移动到最高位。 -/
 def rotateRight (r : List Wire) : Program := prog {
   for pair in (r.zip r.tail) {
-    swapBits(pair.1, pair.2);
+    swapBits(pair.1, pair.2);  -- 交换这对相邻位；按低到高的顺序使原最低位最终移到最高位。
   };
 }
 
 /-- 左旋按逆序执行无测量的相邻交换；固定物理寄存器不换视图。 -/
 def rotateLeft (r : List Wire) : Program := prog {
   for pair in ((r.zip r.tail).reverse) {
-    swapBits(pair.1, pair.2);
+    swapBits(pair.1, pair.2);  -- 交换这对相邻位；按高到低的顺序使原最高位最终移到最低位。
   };
 }
 

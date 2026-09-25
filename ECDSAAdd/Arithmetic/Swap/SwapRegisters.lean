@@ -4,9 +4,9 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 向量形式 Fredkin 分解；每对位使用两次 CX 和一次 CCX。 -/
 def swapRegisters (c : Wire) (a b : List Wire) : Program := prog {
-  copyRegister(none, b, a);
-  copyRegister(some c, a, b);
-  copyRegister(none, b, a);
+  copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
+  copyRegister(some c, a, b);  -- c=1 时 b ^= a，使 b 得到原 a；c=0 时 b 保持。
+  copyRegister(none, b, a);  -- a ^= 当前 b；c=1 时完成 a↔b，c=0 时恢复原 a。
 }
 
 private theorem copy_back (c : Wire) (a b : List Wire) (hlen : a.length=b.length)
@@ -64,9 +64,9 @@ theorem swapRegisters_resources (c : Wire) (a b : List Wire) (hlen : a.length=b.
 
 /-- 无控制交换不需要 Toffoli，用于把新值移回固定的寄存器位置。 -/
 def exchangeRegisters (a b : List Wire) : Program := prog {
-  copyRegister(none, b, a);
-  copyRegister(none, a, b);
-  copyRegister(none, b, a);
+  copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
+  copyRegister(none, a, b);  -- b ^= 当前 a，得到原 a。
+  copyRegister(none, b, a);  -- a ^= 当前 b，得到原 b，完成 a↔b。
 }
 
 theorem exchangeRegisters_spec (a b : List Wire) (hlen : a.length=b.length)

@@ -51,14 +51,14 @@ def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
 /-- 查表值加进累加器，再用同一前向查表清空 table。 -/
 def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
   montLookup(L, addr, K);                           -- table = 地址值*常量 K
-  addInPlace(L.table, L.acc, L.carry, L.cin); -- acc += table
-  montLookup(L, addr, K);                           -- table 清零；地址不变
+  addInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc+table) mod 2^261，进位工作区恢复零。
+  montLookup(L, addr, K);                           -- table 再异或 地址值*K，清零；地址不变。
 }
 
 def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
   montLookup(L, addr, K);                           -- table = 地址值*常量 K
-  subInPlace(L.table, L.acc, L.carry, L.cin); -- acc -= table
-  montLookup(L, addr, K);                           -- table 清零；地址不变
+  subInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc-table) mod 2^261，进位工作区恢复零。
+  montLookup(L, addr, K);                           -- table 再异或 地址值*K，清零；地址不变。
 }
 
 /-- 保存约减系数，加入 m*p 后物理右旋四位。 -/
@@ -84,8 +84,7 @@ def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in (List.range 4) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
-    measuredMaskedAddInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);
-    -- bit=1 时 acc += x*2^j；mask/carry 在每次调用后清零。
+    measuredMaskedAddInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);  -- bit=1 时 acc += x*2^j；mask/carry 在调用后清零。
   };
 }
 
@@ -94,8 +93,7 @@ def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in ((List.range 4).reverse) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
-    measuredMaskedSubInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);
-    -- bit=1 时 acc -= x*2^j；mask/carry 在每次调用后清零。
+    measuredMaskedSubInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);  -- bit=1 时 acc -= x*2^j；mask/carry 在调用后清零。
   };
 }
 
@@ -112,7 +110,7 @@ def montRestoreWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Prog
 def constMontWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
   let digit := (y.drop (4*i)).take 4;
   montLookupAdd(L, digit, K);        -- acc += digit*K
-  montReduce(L, p, i);              -- 约减一轮并保存四位历史
+  montReduce(L, p, i);              -- m=acc mod 16；acc ← (acc+m*p)/16，m 存入第 i 轮历史。
 }
 
 def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
@@ -122,15 +120,15 @@ def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) :
 }
 
 def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
-  xorConstant(L.table, K);
-  addInPlace(L.table, L.acc, L.carry, L.cin);
-  xorConstant(L.table, K);
+  xorConstant(L.table, K);  -- table ^= K；从零装入常量 K。
+  addInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc+K) mod 2^261，进位工作区恢复零。
+  xorConstant(L.table, K);  -- table 再异或 K，清零常量寄存器。
 }
 
 def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
-  xorConstant(L.table, K);
-  subInPlace(L.table, L.acc, L.carry, L.cin);
-  xorConstant(L.table, K);
+  xorConstant(L.table, K);  -- table ^= K；从零装入常量 K。
+  subInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc-K) mod 2^261，进位工作区恢复零。
+  xorConstant(L.table, K);  -- table 再异或 K，清零常量寄存器。
 }
 
 /-- 减 p 后保存借位，条件加回 p；保留 flag 到清理阶段。 -/
@@ -154,7 +152,7 @@ def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
 
 def montPrepareRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) : Program := prog {
   for i in range(k) {
-    montWindow(L, x, y, p, i);
+    montWindow(L, x, y, p, i);  -- d 为 y 的第 i 个四位窗口：加 d*x 后约减除以 16，保存本轮系数 m。
   };
 }
 
@@ -169,7 +167,7 @@ theorem montPrepareRounds_succ (L : MontStageLayout) (x y : List Wire) (p : Nat)
 
 def montRestoreRounds (L : MontStageLayout) (x y : List Wire) (p : Nat) (k : Nat) : Program := prog {
   for i in reversed(range(k)) {
-    montRestoreWindow(L, x, y, p, i);
+    montRestoreWindow(L, x, y, p, i);  -- 用本轮记录 m 恢复 acc ← 16*acc-m*p-d*x，并清记录；d 是 y 的第 i 窗口。
   };
 }
 
@@ -184,7 +182,7 @@ theorem montRestoreRounds_succ (L : MontStageLayout) (x y : List Wire) (p : Nat)
 
 def constPrepareRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) : Program := prog {
   for i in range(k) {
-    constMontWindow(L, y, p, K, i);
+    constMontWindow(L, y, p, K, i);  -- d 为 y 的第 i 个四位窗口：加 d*K 后约减除以 16，保存本轮系数 m。
   };
 }
 
@@ -199,7 +197,7 @@ theorem constPrepareRounds_succ (L : MontStageLayout) (y : List Wire) (p K : Nat
 
 def constRestoreRounds (L : MontStageLayout) (y : List Wire) (p K : Nat) (k : Nat) : Program := prog {
   for i in reversed(range(k)) {
-    constMontRestoreWindow(L, y, p, K, i);
+    constMontRestoreWindow(L, y, p, K, i);  -- 用本轮记录 m 恢复 acc ← 16*acc-m*p-d*K，并清记录；d 是 y 的第 i 窗口。
   };
 }
 
@@ -213,23 +211,23 @@ theorem constRestoreRounds_succ (L : MontStageLayout) (y : List Wire) (p K : Nat
   simp [List.concat_eq_append]
 
 def montPrepare (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program := prog {
-  montPrepareRounds(L, x, y, p, 64);
-  montNormalize(L, p);
+  montPrepareRounds(L, x, y, p, 64);  -- 从零累加 64 个窗口，acc ≡ x*y/2^256 (mod p)，保留约减历史。
+  montNormalize(L, p);  -- acc ← acc mod p；保留是否加回 p 的标志，供恢复使用。
 }
 
 def montRestore (L : MontStageLayout) (x y : List Wire) (p : Nat) : Program := prog {
-  montDenormalize(L, p);
-  montRestoreRounds(L, x, y, p, 64);
+  montDenormalize(L, p);  -- 用保留标志撤销最后的模约减，恢复窗口结束时的 acc，并清该标志。
+  montRestoreRounds(L, x, y, p, 64);  -- 逐轮撤销变量乘积累加与约减，将 acc 和全部历史恢复零。
 }
 
 def constPrepare (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program := prog {
-  constPrepareRounds(L, y, p, K, 64);
-  montNormalize(L, p);
+  constPrepareRounds(L, y, p, K, 64);  -- 从零累加 64 个常量窗口，acc ≡ K*y/2^256 (mod p)，保留约减历史。
+  montNormalize(L, p);  -- acc ← acc mod p；保留是否加回 p 的标志，供恢复使用。
 }
 
 def constRestore (L : MontStageLayout) (y : List Wire) (p K : Nat) : Program := prog {
-  montDenormalize(L, p);
-  constRestoreRounds(L, y, p, K, 64);
+  montDenormalize(L, p);  -- 用保留标志撤销最后的模约减，恢复窗口结束时的 acc，并清该标志。
+  constRestoreRounds(L, y, p, K, 64);  -- 逐轮撤销常量乘积累加与约减，将 acc 和全部历史恢复零。
 }
 
 end ECDSAAdd.Arithmetic
