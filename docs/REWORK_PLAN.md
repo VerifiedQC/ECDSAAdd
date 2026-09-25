@@ -2614,3 +2614,27 @@ ReplayCell按30.3直接组合两次低位交换、C1受控模减/加和受控半
 集成接口ReplayLayout包含payload、counter和active。payload.z/a分别对应第一/第二载荷；payload.work为772位。Valid要求counter.width=10、counter.y/carry/cin包含于payload.work、比较视图互异，以及active/K/记录带/payload全局互异。比较与载荷格按时序复用零工作区；mask在合法布局互异条件中保留，不能因单目阶段不访问mask就删其互异要求。§29第三批负责按既有三字+oddWork/carry末位构造具体映射及证明Valid，随后接完整乘除与点加；本批不宣称3134整机上界已证明。
 
 源码按低位交换、格定义/中间状态/规格/资源、循环定义/单轮规格/循环规格/资源、域函数对应分层；新增21个公开公理检查入口。旧公开点加、求逆、C1及值走陈述不变，当前整机仍8,813,634/5,646,146/3,939。
+
+### 30.11 §30.8 测量清掩码的独立原语交付计划（待复审、未实现）
+
+本批以 `8a8d67b` 为基线，只实现 §30.8 的独立包装
+`measuredControlledModAdd` / `measuredControlledModSub`，保留旧入口；
+不替换回放格、乘除或整机调用。构造与逐阶段寄存器关系沿用 §30.8：
+受控复制后 `mask.low=c∧a.low`、`mask.high=0`，模加核保持源与 mask，
+随后 `eraseMask` 清低位；减法在第二次 `negRaw` 恢复源之前完成清理。
+初末工作区全零，源值允许 `A≤p`，特别保留 `A=0` 时临时源为 p 的情形。
+
+在 `ModInPlaceWrappers.lean`、`ModInPlaceSubtract.lean` 中复用现有私有组合引理，
+为新入口证明完整 Triple、目标外逐线保持、精确支持等式和资源公式。
+所有 Triple 覆盖任意测量记录并恢复精确符号；低位 mask 关系由完整寄存器值
+与范围推出，不把它增加为公开前提。预期资源为：
+
+|独立包装（n>0）|Toffoli|测量|实际支持线|
+|---|---:|---:|---:|
+|measuredControlledModAdd|5n−1|5n−1|5n+5|
+|measuredControlledModSub|7n−1|7n−1|5n+6|
+
+支持集应与对应旧入口相同；加法不触及源高位与 flag，减法触及源高位。
+以上是待证目标，不能从本交付直接扣减整机计数。实现后同步 README、
+PROOF_STATUS、PROVENANCE 和本节状态，在现有 `scripts/verify.sh` 增加公开入口
+公理检查并运行完整验证；不新增公理、测试或放宽证明限额。
