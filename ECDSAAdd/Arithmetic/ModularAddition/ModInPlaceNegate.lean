@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceWrappers
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 扩宽源取补后加 p+1；0 暂时映为 p，不归一化，第二次调用恢复原值。 -/
+/-- 扩宽寄存器取负：L.a ← p−L.a，适用于 0≤L.a≤p；0 映为 p，尚不是标准模 p 取负。
+满足布局/位宽条件且工作区初始为零时，工作区恢复、L.z 保持；再调用一次恢复原 L.a。 -/
 def negRaw (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   let source := L.a;
   notRegister(source);                             -- source = 2^位宽-1-A

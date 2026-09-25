@@ -13,8 +13,9 @@ local macro_rules
   | `(tactic| get_elem_tactic) =>
       `(tactic| (simp_all +zetaDelta only [List.length_cons]; omega))
 
-/-- 正向生成进位链，读出最高进位，再反向清理；不生成差寄存器。
-合法布局中三个列表等长；不等长时保留原程序的公共前缀计算/清理行为，不读出结果。 -/
+/-- 将加法未溢出的条件 XOR 到 target：target ^= [x+y+cin < 2^n]，n=x.length；
+有 control 时再与控制位相与。x/y/cin 保持，零 carry 恢复为零；要求三列表等长、线路互异。
+正向生成进位、读出最高进位再反向清理；长度不等时只计算/清理共同前缀，不读出结果。 -/
 def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program :=
   let n := min x.length (min y.length carry.length)
   let c := cin :: carry
@@ -40,15 +41,18 @@ private theorem compareChain_cons (control : Option Wire) (a b c cin target : Wi
   simp [compareChain, Nat.succ_min_succ, List.ofFn_succ, List.reverse_cons,
     List.flatten_append, List.append_assoc]
 
-/-- target ^= [x < y]（有 control 时为 control ∧ [x < y]）：y 按位取反、cin 置 1，
-进位链算的是 x + ¬y + 1，最高进位 = [x ≥ y]；读出后擦除并还原 y、cin。 -/
+/-- target ^= [x<y]；control=some c 时改为 target ^= c AND [x<y]，输入/控制位保持。
+要求 x/y/carry 等长且参与线路互异，cin/carry 初始为零并恢复；target 不必为零。
+内部计算 x+NOT y+1，其最高进位为 [x≥y]，读出后擦除进位并还原 y/cin。 -/
 def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program := prog {
   notRegister(cin :: y);  -- 翻转 y 的每一位，并将零 cin 置 1；准备 x+¬y+1。
   compareChain(control, x, y, carry, cin, target);  -- target ^= [x<原 y]；有控制位时再与 control 相与，carry 清零。
   notRegister(cin :: y);  -- 再次翻转 y 和 cin，恢复原输入与零进位位。
 }
 
-/-- 与经典常量比较：常量装进零寄存器 T，比较后再卸载。 -/
+/-- target ^= [x<K]；control=some c 时改为 target ^= c AND [x<K]，保留 x/控制位。
+要求 K<2^n，x/T/carry 均为 n 位且线路互异，T/carry/cin 初始为零并恢复。
+先将常量 K 装入 T，比较后卸载；target 不必初始为零。 -/
 def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program := prog {
   xorConstant(T, K);  -- T ^= K；从零装入比较常量 K。
   compareLt(control, x, T, carry, cin, target);  -- target ^= [x<K]；有控制位时再与 control 相与，输入和进位工作区恢复。

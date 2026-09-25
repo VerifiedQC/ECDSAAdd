@@ -98,7 +98,9 @@ theorem regValue_headBit (r : List Wire) (hn : r≠[]) (s : BasisState) :
   | cons a r => cases ha : s a <;> simp [regValue,ha]
 
 
-/-- 先保存奇偶条件，直接把受控比较 XOR 到记录位，再清条件；不生成差寄存器。 -/
+/-- 将分支条件 XOR 到 L.subtract、L.swap：subtract ^= active AND u为奇数 AND v为奇数；
+swap ^= (active AND u为奇数) XOR (active AND u为奇数 AND v为奇数 AND v<u)。
+有效布局下数据保持，oddWork/bothWork/carry/cin 初始为零并恢复；两个结果保留供逆轮使用。 -/
 def recordRound (L : KaliskiRoundLayout) : Program := prog {
   let uOdd := L.u.head!;
   let vOdd := L.v.head!;
@@ -125,13 +127,18 @@ theorem recordRound_program (L : KaliskiRoundLayout) :
   simp only [recordRound, List.append_assoc]
   rfl
 
-/-- 只翻转活动辅助位，既用于装入 !done，也用于恢复 done 后的清理。 -/
+/-- L.active ^= NOT L.done，L.done 保持；active 初始为零时得到本轮是否尚未结束。
+同一门列也用于在恢复旧 done 后清除 active；要求两根线路不同。 -/
 def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]
 
+/-- L.active ^= [i<计数值 k]，k 由 L.comparator.x 读取，即本轮更新后的计数银行。
+计数保持；有效计数/布局条件下，比较工作区初始为零并恢复。 -/
 def roundActiveXor (L : KaliskiRoundLayout) (i : Nat) : Program :=
   counterActiveXor L.comparator L.active i
 
-/-- 终止轮先更新并计数，再改变 done；最后用 i<新 k 清理活动工作位。 -/
+/-- 执行第 i 轮 Kaliski 更新：done=0 时按奇偶/大小关系更新 u/v/r/s，并将计数 k 加一；
+新 v=0 时置 done=1。done=1 后数据/计数值保持，但计数仍转移到下一银行。
+有效轮不变量下临时工作区清零，swap/subtract 从零保存两位分支历史，供 kaliskiUnround 恢复。 -/
 def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
   let vZeroBits := L.data.zeroBits .v; -- 将 v 的每一位接到零检测工作位。
   loadActive(L);                                         -- active = NOT done
@@ -142,7 +149,8 @@ def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
   roundActiveXor(L, i);                                   -- 由 i<kNext 重算 active 并清零
 }
 
-/-- 逆轮先由新 k 恢复活动位和旧 done，再恢复数据/计数，最后清两位记录。 -/
+/-- 用第 i 轮的 swap/subtract 历史恢复轮前 u/v/r/s、k 和 done，并清零这两位记录。
+要求状态与 kaliskiRound 的输出匹配；计数转回旧银行，临时工作区恢复零，不反转测量。 -/
 def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
   let vZeroBits := L.data.zeroBits .v;
   roundActiveXor(L, i);                                   -- 从 kNext 恢复该轮 active

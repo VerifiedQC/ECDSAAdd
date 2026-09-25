@@ -2,12 +2,14 @@ import ECDSAAdd.Arithmetic.Shift.Rotate
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 同一物理寄存器连续右旋 k 位；不改变寄存器视图。 -/
+/-- 将同一物理寄存器 r 循环右移 k 位；线路互异时是位排列，不改变寄存器视图。
+只有移出的低 k 位全零且 k 不超过位宽时，才可解释为数值除以 2^k。 -/
 def rotateRightBits (r : List Wire) : Nat → Program
   | 0 => []
   | k+1 => rotateRight r ++ rotateRightBits r k
 
-/-- 无测量相邻交换的左旋，用于恢复窗口约减前的数值。 -/
+/-- 将同一物理寄存器 r 循环左移 k 位，与 rotateRightBits 互逆。
+只有移出的高 k 位全零且 k 不超过位宽时，才可解释为数值乘以 2^k。 -/
 def rotateLeftBits (r : List Wire) : Nat → Program
   | 0 => []
   | k+1 => rotateLeft r ++ rotateLeftBits r k

@@ -24,7 +24,8 @@ local macro_rules
           [List.length_cons, List.length_map]
                  omega))
 
-/-- 先生成零检测链，读出最终标志，再反向测量清理链上的工作位。 -/
+/-- target ^= c AND [bs 中所有 input 位均为零]，输入和 c 保持。
+要求线路互异、bs 中 work 位初始为零；零检测后测量清理这些工作位并恢复相位。 -/
 def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
   let n := bs.length;
   let chain := c :: bs.map ZeroBit.work;

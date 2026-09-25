@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 按 XOR 写入 g ? X : 1；清零目标上得到安全除数。 -/
+/-- head::tail 的寄存器值 ^= (g=1 ? src : 1)，保留 g/src；清零目标上得到所选除数。
+有效等宽互异布局下，g=0 时选常量 1；g=1 时仍须由调用者保证 src 非零，才是安全除数。 -/
 def safeDivisor (g : Wire) (src : List Wire) (head : Wire) (tail : List Wire) : Program :=
   [.X head,.CX g head]++copyRegister (some g) src (head::tail)
 

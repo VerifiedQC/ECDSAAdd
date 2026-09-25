@@ -35,11 +35,13 @@ theorem sourceUnary_nodup (L : ModInPlaceLayout) (n : Nat) (hw : L.Widths n)
 
 end ModInPlaceLayout
 
-/-- 正偶r先除2、取负、规范模加倍；不丢失约减分支。 -/
+/-- 将 L.a 中的正偶数 R 变为 (−R) mod q；要求 q 为奇数、0<R<2*q 及有效布局/位宽。
+L.z 保持，L.work 初始为零并恢复；先除 2、取负再模加倍，用偶数前提避免丢失恢复信息。 -/
 def negativeEven (L : ModInPlaceLayout) (q : Nat) : Program :=
   rotateRight L.a ++ negRaw L q ++ dblInPlace L.sourceUnary q
 
-/-- 显式前向恢复；不逆转任何测量门。 -/
+/-- 撤销 negativeEven：从 L.a=(−R) mod q 恢复原正偶数 R，要求 q 为奇数、0<R<2*q。
+L.z 保持，L.work 初始为零并恢复；不是对任意输入的普通模取负，也不倒放测量。 -/
 def restoreNegativeEven (L : ModInPlaceLayout) (q : Nat) : Program :=
   halfInPlace L.sourceUnary q ++ negRaw L q ++ rotateLeft L.a
 

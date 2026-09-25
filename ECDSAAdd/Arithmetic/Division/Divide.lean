@@ -60,7 +60,8 @@ theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
 
 end DivideLayout
 
-/-- 将安全分母直接写入 Kaliski v：控制为假时写1，不另占Dsafe字。 -/
+/-- 从零内部寄存器装入安全分母 v=(control=1 ? denominator : 1)，同时装入 u=p、s=1。
+L.control/denominator 保持；控制为零时也能进行非零分母的求逆，沿用 DivideLayout 的有效布局。 -/
 def divideLoad (L : DivideLayout) : Program := prog {
   let denominatorCopy := L.vLow;
   let leastBit := L.vBit;
@@ -73,7 +74,8 @@ def divideLoad (L : DivideLayout) : Program := prog {
   xorConstant(s, 1);                                    -- Kaliski 初值 s=1，其余工作位为零
 }
 
-/-- 恢复阶段归还同一分母后才能卸载；这里只反排无测量的装载门。 -/
+/-- 在内部恢复到安全分母 v、u=p、s=1 后清零这些寄存器，保留 control/denominator。
+要求与 divideLoad 装载值匹配；这里只反排无测量装载门。 -/
 def divideUnload (L : DivideLayout) : Program := prog {
   let denominatorCopy := L.vLow;
   let leastBit := L.vBit;
@@ -93,7 +95,9 @@ theorem divideUnload_program (L : DivideLayout) :
   simp only [divideUnload, List.append_assoc]
   rfl
 
-/-- acc 加上受控分子/分母；准备、乘积清理、恢复均为显式前向程序。 -/
+/-- 受 L.control 控制的模除法累加：acc ← (acc+control·numerator/denominator) mod p。
+control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
+满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。 -/
 def divideAdd (L : DivideLayout) : Program := prog {
   let inverse := L.inner;    -- 逆元结果保存在 inverse.a；历史由 inverse 一并保留。
   let product := L.multiply; -- 输入为 inverse.a 和 numerator，累加目标是 acc。
@@ -104,7 +108,9 @@ def divideAdd (L : DivideLayout) : Program := prog {
   divideUnload(L);                                -- 清 v/u/s，归还全部工作位
 }
 
-/-- acc 减去受控分子/分母；只替换累加中段，不倒放带测量的除法。 -/
+/-- 受 L.control 控制的模除法累减：acc ← (acc−control·numerator/denominator) mod p。
+control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
+满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。 -/
 def divideSub (L : DivideLayout) : Program := prog {
   let inverse := L.inner;
   let product := L.multiply; -- 输入为 inverse.a 和 numerator，累减目标是 acc。

@@ -53,7 +53,8 @@ theorem bit_value (U : ModUnaryLayout) (n : Nat) (hw : U.Widths n) (hn : 0<n) (s
 
 end ModUnaryLayout
 
-/-- 左旋得到 2Z，试减 p、借位低位加回，最后由结果奇偶清借位。 -/
+/-- 原地模倍增：U.z ← 2*U.z mod p，要求 p 为奇数、U.z<p，并满足布局/位宽条件。
+零工作区（含 high）最终恢复为零；左旋加倍、试减 p、按借位加回，最后利用奇偶清借位。 -/
 def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;
   let borrow := U.high;
@@ -79,7 +80,9 @@ theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
   simp only [dblInPlace, List.append_assoc]
   rfl
 
-/-- 保存奇偶，奇数加 p 后右旋，由减半结果与 (p+1)/2 比较清奇偶位。 -/
+/-- 原地模减半：U.z ← (U.z+(U.z mod 2)*p)/2，结果仍在 [0,p)，等价于乘 2⁻¹ mod p。
+要求 p 为奇数、U.z<p，并满足布局/位宽条件；零工作区最终恢复为零。
+奇数先加 p 再右旋，最后利用结果与 (p+1)/2 的比较清除奇偶标志。 -/
 def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;
   let wasOdd := U.flag;

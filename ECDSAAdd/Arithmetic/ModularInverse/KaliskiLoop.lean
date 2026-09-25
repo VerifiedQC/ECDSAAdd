@@ -61,7 +61,9 @@ def loopEndLayout (L : KaliskiRoundLayout) : Nat → KaliskiRoundLayout
   | 0 => L
   | n+1 => loopEndLayout L.swapCounter n
 
-/-- 固定门列按记录带长度展开；银行交替与 i 都由程序构造决定。 -/
+/-- 从轮号 i 起连续执行 rs.length 轮 Kaliski 更新，演化 u/v/r/s 和活动轮计数 k，v=0 后不再改变数值。
+在有效初态/轮不变量下，将每轮 swap/subtract 保存到初始为零的 rs，临时工作区归零。
+计数银行交替使用；固定门列按记录带长度展开，不由数据决定执行轮数。 -/
 def kaliskiLoop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in range(rs.length) {
     let round := (loopEndLayout L j).withRecord rs[j];
@@ -76,7 +78,8 @@ theorem kaliskiLoop_cons (L : KaliskiRoundLayout) (i : Nat) (r : RoundRecord) (r
       kaliskiRound (L.withRecord r) i ++ kaliskiLoop L.swapCounter (i+1) rs := by
   simp [kaliskiLoop, List.ofFn_succ, loopEndLayout, Nat.add_comm, Nat.add_left_comm]
 
-/-- 先恢复后面的轮，再以前向逆轮清除当前两位记录。 -/
+/-- 按反向轮序使用 rs 中的匹配分支记录，恢复 kaliskiLoop 之前的 u/v/r/s、k 和 done。
+将 rs 清零、临时工作区归零；各轮调用显式前向恢复程序，不倒放测量。 -/
 def kaliskiUnloop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in reversed(range(rs.length)) {
     let round := (loopEndLayout L j).withRecord rs[j];

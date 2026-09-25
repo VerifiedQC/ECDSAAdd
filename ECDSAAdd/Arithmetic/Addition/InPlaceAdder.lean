@@ -16,8 +16,9 @@ local macro_rules
       `(tactic| (simp_all +zetaDelta only [List.length_append, List.length_cons, List.length_nil]
                  omega))
 
-/-- 原地加法：先由低到高计算进位，再由高到低清理进位并写回和位。
-输入 x、y 等宽，carry 比它们少一位；不满足此布局条件时返回空电路。 -/
+/-- n 位原地加法：y ← (y+x+cin) mod 2^n，n 是目标寄存器 y 的长度。
+要求 x/y 等长、carry 有 n−1 位且线路互异；carry 初始为零，结束后清零，x/cin 保持。
+先由低到高计算进位，再由高到低清理进位并写回和位；位宽条件不满足时返回空电路。 -/
 def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
   if h : x.length = y.length ∧ carry.length + 1 = y.length then
     prog {
@@ -285,7 +286,9 @@ theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
   · exact (hsame cin hciny).trans hcv
   · exact (regValue_congr _ _ _ (fun w hw => hsame w (hky w hw))).trans hkv
 
-/-- y ← (y − x) mod 2^n：按位取反、加 x、再取反，¬(¬y + x) = y − x；两层 X 门不计资源。 -/
+/-- cin=0 时实现 n 位原地减法：y ← (y−x) mod 2^n，n 是目标寄存器 y 的长度。
+要求 x/y 等长、carry 有 n−1 位且线路互异；carry 初始为零并恢复，x/cin 保持。
+通过按位取反、加 x、再取反计算；两层 X 门不计入 Toffoli/测量用量。 -/
 def subInPlace (x y carry : List Wire) (cin : Wire) : Program :=
   notRegister y ++ addInPlace x y carry cin ++ notRegister y
 
@@ -450,17 +453,25 @@ theorem addInPlace_resources (x y carry : List Wire) (cin : Wire)
   · rw [qubitCount, subInPlace_wires x y carry cin hx hc, List.toFinset_card_of_nodup hnd, hlen]
 
 
-/-- 受控常数加：T 是零寄存器，受 c 控制装入 K，原地加到 y，再同样受控清 T；不增加 Toffoli。 -/
+/-- 受 c 控制的常数加法：y ← (y+c·K) mod 2^n，n=y.length，c 取值 0/1，K<2^n。
+T/y 等长，carry 有 n−1 位，线路互异；T、carry、cin 初始为零并恢复，c 保持。
+受控装入常量 K 后相加，再清零 T；常量装载/清理不增加 Toffoli。 -/
 def maskedAddConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program :=
   maskedConstant c T K ++ addInPlace T y carry cin ++ maskedConstant c T K
 
+/-- 受 c 控制的常数减法：y ← (y−c·K) mod 2^n，n=y.length，c 取值 0/1，K<2^n。
+T/y 等长，carry 有 n−1 位，线路互异；T、carry、cin 初始为零并恢复，c 保持。 -/
 def maskedSubConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program :=
   maskedConstant c T K ++ subInPlace T y carry cin ++ maskedConstant c T K
 
-/-- 受控量子加数：t ← c·src（受控复制），原地加/减到 y，再清 t。 -/
+/-- 受 c 控制的原地加法：y ← (y+c·src) mod 2^n，n=y.length，c 取值 0/1。
+src/t/y 等长，carry 有 n−1 位，线路互异；t、carry、cin 初始为零并恢复，c/src 保持。
+先将 c·src 装入 t，完成加法后再次受控复制以清零 t。 -/
 def maskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ addInPlace t y carry cin ++ copyRegister (some c) src t
 
+/-- 受 c 控制的原地减法：y ← (y−c·src) mod 2^n，n=y.length，c 取值 0/1。
+src/t/y 等长，carry 有 n−1 位，线路互异；t、carry、cin 初始为零并恢复，c/src 保持。 -/
 def maskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ subInPlace t y carry cin ++ copyRegister (some c) src t
 

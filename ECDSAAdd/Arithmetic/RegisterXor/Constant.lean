@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 经典常量按小端展开，只有常量位为 1 的线路才执行 X。 -/
+/-- 将经典常量 k 的低 r.length 位 XOR 到目标寄存器 r；目标初始为零时得到截断后的 k。
+位按小端排列，只有常量位为 1 的线路执行 X；数值解释要求 r 中线路互异。 -/
 def xorConstant : List Wire → Nat → Program
   | [], _ => []
   | w :: ws, k => (if k % 2 = 1 then [Instr.X w] else []) ++ xorConstant ws (k / 2)

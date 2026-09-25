@@ -78,6 +78,9 @@ structure MontPrepared (M : MontLayout) (p X Y : Nat) (s : BasisState) : Prop wh
   fZ : s M.fZ=decide (montgomeryValue p (montgomeryConversion p) (montgomeryValue p X Y 64%p) 64<p)
   shared : regValue M.shared s=0
 
+/-- 从零工作区准备标准模积：M.a = M.x*M.y*R⁻¹ mod p，M.z = M.x*M.y mod p，R=2^256。
+要求有效布局、M.x<p、M.y<2^256，且 p 为素数、p<2^256、p mod 16=15；输入保持，不写外部 M.out。
+两段恢复所需的中间量和历史保留，shared 工作区归零，供输出阶段借用。 -/
 def montP (M : MontLayout) (p : Nat) : Program := prog {
   let conversion := montgomeryConversion p; -- R² mod p，R=2^256。
   montPrepare(M.first, M.x, M.y, p);         -- a = x*y/R mod p
@@ -85,6 +88,8 @@ def montP (M : MontLayout) (p : Nat) : Program := prog {
   -- a/z 及两段历史保留；shared 已清零，可以借给输出阶段。
 }
 
+/-- 从 montP 生成的匹配状态恢复：将 M.a/M.z 及两段历史清零，保留 M.x/M.y 和外部 M.out。
+要求输入未变、历史仍与乘积匹配；执行显式前向恢复程序，不倒放测量。 -/
 def montQ (M : MontLayout) (p : Nat) : Program := prog {
   let conversion := montgomeryConversion p;
   constRestore(M.second, M.a, p, conversion); -- 清 z 及第二段历史；仍需要 a

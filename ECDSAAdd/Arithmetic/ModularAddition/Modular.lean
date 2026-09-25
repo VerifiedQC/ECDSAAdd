@@ -7,7 +7,9 @@ namespace ECDSAAdd.Arithmetic
    加减法按 n+1 位补码运算，选择只写 out 的低 n 位。
    所有操作都是 XOR 写入：同样的输入再次调用，会清除先前算出的结果。 -/
 
-/-- out ^= (x+y) mod q；保留 x/y，恢复全部工作位。 -/
+/-- 模加的 XOR 输出：L.out ^= (L.x+L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
+公开规格要求 0<q<2^L.width、输入均小于 q、布局线路互异；内部支持和小于 2*q 的约减。
+只减一次 q，不是对任意大小输入的通用取模。 -/
 def modAdd (L : ModLayout) (q : Nat) : Program := prog {
   let total := L.reg .total;
   let modulus := L.reg .modulus;
@@ -28,7 +30,8 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog {
   xorConstant(modulus, q);                         -- modulus 再异或 q，清零。
 }
 
-/-- out ^= (x-y) mod q；保留 x/y，恢复全部工作位。 -/
+/-- 模减的 XOR 输出：L.out ^= (L.x−L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
+要求 0<q<2^L.width、输入均小于 q、布局线路互异；这里减法按模 q 理解，不是 Nat 的截断减法。 -/
 def modSub (L : ModLayout) (q : Nat) : Program := prog {
   let diff := L.reg .diff;
   let modulus := L.reg .modulus;

@@ -29,8 +29,10 @@ structure Widths (L : ModAddCoreLayout) (n : Nat) : Prop where
 
 end ModAddCoreLayout
 
-/-- 四个可辨认阶段：计算扩宽和、试减 p、借位时低位加回 p、由结果与源比较清借位。
-constant/carry/cin 初末零；核源可以是外层已装载的 mask，不能提前清该源。 -/
+/-- 原地模加核：L.z ← (L.z+L.a) mod p，L.a 保持；结果位于 L.low，L.high 最终为零。
+要求有效布局、p 的位宽及输入范围满足 modAddCore_spec，尤其 L.a≤p、L.z<p。
+constant/carry/cin 初始为零并恢复；先加、试减 p、按借位加回，再比较清借位。
+源 a 可以是外层装载的 mask，必须保留到借位清理完成。 -/
 def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
   let source := L.a;
   let target := L.z;                    -- low 加上一根 high，容纳完整的和。

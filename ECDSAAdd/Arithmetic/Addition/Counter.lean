@@ -46,10 +46,12 @@ private theorem counterFlip_spec (L : AdderLayout) (hnd : L.wires.Nodup)
   · exact (keep L.out (by intro w hw; simp [hw])).trans ho
   · exact (keep L.carry (by intro w hw; simp [hw])).trans hcarry
 
-/-- 10 位计数器的 XOR 写出；cin 是活动控制位，y 和 carry 是零工作寄存器。 -/
+/-- 受 L.cin 控制的计数结果 XOR 输出：L.out ^= (L.x+L.cin) mod 2^n，n=L.width。
+L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；此模块用其实现 10 位活动轮计数。 -/
 def counterIncXor (L : AdderLayout) : Program := add L
 
-/-- 用补码加法写出 K−C，恢复用于控制的 cin 和全一辅助寄存器。 -/
+/-- 受 L.cin 控制的减一结果 XOR 输出：L.out ^= (L.x−L.cin) mod 2^n，n=L.width。
+L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；L.cin 的值取 0 或 1。 -/
 def counterDecXor (L : AdderLayout) : Program := counterFlip L ++ add L ++ counterFlip L
 
 theorem counterIncXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
@@ -127,10 +129,12 @@ theorem AdderLayout.swapCounter_perm (L : AdderLayout) : L.swapCounter.wires.Per
     simp [AdderLayout.swapCounter, AdderLayout.wires, addWires, List.count_cons] at ih ⊢
     omega
 
-/-- 把受控增量后的值移入空计数寄存器，并以前向减法清空旧寄存器。 -/
+/-- 将计数移入空银行：(L.x=K,L.out=0) → (L.x=0,L.out=(K+L.cin) mod 2^n)，n=L.width。
+L.cin 保持，L.y/L.carry 初始为零并恢复；下一轮需交换 x/out 的角色。 -/
 def counterInc (L : AdderLayout) : Program := counterIncXor L ++ counterDecXor L.swapCounter
 
-/-- 受控减量后同样清空旧计数寄存器，供下轮交换角色复用。 -/
+/-- 将减量后的计数移入空银行：(L.x=K,L.out=0) → (L.x=0,L.out=(K−L.cin) mod 2^n)，n=L.width。
+L.cin 保持，L.y/L.carry 初始为零并恢复；与 counterInc 配合恢复先前计数。 -/
 def counterDec (L : AdderLayout) : Program := counterDecXor L ++ counterIncXor L.swapCounter
 
 theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)

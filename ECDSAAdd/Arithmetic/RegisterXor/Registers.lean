@@ -67,7 +67,8 @@ theorem regValue_lt (r : List Wire) (s : BasisState) : regValue r s < 2^r.length
     rw [Nat.pow_succ]
     split <;> omega
 
-/-- 对寄存器每根线路执行 X。 -/
+/-- 将寄存器 r 逐位取反：r ← (2^n−1) XOR r，n=r.length。
+数值解释要求 r 中线路互异；逐位执行 X，不是算术取负。 -/
 def notRegister (r : List Wire) : Program := r.map Instr.X
 
 /-- 寄存器内每一位取反，其他线路与相位保持。 -/

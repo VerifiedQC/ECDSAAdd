@@ -2,13 +2,15 @@ import ECDSAAdd.Arithmetic.ModularInverse.HalveInPlace
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 固定轮数前向减半，每轮仍执行同一字面门列。
-从轮号 i 起执行 n 轮；先执行当前轮，再递增轮号。仅 i<k 的轮改变数据。 -/
+/-- 从轮号 i 起执行 n 轮：每个 j=i,…,i+n−1 且 j<计数值 k 的轮，将 L.data 乘 2⁻¹ mod q。
+其余轮保持数据；要求 q 为奇数、输入小于 q 和相应布局/计数范围，计数保持，零工作区恢复。
+轮数及门列在构造期固定，不按运行时 k 改变测量顺序。 -/
 def halveInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => halveStep L q i ++ halveInPlace L q (i+1) n
 
-/-- 恢复从 i 起的 n 轮：先恢复后续轮，再恢复当前轮，故轮号顺序与减半相反。 -/
+/-- 撤销从 i 起的 n 轮模减半：按反向轮序，在 j<计数值 k 时将 L.data 乘 2 mod q。
+要求与 halveInPlace 相同的奇模数、布局/范围条件；计数保持，零工作区恢复。 -/
 def restoreInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => restoreInPlace L q (i+1) n ++ doubleStep L q i

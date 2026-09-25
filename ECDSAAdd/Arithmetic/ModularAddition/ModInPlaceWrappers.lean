@@ -24,10 +24,13 @@ def maskedCore (L : ModInPlaceLayout) : ModAddCoreLayout := { L.toModAddCoreLayo
 
 end ModInPlaceLayout
 
-/-- 普通模加直接调用核，未使用的 mask/flag 保持零。 -/
+/-- 原地模加：L.z ← (L.z+L.a) mod p，保留 L.a，L.work 初始为零并恢复。
+要求有效布局和 modAddInPlace_spec 的位宽/范围条件；未使用的 mask/flag 保持零。 -/
 def modAddInPlace (L : ModInPlaceLayout) (p : Nat) : Program := modAddCore L.toModAddCoreLayout p
 
-/-- 装载受控源，计算模和，再清源掩码；mask 必须存活到核比较清借位之后。 -/
+/-- 受 c 控制的原地模加：L.z ← (L.z+c·L.a) mod p，c 取值 0/1，c/L.a 保持。
+要求 controlledModAdd_spec 的有效布局/输入范围；L.work 初始为零并恢复。
+掩码保存 c·L.a，必须等模加核清除借位后再清零。 -/
 def controlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   let source := L.a.take L.low.length;
   let maskedSource := L.mask.take L.low.length;

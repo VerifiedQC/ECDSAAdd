@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.Equality.EqualConstant
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 两个相等标志之后，用负控制生成普通加法与倍点标志。 -/
+/-- generic ^= finite AND NOT equalX，double ^= equalX AND NOT equalNegY。
+三个输入标志保持；参与线路互异时可重复运行以清除同一组分支结果。 -/
 def pointBranchFlags (finite equalX equalNegY generic double : Wire) : Program :=
   [.X equalX, .CCX finite equalX generic, .X equalX,
    .X equalNegY, .CCX equalX equalNegY double, .X equalNegY]

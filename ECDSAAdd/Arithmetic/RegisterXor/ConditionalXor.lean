@@ -2,7 +2,9 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 先计算候选，再 XOR 选择候选或原值，最后用同一核清空候选。 -/
+/-- 条件选择的 XOR 输出：dst ^= (c=1 ? f(src) : src)，保留 c/src，temp 及核工作区恢复为零。
+前提是 kernel 保留输入并计算 temp ^= f(src)，可重算清理；各寄存器满足其布局/零工作区契约。
+先计算候选、再选择输出，最后重新执行 kernel；并非对任意 Program 都有此效果。 -/
 def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
   kernel();                          -- 按调用契约：temp = f(src)，再次运行可清零
   copyRegister(none, src, dst);       -- dst ^= src

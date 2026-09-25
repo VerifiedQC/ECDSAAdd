@@ -18,18 +18,24 @@ def wires (L : AdderLayout) : List Wire := L.cin :: addWires L.bits
 
 end AdderLayout
 
+/-- 按布局 L 计算 L.out ^= (L.x+L.y+L.cin) mod 2^n，n=L.width 是寄存器位宽。
+要求 L.wires 无重复、L.carry 初始为零；L.x/L.y/L.cin 保持，L.carry 恢复为零。 -/
 def add (L : AdderLayout) : Program := rippleAdder L.bits L.cin
+/-- 按布局 L 计算 L.out ^= (L.x−L.y) mod 2^n，n=L.width 是寄存器位宽。
+要求 L.wires 无重复，L.cin、L.carry 初始为零并在结束后恢复；L.x/L.y 保持。 -/
 def sub (L : AdderLayout) : Program := rippleSubtractor L.bits L.cin
 
 /-- 将等长寄存器按位接到全加器；只组织线路编号，不产生门或新 wire。 -/
 def registerAdderBits (x y out carry : List Wire) : List AddBit :=
   List.zipWith (fun xy oc => ⟨xy.1, xy.2, oc.1, oc.2⟩) (x.zip y) (out.zip carry)
 
-/-- out ^= (x+y+cin) mod 2^n；输入保留，零 carry 恢复为零。四个列表等长。 -/
+/-- out ^= (x+y+cin) mod 2^n，n 是寄存器 x 的长度；输入 x/y/cin 保持。
+要求 x/y/out/carry 四个列表等长、参与线路互异，carry 初始为零并在结束后恢复。 -/
 def addXor (x y out carry : List Wire) (cin : Wire) : Program :=
   rippleAdder (registerAdderBits x y out carry) cin
 
-/-- out ^= (x-y) mod 2^n；输入保留，cin=0、carry=0 在调用后恢复。四个列表等长。 -/
+/-- out ^= (x−y) mod 2^n，n 是寄存器 x 的长度；输入 x/y 保持。
+要求 x/y/out/carry 四个列表等长、参与线路互异，cin、carry 初始为零并在结束后恢复。 -/
 def subXor (x y out carry : List Wire) (cin : Wire) : Program :=
   rippleSubtractor (registerAdderBits x y out carry) cin
 

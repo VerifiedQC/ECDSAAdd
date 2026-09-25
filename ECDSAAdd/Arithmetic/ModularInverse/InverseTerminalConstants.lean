@@ -3,7 +3,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 终态u=1、s=q时清常量；同一无测量门列在逆轮前写回。 -/
+/-- 将 I.middle.u ^= 1、I.middle.s ^= q；其它寄存器不变，要求两组线路互异。
+在终态 u=1、s=q 时清零这两个常量寄存器；同一门列在逆轮前把它们从零写回。 -/
 def terminalConstants (I : InverseLoopLayout) (q : Nat) : Program :=
   xorConstant I.middle.u 1 ++ xorConstant I.middle.s q
 

@@ -2,14 +2,17 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceNegate
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 源扩宽取负、模加、再取负恢复；临时 p 是合法的核输入。 -/
+/-- 原地模减：L.z ← (L.z−L.a) mod p，L.a 保持，L.work 初始为零并恢复。
+沿用 modSubInPlace_spec 的布局/范围条件；临时将源变为 p−L.a，模加后还原源。 -/
 def modSubInPlace (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   negRaw(L, p);                        -- source a: A → p-A
   modAddInPlace(L, p);                 -- z += p-A (mod p)，即 z -= A (mod p)
   negRaw(L, p);                        -- source a: p-A → A；工作区恢复
 }
 
-/-- 两次源取负无条件执行，只有模加受控；控制为零时目标保持。 -/
+/-- 受 c 控制的原地模减：L.z ← (L.z−c·L.a) mod p，c 取值 0/1，c/L.a 保持。
+沿用 controlledModSub_spec 的布局/范围条件；L.work 初始为零并恢复。
+两次源取负无条件执行，只有模加受控；c=0 时目标保持。 -/
 def controlledModSub (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   negRaw(L, p);                        -- source a: A → p-A
   controlledModAdd(c, L, p);           -- c=1 时 z += p-A (mod p)

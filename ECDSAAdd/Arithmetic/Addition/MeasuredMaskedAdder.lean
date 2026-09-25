@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 清除已知等于控制与来源逐位AND的掩码；每位只依赖本次测量记录。 -/
+/-- 将已知满足 dst[i] = c AND src[i] 的掩码寄存器 dst 清零，保留 c、src 并恢复相位。
+要求 src/dst 等长且所有参与线路互异；不能用于清除任意未知的 dst。 -/
 def eraseMask (c : Wire) : List Wire → List Wire → Program
   | a::src, b::dst => .measureX b [] [.CZ c a] :: eraseMask c src dst
   | _, _ => []
@@ -88,10 +89,17 @@ theorem eraseMask_eq_copy (c : Wire) (src dst : List Wire)
   cases hy : run (copyRegister (some c) src dst) m s
   simp_all
 
-/-- 受控加法中段保持掩码关系，末段用测量和CZ归零。 -/
+/-- 实现受 c 控制的 n 位原地加法，n 是目标寄存器 y 的长度：
+|c⟩|src⟩|y⟩ ↦ |c⟩|src⟩|(y + c·src) mod 2^n⟩，式中 c 的值取 0 或 1。
+要求 src、t、y 等长，carry 有 n−1 位，所有参与线路互异；t、carry、cin 初始为零。
+结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。 -/
 def measuredMaskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ addInPlace t y carry cin ++ eraseMask c src t
 
+/-- 实现受 c 控制的 n 位原地减法，n 是目标寄存器 y 的长度：
+|c⟩|src⟩|y⟩ ↦ |c⟩|src⟩|(y − c·src) mod 2^n⟩，式中 c 的值取 0 或 1。
+要求 src、t、y 等长，carry 有 n−1 位，所有参与线路互异；t、carry、cin 初始为零。
+结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。 -/
 def measuredMaskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ subInPlace t y carry cin ++ eraseMask c src t
 

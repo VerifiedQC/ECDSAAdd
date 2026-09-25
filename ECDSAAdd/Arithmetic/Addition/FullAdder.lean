@@ -7,14 +7,17 @@ def sumBit (a b c : Bool) : Bool := (a ^^ b) ^^ c
 
 def carryBit (a b c : Bool) : Bool := ((a && b) ^^ (a && c)) ^^ (b && c)
 
-/-- 先临时异或输入，用一个 Toffoli 计算 majority，再恢复输入并异或输出和位。 -/
+/-- 一位全加器：out ^= a XOR b XOR cin，carry ^= MAJ(a,b,cin)，输入 a/b/cin 保持。
+MAJ 表示三个输入中至少两个为 1；out、carry 初始为零时分别得到和位、进位。
+要求五根 wire 互异；临时异或输入，用一个 Toffoli 计算进位，然后恢复输入。 -/
 def fullAdder (a b cin out carry : Wire) : Program := prog {
   CX a b; CX a cin; CCX b cin carry;
   CX a carry; CX a cin; CX a b;
   CX a out; CX b out; CX cin out
 }
 
-/-- 进位是三项 AND 的异或；测量后立即执行对应的三个 CZ 修正。 -/
+/-- 当 carry = MAJ(a,b,cin) 时，将 carry 测量清零，保留 a/b/cin 并恢复相位。
+要求四根 wire 互异；测量后立即执行对应的三个 CZ 修正，不适用于任意 carry 初值。 -/
 def eraseCarry (a b cin carry : Wire) : Program :=
   prog { if meas carry = 1 then [CZ a b, CZ a cin, CZ b cin] else skip }
 

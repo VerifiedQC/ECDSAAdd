@@ -3,7 +3,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
 
 namespace ECDSAAdd.Arithmetic
 
-/-- r 允许大于模数：先规范化，再取负；两次约减之间的临时值最终归零。 -/
+/-- dst ^= (−src) mod q，src 保持；允许 src≥q，但要求 src<2*q、0<q<2^L.width。
+在有效布局下 temp 和 L.wires 初始为零并恢复；先约减再取负，最后清零中间约减值。 -/
 def negativeInit (L : ModLayout) (q : Nat) (src temp dst : List Wire) : Program :=
   reduceXor L q src temp ++ negateXor L q temp dst ++ reduceXor L q src temp
 

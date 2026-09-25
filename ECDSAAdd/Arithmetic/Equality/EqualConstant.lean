@@ -13,7 +13,8 @@ private theorem zeroBit_count (bs : List ZeroBit) (w : Wire) :
       List.count_cons,List.count_nil,ih]
     omega
 
-/-- 保留输入，XOR 写入 control ∧ (input = k)；同一组零检测工作位前后均为零。 -/
+/-- target ^= control AND [input=k]，input 由 bs 中的 input 字段组成，输入/控制位保持。
+要求 k<2^bs.length、参与线路互异，bs 中 work 位初始为零并恢复；同一程序可重算清理结果。 -/
 def equalConstant (control target : Wire) (bs : List ZeroBit) (k : Nat) : Program := prog {
   let input := bs.map ZeroBit.input;
   xorConstant(input, k);                -- input ^= k，将等于 k 转成等于零。

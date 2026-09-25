@@ -28,6 +28,9 @@ structure Widths (L : InverseScaleLayout) : Prop where
   stage : L.stage.Widths
   extraScratch : L.extraScratch.length=6
 
+/-- 以 L.k 中计数 K 查表：L.factor ^= (R*2^(−K) mod q)，R=2^256。
+q 为奇数时 2^(−K) 表示模 q 逆幂；实际表项为 inverseScaleFactor q K。
+有效布局下 k 保持，零 scratch 恢复，factor 可通过重复查表清零。 -/
 def lookup (L : InverseScaleLayout) (q : Nat) : Program :=
   Arithmetic.lookup (L.k.headD L.stage.flag) L.k.tail L.scratch L.factor (inverseScaleFactor q)
 
@@ -38,6 +41,9 @@ def exchange (L : InverseScaleLayout) : Program := prog {
   copyRegister(none, L.a, (L.stage.acc.take 257));  -- acc 的低 257 位再异或当前 a，得到原 a，完成交换。
 }
 
+/-- 将 L.a 中的 N 缩放为 N*2^(−K) mod q，K 是 L.k 中计数，消去 Kaliski 的 2^K 因子。
+满足本文件的 Montgomery 模数/范围/布局条件、live/work 初始为零时，k 保持，work 归零。
+原 N 留在 stage.acc，约减历史和借位仍保留于 live，供 restore 使用；并非全部辅助位都清零。 -/
 def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
@@ -47,6 +53,8 @@ def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
   L.lookup(q);            -- factor 再异或同一 R*2^(-k) mod q，清零；k 不变。
 }
 
+/-- 撤销 prepare 的缩放：从匹配的 Prepared 状态将原 N 放回 L.a，并清零 live 中的累加器及历史。
+L.k 保持，work 恢复零；要求原计数及历史未变，执行前向恢复门列。 -/
 def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。

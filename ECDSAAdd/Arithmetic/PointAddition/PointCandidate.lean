@@ -21,23 +21,31 @@ end PointAddLayout
 /- 直接接收输入/输出寄存器；pool 只决定共用工作位的位置，不是算术输入。
    以下都是 XOR 输出接口，输入保持不变；对同样输入再调用一次可清除结果。
    位宽、互异和零工作位条件沿用 poolSub/poolMul/poolInverse 的规格。 -/
+/-- out ^= (x−y) mod p，保留标准代表元输入 x/y；pool 提供的工作位初始为零并恢复。
+要求 poolSub 的有效位宽和线路互异条件；p 为 secp256k1 域模数。 -/
 abbrev fieldSubXor (pool : Nat → Wire) (x y out : List Wire) : Program :=
   fieldSub (poolSub pool x y out)
 
+/-- out ^= x*y mod p，保留标准代表元输入 x/y；pool 提供的工作位初始为零并恢复。
+要求 poolMul 的有效位宽和线路互异条件。 -/
 abbrev fieldMulXor (pool : Nat → Wire) (x y out : List Wire) : Program :=
   fieldMul (poolMul pool x y out)
 
+/-- out ^= x⁻¹ mod p，要求 0<x<p；x 保持，pool 提供的工作位初始为零并恢复。
+要求 poolInverse 的有效位宽和线路互异条件。 -/
 abbrev fieldInverseXor (pool : Nat → Wire) (x out : List Wire) : Program :=
   fieldInverse (poolInverse pool x out)
 
-/-- 常量工作字装载后立即卸载；输入输出直接连接模减法接口。 -/
+/-- out ^= (x−k) mod p，保留 x；k/x 为标准代表元，满足域减法布局条件。
+L.constant 和 pool 工作区初始为零并恢复；先装入经典常量 k，运算后立即卸载。 -/
 def pointSubConstant (L : PointAddLayout) (x out : List Wire) (k : Nat) : Program := prog {
   xorConstant(L.constant, k);                    -- constant = k
   fieldSubXor(L.poolWire, x, L.constant, out);     -- out ^= (x-k) mod p
   xorConstant(L.constant, k);                    -- constant 清零
 }
 
-/-- 平方使用独立乘数副本，避免重复控制线；复制前后不计 Toffoli。 -/
+/-- L.square ^= L.slope² mod p，保留 L.slope，零的 L.constant 和 pool 工作区恢复。
+要求有效域乘法布局/输入范围；先复制 slope 到独立乘数寄存器，避免重复控制线。 -/
 def pointSquare (L : PointAddLayout) : Program := prog {
   let slope := L.slope;
   let copy := L.constant;
@@ -46,8 +54,10 @@ def pointSquare (L : PointAddLayout) : Program := prog {
   copyRegister(none, slope, copy);                      -- copy 清零
 }
 
-/-- 普通候选在每一条分支上计算。分支标志预先确定，安全除数保证求逆定义域。
-候选区和工作区初始为零；下面的算术等式均按模 p 理解。只有普通分支选用此候选。 -/
+/-- 准备普通点加候选：slope=(y−cy)/(generic=1 ? x−cx : 1)，
+candidateX=slope²−x−cx，candidateY=slope*(x−candidateX)−y；x/y 是 L.input 的坐标，运算均 mod p。
+要求分支标志已正确计算、普通分支 x≠cx，候选区/工作区初始为零且布局有效。
+输入保持，pool 工作区归零；dx/dy、逆元、斜率等中间量保留供清理，只有普通分支选用此候选。 -/
 def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog {
   let x := L.extendedX; -- 输入坐标扩展为 257 位，最高位为零。
   let y := L.extendedY;
@@ -65,7 +75,8 @@ def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog {
   fieldSubXor(pool, L.product, y, L.candidateY);                 -- candidateY = slope*delta-y
 }
 
-/-- 按依赖的逆序重新执行前向 XOR 模块；没有反转测量程序或依赖测量结果选路。 -/
+/-- 将 pointCandidateCompute 生成的候选坐标、斜率、逆元、dx/dy 等中间量清零，输入和分支标志保持。
+要求输入/标志未变且中间量匹配；按依赖逆序重算 XOR 结果，不倒放测量，也不清除任意未知数据。 -/
 def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog {
   let x := L.extendedX;
   let y := L.extendedY;

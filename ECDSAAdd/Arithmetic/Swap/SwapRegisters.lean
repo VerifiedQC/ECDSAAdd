@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 向量形式 Fredkin 分解；每对位使用两次 CX 和一次 CCX。 -/
+/-- c=1 时交换寄存器 a、b 的值，c=0 时两者不变，c 保持；要求等长且参与线路互异。
+每对位使用两次 CX 和一次 CCX，不需要零工作寄存器。 -/
 def swapRegisters (c : Wire) (a b : List Wire) : Program := prog {
   copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
   copyRegister(some c, a, b);  -- c=1 时 b ^= a，使 b 得到原 a；c=0 时 b 保持。
@@ -62,7 +63,8 @@ theorem swapRegisters_resources (c : Wire) (a b : List Wire) (hlen : a.length=b.
     rw [hw, List.toFinset_card_of_nodup hnd]
     simp [← hlen]; omega
 
-/-- 无控制交换不需要 Toffoli，用于把新值移回固定的寄存器位置。 -/
+/-- 无条件交换等长寄存器 a、b 的值；要求参与线路互异，不要求其中一方初始为零。
+每对位使用三个 CX，不需要 Toffoli 或测量。 -/
 def exchangeRegisters (a b : List Wire) : Program := prog {
   copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
   copyRegister(none, a, b);  -- b ^= 当前 a，得到原 a。

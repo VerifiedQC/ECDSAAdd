@@ -2,7 +2,9 @@ import ECDSAAdd.Arithmetic.Addition.RippleAdder
 
 namespace ECDSAAdd.Arithmetic
 
-/-- X + ¬Y + 1 的低 n 位；前后两次 X 层恢复 Y 与输入进位工作线。 -/
+/-- n 位减法的 XOR 输出，n 是逐位布局列表 bs 的长度：out ^= (x−y) mod 2^n。
+x/y/out/carry 分别由 bs 中对应字段组成；要求线路互异，cin、carry 初始为零并在结束后恢复。
+输入 x/y 保持；通过 x + NOT y + 1 计算，前后的 X 层恢复 y 和 cin。 -/
 def rippleSubtractor (bs : List AddBit) (cin : Wire) : Program :=
   notRegister (bs.map AddBit.y ++ [cin]) ++ rippleAdder bs cin ++
     notRegister (bs.map AddBit.y ++ [cin])

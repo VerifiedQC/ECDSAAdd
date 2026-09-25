@@ -2,7 +2,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 经典位为 1 时执行 CX；控制位不属于目标寄存器。 -/
+/-- 受 c 控制将经典常量 k 的低 r.length 位 XOR 到目标寄存器 r：c=0 时不变，c=1 时 r ^= k。
+c 保持；要求目标线路互异且不包含 c，只有常量位为 1 的位置执行 CX。 -/
 def maskedConstant (c : Wire) : List Wire → Nat → Program
   | [],_ => []
   | w::ws,k => (if k%2=1 then [.CX c w] else [])++maskedConstant c ws (k/2)

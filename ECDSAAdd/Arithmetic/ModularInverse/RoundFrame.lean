@@ -7,7 +7,9 @@ namespace ECDSAAdd.Arithmetic
 def RoundFrame (L : RoundDataLayout) (v : RoundField → Nat) (base : BasisState)
     (st : BasisState) : Prop := RoundValues L v st ∧ ∀ w, w∉L.wires → st w=base w
 
-/-- 复用原地受控加减，y和低位进位链清零，out不再被触及。 -/
+/-- 受 c 控制更新字段 f：L.reg f ← (L.reg f ± c·L.reg g) mod 2^L.width。
+negative=true 取减号，否则取加号；有效布局下 c/g 保持，y、低位 carry、cin 初始为零并恢复。
+out 不被触及；位宽和字段不重叠等前提见对应规格。 -/
 def inplaceArithmetic (L : RoundDataLayout) (f g : RoundField) (c : Wire) (negative : Bool) : Program :=
   if negative then
     measuredMaskedSubInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin

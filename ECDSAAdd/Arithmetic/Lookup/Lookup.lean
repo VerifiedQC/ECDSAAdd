@@ -152,7 +152,9 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
         rw [hq1]
         cases ha : s.basis a <;> cases hb : s.basis b <;> simp [hb,regValue]
 
-/-- 无外部控制：a本身使能第一半表，翻转a使能第二半表，末尾还原。 -/
+/-- 按地址寄存器 a::controls 查经典表：target ^= table(地址值)，结果按 target 的位宽截断。
+a 是最低地址位，输入地址保持；要求线路互异且 scratch 至少有 controls.length 个零工作位。
+递归访问两半表，结束时 scratch 恢复为零，并恢复测量相位。 -/
 def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program := prog {
   lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));  -- 原 a=1 时 target ^= table(1+2*controls的值)，scratch 恢复零。
   X a;

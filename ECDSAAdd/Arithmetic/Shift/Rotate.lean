@@ -2,7 +2,7 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 无控制物理交换：三个 CX，不消耗 Toffoli 或测量。 -/
+/-- 交换 a、b 两个位的值，要求两根线路不同；使用三个 CX，不消耗 Toffoli 或测量。 -/
 def swapBits (a b : Wire) : Program := [.CX b a,.CX a b,.CX b a]
 
 private theorem swapBits_correct (a b : Wire) (hab : a≠b) (s : State) (m : List Bool) :
@@ -28,14 +28,16 @@ private theorem swapBits_twice (a b : Wire) (hab : a≠b) (s : State) (m : List 
     · subst q; exact b2.trans a1
     exact (e2 q ha hb).trans (e1 q ha hb)
 
-/-- 小端寄存器右旋：原最低位经相邻交换移动到最高位。 -/
+/-- 将小端寄存器 r 循环右移一位：原最低位移到最高位，其余位向低位移动。
+线路互异且最低位为零时，数值效果才是 r ← r/2；一般情况不是丢弃最低位的右移。 -/
 def rotateRight (r : List Wire) : Program := prog {
   for pair in (r.zip r.tail) {
     swapBits(pair.1, pair.2);  -- 交换这对相邻位；按低到高的顺序使原最低位最终移到最高位。
   };
 }
 
-/-- 左旋按逆序执行无测量的相邻交换；固定物理寄存器不换视图。 -/
+/-- 将小端寄存器 r 循环左移一位：原最高位移到最低位，其余位向高位移动。
+线路互异且最高位为零时，数值效果才是 r ← 2*r；与 rotateRight 互逆。 -/
 def rotateLeft (r : List Wire) : Program := prog {
   for pair in ((r.zip r.tail).reverse) {
     swapBits(pair.1, pair.2);  -- 交换这对相邻位；按高到低的顺序使原最高位最终移到最低位。

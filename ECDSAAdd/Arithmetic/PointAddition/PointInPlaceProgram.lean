@@ -5,7 +5,8 @@ namespace ECDSAAdd.Arithmetic
 open Instr
 open Secp256k1
 
-/-- 受控常数模加：掩码源、无控制模加、清源。 -/
+/-- 受 L.core.generic 控制的原地常数模加：r ← (r+generic·k.val) mod p，generic 取值 0/1。
+要求 r 为标准代表元及有效布局；控制位保持，临时常量/加法工作区初始为零并恢复。 -/
 def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program := prog {
   let M := L.inPlaceConstant r;  -- M.low 接目标 r，M.a 是初始为零的临时常数寄存器。
   maskedConstant(L.core.generic, M.a, k.val);  -- M.a ^= (generic=1 ? k.val : 0)，从零装入受控常数。
@@ -13,7 +14,8 @@ def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp)
   maskedConstant(L.core.generic, M.a, k.val);  -- M.a 再异或同一受控常数，清零；r 保留计算结果。
 }
 
-/-- 规范取负，两个高位在调用边界均零。 -/
+/-- L.core.generic=1 时 L.point.x ← −L.point.x mod p，否则 x 不变。
+有效布局/输入范围下，控制位及 point.y 保持，临时寄存器初始为零并恢复，两个扩展高位保持零。 -/
 def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog {
   let enabled := L.core.generic;
   let negate := L.inPlaceNegate; -- a 接原 x；low 是独立的零临时寄存器。
@@ -22,7 +24,9 @@ def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog {
   controlledModAdd(enabled, negate, p);                 -- temp += 新 x，故 temp 清零
 }
 
-/-- 从当前x/y重算斜率；零除数例外用编译期常量清除。 -/
+/-- 清除当前斜率：generic=1 且 point.x≠0 时从 slope 减去 point.y/point.x；
+generic=1 且 point.x=0 时将 lambdaStar XOR 到 slope，generic=0 时不改 slope。
+在匹配斜率条件下结果为零；point.x/y 保持，零的判等/除法工作区恢复，不是任意斜率的清零操作。 -/
 def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program := prog {
   let enabled := L.core.generic;
   let xIsZero := L.core.equalX;
@@ -51,7 +55,10 @@ theorem pointInPlaceClearSlope_program (L : ControlledPointLayout) (lambdaStar :
   simp only [pointInPlaceClearSlope, List.append_assoc]
   rfl
 
-/-- §16.3十二步普通分支；λ在未启用分支始终为零，外部乘积无需外部控制。 -/
+/-- 普通分支原地点加：generic=1 时令 λ=(y−cy)/(x−cx)，
+x′=λ²−x−cx，y′=λ*(x−x′)−y；x/y 来自 L.point，所有运算均 mod p。generic=0 时点不变。
+要求普通分支 x≠cx、有效曲线点/布局、lambdaStar 是匹配的例外斜率；零斜率/工作区最终恢复。
+finite 和 generic 保持；特殊点分支由外层单独处理。 -/
 def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Program := prog {
   let x := L.point.x;
   let y := L.point.y;
@@ -77,7 +84,8 @@ def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Pr
   pointInPlaceConstantAdd(L, y, -cy);           -- y = 结果纵坐标
 }
 
-/-- g=b XOR o XOR d XOR i；同一CX序列装载与清理。 -/
+/-- core.generic ^= control XOR infinitySelect XOR doubleSelect XOR genericSelect。
+原地版本中三个选择位对应 O、C、−C；它们正确且互斥时，从零得到剩余的受控普通分支标志。 -/
 def pointInPlaceGenericFlag (L : ControlledPointLayout) : Program := prog {
   CX L.control L.core.generic;
   CX L.infinitySelect L.core.generic;
@@ -85,11 +93,13 @@ def pointInPlaceGenericFlag (L : ControlledPointLayout) : Program := prog {
   CX L.genericSelect L.core.generic;
 }
 
-/-- h=b∧[cy≠−cy]，条件是编译期常量，不添加几何前提。 -/
+/-- core.double ^= control AND [cy≠−cy]，保留 control；条件由经典 cy 在构造期确定。
+用于排除 C=−C 时与互逆点分支重叠的倍点分支，同一门列可清理该使能位。 -/
 def pointInPlaceDoubleEnable (L : ControlledPointLayout) (cy : Fp) : Program :=
   if cy≠-cy then [.CX L.control L.core.double] else []
 
-/-- 互斥角落的四次XOR：O→C、C→2C、−C→O。 -/
+/-- 在已准备的互斥选择位下更新 L.point：O→C、C→2C、−C→O，未选择的分支保持。
+选择位保持；通过点编码 XOR 写回，并要求它们与原输入点匹配，不是任意数据上的点加。 -/
 def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program := prog {
   maskedPointConstant(L.infinitySelect, L.point, C);  -- 输入为 O 的分支：point 的编码 XOR C，得到 C。
   maskedPointConstant(L.doubleSelect, L.point, C);  -- 输入为 C 的倍点分支：point 的编码 XOR C，先清为 O。
@@ -97,7 +107,9 @@ def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program := pro
   maskedPointConstant(L.genericSelect, L.point, (-C));  -- 输入为 -C 的分支：XOR -C 的编码，将 point 清为 O。
 }
 
-/-- 输入分类、普通分支、三个互斥角落写回，再从输出清除分类位。 -/
+/-- 向 L.point 原地受控加有限经典点 C：control=1 时 R→R+C，否则 R 保持。
+要求 C 的坐标为 cx/cy、输入为有效曲线点、布局有效且工作区初始为零。
+覆盖普通/倍点/互逆点/无穷远分支，最后从输出重算分类条件，归还全部零工作位。 -/
 def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Program := prog {
   let enabled := L.control;
   let pointBits := L.inPlacePointZero; -- 对整个点编码做相等检测；不是只检查一个坐标。

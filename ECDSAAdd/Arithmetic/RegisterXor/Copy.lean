@@ -5,7 +5,9 @@ namespace ECDSAAdd.Arithmetic
 def copyGate (control : Option Wire) (a b : Wire) : Instr :=
   match control with | none => Instr.CX a b | some c => Instr.CCX c a b
 
-/-- 普通复制用 CX；受控复制逐位用 CCX。两者都按 XOR 更新目标。 -/
+/-- 按位计算 dst ^= src；control=some c 时仅在 c=1 时更新，none 时无条件更新。
+保留 src 和控制位；等长且线路互异时是完整寄存器 XOR，不等长时只处理共同前缀。
+普通复制用 CX，受控复制用 CCX；只有 dst 初始为零时才得到源值的副本。 -/
 def copyRegister (control : Option Wire) (src dst : List Wire) : Program := prog {
   for pair in (src.zip dst) {
     copyGate(control, pair.1, pair.2);  -- 目标位 ^= 源位；control=some c 时仅在 c=1 时更新。

@@ -3,8 +3,11 @@ import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 
 namespace ECDSAAdd.Arithmetic
 
-/-- secp256k1 的模数作为编译期常量；257 位布局保留候选差的符号信息。 -/
+/-- secp256k1 域加法：L.out ^= (L.x+L.y) mod p，输入保持，零工作区恢复。
+输入是 [0,p) 中的标准代表元；257 位算术寄存器保留中间借位，沿用 fieldAdd_spec 的布局条件。 -/
 def fieldAdd (L : ModLayout) : Program := modAdd L p
+/-- secp256k1 域减法：L.out ^= (L.x−L.y) mod p，输入保持，零工作区恢复。
+输入是 [0,p) 中的标准代表元；沿用 fieldSub_spec 的位宽和线路互异条件。 -/
 def fieldSub (L : ModLayout) : Program := modSub L p
 
 private theorem modulus_pos : 0 < p := by norm_num [p]

@@ -4,8 +4,8 @@ import ECDSAAdd.Arithmetic.Comparison.Compare
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 将 [i<k] XOR 到 target：装载阈值 i+1 并比较，清比较工作区后翻转结果。
-不访问计数器另一银行 out。 -/
+/-- target ^= [i<k]，k 是 L.x 保存的计数值；L.x 和另一计数银行 L.out 保持。
+要求 i+1 可由布局位宽表示且线路互异，L.y/carry/cin 初始为零并恢复；装载阈值 i+1 比较后清理。 -/
 def counterActiveXor (L : AdderLayout) (target : Wire) (i : Nat) : Program :=
   compareLtConst none L.x L.y L.carry L.cin target (i+1) ++ [.X target]
 

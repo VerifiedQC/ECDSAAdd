@@ -4,11 +4,15 @@ import ECDSAAdd.Arithmetic.ModularAddition.Accumulate
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 将受控来源临时复制进 y；算术与测量顺序不依赖控制值。 -/
+/-- 受 c 控制的加法并转移银行：(L.x=A,L.out=0) → (L.x=0,L.out=(A+c·src) mod 2^n)，n=L.width。
+c 取值 0/1，c/src 保持；src 长度为 n、线路互异，L.y/L.carry/L.cin 初始为零并恢复。
+结果在 out 而非原 x；算术与测量顺序不依赖 c 的值。 -/
 def maskedAdd (L : AdderLayout) (src : List Wire) (c : Wire) : Program :=
   copyRegister (some c) src L.y ++ add L ++ sub L.swapCounter ++
   copyRegister (some c) src L.y
 
+/-- 受 c 控制的减法并转移银行：(L.x=A,L.out=0) → (L.x=0,L.out=(A−c·src) mod 2^n)，n=L.width。
+c 取值 0/1，c/src 保持；src 长度为 n、线路互异，L.y/L.carry/L.cin 初始为零并恢复。 -/
 def maskedSub (L : AdderLayout) (src : List Wire) (c : Wire) : Program :=
   copyRegister (some c) src L.y ++ sub L ++ add L.swapCounter ++
   copyRegister (some c) src L.y
