@@ -4,19 +4,36 @@ import ECDSAAdd.Math.ModularInverse.KaliskiOneBit
 namespace ECDSAAdd.Arithmetic
 
 /-- L.swap ^= L.active AND NOT L.r 的最低位，数据和 active 保持。
-在一位历史轮的不变量下，此条件重现交换分支，可用于清除或恢复 swap。 -/
+在一位历史轮的不变量下，此条件重现交换分支，可用于清除或恢复 swap。
+
+参数：
+
+- `L`：单轮求逆布局；active 是本轮使能，r 的最低位用于恢复交换条件，swap 是条件的 XOR 目标。
+-/
 def recoverSwap (L : KaliskiRoundLayout) : Program :=
   [.CX L.active L.swap, .CCX L.active L.r.head! L.swap]
 
 /-- 执行一轮 Kaliski 数据/计数更新，与两位历史版本相同，但只保留 subtract 这一位历史。
-在一位历史轮的不变量下，用更新后的 r 的奇偶重算并清零 swap；临时工作区恢复零。 -/
+在一位历史轮的不变量下，用更新后的 r 的奇偶重算并清零 swap；临时工作区恢复零。
+
+参数：
+
+- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。此接口把 swap 作为轮内临时位，轮间仅保留 subtract。
+- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
+-/
 def oneBitRound (L : KaliskiRoundLayout) (i : Nat) : Program :=
   loadActive L ++ recordRound L ++ kaliskiBodyProgram L.data L.active L.swap L.subtract ++
   recoverSwap L ++ counterInc L.counter ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++
   roundActiveXor L i
 
 /-- 从一位历史正轮的匹配状态恢复 u/v/r/s、k 和 done，并清零 subtract。
-先从更新后的 r 奇偶恢复 swap，再调用前向逆算术；要求 oneBitRound 对应不变量。 -/
+先从更新后的 r 奇偶恢复 swap，再调用前向逆算术；要求 oneBitRound 对应不变量。
+
+参数：
+
+- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。此接口把 swap 作为轮内临时位，轮间仅保留 subtract。
+- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
+-/
 def oneBitUnround (L : KaliskiRoundLayout) (i : Nat) : Program :=
   roundActiveXor L i ++ recoverSwap L ++ zeroControlled L.active L.done (L.data.zeroBits .v) ++
   kaliskiUnbodyProgram L.data L.active L.swap L.subtract ++ counterDec L.counter.swapCounter ++

@@ -4,10 +4,20 @@ import ECDSAAdd.Math.CurveDefinition.BitcoinCurve
 namespace ECDSAAdd.Arithmetic
 
 /-- secp256k1 域加法：L.out ^= (L.x+L.y) mod p，输入保持，零工作区恢复。
-输入是 [0,p) 中的标准代表元；257 位算术寄存器保留中间借位，沿用 fieldAdd_spec 的布局条件。 -/
+输入是 [0,p) 中的标准代表元；257 位算术寄存器保留中间借位，沿用 fieldAdd_spec 的布局条件。
+
+参数：
+
+- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。本接口使用固定的 secp256k1 模数 p。
+-/
 def fieldAdd (L : ModLayout) : Program := modAdd L p
 /-- secp256k1 域减法：L.out ^= (L.x−L.y) mod p，输入保持，零工作区恢复。
-输入是 [0,p) 中的标准代表元；沿用 fieldSub_spec 的位宽和线路互异条件。 -/
+输入是 [0,p) 中的标准代表元；沿用 fieldSub_spec 的位宽和线路互异条件。
+
+参数：
+
+- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。本接口使用固定的 secp256k1 模数 p。
+-/
 def fieldSub (L : ModLayout) : Program := modSub L p
 
 private theorem modulus_pos : 0 < p := by norm_num [p]

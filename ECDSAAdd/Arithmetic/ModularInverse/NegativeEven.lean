@@ -36,12 +36,24 @@ theorem sourceUnary_nodup (L : ModInPlaceLayout) (n : Nat) (hw : L.Widths n)
 end ModInPlaceLayout
 
 /-- 将 L.a 中的正偶数 R 变为 (−R) mod q；要求 q 为奇数、0<R<2*q 及有效布局/位宽。
-L.z 保持，L.work 初始为零并恢复；先除 2、取负再模加倍，用偶数前提避免丢失恢复信息。 -/
+L.z 保持，L.work 初始为零并恢复；先除 2、取负再模加倍，用偶数前提避免丢失恢复信息。
+
+参数：
+
+- `L`：原地模运算布局；a 是取负/恢复的目标，work 是初末为零的工作区，原目标 z 在此接口中保持不变。
+- `q`：构造期的经典奇模数，限定正偶数输入的范围 0<R<2*q。
+-/
 def negativeEven (L : ModInPlaceLayout) (q : Nat) : Program :=
   rotateRight L.a ++ negRaw L q ++ dblInPlace L.sourceUnary q
 
 /-- 撤销 negativeEven：从 L.a=(−R) mod q 恢复原正偶数 R，要求 q 为奇数、0<R<2*q。
-L.z 保持，L.work 初始为零并恢复；不是对任意输入的普通模取负，也不倒放测量。 -/
+L.z 保持，L.work 初始为零并恢复；不是对任意输入的普通模取负，也不倒放测量。
+
+参数：
+
+- `L`：原地模运算布局；a 是取负/恢复的目标，work 是初末为零的工作区，原目标 z 在此接口中保持不变。
+- `q`：构造期的经典奇模数，限定正偶数输入的范围 0<R<2*q。
+-/
 def restoreNegativeEven (L : ModInPlaceLayout) (q : Nat) : Program :=
   halfInPlace L.sourceUnary q ++ negRaw L q ++ rotateLeft L.a
 

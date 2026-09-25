@@ -30,11 +30,22 @@ structure Widths (L : InverseScaleLayout) : Prop where
 
 /-- 以 L.k 中计数 K 查表：L.factor ^= (R*2^(−K) mod q)，R=2^256。
 q 为奇数时 2^(−K) 表示模 q 逆幂；实际表项为 inverseScaleFactor q K。
-有效布局下 k 保持，零 scratch 恢复，factor 可通过重复查表清零。 -/
+有效布局下 k 保持，零 scratch 恢复，factor 可通过重复查表清零。
+
+参数：
+
+- `L`：计数缩放布局：a 保存待缩放值，k 保存有效轮计数，factor 暂存查表因子；stage.acc/history/flag 保留恢复信息，其余为工作位。
+- `q`：构造期的经典求逆模数，用于缩放因子 R*2^(−k) mod q；准备/恢复还须满足 Montgomery 条件。
+-/
 def lookup (L : InverseScaleLayout) (q : Nat) : Program :=
   Arithmetic.lookup (L.k.headD L.stage.flag) L.k.tail L.scratch L.factor (inverseScaleFactor q)
 
-/-- 三次无控制CX复制交换a与累加器低257位；高4位保持。 -/
+/-- 三次无控制CX复制交换a与累加器低257位；高4位保持。
+
+参数：
+
+- `L`：缩放布局；本函数只交换 a 与 stage.acc 的低 257 位，不改变高位、计数或历史。
+-/
 def exchange (L : InverseScaleLayout) : Program := prog {
   copyRegister(none, L.a, (L.stage.acc.take 257));  -- acc 的低 257 位 ^= a，暂存两者的逐位差。
   copyRegister(none, (L.stage.acc.take 257), L.a);  -- a ^= acc 的低 257 位，使 a 得到原 acc 的低 257 位。
@@ -43,7 +54,13 @@ def exchange (L : InverseScaleLayout) : Program := prog {
 
 /-- 将 L.a 中的 N 缩放为 N*2^(−K) mod q，K 是 L.k 中计数，消去 Kaliski 的 2^K 因子。
 满足本文件的 Montgomery 模数/范围/布局条件、live/work 初始为零时，k 保持，work 归零。
-原 N 留在 stage.acc，约减历史和借位仍保留于 live，供 restore 使用；并非全部辅助位都清零。 -/
+原 N 留在 stage.acc，约减历史和借位仍保留于 live，供 restore 使用；并非全部辅助位都清零。
+
+参数：
+
+- `L`：计数缩放布局：a 保存待缩放值，k 保存有效轮计数，factor 暂存查表因子；stage.acc/history/flag 保留恢复信息，其余为工作位。
+- `q`：构造期的经典求逆模数，用于缩放因子 R*2^(−k) mod q；准备/恢复还须满足 Montgomery 条件。
+-/
 def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
@@ -54,7 +71,13 @@ def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
 }
 
 /-- 撤销 prepare 的缩放：从匹配的 Prepared 状态将原 N 放回 L.a，并清零 live 中的累加器及历史。
-L.k 保持，work 恢复零；要求原计数及历史未变，执行前向恢复门列。 -/
+L.k 保持，work 恢复零；要求原计数及历史未变，执行前向恢复门列。
+
+参数：
+
+- `L`：计数缩放布局：a 保存待缩放值，k 保存有效轮计数，factor 暂存查表因子；stage.acc/history/flag 保留恢复信息，其余为工作位。
+- `q`：构造期的经典求逆模数，用于缩放因子 R*2^(−k) mod q；准备/恢复还须满足 Montgomery 条件。
+-/
 def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
   let stage := L.stage;
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。

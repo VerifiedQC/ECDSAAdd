@@ -4,7 +4,13 @@ import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
 namespace ECDSAAdd.Arithmetic
 
 /-- 将 I.middle.u ^= 1、I.middle.s ^= q；其它寄存器不变，要求两组线路互异。
-在终态 u=1、s=q 时清零这两个常量寄存器；同一门列在逆轮前把它们从零写回。 -/
+在终态 u=1、s=q 时清零这两个常量寄存器；同一门列在逆轮前把它们从零写回。
+
+参数：
+
+- `I`：完整求逆布局；本函数使用终态视图 middle.u/middle.s 两个寄存器。
+- `q`：构造期的经典模数，也是在终态 s 中清除或重新写入的常量。
+-/
 def terminalConstants (I : InverseLoopLayout) (q : Nat) : Program :=
   xorConstant I.middle.u 1 ++ xorConstant I.middle.s q
 

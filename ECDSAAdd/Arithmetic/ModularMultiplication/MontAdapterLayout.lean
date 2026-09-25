@@ -88,7 +88,13 @@ theorem controlled_add_nodup (c : Wire) (M : MontLayout) (hw : M.Widths)
 end MontLayout
 
 /-- 标准模乘的 XOR 输出：M.out ^= M.x*M.y mod p；M.x/M.y 保持，零工作区恢复。
-要求有效布局、M.x<p、M.y<2^256，且 p 为素数、p<2^256、p mod 16=15；不是 Montgomery 表示的输出。 -/
+要求有效布局、M.x<p、M.y<2^256，且 p 为素数、p<2^256、p mod 16=15；不是 Montgomery 表示的输出。
+
+参数：
+
+- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。XOR 接口异或到 out，累加/累减接口原地更新 out。
+- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
+-/
 def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
   let product := M.product; -- 内部 z 的低 257 位。
   montMulCompute(M, p);                      -- 生成模积，保留历史
@@ -97,7 +103,13 @@ def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
 }
 
 /-- 模乘累加：M.out ← (M.out+M.x*M.y) mod p；M.x/M.y 保持，零工作区恢复。
-沿用 montMulAdd_spec 的位宽/范围/模数条件，M.out 初值是 [0,p) 中的标准代表元。 -/
+沿用 montMulAdd_spec 的位宽/范围/模数条件，M.out 初值是 [0,p) 中的标准代表元。
+
+参数：
+
+- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。XOR 接口异或到 out，累加/累减接口原地更新 out。
+- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
+-/
 def montMulAdd (M : MontLayout) (p : Nat) : Program := prog {
   let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
   montMulCompute(M, p);                      -- 生成模积，保留历史
@@ -106,7 +118,13 @@ def montMulAdd (M : MontLayout) (p : Nat) : Program := prog {
 }
 
 /-- 模乘累减：M.out ← (M.out−M.x*M.y) mod p；M.x/M.y 保持，零工作区恢复。
-沿用 montMulSub_spec 的位宽/范围/模数条件，M.out 初值是 [0,p) 中的标准代表元。 -/
+沿用 montMulSub_spec 的位宽/范围/模数条件，M.out 初值是 [0,p) 中的标准代表元。
+
+参数：
+
+- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。XOR 接口异或到 out，累加/累减接口原地更新 out。
+- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
+-/
 def montMulSub (M : MontLayout) (p : Nat) : Program := prog {
   let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
   montMulCompute(M, p);                      -- 生成模积，保留历史
@@ -116,7 +134,14 @@ def montMulSub (M : MontLayout) (p : Nat) : Program := prog {
 
 /-- 受 c 控制的模乘累加：M.out ← (M.out+c·M.x*M.y) mod p，c 取值 0/1。
 c/M.x/M.y 保持，零工作区恢复；沿用对应规格的布局、输入范围和模数条件。
-c=0 时也计算/清理内部乘积，只是不更新 M.out。 -/
+c=0 时也计算/清理内部乘积，只是不更新 M.out。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。本接口原地更新 out。
+- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
+-/
 def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
   let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
   montMulCompute(M, p);                      -- 生成模积，保留历史
@@ -126,7 +151,14 @@ def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog
 
 /-- 受 c 控制的模乘累减：M.out ← (M.out−c·M.x*M.y) mod p，c 取值 0/1。
 c/M.x/M.y 保持，零工作区恢复；沿用对应规格的布局、输入范围和模数条件。
-c=0 时也计算/清理内部乘积，只是不更新 M.out。 -/
+c=0 时也计算/清理内部乘积，只是不更新 M.out。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。本接口原地更新 out。
+- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
+-/
 def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
   let accumulate := M.addView; -- 输入 a 接 M.product=x*y mod p；目标 z 接 M.out。
   montMulCompute(M, p);                      -- 生成模积，保留历史

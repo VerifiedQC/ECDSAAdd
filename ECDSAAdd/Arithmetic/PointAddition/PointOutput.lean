@@ -7,7 +7,14 @@ open Instr
 open Secp256k1
 
 /-- c=1 时 r 的点编码 ^= 经典点 C 的编码，c=0 时 r 不变，c 保持。
-分别更新 finite/x/y，O 编码为全零；这是按位 XOR，不是曲线点加，要求有效互异点寄存器布局。 -/
+分别更新 finite/x/y，O 编码为全零；这是按位 XOR，不是曲线点加，要求有效互异点寄存器布局。
+
+参数：
+
+- `c`：正控制 wire：为 1 时 XOR 常量点编码。
+- `r`：点编码的 XOR 目标，finite 表示是否有限，x/y 保存小端坐标。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def maskedPointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog {
   maskedConstant(c, [r.finite], (pointFinite C).toNat);  -- c=1 时 r.finite ^= C 的有限点标志。
   maskedConstant(c, r.x, (pointX C));  -- c=1 时 r.x ^= C 的横坐标编码。
@@ -15,7 +22,12 @@ def maskedPointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog 
 }
 
 /-- L.generic=1 时 L.output 的点编码 ^= (有限标志 1,candidateX 的低 256 位,candidateY 的低 256 位)。
-generic=0 时输出不变；候选和标志保持，要求有效输出布局，不清除候选历史。 -/
+generic=0 时输出不变；候选和标志保持，要求有效输出布局，不清除候选历史。
+
+参数：
+
+- `L`：普通分支输出布局：generic 控制是否输出，candidateX/candidateY 提供候选坐标，output 接收对应点编码的 XOR。
+-/
 def pointGenericOutput (L : PointAddLayout) : Program := prog {
   CX L.generic L.output.finite;
   copyRegister((some L.generic), (L.candidateX.take 256), L.output.x);  -- generic=1 时 output.x ^= candidateX 的低 256 位。
@@ -23,7 +35,14 @@ def pointGenericOutput (L : PointAddLayout) : Program := prog {
 }
 
 /-- c=0 时 r 的点编码 ^= C 的编码，c=1 时 r 不变，最终 c 恢复。
-这是负控制的编码 XOR，不是加上 −C；要求有效互异点寄存器布局。 -/
+这是负控制的编码 XOR，不是加上 −C；要求有效互异点寄存器布局。
+
+参数：
+
+- `c`：负控制 wire：原值为 0 时 XOR 常量点编码，执行后恢复原控制值。
+- `r`：点编码的 XOR 目标，包含有限标志 finite 和小端坐标 x/y。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def negativePointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog {
   X c;
   maskedPointConstant(c, r, C);  -- c 已翻转：原 c=0 时，将 C 的编码 XOR 到 r。
@@ -31,7 +50,13 @@ def negativePointConstant (c : Wire) (r : PointReg) (C : Point) : Program := pro
 }
 
 /-- 在分支标志和候选已正确准备时，将输入点 R 与有限常量 C 的和的编码 XOR 到 L.output。
-普通分支用候选，R=C 用 2C，R=O 用 C，R=−C 用全零；输入和中间量保持，清理由调用者完成。 -/
+普通分支用候选，R=C 用 2C，R=O 用 C，R=−C 用全零；输入和中间量保持，清理由调用者完成。
+
+参数：
+
+- `L`：点加布局：input/output 是输入与 XOR 输出点寄存器，generic/double 等位保存分支条件，候选坐标/斜率等寄存器保存中间量，pool 是共享算术工作池。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def pointOutput (L : PointAddLayout) (C : Point) : Program := prog {
   pointGenericOutput(L);                              -- 普通分支：输出 XOR 候选坐标
   maskedPointConstant(L.double, L.output, C+C);         -- 输入为 C：输出 XOR 2C
@@ -40,7 +65,13 @@ def pointOutput (L : PointAddLayout) (C : Point) : Program := prog {
 }
 
 /-- 将点寄存器 a 的 finite/x/y 编码按位 XOR 到 b，保留 a；不进行曲线点加。
-要求有效等宽且互异的点寄存器布局，只有 b 初始为零时才得到 a 的副本。 -/
+要求有效等宽且互异的点寄存器布局，只有 b 初始为零时才得到 a 的副本。
+
+参数：
+
+- `a`：来源点寄存器，包含 finite/x/y，保持不变。
+- `b`：点编码的 XOR 目标寄存器；它为零时得到 a 的副本。
+-/
 def pointCopy (a b : PointReg) : Program := prog {
   CX a.finite b.finite;
   copyRegister(none, a.x, b.x);  -- b.x ^= a.x；保留源坐标 a.x。
@@ -49,7 +80,13 @@ def pointCopy (a b : PointReg) : Program := prog {
 
 /-- L.output 的编码 ^= 输入点 L.input 与经典常量点 C 的和的编码；输入点保持。
 有效点输入、布局和零工作区条件下，工作区最终恢复零；输出为零时直接得到 R+C。
-有限 C 时先计算安全候选，再选择正确分支并清理；C=O 时直接 XOR 输入点编码。 -/
+有限 C 时先计算安全候选，再选择正确分支并清理；C=O 时直接 XOR 输入点编码。
+
+参数：
+
+- `L`：点加布局：input/output 是输入与 XOR 输出点寄存器，generic/double 等位保存分支条件，候选坐标/斜率等寄存器保存中间量，pool 是共享算术工作池。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def pointAddOut (L : PointAddLayout) (C : Point) : Program :=
   match C with
   | .zero => pointCopy L.input L.output -- C=O：output 的编码 ^= 输入点编码。

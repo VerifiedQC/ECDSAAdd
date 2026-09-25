@@ -4,7 +4,16 @@ import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
 namespace ECDSAAdd.Arithmetic
 
 /-- dst ^= (−src) mod q，src 保持；允许 src≥q，但要求 src<2*q、0<q<2^L.width。
-在有效布局下 temp 和 L.wires 初始为零并恢复；先约减再取负，最后清零中间约减值。 -/
+在有效布局下 temp 和 L.wires 初始为零并恢复；先约减再取负，最后清零中间约减值。
+
+参数：
+
+- `L`：内部模加减布局，本接口把 L.wires 用作初末为零的工作区。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+- `src`：小端来源寄存器，保存要取模负值的 Kaliski 系数，运算后保持。
+- `temp`：与 src/dst 等宽的零中间寄存器，暂存 src mod q。
+- `dst`：小端 XOR 输出寄存器，接收 (−src) mod q，初值不必为零。
+-/
 def negativeInit (L : ModLayout) (q : Nat) (src temp dst : List Wire) : Program :=
   reduceXor L q src temp ++ negateXor L q temp dst ++ reduceXor L q src temp
 

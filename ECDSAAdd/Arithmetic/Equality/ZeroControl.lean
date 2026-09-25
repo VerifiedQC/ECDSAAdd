@@ -11,10 +11,24 @@ structure ZeroBit where
 
 def ZeroBit.wires (b : ZeroBit) : List Wire := [b.input,b.work]
 
-/-- t ^= c AND NOT a；输入保持。 -/
+/-- t ^= c AND NOT a；输入保持。
+
+参数：
+
+- `c`：正控制 wire，值保持。
+- `a`：取反后参与 AND 的输入 wire，最终恢复原值。
+- `t`：AND 结果位；negAnd 对它做 XOR，negAndErase 要求它已等于 c AND NOT a 才能清零。
+-/
 private def negAnd (c a t : Wire) : Program := [.X a, .CCX c a t, .X a]
 
-/-- 已知 t = c AND NOT a 时，测量清零 t 并恢复相位。 -/
+/-- 已知 t = c AND NOT a 时，测量清零 t 并恢复相位。
+
+参数：
+
+- `c`：正控制 wire，值保持。
+- `a`：取反后参与 AND 的输入 wire，最终恢复原值。
+- `t`：AND 结果位；negAnd 对它做 XOR，negAndErase 要求它已等于 c AND NOT a 才能清零。
+-/
 private def negAndErase (c a t : Wire) : Program :=
   [.X a, .measureX t [] [.CZ c a], .X a]
 
@@ -25,7 +39,14 @@ local macro_rules
                  omega))
 
 /-- target ^= c AND [bs 中所有 input 位均为零]，输入和 c 保持。
-要求线路互异、bs 中 work 位初始为零；零检测后测量清理这些工作位并恢复相位。 -/
+要求线路互异、bs 中 work 位初始为零；零检测后测量清理这些工作位并恢复相位。
+
+参数：
+
+- `c`：控制 wire，只有它为 1 时才将零检测条件 XOR 到目标。
+- `target`：零检测条件的 XOR 输出 wire，初值不必为零。
+- `bs`：逐位零检测布局：input 是被检测位，work 是生成检测链的零工作位。
+-/
 def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
   let n := bs.length;
   let chain := c :: bs.map ZeroBit.work;

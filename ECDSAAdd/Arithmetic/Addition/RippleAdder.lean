@@ -24,7 +24,13 @@ local macro_rules
 /-- n 位加法的 XOR 输出，n 是逐位布局列表 bs 的长度：out ^= (x+y+cin) mod 2^n。
 x/y/out/carry 分别由 bs 中对应字段组成；输入 x/y/cin 保持，初始为零的 carry 最终清零。
 要求布局中的线路互异。先由低到高计算和与进位，再由高到低测量清理进位。
-c 将 cin 与各位进位线连成一条链；只组织已有线路，不分配新线。 -/
+c 将 cin 与各位进位线连成一条链；只组织已有线路，不分配新线。
+
+参数：
+
+- `bs`：从最低位到最高位排列的逐位布局；每项的 x/y 是两输入位，out 是和的 XOR 输出位，carry 是零进位工作位。
+- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
+-/
 def rippleAdder (bs : List AddBit) (cin : Wire) : Program := prog {
   let n := bs.length;
   let c := [cin] ++ bs.map AddBit.carry;

@@ -3,7 +3,14 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 namespace ECDSAAdd.Arithmetic
 
 /-- 受 c 控制将经典常量 k 的低 r.length 位 XOR 到目标寄存器 r：c=0 时不变，c=1 时 r ^= k。
-c 保持；要求目标线路互异且不包含 c，只有常量位为 1 的位置执行 CX。 -/
+c 保持；要求目标线路互异且不包含 c，只有常量位为 1 的位置执行 CX。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `第 2 个参数（r）`：小端 XOR 目标寄存器，初值不必为零。
+- `第 3 个参数（k）`：构造电路时已知的经典常量，只使用与 r 位宽对应的低位。
+-/
 def maskedConstant (c : Wire) : List Wire → Nat → Program
   | [],_ => []
   | w::ws,k => (if k%2=1 then [.CX c w] else [])++maskedConstant c ws (k/2)

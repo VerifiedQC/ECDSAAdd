@@ -8,7 +8,12 @@ open Secp256k1
 
 /-- genericSelect ^= control AND core.generic，doubleSelect ^= control AND core.double，
 infinitySelect ^= control AND NOT core.input.finite；有效布局下输入及原分类位保持。
-重复调用清理相同条件的结果；外部控制不改变候选算术/测量序列。 -/
+重复调用清理相同条件的结果；外部控制不改变候选算术/测量序列。
+
+参数：
+
+- `L`：受控点加布局：core.input/core.output 是输入和 XOR 输出，control 是外部控制，三个 Select 位选择输出分支，core 还提供候选与工作区。此处 genericSelect/doubleSelect/infinitySelect 分别对应普通、倍点、无穷远输入分支。
+-/
 def pointSelectors (L : ControlledPointLayout) : Program := prog {
   CCX L.control L.core.generic L.genericSelect;
   CCX L.control L.core.double L.doubleSelect;
@@ -18,7 +23,13 @@ def pointSelectors (L : ControlledPointLayout) : Program := prog {
 }
 
 /-- 按已准备的选择位，将普通候选、2C 或 C 的点编码 XOR 到 L.core.output。
-选择位应分别表示受控普通/倍点/无穷远分支；全部为零时不写输出，其余中间量保持。 -/
+选择位应分别表示受控普通/倍点/无穷远分支；全部为零时不写输出，其余中间量保持。
+
+参数：
+
+- `L`：受控点加布局：core.input/core.output 是输入和 XOR 输出，control 是外部控制，三个 Select 位选择输出分支，core 还提供候选与工作区。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
   pointGenericOutput(L.selected);  -- genericSelect=1 时，将普通候选点的编码 XOR 到 core.output。
   maskedPointConstant(L.doubleSelect, L.core.output, (C+C));  -- doubleSelect=1 时，将 2C 的编码 XOR 到 core.output。
@@ -26,7 +37,13 @@ def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := pro
 }
 
 /-- 在分类位和候选匹配时，control=1 将 R+C 的编码 XOR 到 core.output，control=0 时输出不变。
-零的三个选择位在结束后恢复；输入、候选及其历史保持，清理由外层负责。 -/
+零的三个选择位在结束后恢复；输入、候选及其历史保持，清理由外层负责。
+
+参数：
+
+- `L`：受控点加布局：core.input/core.output 是输入和 XOR 输出，control 是外部控制，三个 Select 位选择输出分支，core 还提供候选与工作区。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def controlledPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
   pointSelectors(L);              -- 外部 control 与普通/倍点/无穷远条件分别 AND
   selectedPointOutput(L, C);       -- 将被选择的结果 XOR 到 core.output
@@ -35,7 +52,13 @@ def controlledPointOutput (L : ControlledPointLayout) (C : Point) : Program := p
 
 /-- control=1 时 core.output 的编码 ^= R+C 的编码，control=0 时输出保持；R 来自 core.input。
 要求有效点输入、布局和零工作区，control/输入点保持，工作区恢复零。
-未启用分支也计算和清理候选，只抑制最终输出；这不是原地点加。 -/
+未启用分支也计算和清理候选，只抑制最终输出；这不是原地点加。
+
+参数：
+
+- `L`：受控点加布局：core.input/core.output 是输入和 XOR 输出，control 是外部控制，三个 Select 位选择输出分支，core 还提供候选与工作区。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => copyRegister (some L.control) (PointAddLayout.pointWires L.core.input)
@@ -50,7 +73,13 @@ def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
 
 /-- 受 control 控制的原地点加：|control⟩|R⟩ ↦ |control⟩|R+control·C⟩，control 取值 0/1。
 R 保存在 L.point，C 是经典常量点；有效点/布局及零工作区条件下，control 保持，工作区恢复零。
-C=O 时是空电路；有限 C 的实现包含普通分支、倍点、互逆点和无穷远点。 -/
+C=O 时是空电路；有限 C 的实现包含普通分支、倍点、互逆点和无穷远点。
+
+参数：
+
+- `L`：原地点加布局：point（即 core.input）是更新目标，control 是外部控制，core.generic 是普通分支使能；core 的候选区和 pool 被借作斜率、算术及分类工作位。
+- `C`：构造电路时已知的经典曲线点，不是点寄存器；用其编码或坐标生成电路。
+-/
 def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => []

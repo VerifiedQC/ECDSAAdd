@@ -14,7 +14,13 @@ private theorem data_updates (z : KState) (X : Nat) :
   refine ⟨?_,?_,?_⟩ <;> funext f <;> cases f <;> rfl
 
 /-- c=1 时同时交换 L.u↔L.v、L.r↔L.s；c=0 时四个寄存器不变，c 保持。
-要求两对寄存器各自等长且参与线路互异，使数值与对应系数同步交换。 -/
+要求两对寄存器各自等长且参与线路互异，使数值与对应系数同步交换。
+
+参数：
+
+- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
+- `c`：控制 wire：为 1 时同时交换 u/v 与 r/s，为 0 时保持。
+-/
 def swapDataPairs (L : RoundDataLayout) (c : Wire) : Program := prog {
   swapRegisters(c, L.u, L.v);  -- c=1 时 u↔v，否则两者保持。
   swapRegisters(c, L.r, L.s);  -- c=1 时 r↔s，使系数与 u/v 的角色同步交换。
@@ -37,7 +43,15 @@ private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.w
 
 /-- Kaliski 一轮的数据更新：先按 swap 交换 u/v 和 r/s；subtract=1 时 u←u−v、r←r+s；
 active=1 时 u←u/2、s←2*s，最后按 swap 换回。工作区初始为零并恢复，控制位保持。
-整数解释要求本轮不变量保证待减数足够、待除数为偶数及无溢出；一般门列实际按位宽运算/循环移位。 -/
+整数解释要求本轮不变量保证待减数足够、待除数为偶数及无溢出；一般门列实际按位宽运算/循环移位。
+
+参数：
+
+- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
+- `active`：本轮使能 wire，控制除以 2/乘以 2 的循环移位；已经结束的轮为 0。
+- `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
+- `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
+-/
 def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
   let u := L.u;
   let v := L.v;
@@ -55,7 +69,15 @@ def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Pro
 
 /-- 撤销 kaliskiBodyProgram 的数据更新：在同样的交换视图中先 s←s/2、u←2*u，
 再按 subtract 做 r←r−s、u←u+v，最后换回；移位仍受 active 控制。
-要求来自匹配的正轮数据和分支记录、满足轮不变量；零工作区恢复，控制位保持，不倒放测量。 -/
+要求来自匹配的正轮数据和分支记录、满足轮不变量；零工作区恢复，控制位保持，不倒放测量。
+
+参数：
+
+- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
+- `active`：本轮使能 wire，控制除以 2/乘以 2 的循环移位；已经结束的轮为 0。
+- `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
+- `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
+-/
 def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
   let u := L.u;
   let v := L.v;

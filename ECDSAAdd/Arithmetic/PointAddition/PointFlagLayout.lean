@@ -61,14 +61,28 @@ theorem PointAddLayout.flag_interfaces (L : PointAddLayout) (hn : L.wires.Nodup)
 
 /-- 从零计算分类位：equalX=finite AND [x=cx]，equalNegY=finite AND [y=−cy]，
 generic=finite AND NOT equalX，double=equalX AND NOT equalNegY；x/y/finite 来自 L.input。
-有效布局下输入保持，零检测工作区恢复；保留四个标志供候选计算/输出选择。 -/
+有效布局下输入保持，零检测工作区恢复；保留四个标志供候选计算/输出选择。
+
+参数：
+
+- `L`：点加分类布局：input.finite/x/y 是输入，equalX/equalNegY 接收相等条件，generic/double 是分支标志，zeroX/zeroY 提供零检测视图。
+- `cx`：经典常量点 C 的横坐标，属于域 Fp，不是存放坐标的量子寄存器。
+- `cy`：经典常量点 C 的纵坐标，属于域 Fp，不是存放坐标的量子寄存器。
+-/
 def pointFlagsCompute (L : PointAddLayout) (cx cy : Fp) : Program :=
   equalConstant L.input.finite L.equalX L.zeroX cx.val++ -- equalX ^= finite AND [x=cx]。
   equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++ -- equalNegY ^= finite AND [y=-cy]。
   pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double -- generic ^= finite AND NOT equalX；double ^= equalX AND NOT equalNegY。
 
 /-- 清除 pointFlagsCompute 生成的 equalX/equalNegY/generic/double，输入保持。
-要求输入/cx/cy 未变、标志匹配，零检测工作区初始为零并恢复；重算条件进行 XOR 清理。 -/
+要求输入/cx/cy 未变、标志匹配，零检测工作区初始为零并恢复；重算条件进行 XOR 清理。
+
+参数：
+
+- `L`：点加分类布局：input.finite/x/y 是输入，equalX/equalNegY 接收相等条件，generic/double 是分支标志，zeroX/zeroY 提供零检测视图。
+- `cx`：经典常量点 C 的横坐标，属于域 Fp，不是存放坐标的量子寄存器。
+- `cy`：经典常量点 C 的纵坐标，属于域 Fp，不是存放坐标的量子寄存器。
+-/
 def pointFlagsClear (L : PointAddLayout) (cx cy : Fp) : Program :=
   pointBranchFlags L.input.finite L.equalX L.equalNegY L.generic L.double++ -- 重算并异或同样的分支条件，清 generic/double。
   equalConstant L.input.finite L.equalNegY L.zeroY (-cy).val++ -- equalNegY 再异或 finite AND [y=-cy]，清零。

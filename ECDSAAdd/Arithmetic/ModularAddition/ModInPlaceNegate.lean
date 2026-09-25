@@ -3,7 +3,13 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceWrappers
 namespace ECDSAAdd.Arithmetic
 
 /-- 扩宽寄存器取负：L.a ← p−L.a，适用于 0≤L.a≤p；0 映为 p，尚不是标准模 p 取负。
-满足布局/位宽条件且工作区初始为零时，工作区恢复、L.z 保持；再调用一次恢复原 L.a。 -/
+满足布局/位宽条件且工作区初始为零时，工作区恢复、L.z 保持；再调用一次恢复原 L.a。
+
+参数：
+
+- `L`：取负借用的原地模运算布局；本函数更新源寄存器 a，使用 constant/carry/cin，保持原目标 z。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def negRaw (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   let source := L.a;
   notRegister(source);                             -- source = 2^位宽-1-A

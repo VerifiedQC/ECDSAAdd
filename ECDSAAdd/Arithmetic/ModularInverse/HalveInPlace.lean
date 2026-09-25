@@ -53,7 +53,14 @@ theorem HalvingCounter.congr (L : AdderLayout) (K : Nat) (s t : BasisState)
 
 /-- 当 i<L.counter.x（计数值 k）时，L.data ← (L.data+(L.data mod 2)*q)/2；否则 L.data 不变。
 要求 q 为奇数、L.data<q，以及 halveStep_spec 的布局/计数范围；计数保持，零工作区恢复。
-active 保存 i<k，flag 暂存原奇偶，最后由减半结果比较清 flag、重算计数条件清 active。 -/
+active 保存 i<k，flag 暂存原奇偶，最后由减半结果比较清 flag、重算计数条件清 active。
+
+参数：
+
+- `L`：模减半布局：data 是原地更新的数据，counter.x 保存有效轮数 k，active/flag 暂存使能与奇偶，constant/chain/top/cin 等为工作位。
+- `q`：构造期的经典奇模数；倍增和减半均在模 q 意义下进行。
+- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
+-/
 def halveStep (L : HalvingLayout) (q i : Nat) : Program :=
   -- 装入本轮使能 active = [i<k]，计数输入 k 保持。
   counterActiveXor L.counter L.active i ++
@@ -69,7 +76,14 @@ def halveStep (L : HalvingLayout) (q i : Nat) : Program :=
 
 /-- 当 i<L.counter.x（计数值 k）时，L.data ← 2*L.data mod q；否则 L.data 不变。
 要求 q 为奇数、L.data<q，以及对应规格的布局/计数范围；计数保持，零工作区恢复。
-以独立前向门列撤销同一轮 halveStep，不反转测量。 -/
+以独立前向门列撤销同一轮 halveStep，不反转测量。
+
+参数：
+
+- `L`：模减半布局：data 是原地更新的数据，counter.x 保存有效轮数 k，active/flag 暂存使能与奇偶，constant/chain/top/cin 等为工作位。
+- `q`：构造期的经典奇模数；倍增和减半均在模 q 意义下进行。
+- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
+-/
 def doubleStep (L : HalvingLayout) (q i : Nat) : Program :=
   -- 装入本轮使能；比较加 CX 得到 flag = active ∧ [data ≥ (q+1)/2]。
   counterActiveXor L.counter L.active i ++

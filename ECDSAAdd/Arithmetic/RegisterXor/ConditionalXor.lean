@@ -4,7 +4,16 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 条件选择的 XOR 输出：dst ^= (c=1 ? f(src) : src)，保留 c/src，temp 及核工作区恢复为零。
 前提是 kernel 保留输入并计算 temp ^= f(src)，可重算清理；各寄存器满足其布局/零工作区契约。
-先计算候选、再选择输出，最后重新执行 kernel；并非对任意 Program 都有此效果。 -/
+先计算候选、再选择输出，最后重新执行 kernel；并非对任意 Program 都有此效果。
+
+参数：
+
+- `kernel`：预先构造的子电路，按接口契约计算 temp ^= f(src)，保持 src，且能再次运行以清理。
+- `c`：选择 wire：0 选择原 src，1 选择 kernel 算出的 f(src)。
+- `src`：小端输入寄存器，也是不启用 kernel 结果时的候选值，保持不变。
+- `temp`：kernel 的零候选工作寄存器，与 src/dst 等宽，用后清零。
+- `dst`：小端 XOR 输出寄存器，接收选中的候选值，初值不必为零。
+-/
 def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
   kernel();                          -- 按调用契约：temp = f(src)，再次运行可清零
   copyRegister(none, src, dst);       -- dst ^= src

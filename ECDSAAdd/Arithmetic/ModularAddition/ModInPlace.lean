@@ -32,7 +32,13 @@ end ModAddCoreLayout
 /-- 原地模加核：L.z ← (L.z+L.a) mod p，L.a 保持；结果位于 L.low，L.high 最终为零。
 要求有效布局、p 的位宽及输入范围满足 modAddCore_spec，尤其 L.a≤p、L.z<p。
 constant/carry/cin 初始为零并恢复；先加、试减 p、按借位加回，再比较清借位。
-源 a 可以是外层装载的 mask，必须保留到借位清理完成。 -/
+源 a 可以是外层装载的 mask，必须保留到借位清理完成。
+
+参数：
+
+- `L`：原地模加线路布局：a 是保留的源寄存器，low 是目标低位，high 是其扩展/借位位，z=low++[high]；constant/carry/cin 是算术工作区。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog {
   let source := L.a;
   let target := L.z;                    -- low 加上一根 high，容纳完整的和。

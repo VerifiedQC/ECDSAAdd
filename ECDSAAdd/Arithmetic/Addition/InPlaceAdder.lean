@@ -6,7 +6,15 @@ import Mathlib.Data.List.OfFn
 namespace ECDSAAdd.Arithmetic
 open Instr
 
-/-- fullAdder 的前六门：carry ^= MAJ(a,b,cin)，三个输入恢复，不写和位。 -/
+/-- fullAdder 的前六门：carry ^= MAJ(a,b,cin)，三个输入恢复，不写和位。
+
+参数：
+
+- `a`：第一个输入位的 wire，运算后保持。
+- `b`：第二个输入位的 wire，运算后保持。
+- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
+- `carry`：MAJ(a,b,cin) 的 XOR 输出 wire；初始为 0 时记录该位进位。
+-/
 def majority (a b cin carry : Wire) : Program := prog {
   CX a b; CX a cin; CCX b cin carry; CX a carry; CX a cin; CX a b
 }
@@ -18,7 +26,15 @@ local macro_rules
 
 /-- n 位原地加法：y ← (y+x+cin) mod 2^n，n 是目标寄存器 y 的长度。
 要求 x/y 等长、carry 有 n−1 位且线路互异；carry 初始为零，结束后清零，x/cin 保持。
-先由低到高计算进位，再由高到低清理进位并写回和位；位宽条件不满足时返回空电路。 -/
+先由低到高计算进位，再由高到低清理进位并写回和位；位宽条件不满足时返回空电路。
+
+参数：
+
+- `x`：小端加数寄存器，运算后保持。
+- `y`：小端被加寄存器，原值作为输入，随后被和覆盖。
+- `carry`：相邻数据位之间的进位工作寄存器，比 y 少一位，初末为零。
+- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
+-/
 def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
   if h : x.length = y.length ∧ carry.length + 1 = y.length then
     prog {
@@ -37,7 +53,15 @@ def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
     }
   else []
 
-/-- 仅用于结构归纳的参考电路；实际 addInPlace 由上面的循环生成。 -/
+/-- 仅用于结构归纳的参考电路；实际 addInPlace 由上面的循环生成。
+
+参数：
+
+- `第 1 个参数（x）`：小端加数寄存器，运算后保持。
+- `第 2 个参数（y）`：小端原地更新的被加寄存器。
+- `第 3 个参数（carry）`：比 y 少一位的零进位工作寄存器。
+- `第 4 个参数（cin）`：最低位的输入进位 wire，其原值参与加法，运算后保留。
+-/
 private def addInPlaceRecursive : List Wire → List Wire → List Wire → Wire → Program
   | a :: (a' :: as), b :: (b' :: bs), c :: cs, cin =>
       majority a b cin c ++ addInPlaceRecursive (a' :: as) (b' :: bs) cs c ++
@@ -288,7 +312,15 @@ theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
 
 /-- cin=0 时实现 n 位原地减法：y ← (y−x) mod 2^n，n 是目标寄存器 y 的长度。
 要求 x/y 等长、carry 有 n−1 位且线路互异；carry 初始为零并恢复，x/cin 保持。
-通过按位取反、加 x、再取反计算；两层 X 门不计入 Toffoli/测量用量。 -/
+通过按位取反、加 x、再取反计算；两层 X 门不计入 Toffoli/测量用量。
+
+参数：
+
+- `x`：小端减数寄存器，运算后保持。
+- `y`：小端被减数寄存器，原值作为输入，随后被差覆盖。
+- `carry`：相邻数据位之间的进位工作寄存器，比 y 少一位，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+-/
 def subInPlace (x y carry : List Wire) (cin : Wire) : Program :=
   notRegister y ++ addInPlace x y carry cin ++ notRegister y
 
@@ -455,23 +487,63 @@ theorem addInPlace_resources (x y carry : List Wire) (cin : Wire)
 
 /-- 受 c 控制的常数加法：y ← (y+c·K) mod 2^n，n=y.length，c 取值 0/1，K<2^n。
 T/y 等长，carry 有 n−1 位，线路互异；T、carry、cin 初始为零并恢复，c 保持。
-受控装入常量 K 后相加，再清零 T；常量装载/清理不增加 Toffoli。 -/
+受控装入常量 K 后相加，再清零 T；常量装载/清理不增加 Toffoli。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `T`：零常数工作寄存器，与 y 等宽，暂存 c·K，随后清零。
+- `y`：小端原地更新目标；在原值上加上受控常量。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+- `K`：构造期的经典加数数值，不是存放该值的量子寄存器。
+-/
 def maskedAddConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program :=
   maskedConstant c T K ++ addInPlace T y carry cin ++ maskedConstant c T K
 
 /-- 受 c 控制的常数减法：y ← (y−c·K) mod 2^n，n=y.length，c 取值 0/1，K<2^n。
-T/y 等长，carry 有 n−1 位，线路互异；T、carry、cin 初始为零并恢复，c 保持。 -/
+T/y 等长，carry 有 n−1 位，线路互异；T、carry、cin 初始为零并恢复，c 保持。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `T`：零常数工作寄存器，与 y 等宽，暂存 c·K，随后清零。
+- `y`：小端原地更新目标；在原值上减去受控常量。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+- `K`：构造期的经典减数数值，不是存放该值的量子寄存器。
+-/
 def maskedSubConst (c : Wire) (T y carry : List Wire) (cin : Wire) (K : Nat) : Program :=
   maskedConstant c T K ++ subInPlace T y carry cin ++ maskedConstant c T K
 
 /-- 受 c 控制的原地加法：y ← (y+c·src) mod 2^n，n=y.length，c 取值 0/1。
 src/t/y 等长，carry 有 n−1 位，线路互异；t、carry、cin 初始为零并恢复，c/src 保持。
-先将 c·src 装入 t，完成加法后再次受控复制以清零 t。 -/
+先将 c·src 装入 t，完成加法后再次受控复制以清零 t。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `src`：小端加数寄存器，运算后保持。
+- `t`：与 src/y 等宽的零掩码工作寄存器，暂存 c·src，运算后清零。
+- `y`：小端原地更新目标，初值参与运算，并被加减结果覆盖。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+-/
 def maskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ addInPlace t y carry cin ++ copyRegister (some c) src t
 
 /-- 受 c 控制的原地减法：y ← (y−c·src) mod 2^n，n=y.length，c 取值 0/1。
-src/t/y 等长，carry 有 n−1 位，线路互异；t、carry、cin 初始为零并恢复，c/src 保持。 -/
+src/t/y 等长，carry 有 n−1 位，线路互异；t、carry、cin 初始为零并恢复，c/src 保持。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `src`：小端减数寄存器，运算后保持。
+- `t`：与 src/y 等宽的零掩码工作寄存器，暂存 c·src，运算后清零。
+- `y`：小端原地更新目标，初值参与运算，并被加减结果覆盖。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+-/
 def maskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ subInPlace t y carry cin ++ copyRegister (some c) src t
 

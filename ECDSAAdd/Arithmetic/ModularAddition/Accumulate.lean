@@ -53,12 +53,24 @@ theorem modular_sum_sub (A B q : Nat) (hA : A < q) (hB : B < q) :
 
 /-- 将模和移入空银行：(L.x=A,L.out=0) → (L.x=0,L.out=(A+L.y) mod q)。
 要求 A、L.y<q，0<q<2^L.width；L.y 保持，L.work 初始为零并恢复，布局线路互异。
-结果在 out 而非 x，下一步可交换两者角色复用。 -/
+结果在 out 而非 x，下一步可交换两者角色复用。
+
+参数：
+
+- `L`：模累加布局：x 保存原累加值，y 是保留的加数，out 是初始为零的新累加寄存器，work 是零工作区。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def accumulate (L : ModLayout) (q : Nat) : Program := modAdd L q ++ modSub L.swapXOut q
 
 /-- 恢复 accumulate 的输入：(L.x=0,L.out=(A+L.y) mod q) → (L.x=A,L.out=0)。
 要求 A、L.y<q，0<q<2^L.width；L.y 保持，L.work 初始为零并恢复，布局线路互异。
-只调用前向模减/模加，不反转测量指令。 -/
+只调用前向模减/模加，不反转测量指令。
+
+参数：
+
+- `L`：恢复模累加的布局：out 保存模和，y 保存未变的加数，x 是接收原累加值的零寄存器，work 是零工作区。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def unaccumulate (L : ModLayout) (q : Nat) : Program := modSub L.swapXOut q ++ modAdd L q
 
 theorem accumulate_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)

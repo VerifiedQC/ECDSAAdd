@@ -3,7 +3,14 @@ import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 namespace ECDSAAdd.Arithmetic
 
 /-- 将已知满足 dst[i] = c AND src[i] 的掩码寄存器 dst 清零，保留 c、src 并恢复相位。
-要求 src/dst 等长且所有参与线路互异；不能用于清除任意未知的 dst。 -/
+要求 src/dst 等长且所有参与线路互异；不能用于清除任意未知的 dst。
+
+参数：
+
+- `c`：原先生成掩码时使用的控制 wire，保留其值。
+- `第 2 个参数（src）`：小端来源寄存器，必须保留生成掩码时的值。
+- `第 3 个参数（dst）`：待测量清零的掩码寄存器，每一位须等于 c AND 对应的 src 位。
+-/
 def eraseMask (c : Wire) : List Wire → List Wire → Program
   | a::src, b::dst => .measureX b [] [.CZ c a] :: eraseMask c src dst
   | _, _ => []
@@ -92,14 +99,34 @@ theorem eraseMask_eq_copy (c : Wire) (src dst : List Wire)
 /-- 实现受 c 控制的 n 位原地加法，n 是目标寄存器 y 的长度：
 |c⟩|src⟩|y⟩ ↦ |c⟩|src⟩|(y + c·src) mod 2^n⟩，式中 c 的值取 0 或 1。
 要求 src、t、y 等长，carry 有 n−1 位，所有参与线路互异；t、carry、cin 初始为零。
-结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。 -/
+结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `src`：小端加数寄存器，运算后保持。
+- `t`：与 src/y 等宽的零掩码工作寄存器，暂存 c·src，运算后清零。
+- `y`：小端原地更新目标，初值参与运算，并被加减结果覆盖。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+-/
 def measuredMaskedAddInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ addInPlace t y carry cin ++ eraseMask c src t
 
 /-- 实现受 c 控制的 n 位原地减法，n 是目标寄存器 y 的长度：
 |c⟩|src⟩|y⟩ ↦ |c⟩|src⟩|(y − c·src) mod 2^n⟩，式中 c 的值取 0 或 1。
 要求 src、t、y 等长，carry 有 n−1 位，所有参与线路互异；t、carry、cin 初始为零。
-结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。 -/
+结束后 c、src 不变，t、carry、cin 恢复为零；测量清理恢复相位。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `src`：小端减数寄存器，运算后保持。
+- `t`：与 src/y 等宽的零掩码工作寄存器，暂存 c·src，运算后清零。
+- `y`：小端原地更新目标，初值参与运算，并被加减结果覆盖。
+- `carry`：比 y 少一位的进位工作寄存器，初末为零。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+-/
 def measuredMaskedSubInPlace (c : Wire) (src t y carry : List Wire) (cin : Wire) : Program :=
   copyRegister (some c) src t ++ subInPlace t y carry cin ++ eraseMask c src t
 

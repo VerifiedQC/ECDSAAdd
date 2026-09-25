@@ -14,7 +14,13 @@ def selectWires : List SelectBit → List Wire
   | b :: bs => b.no :: b.yes :: b.out :: selectWires bs
 
 /-- 输出异或 (if flag then yes else no)。暂时将 yes XOR 到 no，
-用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。 -/
+用一个 Toffoli 选择差值，再还原 no；选择位必须在这三组线路之外。
+
+参数：
+
+- `bs`：逐位选择布局；每项的 no/yes 是两个候选输入位，out 是对应的 XOR 输出位。
+- `flag`：选择 wire：0 选择 no，1 选择 yes，运算后保持。
+-/
 def selectXor (bs : List SelectBit) (flag : Wire) : Program := prog {
   for b in bs {
     CX b.no b.out;
@@ -149,7 +155,15 @@ theorem selectXor_wires (b : SelectBit) (bs : List SelectBit) (flag : Wire) :
     simp [wires, Instr.wires, selectWires]
     tauto
 
-/-- out ^= (if flag then whenOne else whenZero)；只更新 out，三个列表等长。 -/
+/-- out ^= (if flag then whenOne else whenZero)；只更新 out，三个列表等长。
+
+参数：
+
+- `flag`：选择 wire：0 选择 whenZero，1 选择 whenOne。
+- `whenZero`：flag=0 时选用的小端输入寄存器，保持不变。
+- `whenOne`：flag=1 时选用的小端输入寄存器，保持不变。
+- `out`：小端 XOR 输出寄存器，初值不必为零。
+-/
 def chooseXor (flag : Wire) (whenZero whenOne out : List Wire) : Program :=
   selectXor (List.zipWith (fun ab o => ⟨ab.1, ab.2, o⟩) (whenZero.zip whenOne) out) flag
 

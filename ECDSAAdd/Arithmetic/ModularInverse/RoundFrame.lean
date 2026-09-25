@@ -9,7 +9,16 @@ def RoundFrame (L : RoundDataLayout) (v : RoundField → Nat) (base : BasisState
 
 /-- 受 c 控制更新字段 f：L.reg f ← (L.reg f ± c·L.reg g) mod 2^L.width。
 negative=true 取减号，否则取加号；有效布局下 c/g 保持，y、低位 carry、cin 初始为零并恢复。
-out 不被触及；位宽和字段不重叠等前提见对应规格。 -/
+out 不被触及；位宽和字段不重叠等前提见对应规格。
+
+参数：
+
+- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
+- `f`：构造期的 RoundField 标记，选择被原地更新的目标寄存器 L.reg f。
+- `g`：构造期的 RoundField 标记，选择保持不变的源寄存器 L.reg g。
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `negative`：构造期的经典 Bool：true 生成受控减法，false 生成受控加法；不是量子控制 wire。
+-/
 def inplaceArithmetic (L : RoundDataLayout) (f g : RoundField) (c : Wire) (negative : Bool) : Program :=
   if negative then
     measuredMaskedSubInPlace c (L.reg g) (L.reg .y) (L.reg f) ((L.reg .carry).take (L.width-1)) L.cin

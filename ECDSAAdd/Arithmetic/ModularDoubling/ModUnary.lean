@@ -54,7 +54,13 @@ theorem bit_value (U : ModUnaryLayout) (n : Nat) (hw : U.Widths n) (hn : 0<n) (s
 end ModUnaryLayout
 
 /-- 原地模倍增：U.z ← 2*U.z mod p，要求 p 为奇数、U.z<p，并满足布局/位宽条件。
-零工作区（含 high）最终恢复为零；左旋加倍、试减 p、按借位加回，最后利用奇偶清借位。 -/
+零工作区（含 high）最终恢复为零；左旋加倍、试减 p、按借位加回，最后利用奇偶清借位。
+
+参数：
+
+- `U`：一元模运算布局：z（low 加 high）是原地更新目标，bit 是最低位，flag 暂存奇偶，constant/carry/cin 是零工作区。
+- `p`：构造期的经典奇模数，使模倍增与模减半互逆。
+-/
 def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;
   let borrow := U.high;
@@ -82,7 +88,13 @@ theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
 
 /-- 原地模减半：U.z ← (U.z+(U.z mod 2)*p)/2，结果仍在 [0,p)，等价于乘 2⁻¹ mod p。
 要求 p 为奇数、U.z<p，并满足布局/位宽条件；零工作区最终恢复为零。
-奇数先加 p 再右旋，最后利用结果与 (p+1)/2 的比较清除奇偶标志。 -/
+奇数先加 p 再右旋，最后利用结果与 (p+1)/2 的比较清除奇偶标志。
+
+参数：
+
+- `U`：一元模运算布局：z（low 加 high）是原地更新目标，bit 是最低位，flag 暂存奇偶，constant/carry/cin 是零工作区。
+- `p`：构造期的经典奇模数，使模倍增与模减半互逆。
+-/
 def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;
   let wasOdd := U.flag;

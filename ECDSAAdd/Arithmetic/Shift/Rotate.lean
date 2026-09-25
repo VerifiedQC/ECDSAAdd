@@ -2,7 +2,13 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 交换 a、b 两个位的值，要求两根线路不同；使用三个 CX，不消耗 Toffoli 或测量。 -/
+/-- 交换 a、b 两个位的值，要求两根线路不同；使用三个 CX，不消耗 Toffoli 或测量。
+
+参数：
+
+- `a`：参与交换的第一个 wire。
+- `b`：参与交换的第二个 wire。
+-/
 def swapBits (a b : Wire) : Program := [.CX b a,.CX a b,.CX b a]
 
 private theorem swapBits_correct (a b : Wire) (hab : a≠b) (s : State) (m : List Bool) :
@@ -29,7 +35,12 @@ private theorem swapBits_twice (a b : Wire) (hab : a≠b) (s : State) (m : List 
     exact (e2 q ha hb).trans (e1 q ha hb)
 
 /-- 将小端寄存器 r 循环右移一位：原最低位移到最高位，其余位向低位移动。
-线路互异且最低位为零时，数值效果才是 r ← r/2；一般情况不是丢弃最低位的右移。 -/
+线路互异且最低位为零时，数值效果才是 r ← r/2；一般情况不是丢弃最低位的右移。
+
+参数：
+
+- `r`：待循环移位的小端寄存器，首项是最低位；只重新排列其中各位的值。
+-/
 def rotateRight (r : List Wire) : Program := prog {
   for pair in (r.zip r.tail) {
     swapBits(pair.1, pair.2);  -- 交换这对相邻位；按低到高的顺序使原最低位最终移到最高位。
@@ -37,7 +48,12 @@ def rotateRight (r : List Wire) : Program := prog {
 }
 
 /-- 将小端寄存器 r 循环左移一位：原最高位移到最低位，其余位向高位移动。
-线路互异且最高位为零时，数值效果才是 r ← 2*r；与 rotateRight 互逆。 -/
+线路互异且最高位为零时，数值效果才是 r ← 2*r；与 rotateRight 互逆。
+
+参数：
+
+- `r`：待循环移位的小端寄存器，首项是最低位；只重新排列其中各位的值。
+-/
 def rotateLeft (r : List Wire) : Program := prog {
   for pair in ((r.zip r.tail).reverse) {
     swapBits(pair.1, pair.2);  -- 交换这对相邻位；按高到低的顺序使原最高位最终移到最低位。

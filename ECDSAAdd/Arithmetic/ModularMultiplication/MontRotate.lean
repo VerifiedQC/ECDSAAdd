@@ -3,13 +3,25 @@ import ECDSAAdd.Arithmetic.Shift.Rotate
 namespace ECDSAAdd.Arithmetic
 
 /-- 将同一物理寄存器 r 循环右移 k 位；线路互异时是位排列，不改变寄存器视图。
-只有移出的低 k 位全零且 k 不超过位宽时，才可解释为数值除以 2^k。 -/
+只有移出的低 k 位全零且 k 不超过位宽时，才可解释为数值除以 2^k。
+
+参数：
+
+- `r`：被循环移位的小端寄存器。
+- `第 2 个参数（k）`：构造期的循环移位次数，每次移动一位，不是运行时控制位。
+-/
 def rotateRightBits (r : List Wire) : Nat → Program
   | 0 => []
   | k+1 => rotateRight r ++ rotateRightBits r k
 
 /-- 将同一物理寄存器 r 循环左移 k 位，与 rotateRightBits 互逆。
-只有移出的高 k 位全零且 k 不超过位宽时，才可解释为数值乘以 2^k。 -/
+只有移出的高 k 位全零且 k 不超过位宽时，才可解释为数值乘以 2^k。
+
+参数：
+
+- `r`：被循环移位的小端寄存器。
+- `第 2 个参数（k）`：构造期的循环移位次数，每次移动一位，不是运行时控制位。
+-/
 def rotateLeftBits (r : List Wire) : Nat → Program
   | 0 => []
   | k+1 => rotateLeft r ++ rotateLeftBits r k

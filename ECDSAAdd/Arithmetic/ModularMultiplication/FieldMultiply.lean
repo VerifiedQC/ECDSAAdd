@@ -4,7 +4,12 @@ import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 namespace ECDSAAdd.Arithmetic
 
 /-- secp256k1 域乘法：L.out ^= L.x*L.y mod p，L.x/L.y 保持，零工作区恢复。
-输入为 [0,p) 中的标准代表元，满足 fieldMul_spec 的布局；内部使用 Montgomery 转换，输出是标准模积。 -/
+输入为 [0,p) 中的标准代表元，满足 fieldMul_spec 的布局；内部使用 Montgomery 转换，输出是标准模积。
+
+参数：
+
+- `L`：secp256k1 模乘布局：x/y 是两个输入，out 是 XOR 输出，work 含两段累加器、历史及共享工作位。
+-/
 def fieldMul (L : MontLayout) : Program := montMulXor L p
 
 /-- 任意输出 XOR 规格保持；乘数范围由 256 位寄存器自动给出。 -/

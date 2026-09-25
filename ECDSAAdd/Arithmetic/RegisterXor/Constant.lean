@@ -3,7 +3,13 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 namespace ECDSAAdd.Arithmetic
 
 /-- 将经典常量 k 的低 r.length 位 XOR 到目标寄存器 r；目标初始为零时得到截断后的 k。
-位按小端排列，只有常量位为 1 的线路执行 X；数值解释要求 r 中线路互异。 -/
+位按小端排列，只有常量位为 1 的线路执行 X；数值解释要求 r 中线路互异。
+
+参数：
+
+- `第 1 个参数（r）`：小端 XOR 目标寄存器，即按最低位到最高位排列的 wire 列表。
+- `第 2 个参数（k）`：构造电路时已知的经典常量，只使用与 r 位宽对应的低位。
+-/
 def xorConstant : List Wire → Nat → Program
   | [], _ => []
   | w :: ws, k => (if k % 2 = 1 then [Instr.X w] else []) ++ xorConstant ws (k / 2)

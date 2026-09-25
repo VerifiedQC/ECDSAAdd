@@ -48,6 +48,12 @@ private theorem square_copy (L : ControlledPointLayout) (hw : L.Widths) (hnd : L
   · exact (regValue_congr _ _ _ (fun q hq => hframe q (away q (by simp [F,hq])))).trans h.1.2
   · exact (regValue_congr _ _ _ (fun q hq => hframe q (away q (by simp [F,hq])))).trans h.2
 
+/-- 证明中使用的平方累减子电路：从 point.x 减去斜率平方，随后清理乘数副本。
+
+参数：
+
+- `L`：平方累减的点加布局；inPlaceSlope 是输入，inPlaceSquare.y 暂存副本，point.x 是减去斜率平方的目标，模乘工作区借自布局。
+-/
 private def squareProgram (L : ControlledPointLayout) : Program :=
   copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++ montMulSub (squareAdapter L) p ++
   copyRegister none L.inPlaceSlope L.inPlaceSquare.y

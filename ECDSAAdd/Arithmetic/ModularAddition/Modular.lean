@@ -9,7 +9,13 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 模加的 XOR 输出：L.out ^= (L.x+L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
 公开规格要求 0<q<2^L.width、输入均小于 q、布局线路互异；内部支持和小于 2*q 的约减。
-只减一次 q，不是对任意大小输入的通用取模。 -/
+只减一次 q，不是对任意大小输入的通用取模。
+
+参数：
+
+- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def modAdd (L : ModLayout) (q : Nat) : Program := prog {
   let total := L.reg .total;
   let modulus := L.reg .modulus;
@@ -31,7 +37,13 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog {
 }
 
 /-- 模减的 XOR 输出：L.out ^= (L.x−L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
-要求 0<q<2^L.width、输入均小于 q、布局线路互异；这里减法按模 q 理解，不是 Nat 的截断减法。 -/
+要求 0<q<2^L.width、输入均小于 q、布局线路互异；这里减法按模 q 理解，不是 Nat 的截断减法。
+
+参数：
+
+- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def modSub (L : ModLayout) (q : Nat) : Program := prog {
   let diff := L.reg .diff;
   let modulus := L.reg .modulus;

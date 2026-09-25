@@ -5,7 +5,14 @@ import ECDSAAdd.Arithmetic.Comparison.Compare
 namespace ECDSAAdd.Arithmetic
 
 /-- target ^= [i<k]，k 是 L.x 保存的计数值；L.x 和另一计数银行 L.out 保持。
-要求 i+1 可由布局位宽表示且线路互异，L.y/carry/cin 初始为零并恢复；装载阈值 i+1 比较后清理。 -/
+要求 i+1 可由布局位宽表示且线路互异，L.y/carry/cin 初始为零并恢复；装载阈值 i+1 比较后清理。
+
+参数：
+
+- `L`：计数比较布局：x 保存计数，y 暂存阈值，carry/cin 是零工作位，另一计数寄存器 out 不被访问。
+- `target`：条件 i<计数值 的 XOR 输出 wire。
+- `i`：构造期的经典阈值/轮号，内部实际装载 i+1 做比较。
+-/
 def counterActiveXor (L : AdderLayout) (target : Wire) (i : Nat) : Program :=
   compareLtConst none L.x L.y L.carry L.cin target (i+1) ++ [.X target]
 

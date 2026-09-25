@@ -4,7 +4,13 @@ namespace ECDSAAdd.Arithmetic
 
 /-- n 位减法的 XOR 输出，n 是逐位布局列表 bs 的长度：out ^= (x−y) mod 2^n。
 x/y/out/carry 分别由 bs 中对应字段组成；要求线路互异，cin、carry 初始为零并在结束后恢复。
-输入 x/y 保持；通过 x + NOT y + 1 计算，前后的 X 层恢复 y 和 cin。 -/
+输入 x/y 保持；通过 x + NOT y + 1 计算，前后的 X 层恢复 y 和 cin。
+
+参数：
+
+- `bs`：从最低位到最高位的逐位布局；每项的 x 是被减数位，y 是减数位，out 是差的 XOR 输出位，carry 是零进位工作位。
+- `cin`：最低进位工作 wire，初始为 0；内部暂置 1 以计算补码减法，结束后清零。
+-/
 def rippleSubtractor (bs : List AddBit) (cin : Wire) : Program :=
   notRegister (bs.map AddBit.y ++ [cin]) ++ rippleAdder bs cin ++
     notRegister (bs.map AddBit.y ++ [cin])

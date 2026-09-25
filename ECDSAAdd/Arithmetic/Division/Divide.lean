@@ -61,7 +61,12 @@ theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
 end DivideLayout
 
 /-- 从零内部寄存器装入安全分母 v=(control=1 ? denominator : 1)，同时装入 u=p、s=1。
-L.control/denominator 保持；控制为零时也能进行非零分母的求逆，沿用 DivideLayout 的有效布局。 -/
+L.control/denominator 保持；控制为零时也能进行非零分母的求逆，沿用 DivideLayout 的有效布局。
+
+参数：
+
+- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
+-/
 def divideLoad (L : DivideLayout) : Program := prog {
   let denominatorCopy := L.vLow;
   let leastBit := L.vBit;
@@ -75,7 +80,12 @@ def divideLoad (L : DivideLayout) : Program := prog {
 }
 
 /-- 在内部恢复到安全分母 v、u=p、s=1 后清零这些寄存器，保留 control/denominator。
-要求与 divideLoad 装载值匹配；这里只反排无测量装载门。 -/
+要求与 divideLoad 装载值匹配；这里只反排无测量装载门。
+
+参数：
+
+- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
+-/
 def divideUnload (L : DivideLayout) : Program := prog {
   let denominatorCopy := L.vLow;
   let leastBit := L.vBit;
@@ -97,7 +107,12 @@ theorem divideUnload_program (L : DivideLayout) :
 
 /-- 受 L.control 控制的模除法累加：acc ← (acc+control·numerator/denominator) mod p。
 control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
-满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。 -/
+满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。
+
+参数：
+
+- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
+-/
 def divideAdd (L : DivideLayout) : Program := prog {
   let inverse := L.inner;    -- 逆元结果保存在 inverse.a；历史由 inverse 一并保留。
   let product := L.multiply; -- 输入为 inverse.a 和 numerator，累加目标是 acc。
@@ -110,7 +125,12 @@ def divideAdd (L : DivideLayout) : Program := prog {
 
 /-- 受 L.control 控制的模除法累减：acc ← (acc−control·numerator/denominator) mod p。
 control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
-满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。 -/
+满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。
+
+参数：
+
+- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
+-/
 def divideSub (L : DivideLayout) : Program := prog {
   let inverse := L.inner;
   let product := L.multiply; -- 输入为 inverse.a 和 numerator，累减目标是 acc。

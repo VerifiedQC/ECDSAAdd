@@ -4,7 +4,16 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 namespace ECDSAAdd.Arithmetic
 open Instr Correction
 
-/-- 正分支返回后，以CX切到负分支；子树共用后续scratch，最后清负AND。 -/
+/-- 正分支返回后，以CX切到负分支；子树共用后续scratch，最后清负AND。
+
+参数：
+
+- `a`：当前子表的使能 wire；只有 a=1 时写出表值。
+- `controls`：当前子表的地址寄存器，小端排列，不含使能位 a。
+- `scratch`：递归生成地址条件的零工作寄存器，用后清零。
+- `target`：子表值的 XOR 输出寄存器，小端排列。
+- `table`：当前子表的经典地址到数值映射。
+-/
 private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program :=
   match controls, scratch with
   | [], _ => maskedConstant a target (table 0)
@@ -154,7 +163,16 @@ private theorem lookupWalk_correct (a : Wire) (controls scratch target : List Wi
 
 /-- 按地址寄存器 a::controls 查经典表：target ^= table(地址值)，结果按 target 的位宽截断。
 a 是最低地址位，输入地址保持；要求线路互异且 scratch 至少有 controls.length 个零工作位。
-递归访问两半表，结束时 scratch 恢复为零，并恢复测量相位。 -/
+递归访问两半表，结束时 scratch 恢复为零，并恢复测量相位。
+
+参数：
+
+- `a`：地址寄存器的最低位 wire；不是外部使能位。
+- `controls`：其余地址位，按从低到高的顺序接在 a 之后，与 a 一起确定表索引。
+- `scratch`：递归地址解码的零工作寄存器，用后清零。
+- `target`：所查表值的 XOR 输出寄存器，小端排列。
+- `table`：经典查表函数，将地址数值映射到要写出的常量；它在构造电路时使用。
+-/
 def lookup (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program := prog {
   lookupWalk(a, controls, scratch, target, fun d => table (1+2*d));  -- 原 a=1 时 target ^= table(1+2*controls的值)，scratch 恢复零。
   X a;

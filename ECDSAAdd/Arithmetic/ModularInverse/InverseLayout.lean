@@ -82,7 +82,12 @@ theorem inner_nodup (L : InverseLayout) (hnd : L.wires.Nodup) : L.inner.wires.No
 end InverseLayout
 
 /-- 从零内部寄存器装入 Kaliski 初态：vLow=x、u=p、s=1，其余初始零位保持，外部 L.x 不变。
-本质是受布局约束的 XOR 装载，非覆盖赋值；p 为 secp256k1 域模数。 -/
+本质是受布局约束的 XOR 装载，非覆盖赋值；p 为 secp256k1 域模数。
+
+参数：
+
+- `L`：外部求逆布局：x 是保留的输入寄存器，inner 是完整 Kaliski 内核，out 是 inner.out 的低 256 位，work 是其余内部线路。
+-/
 def inverseLoad (L : InverseLayout) : Program := prog {
   copyRegister(none, L.x, L.vLow);  -- vLow ^= x；从零复制待求逆输入，x 保持。
   xorConstant(L.inner.first.u, p);  -- u ^= p；从零装入 Kaliski 初值 u=p。
@@ -90,7 +95,12 @@ def inverseLoad (L : InverseLayout) : Program := prog {
 }
 
 /-- 在内部已恢复到 vLow=x、u=p、s=1 时，将这三个寄存器清零，保留外部 L.x/out。
-只卸载匹配的求逆初态，不用于清除任意内部数据。 -/
+只卸载匹配的求逆初态，不用于清除任意内部数据。
+
+参数：
+
+- `L`：外部求逆布局：x 是保留的输入寄存器，inner 是完整 Kaliski 内核，out 是 inner.out 的低 256 位，work 是其余内部线路。
+-/
 def inverseUnload (L : InverseLayout) : Program := prog {
   xorConstant(L.inner.first.s, 1);  -- s 再异或 1，从恢复后的初值 1 清零。
   xorConstant(L.inner.first.u, p);  -- u 再异或 p，从恢复后的初值 p 清零。
@@ -98,7 +108,12 @@ def inverseUnload (L : InverseLayout) : Program := prog {
 }
 
 /-- secp256k1 域求逆的 XOR 输出：L.out ^= L.x⁻¹ mod p，输入 L.x 保持，零工作区恢复。
-要求 0<L.x<p、输入/输出各 256 位及有效互异布局；不包含零输入的求逆契约。 -/
+要求 0<L.x<p、输入/输出各 256 位及有效互异布局；不包含零输入的求逆契约。
+
+参数：
+
+- `L`：外部求逆布局：x 是保留的输入寄存器，inner 是完整 Kaliski 内核，out 是 inner.out 的低 256 位，work 是其余内部线路。
+-/
 def fieldInverse (L : InverseLayout) : Program := prog {
   inverseLoad(L);  -- 准备 Kaliski 初值 v=x、u=p、s=1。
   inverseLoop(L.inner, p);  -- out ^= x⁻¹ mod p；计算后清逆元及历史，恢复 u/v/s 的初值。

@@ -25,12 +25,25 @@ def maskedCore (L : ModInPlaceLayout) : ModAddCoreLayout := { L.toModAddCoreLayo
 end ModInPlaceLayout
 
 /-- 原地模加：L.z ← (L.z+L.a) mod p，保留 L.a，L.work 初始为零并恢复。
-要求有效布局和 modAddInPlace_spec 的位宽/范围条件；未使用的 mask/flag 保持零。 -/
+要求有效布局和 modAddInPlace_spec 的位宽/范围条件；未使用的 mask/flag 保持零。
+
+参数：
+
+- `L`：原地模运算布局：a 是保留的源，z（low 加 high）是更新目标，constant/carry/cin 是工作区，mask/flag 用于受控运算。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def modAddInPlace (L : ModInPlaceLayout) (p : Nat) : Program := modAddCore L.toModAddCoreLayout p
 
 /-- 受 c 控制的原地模加：L.z ← (L.z+c·L.a) mod p，c 取值 0/1，c/L.a 保持。
 要求 controlledModAdd_spec 的有效布局/输入范围；L.work 初始为零并恢复。
-掩码保存 c·L.a，必须等模加核清除借位后再清零。 -/
+掩码保存 c·L.a，必须等模加核清除借位后再清零。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `L`：原地模运算布局：a 是保留的源，z（low 加 high）是更新目标，constant/carry/cin 是工作区，mask/flag 用于受控运算。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def controlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   let source := L.a.take L.low.length;
   let maskedSource := L.mask.take L.low.length;

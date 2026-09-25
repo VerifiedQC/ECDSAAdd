@@ -3,7 +3,14 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 namespace ECDSAAdd.Arithmetic
 
 /-- c=1 时交换寄存器 a、b 的值，c=0 时两者不变，c 保持；要求等长且参与线路互异。
-每对位使用两次 CX 和一次 CCX，不需要零工作寄存器。 -/
+每对位使用两次 CX 和一次 CCX，不需要零工作寄存器。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `a`：参与交换的第一个小端寄存器。
+- `b`：参与交换的第二个小端寄存器，与 a 等宽。
+-/
 def swapRegisters (c : Wire) (a b : List Wire) : Program := prog {
   copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
   copyRegister(some c, a, b);  -- c=1 时 b ^= a，使 b 得到原 a；c=0 时 b 保持。
@@ -64,7 +71,13 @@ theorem swapRegisters_resources (c : Wire) (a b : List Wire) (hlen : a.length=b.
     simp [← hlen]; omega
 
 /-- 无条件交换等长寄存器 a、b 的值；要求参与线路互异，不要求其中一方初始为零。
-每对位使用三个 CX，不需要 Toffoli 或测量。 -/
+每对位使用三个 CX，不需要 Toffoli 或测量。
+
+参数：
+
+- `a`：参与交换的第一个小端寄存器。
+- `b`：参与交换的第二个小端寄存器，与 a 等宽。
+-/
 def exchangeRegisters (a b : List Wire) : Program := prog {
   copyRegister(none, b, a);  -- a ^= b，暂存两个原值的逐位差。
   copyRegister(none, a, b);  -- b ^= 当前 a，得到原 a。

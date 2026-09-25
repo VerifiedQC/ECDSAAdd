@@ -4,13 +4,29 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 从轮号 i 起执行 n 轮：每个 j=i,…,i+n−1 且 j<计数值 k 的轮，将 L.data 乘 2⁻¹ mod q。
 其余轮保持数据；要求 q 为奇数、输入小于 q 和相应布局/计数范围，计数保持，零工作区恢复。
-轮数及门列在构造期固定，不按运行时 k 改变测量顺序。 -/
+轮数及门列在构造期固定，不按运行时 k 改变测量顺序。
+
+参数：
+
+- `L`：模减半布局：data 是原地更新的数据，counter.x 保存有效轮数 k，active/flag 暂存使能与奇偶，constant/chain/top/cin 等为工作位。
+- `q`：构造期的经典奇模数。
+- `i`：构造期的起始轮号；第 j 轮是否改变数据由 j<计数值 k 决定。
+- `第 4 个参数（n）`：构造期的固定轮数，正向覆盖 i 至 i+n−1；恢复函数按相反轮序执行。
+-/
 def halveInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => halveStep L q i ++ halveInPlace L q (i+1) n
 
 /-- 撤销从 i 起的 n 轮模减半：按反向轮序，在 j<计数值 k 时将 L.data 乘 2 mod q。
-要求与 halveInPlace 相同的奇模数、布局/范围条件；计数保持，零工作区恢复。 -/
+要求与 halveInPlace 相同的奇模数、布局/范围条件；计数保持，零工作区恢复。
+
+参数：
+
+- `L`：模减半布局：data 是原地更新的数据，counter.x 保存有效轮数 k，active/flag 暂存使能与奇偶，constant/chain/top/cin 等为工作位。
+- `q`：构造期的经典奇模数。
+- `i`：构造期的起始轮号；第 j 轮是否改变数据由 j<计数值 k 决定。
+- `第 4 个参数（n）`：构造期的固定轮数，正向覆盖 i 至 i+n−1；恢复函数按相反轮序执行。
+-/
 def restoreInPlace (L : HalvingLayout) (q i : Nat) : Nat → Program
   | 0 => []
   | n+1 => restoreInPlace L q (i+1) n ++ doubleStep L q i

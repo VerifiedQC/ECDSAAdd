@@ -6,13 +6,27 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 受 c 控制的加法并转移银行：(L.x=A,L.out=0) → (L.x=0,L.out=(A+c·src) mod 2^n)，n=L.width。
 c 取值 0/1，c/src 保持；src 长度为 n、线路互异，L.y/L.carry/L.cin 初始为零并恢复。
-结果在 out 而非原 x；算术与测量顺序不依赖 c 的值。 -/
+结果在 out 而非原 x；算术与测量顺序不依赖 c 的值。
+
+参数：
+
+- `L`：转移式加减布局：x 保存原值，out 是初始为空的结果寄存器，y 暂存受控 src，carry/cin 是零工作位。
+- `src`：小端来源寄存器，作为受控加数/减数，运算后保持。
+- `c`：是否把 src 加入/减去的控制 wire；c=0 时也会把原 x 移入 out 并清零 x。
+-/
 def maskedAdd (L : AdderLayout) (src : List Wire) (c : Wire) : Program :=
   copyRegister (some c) src L.y ++ add L ++ sub L.swapCounter ++
   copyRegister (some c) src L.y
 
 /-- 受 c 控制的减法并转移银行：(L.x=A,L.out=0) → (L.x=0,L.out=(A−c·src) mod 2^n)，n=L.width。
-c 取值 0/1，c/src 保持；src 长度为 n、线路互异，L.y/L.carry/L.cin 初始为零并恢复。 -/
+c 取值 0/1，c/src 保持；src 长度为 n、线路互异，L.y/L.carry/L.cin 初始为零并恢复。
+
+参数：
+
+- `L`：转移式加减布局：x 保存原值，out 是初始为空的结果寄存器，y 暂存受控 src，carry/cin 是零工作位。
+- `src`：小端来源寄存器，作为受控加数/减数，运算后保持。
+- `c`：是否把 src 加入/减去的控制 wire；c=0 时也会把原 x 移入 out 并清零 x。
+-/
 def maskedSub (L : AdderLayout) (src : List Wire) (c : Wire) : Program :=
   copyRegister (some c) src L.y ++ sub L ++ add L.swapCounter ++
   copyRegister (some c) src L.y

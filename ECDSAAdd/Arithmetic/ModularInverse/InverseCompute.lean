@@ -4,7 +4,13 @@ namespace ECDSAAdd.Arithmetic
 
 /-- 准备模逆元：从 Kaliski 初态 u=q、v=A、r=0、s=1、k=0 出发，令 L.a=A⁻¹ mod q。
 要求 0<A<q、互素性及 inverseCompute_values 的模数/位宽/512 轮布局条件，其余指定工作位初始为零。
-不写外部 out；保留循环终态、分支记录及缩放历史，供 inverseUncompute 恢复。 -/
+不写外部 out；保留循环终态、分支记录及缩放历史，供 inverseUncompute 恢复。
+
+参数：
+
+- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
+- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
+-/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
   let records := L.records;       -- 每轮保存 swap/subtract 两位，最终规格要求共 512 轮。
   let r := L.middle.r;            -- 循环结束后的 Kaliski 系数寄存器。
@@ -16,7 +22,13 @@ def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
 }
 
 /-- 恢复 inverseCompute 的匹配输出：清零逆元 L.a 及循环/缩放历史，恢复 u=q、v=A、r=0、s=1、k=0。
-外部 out 保持；要求历史与输入匹配，各段执行显式前向门列，不倒放测量。 -/
+外部 out 保持；要求历史与输入匹配，各段执行显式前向门列，不倒放测量。
+
+参数：
+
+- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
+- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
+-/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
   let r := L.middle.r;
   let inverse := L.a;
@@ -27,7 +39,13 @@ def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
 }
 
 /-- 将初态 L.first.v 中 A 的模逆元 XOR 到 L.out：L.out ^= A⁻¹ mod q。
-沿用 inverseCompute 的有效初态/范围条件；先准备再清理，内部恢复 Kaliski 初态而不是全零。 -/
+沿用 inverseCompute 的有效初态/范围条件；先准备再清理，内部恢复 Kaliski 初态而不是全零。
+
+参数：
+
+- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
+- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
+-/
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
   inverseCompute(L, q);             -- a = 输入的逆元；保留恢复历史
   copyRegister(none, L.a, L.out);    -- out ^= a

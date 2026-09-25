@@ -3,7 +3,13 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceNegate
 namespace ECDSAAdd.Arithmetic
 
 /-- 原地模减：L.z ← (L.z−L.a) mod p，L.a 保持，L.work 初始为零并恢复。
-沿用 modSubInPlace_spec 的布局/范围条件；临时将源变为 p−L.a，模加后还原源。 -/
+沿用 modSubInPlace_spec 的布局/范围条件；临时将源变为 p−L.a，模加后还原源。
+
+参数：
+
+- `L`：原地模运算布局：a 是保留的源，z（low 加 high）是更新目标，constant/carry/cin 是工作区，mask/flag 用于受控运算。此处 a 是减数。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def modSubInPlace (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   negRaw(L, p);                        -- source a: A → p-A
   modAddInPlace(L, p);                 -- z += p-A (mod p)，即 z -= A (mod p)
@@ -12,7 +18,14 @@ def modSubInPlace (L : ModInPlaceLayout) (p : Nat) : Program := prog {
 
 /-- 受 c 控制的原地模减：L.z ← (L.z−c·L.a) mod p，c 取值 0/1，c/L.a 保持。
 沿用 controlledModSub_spec 的布局/范围条件；L.work 初始为零并恢复。
-两次源取负无条件执行，只有模加受控；c=0 时目标保持。 -/
+两次源取负无条件执行，只有模加受控；c=0 时目标保持。
+
+参数：
+
+- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
+- `L`：原地模运算布局：a 是保留的源，z（low 加 high）是更新目标，constant/carry/cin 是工作区，mask/flag 用于受控运算。此处 a 是减数。
+- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+-/
 def controlledModSub (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
   negRaw(L, p);                        -- source a: A → p-A
   controlledModAdd(c, L, p);           -- c=1 时 z += p-A (mod p)

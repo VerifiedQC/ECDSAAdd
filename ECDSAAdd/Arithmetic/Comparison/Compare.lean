@@ -4,7 +4,14 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 namespace ECDSAAdd.Arithmetic
 open Instr
 
-/-- 读出最高进位：无控制时 target ^= ¬top；有控制时 target ^= control ∧ ¬top。 -/
+/-- 读出最高进位：无控制时 target ^= ¬top；有控制时 target ^= control ∧ ¬top。
+
+参数：
+
+- `第 1 个参数（control）`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
+- `第 2 个参数（top）`：加法进位链的最高进位 wire，读取后保持。
+- `第 3 个参数（t）`：XOR 输出 wire，接收 NOT top 或受控的 NOT top。
+-/
 def flipBelow : Option Wire → Wire → Wire → Program
   | none, top, t => [.X t, .CX top t]
   | some c, top, t => [.CX c t, .CCX c top t]
@@ -15,7 +22,17 @@ local macro_rules
 
 /-- 将加法未溢出的条件 XOR 到 target：target ^= [x+y+cin < 2^n]，n=x.length；
 有 control 时再与控制位相与。x/y/cin 保持，零 carry 恢复为零；要求三列表等长、线路互异。
-正向生成进位、读出最高进位再反向清理；长度不等时只计算/清理共同前缀，不读出结果。 -/
+正向生成进位、读出最高进位再反向清理；长度不等时只计算/清理共同前缀，不读出结果。
+
+参数：
+
+- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
+- `x`：小端第一个加数寄存器，值保持。
+- `y`：小端第二个加数寄存器，值保持。
+- `carry`：与 x/y 等长的进位工作寄存器，初末为零，末位保存最高进位。
+- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
+- `target`：比较条件的 XOR 输出 wire，初值不必为零。
+-/
 def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program :=
   let n := min x.length (min y.length carry.length)
   let c := cin :: carry
@@ -43,7 +60,17 @@ private theorem compareChain_cons (control : Option Wire) (a b c cin target : Wi
 
 /-- target ^= [x<y]；control=some c 时改为 target ^= c AND [x<y]，输入/控制位保持。
 要求 x/y/carry 等长且参与线路互异，cin/carry 初始为零并恢复；target 不必为零。
-内部计算 x+NOT y+1，其最高进位为 [x≥y]，读出后擦除进位并还原 y/cin。 -/
+内部计算 x+NOT y+1，其最高进位为 [x≥y]，读出后擦除进位并还原 y/cin。
+
+参数：
+
+- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
+- `x`：小端被比较寄存器，判断它是否小于 y，值保持。
+- `y`：小端比较基准寄存器，值保持。
+- `carry`：与 x/y 等长的进位工作寄存器，初末为零，末位保存最高进位。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+- `target`：比较条件的 XOR 输出 wire，初值不必为零。
+-/
 def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program := prog {
   notRegister(cin :: y);  -- 翻转 y 的每一位，并将零 cin 置 1；准备 x+¬y+1。
   compareChain(control, x, y, carry, cin, target);  -- target ^= [x<原 y]；有控制位时再与 control 相与，carry 清零。
@@ -52,7 +79,18 @@ def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire
 
 /-- target ^= [x<K]；control=some c 时改为 target ^= c AND [x<K]，保留 x/控制位。
 要求 K<2^n，x/T/carry 均为 n 位且线路互异，T/carry/cin 初始为零并恢复。
-先将常量 K 装入 T，比较后卸载；target 不必初始为零。 -/
+先将常量 K 装入 T，比较后卸载；target 不必初始为零。
+
+参数：
+
+- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
+- `x`：小端被比较寄存器，判断其数值是否小于 K。
+- `T`：与 x 等宽的零常数工作寄存器，用来装入 K，比较后卸载。
+- `carry`：与 x 等长的零进位工作寄存器，比较后恢复。
+- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
+- `target`：小于条件的 XOR 输出 wire，初值不必为零。
+- `K`：构造电路时已知的经典比较阈值。
+-/
 def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program := prog {
   xorConstant(T, K);  -- T ^= K；从零装入比较常量 K。
   compareLt(control, x, T, carry, cin, target);  -- target ^= [x<K]；有控制位时再与 control 相与，输入和进位工作区恢复。

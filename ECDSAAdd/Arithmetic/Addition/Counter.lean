@@ -21,6 +21,12 @@ private theorem counter_perm (L : AdderLayout) :
       AdderLayout.wires, addWires, List.count_cons] at ih ⊢
     omega
 
+/-- 翻转计数器的 cin 和 y，为补码减一准备输入。
+
+参数：
+
+- `L`：计数器借用的加法布局；本函数只翻转 cin 和辅助寄存器 y，为补码减一做准备。
+-/
 private def counterFlip (L : AdderLayout) : Program := notRegister (L.cin::L.y)
 
 private theorem counterFlip_spec (L : AdderLayout) (hnd : L.wires.Nodup)
@@ -47,11 +53,21 @@ private theorem counterFlip_spec (L : AdderLayout) (hnd : L.wires.Nodup)
   · exact (keep L.carry (by intro w hw; simp [hw])).trans hcarry
 
 /-- 受 L.cin 控制的计数结果 XOR 输出：L.out ^= (L.x+L.cin) mod 2^n，n=L.width。
-L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；此模块用其实现 10 位活动轮计数。 -/
+L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；此模块用其实现 10 位活动轮计数。
+
+参数：
+
+- `L`：计数线路布局：x 保存当前计数，cin 是是否增减一的控制位，out 接收 XOR 结果，y/carry 是零工作寄存器。
+-/
 def counterIncXor (L : AdderLayout) : Program := add L
 
 /-- 受 L.cin 控制的减一结果 XOR 输出：L.out ^= (L.x−L.cin) mod 2^n，n=L.width。
-L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；L.cin 的值取 0 或 1。 -/
+L.x/L.cin 保持，L.y/L.carry 初始为零并恢复；L.cin 的值取 0 或 1。
+
+参数：
+
+- `L`：计数线路布局：x 保存当前计数，cin 是是否增减一的控制位，out 接收 XOR 结果，y/carry 是零工作寄存器。
+-/
 def counterDecXor (L : AdderLayout) : Program := counterFlip L ++ add L ++ counterFlip L
 
 theorem counterIncXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
@@ -130,11 +146,21 @@ theorem AdderLayout.swapCounter_perm (L : AdderLayout) : L.swapCounter.wires.Per
     omega
 
 /-- 将计数移入空银行：(L.x=K,L.out=0) → (L.x=0,L.out=(K+L.cin) mod 2^n)，n=L.width。
-L.cin 保持，L.y/L.carry 初始为零并恢复；下一轮需交换 x/out 的角色。 -/
+L.cin 保持，L.y/L.carry 初始为零并恢复；下一轮需交换 x/out 的角色。
+
+参数：
+
+- `L`：双寄存器计数布局：x 保存当前计数，out 是初始为空的下一计数寄存器，cin 控制是否增减一，y/carry 是零工作区。
+-/
 def counterInc (L : AdderLayout) : Program := counterIncXor L ++ counterDecXor L.swapCounter
 
 /-- 将减量后的计数移入空银行：(L.x=K,L.out=0) → (L.x=0,L.out=(K−L.cin) mod 2^n)，n=L.width。
-L.cin 保持，L.y/L.carry 初始为零并恢复；与 counterInc 配合恢复先前计数。 -/
+L.cin 保持，L.y/L.carry 初始为零并恢复；与 counterInc 配合恢复先前计数。
+
+参数：
+
+- `L`：双寄存器计数布局：x 保存当前计数，out 是初始为空的下一计数寄存器，cin 控制是否增减一，y/carry 是零工作区。
+-/
 def counterDec (L : AdderLayout) : Program := counterDecXor L ++ counterIncXor L.swapCounter
 
 theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)

@@ -5,18 +5,43 @@ open ExternalMod
 
 /-- 在 operation 对 L.reg f 中输入计算 L.out ^= h(输入) 的契约下，得到 dst ^= h(src)。
 src 保持；src 装入零的内部寄存器，复制结果后重算以清理，L.wires 初始为零并恢复。
-需要 operation 的输入保持、XOR 输出及零工作区契约，并非任意 Program 都能如此清理。 -/
+需要 operation 的输入保持、XOR 输出及零工作区契约，并非任意 Program 都能如此清理。
+
+参数：
+
+- `L`：内部模运算布局；reg f 接收 src 副本，out 暂存运算结果，其余内部线路作零工作区。
+- `f`：选择将 src 接到 L 中哪个输入字段的构造期标记；约减用 .x，取负用 .y。
+- `operation`：内部 XOR 运算子电路，须保留输入并能通过重复运行清理 L.out。
+- `src`：小端外部输入寄存器，运算后保持。
+- `dst`：小端外部 XOR 输出寄存器，初值不必为零。
+-/
 def unaryModXor (L : ModLayout) (f : ModField) (operation : Program) (src dst : List Wire) : Program :=
   copyRegister none src (L.reg f) ++ operation ++ copyRegister none L.out dst ++
     operation ++ copyRegister none src (L.reg f)
 
 /-- dst ^= src mod q，src 保持，L.wires 初始为零并恢复。
-要求 0<q<2^L.width、src<2*q，src/dst 均为 L.width+1 位且参与线路互异。 -/
+要求 0<q<2^L.width、src<2*q，src/dst 均为 L.width+1 位且参与线路互异。
+
+参数：
+
+- `L`：内部模加减线路布局；本接口将 L.wires 全部作为初末为零的工作区。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+- `src`：小端外部输入寄存器，约减/取负时保留原值。
+- `dst`：小端外部 XOR 输出寄存器，接收约减或模取负结果。
+-/
 def reduceXor (L : ModLayout) (q : Nat) (src dst : List Wire) : Program :=
   unaryModXor L .x (modAdd L q) src dst
 
 /-- dst ^= (−src) mod q，src 保持，L.wires 初始为零并恢复。
-要求 0<q<2^L.width、src<q，src/dst 均为 L.width+1 位且参与线路互异。 -/
+要求 0<q<2^L.width、src<q，src/dst 均为 L.width+1 位且参与线路互异。
+
+参数：
+
+- `L`：内部模加减线路布局；本接口将 L.wires 全部作为初末为零的工作区。
+- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
+- `src`：小端外部输入寄存器，约减/取负时保留原值。
+- `dst`：小端外部 XOR 输出寄存器，接收约减或模取负结果。
+-/
 def negateXor (L : ModLayout) (q : Nat) (src dst : List Wire) : Program :=
   unaryModXor L .y (modSub L q) src dst
 

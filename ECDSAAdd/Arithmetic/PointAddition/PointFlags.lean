@@ -3,7 +3,16 @@ import ECDSAAdd.Arithmetic.Equality.EqualConstant
 namespace ECDSAAdd.Arithmetic
 
 /-- generic ^= finite AND NOT equalX，double ^= equalX AND NOT equalNegY。
-三个输入标志保持；参与线路互异时可重复运行以清除同一组分支结果。 -/
+三个输入标志保持；参与线路互异时可重复运行以清除同一组分支结果。
+
+参数：
+
+- `finite`：输入点是否有限的 wire，1 表示有限点，0 表示无穷远点。
+- `equalX`：输入横坐标等于常量点横坐标的条件 wire，有限点检测已由调用者处理。
+- `equalNegY`：输入纵坐标等于常量点纵坐标相反数的条件 wire。
+- `generic`：普通点加分支条件的 XOR 输出 wire。
+- `double`：倍点分支条件的 XOR 输出 wire。
+-/
 def pointBranchFlags (finite equalX equalNegY generic double : Wire) : Program :=
   [.X equalX, .CCX finite equalX generic, .X equalX,
    .X equalNegY, .CCX equalX equalNegY double, .X equalNegY]
