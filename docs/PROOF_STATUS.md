@@ -33,6 +33,30 @@
 
 本索引不把独立模块的资源相加当作整机结果。当前整机支持等式另见 [pointDialogFinite_wires](../ECDSAAdd/Arithmetic/PointDialogWires.lean#L26)。布局仍分配 9,817 位，实际触及 3,134 位，两数口径不同。
 
+## 回放正逆组合：规范值与电路恢复
+
+[ReplayRoundTrip.lean](../ECDSAAdd/Arithmetic/ReplayRoundTrip.lean) 新增八条组合定理，以 `secp256k1` 的 `p` 为模数：
+
+- `replayNatUnstep_step`、`replayNatStep_unstep`：任意三个布尔控制位下，单步的两个执行次序都恢复 `X,Y`。
+- `replayNatUnloop_loop`、`replayNatLoop_unloop`：任意记录序列、起始索引与计数阈值下，循环的两个次序都恢复 `X,Y`。
+- `replayCell_roundTrip_spec`、`replayUncell_roundTrip_spec`：实际单格程序顺序组合恢复 `ReplayValues`。
+- `replayLoop_roundTrip_spec`、`replayUnloop_roundTrip_spec`：实际循环程序顺序组合恢复 `ReplayState`，包括记录与外部线路的保持。
+
+自然数恢复要求 `X<p`、`Y<p`，允许零载荷。证明通过已有域等式和输出范围，将模相等提升为规范自然数相等。单格电路另要求合法位宽、线路互异和 `p<2^n`；循环电路另要求 `L.Valid n rs`、计数寄存器与 `K` 相符、`i+rs.length≤512`。两段使用独立分段的任意测量记录，`Triple.seq` 保证相位恢复和零工作区；没有倒放含测量的门列，也没有量子信道语义提升。
+
+本批基于 `8a8d67b`，只增加证明，不改变现有程序、公开规格或资源数。`scripts/verify.sh` 实跑通过 2,244 项构建、460 个选定公理入口；新增八条入口的实际输出如下。独立审阅与合并另行记录。
+
+```text
+'ECDSAAdd.Arithmetic.replayNatUnstep_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatStep_unstep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatUnloop_loop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayNatLoop_unloop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayCell_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUncell_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayLoop_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.replayUnloop_roundTrip_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+
 ## M1
 
 ```lean

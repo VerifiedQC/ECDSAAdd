@@ -467,6 +467,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.pointDialogFinite_counts
 #print axioms ECDSAAdd.Arithmetic.pointDialogFinite_wires
 #print axioms ECDSAAdd.Arithmetic.pointDialogFinite_qubits
+#print axioms ECDSAAdd.Arithmetic.replayNatUnstep_step
+#print axioms ECDSAAdd.Arithmetic.replayNatStep_unstep
+#print axioms ECDSAAdd.Arithmetic.replayNatUnloop_loop
+#print axioms ECDSAAdd.Arithmetic.replayNatLoop_unloop
+#print axioms ECDSAAdd.Arithmetic.replayCell_roundTrip_spec
+#print axioms ECDSAAdd.Arithmetic.replayUncell_roundTrip_spec
+#print axioms ECDSAAdd.Arithmetic.replayLoop_roundTrip_spec
+#print axioms ECDSAAdd.Arithmetic.replayUnloop_roundTrip_spec
 LEAN
 )
 printf '%s\n' "$axioms"
