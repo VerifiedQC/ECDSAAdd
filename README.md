@@ -33,6 +33,7 @@
 | 完整点加电路 | 已证明经典常量 C、任意合法输入 R 的完整点加 XOR、零输出规格及同程序精确资源 | [PointAddSpec.lean](ECDSAAdd/Arithmetic/PointAddSpec.lean) · [PointAddResources.lean](ECDSAAdd/Arithmetic/PointAddResources.lean) |
 | 受控原地点加 | 已证明控制保持、全部点情形、临时点/工作区清零及同程序精确资源 | [ControlledPointAddSpec.lean](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean) · [ControlledPointResources.lean](ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
 | 原地加减与比较器原语 | 已证明原地加/减（n−1 Toffoli、n−1 测量、3n 线）、受控常数/寄存器加减、Gidney 比较器（n Toffoli）；已由求逆第二阶段复用 | [InPlaceAdder.lean](ECDSAAdd/Arithmetic/InPlaceAdder.lean) · [Compare.lean](ECDSAAdd/Arithmetic/Compare.lean) |
+| 回放正逆组合 | 已证明 secp256k1 规范载荷上单格及循环的双向恢复；电路组合对任意测量记录恢复相位、寄存器断言和零工作区 | [ReplayRoundTrip.lean](ECDSAAdd/Arithmetic/ReplayRoundTrip.lean) |
 
 每次创建或更新 PR 前，逐项核对本节与实际源码、公开定理和验证结果；状态变化时在同一 PR 更新 README。后续计划不计入已实现范围。
 
