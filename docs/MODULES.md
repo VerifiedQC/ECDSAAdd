@@ -59,7 +59,13 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 算法主体直接列出输入/输出寄存器，较复杂布局旁注明连接关系；行内注释说明数值更新、选择方向和清理目的。`let` 只组织已有 wire，不分配新量子位。`Xor` 接口把结果异或到目标，不能当成覆盖赋值；写成“中间量=结果”的注释以规格要求的零初值为前提。
 
-`prog` 中直接门统一写作 `X target;`、`CX control target;`、`CCX a b target;`，子电路保留 `fullAdder(...);` 形式，循环内外一致。通过文件级 `open Instr` 省略门名的前缀；旧括号式门调用仍兼容。
+`prog` 中直接门统一写作 `X target;`、`CX control target;`、`CCX a b target;`，子电路也支持 `addXor x y total;` 这样的普通 Lean 调用。通过文件级 `open Instr` 省略门名的前缀；旧括号式调用仍兼容。
+
+辅助接线较多的主体使用 `prog using (...Context L) { ... }`：数据源、目标与必要控制仍在调用处出现，进位链、零进位、mask、工作池等在同文件的 Context 配置中绑定一次。每个 `let` 别名注明用途；算法阅读可先跳过 Context 的接线实现。它只做构造期展开，不分配 qubit、不自动推断可复用工作位；底层完整参数接口仍保留。例如 modAdd/modSub 内的 `addXor x y total` 使用零 cinSum 和 carrySum，不能据此删掉普通 addXor 的非零进位功能。
+
+已采用配置的入口包括模加减/原地模加、模倍增/减半、Montgomery 段内加减、Kaliski 数据轮、除法乘积累加/累减，以及点加候选和斜率清理。复制、选择、交换、移位等原本清楚的门级循环不额外包一层配置。
+
+斜率清理中 `C-div x slope; C-const (x XOR 1) slope;` 的 x 特指条件“point.x≠0”，不是数值寄存器。配置绑定分子 point.y、分母 point.x、例外常数 lambdaStar、外部使能 generic，并显式准备/清除原有两根条件位。两个模块分别展开成现有 divideSub 和 maskedConstant；`XOR 1` 仅交换条件的正反分支，generic=0 时两支均关闭。此处 C-div 的效果是从 slope 减去商，不是将商覆盖写入 slope。
 
 算法主体的每处子电路调用后，用行尾注释说明这次调用对实际寄存器做了什么计算：写明目标、控制条件，以及 XOR、模加减或交换等更新方式。重复调用用于清理时，要说明再次计算并异或了什么，而不只重复函数名；必要时在布局别名旁标明输入与目标的连接。注释中的数值结论沿用该算法的位宽、范围、线路互异和工作区初值前提，不额外扩展规格；逐门代码和证明步骤无需按此规则复述。
 
@@ -113,6 +119,6 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 本轮只用 `new-temp` 累积报告、文档和源码整理，`new` 留作最终验收后的集成分支。多人协作按模块划定写入范围，由一个集成人负责共享文件和 Git 操作。接口、算法、历史寿命或文件归属变化时，同步修改模块 README。
 
-仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，以及 `tests/ModularReadable.lean` 中显式寄存器接口的回归检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
+仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，`tests/ModularReadable.lean` 中显式寄存器接口的回归检查，以及 `tests/ContextPrograms.lean` 中配置作用域、条件取反及展开等价性检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
 
 当前证明与资源证据见 [PROOF_STATUS](PROOF_STATUS.md)，算法历史见 [REWORK_PLAN](REWORK_PLAN.md)，来源见 [PROVENANCE](PROVENANCE.md)，整理范围和验收记录见 [READABILITY_REPORT](READABILITY_REPORT.md)。

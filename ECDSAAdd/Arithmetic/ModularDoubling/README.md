@@ -2,6 +2,8 @@
 
 本模块实现奇模数下的原地倍增和减半，并证明它们的结果、工作位清理及资源用量。
 
+`dblInPlace` / `halfInPlace` 用 `modUnaryContext` 绑定零常数/进位工作区；主体保留目标、控制位和经典常数。`maskedAddConstLow` 明确只更新低 n 位；它与全宽加常数使用不同长度的辅助位，接线见同文件配置。
+
 算法入口在 [ModUnary.lean](ModUnary.lean)。`dblInPlace` 先左移得到两倍，再试减 p、按借位加回 p，利用 p 为奇数清理借位；`halfInPlace` 先记录最低位，奇数时加 p，再右移减半，最后用输出重算并清除奇偶记录。代码中的 target 是被更新的寄存器，borrow/wasOdd 是需要恢复为零的标志位。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。

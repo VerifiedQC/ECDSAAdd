@@ -2,6 +2,8 @@
 
 本模块实现 secp256k1 点与经典常量点相加的电路，包括 XOR 输出、受控原地更新、特殊点分支及辅助位清理。
 
+候选点计算用 `pointCandidateContext` 固定共享零工作池，主体只传逻辑输入输出。斜率清理用 `clearSlopeContext`，主体写成 `C-div x slope`、`C-const (x XOR 1) slope`：这里 x 是“point.x≠0”的条件，两个分支均受 generic 使能；分别从 slope 减去 point.y/point.x、向 slope XOR 例外常数 lambdaStar。配置中明确列出分子、分母、常数和原有条件位的准备/清理；XOR 1 只交换分支，不施加 X 门。
+
 普通分支的公式直接写在 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute` 中：dx=x−cx、dy=y−cy、slope=dy/dx、candidateX=slope²−x−cx、candidateY=slope·(x−candidateX)−y，运算均模 p。非普通分支用安全分母 1 完成计算，但不选用该候选。代码中的 `fieldSubXor/fieldMulXor/fieldInverseXor` 显式列出输入和 XOR 输出，pool 只指定共享工作区。
 
 原地算法见 [PointInPlaceProgram.lean](PointInPlaceProgram.lean)：`pointInPlaceGeneric` 标明每一步更新后的坐标，`pointInPlaceClearSlope` 说明怎样用更新后的坐标清理斜率；`pointInPlaceFinite` 处理普通、倍点、互逆点、无穷远点分支并清除分类标志。清理始终使用明确的恢复程序，不倒放测量指令。

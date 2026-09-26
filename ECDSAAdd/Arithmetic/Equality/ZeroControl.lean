@@ -48,8 +48,8 @@ local macro_rules
 - `bs`：逐位零检测布局：input 是被检测位，work 是生成检测链的零工作位。
 -/
 def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
-  let n := bs.length;
-  let chain := c :: bs.map ZeroBit.work;
+  let n := bs.length; -- 待检测输入/辅助位配对列表 bs 的长度。
+  let chain := c :: bs.map ZeroBit.work; -- 零检测的前缀 AND 链；首项为外部控制 c，其余为零工作位。
   for i in range(n) {
     negAnd(chain[i], bs[i].input, bs[i].work); -- chain[i+1] = c AND 前 i+1 个输入均为零。
   };

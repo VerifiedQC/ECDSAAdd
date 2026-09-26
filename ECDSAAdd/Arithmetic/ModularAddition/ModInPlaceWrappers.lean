@@ -45,8 +45,8 @@ def modAddInPlace (L : ModInPlaceLayout) (p : Nat) : Program := modAddCore L.toM
 - `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
 -/
 def controlledModAdd (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := prog {
-  let source := L.a.take L.low.length;
-  let maskedSource := L.mask.take L.low.length;
+  let source := L.a.take L.low.length; -- 源 a 的低 n 位，数值保持；n 是目标 low 的长度。
+  let maskedSource := L.mask.take L.low.length; -- 零 mask 的低 n 位，暂存 c·source，最后清零。
   let addToTarget := L.maskedCore; -- 输入 a 接 mask，输出 z 仍接 L.z；共用原工作区。
   copyRegister(some c, source, maskedSource); -- maskedSource = c ? source : 0
   modAddCore(addToTarget, p);                 -- z = (z + maskedSource) mod p

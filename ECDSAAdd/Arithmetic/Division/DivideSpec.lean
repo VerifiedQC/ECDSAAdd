@@ -170,13 +170,13 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
   simp only [heA] at hadd
   simp only [heS] at hsub
   constructor
-  · apply Triple.conseq ?_ (by simpa only [divideAdd,List.append_assoc] using hadd) ?_
+  · apply Triple.conseq ?_ (by simpa only [divideAdd_program,List.append_assoc] using hadd) ?_
     · intro st h
       exact ⟨⟨(divideZero_iff L D st).mpr ⟨h.1.1.1.2,h.2⟩,h.1.1.1.1⟩,h.1.1.2,h.1.2⟩
     · intro st h
       have hz := (divideZero_iff L D st).mp h.1.1
       exact ⟨⟨⟨⟨h.1.2,hz.1⟩,h.2.1⟩,h.2.2⟩,hz.2⟩
-  · apply Triple.conseq ?_ (by simpa only [divideSub,List.append_assoc] using hsub) ?_
+  · apply Triple.conseq ?_ (by simpa only [divideSub_program,List.append_assoc] using hsub) ?_
     · intro st h
       exact ⟨⟨(divideZero_iff L D st).mpr ⟨h.1.1.1.2,h.2⟩,h.1.1.1.1⟩,h.1.1.2,h.1.2⟩
     · intro st h

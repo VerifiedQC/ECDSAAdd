@@ -103,7 +103,7 @@ def montP (M : MontLayout) (p : Nat) : Program := prog {
 - `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
 -/
 def montQ (M : MontLayout) (p : Nat) : Program := prog {
-  let conversion := montgomeryConversion p;
+  let conversion := montgomeryConversion p; -- 经典转换常数 R² mod p（R=2^256），用于撤销第二段 Montgomery 运算。
   constRestore(M.second, M.a, p, conversion); -- 清 z 及第二段历史；仍需要 a
   montRestore(M.first, M.x, M.y, p);          -- 清 a 及第一段历史；x/y 保持
 }

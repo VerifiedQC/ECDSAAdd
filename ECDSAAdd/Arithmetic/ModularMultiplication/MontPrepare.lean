@@ -44,6 +44,30 @@ def source (L : MontStageLayout) (x : List Wire) (j : Nat) : List Wire :=
 
 end MontStageLayout
 
+/-- Montgomery 段内部的寄存器运算接口；控制、源和目标显式，零工作区固定。 -/
+structure MontArithmeticOps where
+  addInPlace : List Wire → List Wire → Program
+  subInPlace : List Wire → List Wire → Program
+  controlledAdd : Wire → List Wire → List Wire → Program
+  controlledSub : Wire → List Wire → List Wire → Program
+  maskedAddConst : Wire → List Wire → Nat → Program
+  maskedSubConst : Wire → List Wire → Nat → Program
+
+/-- L 是单段接线：carry/cin 保存进位，mask 暂存受控源，table 暂装经典常数。
+这些工作位初始为零，每次操作后清零；acc/history/flag 不在此处自动清理。 -/
+def montArithmeticContext (L : MontStageLayout) : CircuitDSL.Context MontArithmeticOps := {
+  operations := {
+    addInPlace := fun source target => addInPlace source target L.carry L.cin
+    subInPlace := fun source target => subInPlace source target L.carry L.cin
+    controlledAdd := fun control source target =>
+      measuredMaskedAddInPlace control source L.mask target L.carry L.cin
+    controlledSub := fun control source target =>
+      measuredMaskedSubInPlace control source L.mask target L.carry L.cin
+    maskedAddConst := fun control target k => maskedAddConst control L.table target L.carry L.cin k
+    maskedSubConst := fun control target k => maskedSubConst control L.table target L.carry L.cin k
+  }
+}
+
 /-- 将四位地址 addr 的数值 d 所对应的 d*K XOR 到 L.table，保留 addr，零 scratch 恢复。
 表值按 L.table 的位宽截断；要求 addr 恰有四位及有效的查表布局。
 
@@ -65,9 +89,9 @@ def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
 - `addr`：四位小端地址寄存器，其数值 d 用来选择 d*K。
 - `K`：构造期的经典乘数常量；查表项为 d*K。
 -/
-def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
   montLookup(L, addr, K);                           -- table = 地址值*常量 K
-  addInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc+table) mod 2^261，进位工作区恢复零。
+  addInPlace L.table L.acc;  -- acc ← (acc+table) mod 2^261，进位工作区恢复零。
   montLookup(L, addr, K);                           -- table 再异或 地址值*K，清零；地址不变。
 }
 
@@ -80,9 +104,9 @@ def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :
 - `addr`：四位小端地址寄存器，其数值 d 用来选择 d*K。
 - `K`：构造期的经典乘数常量；查表项为 d*K。
 -/
-def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
   montLookup(L, addr, K);                           -- table = 地址值*常量 K
-  subInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc-table) mod 2^261，进位工作区恢复零。
+  subInPlace L.table L.acc;  -- acc ← (acc-table) mod 2^261，进位工作区恢复零。
   montLookup(L, addr, K);                           -- table 再异或 地址值*K，清零；地址不变。
 }
 
@@ -97,7 +121,7 @@ def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :
 - `i`：构造期的约减轮编号，从 0 开始；指定保存/读取四位系数 m 的 L.record i。
 -/
 def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
-  let digit := L.acc.take 4;
+  let digit := L.acc.take 4; -- 累加器的低四位，当前值是约减系数 m。
   let history := L.record i; -- 第 i 轮独占的四根历史位，保存 m。
   copyRegister(none, digit, history); -- m = acc mod 16
   montLookupAdd(L, history, p);       -- acc += m*p；p mod 16=15 时低四位全零
@@ -114,8 +138,8 @@ def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
 - `i`：构造期的约减轮编号，从 0 开始；指定保存/读取四位系数 m 的 L.record i。
 -/
 def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
-  let digit := L.acc.take 4;
-  let history := L.record i;
+  let digit := L.acc.take 4; -- 累加器的低四位，撤销约减后重现系数 m。
+  let history := L.record i; -- 第 i 轮保存 m 的四根历史位，撤销约减后清零。
   rotateLeftBits(L.acc, 4);          -- acc *= 16，恢复约减前的和
   montLookupSub(L, history, p);       -- acc -= m*p
   copyRegister(none, digit, history); -- 原低四位重新等于 m，故 history 清零
@@ -131,11 +155,11 @@ def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
 - `y`：小端乘数寄存器，值保持；按四位一组读取其低 256 位。
 - `i`：构造期的窗口编号，从 0 开始；第 i 个窗口对应乘数的第 4*i 至 4*i+3 位和同号历史槽。
 -/
-def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
+def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog using (montArithmeticContext L) {
   for j in (List.range 4) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
-    measuredMaskedAddInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);  -- bit=1 时 acc += x*2^j；mask/carry 在调用后清零。
+    controlledAdd bit shiftedX L.acc;  -- bit=1 时 acc += x*2^j；mask/carry 在调用后清零。
   };
 }
 
@@ -149,11 +173,11 @@ def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
 - `y`：小端乘数寄存器，值保持；按四位一组读取其低 256 位。
 - `i`：构造期的窗口编号，从 0 开始；第 i 个窗口对应乘数的第 4*i 至 4*i+3 位和同号历史槽。
 -/
-def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
+def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog using (montArithmeticContext L) {
   for j in ((List.range 4).reverse) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- 同一 x 加零扩展，表示 x*2^j。
-    measuredMaskedSubInPlace(bit, shiftedX, L.mask, L.acc, L.carry, L.cin);  -- bit=1 时 acc -= x*2^j；mask/carry 在调用后清零。
+    controlledSub bit shiftedX L.acc;  -- bit=1 时 acc -= x*2^j；mask/carry 在调用后清零。
   };
 }
 
@@ -201,7 +225,7 @@ def montRestoreWindow (L : MontStageLayout) (x y : List Wire) (p i : Nat) : Prog
 - `i`：构造期的窗口编号，从 0 开始；第 i 个窗口对应乘数的第 4*i 至 4*i+3 位和同号历史槽。
 -/
 def constMontWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
-  let digit := (y.drop (4*i)).take 4;
+  let digit := (y.drop (4*i)).take 4; -- 乘数 y 的第 i 个四位窗口，保持不变。
   montLookupAdd(L, digit, K);        -- acc += digit*K
   montReduce(L, p, i);              -- m=acc mod 16；acc ← (acc+m*p)/16，m 存入第 i 轮历史。
 }
@@ -218,7 +242,7 @@ y/K 不变且记录匹配时，清除该轮记录，零临时工作区恢复。
 - `i`：构造期的窗口编号，从 0 开始；第 i 个窗口对应乘数的第 4*i 至 4*i+3 位和同号历史槽。
 -/
 def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) : Program := prog {
-  let digit := (y.drop (4*i)).take 4;
+  let digit := (y.drop (4*i)).take 4; -- 与正向第 i 轮相同的四位乘数窗口，保持不变。
   montRestoreReduce(L, p, i);       -- 撤销约减，清除第 i 轮记录
   montLookupSub(L, digit, K);        -- acc -= digit*K
 }
@@ -231,9 +255,9 @@ def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) :
 - `L`：单段 Montgomery 线路布局：acc 是累加器，history 保存每轮约减系数，flag 保存最终借位；table/mask/carry/cin/pad/scratch 为临时工作位。
 - `K`：构造期的经典加数/减数；其低 261 位暂装入 table。
 -/
-def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
+def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
   xorConstant(L.table, K);  -- table ^= K；从零装入常量 K。
-  addInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc+K) mod 2^261，进位工作区恢复零。
+  addInPlace L.table L.acc;  -- acc ← (acc+K) mod 2^261，进位工作区恢复零。
   xorConstant(L.table, K);  -- table 再异或 K，清零常量寄存器。
 }
 
@@ -244,9 +268,9 @@ def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
 - `L`：单段 Montgomery 线路布局：acc 是累加器，history 保存每轮约减系数，flag 保存最终借位；table/mask/carry/cin/pad/scratch 为临时工作位。
 - `K`：构造期的经典加数/减数；其低 261 位暂装入 table。
 -/
-def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
+def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
   xorConstant(L.table, K);  -- table ^= K；从零装入常量 K。
-  subInPlace(L.table, L.acc, L.carry, L.cin);  -- acc ← (acc-K) mod 2^261，进位工作区恢复零。
+  subInPlace L.table L.acc;  -- acc ← (acc-K) mod 2^261，进位工作区恢复零。
   xorConstant(L.table, K);  -- table 再异或 K，清零常量寄存器。
 }
 
@@ -258,12 +282,12 @@ def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
 - `L`：规范化线路布局：acc 保存约减前/后的数值，flag 保存是否加回 p；table/carry/cin 是零工作区。
 - `p`：构造期的经典模数，用来将累加器限制到 [0,p)，要求 p<2^256。
 -/
-def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
-  let borrow := L.flag;
-  let high := L.acc.getD 260 L.flag;
+def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
+  let borrow := L.flag; -- 初始为零的历史标志位，保存原 acc<p，留给逆向恢复。
+  let high := L.acc.getD 260 L.flag; -- 261 位累加器的最高位，试减 p 后表示借位。
   montConstantSub(L, p);                               -- acc -= p
   CX high borrow;                              -- 保存原 acc<p 的借位条件
-  maskedAddConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位时加回 p，得到 [0,p) 中的值
+  maskedAddConst borrow L.acc p; -- 借位时加回 p，得到 [0,p) 中的值
   -- borrow 是恢复所需历史，此时不能清除。
 }
 
@@ -275,10 +299,10 @@ def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
 - `L`：规范化线路布局：acc 保存约减前/后的数值，flag 保存是否加回 p；table/carry/cin 是零工作区。
 - `p`：构造期的经典模数，用来将累加器限制到 [0,p)，要求 p<2^256。
 -/
-def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
-  let borrow := L.flag;
-  let high := L.acc.getD 260 L.flag;
-  maskedSubConst(borrow, L.table, L.acc, L.carry, L.cin, p); -- 借位分支减回 p
+def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
+  let borrow := L.flag; -- 规范化阶段保留的借位历史，本过程将其清零。
+  let high := L.acc.getD 260 L.flag; -- 累加器最高位，撤销加回 p 后重现借位。
+  maskedSubConst borrow L.acc p; -- 借位分支减回 p
   CX high borrow;                                 -- high 重现原借位，清零 borrow
   montConstantAdd(L, p);                                  -- acc 恢复到归一化前的值
 }

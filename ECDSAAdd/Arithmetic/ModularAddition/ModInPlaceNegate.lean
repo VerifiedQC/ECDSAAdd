@@ -11,7 +11,7 @@ namespace ECDSAAdd.Arithmetic
 - `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
 -/
 def negRaw (L : ModInPlaceLayout) (p : Nat) : Program := prog {
-  let source := L.a;
+  let source := L.a; -- 需要暂时改成 p-A 的源寄存器，包含扩展高位。
   notRegister(source);                             -- source = 2^位宽-1-A
   xorConstant(L.constant, p+1);                     -- constant = p+1
   addInPlace(L.constant, source, L.carry, L.cin);    -- source = p-A（按位宽截断后）

@@ -107,11 +107,11 @@ swap ^= (active AND u为奇数) XOR (active AND u为奇数 AND v为奇数 AND v<
 - `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。本函数读取数据和 active，写入 swap/subtract。
 -/
 def recordRound (L : KaliskiRoundLayout) : Program := prog {
-  let uOdd := L.u.head!;
-  let vOdd := L.v.head!;
-  let activeUOdd := L.oddWork;
-  let bothOdd := L.bothWork;
-  let carry := L.data.reg .carry;
+  let uOdd := L.u.head!; -- u 的最低位，表示 u 是否为奇数。
+  let vOdd := L.v.head!; -- v 的最低位，表示 v 是否为奇数。
+  let activeUOdd := L.oddWork; -- 零辅助位，暂存 active AND uOdd。
+  let bothOdd := L.bothWork; -- 零辅助位，暂存 active AND uOdd AND vOdd。
+  let carry := L.data.reg .carry; -- 比较 v<u 使用的零进位链，比较后恢复。
   CCX L.active uOdd activeUOdd;         -- activeUOdd = active AND (u 为奇数)
   CCX activeUOdd vOdd bothOdd;          -- bothOdd = active AND (u、v 均为奇数)
   CX bothOdd L.subtract;                -- 保存本轮是否需要相减
@@ -180,7 +180,7 @@ def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
 - `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
 -/
 def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
-  let vZeroBits := L.data.zeroBits .v;
+  let vZeroBits := L.data.zeroBits .v; -- v 的输入位与零检测辅助位配对，用于恢复 done。
   roundActiveXor(L, i);                                   -- 从 kNext 恢复该轮 active
   zeroControlled(L.active, L.done, vZeroBits);             -- 恢复轮前 done
   kaliskiUnbodyProgram(L.data, L.active, L.swap, L.subtract); -- 恢复 u/v/r/s

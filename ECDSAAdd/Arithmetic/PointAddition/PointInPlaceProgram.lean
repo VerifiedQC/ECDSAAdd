@@ -29,12 +29,44 @@ def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp)
 - `L`：原地点加布局：point（即 core.input）是更新目标，control 是外部控制，core.generic 是普通分支使能；core 的候选区和 pool 被借作斜率、算术及分类工作位。本函数在普通分支取负 point.x，point.y 保持。
 -/
 def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog {
-  let enabled := L.core.generic;
+  let enabled := L.core.generic; -- 普通分支使能位，取负期间保持不变。
   let negate := L.inPlaceNegate; -- a 接原 x；low 是独立的零临时寄存器。
   controlledModSub(enabled, negate, p);                 -- enabled=1 时 temp = -x mod p
   swapRegisters(enabled, L.point.x, negate.low);        -- x 得到 -x，temp 留原 x
   controlledModAdd(enabled, negate, p);                 -- temp += 新 x，故 temp 清零
 }
+
+/-- 两个具体受控模块：cdiv 减去分子/分母，cconst XOR 固定例外常数。
+第一个参数选已准备的分支线，第二个参数是被更新的寄存器。 -/
+structure ClearSlopeOps where
+  cdiv : CircuitDSL.Branch → List Wire → Program
+  cconst : CircuitDSL.Branch → List Wire → Program
+
+/-- L 提供分子 point.y、分母 point.x、已有求逆工作区和两根条件位；lambdaStar 是例外常数。
+before/after 正是原电路的条件计算/清理，不增加辅助位。
+输入条件位须为零；正文须保持 point.x/y 及条件位，以便 after 重算清理。 -/
+def clearSlopeContext (L : ControlledPointLayout) (lambdaStar : Fp) :
+    CircuitDSL.Context ClearSlopeOps :=
+  let enabled := L.core.generic       -- 普通分支的外层使能位，保持不变。
+  let xIsZero := L.core.equalX        -- 零辅助位，暂存 enabled AND (point.x=0)。
+  let divideEnabled := L.core.equalNegY -- 零辅助位，暂存 enabled AND (point.x≠0)。
+  {
+    operations := {
+      cdiv := fun condition target =>
+        divideSub { L.inPlaceDivide condition.onTrue L.point.x L.point.y with acc := target }
+      cconst := fun condition target => maskedConstant condition.onTrue target lambdaStar.val
+    }
+    before := prog {
+      equalConstant enabled xIsZero L.inPlaceXZero 0; -- xIsZero = enabled AND (point.x=0)。
+      CX enabled divideEnabled;
+      CX xIsZero divideEnabled;                      -- divideEnabled = enabled AND (point.x≠0)。
+    }
+    after := prog {
+      CX enabled divideEnabled;
+      CX xIsZero divideEnabled;                      -- 先清除非零分支条件。
+      equalConstant enabled xIsZero L.inPlaceXZero 0; -- 再清除为零分支条件。
+    }
+  }
 
 /-- 清除当前斜率：generic=1 且 point.x≠0 时从 slope 减去 point.y/point.x；
 generic=1 且 point.x=0 时将 lambdaStar XOR 到 slope，generic=0 时不改 slope。
@@ -45,20 +77,12 @@ generic=1 且 point.x=0 时将 lambdaStar XOR 到 slope，generic=0 时不改 sl
 - `L`：原地点加布局：point（即 core.input）是更新目标，control 是外部控制，core.generic 是普通分支使能；core 的候选区和 pool 被借作斜率、算术及分类工作位。point.x/y 此时保存算法的中间坐标，inPlaceSlope 是待清的斜率，equalX/equalNegY 暂存零检测与除法使能。
 - `lambdaStar`：构造期的例外斜率常量；在原地点加中取 exceptionalSlope C，用于中途 x=0、无法从 y/x 重算斜率时清理。
 -/
-def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program := prog {
-  let enabled := L.core.generic;
-  let xIsZero := L.core.equalX;
-  let divideEnabled := L.core.equalNegY;
-  let slope := L.inPlaceSlope;
-  let division := L.inPlaceDivide divideEnabled L.point.x L.point.y;
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);  -- xIsZero = enabled AND (x=0)。
-  CX enabled divideEnabled;
-  CX xIsZero divideEnabled;                  -- divideEnabled = enabled AND (x≠0)
-  divideSub(division);                              -- x≠0 分支：slope -= y/x → 0
-  maskedConstant(xIsZero, slope, lambdaStar.val);     -- x=0 分支：slope ^= 预先算好的例外斜率 → 0
-  CX enabled divideEnabled;                  -- 清除两个临时条件位
-  CX xIsZero divideEnabled;
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0);  -- xIsZero ^= enabled AND (x=0)，重算原条件以清零 xIsZero。
+def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program :=
+    prog using (clearSlopeContext L lambdaStar) {
+  let x := CircuitDSL.Branch.mk L.core.equalNegY L.core.equalX; -- 条件“point.x≠0”，不是数值寄存器；两分支均受 generic 控制。
+  let slope := L.inPlaceSlope; -- 待清的 256 位斜率寄存器。
+  C-div x slope;             -- 非零分支：slope -= point.y/point.x → 0。
+  C-const (x XOR 1) slope;   -- 为零分支：slope ^= lambdaStar → 0；XOR 1 仅交换分支，不施加 X 门。
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -86,10 +110,10 @@ finite 和 generic 保持；特殊点分支由外层单独处理。
 - `lambdaStar`：构造期的例外斜率常量；在原地点加中取 exceptionalSlope C，用于中途 x=0、无法从 y/x 重算斜率时清理。
 -/
 def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Program := prog {
-  let x := L.point.x;
-  let y := L.point.y;
-  let slope := L.inPlaceSlope;
-  let slopeCopy := L.inPlaceSquare.y;
+  let x := L.point.x; -- 被原地更新的横坐标寄存器，256 位。
+  let y := L.point.y; -- 被原地更新的纵坐标寄存器，256 位。
+  let slope := L.inPlaceSlope; -- 初始为零的 256 位斜率寄存器，最后重新计算并清零。
+  let slopeCopy := L.inPlaceSquare.y; -- 平方时借用的零寄存器，暂存斜率副本，乘法后清零。
   let division := L.inPlaceDivide L.core.generic x y; -- slope += y/x，受 generic 控制
   let product := L.inPlaceMultiply;                  -- 输入 slope,x，累加目标 y
   let square := L.inPlaceSquare;                     -- 输入 slope,slopeCopy，累加目标 x
@@ -162,12 +186,12 @@ def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program := pro
 - `cy`：经典常量点 C 的纵坐标，属于域 Fp，不是存放坐标的量子寄存器。必须与 C 匹配。
 -/
 def pointInPlaceFinite (L : ControlledPointLayout) (C : Point) (cx cy : Fp) : Program := prog {
-  let enabled := L.control;
+  let enabled := L.control; -- 外部控制位：为 1 才更新输入点。
   let pointBits := L.inPlacePointZero; -- 对整个点编码做相等检测；不是只检查一个坐标。
-  let isInfinity := L.infinitySelect;
-  let isDouble := L.doubleSelect;
+  let isInfinity := L.infinitySelect; -- 零标志位，暂存使能下输入点为无穷远点的条件。
+  let isDouble := L.doubleSelect; -- 零标志位，暂存使能下输入点等于 C 的倍点分支条件。
   let isInverse := L.genericSelect;    -- 原地版本中该旧字段保存 [输入点=-C]，不是普通分支。
-  let doubleEnabled := L.core.double;
+  let doubleEnabled := L.core.double; -- 零辅助位，暂存 enabled AND (C≠-C)，避免角落分支重叠。
   pointInPlaceDoubleEnable(L, cy);     -- doubleEnabled = enabled AND (C≠-C)
   equalConstant(enabled, isInfinity, pointBits, pointCode 0);  -- isInfinity = enabled AND (point=O)。
   equalConstant(doubleEnabled, isDouble, pointBits, pointCode C);  -- isDouble = doubleEnabled AND (point=C)。

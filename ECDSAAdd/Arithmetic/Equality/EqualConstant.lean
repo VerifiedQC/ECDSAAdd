@@ -24,7 +24,7 @@ private theorem zeroBit_count (bs : List ZeroBit) (w : Wire) :
 - `k`：构造电路时已知的经典比较常量，与整个 input 寄存器的数值比较。
 -/
 def equalConstant (control target : Wire) (bs : List ZeroBit) (k : Nat) : Program := prog {
-  let input := bs.map ZeroBit.input;
+  let input := bs.map ZeroBit.input; -- 从 bs 提取的输入寄存器；与 k 比较后恢复原值。
   xorConstant(input, k);                -- input ^= k，将等于 k 转成等于零。
   zeroControlled(control, target, bs);  -- target ^= control AND (input=0)。
   xorConstant(input, k);                -- 恢复原输入。

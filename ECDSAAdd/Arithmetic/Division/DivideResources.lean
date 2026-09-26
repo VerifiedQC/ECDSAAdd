@@ -27,7 +27,7 @@ theorem divide_counts (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
   have hl := divideLoad_counts L hw
   simp only [inverseLoop,toffoliCount_append,measurementCount_append,hc.1,hc.2,
     Option.isSome_none,Bool.false_eq_true,if_false] at hi
-  simp only [divideAdd,divideSub,toffoliCount_append,measurementCount_append,
+  simp only [divideAdd_program,divideSub_program,toffoliCount_append,measurementCount_append,
     hl.1,hl.2.1,hl.2.2.1,hl.2.2.2,hm.1.1,hm.1.2,hm.2.1,hm.2.2]
   omega
 

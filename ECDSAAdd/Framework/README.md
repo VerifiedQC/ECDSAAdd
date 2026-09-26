@@ -77,6 +77,26 @@ def CircuitDSL.emit {α : Type} [CircuitDSL.ToProgram α] (value : α) : Program
 
 通过对应 instance 将 value 转成指令列表。`prog` 对 Instr 和 Program 直接生成门列表或保留子程序调用；其他类型使用对应 instance。它还支持局部 `let`、`for i in range(n)`、`for i in reversed(range(n))` 和 `for item in items`（遍历列表）。循环在生成电路时展开，range 保留索引范围证明；倒序循环倒序调用子程序，不会倒放子程序中的门或测量。`X`、`CX`、`CCX`、`measureX` 的普通 Lean 调用在循环内外均可使用，复合参数按 Lean 规则加括号。
 
+```lean
+structure CircuitDSL.Context (α : Type)
+```
+
+接线配置由 operations、before、after 三部分组成。`prog using context { ... }` 将 operations 中的具名字段作为该代码块的局部操作；before/after 是明确指定的准备与清理电路，默认均为空。配置必须在构造期可展开，不自动分配辅助位，也不自动推断哪些位可复用。作用域结束后原函数接口不变。
+
+```lean
+structure CircuitDSL.Branch
+```
+
+分支条件由 onTrue、onFalse 两根控制线组成，分别预先保存 `enabled AND predicate` 和 `enabled AND NOT predicate`。
+
+```lean
+def CircuitDSL.Branch.complement (b : CircuitDSL.Branch) : CircuitDSL.Branch
+```
+
+交换两条分支线，简写为 `(b XOR 1)`；不施加 X 门，不对 wire 编号或数据寄存器做异或。使能关闭时，两条分支都为零。
+
+`C-div condition target` 和 `C-const condition target` 分别调用当前配置中的 cdiv/cconst 实现。在斜率清理中，前者是受控地减去分子/分母，后者是受控地 XOR 例外斜率常数；具体分子、分母、常数和辅助位由 `clearSlopeContext` 明确接线。它们不是对任意 Program 添加控制的通用黑盒。
+
 ## [Semantics.lean](Semantics.lean)
 
 ```lean

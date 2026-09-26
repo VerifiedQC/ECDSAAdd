@@ -56,6 +56,21 @@ instance : ToProgram Program := ⟨fun circuit => circuit⟩
 def emit {α : Type} [ToProgram α] (value : α) : Program :=
   ToProgram.toProgram value
 
+/-- `operations` 的字段只在当前 prog 内成为局部名字；before/after 显式提供准备/清理门列。
+这只是构造期接线，不分配辅助位，也不自动给任意电路添加量子控制。 -/
+structure Context (α : Type) where
+  operations : α
+  before : Program := []
+  after : Program := []
+
+/-- 同一使能条件下的正、反分支线。取反交换两根线，不翻转物理 wire。
+使用者负责事先准备 onTrue=enabled∧predicate、onFalse=enabled∧¬predicate。 -/
+structure Branch where
+  onTrue : Wire
+  onFalse : Wire
+
+def Branch.complement (b : Branch) : Branch := ⟨b.onFalse, b.onTrue⟩
+
 end CircuitDSL
 
 /-- Erase notation adapters during elaboration, keeping named subcircuits visible to proofs. -/
@@ -82,6 +97,15 @@ syntax "for " ident " in " term:max "{" circuitStmt* "}" ";" : circuitStmt
 syntax (name := circuitBlock) (priority := high) "prog" "{" circuitStmt* "}" : term
 syntax "circuitSeq% " term:max "{" circuitStmt* "}" : term
 
+-- 这两个名字调用当前接线环境的具体实现，不引入一个黑盒 controlled-Program。
+syntax "C-div" term:max term:max ";" : circuitStmt
+syntax "C-const" term:max term:max ";" : circuitStmt
+syntax "(" term " XOR " num ")" : term
+macro_rules
+  | `(($b XOR $n:num)) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(CircuitDSL.Branch.complement $b)
+
 macro_rules
   | `(circuitSeq% $acc {}) => `($acc)
   | `(circuitSeq% $acc { let $name:ident := $value:term; $rest:circuitStmt* }) =>
@@ -91,6 +115,10 @@ macro_rules
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
+  | `(prog { C-div $condition $target; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `cdiv):ident $condition $target; $rest* })
+  | `(prog { C-const $condition $target; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `cconst):ident $condition $target; $rest* })
   | `(prog { $f:ident $args:term*; $rest:circuitStmt* }) => do
       let mut call : TSyntax `term := ⟨f.raw⟩
       for arg in args do
@@ -123,5 +151,42 @@ macro_rules (kind := circuitBlock)
   | `(prog { for $item:ident in $items:term { $body:circuitStmt* };
         $rest:circuitStmt* }) =>
       `(circuitSeq% (($items).flatMap (fun $item => prog { $body* })) { $rest* })
+
+namespace CircuitDSL
+open Lean.Meta Lean.Elab.Term
+
+/-- 展开配置字段后再检查普通 prog；产物不保留运行期环境或分派层。 -/
+private def elabWithOperations (ops : Expr) (fields : List Name)
+    (body : Syntax) : TermElabM Expr := do
+  match fields with
+  | [] =>
+      let e ← elabTermEnsuringType body (mkConst ``Program)
+      synthesizeSyntheticMVarsNoPostponing
+      instantiateMVars e
+  | field :: rest =>
+      let value ← whnf (← mkProjection ops field)
+      withLetDecl field (← inferType value) value fun binding => do
+        let e ← elabWithOperations ops rest body
+        return e.replaceFVar binding value
+
+elab "prog" "using" ctx:term:max "{" body:circuitStmt* "}" : term => do
+  let c ← whnf (← elabTerm ctx none)
+  unless c.isAppOfArity ``Context.mk 4 do
+    throwErrorAt ctx "prog using 需要可展开的 CircuitDSL.Context 接线配置"
+  let args := c.getAppArgs
+  let ops := args[1]!
+  let ty ← whnf (← inferType ops)
+  let some info := getStructureInfo? (← getEnv) ty.getAppFn.constName! |
+    throwErrorAt ctx "Context.operations 必须是有具名字段的 structure"
+  let stx ← `(prog { $body* })
+  let mut result ← elabWithOperations ops info.fieldNames.toList stx
+  -- 不插入空 append，保持既有门列的定义等同性及证明展开形式。
+  if !args[2]!.isAppOf ``List.nil then
+    result ← mkAppM ``HAppend.hAppend #[args[2]!, result]
+  if !args[3]!.isAppOf ``List.nil then
+    result ← mkAppM ``HAppend.hAppend #[result, args[3]!]
+  return result
+
+end CircuitDSL
 
 end ECDSAAdd

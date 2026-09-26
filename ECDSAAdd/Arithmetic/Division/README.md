@@ -2,6 +2,8 @@
 
 本模块通过准备逆元和受控模乘，将模除法结果加到或减出目标寄存器，并恢复求逆历史与工作区。
 
+`divideAdd` / `divideSub` 使用 `divisionProductContext` 固定乘法工作区与输出扩展高位。主体写出控制、逆元、分子和累加目标；接线仍只借用求逆后已清零的区域，不覆盖存活的逆元或历史。
+
 算法入口是 [Divide.lean](Divide.lean) 的 `divideAdd`、`divideSub`：先准备安全分母（control=1 用 denominator，否则用 1），求逆，再将 numerator·denominator⁻¹ 受控加到或减出 acc，最后恢复求逆并卸载分母。代码标明了 inverse、product 两个布局连接哪些寄存器；求逆历史一直保留到乘积累加结束。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。

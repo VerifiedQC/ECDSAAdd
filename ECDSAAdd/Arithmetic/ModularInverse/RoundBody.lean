@@ -41,6 +41,25 @@ private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.w
   have h := h1.seq h2
   simpa only [swapDataPairs, RoundDataLayout.u,RoundDataLayout.v,RoundDataLayout.r,RoundDataLayout.s,he] using h
 
+/-- 受控原地加减的逻辑参数依次为 control、source、target。 -/
+structure RoundArithmeticOps where
+  controlledAdd : Wire → List Wire → List Wire → Program
+  controlledSub : Wire → List Wire → List Wire → Program
+
+/-- L 提供本轮的固定工作区：mask 暂存 control·source，carry/cin 为进位链及零进位。
+两次加减按顺序复用它们；每次调用均清零这些工作位，使用已有测量清理电路。 -/
+def roundArithmeticContext (L : RoundDataLayout) : CircuitDSL.Context RoundArithmeticOps :=
+  let mask := L.reg .y                        -- 初始为零的受控源副本，调用后清零。
+  let carry := (L.reg .carry).take (L.width-1) -- width-1 根零进位辅助线。
+  {
+    operations := {
+      controlledAdd := fun control source target =>
+        measuredMaskedAddInPlace control source mask target carry L.cin
+      controlledSub := fun control source target =>
+        measuredMaskedSubInPlace control source mask target carry L.cin
+    }
+  }
+
 /-- Kaliski 一轮的数据更新：先按 swap 交换 u/v 和 r/s；subtract=1 时 u←u−v、r←r+s；
 active=1 时 u←u/2、s←2*s，最后按 swap 换回。工作区初始为零并恢复，控制位保持。
 整数解释要求本轮不变量保证待减数足够、待除数为偶数及无溢出；一般门列实际按位宽运算/循环移位。
@@ -52,16 +71,15 @@ active=1 时 u←u/2、s←2*s，最后按 swap 换回。工作区初始为零�
 - `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
 - `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
 -/
-def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
-  let u := L.u;
-  let v := L.v;
-  let r := L.r;
-  let s := L.s;
-  let mask := L.reg .y;                     -- 两次受控加减复用的零工作寄存器。
-  let carry := (L.reg .carry).take (L.width-1);
+def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
+    prog using (roundArithmeticContext L) {
+  let u := L.u; -- 当前约简数据，本轮选中的偶数/较大数移到这里处理。
+  let v := L.v; -- 另一约简数据，在减法中用作源。
+  let r := L.r; -- 与 u 配对的系数，执行受控加法。
+  let s := L.s; -- 与 v 配对的系数，执行受控倍增。
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s
-  measuredMaskedSubInPlace(subtract, v, mask, u, carry, L.cin); -- subtract=1 时 u -= v
-  measuredMaskedAddInPlace(subtract, s, mask, r, carry, L.cin); -- subtract=1 时 r += s
+  controlledSub subtract v u;                -- subtract=1 时 u -= v
+  controlledAdd subtract s r;                -- subtract=1 时 r += s
   shiftRight(active, u);                     -- active=1 时，偶数 u /= 2
   shiftLeft(active, s);                      -- active=1 时 s *= 2
   swapDataPairs(L, swap);                    -- 将寄存器角色交换回来
@@ -78,18 +96,17 @@ def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Pro
 - `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
 - `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
 -/
-def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program := prog {
-  let u := L.u;
-  let v := L.v;
-  let r := L.r;
-  let s := L.s;
-  let mask := L.reg .y;
-  let carry := (L.reg .carry).take (L.width-1);
+def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
+    prog using (roundArithmeticContext L) {
+  let u := L.u; -- 待恢复的约简数据，与正轮使用同一寄存器。
+  let v := L.v; -- 另一约简数据，用于撤销 u 的减法。
+  let r := L.r; -- 与 u 配对的系数，撤销先前的受控加法。
+  let s := L.s; -- 与 v 配对的系数，先撤销倍增再作为减法源。
   swapDataPairs(L, swap);                    -- 重建正向运算时的寄存器角色
   shiftRight(active, s);                     -- 撤销 s *= 2
   shiftLeft(active, u);                      -- 撤销 u /= 2
-  measuredMaskedSubInPlace(subtract, s, mask, r, carry, L.cin); -- 撤销 r += s
-  measuredMaskedAddInPlace(subtract, v, mask, u, carry, L.cin); -- 撤销 u -= v
+  controlledSub subtract s r;                -- 撤销 r += s
+  controlledAdd subtract v u;                -- 撤销 u -= v
   swapDataPairs(L, swap);                    -- u/v/r/s 恢复轮前值
 }
 

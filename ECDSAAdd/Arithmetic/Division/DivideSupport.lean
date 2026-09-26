@@ -77,10 +77,10 @@ theorem divide_wires (L : DivideLayout) (hw : L.Widths) :
     exact List.mem_toFinset.mpr (L.data_used_subset .s (by decide) (List.mem_toFinset.mp (xorConstant_wires_subset _ _ h)))
   have heA : divideAdd L = divideLoad L ++ inverseCompute L.inner p ++
       (montMulControlledAdd L.control L.multiply p) ++
-      inverseUncompute L.inner p ++ divideUnload L := by simp only [divideAdd,List.append_assoc]
+      inverseUncompute L.inner p ++ divideUnload L := by simp only [divideAdd_program,List.append_assoc]
   have heS : divideSub L = divideLoad L ++ inverseCompute L.inner p ++
       (montMulControlledSub L.control L.multiply p) ++
-      inverseUncompute L.inner p ++ divideUnload L := by simp only [divideSub,List.append_assoc]
+      inverseUncompute L.inner p ++ divideUnload L := by simp only [divideSub_program,List.append_assoc]
   rw [heA,heS]
   simp only [wires_append,hi.1,hi.2,hm.1,hm.2,divideLoad,divideUnload_program,wires_append,hc,
     wires,Instr.wires,Finset.union_empty]

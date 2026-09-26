@@ -30,9 +30,9 @@ def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
 - `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  let r := L.middle.r;
-  let inverse := L.a;
-  let scaling := L.scaling;
+  let r := L.middle.r; -- Kaliski 循环结束时的 r 系数，用于重算未缩放逆元。
+  let inverse := L.a; -- 逆元结果寄存器 a，恢复缩放后将其清零。
+  let scaling := L.scaling; -- 逆元缩放的接线及历史，负责恢复未缩放的 (-r) mod q。
   scaling.restore(q);                              -- inverse 恢复成 (-r) mod q；清缩放历史
   negativeInit(L.arithmetic, q, r, L.temp, inverse); -- 同值 XOR，使 inverse 清零
   kaliskiUnloop(L.first, 0, L.records);              -- 借助分支记录恢复 u/v/r/s/k，并清记录

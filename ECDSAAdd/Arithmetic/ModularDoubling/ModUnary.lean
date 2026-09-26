@@ -53,6 +53,27 @@ theorem bit_value (U : ModUnaryLayout) (n : Nat) (hw : U.Widths n) (hn : 0<n) (s
 
 end ModUnaryLayout
 
+/-- 模倍增/减半的逻辑接口；low/全宽两个加常数接口明确区分位宽。 -/
+structure ModUnaryOps where
+  subInPlace : List Wire → List Wire → Program
+  maskedAddConst : Wire → List Wire → Nat → Program
+  maskedAddConstLow : Wire → List Wire → Nat → Program
+  compareLtConst : List Wire → Nat → Wire → Program
+
+/-- U 提供零 constant/carry/cin；Low 接口取低 n 位常数及 n-1 根进位，其他使用全宽。
+compareLtConst 比较低 n 位目标与经典常数，使用 n 根 carry；不分配新的辅助位。 -/
+def modUnaryContext (U : ModUnaryLayout) : CircuitDSL.Context ModUnaryOps := {
+  operations := {
+    subInPlace := fun source target => subInPlace source target U.carry U.cin
+    maskedAddConst := fun control target k => maskedAddConst control U.constant target U.carry U.cin k
+    maskedAddConstLow := fun control target k =>
+      maskedAddConst control (U.constant.take U.low.length) target
+        (U.carry.take (U.low.length-1)) U.cin k
+    compareLtConst := fun target k out =>
+      compareLtConst none target (U.constant.take U.low.length) U.carry U.cin out k
+  }
+}
+
 /-- 原地模倍增：U.z ← 2*U.z mod p，要求 p 为奇数、U.z<p，并满足布局/位宽条件。
 零工作区（含 high）最终恢复为零；左旋加倍、试减 p、按借位加回，最后利用奇偶清借位。
 
@@ -61,17 +82,15 @@ end ModUnaryLayout
 - `U`：一元模运算布局：z（low 加 high）是原地更新目标，bit 是最低位，flag 暂存奇偶，constant/carry/cin 是零工作区。
 - `p`：构造期的经典奇模数，使模倍增与模减半互逆。
 -/
-def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
-  let target := U.z;
-  let borrow := U.high;
-  let leastBit := U.bit;
-  let lowConstant := U.constant.take U.low.length;
-  let lowCarry := U.carry.take (U.low.length-1);
+def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryContext U) {
+  let target := U.z;       -- low 加一根零 high，保存扩宽后的目标数值。
+  let borrow := U.high;    -- 目标最高位，试减 p 后暂存借位。
+  let leastBit := U.bit;   -- 目标最低位，用结果奇偶清除借位。
   rotateLeft(target);                                  -- 零 high 移到最低位：target = 2Z
   xorConstant(U.constant, p);                           -- constant = p
-  subInPlace(U.constant, target, U.carry, U.cin);        -- target -= p；borrow = [2Z < p]
+  subInPlace U.constant target;                        -- target -= p；borrow = [2Z < p]
   xorConstant(U.constant, p);                           -- constant 清零
-  maskedAddConst(borrow, lowConstant, U.low, lowCarry, U.cin, p); -- 有借位则加回 p
+  maskedAddConstLow borrow U.low p;                    -- 有借位则低 n 位加回 p
   X borrow;                                     -- p 为奇数，结果奇偶记录是否约减。
   CX leastBit borrow;                           -- borrow 清零
 }
@@ -95,14 +114,13 @@ theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
 - `U`：一元模运算布局：z（low 加 high）是原地更新目标，bit 是最低位，flag 暂存奇偶，constant/carry/cin 是零工作区。
 - `p`：构造期的经典奇模数，使模倍增与模减半互逆。
 -/
-def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
-  let target := U.z;
-  let wasOdd := U.flag;
-  let lowConstant := U.constant.take U.low.length;
+def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryContext U) {
+  let target := U.z;       -- low 加一根零 high，容纳奇数时加 p 的完整结果。
+  let wasOdd := U.flag;    -- 零辅助位，暂存输入的奇偶，最后清零。
   CX U.bit wasOdd;                             -- wasOdd = Z mod 2
-  maskedAddConst(wasOdd, U.constant, target, U.carry, U.cin, p); -- 奇数时 target += p
+  maskedAddConst wasOdd target p;                      -- 奇数时 target += p
   rotateRight(target);                                -- 偶数右旋：target /= 2
-  compareLtConst(none, U.low, lowConstant, U.carry, U.cin, wasOdd, (p+1)/2);  -- wasOdd ^= [减半后的 low<(p+1)/2]，随后 X 将其清零。
+  compareLtConst U.low ((p+1)/2) wasOdd;                -- wasOdd ^= [减半后的 low<(p+1)/2]，随后 X 将其清零。
   X wasOdd;                                     -- 原 Z 为奇数 iff 新值 ≥ (p+1)/2，清零标志。
 }
 

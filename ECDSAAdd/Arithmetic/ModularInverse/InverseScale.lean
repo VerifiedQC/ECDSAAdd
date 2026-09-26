@@ -62,7 +62,7 @@ def exchange (L : InverseScaleLayout) : Program := prog {
 - `q`：构造期的经典求逆模数，用于缩放因子 R*2^(−k) mod q；准备/恢复还须满足 Montgomery 条件。
 -/
 def prepare (L : InverseScaleLayout) (q : Nat) : Program := prog {
-  let stage := L.stage;
+  let stage := L.stage; -- Montgomery 缩放段的累加器、历史及零工作区。
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
   L.lookup(q);            -- factor ^= R*2^(-k) mod q；从零装入缩放因子，R=2^256。
   montPrepare(stage, factor, L.a.take 256, q); -- stage.acc = factor*a/R mod q
@@ -79,7 +79,7 @@ L.k 保持，work 恢复零；要求原计数及历史未变，执行前向恢�
 - `q`：构造期的经典求逆模数，用于缩放因子 R*2^(−k) mod q；准备/恢复还须满足 Montgomery 条件。
 -/
 def restore (L : InverseScaleLayout) (q : Nat) : Program := prog {
-  let stage := L.stage;
+  let stage := L.stage; -- 与正向缩放相同的 Montgomery 段，保留了恢复所需历史。
   let factor := L.factor; -- k 寻址的经典缩放表；补偿 Kaliski 比例和 Montgomery 的 R。
   L.lookup(q);            -- factor ^= R*2^(-k) mod q；重新装入相同因子，R=2^256。
   L.exchange();          -- 将未缩放值 N 放回 a，将缩放结果放回 stage.acc

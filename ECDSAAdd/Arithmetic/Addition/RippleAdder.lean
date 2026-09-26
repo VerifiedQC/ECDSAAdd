@@ -32,14 +32,14 @@ c 将 cin 与各位进位线连成一条链；只组织已有线路，不分配�
 - `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
 -/
 def rippleAdder (bs : List AddBit) (cin : Wire) : Program := prog {
-  let n := bs.length;
-  let c := [cin] ++ bs.map AddBit.carry;
+  let n := bs.length; -- 按低位到高位排列的全加器列表 bs 的长度，即数据位数。
+  let c := [cin] ++ bs.map AddBit.carry; -- 进位链：c[0]=cin，c[i+1] 是第 i 位产生的进位。
   for i in range(n) {
-    let b := bs[i];
+    let b := bs[i]; -- 第 i 位全加器的输入 x/y、输出 out 和进位 carry 的接线。
     fullAdder(b.x, b.y, c[i], b.out, b.carry);  -- b.out ^= 本位和 x⊕y⊕cin；b.carry 写入本位进位，供下一位使用。
   };
   for i in reversed(range(n)) {
-    let b := bs[i];
+    let b := bs[i]; -- 第 i 位全加器的输入 x/y、输出 out 和进位 carry 的接线。
     eraseCarry(b.x, b.y, c[i], b.carry);  -- 利用未变的本位输入测量清零 b.carry，并修正相位；和位保持。
   };
 }

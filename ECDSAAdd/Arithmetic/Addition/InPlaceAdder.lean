@@ -38,8 +38,8 @@ local macro_rules
 def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
   if h : x.length = y.length ∧ carry.length + 1 = y.length then
     prog {
-      let n := x.length;
-      let c := [cin] ++ carry;
+      let n := x.length;        -- 输入 x 的位数；上面的条件保证与目标 y 等长。
+      let c := [cin] ++ carry;  -- 进位链，首项是保持不变的 cin，其余是待计算/清理的辅助位。
       for i in range(n - 1) {
         majority(x[i], y[i], c[i], c[i + 1]);  -- c[i+1] 写入 x[i]+y[i]+c[i] 的进位；输入位保持。
       };

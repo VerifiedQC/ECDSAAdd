@@ -2,6 +2,21 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularSteps
 
 namespace ECDSAAdd.Arithmetic
 
+/-- 模加减主体的逻辑接口：out ^= x±y；辅助参数在 modArithmeticContext 接线。 -/
+structure ModArithmeticOps where
+  addXor : List Wire → List Wire → List Wire → Program
+  subXor : List Wire → List Wire → List Wire → Program
+
+/-- L 提供固定辅助位；它们须初始为零，调用后恢复，不自动分配或猜测工作区。
+carrySum/carryDiff 分别是加/减法进位链；cinSum/cinDiff 是零输入进位。
+简写只用于此零进位环境，普通 addXor 的非零 cin 接口保持不变。 -/
+def modArithmeticContext (L : ModLayout) : CircuitDSL.Context ModArithmeticOps := {
+  operations := {
+    addXor := fun x y out => addXor x y out (L.reg .carrySum) L.cinSum
+    subXor := fun x y out => subXor x y out (L.reg .carryDiff) L.cinDiff
+  }
+}
+
 /- 下列注释沿用原规格：0<q<2^n、x,y<q、各线路互异、工作区初始为零。
    n=L.width；x/y/total/modulus/diff 是 n+1 位，最高位用于溢出或借位。
    加减法按 n+1 位补码运算，选择只写 out 的低 n 位。
@@ -16,23 +31,24 @@ namespace ECDSAAdd.Arithmetic
 - `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
 - `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
 -/
-def modAdd (L : ModLayout) (q : Nat) : Program := prog {
-  let total := L.reg .total;
-  let modulus := L.reg .modulus;
-  let diff := L.reg .diff;
-  let carrySum := L.reg .carrySum;
-  let carryDiff := L.reg .carryDiff;
-  let borrow := L.high.diff;
+def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
+  let x := L.x;                     -- 保持不变的输入 x，含一根零扩展高位。
+  let y := L.y;                     -- 保持不变的输入 y，含一根零扩展高位。
+  let total := L.reg .total;        -- 零临时寄存器，保存 n+1 位完整和 x+y。
+  let modulus := L.reg .modulus;    -- 零临时寄存器，用来装载经典模数 q。
+  let diff := L.reg .diff;          -- 零临时寄存器，保存试减 q 后的 n+1 位差。
+  let borrow := L.high.diff;        -- diff 的最高位，表示试减是否发生借位。
+  let out := L.lowReg .out;         -- 最终 XOR 输出寄存器，仅取低 n 位。
 
   xorConstant(modulus, q);                         -- modulus = q
-  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total = x+y
-  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff = total-q
+  addXor x y total;                               -- total = x+y
+  subXor total modulus diff;                      -- diff = total-q
 
   -- 借位为 0：total≥q，选 diff；借位为 1：total<q，选 total。
-  chooseXor(borrow, diff.take L.width, total.take L.width, L.lowReg .out);  -- out 的低 n 位 ^= (borrow=1 ? total : diff) 的低 n 位。
+  chooseXor borrow (diff.take L.width) (total.take L.width) out;  -- out ^= (borrow=1 ? total : diff) 的低 n 位。
 
-  subXor(total, modulus, diff, carryDiff, L.cinDiff); -- diff 再异或 total-q，清零（按 n+1 位补码）。
-  addXor(L.x, L.y, total, carrySum, L.cinSum);       -- total 再异或 x+y，清零。
+  subXor total modulus diff;                      -- diff 再异或 total-q，清零（按 n+1 位补码）。
+  addXor x y total;                               -- total 再异或 x+y，清零。
   xorConstant(modulus, q);                         -- modulus 再异或 q，清零。
 }
 
@@ -44,23 +60,24 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog {
 - `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
 - `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
 -/
-def modSub (L : ModLayout) (q : Nat) : Program := prog {
-  let diff := L.reg .diff;
-  let modulus := L.reg .modulus;
-  let corrected := L.reg .total; -- 模减时，total 寄存器保存加回 q 后的候选值。
-  let carrySum := L.reg .carrySum;
-  let carryDiff := L.reg .carryDiff;
-  let borrow := L.high.diff;
+def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
+  let x := L.x;                     -- 保持不变的输入 x，含一根零扩展高位。
+  let y := L.y;                     -- 保持不变的输入 y，含一根零扩展高位。
+  let diff := L.reg .diff;          -- 零临时寄存器，保存 n+1 位补码差 x-y。
+  let modulus := L.reg .modulus;    -- 零临时寄存器，用来装载经典模数 q。
+  let corrected := L.reg .total;    -- 零临时寄存器，保存加回 q 后的候选值。
+  let borrow := L.high.diff;        -- diff 的最高位，表示 x-y 是否发生借位。
+  let out := L.lowReg .out;         -- 最终 XOR 输出寄存器，仅取低 n 位。
 
   xorConstant(modulus, q);                              -- modulus = q
-  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff = x-y
-  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected = diff+q
+  subXor x y diff;                                     -- diff = x-y
+  addXor diff modulus corrected;                       -- corrected = diff+q
 
   -- 借位为 0：x≥y，选 diff；借位为 1：x<y，选 corrected。
-  chooseXor(borrow, diff.take L.width, corrected.take L.width, L.lowReg .out);  -- out 的低 n 位 ^= (borrow=1 ? corrected : diff) 的低 n 位。
+  chooseXor borrow (diff.take L.width) (corrected.take L.width) out;  -- out ^= (borrow=1 ? corrected : diff) 的低 n 位。
 
-  addXor(diff, modulus, corrected, carrySum, L.cinSum);  -- corrected 再异或 diff+q，清零（按 n+1 位截断）。
-  subXor(L.x, L.y, diff, carryDiff, L.cinDiff);           -- diff 再异或 x-y，清零（按 n+1 位补码）。
+  addXor diff modulus corrected;                       -- corrected 再异或 diff+q，清零（按 n+1 位截断）。
+  subXor x y diff;                                     -- diff 再异或 x-y，清零（按 n+1 位补码）。
   xorConstant(modulus, q);                              -- modulus 再异或 q，清零。
 }
 

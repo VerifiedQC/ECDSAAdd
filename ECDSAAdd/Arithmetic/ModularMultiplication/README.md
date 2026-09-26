@@ -2,6 +2,8 @@
 
 本模块通过 Montgomery 窗口运算实现标准表示的模乘及受控累加等接口，并证明结果、历史恢复和资源用量。
 
+`MontPrepare.lean` 内的加减步骤用 `montArithmeticContext` 绑定 mask、table 和进位工作区；如 `controlledAdd bit shiftedX L.acc` 明确表示受 bit 控制的累加。历史位仍显式保留到对应恢复步骤，不由配置自动清理。
+
 算法从 [MontPrepare.lean](MontPrepare.lean) 的 `montWindow` 读起：向 acc 加入 x 乘以当前四位数 d，记录 m=acc mod 16，再令 acc=(acc+m·p)/16。m 保存在 history 中，恢复时先乘回 16、减去 m·p，再清除记录。
 
 [MontLayout.lean](MontLayout.lean) 的 `montMulCompute`（原名 `montP`）串联两次 Montgomery 阶段：先得 x·y/R，再乘 R² 并除 R，得到标准模积，R=2^256。`montMulUncompute`（原名 `montQ`）负责恢复。[MontAdapterLayout.lean](MontAdapterLayout.lean) 的输出接口统一是“计算模积 → XOR/加减到 out → 恢复”；历史在恢复前保留，只有 shared 工作区可在输出阶段借用。
