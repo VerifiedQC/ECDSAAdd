@@ -103,6 +103,19 @@ example (L : ControlledPointLayout) (lambdaStar : Fp) :
       equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 :=
   pointInPlaceClearSlope_program L lambdaStar
 
+-- 斜率配置只绑定操作，空正文不能偷偷插入条件位的准备或清理。
+example (L : ControlledPointLayout) (lambdaStar : Fp) :
+    (prog using (clearSlopeContext L lambdaStar) {}) = ([] : Program) := rfl
+
+-- 两处简写只展开成原来的两个子电路；外围判零和清理留在调用者中。
+example (L : ControlledPointLayout) (lambdaStar : Fp)
+    (x : CircuitDSL.Branch) (slope : List Wire) :
+    (prog using (clearSlopeContext L lambdaStar) {
+      C-div x slope;
+      C-const (x XOR 1) slope;
+    }) = divideSub ⟨x.onTrue, L.point.x, L.point.y, slope, L.inPlaceInverse⟩ ++
+      maskedConstant x.onFalse slope lambdaStar.val := rfl
+
 -- 控制参数、目标和分子/分母均真正进入原除法，不因简写而被忽略。
 example (L : ControlledPointLayout) (lambdaStar : Fp)
     (condition : CircuitDSL.Branch) (target : List Wire) :

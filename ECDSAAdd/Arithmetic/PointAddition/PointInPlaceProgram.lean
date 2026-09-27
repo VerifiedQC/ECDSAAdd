@@ -28,40 +28,37 @@ structure ClearSlopeOps where
   cdiv : CircuitDSL.Branch → List Wire → Program
   cconst : CircuitDSL.Branch → List Wire → Program
 
-/-- L 提供分子 point.y、分母 point.x、已有求逆工作区和两根条件位；lambdaStar 是例外常数。
-before/after 正是原电路的条件计算/清理，不增加辅助位。
-输入条件位须为零；正文须保持 point.x/y 及条件位，以便 after 重算清理。 -/
+/-- 只绑定两处简写：分子 point.y、分母 point.x、求逆工作区和例外常数 lambdaStar。
+不插入准备或清理操作；条件位由 pointInPlaceClearSlope 显式计算和清零。 -/
 def clearSlopeContext (L : ControlledPointLayout) (lambdaStar : Fp) :
-    CircuitDSL.Context ClearSlopeOps :=
-  let enabled := L.core.generic       -- 普通分支的外层使能位，保持不变。
-  let xIsZero := L.core.equalX        -- 零辅助位，暂存 enabled AND (point.x=0)。
-  let divideEnabled := L.core.equalNegY -- 零辅助位，暂存 enabled AND (point.x≠0)。
-  {
-    operations := {
-      cdiv := fun condition target =>
-        divideSub { L.inPlaceDivide condition.onTrue L.point.x L.point.y with acc := target }
-      cconst := fun condition target => maskedConstant condition.onTrue target lambdaStar.val
-    }
-    before := prog {
-      equalConstant enabled xIsZero L.inPlaceXZero 0; -- xIsZero = enabled AND (point.x=0)。
-      CX enabled divideEnabled;
-      CX xIsZero divideEnabled;                      -- divideEnabled = enabled AND (point.x≠0)。
-    }
-    after := prog {
-      CX enabled divideEnabled;
-      CX xIsZero divideEnabled;                      -- 先清除非零分支条件。
-      equalConstant enabled xIsZero L.inPlaceXZero 0; -- 再清除为零分支条件。
-    }
+    CircuitDSL.Context ClearSlopeOps := {
+  operations := {
+    cdiv := fun condition target =>
+      divideSub { L.inPlaceDivide condition.onTrue L.point.x L.point.y with acc := target }
+    cconst := fun condition target => maskedConstant condition.onTrue target lambdaStar.val
   }
+}
 
 /-- generic=1 时清零 slope：point.x≠0 时减去 point.y/point.x，否则 XOR 预先算好的例外斜率 lambdaStar。
 要求 slope 与对应分支的斜率相等；generic=0 时不变。 -/
 def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program :=
     prog using (clearSlopeContext L lambdaStar) {
-  let x := CircuitDSL.Branch.mk L.core.equalNegY L.core.equalX; -- 条件“point.x≠0”，不是数值寄存器；两分支均受 generic 控制。
+  let enabled := L.core.generic; -- 1 表示启用普通点加分支，0 表示不启用。
+  let xIsZero := L.core.equalX; -- 保存 enabled AND [point.x=0]。
+  let divideEnabled := L.core.equalNegY; -- 保存 enabled AND [point.x≠0]。
   let slope := L.inPlaceSlope; -- 待清零的斜率。
-  C-div x slope;             -- point.x≠0 时 slope -= point.y/point.x → 0。
-  C-const (x XOR 1) slope;   -- point.x=0 时 slope ^= lambdaStar → 0；XOR 1 只交换分支。
+  let x := CircuitDSL.Branch.mk divideEnabled xIsZero; -- 条件“point.x≠0”，两分支均受 enabled 控制。
+
+  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- xIsZero = enabled AND [point.x=0]
+  CX enabled divideEnabled;
+  CX xIsZero divideEnabled; -- divideEnabled = enabled AND [point.x≠0]
+
+  C-div x slope;           -- 非零分支：slope -= point.y/point.x → 0。
+  C-const (x XOR 1) slope; -- 为零分支：slope ^= lambdaStar → 0；XOR 1 仅交换分支，不施加 X 门。
+
+  CX enabled divideEnabled;
+  CX xIsZero divideEnabled; -- 清零 divideEnabled。
+  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- 清零 xIsZero。
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/

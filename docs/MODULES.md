@@ -65,7 +65,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 已采用配置的入口包括模加减/原地模加、模倍增/减半、Montgomery 段内加减、Kaliski 数据轮、除法乘积累加/累减，以及点加候选和斜率清理。复制、选择、交换、移位等原本清楚的门级循环不额外包一层配置。
 
-斜率清理中 `C-div x slope; C-const (x XOR 1) slope;` 的 x 特指条件“point.x≠0”，不是数值寄存器。配置绑定分子 point.y、分母 point.x、例外常数 lambdaStar、外部使能 generic，并显式准备/清除原有两根条件位。两个模块分别展开成现有 divideSub 和 maskedConstant；`XOR 1` 仅交换条件的正反分支，generic=0 时两支均关闭。此处 C-div 的效果是从 slope 减去商，不是将商覆盖写入 slope。
+斜率清理中 `C-div x slope; C-const (x XOR 1) slope;` 的 x 特指条件“point.x≠0”，不是数值寄存器。`clearSlopeContext` 只绑定分子 point.y、分母 point.x、例外常数 lambdaStar 和辅助位，不自动插入门。判零及原有两根条件位的准备/清理显式保留在 `pointInPlaceClearSlope` 正文中，只有两处子电路调用使用简写。它们分别展开成现有 divideSub 和 maskedConstant；`XOR 1` 仅交换条件的正反分支，generic=0 时两支均关闭。此处 C-div 的效果是从 slope 减去商，不是将商覆盖写入 slope。
 
 ### 当前注释规则（2026-09-27）
 
