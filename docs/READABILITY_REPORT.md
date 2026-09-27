@@ -89,3 +89,13 @@ README 的公式是解释性摘要，不能代替精确 Lean 规格。复杂示�
 本次不改 README、接口、程序或证明。相对 `36dd362`，逐文件去掉 Lean 注释及空白后，26 个文件的代码一致；`git diff --check` 通过。
 
 完整 `scripts/verify.sh` 退出码为 0：2,148 个构建任务、五个测试文件共 150 个 example，以及 318 项公开定理公理依赖检查均通过。仅更新 `new-temp`，不合并 `new`；这些是本地验证结果。
+
+## 后续：斜率清理的独立判零与双控制（2026-09-27）
+
+按用户确认的逻辑，`xIsZero` 改为只保存 `[point.x=0]`，不再混入 generic；程序显式判零，执行 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 与 `CCXor generic xIsZero slope lambdaStar`，再清除判零位。分子、分母和常量出现在调用处；负控制不会修改 xIsZero。底层复用已有 equalNegY 位作为判零种子和双控制工作位，每次调用后恢复零。
+
+这是实际电路调整，不再要求与旧门列相同。原 `pointInPlaceClearSlope_spec` 及完整点加规格的前提和结论不变，相关证明按新门列更新；新增 `pointInPlaceClearSlope_disabled` 证明 generic=0 时任意初始斜率均保持，不要求 A=0 或分母非零。`pointStep_zero` 证明独立判零不依赖 generic。
+
+同程序资源证明确认新增 4 个 Toffoli 门，无新增测量或实际线路：有限 C 的 controlledPointAdd 为 8,946,190 / 5,772,554 / 6,218。当前资源说明已同步，历史优化表保留原阶段数据。
+
+完整 `scripts/verify.sh` 退出码为 0：2,148 个构建任务、五个测试文件共 156 个 example、320 项公理依赖检查通过。新增检查覆盖独立判零、正负双控制、操作数传递和非法语法；不新增公理、sorry 或放宽证明限制。仍只更新 `new-temp`，不合并 `new`。

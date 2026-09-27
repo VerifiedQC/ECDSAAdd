@@ -95,7 +95,9 @@ def CircuitDSL.Branch.complement (b : CircuitDSL.Branch) : CircuitDSL.Branch
 
 交换两条分支线，简写为 `(b XOR 1)`；不施加 X 门，不对 wire 编号或数据寄存器做异或。使能关闭时，两条分支都为零。
 
-`C-div condition target` 和 `C-const condition target` 分别调用当前配置中的 cdiv/cconst 实现。在斜率清理中，前者是受控地减去分子/分母，后者是受控地 XOR 例外斜率常数；具体分子、分母、常数和辅助位由 `clearSlopeContext` 明确接线。它们不是对任意 Program 添加控制的通用黑盒。
+`C-div condition target` 和 `C-const condition target` 保留为调用配置中 cdiv/cconst 的兼容语法。
+
+斜率清理现在使用 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`。两个控制条件均成立时，分别从 slope 减去模 p 的商、向 slope XOR 常量。这里 xIsZero 是独立的判零 wire；控制位置的 `XOR 1` 表示负控制，不修改该位，也不使用上述 Branch 的预先掩码表示。商表达式由语法拆成分子和分母寄存器，不先执行 Lean 除法。`clearSlopeContext` 只绑定工作区；具体实现先合并双控制，再调用原受控算术接口并清零临时控制，不对任意 Program 逐门添加控制。
 
 ## [Semantics.lean](Semantics.lean)
 

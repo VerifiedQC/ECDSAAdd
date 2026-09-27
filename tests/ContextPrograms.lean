@@ -92,39 +92,84 @@ example (xIsZero : Bool) :
     (false ^^ (false && xIsZero)) = false ∧ (false && xIsZero) = false := by
   cases xIsZero <;> decide
 
--- 真实斜率清理（含准备/清理）与原门列相等，而不只是匹配某几个样本结果。
+-- 独立判零及两段双控制操作的展开式。
 example (L : ControlledPointLayout) (lambdaStar : Fp) :
     pointInPlaceClearSlope L lambdaStar =
-      equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
-      [.CX L.core.generic L.core.equalNegY, .CX L.core.equalX L.core.equalNegY] ++
+      zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero ++
+      doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
       divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y) ++
-      maskedConstant L.core.equalX L.inPlaceSlope lambdaStar.val ++
-      [.CX L.core.generic L.core.equalNegY, .CX L.core.equalX L.core.equalNegY] ++
-      equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 :=
+      doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
+      doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+      maskedConstant L.core.equalNegY L.inPlaceSlope lambdaStar.val ++
+      doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+      zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero :=
   pointInPlaceClearSlope_program L lambdaStar
 
--- 斜率配置只绑定操作，空正文不能偷偷插入条件位的准备或清理。
-example (L : ControlledPointLayout) (lambdaStar : Fp) :
-    (prog using (clearSlopeContext L lambdaStar) {}) = ([] : Program) := rfl
+-- 配置不插入整个正文的准备/清理。
+example (L : ControlledPointLayout) :
+    (prog using (clearSlopeContext L) {}) = ([] : Program) := rfl
 
--- 两处简写只展开成原来的两个子电路；外围判零和清理留在调用者中。
-example (L : ControlledPointLayout) (lambdaStar : Fp)
-    (x : CircuitDSL.Branch) (slope : List Wire) :
-    (prog using (clearSlopeContext L lambdaStar) {
-      C-div x slope;
-      C-const (x XOR 1) slope;
-    }) = divideSub ⟨x.onTrue, L.point.x, L.point.y, slope, L.inPlaceInverse⟩ ++
-      maskedConstant x.onFalse slope lambdaStar.val := rfl
+-- 控制方向、目标、分子及分母必须进入真实除法接口。
+example (L : ControlledPointLayout) (generic xIsZero : Wire)
+    (slope numerator denominator : List Wire) :
+    (prog using (clearSlopeContext L) {
+      CCsub generic (xIsZero XOR 1) slope (numerator / denominator);
+    }) =
+      doubleControlXor generic xIsZero L.core.equalNegY true ++
+      divideSub ⟨L.core.equalNegY, denominator, numerator, slope, L.inPlaceInverse⟩ ++
+      doubleControlXor generic xIsZero L.core.equalNegY true := rfl
 
--- 控制参数、目标和分子/分母均真正进入原除法，不因简写而被忽略。
-example (L : ControlledPointLayout) (lambdaStar : Fp)
-    (condition : CircuitDSL.Branch) (target : List Wire) :
-    (clearSlopeContext L lambdaStar).operations.cdiv condition target =
-      divideSub ⟨condition.onTrue, L.point.x, L.point.y, target, L.inPlaceInverse⟩ := rfl
+example (L : ControlledPointLayout) (g c : Wire) (t n d : List Wire) :
+    (prog using (clearSlopeContext L) { CCsub g c t (n / d); }) =
+      doubleControlXor g c L.core.equalNegY false ++
+      divideSub ⟨L.core.equalNegY,d,n,t,L.inPlaceInverse⟩ ++
+      doubleControlXor g c L.core.equalNegY false := rfl
 
-example (L : ControlledPointLayout) (lambdaStar : Fp)
-    (condition : CircuitDSL.Branch) (target : List Wire) :
-    (clearSlopeContext L lambdaStar).operations.cconst (condition XOR 1) target =
-      maskedConstant condition.onFalse target lambdaStar.val := rfl
+-- 常量由调用处传入，不再隐藏在配置中。
+example (L : ControlledPointLayout) (g c : Wire) (target : List Wire) (value : Fp) :
+    (prog using (clearSlopeContext L) { CCXor g c target value; }) =
+      doubleControlXor g c L.core.equalNegY false ++
+      maskedConstant L.core.equalNegY target value.val ++
+      doubleControlXor g c L.core.equalNegY false := rfl
+
+example (L : ControlledPointLayout) (g c : Wire) (target : List Wire) (value : Fp) :
+    (prog using (clearSlopeContext L) { CCXor g (c XOR 1) target value; }) =
+      doubleControlXor g c L.core.equalNegY true ++
+      maskedConstant L.core.equalNegY target value.val ++
+      doubleControlXor g c L.core.equalNegY true := rfl
+
+example (_L : ControlledPointLayout) : True := by
+  fail_if_success
+    have _bad : Program := prog using (clearSlopeContext _L) {
+      CCsub 0 (1 XOR 2) [2] ([3] / [4]);
+    }
+  fail_if_success
+    have _bad : Program := prog using (clearSlopeContext _L) {
+      CCXor 0 (1 XOR 2) [2] (0 : Fp);
+    }
+  fail_if_success
+    have _bad : Program := prog using (clearSlopeContext _L) {
+      CCsub 0 1 true ([3] / [4]);
+    }
+  fail_if_success
+    have _bad : Program := prog { CCXor 0 1 [2] (0 : Fp); }
+  trivial
+
+-- 判零不读取 generic；覆盖输入位、generic 和测量结果的全部布尔组合。
+example (input generic measurement : Bool) :
+    let s : State := ⟨false,fun w => if w=2 then input else if w=4 then generic else false⟩
+    let t := run (zeroTestWithSeed 0 1 [⟨2,3⟩]) [measurement] s
+    t.basis 1 = !input ∧ t.basis 0 = false ∧ t.basis 3 = false ∧
+      t.basis 2 = input ∧ t.basis 4 = generic ∧ t.phase = false := by
+  cases input <;> cases generic <;> cases measurement <;> decide
+
+-- 正/负双控制的真值表；控制位本身不变，重复调用清零 work。
+example (g c negated : Bool) :
+    let s : State := ⟨false,fun w => if w=0 then g else if w=1 then c else false⟩
+    let p := doubleControlXor 0 1 2 negated
+    let t := run p [] s
+    t.basis 2 = (g && (if negated then !c else c)) ∧
+      t.basis 0 = g ∧ t.basis 1 = c ∧ (run p [] t).basis 2 = false := by
+  cases g <;> cases c <;> cases negated <;> decide
 
 end ContextPrograms

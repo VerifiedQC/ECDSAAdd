@@ -2,7 +2,7 @@
 
 本模块实现 secp256k1 点与经典常量点相加的电路，包括 XOR 输出、受控原地更新、特殊点分支及辅助位清理。
 
-候选点计算用 `pointCandidateContext` 固定共享零工作池，主体只传逻辑输入输出。斜率清理仅将两处调用简写为 `C-div x slope`、`C-const (x XOR 1) slope`：这里 x 是“point.x≠0”的条件，两个分支均受 generic 使能；分别从 slope 减去 point.y/point.x、向 slope XOR 例外常数 lambdaStar。`clearSlopeContext` 只绑定分子、分母、常数和辅助位；判零、条件位准备和清理仍显式保留在 `pointInPlaceClearSlope` 函数体中。`XOR 1` 只交换分支，不施加 X 门。
+候选点计算用 `pointCandidateContext` 固定共享零工作池。斜率清理中，`xIsZero` 只保存 `[point.x=0]`，与 `generic` 无关。主体先判零，再执行 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`，最后清零判零位。两行分别处理非零、为零的分母；`XOR 1` 表示负控制，不修改 xIsZero。`clearSlopeContext` 只绑定判零及算术工作区，复用已有 equalNegY 临时位，不新增量子位。
 
 普通分支的公式直接写在 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute` 中：dx=x−cx、dy=y−cy、slope=dy/dx、candidateX=slope²−x−cx、candidateY=slope·(x−candidateX)−y，运算均模 p。非普通分支用安全分母 1 完成计算，但不选用该候选。代码中的 `fieldSubXor/fieldMulXor/fieldInverseXor` 显式列出输入和 XOR 输出，pool 只指定共享工作区。
 
@@ -205,6 +205,8 @@ pointInPlaceClearSlope L k
 
 即清零斜率 A，保留 X、Y、普通分支标志 G 和两个为零的辅助标志；相位保持不变。
 
+`pointInPlaceClearSlope_disabled` 另外证明：G=0 时任意初始斜率 A 都保持不变，不要求 A=0，也不要求 X≠0；两个辅助位和工作区仍恢复零。
+
 ## [PointInPlaceConstant.lean](PointInPlaceConstant.lean)
 
 该文件受控地向点坐标加常量。
@@ -389,7 +391,7 @@ L 是受控原地点加电路的寄存器布局。
 
   - `controlledPointOutput L C`：T = `518`，M = `0`。
   - `controlledPointAddOut L (.some hc)`：T = `9321834`，M = `6147424`，Q = `9784`。
-  - `controlledPointAdd L (.some hc)`：T = `8946186`，M = `5772554`，Q = `6218`。
+  - `controlledPointAdd L (.some hc)`：T = `8946190`，M = `5772554`，Q = `6218`。
   - `controlledPointAdd L 0`：T = `0`，M = `0`，Q = `0`。
 
 ## [PointAddResources.lean](PointAddResources.lean)
@@ -425,8 +427,10 @@ L 是受控原地点加电路的寄存器布局。
 
   - `pointInPlaceConstantAdd L r k`：T = `1023`，M = `1023`。
   - `pointInPlaceNegate L`：T = `3838`，M = `2558`。
-  - `pointInPlaceGeneric L cx cy lambdaStar`：T = `8943108`，M = `5769476`。
-  - `pointInPlaceFinite L C cx cy`：T = `8946186`，M = `5772554`。
+  - `pointInPlaceGeneric L cx cy lambdaStar`：T = `8943112`，M = `5769476`。
+  - `pointInPlaceFinite L C cx cy`：T = `8946190`，M = `5772554`。
+
+  独立判零版用双控制替代预先掩码的分支，相比此前多 4 个 Toffoli 门；测量和实际线路数不变。
 
 ## [PointInPlaceResources.lean](PointInPlaceResources.lean)
 

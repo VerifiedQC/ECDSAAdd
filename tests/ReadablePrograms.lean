@@ -372,12 +372,14 @@ example (L : ControlledPointLayout) :
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceClearSlope
 example (L : ControlledPointLayout) (lambdaStar : Fp) :
     pointInPlaceClearSlope L lambdaStar =
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
+  zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
   divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y) ++
-  maskedConstant L.core.equalX L.inPlaceSlope lambdaStar.val ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 := by rw [pointInPlaceClearSlope_program]
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+  maskedConstant L.core.equalNegY L.inPlaceSlope lambdaStar.val ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+  zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero := by rw [pointInPlaceClearSlope_program]
 
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceGeneric
 example (L : ControlledPointLayout) (cx cy lambdaStar : Fp) :

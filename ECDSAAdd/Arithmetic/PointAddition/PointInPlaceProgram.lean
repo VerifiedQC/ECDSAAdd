@@ -22,54 +22,69 @@ def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog {
   controlledModAdd(enabled, negate, p);                 -- 清零 negate.low。
 }
 
-/-- 两个具体受控模块：cdiv 减去分子/分母，cconst XOR 固定例外常数。
-第一个参数选已准备的分支线，第二个参数是被更新的寄存器。 -/
+/-- target ^= [输入全零]；seed 初始为零，临时置 1 后恢复。 -/
+def zeroTestWithSeed (seed target : Wire) (bs : List ZeroBit) : Program :=
+  [.X seed] ++ equalConstant seed target bs 0 ++ [.X seed]
+
+/-- work ^= generic AND (negated ? NOT condition : condition)。
+negated 是构造电路时确定的控制方向，不翻转 condition。 -/
+def doubleControlXor (generic condition work : Wire) (negated : Bool) : Program :=
+  if negated then [.CX generic work, .CCX generic condition work]
+  else [.CCX generic condition work]
+
+/-- zeroTest 计算独立判零位；ccsub/ccxor 接收使能、条件、控制方向和算术操作数。 -/
 structure ClearSlopeOps where
-  cdiv : CircuitDSL.Branch → List Wire → Program
-  cconst : CircuitDSL.Branch → List Wire → Program
+  zeroTest : List Wire → Wire → Program
+  ccsub : Wire → Wire → Bool → List Wire → List Wire → List Wire → Program
+  ccxor : Wire → Wire → Bool → List Wire → Fp → Program
 
-/-- 只绑定两处简写：分子 point.y、分母 point.x、求逆工作区和例外常数 lambdaStar。
-不插入准备或清理操作；条件位由 pointInPlaceClearSlope 显式计算和清零。 -/
-def clearSlopeContext (L : ControlledPointLayout) (lambdaStar : Fp) :
-    CircuitDSL.Context ClearSlopeOps := {
-  operations := {
-    cdiv := fun condition target =>
-      divideSub { L.inPlaceDivide condition.onTrue L.point.x L.point.y with acc := target }
-    cconst := fun condition target => maskedConstant condition.onTrue target lambdaStar.val
+/-- 复用 equalNegY 作为判零种子和双控制工作位；每次调用前后均为零。
+只绑定辅助接线，不自动插入整个代码块的准备或清理操作。 -/
+def clearSlopeContext (L : ControlledPointLayout) : CircuitDSL.Context ClearSlopeOps :=
+  let work := L.core.equalNegY
+  {
+    operations := {
+      zeroTest := fun input target =>
+        zeroTestWithSeed work target (zeroPorts input (L.inPlaceBorrow.take 256))
+      ccsub := fun generic condition negated target numerator denominator =>
+        doubleControlXor generic condition work negated ++
+        divideSub ⟨work, denominator, numerator, target, L.inPlaceInverse⟩ ++
+        doubleControlXor generic condition work negated
+      ccxor := fun generic condition negated target value =>
+        doubleControlXor generic condition work negated ++
+        maskedConstant work target value.val ++
+        doubleControlXor generic condition work negated
+    }
   }
-}
 
-/-- generic=1 时清零 slope：point.x≠0 时减去 point.y/point.x，否则 XOR 预先算好的例外斜率 lambdaStar。
-要求 slope 与对应分支的斜率相等；generic=0 时不变。 -/
+/-- generic=1 时清零 slope：point.x≠0 时减去 point.y/point.x，
+否则 XOR 预先算好的例外斜率 lambdaStar；generic=0 时保持原状态。 -/
 def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Program :=
-    prog using (clearSlopeContext L lambdaStar) {
-  let enabled := L.core.generic; -- 1 表示启用普通点加分支，0 表示不启用。
-  let xIsZero := L.core.equalX; -- 保存 enabled AND [point.x=0]。
-  let divideEnabled := L.core.equalNegY; -- 保存 enabled AND [point.x≠0]。
+    prog using (clearSlopeContext L) {
+  let point := L.point;
+  let generic := L.core.generic;
+  let xIsZero := L.core.equalX; -- 保存 [point.x=0]，与 generic 无关。
   let slope := L.inPlaceSlope; -- 待清零的斜率。
-  let x := CircuitDSL.Branch.mk divideEnabled xIsZero; -- 条件“point.x≠0”，两分支均受 enabled 控制。
 
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- xIsZero = enabled AND [point.x=0]
-  CX enabled divideEnabled;
-  CX xIsZero divideEnabled; -- divideEnabled = enabled AND [point.x≠0]
+  zeroTest point.x xIsZero; -- xIsZero = [point.x=0]
 
-  C-div x slope;           -- 非零分支：slope -= point.y/point.x → 0。
-  C-const (x XOR 1) slope; -- 为零分支：slope ^= lambdaStar → 0；XOR 1 仅交换分支，不施加 X 门。
+  CCsub generic (xIsZero XOR 1) slope (point.y / point.x); -- 非零分支：slope -= point.y/point.x → 0。
+  CCXor generic xIsZero slope lambdaStar;                -- 为零分支：slope ^= lambdaStar → 0。
 
-  CX enabled divideEnabled;
-  CX xIsZero divideEnabled; -- 清零 divideEnabled。
-  equalConstant(enabled, xIsZero, L.inPlaceXZero, 0); -- 清零 xIsZero。
+  zeroTest point.x xIsZero; -- 清零 xIsZero。
 }
 
-/-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
+/-- 供证明使用的展开式：独立判零，两个双控制操作，再清零判零位。 -/
 theorem pointInPlaceClearSlope_program (L : ControlledPointLayout) (lambdaStar : Fp) :
     pointInPlaceClearSlope L lambdaStar =
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
+  zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
   divideSub (L.inPlaceDivide L.core.equalNegY L.point.x L.point.y) ++
-  maskedConstant L.core.equalX L.inPlaceSlope lambdaStar.val ++
-  [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] ++
-  equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0 := by
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY true ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+  maskedConstant L.core.equalNegY L.inPlaceSlope lambdaStar.val ++
+  doubleControlXor L.core.generic L.core.equalX L.core.equalNegY false ++
+  zeroTestWithSeed L.core.equalNegY L.core.equalX L.inPlaceXZero := by
   simp only [pointInPlaceClearSlope, List.append_assoc]
   rfl
 

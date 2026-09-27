@@ -48,8 +48,8 @@ private theorem mont_not_mem (q : Wire) (M : MontLayout) (hw : M.Widths) (hn : q
   tauto
 
 private theorem zero_not_mem (L : ControlledPointLayout) (hw : L.Widths) (q : Wire)
-    (ng : q≠L.core.generic) (ne : q≠L.core.equalX) (nx : q∉L.point.x)
-    (ntake : ∀ n,q∉L.inPlaceBorrow.take n) : q∉wires (equalConstant L.core.generic L.core.equalX L.inPlaceXZero 0) := by
+    (ng : q≠L.core.equalNegY) (ne : q≠L.core.equalX) (nx : q∉L.point.x)
+    (ntake : ∀ n,q∉L.inPlaceBorrow.take n) : q∉wires (equalConstant L.core.equalNegY L.core.equalX L.inPlaceXZero 0) := by
     rw [equalConstant_wires]
     have hp := zeroPorts_perm L.point.x (L.inPlaceBorrow.take 256)
       (by rw [show L.point.x.length=256 from hw.inputX]; simp [L.inPlaceBorrow_length hw])
@@ -123,7 +123,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   obtain ⟨nb,nM,nS,nN,nConst⟩ := views_not_mem L hw q hnot
   have ntake (n : Nat) : q∉L.inPlaceBorrow.take n := fun h => nb ((List.take_sublist _ _).subset h)
   have nDivide := divide_not_mem L hw q nx ny na ni
-  have nEq := zero_not_mem L hw q ng ne nx ntake
+  have nEq := zero_not_mem L hw q nq ne nx ntake
   have nMasked (c : Wire) (r : List Wire) (v : Nat) (nc : q≠c) (nr : q∉r) : q∉wires (maskedConstant c r v) := by
     intro h
     have hh := maskedConstant_wires_subset c r v h
@@ -147,16 +147,15 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have hm := mont_not_mem q L.inPlaceMultiply (L.inPlaceMultiply_widths hw) nM
   have hs := mont_not_mem q L.inPlaceSquare (L.inPlaceSquare_widths hw) nS
   have hneg := modPrograms_not_mem q L.core.generic ng L.inPlaceNegate (L.inPlaceNegate_widths hw) nN
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,pointInPlaceNegate,wires_append,Finset.mem_union]
+  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,zeroTestWithSeed,doubleControlXor,
+    ite_true,Bool.false_eq_true,ite_false,pointInPlaceNegate,wires_append,Finset.mem_union]
   have nmg := (nDivide L.core.generic ng).1
   have nmq := (nDivide L.core.equalNegY nq).2
-  have nmask := nMasked L.core.equalX L.inPlaceSlope k.val ne na
+  have nmask := nMasked L.core.equalNegY L.inPlaceSlope k.val nq na
   have ncx v := nCA L.point.x nx hw.inputX v
   have ncy v := nCA L.point.y ny hw.inputY v
-  have nCX : q∉wires [.CX L.core.generic L.core.equalNegY,.CX L.core.equalX L.core.equalNegY] := by
-    simp [wires,Instr.wires,ng,ne,nq]
-  simp only [ncx _,ncy _,nmg,nmq,hm.1,hm.2,hs.2,ncopy,nEq,nmask,nCX,hneg.2.2.1,hneg.2.2.2,
-    nswap,false_or,not_false_eq_true]
+  simp [ncx _,ncy _,nmg,nmq,hm.1,hm.2,hs.2,ncopy,nEq,nmask,hneg.2.2.1,hneg.2.2.2,
+    nswap,wires,Instr.wires,ng,ne,nq]
 
 /-- 已恢复的λ/e/q及求逆工作位与语法支持上界共同给出完整逐线保持。 -/
 private theorem generic_frame_values (L : ControlledPointLayout) (P : Program)

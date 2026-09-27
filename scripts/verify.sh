@@ -224,6 +224,8 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceNegate_spec
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceSquare_correct
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceClearSlope_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceClearSlope_disabled
+#print axioms ECDSAAdd.Arithmetic.pointStep_zero
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceGeneric_point
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceCorners_effect
 #print axioms ECDSAAdd.Arithmetic.pointInPlaceFinite_spec

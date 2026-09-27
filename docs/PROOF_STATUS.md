@@ -2,7 +2,9 @@
 
 M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部分（候选计算、完整经典常量点加、受控原地点加）的基线已合并到 main。改1/2/3/4/5已实现，包括原地求逆、Horner模乘和除法中心点加，以下状态与资源对应当前提交；其余成本压缩计划见 [重做设计](REWORK_PLAN.md)。
 
-验证包含 `lake --wfail build` 和选定公开定理的传递公理白名单；没有测试。CI、独立复审和合并状态以当前 PR 为准。
+当前分支已将斜率清理改为独立判零和双控制：有限常量点加为 8,946,190 Toffoli、5,772,554 次测量、6,218 根实际静态线路。后文阶段记录中的 8,946,186 是此次调整前的资源。
+
+验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
 ## M1
 
@@ -485,6 +487,8 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.pointInPlaceNegate_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceSquare_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceClearSlope_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointInPlaceClearSlope_disabled' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.pointStep_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceGeneric_point' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceCorners_effect' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceFinite_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -693,7 +697,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 16,173,722 | 8,792,720 | 9,718 |
-| 有限 C 的 `controlledPointAdd` | 8,946,186 | 5,772,554 | 6,218 |
+| 有限 C 的 `controlledPointAdd` | 8,946,190 | 5,772,554 | 6,218 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointInPlaceFinite`门列的计数与支持定理。实际支持为点513位、控制1位、斜率256位、七个标志和求逆核心5,441位；借用区已在核心内，不重复计数。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。

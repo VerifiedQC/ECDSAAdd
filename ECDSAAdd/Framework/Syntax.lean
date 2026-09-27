@@ -100,6 +100,9 @@ syntax "circuitSeq% " term:max "{" circuitStmt* "}" : term
 -- 这两个名字调用当前接线环境的具体实现，不引入一个黑盒 controlled-Program。
 syntax "C-div" term:max term:max ";" : circuitStmt
 syntax "C-const" term:max term:max ";" : circuitStmt
+-- 双控制算术：商的两个寄存器由语法拆开，不先执行 Lean 的除法。
+syntax "CCsub" term:max term:max term:max "(" term:max " / " term:max ")" ";" : circuitStmt
+syntax "CCXor" term:max term:max term:max term:max ";" : circuitStmt
 syntax "(" term " XOR " num ")" : term
 macro_rules
   | `(($b XOR $n:num)) => do
@@ -115,6 +118,16 @@ macro_rules
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
+  | `(prog { CCsub $g ($c XOR $n:num) $target ($numerator / $denominator); $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { $(mkIdent `ccsub):ident $g $c true $target $numerator $denominator; $rest* })
+  | `(prog { CCsub $g $c $target ($numerator / $denominator); $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `ccsub):ident $g $c false $target $numerator $denominator; $rest* })
+  | `(prog { CCXor $g ($c XOR $n:num) $target $value; $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { $(mkIdent `ccxor):ident $g $c true $target $value; $rest* })
+  | `(prog { CCXor $g $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `ccxor):ident $g $c false $target $value; $rest* })
   | `(prog { C-div $condition $target; $rest:circuitStmt* }) =>
       `(prog { $(mkIdent `cdiv):ident $condition $target; $rest* })
   | `(prog { C-const $condition $target; $rest:circuitStmt* }) =>

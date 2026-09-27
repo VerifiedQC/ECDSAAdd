@@ -28,7 +28,7 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
 /-- 两次除法与五个乘积的同程序精确成本；线数来自实际支持等式。 -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=8946186 ∧
+    toffoliCount (controlledPointAdd L (.some hc))=8946190 ∧
     measurementCount (controlledPointAdd L (.some hc))=5772554 ∧
     qubitCount (controlledPointAdd L (.some hc))=6218 := by
   have hh := pointInPlaceFinite_counts L h hn (.some hc) cx cy

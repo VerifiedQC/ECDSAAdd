@@ -42,10 +42,10 @@ theorem pointInPlaceNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (h
   rw [show L.point.x.length=256 from hw.inputX]
   norm_num
 
-/-- 与§16逐门预算对应的普通分支精确门数；尚不替代其功能规格。 -/
+/-- 普通分支的同门列计数，包含独立判零及双控制准备/清理；不替代功能规格。 -/
 theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (cx cy lambdaStar : Fp) :
-    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=8943108 ∧
+    toffoliCount (pointInPlaceGeneric L cx cy lambdaStar)=8943112 ∧
     measurementCount (pointInPlaceGeneric L cx cy lambdaStar)=5769476 := by
   have ha k := pointInPlaceConstantAdd_counts L hw hnd L.point.x (Or.inl rfl) k
   have hb k := pointInPlaceConstantAdd_counts L hw hnd L.point.y (Or.inr rfl) k
@@ -59,7 +59,7 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (L.inPlaceSquare_nodup hw hnd)
   have hcopy := copyRegister_counts none L.inPlaceSlope L.inPlaceSquare.y
     ((L.inPlaceSlope_length hw).trans (L.inPlaceSquare_widths hw).y.symm)
-  have hz := equalConstant_counts L.core.generic L.core.equalX L.inPlaceXZero 0
+  have hz := equalConstant_counts L.core.equalNegY L.core.equalX L.inPlaceXZero 0
   have hzl : L.inPlaceXZero.length=256 := by
     have he := (zeroPorts_maps L.point.x (L.inPlaceBorrow.take 256)
       (by simp only [List.length_take,L.inPlaceBorrow_length hw]; exact hw.inputX)).1
@@ -67,7 +67,8 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     simpa only [List.length_map,show L.point.x.length=256 from hw.inputX] using hh
   rw [hzl] at hz
   have hn := pointInPlaceNegate_counts L hw hnd
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,toffoliCount_append,measurementCount_append,
+  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,zeroTestWithSeed,
+    doubleControlXor,ite_true,Bool.false_eq_true,ite_false,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hdg.1,hdg.2.1,hdq.2.2.1,hdq.2.2.2,
     hm.2.1.1,hm.2.1.2,hm.2.2.1,hm.2.2.2,hs.2.2.1,hs.2.2.2,
     hcopy.1,hcopy.2,hz.1,hz.2,hn.1,hn.2,(maskedConstant_counts _ _ _).1,(maskedConstant_counts _ _ _).2]
@@ -76,7 +77,7 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
 /-- 分类与输出清标志各做三次完整点检测；常量写回不含Toffoli。 -/
 theorem pointInPlaceFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hnd : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointInPlaceFinite L C cx cy)=8946186 ∧
+    toffoliCount (pointInPlaceFinite L C cx cy)=8946190 ∧
     measurementCount (pointInPlaceFinite L C cx cy)=5772554 := by
   have hg := pointInPlaceGeneric_counts L hw hnd cx cy (exceptionalSlope C)
   have hz c t k := equalConstant_counts c t L.inPlacePointZero k
