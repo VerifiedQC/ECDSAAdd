@@ -17,39 +17,26 @@ def modArithmeticContext (L : ModLayout) : CircuitDSL.Context ModArithmeticOps :
   }
 }
 
-/- 下列注释沿用原规格：0<q<2^n、x,y<q、各线路互异、工作区初始为零。
-   n=L.width；x/y/total/modulus/diff 是 n+1 位，最高位用于溢出或借位。
-   加减法按 n+1 位补码运算，选择只写 out 的低 n 位。
-   所有操作都是 XOR 写入：同样的输入再次调用，会清除先前算出的结果。 -/
-
-/-- 模加的 XOR 输出：L.out ^= (L.x+L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
-公开规格要求 0<q<2^L.width、输入均小于 q、布局线路互异；内部支持和小于 2*q 的约减。
-只减一次 q，不是对任意大小输入的通用取模。
-
-参数：
-
-- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
-- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
--/
+/-- 输出 L.out ^= (L.x+L.y) mod q，要求 0<q<2^n、x,y<q。
+n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
 def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
-  let x := L.x;                     -- 保持不变的输入 x，含一根零扩展高位。
-  let y := L.y;                     -- 保持不变的输入 y，含一根零扩展高位。
-  let total := L.reg .total;        -- 零临时寄存器，保存 n+1 位完整和 x+y。
-  let modulus := L.reg .modulus;    -- 零临时寄存器，用来装载经典模数 q。
-  let diff := L.reg .diff;          -- 零临时寄存器，保存试减 q 后的 n+1 位差。
-  let borrow := L.high.diff;        -- diff 的最高位，表示试减是否发生借位。
-  let out := L.lowReg .out;         -- 最终 XOR 输出寄存器，仅取低 n 位。
+  let x := L.x;
+  let y := L.y;
+  let total := L.reg .total;        -- 用于保存 x+y。
+  let modulus := L.reg .modulus;    -- 用于保存模数 q。
+  let diff := L.reg .diff;          -- 用于保存 total-q。
+  let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
+  let out := L.lowReg .out;         -- 最终的输出。
 
-  xorConstant(modulus, q);                         -- modulus = q
+  xorConstant(modulus, q);                        -- modulus = q
   addXor x y total;                               -- total = x+y
   subXor total modulus diff;                      -- diff = total-q
 
-  -- 借位为 0：total≥q，选 diff；借位为 1：total<q，选 total。
-  chooseXor borrow (diff.take L.width) (total.take L.width) out;  -- out ^= (borrow=1 ? total : diff) 的低 n 位。
+  chooseXor borrow (diff.take L.width) (total.take L.width) out;  -- out ^= (borrow=0 ? diff : total) 的低 n 位。
 
-  subXor total modulus diff;                      -- diff 再异或 total-q，清零（按 n+1 位补码）。
-  addXor x y total;                               -- total 再异或 x+y，清零。
-  xorConstant(modulus, q);                         -- modulus 再异或 q，清零。
+  subXor total modulus diff;                      -- 清零 diff。
+  addXor x y total;                               -- 清零 total。
+  xorConstant(modulus, q);                        -- 清零 modulus。
 }
 
 /-- 模减的 XOR 输出：L.out ^= (L.x−L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
