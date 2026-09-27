@@ -63,8 +63,8 @@ def pointInPlaceClearSlope (L : ControlledPointLayout) (lambdaStar : Fp) : Progr
     prog using (clearSlopeContext L) {
   let point := L.point;
   let generic := L.core.generic;
-  let xIsZero := L.core.equalX; -- 保存 [point.x=0]，与 generic 无关。
   let slope := L.inPlaceSlope; -- 待清零的斜率。
+  let xIsZero := L.core.equalX; -- 保存 [point.x=0]
 
   zeroTest point.x xIsZero; -- xIsZero = [point.x=0]
 
