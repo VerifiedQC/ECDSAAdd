@@ -13,21 +13,13 @@ private theorem zeroBit_count (bs : List ZeroBit) (w : Wire) :
       List.count_cons,List.count_nil,ih]
     omega
 
-/-- target ^= control AND [input=k]，input 由 bs 中的 input 字段组成，输入/控制位保持。
-要求 k<2^bs.length、参与线路互异，bs 中 work 位初始为零并恢复；同一程序可重算清理结果。
-
-参数：
-
-- `control`：控制 wire，只有它为 1 时才将判等条件 XOR 到目标。
-- `target`：判等条件的 XOR 输出 wire，初值不必为零。
-- `bs`：从最低位到最高位的输入布局，每项含输入位 input 和初末为零的检测工作位 work。
-- `k`：构造电路时已知的经典比较常量，与整个 input 寄存器的数值比较。
--/
+/-- target ^= control AND [input=k]，input 由 bs 中的 input 字段组成。
+要求 k<2^n，n 是输入位列表 bs 的长度。 -/
 def equalConstant (control target : Wire) (bs : List ZeroBit) (k : Nat) : Program := prog {
-  let input := bs.map ZeroBit.input; -- 从 bs 提取的输入寄存器；与 k 比较后恢复原值。
-  xorConstant(input, k);                -- input ^= k，将等于 k 转成等于零。
-  zeroControlled(control, target, bs);  -- target ^= control AND (input=0)。
-  xorConstant(input, k);                -- 恢复原输入。
+  let input := bs.map ZeroBit.input;
+  xorConstant(input, k);                -- input ^= k
+  zeroControlled(control, target, bs);  -- target ^= control AND [input=0]
+  xorConstant(input, k);                -- 恢复 input。
 }
 
 theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : Nat)

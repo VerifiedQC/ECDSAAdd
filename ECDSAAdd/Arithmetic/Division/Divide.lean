@@ -60,40 +60,28 @@ theorem vLow_length (L : DivideLayout) (hw : L.Widths) : L.vLow.length=256 := by
 
 end DivideLayout
 
-/-- 从零内部寄存器装入安全分母 v=(control=1 ? denominator : 1)，同时装入 u=p、s=1。
-L.control/denominator 保持；控制为零时也能进行非零分母的求逆，沿用 DivideLayout 的有效布局。
-
-参数：
-
-- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
--/
+/-- 从零装入安全分母 v=(L.control=1 ? L.denominator : 1)，以及求逆初值 u=p、s=1。 -/
 def divideLoad (L : DivideLayout) : Program := prog {
-  let denominatorCopy := L.vLow; -- 求逆用的安全分母副本，初始为零；控制关时写 1、开时写真实分母。
-  let leastBit := L.vBit; -- 安全分母副本的最低位，用来构造控制关闭时的常数 1。
-  let u := L.inner.first.u; -- Kaliski 数据寄存器 u，初始为零，装入模数 p。
-  let s := L.inner.first.s; -- Kaliski 系数寄存器 s，初始为零，装入 1。
+  let denominatorCopy := L.vLow; -- 用于保存安全分母。
+  let leastBit := L.vBit; -- 安全分母的最低位。
+  let u := L.inner.first.u; -- 求逆所用的数据寄存器 u。
+  let s := L.inner.first.s; -- 求逆所用的系数寄存器 s。
   X leastBit;
-  CX L.control leastBit;                         -- control=0 时 denominatorCopy=1
-  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时复制真实分母
-  xorConstant(u, p);                                    -- Kaliski 初值 u=p
-  xorConstant(s, 1);                                    -- Kaliski 初值 s=1，其余工作位为零
+  CX L.control leastBit;                         -- control=0 时 denominatorCopy=1。
+  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时 denominatorCopy=denominator。
+  xorConstant(u, p);                                    -- u = p
+  xorConstant(s, 1);                                    -- s = 1
 }
 
-/-- 在内部恢复到安全分母 v、u=p、s=1 后清零这些寄存器，保留 control/denominator。
-要求与 divideLoad 装载值匹配；这里只反排无测量装载门。
-
-参数：
-
-- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
--/
+/-- 清零 divideLoad 装入的 v、u、s；要求它们已恢复到装载时的值。 -/
 def divideUnload (L : DivideLayout) : Program := prog {
-  let denominatorCopy := L.vLow; -- 已恢复到求逆前初值的安全分母副本，接下来清零。
-  let leastBit := L.vBit; -- 安全分母副本最低位，撤销控制关闭时的常数 1。
-  xorConstant(L.inner.first.s, 1);                      -- s: 1 → 0
-  xorConstant(L.inner.first.u, p);                      -- u: p → 0
-  copyRegister(some L.control, L.denominator, denominatorCopy); -- 清真实分母分支
+  let denominatorCopy := L.vLow; -- 保存已恢复的安全分母。
+  let leastBit := L.vBit; -- 安全分母的最低位。
+  xorConstant(L.inner.first.s, 1);                      -- 清零 s。
+  xorConstant(L.inner.first.u, p);                      -- 清零 u。
+  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时清零分母副本。
   CX L.control leastBit;
-  X leastBit;                                    -- 清安全分母 1 的分支
+  X leastBit;                                    -- control=0 时清零分母副本。
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -123,38 +111,26 @@ def divisionProductContext (L : DivideLayout) : CircuitDSL.Context DivisionProdu
   }
 }
 
-/-- 受 L.control 控制的模除法累加：acc ← (acc+control·numerator/denominator) mod p。
-control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
-满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。
-
-参数：
-
-- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
--/
+/-- L.control=1 时 L.acc ← (L.acc+L.numerator/L.denominator) mod p，为 0 时不变。
+p 是 secp256k1 坐标域的模数；除法表示乘模逆元，启用时要求分母非零，输入值均在 [0,p)。 -/
 def divideAdd (L : DivideLayout) : Program := prog using (divisionProductContext L) {
-  let inverse := L.inner;    -- 逆元结果保存在 inverse.a；历史由 inverse 一并保留。
+  let inverse := L.inner;    -- inverse.a 用于保存逆元。
   divideLoad(L);                                  -- v = control ? denominator : 1；u=p，s=1
   inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
-  controlledMulAdd L.control inverse.a L.numerator L.acc; -- control=1 时 acc += numerator/denominator
-  inverseUncompute(inverse, p);                    -- 逆元与历史恢复到求逆前
-  divideUnload(L);                                -- 清 v/u/s，归还全部工作位
+  controlledMulAdd L.control inverse.a L.numerator L.acc; -- control=1 时 acc += numerator/denominator (mod p)。
+  inverseUncompute(inverse, p);                    -- 清零逆元，恢复求逆初态。
+  divideUnload(L);                                -- 清零 v/u/s。
 }
 
-/-- 受 L.control 控制的模除法累减：acc ← (acc−control·numerator/denominator) mod p。
-control=0 时 acc 不变；control=1 时要求 denominator 非零，除法表示乘模 p 逆元。
-满足布局/标准代表元范围且工作区初始为零时，control/分子/分母保持，工作区恢复零。
-
-参数：
-
-- `L`：除法布局：control 是外部使能，numerator/denominator 是保留的分子/分母寄存器，acc 是原地累加或累减目标，inner 保存逆元、历史及工作位。
--/
+/-- L.control=1 时 L.acc ← (L.acc−L.numerator/L.denominator) mod p，为 0 时不变。
+p 是 secp256k1 坐标域的模数；除法表示乘模逆元，启用时要求分母非零，输入值均在 [0,p)。 -/
 def divideSub (L : DivideLayout) : Program := prog using (divisionProductContext L) {
-  let inverse := L.inner; -- 求逆布局：a 保存逆元，其他区域保存计算历史及零工作位。
-  divideLoad(L);                                  -- v = control ? denominator : 1
+  let inverse := L.inner; -- inverse.a 用于保存逆元。
+  divideLoad(L);                                  -- v = control ? denominator : 1；u=p，s=1
   inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
-  controlledMulSub L.control inverse.a L.numerator L.acc; -- control=1 时 acc -= numerator/denominator
-  inverseUncompute(inverse, p);                    -- 恢复求逆前状态
-  divideUnload(L);                                -- 清工作位；分子、分母保持
+  controlledMulSub L.control inverse.a L.numerator L.acc; -- control=1 时 acc -= numerator/denominator (mod p)。
+  inverseUncompute(inverse, p);                    -- 清零逆元，恢复求逆初态。
+  divideUnload(L);                                -- 清零 v/u/s。
 }
 
 /-- 接线简写与原有布局接口生成相同门列；供下游规格与资源证明展开。 -/

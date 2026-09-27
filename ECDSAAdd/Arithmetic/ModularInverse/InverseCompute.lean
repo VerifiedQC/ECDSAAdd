@@ -2,54 +2,34 @@ import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleState
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 准备模逆元：从 Kaliski 初态 u=q、v=A、r=0、s=1、k=0 出发，令 L.a=A⁻¹ mod q。
-要求 0<A<q、互素性及 inverseCompute_values 的模数/位宽/512 轮布局条件，其余指定工作位初始为零。
-不写外部 out；保留循环终态、分支记录及缩放历史，供 inverseUncompute 恢复。
-
-参数：
-
-- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
-- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
--/
+/-- 从 Kaliski 初态 u=q、v=A、r=0、s=1、k=0 计算 L.a=A⁻¹ mod q，保留恢复历史。
+要求 0<A<q、A 与 q 互素，以及 inverseCompute_values 的模数/位宽/512 轮条件。 -/
 def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  let records := L.records;       -- 每轮保存 swap/subtract 两位，最终规格要求共 512 轮。
-  let r := L.middle.r;            -- 循环结束后的 Kaliski 系数寄存器。
-  let inverse := L.a;             -- 本函数的逆元结果寄存器；不直接写外部 out。
-  let scaling := L.scaling;       -- 用计数 k 修正比例，a 同时是缩放输入/输出。
-  kaliskiLoop(L.first, 0, records);              -- 演化 u/v/r/s/k，保存各轮分支
+  let records := L.records;       -- 每轮保存 swap/subtract 两位，共 512 轮。
+  let r := L.middle.r;            -- Kaliski 循环结束时的系数 r。
+  let inverse := L.a;             -- 用于保存逆元。
+  let scaling := L.scaling;       -- 按活动轮数 k 修正逆元的缩放。
+  kaliskiLoop(L.first, 0, records);              -- 更新 u/v/r/s/k，保存分支记录。
   negativeInit(L.arithmetic, q, r, L.temp, inverse); -- inverse = (-r) mod q
-  scaling.prepare(q);                           -- inverse = 原输入的逆元；保留恢复所需历史
+  scaling.prepare(q);                           -- inverse = A⁻¹ mod q
 }
 
-/-- 恢复 inverseCompute 的匹配输出：清零逆元 L.a 及循环/缩放历史，恢复 u=q、v=A、r=0、s=1、k=0。
-外部 out 保持；要求历史与输入匹配，各段执行显式前向门列，不倒放测量。
-
-参数：
-
-- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
-- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
--/
+/-- 用 inverseCompute 的匹配输入与历史清零 L.a，恢复 u=q、v=A、r=0、s=1、k=0。 -/
 def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  let r := L.middle.r; -- Kaliski 循环结束时的 r 系数，用于重算未缩放逆元。
-  let inverse := L.a; -- 逆元结果寄存器 a，恢复缩放后将其清零。
-  let scaling := L.scaling; -- 逆元缩放的接线及历史，负责恢复未缩放的 (-r) mod q。
-  scaling.restore(q);                              -- inverse 恢复成 (-r) mod q；清缩放历史
-  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- 同值 XOR，使 inverse 清零
-  kaliskiUnloop(L.first, 0, L.records);              -- 借助分支记录恢复 u/v/r/s/k，并清记录
+  let r := L.middle.r; -- Kaliski 循环结束时的系数 r。
+  let inverse := L.a; -- 保存待清零的逆元。
+  let scaling := L.scaling; -- 逆元缩放的接线与历史。
+  scaling.restore(q);                              -- inverse = (-r) mod q，清零缩放历史。
+  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- 清零 inverse。
+  kaliskiUnloop(L.first, 0, L.records);              -- 恢复 Kaliski 初态，清零分支记录。
 }
 
-/-- 将初态 L.first.v 中 A 的模逆元 XOR 到 L.out：L.out ^= A⁻¹ mod q。
-沿用 inverseCompute 的有效初态/范围条件；先准备再清理，内部恢复 Kaliski 初态而不是全零。
-
-参数：
-
-- `L`：完整求逆内核布局：first 是初始轮布局，records 是分支记录带，a 保存逆元，out 是外部 XOR 目标，temp/arithmetic 供取负与缩放借用。
-- `q`：构造期的经典求逆模数；与初态 u 相同，要求满足互素性、位宽及 q mod 16=15 等接口条件。
--/
+/-- L.out ^= A⁻¹ mod q，A 是初态 L.first.v 的值。
+初态及数值条件同 inverseCompute；内部恢复到该初态。 -/
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  inverseCompute(L, q);             -- a = 输入的逆元；保留恢复历史
+  inverseCompute(L, q);             -- a = A⁻¹ mod q
   copyRegister(none, L.a, L.out);    -- out ^= a
-  inverseUncompute(L, q);           -- a 清零，内部初态恢复；out 保留
+  inverseUncompute(L, q);           -- 清零 a，恢复 Kaliski 初态。
 }
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=

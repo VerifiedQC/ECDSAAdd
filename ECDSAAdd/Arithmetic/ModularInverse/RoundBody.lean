@@ -13,17 +13,10 @@ private theorem data_updates (z : KState) (X : Nat) :
     Function.update (roundDataValues z) .s X = roundDataValues {z with s:=X} := by
   refine ⟨?_,?_,?_⟩ <;> funext f <;> cases f <;> rfl
 
-/-- c=1 时同时交换 L.u↔L.v、L.r↔L.s；c=0 时四个寄存器不变，c 保持。
-要求两对寄存器各自等长且参与线路互异，使数值与对应系数同步交换。
-
-参数：
-
-- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
-- `c`：控制 wire：为 1 时同时交换 u/v 与 r/s，为 0 时保持。
--/
+/-- c=1 时交换 L.u↔L.v、L.r↔L.s；c=0 时不变。 -/
 def swapDataPairs (L : RoundDataLayout) (c : Wire) : Program := prog {
-  swapRegisters(c, L.u, L.v);  -- c=1 时 u↔v，否则两者保持。
-  swapRegisters(c, L.r, L.s);  -- c=1 时 r↔s，使系数与 u/v 的角色同步交换。
+  swapRegisters(c, L.u, L.v);  -- c=1 时 u↔v。
+  swapRegisters(c, L.r, L.s);  -- c=1 时 r↔s。
 }
 
 private theorem swap_pairs_frame (L : RoundDataLayout) (c : Wire) (hnd : (c::L.wires).Nodup)
@@ -60,54 +53,36 @@ def roundArithmeticContext (L : RoundDataLayout) : CircuitDSL.Context RoundArith
     }
   }
 
-/-- Kaliski 一轮的数据更新：先按 swap 交换 u/v 和 r/s；subtract=1 时 u←u−v、r←r+s；
-active=1 时 u←u/2、s←2*s，最后按 swap 换回。工作区初始为零并恢复，控制位保持。
-整数解释要求本轮不变量保证待减数足够、待除数为偶数及无溢出；一般门列实际按位宽运算/循环移位。
-
-参数：
-
-- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
-- `active`：本轮使能 wire，控制除以 2/乘以 2 的循环移位；已经结束的轮为 0。
-- `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
-- `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
--/
+/-- 按 swap 交换 u/v、r/s；subtract=1 时 u←u−v、r←r+s；active=1 时 u←u/2、s←2*s，最后换回。
+u/v 是约简数据，r/s 是对应系数；轮不变量保证移位等价于整数乘除且无溢出。 -/
 def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
     prog using (roundArithmeticContext L) {
-  let u := L.u; -- 当前约简数据，本轮选中的偶数/较大数移到这里处理。
-  let v := L.v; -- 另一约简数据，在减法中用作源。
-  let r := L.r; -- 与 u 配对的系数，执行受控加法。
-  let s := L.s; -- 与 v 配对的系数，执行受控倍增。
-  swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s
-  controlledSub subtract v u;                -- subtract=1 时 u -= v
-  controlledAdd subtract s r;                -- subtract=1 时 r += s
-  shiftRight(active, u);                     -- active=1 时，偶数 u /= 2
-  shiftLeft(active, s);                      -- active=1 时 s *= 2
-  swapDataPairs(L, swap);                    -- 将寄存器角色交换回来
+  let u := L.u;
+  let v := L.v;
+  let r := L.r;
+  let s := L.s;
+  swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
+  controlledSub subtract v u;                -- subtract=1 时 u -= v。
+  controlledAdd subtract s r;                -- subtract=1 时 r += s。
+  shiftRight(active, u);                     -- active=1 时 u /= 2。
+  shiftLeft(active, s);                      -- active=1 时 s *= 2。
+  swapDataPairs(L, swap);                    -- 交换回来。
 }
 
-/-- 撤销 kaliskiBodyProgram 的数据更新：在同样的交换视图中先 s←s/2、u←2*u，
-再按 subtract 做 r←r−s、u←u+v，最后换回；移位仍受 active 控制。
-要求来自匹配的正轮数据和分支记录、满足轮不变量；零工作区恢复，控制位保持，不倒放测量。
-
-参数：
-
-- `L`：Kaliski 数据布局：u/v 是约简数据，r/s 是配套系数，y/carry/cin 是受控加减借用的工作位；此参数不含独立的分支控制位。
-- `active`：本轮使能 wire，控制除以 2/乘以 2 的循环移位；已经结束的轮为 0。
-- `swap`：是否临时交换 u/v 和 r/s 的分支 wire，须与本轮奇偶/大小条件匹配。
-- `subtract`：是否执行 u−v、r+s 的分支 wire；恢复方向撤销对应加减，值始终保留。
--/
+/-- 用匹配的分支记录撤销 kaliskiBodyProgram：交换后按 active 做 s←s/2、u←2*u，
+按 subtract 做 r←r−s、u←u+v，最后换回。 -/
 def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
     prog using (roundArithmeticContext L) {
-  let u := L.u; -- 待恢复的约简数据，与正轮使用同一寄存器。
-  let v := L.v; -- 另一约简数据，用于撤销 u 的减法。
-  let r := L.r; -- 与 u 配对的系数，撤销先前的受控加法。
-  let s := L.s; -- 与 v 配对的系数，先撤销倍增再作为减法源。
-  swapDataPairs(L, swap);                    -- 重建正向运算时的寄存器角色
-  shiftRight(active, s);                     -- 撤销 s *= 2
-  shiftLeft(active, u);                      -- 撤销 u /= 2
-  controlledSub subtract s r;                -- 撤销 r += s
-  controlledAdd subtract v u;                -- 撤销 u -= v
-  swapDataPairs(L, swap);                    -- u/v/r/s 恢复轮前值
+  let u := L.u;
+  let v := L.v;
+  let r := L.r;
+  let s := L.s;
+  swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
+  shiftRight(active, s);                     -- active=1 时 s /= 2。
+  shiftLeft(active, u);                      -- active=1 时 u *= 2。
+  controlledSub subtract s r;                -- subtract=1 时 r -= s。
+  controlledAdd subtract v u;                -- subtract=1 时 u += v。
+  swapDataPairs(L, swap);                    -- 交换回来。
 }
 
 /-- 供既有证明使用；直接寄存器接口与原布局调用生成同一门列。 -/

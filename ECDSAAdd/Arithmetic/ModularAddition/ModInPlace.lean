@@ -49,31 +49,23 @@ def modAddCoreContext (L : ModAddCoreLayout) : CircuitDSL.Context ModAddCoreOps 
   }
 }
 
-/-- 原地模加核：L.z ← (L.z+L.a) mod p，L.a 保持；结果位于 L.low，L.high 最终为零。
-要求有效布局、p 的位宽及输入范围满足 modAddCore_spec，尤其 L.a≤p、L.z<p。
-constant/carry/cin 初始为零并恢复；先加、试减 p、按借位加回，再比较清借位。
-源 a 可以是外层装载的 mask，必须保留到借位清理完成。
-
-参数：
-
-- `L`：原地模加线路布局：a 是保留的源寄存器，low 是目标低位，high 是其扩展/借位位，z=low++[high]；constant/carry/cin 是算术工作区。
-- `p`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
--/
+/-- L.z ← (L.z+L.a) mod p，要求 0<p<2^n、L.a≤p、L.z<p。
+n 是目标低位寄存器 L.low 的长度，L.z=L.low++[L.high]。 -/
 def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog using (modAddCoreContext L) {
-  let source := L.a;                   -- 保持不变的 n+1 位源寄存器。
-  let target := L.z;                    -- low 加上一根 high，容纳完整的和。
-  let borrow := L.high;                -- 目标最高位，试减后暂存借位。
-  let n := L.low.length;               -- 目标有效数值部分 low 的位数。
-  let lowSource := source.take n;      -- 源的低 n 位，用于比较并清除借位。
+  let source := L.a;
+  let target := L.z;                    -- 用于保存完整的和。
+  let borrow := L.high;                -- target 的最高位：试减后 0 表示没有借位，1 表示发生借位。
+  let n := L.low.length;
+  let lowSource := source.take n;
 
   addInPlace source target;                         -- target += source
   xorConstant(L.constant, p);                        -- constant = p
-  subInPlace L.constant target;                     -- target -= p；borrow = [原和 < p]
-  xorConstant(L.constant, p);                        -- constant 清零
-  maskedAddConst borrow L.low p;                    -- 有借位则低 n 位加回 p
+  subInPlace L.constant target;                     -- target -= p；borrow = [原和<p]
+  xorConstant(L.constant, p);                        -- 清零 constant。
+  maskedAddConst borrow L.low p;                    -- borrow=1 时 low += p。
 
-  -- 原和发生约减 iff 结果 < source；与原借位相反，故最后 X 后 borrow=0。
-  compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]；即异或“原和曾约减”的标志。
+  -- 结果小于 source 表示曾发生约减，与借位标志相反。
+  compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]，随后 X 清零 borrow。
   X borrow;
 }
 

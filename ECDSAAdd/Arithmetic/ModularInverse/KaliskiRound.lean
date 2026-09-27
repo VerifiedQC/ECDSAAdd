@@ -98,27 +98,21 @@ theorem regValue_headBit (r : List Wire) (hn : r≠[]) (s : BasisState) :
   | cons a r => cases ha : s a <;> simp [regValue,ha]
 
 
-/-- 将分支条件 XOR 到 L.subtract、L.swap：subtract ^= active AND u为奇数 AND v为奇数；
-swap ^= (active AND u为奇数) XOR (active AND u为奇数 AND v为奇数 AND v<u)。
-有效布局下数据保持，oddWork/bothWork/carry/cin 初始为零并恢复；两个结果保留供逆轮使用。
-
-参数：
-
-- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。本函数读取数据和 active，写入 swap/subtract。
--/
+/-- L.subtract ^= active AND uOdd AND vOdd；
+L.swap ^= (active AND uOdd) XOR (active AND uOdd AND vOdd AND [v<u])。
+uOdd/vOdd 表示 u/v 是否为奇数。 -/
 def recordRound (L : KaliskiRoundLayout) : Program := prog {
-  let uOdd := L.u.head!; -- u 的最低位，表示 u 是否为奇数。
-  let vOdd := L.v.head!; -- v 的最低位，表示 v 是否为奇数。
-  let activeUOdd := L.oddWork; -- 零辅助位，暂存 active AND uOdd。
-  let bothOdd := L.bothWork; -- 零辅助位，暂存 active AND uOdd AND vOdd。
-  let carry := L.data.reg .carry; -- 比较 v<u 使用的零进位链，比较后恢复。
-  CCX L.active uOdd activeUOdd;         -- activeUOdd = active AND (u 为奇数)
-  CCX activeUOdd vOdd bothOdd;          -- bothOdd = active AND (u、v 均为奇数)
-  CX bothOdd L.subtract;                -- 保存本轮是否需要相减
+  let uOdd := L.u.head!; -- u 的最低位：0 为偶数，1 为奇数。
+  let vOdd := L.v.head!; -- v 的最低位：0 为偶数，1 为奇数。
+  let activeUOdd := L.oddWork; -- 用于保存 active AND uOdd。
+  let bothOdd := L.bothWork; -- 用于保存 active AND uOdd AND vOdd。
+  let carry := L.data.reg .carry; -- 比较 v<u 所用的进位工作区。
+  CCX L.active uOdd activeUOdd;         -- activeUOdd = active AND uOdd
+  CCX activeUOdd vOdd bothOdd;          -- bothOdd = activeUOdd AND vOdd
+  CX bothOdd L.subtract;                -- subtract ^= bothOdd
   CX activeUOdd L.swap;
-  compareLt(some bothOdd, L.v, L.u, carry, L.cin, L.swap);  -- swap ^= bothOdd AND [v<u]；输入与进位工作区恢复。
-  -- swap = activeUOdd XOR (bothOdd AND v<u)，决定先交换哪组数据。
-  CCX activeUOdd vOdd bothOdd;          -- 临时条件清零；swap/subtract 保留
+  compareLt(some bothOdd, L.v, L.u, carry, L.cin, L.swap);  -- swap ^= bothOdd AND [v<u]
+  CCX activeUOdd vOdd bothOdd;          -- 清零 bothOdd。
   CCX L.active uOdd activeUOdd;
 }
 
@@ -132,61 +126,34 @@ theorem recordRound_program (L : KaliskiRoundLayout) :
   simp only [recordRound, List.append_assoc]
   rfl
 
-/-- L.active ^= NOT L.done，L.done 保持；active 初始为零时得到本轮是否尚未结束。
-同一门列也用于在恢复旧 done 后清除 active；要求两根线路不同。
-
-参数：
-
-- `L`：单轮求逆布局；本函数只使用 done 终止标志和 active 使能工作位。
--/
+/-- L.active ^= NOT L.done；done=0 表示尚未结束，done=1 表示已结束。 -/
 def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]
 
-/-- L.active ^= [i<计数值 k]，k 由 L.comparator.x 读取，即本轮更新后的计数银行。
-计数保持；有效计数/布局条件下，比较工作区初始为零并恢复。
-
-参数：
-
-- `L`：单轮求逆布局；comparator.x 指向本轮更新后的 kNext，active 是比较结果的 XOR 目标，其余比较工作位借自布局。
-- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
--/
+/-- L.active ^= [i<kNext]，i 是当前轮号，kNext 是本轮更新后的活动轮计数。 -/
 def roundActiveXor (L : KaliskiRoundLayout) (i : Nat) : Program :=
   counterActiveXor L.comparator L.active i
 
-/-- 执行第 i 轮 Kaliski 更新：done=0 时按奇偶/大小关系更新 u/v/r/s，并将计数 k 加一；
-新 v=0 时置 done=1。done=1 后数据/计数值保持，但计数仍转移到下一银行。
-有效轮不变量下临时工作区清零，swap/subtract 从零保存两位分支历史，供 kaliskiUnround 恢复。
-
-参数：
-
-- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。
-- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
--/
+/-- 执行第 i 轮 Kaliski 更新：done=0 时更新 u/v/r/s 并令 k←k+1，新 v=0 时置 done=1。
+done=1 时数值不变；swap/subtract 保存本轮分支，计数转入 kNext。 -/
 def kaliskiRound (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
-  let vZeroBits := L.data.zeroBits .v; -- 将 v 的每一位接到零检测工作位。
+  let vZeroBits := L.data.zeroBits .v; -- v 与零检测工作位的接线。
   loadActive(L);                                         -- active = NOT done
-  recordRound(L);                                        -- 保存 swap/subtract，供日后恢复
-  kaliskiBodyProgram(L.data, L.active, L.swap, L.subtract); -- 按条件更新 u/v/r/s
-  counterInc(L.counter);                                 -- kNext = k+active，旧 k 银行清零
-  zeroControlled(L.active, L.done, vZeroBits);             -- 活动轮的 v=0 时，将 done 置 1
-  roundActiveXor(L, i);                                   -- 由 i<kNext 重算 active 并清零
+  recordRound(L);                                        -- 保存 swap/subtract。
+  kaliskiBodyProgram(L.data, L.active, L.swap, L.subtract); -- 按条件更新 u/v/r/s。
+  counterInc(L.counter);                                 -- kNext = k+active，清零旧 k。
+  zeroControlled(L.active, L.done, vZeroBits);             -- active=1 且新 v=0 时置 done=1。
+  roundActiveXor(L, i);                                   -- 由 i<kNext 清零 active。
 }
 
-/-- 用第 i 轮的 swap/subtract 历史恢复轮前 u/v/r/s、k 和 done，并清零这两位记录。
-要求状态与 kaliskiRound 的输出匹配；计数转回旧银行，临时工作区恢复零，不反转测量。
-
-参数：
-
-- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。
-- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
--/
+/-- 用第 i 轮匹配的 swap/subtract 记录恢复轮前 u/v/r/s、k 和 done，并清零记录。 -/
 def kaliskiUnround (L : KaliskiRoundLayout) (i : Nat) : Program := prog {
-  let vZeroBits := L.data.zeroBits .v; -- v 的输入位与零检测辅助位配对，用于恢复 done。
-  roundActiveXor(L, i);                                   -- 从 kNext 恢复该轮 active
-  zeroControlled(L.active, L.done, vZeroBits);             -- 恢复轮前 done
-  kaliskiUnbodyProgram(L.data, L.active, L.swap, L.subtract); -- 恢复 u/v/r/s
-  counterDec(L.counter.swapCounter);                      -- 恢复 k，清空 kNext 银行
-  recordRound(L);                                        -- 从已恢复数据重算并清 swap/subtract
-  loadActive(L);                                         -- active 清零
+  let vZeroBits := L.data.zeroBits .v; -- v 与零检测工作位的接线。
+  roundActiveXor(L, i);                                   -- active = [i<kNext]
+  zeroControlled(L.active, L.done, vZeroBits);             -- 恢复 done。
+  kaliskiUnbodyProgram(L.data, L.active, L.swap, L.subtract); -- 恢复 u/v/r/s。
+  counterDec(L.counter.swapCounter);                      -- 恢复 k，清零 kNext。
+  recordRound(L);                                        -- 清零 swap/subtract。
+  loadActive(L);                                         -- 清零 active。
 }
 
 end ECDSAAdd.Arithmetic

@@ -21,26 +21,18 @@ local macro_rules
           [List.length_append, List.length_cons, List.length_nil, List.length_map]
                  omega))
 
-/-- n 位加法的 XOR 输出，n 是逐位布局列表 bs 的长度：out ^= (x+y+cin) mod 2^n。
-x/y/out/carry 分别由 bs 中对应字段组成；输入 x/y/cin 保持，初始为零的 carry 最终清零。
-要求布局中的线路互异。先由低到高计算和与进位，再由高到低测量清理进位。
-c 将 cin 与各位进位线连成一条链；只组织已有线路，不分配新线。
-
-参数：
-
-- `bs`：从最低位到最高位排列的逐位布局；每项的 x/y 是两输入位，out 是和的 XOR 输出位，carry 是零进位工作位。
-- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
--/
+/-- 输出 out ^= (x+y+cin) mod 2^n，n 是逐位接线列表 bs 的长度。
+x/y/out 分别由 bs 中的同名字段组成；cin 是输入进位。 -/
 def rippleAdder (bs : List AddBit) (cin : Wire) : Program := prog {
-  let n := bs.length; -- 按低位到高位排列的全加器列表 bs 的长度，即数据位数。
-  let c := [cin] ++ bs.map AddBit.carry; -- 进位链：c[0]=cin，c[i+1] 是第 i 位产生的进位。
+  let n := bs.length; -- 输入位列表 bs 的长度。
+  let c := [cin] ++ bs.map AddBit.carry; -- 进位链：c[0]=cin，c[i+1] 是第 i 位的进位。
   for i in range(n) {
-    let b := bs[i]; -- 第 i 位全加器的输入 x/y、输出 out 和进位 carry 的接线。
-    fullAdder(b.x, b.y, c[i], b.out, b.carry);  -- b.out ^= 本位和 x⊕y⊕cin；b.carry 写入本位进位，供下一位使用。
+    let b := bs[i];
+    fullAdder(b.x, b.y, c[i], b.out, b.carry);  -- b.out ^= x⊕y⊕cin；b.carry = 本位进位。
   };
   for i in reversed(range(n)) {
-    let b := bs[i]; -- 第 i 位全加器的输入 x/y、输出 out 和进位 carry 的接线。
-    eraseCarry(b.x, b.y, c[i], b.carry);  -- 利用未变的本位输入测量清零 b.carry，并修正相位；和位保持。
+    let b := bs[i];
+    eraseCarry(b.x, b.y, c[i], b.carry);  -- 清零 b.carry。
   };
 }
 

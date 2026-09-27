@@ -78,52 +78,25 @@ structure MontPrepared (M : MontLayout) (p X Y : Nat) (s : BasisState) : Prop wh
   fZ : s M.fZ=decide (montgomeryValue p (montgomeryConversion p) (montgomeryValue p X Y 64%p) 64<p)
   shared : regValue M.shared s=0
 
-/-- 从零工作区准备标准模积：M.a = M.x*M.y*R⁻¹ mod p，M.z = M.x*M.y mod p，R=2^256。
-要求有效布局、M.x<p、M.y<2^256，且 p 为素数、p<2^256、p mod 16=15；输入保持，不写外部 M.out。
-两段恢复所需的中间量和历史保留，shared 工作区归零，供输出阶段借用。
-
-参数：
-
-- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。
-- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
--/
+/-- 从零计算 M.a=M.x*M.y*R⁻¹ mod p、M.z=M.x*M.y mod p，R=2^256，并保留恢复历史。
+要求 M.x<p、M.y<2^256，p 为素数、p<2^256、p mod 16=15。 -/
 def montP (M : MontLayout) (p : Nat) : Program := prog {
-  let conversion := montgomeryConversion p; -- R² mod p，R=2^256。
+  let conversion := montgomeryConversion p; -- 转换常数 R² mod p，R=2^256。
   montPrepare(M.first, M.x, M.y, p);         -- a = x*y/R mod p
   constPrepare(M.second, M.a, p, conversion); -- z = conversion*a/R = x*y mod p
-  -- a/z 及两段历史保留；shared 已清零，可以借给输出阶段。
 }
 
-/-- 从 montP 生成的匹配状态恢复：将 M.a/M.z 及两段历史清零，保留 M.x/M.y 和外部 M.out。
-要求输入未变、历史仍与乘积匹配；执行显式前向恢复程序，不倒放测量。
-
-参数：
-
-- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。
-- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
--/
+/-- 用 montP 的匹配输入与历史，清零 M.a、M.z 及两段历史。 -/
 def montQ (M : MontLayout) (p : Nat) : Program := prog {
-  let conversion := montgomeryConversion p; -- 经典转换常数 R² mod p（R=2^256），用于撤销第二段 Montgomery 运算。
-  constRestore(M.second, M.a, p, conversion); -- 清 z 及第二段历史；仍需要 a
-  montRestore(M.first, M.x, M.y, p);          -- 清 a 及第一段历史；x/y 保持
+  let conversion := montgomeryConversion p; -- 转换常数 R² mod p，R=2^256。
+  constRestore(M.second, M.a, p, conversion); -- 清零 z 及第二段历史。
+  montRestore(M.first, M.x, M.y, p);          -- 清零 a 及第一段历史。
 }
 
-/-- z 得到标准模积 x*y mod p；保留恢复历史，shared 清零。
-
-参数：
-
-- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。
-- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
--/
+/-- 计算 M.z=M.x*M.y mod p，并保留恢复历史；即 montP。 -/
 abbrev montMulCompute := montP
 
-/-- 使用未改变的 x/y 及历史清除模积和全部内部状态。
-
-参数：
-
-- `M`：完整模乘布局：x/y 是输入，out 是外部目标，a/z 是两段内部累加器；各段保留独立历史，共用 shared 临时工作区。
-- `p`：构造期的经典模数；标准模积规格要求 p 为素数、p<2^256、p mod 16=15。
--/
+/-- 用匹配输入与历史清零内部模积；即 montQ。 -/
 abbrev montMulUncompute := montQ
 
 end ECDSAAdd.Arithmetic

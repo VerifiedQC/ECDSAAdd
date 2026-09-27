@@ -2,15 +2,7 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 
 namespace ECDSAAdd.Arithmetic
 
-/-- c=1 时交换 a、b 的值，c=0 时两者不变；c 始终保持。
-要求三根线路互异；Fredkin 门分解为两次 CX 与一次 CCX。
-
-参数：
-
-- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
-- `a`：参与交换的第一个 wire。
-- `b`：参与交换的第二个 wire。
--/
+/-- c=1 时交换位 a、b；c=0 时不变。 -/
 def cswap (c a b : Wire) : Program := [.CX b a, .CCX c a b, .CX b a]
 
 theorem cswap_correct (c a b : Wire) (hnd : [c,a,b].Nodup) (s : State) (m : List Bool) :
@@ -52,31 +44,17 @@ theorem cswap_twice (c a b : Wire) (hnd : [c,a,b].Nodup) (s : State) (m : List B
     · subst w; rw [b2, hc, a1, b1]; cases s.basis c <;> rfl
     · exact (e2 w ha hb).trans (e1 w ha hb)
 
-/-- c=1 时将 r 循环右移一位，c=0 时 r 不变，c 保持；要求参与线路互异。
-当 r 原最低位为零（数值为偶数）时，受控分支的效果是 r ← r/2。
-
-参数：
-
-- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
-- `r`：待受控循环移位的小端寄存器，首项是最低位。
--/
+/-- c=1 时将小端寄存器 r 循环右移一位，最低位为零时等价于 r ← r/2；c=0 时不变。 -/
 def shiftRight (c : Wire) (r : List Wire) : Program := prog {
   for pair in (r.zip r.tail) {
-    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位，逐步右旋；原最低位为零时就是除以 2。
+    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位。
   };
 }
 
-/-- c=1 时将 r 循环左移一位，c=0 时 r 不变，c 保持；要求参与线路互异。
-当 r 原最高位为零时，受控分支的效果是 r ← 2*r；这是 shiftRight 的逆交换网络。
-
-参数：
-
-- `c`：控制 wire，值为 1 时启用运算，值为 0 时保持目标。
-- `r`：待受控循环移位的小端寄存器，首项是最低位。
--/
+/-- c=1 时将小端寄存器 r 循环左移一位，最高位为零时等价于 r ← 2*r；c=0 时不变。 -/
 def shiftLeft (c : Wire) (r : List Wire) : Program := prog {
   for pair in ((r.zip r.tail).reverse) {
-    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位，逆序完成左旋；原最高位为零时就是乘以 2。
+    cswap(c, pair.1, pair.2);  -- c=1 时交换相邻位。
   };
 }
 

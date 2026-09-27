@@ -4,14 +4,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 namespace ECDSAAdd.Arithmetic
 open Instr
 
-/-- 读出最高进位：无控制时 target ^= ¬top；有控制时 target ^= control ∧ ¬top。
-
-参数：
-
-- `第 1 个参数（control）`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
-- `第 2 个参数（top）`：加法进位链的最高进位 wire，读取后保持。
-- `第 3 个参数（t）`：XOR 输出 wire，接收 NOT top 或受控的 NOT top。
--/
+/-- 无控制时 t ^= NOT top；control=some c 时 t ^= c AND NOT top。
+top 是最高进位。 -/
 def flipBelow : Option Wire → Wire → Wire → Program
   | none, top, t => [.X t, .CX top t]
   | some c, top, t => [.CX c t, .CCX c top t]
@@ -20,19 +14,8 @@ local macro_rules
   | `(tactic| get_elem_tactic) =>
       `(tactic| (simp_all +zetaDelta only [List.length_cons]; omega))
 
-/-- 将加法未溢出的条件 XOR 到 target：target ^= [x+y+cin < 2^n]，n=x.length；
-有 control 时再与控制位相与。x/y/cin 保持，零 carry 恢复为零；要求三列表等长、线路互异。
-正向生成进位、读出最高进位再反向清理；长度不等时只计算/清理共同前缀，不读出结果。
-
-参数：
-
-- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
-- `x`：小端第一个加数寄存器，值保持。
-- `y`：小端第二个加数寄存器，值保持。
-- `carry`：与 x/y 等长的进位工作寄存器，初末为零，末位保存最高进位。
-- `cin`：最低位的输入进位 wire，其原值参与加法，运算后保留。
-- `target`：比较条件的 XOR 输出 wire，初值不必为零。
--/
+/-- target ^= [x+y+cin < 2^n]，n 是输入 x 的位数，x/y/carry 等长。
+control=some c 时仅在 c=1 时更新 target；none 时无条件更新。 -/
 def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program :=
   let n := min x.length (min y.length carry.length)
   let c := cin :: carry
@@ -40,11 +23,11 @@ def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : W
       flipBelow control c[n] target else []
   prog {
     for i in range(n) {
-      majority(x[i], y[i], c[i], carry[i]); -- carry[i] 保存 x[i]+y[i]+c[i] 的进位。
+      majority(x[i], y[i], c[i], carry[i]); -- carry[i] = 本位进位。
     };
-    readout(); -- target ^= NOT c[n]；有控制位时再与 control 相与。
+    readout(); -- target ^= NOT c[n]；有控制时仅在 control=1 执行。
     for i in reversed(range(n)) {
-      eraseCarry(x[i], y[i], c[i], carry[i]); -- 反向清零进位，保留 x/y/cin。
+      eraseCarry(x[i], y[i], c[i], carry[i]); -- 清零 carry[i]。
     };
   }
 
@@ -58,43 +41,20 @@ private theorem compareChain_cons (control : Option Wire) (a b c cin target : Wi
   simp [compareChain, Nat.succ_min_succ, List.ofFn_succ, List.reverse_cons,
     List.flatten_append, List.append_assoc]
 
-/-- target ^= [x<y]；control=some c 时改为 target ^= c AND [x<y]，输入/控制位保持。
-要求 x/y/carry 等长且参与线路互异，cin/carry 初始为零并恢复；target 不必为零。
-内部计算 x+NOT y+1，其最高进位为 [x≥y]，读出后擦除进位并还原 y/cin。
-
-参数：
-
-- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
-- `x`：小端被比较寄存器，判断它是否小于 y，值保持。
-- `y`：小端比较基准寄存器，值保持。
-- `carry`：与 x/y 等长的进位工作寄存器，初末为零，末位保存最高进位。
-- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
-- `target`：比较条件的 XOR 输出 wire，初值不必为零。
--/
+/-- target ^= [x<y]；control=some c 时改为 target ^= c AND [x<y]。
+x/y/carry 等长，cin=0。 -/
 def compareLt (control : Option Wire) (x y carry : List Wire) (cin target : Wire) : Program := prog {
-  notRegister(cin :: y);  -- 翻转 y 的每一位，并将零 cin 置 1；准备 x+¬y+1。
-  compareChain(control, x, y, carry, cin, target);  -- target ^= [x<原 y]；有控制位时再与 control 相与，carry 清零。
-  notRegister(cin :: y);  -- 再次翻转 y 和 cin，恢复原输入与零进位位。
+  notRegister(cin :: y);  -- 准备 x+¬y+1。
+  compareChain(control, x, y, carry, cin, target);  -- target ^= [x<原 y]；有控制时仅在 control=1 执行。
+  notRegister(cin :: y);  -- 恢复 y，清零 cin。
 }
 
-/-- target ^= [x<K]；control=some c 时改为 target ^= c AND [x<K]，保留 x/控制位。
-要求 K<2^n，x/T/carry 均为 n 位且线路互异，T/carry/cin 初始为零并恢复。
-先将常量 K 装入 T，比较后卸载；target 不必初始为零。
-
-参数：
-
-- `control`：可选控制 wire；`none` 表示无条件执行，`some c` 表示只在 c=1 时更新目标。
-- `x`：小端被比较寄存器，判断其数值是否小于 K。
-- `T`：与 x 等宽的零常数工作寄存器，用来装入 K，比较后卸载。
-- `carry`：与 x 等长的零进位工作寄存器，比较后恢复。
-- `cin`：加法器的最低进位工作 wire，本接口要求初始为 0，结束后恢复为 0。
-- `target`：小于条件的 XOR 输出 wire，初值不必为零。
-- `K`：构造电路时已知的经典比较阈值。
--/
+/-- target ^= [x<K]；control=some c 时改为 target ^= c AND [x<K]。
+K<2^n，n 是输入 x 的位数；T 用于保存 K。 -/
 def compareLtConst (control : Option Wire) (x T carry : List Wire) (cin target : Wire) (K : Nat) : Program := prog {
-  xorConstant(T, K);  -- T ^= K；从零装入比较常量 K。
-  compareLt(control, x, T, carry, cin, target);  -- target ^= [x<K]；有控制位时再与 control 相与，输入和进位工作区恢复。
-  xorConstant(T, K);  -- T 再异或 K，清零常量寄存器。
+  xorConstant(T, K);  -- T = K
+  compareLt(control, x, T, carry, cin, target);  -- target ^= [x<K]；有控制时仅在 control=1 执行。
+  xorConstant(T, K);  -- 清零 T。
 }
 
 /-- 控制位的值：无控制视为真。 -/

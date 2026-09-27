@@ -69,7 +69,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ### 当前注释规则（2026-09-27）
 
-以 [Modular.lean 的 modAdd](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 为精简示范；本次未批量改写其他函数。以下规则替代此前“每个参数、每个 let 都解释”的要求，不改变各层 README 的写法。
+以 [Modular.lean 的 modAdd](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 为精简示范；同一风格已应用于下表的重要算法入口及直接相关的程序辅助函数，覆盖 14 个模块中的 26 个 Lean 文件。本次仅修改注释，不改程序、证明或各层 README 的写法。以下规则替代此前“每个参数、每个 let 都解释”的要求。
 
 - 函数开头只写计算结果、必要数值条件，以及 n 等不明确符号的含义；不固定添加“参数”段，不重复完整规格。
 - `let x := L.x` 这类直观别名不注释。中间量只写用途，如“用于保存 x+y”“用于保存 total-q”；标志位要写清 0/1 各表示什么。

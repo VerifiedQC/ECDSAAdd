@@ -39,33 +39,26 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
   xorConstant(modulus, q);                        -- 清零 modulus。
 }
 
-/-- 模减的 XOR 输出：L.out ^= (L.x−L.y) mod q，输入 L.x/L.y 保持，L.work 初始为零并恢复。
-要求 0<q<2^L.width、输入均小于 q、布局线路互异；这里减法按模 q 理解，不是 Nat 的截断减法。
-
-参数：
-
-- `L`：模加减线路布局：x/y 是输入寄存器，out 是 XOR 输出，work 包含中间和/差、模数、进位等工作位；width 是有效数值位宽。
-- `q`：构造电路时已知的经典模数，不是量子输入寄存器；取值须满足上述范围条件。
--/
+/-- 输出 L.out ^= (L.x−L.y) mod q，要求 0<q<2^n、x,y<q。
+n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
 def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
-  let x := L.x;                     -- 保持不变的输入 x，含一根零扩展高位。
-  let y := L.y;                     -- 保持不变的输入 y，含一根零扩展高位。
-  let diff := L.reg .diff;          -- 零临时寄存器，保存 n+1 位补码差 x-y。
-  let modulus := L.reg .modulus;    -- 零临时寄存器，用来装载经典模数 q。
-  let corrected := L.reg .total;    -- 零临时寄存器，保存加回 q 后的候选值。
-  let borrow := L.high.diff;        -- diff 的最高位，表示 x-y 是否发生借位。
-  let out := L.lowReg .out;         -- 最终 XOR 输出寄存器，仅取低 n 位。
+  let x := L.x;
+  let y := L.y;
+  let diff := L.reg .diff;          -- 用于保存 x-y。
+  let modulus := L.reg .modulus;    -- 用于保存模数 q。
+  let corrected := L.reg .total;    -- 用于保存 diff+q。
+  let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
+  let out := L.lowReg .out;         -- 最终的输出。
 
   xorConstant(modulus, q);                              -- modulus = q
   subXor x y diff;                                     -- diff = x-y
   addXor diff modulus corrected;                       -- corrected = diff+q
 
-  -- 借位为 0：x≥y，选 diff；借位为 1：x<y，选 corrected。
-  chooseXor borrow (diff.take L.width) (corrected.take L.width) out;  -- out ^= (borrow=1 ? corrected : diff) 的低 n 位。
+  chooseXor borrow (diff.take L.width) (corrected.take L.width) out;  -- out ^= (borrow=0 ? diff : corrected) 的低 n 位。
 
-  addXor diff modulus corrected;                       -- corrected 再异或 diff+q，清零（按 n+1 位截断）。
-  subXor x y diff;                                     -- diff 再异或 x-y，清零（按 n+1 位补码）。
-  xorConstant(modulus, q);                              -- modulus 再异或 q，清零。
+  addXor diff modulus corrected;                       -- 清零 corrected。
+  subXor x y diff;                                     -- 清零 diff。
+  xorConstant(modulus, q);                              -- 清零 modulus。
 }
 
 private theorem registerAdderBits_map (bs : List ModBit) (a b target c : ModField) :

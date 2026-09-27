@@ -2,24 +2,13 @@ import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
 
-/-- 条件选择的 XOR 输出：dst ^= (c=1 ? f(src) : src)，保留 c/src，temp 及核工作区恢复为零。
-前提是 kernel 保留输入并计算 temp ^= f(src)，可重算清理；各寄存器满足其布局/零工作区契约。
-先计算候选、再选择输出，最后重新执行 kernel；并非对任意 Program 都有此效果。
-
-参数：
-
-- `kernel`：预先构造的子电路，按接口契约计算 temp ^= f(src)，保持 src，且能再次运行以清理。
-- `c`：选择 wire：0 选择原 src，1 选择 kernel 算出的 f(src)。
-- `src`：小端输入寄存器，也是不启用 kernel 结果时的候选值，保持不变。
-- `temp`：kernel 的零候选工作寄存器，与 src/dst 等宽，用后清零。
-- `dst`：小端 XOR 输出寄存器，接收选中的候选值，初值不必为零。
--/
+/-- dst ^= (c=1 ? f(src) : src)。kernel 负责计算 temp ^= f(src)，temp 初始为零。 -/
 def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
-  kernel();                          -- 按调用契约：temp = f(src)，再次运行可清零
+  kernel();                          -- temp = f(src)
   copyRegister(none, src, dst);       -- dst ^= src
-  copyRegister(some c, src, dst);     -- c=1 时撤销 src 的贡献
-  copyRegister(some c, temp, dst);    -- c=1 时改为 XOR temp；c=0 时保留 src
-  kernel();                          -- temp 清零，最终 dst ^= (c ? f(src) : src)
+  copyRegister(some c, src, dst);     -- c=1 时撤销 src
+  copyRegister(some c, temp, dst);    -- c=1 时 dst ^= temp
+  kernel();                          -- 清零 temp。
 }
 
 /-- 两个可变寄存器以外逐线保持初始状态。 -/

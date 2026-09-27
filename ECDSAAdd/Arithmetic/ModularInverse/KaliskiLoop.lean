@@ -61,20 +61,12 @@ def loopEndLayout (L : KaliskiRoundLayout) : Nat → KaliskiRoundLayout
   | 0 => L
   | n+1 => loopEndLayout L.swapCounter n
 
-/-- 从轮号 i 起连续执行 rs.length 轮 Kaliski 更新，演化 u/v/r/s 和活动轮计数 k，v=0 后不再改变数值。
-在有效初态/轮不变量下，将每轮 swap/subtract 保存到初始为零的 rs，临时工作区归零。
-计数银行交替使用；固定门列按记录带长度展开，不由数据决定执行轮数。
-
-参数：
-
-- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。它指定循环开始时各计数寄存器的角色。
-- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
-- `rs`：按正向轮序排列的记录槽列表；每个 RoundRecord 指定 swap/subtract 两根历史 wire，长度决定展开轮数，而非经典分支值列表。
--/
+/-- 从轮号 i 起执行 rs.length 轮 Kaliski 更新，更新 u/v/r/s 和活动轮计数 k；v=0 后数值不再变化。
+rs 每项保存一轮的 swap/subtract 两位记录，供恢复使用。 -/
 def kaliskiLoop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in range(rs.length) {
-    let round := (loopEndLayout L j).withRecord rs[j]; -- 第 j 轮的数据/计数器视图，分支历史接 rs[j]。
-    kaliskiRound(round, i+j);  -- 执行第 i+j 轮：按条件更新 u/v/r/s、有效轮计数 k 和 done，分支存入 rs[j]。
+    let round := (loopEndLayout L j).withRecord rs[j]; -- 第 j 轮接线，分支记录用 rs[j]。
+    kaliskiRound(round, i+j);  -- 更新 u/v/r/s/k/done，保存本轮分支。
   };
 }
 
@@ -85,19 +77,11 @@ theorem kaliskiLoop_cons (L : KaliskiRoundLayout) (i : Nat) (r : RoundRecord) (r
       kaliskiRound (L.withRecord r) i ++ kaliskiLoop L.swapCounter (i+1) rs := by
   simp [kaliskiLoop, List.ofFn_succ, loopEndLayout, Nat.add_comm, Nat.add_left_comm]
 
-/-- 按反向轮序使用 rs 中的匹配分支记录，恢复 kaliskiLoop 之前的 u/v/r/s、k 和 done。
-将 rs 清零、临时工作区归零；各轮调用显式前向恢复程序，不倒放测量。
-
-参数：
-
-- `L`：Kaliski 单轮布局：u/v 是待约简数据，r/s 是系数，k/kNext 是当前/下一计数寄存器，done 表示终止，active 是本轮使能，swap/subtract 保存分支记录，其余为共享工作位。它指定循环开始时各计数寄存器的角色。
-- `i`：构造期的绝对轮号，从 0 开始；与量子计数寄存器 k 的值不同，用于判断本轮是否有效。
-- `rs`：按正向轮序排列的记录槽列表；每个 RoundRecord 指定 swap/subtract 两根历史 wire，长度决定展开轮数，而非经典分支值列表。
--/
+/-- 用 rs 中匹配的分支记录，逆序撤销从轮号 i 开始的 Kaliski 循环，并清零 rs。 -/
 def kaliskiUnloop (L : KaliskiRoundLayout) (i : Nat) (rs : List RoundRecord) : Program := prog {
   for j in reversed(range(rs.length)) {
-    let round := (loopEndLayout L j).withRecord rs[j]; -- 与正向第 j 轮相同的视图及历史槽 rs[j]。
-    kaliskiUnround(round, i+j);  -- 恢复第 i+j 轮之前的 u/v/r/s/k/done，并清零 rs[j] 的两位分支记录。
+    let round := (loopEndLayout L j).withRecord rs[j]; -- 第 j 轮接线，分支记录用 rs[j]。
+    kaliskiUnround(round, i+j);  -- 恢复轮前状态，清零 rs[j]。
   };
 }
 
