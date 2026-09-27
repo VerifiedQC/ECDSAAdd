@@ -5,9 +5,8 @@ namespace ECDSAAdd.Arithmetic
 /-- dst ^= (c=1 ? f(src) : src)。kernel 负责计算 temp ^= f(src)，temp 初始为零。 -/
 def conditionalXor (kernel : Program) (c : Wire) (src temp dst : List Wire) : Program := prog {
   kernel();                          -- temp = f(src)
-  copyRegister(none, src, dst);       -- dst ^= src
-  copyRegister(some c, src, dst);     -- c=1 时撤销 src
-  copyRegister(some c, temp, dst);    -- c=1 时 dst ^= temp
+  CXor (c XOR 1) dst src;            -- c=0 时 dst ^= src。
+  CXor c dst temp;                   -- c=1 时 dst ^= f(src)。
   kernel();                          -- 清零 temp。
 }
 

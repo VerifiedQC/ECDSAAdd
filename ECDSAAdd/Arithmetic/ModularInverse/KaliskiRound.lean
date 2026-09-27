@@ -127,7 +127,7 @@ theorem recordRound_program (L : KaliskiRoundLayout) :
   rfl
 
 /-- L.active ^= NOT L.done；done=0 表示尚未结束，done=1 表示已结束。 -/
-def loadActive (L : KaliskiRoundLayout) : Program := [.X L.active,.CX L.done L.active]
+def loadActive (L : KaliskiRoundLayout) : Program := prog { CX (L.done XOR 1) L.active; }
 
 /-- L.active ^= [i<kNext]，i 是当前轮号，kNext 是本轮更新后的活动轮计数。 -/
 def roundActiveXor (L : KaliskiRoundLayout) (i : Nat) : Program :=

@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.RegisterXor.Registers
+import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
 open Instr
@@ -151,5 +151,94 @@ theorem selectXor_wires (b : SelectBit) (bs : List SelectBit) (flag : Wire) :
 /-- out ^= (flag=0 ? whenZero : whenOne)，三个寄存器等长。 -/
 def chooseXor (flag : Wire) (whenZero whenOne out : List Wire) : Program :=
   selectXor (List.zipWith (fun ab o => ⟨ab.1, ab.2, o⟩) (whenZero.zip whenOne) out) flag
+
+/-- 优化选择与两个独立的互补受控 XOR 有相同的完整状态效果。
+要求源、目标及控制互异；输出可以是任意初值，不依赖测量结果。 -/
+theorem selectXor_controls_equiv (bs : List SelectBit) (flag : Wire)
+    (hnd : (selectWires bs).Nodup) (hflag : flag ∉ selectWires bs)
+    (s : State) (m : List Bool) :
+    run (selectXor bs flag) m s = run (prog {
+      CXor (flag XOR 1) (bs.map SelectBit.out) (bs.map SelectBit.no);
+      CXor flag (bs.map SelectBit.out) (bs.map SelectBit.yes);
+    }) m s := by
+  let a := bs.map SelectBit.no
+  let b := bs.map SelectBit.yes
+  let o := bs.map SelectBit.out
+  have counts (xs : List SelectBit) (w : Wire) :
+      (selectWires xs).count w = (xs.map SelectBit.no).count w +
+        (xs.map SelectBit.yes).count w + (xs.map SelectBit.out).count w := by
+    induction xs with
+    | nil => rfl
+    | cons x xs ih => simp only [selectWires, List.map_cons, List.count_cons, ih]; omega
+  have ha : (a ++ o).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro w
+    have h := List.nodup_iff_count.mp hnd w
+    rw [counts] at h
+    simp only [List.count_append]
+    change (bs.map SelectBit.no).count w + (bs.map SelectBit.out).count w ≤ 1
+    omega
+  have hb : (b ++ o).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro w
+    have h := List.nodup_iff_count.mp hnd w
+    rw [counts] at h
+    simp only [List.count_append]
+    change (bs.map SelectBit.yes).count w + (bs.map SelectBit.out).count w ≤ 1
+    omega
+  have hf : flag ∉ o := by
+    intro h
+    obtain ⟨x, hx, he⟩ := List.mem_map.mp h
+    exact hflag (he ▸ (mem_selectWires hx).2.2)
+  have hctrl : ∀ c ∈ some flag, c ∉ o := by simpa using hf
+  have had := (List.nodup_append'.mp ha).2.2
+  have hbd := (List.nodup_append'.mp hb).2.2
+  let s₀ := run (copyRegister none a o) m s
+  let s₁ := run (copyRegister (some flag) a o) m s₀
+  let s₂ := run (copyRegister (some flag) b o) m s₁
+  obtain ⟨hp₀, he₀, hv₀⟩ := copyRegister_correct none a o
+    (by simp [a, o]) ha (by simp) s m
+  obtain ⟨hp₁, he₁, hv₁⟩ := copyRegister_correct (some flag) a o
+    (by simp [a, o]) ha hctrl s₀ m
+  obtain ⟨hp₂, he₂, hv₂⟩ := copyRegister_correct (some flag) b o
+    (by simp [b, o]) hb hctrl s₁ m
+  have hfa : s₀.basis flag = s.basis flag := he₀ flag hf
+  have hfb : s₁.basis flag = s.basis flag := (he₁ flag hf).trans hfa
+  have hva : regValue a s₀.basis = regValue a s.basis :=
+    regValue_congr _ _ _ (fun w hw => he₀ w (List.disjoint_left.mp had hw))
+  have hvb : regValue b s₁.basis = regValue b s.basis :=
+    regValue_congr _ _ _ (fun w hw =>
+      (he₁ w (List.disjoint_left.mp hbd hw)).trans (he₀ w (List.disjoint_left.mp hbd hw)))
+  change regValue o s₀.basis = _ at hv₀
+  change regValue o s₁.basis = _ at hv₁
+  change regValue o s₂.basis = _ at hv₂
+  simp only [copyValue] at hv₀ hv₁ hv₂
+  rw [hv₁, hv₀, hfa, hfb, hva, hvb] at hv₂
+  have hv : regValue o s₂.basis = regValue o s.basis ^^^
+      (if s.basis flag then regValue b s.basis else regValue a s.basis) := by
+    cases h : s.basis flag <;> simpa [h, Nat.xor_assoc] using hv₂
+  obtain ⟨hp, he, hz⟩ := selectXor_correct bs flag hnd hflag s m
+  have hr : run (prog {
+      CXor (flag XOR 1) o a;
+      CXor flag o b;
+    }) m s = s₂ := by
+    rw [run_append, run_take, run_append, run_take]
+    simp only [
+      (copyRegister_counts none a o (by simp [a, o])).2,
+      (copyRegister_counts (some flag) a o (by simp [a, o])).2,
+      measurementCount_append, Nat.zero_add, List.drop_zero]
+    rfl
+  change run (selectXor bs flag) m s = run (prog {
+    CXor (flag XOR 1) o a; CXor flag o b;
+  }) m s
+  rw [hr]
+  have hphase : (run (selectXor bs flag) m s).phase = s₂.phase :=
+    hp.trans (hp₂.trans (hp₁.trans hp₀)).symm
+  have hbasis : (run (selectXor bs flag) m s).basis = s₂.basis := by
+    funext w
+    by_cases hw : w ∈ o
+    · exact (regValue_eq_iff o _ _).mp (hz.trans hv.symm) w hw
+    · exact (he w hw).trans ((he₂ w hw).trans ((he₁ w hw).trans (he₀ w hw))).symm
+  exact congrArg₂ State.mk hphase hbasis
 
 end ECDSAAdd.Arithmetic

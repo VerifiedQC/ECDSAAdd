@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Copy
 
 namespace ECDSAAdd.Arithmetic
+open Instr
 
 /-- head::tail 的寄存器值 ^= (g=1 ? src : 1)，保留 g/src；清零目标上得到所选除数。
 有效等宽互异布局下，g=0 时选常量 1；g=1 时仍须由调用者保证 src 非零，才是安全除数。
@@ -12,8 +13,14 @@ namespace ECDSAAdd.Arithmetic
 - `head`：目标除数寄存器的最低位 wire。
 - `tail`：目标除数的其余位，从低到高排列；完整 XOR 目标是 head::tail。
 -/
-def safeDivisor (g : Wire) (src : List Wire) (head : Wire) (tail : List Wire) : Program :=
-  [.X head,.CX g head]++copyRegister (some g) src (head::tail)
+def safeDivisor (g : Wire) (src : List Wire) (head : Wire) (tail : List Wire) : Program := prog {
+  CX (g XOR 1) head;              -- g=0 时目标 ^= 1。
+  CXor g (head :: tail) src;      -- g=1 时目标 ^= src。
+}
+
+theorem safeDivisor_program (g : Wire) (src : List Wire) (head : Wire) (tail : List Wire) :
+    safeDivisor g src head tail = [.X head, .CX g head] ++
+      copyRegister (some g) src (head :: tail) := rfl
 
 theorem safeDivisor_correct (g : Wire) (src : List Wire) (head : Wire) (tail : List Wire)
     (hlen : src.length=(head::tail).length) (hnd : (g::src++(head::tail)).Nodup)
@@ -57,7 +64,7 @@ theorem safeDivisor_correct (g : Wire) (src : List Wire) (head : Wire) (tail : L
         if_false,if_true] using hh
   obtain ⟨hp,he,hv⟩ := copyRegister_correct (some g) src (head::tail) hlen hs
     (by simpa using hg) u m
-  rw [safeDivisor,run_append,run_take,hu]
+  rw [safeDivisor_program,run_append,run_take,hu]
   simp only [measurementCount,List.drop_zero]
   refine ⟨hp,?_,?_⟩
   · intro w hw

@@ -67,9 +67,19 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 斜率清理不再用 x 表示条件，也不把 generic 掺入 xIsZero：`zeroTest point.x xIsZero` 得到独立的 `[point.x=0]`；`CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 在非零分支减去模 p 的商，`CCXor generic xIsZero slope lambdaStar` 在为零分支 XOR 例外斜率。之后再次判零以清除 xIsZero。控制位置的 `XOR 1` 表示负控制，不修改条件位；除法表达式只描述寄存器操作，不无条件求商。配置复用原有工作位来合并两个控制、调用 divideSub 或 maskedConstant、清零临时控制。generic=0 时最终状态不变，但仍会执行计算与清理。此版实际门列有所变化：Toffoli 增加 4，测量及静态线路数不变；正确性和资源须按新门列验证。
 
+### 显式受控操作（2026-09-27）
+
+重要算法的量子条件分支使用 `CXor 控制 目标 源`、`CConst 控制 目标 常数`、`CPointXor 控制 目标 常量点`；后者异或点编码，不是点加。`(c XOR 1)` 表示 c=0 的负控制，不是测量或修改 c 的语句。普通受控原地加减写为 `CAdd/CSub 控制 目标 源`，常量加减写为 `CAddConst/CSubConst 控制 目标 常数`；低位常量加法用 `CAddConstLow`。这些调用仍使用原有具体算术电路及已绑定的辅助接线，不是给任意 Program 逐门套控制。
+
+modAdd/modSub 现在以 `let n := L.width` 在代码中定义 n，随后列出无借位/有借位的两行 CXor。modArithmeticContext 明确配置 cxorCases，将相邻、同一控制与目标、先负后正的两行合并为原 chooseXor，每位仍只有一个 Toffoli。Selection 的 `selectXor_controls_equiv` 证明此优化与两个独立控制的完整状态效果等价，前提是等宽且线路互异。无此配置、不同控制/目标、或中间有语句/let 时不合并；不是任意别名和任意接线下都合法的优化。
+
+已检查表中 14 个模块：RegisterXor 的原值/函数值选择，Comparison 的负控制读出，ModularAddition 的借位选择与回补，ModularDoubling 的奇偶/借位回补，ModularMultiplication 的受控累加/约减，ModularInverse 的活动标志与数据轮，Division 的安全分母，PointAddition 的候选分母、点编码输出与特殊分支均采用显式控制。Lookup 的叶子为受控常量 XOR，递归树保留显式条件工作位及测量清理。Addition、Selection 的已清楚门级主体，以及 Swap/Shift 和已显式带控制的 Equality 不额外包装。按经典常量、列表长度、接线种类构造电路的 if/match 保留，不伪装成量子判断。
+
+这轮保留资源用量；除 divideUnload 将末尾的 `CX; X` 改为等价的 `X; CX` 负控制展开外，其余被改写主体通过指令列表相等性核对。卸载重排保留控制/目标互异条件下的完整状态效果，并同步验证其原有规格。负控制点编码的底层仍可通过暂时 X 控制位再恢复来实现；“XOR 1”本身不是一条 X 指令，不代表所有底层实现都没有 X 门。
+
 ### 当前注释规则（2026-09-27）
 
-以 [Modular.lean 的 modAdd](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 为精简示范；同一风格已应用于下表的重要算法入口及直接相关的程序辅助函数，覆盖 14 个模块中的 26 个 Lean 文件。本次仅修改注释，不改程序、证明或各层 README 的写法。以下规则替代此前“每个参数、每个 let 都解释”的要求。
+以 [Modular.lean 的 modAdd](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 为精简示范；同一风格已应用于下表的重要算法入口及直接相关的程序辅助函数，覆盖 14 个模块中的 26 个 Lean 文件。该注释精简阶段不改程序、证明或各层 README 的写法；后续受控语法改写见上一节。以下规则替代此前“每个参数、每个 let 都解释”的要求。
 
 - 函数开头只写计算结果、必要数值条件，以及 n 等不明确符号的含义；不固定添加“参数”段，不重复完整规格。
 - `let x := L.x` 这类直观别名不注释。中间量只写用途，如“用于保存 x+y”“用于保存 total-q”；标志位要写清 0/1 各表示什么。
@@ -124,6 +134,6 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 本轮只用 `new-temp` 累积报告、文档和源码整理，`new` 留作最终验收后的集成分支。多人协作按模块划定写入范围，由一个集成人负责共享文件和 Git 操作。接口、算法、历史寿命或文件归属变化时，同步修改模块 README。
 
-仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，`tests/ModularReadable.lean` 中显式寄存器接口的回归检查，以及 `tests/ContextPrograms.lean` 中配置作用域、条件取反及展开等价性检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
+仓库根目录运行 `scripts/verify.sh`：完整 `lake --wfail build`，运行 `tests/ProgSyntax.lean`、`tests/ReadablePrograms.lean`、`tests/ReadableLoops.lean` 中的语法与指令等价性检查，`tests/ModularReadable.lean` 中显式寄存器接口的回归检查，`tests/ContextPrograms.lean` 中配置作用域、条件取反及展开等价性检查，以及 `tests/ControlledPrograms.lean` 中显式控制、选择优化及拒绝误合并的检查，然后检查脚本选定公开定理的传递公理依赖，只允许 propext、Classical.choice、Quot.sound。不以数值测试替代证明。
 
 当前证明与资源证据见 [PROOF_STATUS](PROOF_STATUS.md)，算法历史见 [REWORK_PLAN](REWORK_PLAN.md)，来源见 [PROVENANCE](PROVENANCE.md)，整理范围和验收记录见 [READABILITY_REPORT](READABILITY_REPORT.md)。

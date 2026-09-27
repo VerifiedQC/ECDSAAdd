@@ -62,8 +62,8 @@ def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Pro
   let r := L.r;
   let s := L.s;
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
-  controlledSub subtract v u;                -- subtract=1 时 u -= v。
-  controlledAdd subtract s r;                -- subtract=1 时 r += s。
+  CSub subtract u v;                         -- subtract=1 时 u -= v。
+  CAdd subtract r s;                         -- subtract=1 时 r += s。
   shiftRight(active, u);                     -- active=1 时 u /= 2。
   shiftLeft(active, s);                      -- active=1 时 s *= 2。
   swapDataPairs(L, swap);                    -- 交换回来。
@@ -80,8 +80,8 @@ def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : P
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
   shiftRight(active, s);                     -- active=1 时 s /= 2。
   shiftLeft(active, u);                      -- active=1 时 u *= 2。
-  controlledSub subtract s r;                -- subtract=1 时 r -= s。
-  controlledAdd subtract v u;                -- subtract=1 时 u += v。
+  CSub subtract r s;                         -- subtract=1 时 r -= s。
+  CAdd subtract u v;                         -- subtract=1 时 u += v。
   swapDataPairs(L, swap);                    -- 交换回来。
 }
 

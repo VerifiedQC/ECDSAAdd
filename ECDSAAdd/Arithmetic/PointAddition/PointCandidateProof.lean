@@ -125,7 +125,8 @@ theorem pointCandidate_compute_spec (L : PointAddLayout) (h : L.Widths) (hnd : L
     funext f
     cases f <;> simp [v11,v10,v9,v8,v7,v6,v5,v4,v3,v2,v1,v0,candidateInitial,candidateResult]
   rw [← hf]
-  exact (((((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9).seq h10).seq h11
+  simpa only [pointCandidateCompute_program] using
+    (((((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9).seq h10).seq h11
 
 /-- 候选寄存器按依赖逆序清零，输入、普通分支标志和共享池保持。 -/
 private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
@@ -142,7 +143,7 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       | .square => SQ | .offset => OF | .x => CX | .delta => DE | .product => PR
       | .y => CY | .constant => 0 | .divisor => DV | .inverse => IV) G) (pointCandidateClear L cx cy)
       (CandidateValues L (candidateInitial X Y) G) := by
-  rw [pointCandidateClear]
+  rw [pointCandidateClear_program]
   letI : NeZero p := ⟨by norm_num [p]⟩
   have hp : 0<p := by norm_num [p]
   have hp1 : 1<p := by norm_num [p]

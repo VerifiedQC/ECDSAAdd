@@ -66,9 +66,8 @@ def divideLoad (L : DivideLayout) : Program := prog {
   let leastBit := L.vBit; -- 安全分母的最低位。
   let u := L.inner.first.u; -- 求逆所用的数据寄存器 u。
   let s := L.inner.first.s; -- 求逆所用的系数寄存器 s。
-  X leastBit;
-  CX L.control leastBit;                         -- control=0 时 denominatorCopy=1。
-  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时 denominatorCopy=denominator。
+  CX (L.control XOR 1) leastBit;                 -- control=0 时 denominatorCopy=1。
+  CXor L.control denominatorCopy L.denominator; -- control=1 时 denominatorCopy=denominator。
   xorConstant(u, p);                                    -- u = p
   xorConstant(s, 1);                                    -- s = 1
 }
@@ -79,9 +78,8 @@ def divideUnload (L : DivideLayout) : Program := prog {
   let leastBit := L.vBit; -- 安全分母的最低位。
   xorConstant(L.inner.first.s, 1);                      -- 清零 s。
   xorConstant(L.inner.first.u, p);                      -- 清零 u。
-  copyRegister(some L.control, L.denominator, denominatorCopy); -- control=1 时清零分母副本。
-  CX L.control leastBit;
-  X leastBit;                                    -- control=0 时清零分母副本。
+  CXor L.control denominatorCopy L.denominator; -- control=1 时清零分母副本。
+  CX (L.control XOR 1) leastBit;                 -- control=0 时清零常量 1。
 }
 
 /-- Proof-facing expansion of the readable program; the instruction sequence is unchanged. -/
@@ -89,7 +87,7 @@ theorem divideUnload_program (L : DivideLayout) :
     divideUnload L =
   xorConstant L.inner.first.s 1 ++ xorConstant L.inner.first.u p ++
   copyRegister (some L.control) L.denominator L.vLow ++
-  [.CX L.control L.vBit,.X L.vBit] := by
+  [.X L.vBit,.CX L.control L.vBit] := by
   simp only [divideUnload, List.append_assoc]
   rfl
 

@@ -99,6 +99,10 @@ def CircuitDSL.Branch.complement (b : CircuitDSL.Branch) : CircuitDSL.Branch
 
 斜率清理现在使用 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`。两个控制条件均成立时，分别从 slope 减去模 p 的商、向 slope XOR 常量。这里 xIsZero 是独立的判零 wire；控制位置的 `XOR 1` 表示负控制，不修改该位，也不使用上述 Branch 的预先掩码表示。商表达式由语法拆成分子和分母寄存器，不先执行 Lean 除法。`clearSlopeContext` 只绑定工作区；具体实现先合并双控制，再调用原受控算术接口并清零临时控制，不对任意 Program 逐门添加控制。
 
+单控制调用统一把目标放在源之前：`CXor c out src` 是寄存器 XOR，`CConst c out k` 是经典常量 XOR，`CPointXor c out C` 是点编码 XOR（不是点加）。它们支持 `(c XOR 1)` 负控制；`CX (c XOR 1) target`、`CCX enabled (c XOR 1) target` 也表示负控制门。`CAdd/CSub c target source` 与 `CAddConst/CSubConst c target k` 调用配置中的受控加减；`CAddConstLow` 使用配置中低位宽的常量加法。后面这些算术简写只接受正控制，不会给任意程序自动添加控制。
+
+只有接线配置明确提供 cxorCases 时，相邻的 `CXor (c XOR 1) out a; CXor c out b;` 才合并成选择电路；要求 c/out 是相同的语法表达式。不同控制、不同目标、中间隔有语句或 let 时不合并，无配置时仍展开成独立控制。模加减绑定原 chooseXor，每位一个 Toffoli；其等价性由 Selection 中的 `selectXor_controls_equiv` 证明，沿用寄存器等宽、线路互异的前提。此优化不会检查任意布局是否满足前提，调用者仍须通过公开规格证明合法性。
+
 ## [Semantics.lean](Semantics.lean)
 
 ```lean

@@ -2,6 +2,8 @@ import ECDSAAdd
 
 -- Each equation freezes the pre-refactor instruction list for arbitrary inputs.
 -- These are kernel-checked equalities, not just sample executions.
+-- Exception: divideUnload now uses the equivalent X; CX negative-control order.
+-- ControlledPrograms proves the two orders have the same full-state effect.
 namespace ECDSAAdd.Arithmetic
 open Instr Correction Secp256k1
 
@@ -9,7 +11,7 @@ open Instr Correction Secp256k1
 example (kernel : Program) (c : Wire) (src temp dst : List Wire) :
     conditionalXor kernel c src temp dst =
   kernel ++ copyRegister none src dst ++ copyRegister (some c) src dst ++
-  copyRegister (some c) temp dst ++ kernel := by rfl
+  copyRegister (some c) temp dst ++ kernel := by simp only [conditionalXor, List.append_assoc]
 
 -- Equality/EqualConstant.lean: equalConstant
 example (control target : Wire) (bs : List ZeroBit) (k : Nat) :
@@ -342,7 +344,7 @@ example (L : DivideLayout) :
     divideUnload L =
   xorConstant L.inner.first.s 1 ++ xorConstant L.inner.first.u p ++
   copyRegister (some L.control) L.denominator L.vLow ++
-  [.CX L.control L.vBit,.X L.vBit] := by rw [divideUnload_program]
+  [.X L.vBit,.CX L.control L.vBit] := by rw [divideUnload_program]
 
 -- Division/Divide.lean: divideAdd
 example (L : DivideLayout) :
@@ -454,7 +456,7 @@ example (L : PointAddLayout) (cx cy : Fp) :
   pointSubConstant L L.offset L.candidateX cx.val++
   fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)++
   fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)++
-  fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY) := by rfl
+  fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY) := pointCandidateCompute_program L cx cy
 
 -- PointAddition/PointCandidate.lean: pointCandidateClear
 example (L : PointAddLayout) (cx cy : Fp) :
@@ -469,7 +471,7 @@ example (L : PointAddLayout) (cx cy : Fp) :
   fieldInverse (poolInverse L.poolWire L.divisor L.inverse)++
   safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail++
   pointSubConstant L L.extendedY L.dy cy.val++
-  pointSubConstant L L.extendedX L.dx cx.val := by rfl
+  pointSubConstant L L.extendedX L.dx cx.val := pointCandidateClear_program L cx cy
 
 -- PointAddition/PointOutput.lean: maskedPointConstant
 example (c : Wire) (r : PointReg) (C : Point) :

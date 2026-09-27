@@ -9,16 +9,16 @@ open Secp256k1
 /-- c=1 时 r 的点编码 ^= C 的编码，为 0 时不变；C 是经典常量点。
 这是按位 XOR，不是曲线点加。 -/
 def maskedPointConstant (c : Wire) (r : PointReg) (C : Point) : Program := prog {
-  maskedConstant(c, [r.finite], (pointFinite C).toNat);  -- c=1 时 r.finite ^= C 的有限点标志。
-  maskedConstant(c, r.x, (pointX C));  -- c=1 时 r.x ^= C 的横坐标。
-  maskedConstant(c, r.y, (pointY C));  -- c=1 时 r.y ^= C 的纵坐标。
+  CConst c [r.finite] (pointFinite C).toNat; -- c=1 时 r.finite ^= C 的有限点标志。
+  CConst c r.x (pointX C);                  -- c=1 时 r.x ^= C 的横坐标。
+  CConst c r.y (pointY C);                  -- c=1 时 r.y ^= C 的纵坐标。
 }
 
 /-- L.generic=1 时 L.output 的点编码 ^= (有限标志 1, candidateX 的低 256 位, candidateY 的低 256 位)。 -/
 def pointGenericOutput (L : PointAddLayout) : Program := prog {
   CX L.generic L.output.finite;
-  copyRegister((some L.generic), (L.candidateX.take 256), L.output.x);  -- generic=1 时 output.x ^= candidateX 的低 256 位。
-  copyRegister((some L.generic), (L.candidateY.take 256), L.output.y);  -- generic=1 时 output.y ^= candidateY 的低 256 位。
+  CXor L.generic L.output.x (L.candidateX.take 256); -- generic=1 时 output.x ^= candidateX 的低 256 位。
+  CXor L.generic L.output.y (L.candidateY.take 256); -- generic=1 时 output.y ^= candidateY 的低 256 位。
 }
 
 /-- c=0 时 r 的点编码 ^= 经典点 C 的编码，为 1 时不变；不是加上 −C。 -/
@@ -31,8 +31,8 @@ def negativePointConstant (c : Wire) (r : PointReg) (C : Point) : Program := pro
 /-- 分支标志和候选已准备好时，L.output 的点编码 ^= (L.input+C) 的编码，C 是经典有限点。 -/
 def pointOutput (L : PointAddLayout) (C : Point) : Program := prog {
   pointGenericOutput(L);                              -- 普通分支：output 编码 ^= 候选点。
-  maskedPointConstant(L.double, L.output, C+C);         -- 输入为 C：output 编码 ^= 2C。
-  negativePointConstant(L.input.finite, L.output, C);   -- 输入为 O：output 编码 ^= C。
+  CPointXor L.double L.output (C+C);              -- 输入为 C：output 编码 ^= 2C。
+  CPointXor (L.input.finite XOR 1) L.output C;    -- 输入为 O：output 编码 ^= C。
   -- 输入为 -C 时结果是 O，编码全零，无需写入。
 }
 

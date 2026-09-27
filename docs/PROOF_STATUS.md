@@ -4,6 +4,8 @@ M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部
 
 当前分支已将斜率清理改为独立判零和双控制：有限常量点加为 8,946,190 Toffoli、5,772,554 次测量、6,218 根实际静态线路。后文阶段记录中的 8,946,186 是此次调整前的资源。
 
+随后将重要算法中的条件选择改写为显式受控调用，资源保持上述数值。`selectXor_controls_equiv` 证明模加减的选择优化与两个独立受控 XOR 具有相同完整状态效果；它要求等宽、互异接线，不能用于任意重叠寄存器。除法卸载中两门的等价重排也保留原有公开规格。验证新增 ControlledPrograms 测试及选择等价定理的公理依赖检查。
+
 验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
 ## M1
@@ -489,6 +491,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 'ECDSAAdd.Arithmetic.pointInPlaceClearSlope_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceClearSlope_disabled' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointStep_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.selectXor_controls_equiv' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceGeneric_point' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceCorners_effect' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ECDSAAdd.Arithmetic.pointInPlaceFinite_spec' depends on axioms: [propext, Classical.choice, Quot.sound]

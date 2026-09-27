@@ -58,7 +58,7 @@ theorem loadActive_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
     exact Ne.symm h.1.1
   intro s m h
   refine ⟨rfl,flags_update L hnd z K N A D S T _ _ _ _ h ?_ ?_ ?_⟩
-  · simp only [loadActive,run,writeBit,Function.update_self,Function.update_of_ne had,h.2.active,h.2.done]
+  · simp only [loadActive,List.singleton_append,run,writeBit,Function.update_self,Function.update_of_ne had,h.2.active,h.2.done]
     cases A <;> cases D <;> rfl
   · simpa [loadActive,run,writeBit,had] using h.2.done
   · intro w hw _

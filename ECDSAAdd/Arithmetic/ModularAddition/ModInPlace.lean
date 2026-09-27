@@ -62,7 +62,7 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog using (modAddC
   xorConstant(L.constant, p);                        -- constant = p
   subInPlace L.constant target;                     -- target -= p；borrow = [原和<p]
   xorConstant(L.constant, p);                        -- 清零 constant。
-  maskedAddConst borrow L.low p;                    -- borrow=1 时 low += p。
+  CAddConst borrow L.low p;                         -- borrow=1 时 low += p。
 
   -- 结果小于 source 表示曾发生约减，与借位标志相反。
   compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]，随后 X 清零 borrow。

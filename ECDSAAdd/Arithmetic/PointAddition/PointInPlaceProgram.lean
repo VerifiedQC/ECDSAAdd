@@ -8,9 +8,9 @@ open Secp256k1
 /-- r ← (r+L.core.generic·k.val) mod p，k 是经典域元素，要求 r<p。 -/
 def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program := prog {
   let M := L.inPlaceConstant r;  -- a 用于保存受控常数，low 接目标 r。
-  maskedConstant(L.core.generic, M.a, k.val);  -- M.a = generic ? k.val : 0
+  CConst L.core.generic M.a k.val; -- generic=1 时 M.a = k.val。
   modAddInPlace(M, p);  -- r += M.a (mod p)
-  maskedConstant(L.core.generic, M.a, k.val);  -- 清零 M.a。
+  CConst L.core.generic M.a k.val; -- 清零 M.a。
 }
 
 /-- L.core.generic=1 时 L.point.x ← −L.point.x mod p，为 0 时不变。 -/
@@ -131,10 +131,10 @@ def pointInPlaceDoubleEnable (L : ControlledPointLayout) (cy : Fp) : Program :=
 /-- 在分支标志已准备好时，将 L.point 的三个特殊分支分别更新为 O→C、C→2C、−C→O。
 C 是经典有限点，O 是无穷远点。 -/
 def pointInPlaceCorners (L : ControlledPointLayout) (C : Point) : Program := prog {
-  maskedPointConstant(L.infinitySelect, L.point, C);  -- 输入为 O：point 编码 ^= C → C。
-  maskedPointConstant(L.doubleSelect, L.point, C);  -- 输入为 C：point 编码 ^= C → O。
-  maskedPointConstant(L.doubleSelect, L.point, (C+C));  -- 输入为 C：point 编码 ^= 2C → 2C。
-  maskedPointConstant(L.genericSelect, L.point, (-C));  -- 输入为 -C：point 编码 ^= -C → O。
+  CPointXor L.infinitySelect L.point C;   -- 输入为 O：point 编码 ^= C → C。
+  CPointXor L.doubleSelect L.point C;     -- 输入为 C：point 编码 ^= C → O。
+  CPointXor L.doubleSelect L.point (C+C); -- 输入为 C：point 编码 ^= 2C → 2C。
+  CPointXor L.genericSelect L.point (-C); -- 输入为 -C：point 编码 ^= -C → O。
 }
 
 /-- L.control=1 时 L.point ← L.point+C，为 0 时不变。

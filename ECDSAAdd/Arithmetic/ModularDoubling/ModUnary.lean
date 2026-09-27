@@ -84,7 +84,7 @@ def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryC
   xorConstant(U.constant, p);                           -- constant = p
   subInPlace U.constant target;                        -- target -= p；borrow = [倍增结果<p]
   xorConstant(U.constant, p);                           -- 清零 constant。
-  maskedAddConstLow borrow U.low p;                    -- borrow=1 时 low += p。
+  CAddConstLow borrow U.low p;                         -- borrow=1 时 low += p。
   X borrow;                                     -- 结果为奇数表示发生过约减。
   CX leastBit borrow;                           -- 清零 borrow。
 }
@@ -105,7 +105,7 @@ def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnary
   let target := U.z;       -- 用于保存 U.low 或 U.low+p。
   let wasOdd := U.flag;    -- 保存输入奇偶：0 为偶数，1 为奇数。
   CX U.bit wasOdd;                             -- wasOdd = target mod 2
-  maskedAddConst wasOdd target p;                      -- wasOdd=1 时 target += p。
+  CAddConst wasOdd target p;                           -- wasOdd=1 时 target += p。
   rotateRight(target);                                -- target /= 2
   compareLtConst U.low ((p+1)/2) wasOdd;                -- wasOdd ^= [low<(p+1)/2]
   X wasOdd;                                     -- 原输入为奇数 iff 结果≥(p+1)/2，清零 wasOdd。

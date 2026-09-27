@@ -110,7 +110,7 @@ def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in (List.range 4) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    controlledAdd bit shiftedX L.acc;  -- bit=1 时 acc += x*2^j。
+    CAdd bit L.acc shiftedX;           -- bit=1 时 acc += x*2^j。
   };
 }
 
@@ -119,7 +119,7 @@ def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in ((List.range 4).reverse) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    controlledSub bit shiftedX L.acc;  -- bit=1 时 acc -= x*2^j。
+    CSub bit L.acc shiftedX;           -- bit=1 时 acc -= x*2^j。
   };
 }
 
@@ -174,14 +174,14 @@ def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montA
   let high := L.acc.getD 260 L.flag; -- acc 的最高位，试减后表示借位。
   montConstantSub(L, p);                               -- acc -= p
   CX high borrow;                              -- borrow = [原 acc<p]
-  maskedAddConst borrow L.acc p; -- borrow=1 时 acc += p。
+  CAddConst borrow L.acc p;      -- borrow=1 时 acc += p。
 }
 
 /-- 撤销 montNormalize：L.acc ← L.acc+(L.flag=1 ? 0 : p)，清零 L.flag。 -/
 def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
   let borrow := L.flag; -- 正向约减保留的借位。
   let high := L.acc.getD 260 L.flag; -- acc 的最高位。
-  maskedSubConst borrow L.acc p; -- borrow=1 时 acc -= p。
+  CSubConst borrow L.acc p;      -- borrow=1 时 acc -= p。
   CX high borrow;                                 -- 清零 borrow。
   montConstantAdd(L, p);                                  -- 恢复 acc。
 }

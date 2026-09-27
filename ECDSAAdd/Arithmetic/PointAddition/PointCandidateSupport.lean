@@ -142,7 +142,7 @@ theorem pointCandidate_support (L : PointAddLayout) (h : L.Widths) (cx cy : Fp) 
   have cProduct := poolMul_support L h L.delta (L.slope.take 256) L.product hdelta (by simp [hslope]) hproduct
   have cSquare := pointSquare_support L h
   have cInverse := poolInverse_support L _ _ h.divisor h.inverse
-  simp only [pointCandidateCompute,pointCandidateClear,wires_append,cDx,cDy,cX,
+  simp only [pointCandidateCompute_program,pointCandidateClear_program,wires_append,cDx,cDy,cX,
     cOffset,cDelta,cY,cSlope,cProduct,cSquare,hsafe,cInverse]
   constructor <;> ext w
   all_goals

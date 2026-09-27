@@ -7,8 +7,8 @@ open Instr
 /-- 无控制时 t ^= NOT top；control=some c 时 t ^= c AND NOT top。
 top 是最高进位。 -/
 def flipBelow : Option Wire → Wire → Wire → Program
-  | none, top, t => [.X t, .CX top t]
-  | some c, top, t => [.CX c t, .CCX c top t]
+  | none, top, t => prog { CX (top XOR 1) t; }
+  | some c, top, t => prog { CCX c (top XOR 1) t; }
 
 local macro_rules
   | `(tactic| get_elem_tactic) =>
@@ -68,7 +68,7 @@ theorem flipBelow_correct (control : Option Wire) (top t : Wire) (hnt : t ≠ to
       ⟨s.phase, writeBit s.basis t (s.basis t ^^ (controlValue control s.basis && !s.basis top))⟩ := by
   cases control with
   | none =>
-    simp only [flipBelow, run, controlValue]
+    simp only [flipBelow, controlValue]
     apply congrArg (State.mk s.phase)
     funext w
     by_cases hw : w = t
@@ -77,7 +77,7 @@ theorem flipBelow_correct (control : Option Wire) (top t : Wire) (hnt : t ≠ to
     · simp [writeBit, hw]
   | some c =>
     have hct : c ≠ t := hc c (by simp)
-    simp only [flipBelow, run, controlValue]
+    simp only [flipBelow, controlValue]
     apply congrArg (State.mk s.phase)
     funext w
     by_cases hw : w = t

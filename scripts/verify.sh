@@ -7,6 +7,7 @@ lake env lean tests/ReadablePrograms.lean
 lake env lean tests/ReadableLoops.lean
 lake env lean tests/ModularReadable.lean
 lake env lean tests/ContextPrograms.lean
+lake env lean tests/ControlledPrograms.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -41,6 +42,7 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.modSub_spec
 #print axioms ECDSAAdd.Arithmetic.modAdd_resources
 #print axioms ECDSAAdd.Arithmetic.modSub_resources
+#print axioms ECDSAAdd.Arithmetic.selectXor_controls_equiv
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_zero_spec
 #print axioms ECDSAAdd.Arithmetic.fieldSub_zero_spec
 #print axioms ECDSAAdd.Arithmetic.fieldAdd_spec

@@ -103,6 +103,17 @@ syntax "C-const" term:max term:max ";" : circuitStmt
 -- 双控制算术：商的两个寄存器由语法拆开，不先执行 Lean 的除法。
 syntax "CCsub" term:max term:max term:max "(" term:max " / " term:max ")" ";" : circuitStmt
 syntax "CCXor" term:max term:max term:max term:max ";" : circuitStmt
+-- 明确的受控操作；参数依次为控制、目标、源/常数。
+syntax "CXor" term:max term:max term:max ";" : circuitStmt
+syntax "CConst" term:max term:max term:max ";" : circuitStmt
+syntax "CPointXor" term:max term:max term:max ";" : circuitStmt
+syntax "CAdd" term:max term:max term:max ";" : circuitStmt
+syntax "CSub" term:max term:max term:max ";" : circuitStmt
+syntax "CAddConst" term:max term:max term:max ";" : circuitStmt
+syntax "CAddConstLow" term:max term:max term:max ";" : circuitStmt
+syntax "CSubConst" term:max term:max term:max ";" : circuitStmt
+syntax "circuitXorCases% " term:max term:max term:max term:max
+  "{" circuitStmt* "}" : term
 syntax "(" term " XOR " num ")" : term
 macro_rules
   | `(($b XOR $n:num)) => do
@@ -115,6 +126,7 @@ macro_rules
       `($acc ++ (let $name := $value; prog { $rest* }))
   | `(circuitSeq% $acc { $first:circuitStmt $rest:circuitStmt* }) =>
       `(circuitSeq% ($acc ++ prog { $first }) { $rest* })
+
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
@@ -165,8 +177,99 @@ macro_rules (kind := circuitBlock)
         $rest:circuitStmt* }) =>
       `(circuitSeq% (($items).flatMap (fun $item => prog { $body* })) { $rest* })
 
+macro_rules (kind := circuitBlock)
+  | `(prog { $gate:ident $c ($d XOR $n:num) $target; $rest:circuitStmt* }) => do
+      unless gate.getId == `CCX do Macro.throwUnsupported
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { Instr.CX $c $target; Instr.CCX $c $d $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { $gate:ident ($c XOR $n:num) $target; $rest:circuitStmt* }) => do
+      unless gate.getId == `CX do Macro.throwUnsupported
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { Instr.X $target; Instr.CX $c $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CSubConst $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `maskedSubConst):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CAddConstLow $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `maskedAddConstLow):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CAddConst $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `maskedAddConst):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CSub $c $target $source; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `controlledSub):ident $c $source $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CAdd $c $target $source; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `controlledAdd):ident $c $source $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CPointXor $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `maskedPointConstant):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CPointXor ($c XOR $n:num) $target $value; $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { $(mkIdent `negativePointConstant):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CConst $c $target $value; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `maskedConstant):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CConst ($c XOR $n:num) $target $value; $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { $(mkIdent `xorConstant):ident $target $value;
+        $(mkIdent `maskedConstant):ident $c $target $value; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CXor $c $target $source; $rest:circuitStmt* }) =>
+      `(prog { $(mkIdent `copyRegister):ident (some $c) $source $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CXor ($c XOR $n:num) $target $source; $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      `(prog { $(mkIdent `copyRegister):ident none $source $target;
+        $(mkIdent `copyRegister):ident (some $c) $source $target; $rest* })
+
+macro_rules (kind := circuitBlock)
+  | `(prog { CXor ($c XOR $n:num) $target $no; CXor $d $other $yes;
+        $rest:circuitStmt* }) => do
+      unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
+      if c.raw == d.raw && target.raw == other.raw then
+        `(circuitXorCases% $c $target $no $yes { $rest* })
+      else
+        `(prog { $(mkIdent `copyRegister):ident none $no $target;
+          $(mkIdent `copyRegister):ident (some $c) $no $target;
+          CXor $d $other $yes; $rest* })
+
+macro_rules
+  | `(circuitSeq% $acc { CXor ($c XOR $n:num) $target $no;
+        CXor $d $other $yes; $rest:circuitStmt* }) =>
+      `(circuitSeq% ($acc ++ prog {
+        CXor ($c XOR $n) $target $no; CXor $d $other $yes;
+      }) { $rest* })
+
 namespace CircuitDSL
 open Lean.Meta Lean.Elab.Term
+
+/-- 仅合并相邻、同控制/同目标的负/正 CXor。没有配置时保留两个独立操作。
+配置中的 cxorCases 须证明等宽、互异接线下的选择语义，不能借此控制任意程序。 -/
+elab_rules : term
+  | `(circuitXorCases% $c $target $no $yes { $rest:circuitStmt* }) => do
+    let stx ← if (← getLCtx).findFromUserName? `cxorCases |>.isSome then
+      `(prog { $(mkIdent `cxorCases):ident $c $target $no $yes; $rest* })
+    else
+      `(prog { $(mkIdent `copyRegister):ident none $no $target;
+        $(mkIdent `copyRegister):ident (some $c) $no $target;
+        $(mkIdent `copyRegister):ident (some $c) $yes $target; $rest* })
+    elabTerm stx (some (mkConst ``Program))
 
 /-- 展开配置字段后再检查普通 prog；产物不保留运行期环境或分派层。 -/
 private def elabWithOperations (ops : Expr) (fields : List Name)

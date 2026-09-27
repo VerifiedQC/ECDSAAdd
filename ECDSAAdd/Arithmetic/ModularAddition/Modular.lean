@@ -6,6 +6,7 @@ namespace ECDSAAdd.Arithmetic
 structure ModArithmeticOps where
   addXor : List Wire → List Wire → List Wire → Program
   subXor : List Wire → List Wire → List Wire → Program
+  cxorCases : Wire → List Wire → List Wire → List Wire → Program
 
 /-- L 提供固定辅助位；它们须初始为零，调用后恢复，不自动分配或猜测工作区。
 carrySum/carryDiff 分别是加/减法进位链；cinSum/cinDiff 是零输入进位。
@@ -14,12 +15,15 @@ def modArithmeticContext (L : ModLayout) : CircuitDSL.Context ModArithmeticOps :
   operations := {
     addXor := fun x y out => addXor x y out (L.reg .carrySum) L.cinSum
     subXor := fun x y out => subXor x y out (L.reg .carryDiff) L.cinDiff
+    -- 互补 CXor 共用原选择电路，每位仍只用一个 Toffoli。
+    cxorCases := fun flag out whenZero whenOne => chooseXor flag whenZero whenOne out
   }
 }
 
 /-- 输出 L.out ^= (L.x+L.y) mod q，要求 0<q<2^n、x,y<q。
 n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
 def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
+  let n := L.width;
   let x := L.x;
   let y := L.y;
   let total := L.reg .total;        -- 用于保存 x+y。
@@ -32,7 +36,8 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
   addXor x y total;                               -- total = x+y
   subXor total modulus diff;                      -- diff = total-q
 
-  chooseXor borrow (diff.take L.width) (total.take L.width) out;  -- out ^= (borrow=0 ? diff : total) 的低 n 位。
+  CXor (borrow XOR 1) out (diff.take n); -- 无借位：out ^= diff 的低 n 位。
+  CXor borrow out (total.take n);       -- 有借位：out ^= total 的低 n 位。
 
   subXor total modulus diff;                      -- 清零 diff。
   addXor x y total;                               -- 清零 total。
@@ -42,6 +47,7 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
 /-- 输出 L.out ^= (L.x−L.y) mod q，要求 0<q<2^n、x,y<q。
 n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
 def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
+  let n := L.width;
   let x := L.x;
   let y := L.y;
   let diff := L.reg .diff;          -- 用于保存 x-y。
@@ -54,7 +60,8 @@ def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
   subXor x y diff;                                     -- diff = x-y
   addXor diff modulus corrected;                       -- corrected = diff+q
 
-  chooseXor borrow (diff.take L.width) (corrected.take L.width) out;  -- out ^= (borrow=0 ? diff : corrected) 的低 n 位。
+  CXor (borrow XOR 1) out (diff.take n); -- 无借位：out ^= diff 的低 n 位。
+  CXor borrow out (corrected.take n);  -- 有借位：out ^= corrected 的低 n 位。
 
   addXor diff modulus corrected;                       -- 清零 corrected。
   subXor x y diff;                                     -- 清零 diff。

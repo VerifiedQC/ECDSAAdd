@@ -72,9 +72,11 @@ def pointSquare (L : PointAddLayout) : Program := prog using (pointCandidateCont
 def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog using (pointCandidateContext L) {
   let x := L.extendedX;
   let y := L.extendedY;
+  let divisor := L.divisor.head! :: L.divisor.tail; -- 用于保存安全分母，最低位可装入 1。
   pointSubConstant x L.dx cx.val;                         -- dx = x-cx
   pointSubConstant y L.dy cy.val;                         -- dy = y-cy
-  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);  -- divisor = generic ? dx : 1
+  CConst (L.generic XOR 1) [L.divisor.head!] 1; -- 非普通分支：divisor = 1。
+  CXor L.generic divisor (L.dx.take 256);     -- 普通分支：divisor = dx。
   fieldInverseXor L.divisor L.inverse;                  -- inverse = 1/divisor
   fieldMulXor L.dy L.inverse L.slope;                  -- slope = dy/divisor
   pointSquare(L);                                             -- square = slope²
@@ -89,6 +91,7 @@ def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog us
 def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog using (pointCandidateContext L) {
   let x := L.extendedX;
   let y := L.extendedY;
+  let divisor := L.divisor.head! :: L.divisor.tail; -- 已恢复的安全分母。
   fieldSubXor L.product y L.candidateY;            -- 清零 candidateY。
   fieldMulXor L.delta (L.slope.take 256) L.product;  -- 清零 product。
   fieldSubXor x L.candidateX L.delta;              -- 清零 delta。
@@ -97,9 +100,45 @@ def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog usin
   pointSquare(L);                                        -- 清零 square。
   fieldMulXor L.dy L.inverse L.slope;             -- 清零 slope。
   fieldInverseXor L.divisor L.inverse;             -- 清零 inverse。
-  safeDivisor(L.generic, L.dx.take 256, L.divisor.head!, L.divisor.tail);  -- 清零 divisor。
+  CConst (L.generic XOR 1) [L.divisor.head!] 1; -- 非普通分支：清零常量 1。
+  CXor L.generic divisor (L.dx.take 256);     -- 普通分支：清零 dx 副本。
   pointSubConstant y L.dy cy.val;                    -- 清零 dy。
   pointSubConstant x L.dx cx.val;                    -- 清零 dx。
 }
+
+/-- 可读受控分支与原安全分母电路的展开式，供证明使用。 -/
+-- PointAddition/PointCandidate.lean: pointCandidateCompute
+theorem pointCandidateCompute_program (L : PointAddLayout) (cx cy : Fp) :
+    pointCandidateCompute L cx cy =
+  pointSubConstant L L.extendedX L.dx cx.val++
+  pointSubConstant L L.extendedY L.dy cy.val++
+  safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail++
+  fieldInverse (poolInverse L.poolWire L.divisor L.inverse)++
+  fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)++
+  pointSquare L++
+  fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)++
+  pointSubConstant L L.offset L.candidateX cx.val++
+  fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)++
+  fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)++
+  fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY) := by
+  simp only [pointCandidateCompute, safeDivisor, xorConstant, maskedConstant, List.append_assoc]
+  rfl
+
+/-- 清理方向保留同一安全分母门列。 -/
+theorem pointCandidateClear_program (L : PointAddLayout) (cx cy : Fp) :
+    pointCandidateClear L cx cy =
+  fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)++
+  fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)++
+  fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)++
+  pointSubConstant L L.offset L.candidateX cx.val++
+  fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)++
+  pointSquare L++
+  fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)++
+  fieldInverse (poolInverse L.poolWire L.divisor L.inverse)++
+  safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail++
+  pointSubConstant L L.extendedY L.dy cy.val++
+  pointSubConstant L L.extendedX L.dx cx.val := by
+  simp only [pointCandidateClear, safeDivisor, xorConstant, maskedConstant, List.append_assoc]
+  rfl
 
 end ECDSAAdd.Arithmetic

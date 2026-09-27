@@ -8,7 +8,7 @@ open Instr Correction
 a 是当前子表的使能，scratch 用于保存地址条件。 -/
 private def lookupWalk (a : Wire) (controls scratch target : List Wire) (table : Nat → Nat) : Program :=
   match controls, scratch with
-  | [], _ => maskedConstant a target (table 0)
+  | [], _ => prog { CConst a target (table 0); }
   | b::bs, q::qs => prog {
       CCX a b q; -- q = a AND b
       lookupWalk(q, bs, qs, target, fun d => table (1+2*d));  -- q=1 时 target ^= 奇数地址子表的值。

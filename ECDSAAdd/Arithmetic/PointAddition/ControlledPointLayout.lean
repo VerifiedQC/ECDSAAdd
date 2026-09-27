@@ -32,8 +32,8 @@ def pointSelectors (L : ControlledPointLayout) : Program := prog {
 -/
 def selectedPointOutput (L : ControlledPointLayout) (C : Point) : Program := prog {
   pointGenericOutput(L.selected);  -- genericSelect=1 时，将普通候选点的编码 XOR 到 core.output。
-  maskedPointConstant(L.doubleSelect, L.core.output, (C+C));  -- doubleSelect=1 时，将 2C 的编码 XOR 到 core.output。
-  maskedPointConstant(L.infinitySelect, L.core.output, C);  -- infinitySelect=1 时，将 C 的编码 XOR 到 core.output。
+  CPointXor L.doubleSelect L.core.output (C+C); -- doubleSelect=1 时，将 2C 的编码 XOR 到 core.output。
+  CPointXor L.infinitySelect L.core.output C;  -- infinitySelect=1 时，将 C 的编码 XOR 到 core.output。
 }
 
 /-- 在分类位和候选匹配时，control=1 将 R+C 的编码 XOR 到 core.output，control=0 时输出不变。

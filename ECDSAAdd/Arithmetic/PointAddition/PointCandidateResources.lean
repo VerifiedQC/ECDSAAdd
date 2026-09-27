@@ -70,7 +70,7 @@ theorem pointCandidate_counts (L : PointAddLayout) (h : L.Widths) (hnd : L.wires
   have cSafe := safeDivisor_counts L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail
     (by rw [hd]; simp [hdx,h.divisor])
   simp only [List.length_take,hdx] at cSafe
-  simp only [pointCandidateCompute,pointCandidateClear,toffoliCount_append,measurementCount_append,
+  simp only [pointCandidateCompute_program,pointCandidateClear_program,toffoliCount_append,measurementCount_append,
     cDx.1,cDx.2,cDy.1,cDy.2,cX.1,cX.2,cOffset.1,cOffset.2.1,cDelta.1,cDelta.2.1,cY.1,cY.2.1,
     cSlope.1,cSlope.2.1,cProduct.1,cProduct.2.1,cSquare.1,cSquare.2,cInverse.1,cInverse.2.1,
     cSafe.1,cSafe.2]
