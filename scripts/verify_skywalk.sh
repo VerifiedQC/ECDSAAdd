@@ -35,10 +35,15 @@ task_modules=(
   ECDSAAdd.Arithmetic.SignedRecordProgram ECDSAAdd.Arithmetic.SkywalkSeed
   ECDSAAdd.Arithmetic.SkywalkTerminal ECDSAAdd.Arithmetic.SkywalkDialog
   ECDSAAdd.Arithmetic.SkywalkIntegerTick ECDSAAdd.Arithmetic.SkywalkPool
+  ECDSAAdd.Arithmetic.SkywalkShared ECDSAAdd.Arithmetic.SkywalkPointPool
+  ECDSAAdd.Arithmetic.SkywalkIntegerLoopCore ECDSAAdd.Arithmetic.SkywalkIntegerLoop
   ECDSAAdd.Arithmetic.SignedHalf ECDSAAdd.Arithmetic.SkywalkSign
   ECDSAAdd.Arithmetic.SkywalkRoute ECDSAAdd.Arithmetic.SkywalkPayloadProgram
 )
 if [[ $# -gt 1 ]]; then task_modules=("${@:2}"); fi
+# Bound runaway proof reduction before it can exhaust the pod's64GB cgroup.
+# This limits the compiler process, not the theorem's inputs or proof checks.
+ulimit -v 25165824
 lake --wfail build "${task_modules[@]}" > "$task_log_dir/build.log" 2>&1
 task_build_end="$(date +%s)"
 python3 - "$task_log_dir" "${task_modules[@]}" <<'PY'
@@ -49,6 +54,8 @@ if 'ECDSAAdd.Math.SkywalkRailsBridge' in modules:
  modules.insert(modules.index('ECDSAAdd.Math.SkywalkRailsBridge'),'ECDSAAdd.Math.SkywalkRails')
 if 'ECDSAAdd.Arithmetic.SkywalkIntegerTick' in modules:
  modules.insert(modules.index('ECDSAAdd.Arithmetic.SkywalkIntegerTick'),'ECDSAAdd.Arithmetic.SkywalkIntegerLayout')
+if 'ECDSAAdd.Arithmetic.SkywalkIntegerLoop' in modules and 'ECDSAAdd.Arithmetic.SkywalkIntegerLoopCore' not in modules:
+ modules.insert(modules.index('ECDSAAdd.Arithmetic.SkywalkIntegerLoop'),'ECDSAAdd.Arithmetic.SkywalkIntegerLoopCore')
 queries=[]; sources=[]; text=[]
 for module in modules:
  path=Path(module.replace('.','/')+'.lean'); source=path.read_text()

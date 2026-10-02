@@ -103,4 +103,44 @@ theorem skywalkPointWire_nodup (pool : Nat → Wire) (x y : List Wire)
   simp only [List.count_append] at hh ⊢
   omega
 
+/-- The overlay has precisely the two caller words and its clean workspace.
+This statement is about physical support, with no lifetime assumptions. -/
+theorem skywalkPointWire_mem (pool : Nat → Wire) (x y : List Wire)
+    (hx : x.length=256) (hy : y.length=256) (q : Wire) :
+    q∈skywalkSharedWires (skywalkPointWire pool x y) ↔
+      q∈wireBlock pool 0 1802 ∨ q∈x ∨ q∈y := by
+  have hp : wireBlock pool 0 1802=wireBlock pool 0 770++
+      wireBlock pool 770 1030++wireBlock pool 1800 2 := by
+    symm
+    rw [wireBlock_append,wireBlock_append]
+  rw [skywalkPointWire_shared pool x y hx hy,hp]
+  simp only [List.mem_append]
+  tauto
+
+/-- Clean caller workspace supplies every zero required by the shared port,
+even when the two coordinate words contain arbitrary canonical field values. -/
+theorem skywalkPointWire_clean (pool : Nat → Wire) (x y : List Wire)
+    (hx : x.length=256) (hy : y.length=256) (s : BasisState)
+    (hc : regValue (wireBlock pool 0 1802) s=0) :
+    ∀ q∈skywalkSharedWires (skywalkPointWire pool x y),q∉x → q∉y → s q=false := by
+  intro q hq hqx hqy
+  have hmem := (skywalkPointWire_mem pool x y hx hy q).mp hq
+  rcases hmem with hp|hxx|hyy
+  · exact (regValue_zero _ _).mp hc q hp
+  · exact False.elim (hqx hxx)
+  · exact False.elim (hqy hyy)
+
+/-- A caller control separated from the physical caller words and workspace
+is also outside the entire shared arithmetic universe. -/
+theorem skywalkPointWire_control_outside (pool : Nat → Wire) (x y : List Wire)
+    (hx : x.length=256) (hy : y.length=256) (control : Wire)
+    (hn : (control::wireBlock pool 0 1802++x++y).Nodup) :
+    control∉skywalkSharedWires (skywalkPointWire pool x y) := by
+  intro hmem
+  have hnot := (List.nodup_cons.mp hn).1
+  rcases (skywalkPointWire_mem pool x y hx hy control).mp hmem with hp|hxx|hyy
+  · exact hnot (List.mem_append_left _ (List.mem_append_left _ hp))
+  · exact hnot (List.mem_append_left _ (List.mem_append_right _ hxx))
+  · exact hnot (List.mem_append_right _ hyy)
+
 end ECDSAAdd.Arithmetic
