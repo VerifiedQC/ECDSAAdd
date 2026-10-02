@@ -83,15 +83,15 @@ theorem subtract_step (active swap sub : Wire) (L : ModInPlaceLayout)
     (n p X Y : Nat) (C W S : Bool) (hw : L.Widths n)
     (hnd : (active::swap::sub::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
     (hX : X<p) (hY : Y<p) :
-    Triple (ReplayValues active swap sub L C W S X Y) (controlledModSub sub L p)
+    Triple (ReplayValues active swap sub L C W S X Y) (measuredControlledModSub sub L p)
       (ReplayValues active swap sub L C W S (if S then (X+p-Y)%p else X) Y) := by
   intro s m h
   have hs := control_nodup active swap sub L hnd sub (by simp)
-  obtain ⟨hf,hv⟩ := controlledModSub_spec sub L n p Y X S hw hs hp hpn (by omega) hX
+  obtain ⟨hf,hv⟩ := measuredControlledModSub_spec sub L n p Y X S hw hs hp hpn (by omega) hX
     s m ⟨⟨⟨h.2.2.1,h.2.2.2.2.1⟩,h.2.2.2.1⟩,h.2.2.2.2.2⟩
   simp only [Holds.holds] at hv
   have keep (q : Wire) (hq : q∉L.z) :=
-    controlledModSub_frame sub L n p Y X S hw hs hp hpn (by omega) hX
+    measuredControlledModSub_frame sub L n p Y X S hw hs hp hpn (by omega) hX
       s m h.2.2.1 h.2.2.2.2.1 h.2.2.2.1 h.2.2.2.2.2 q hq
   exact ⟨hf,(keep active (control_outside active swap sub L hnd active (by simp)).1).trans h.1,
     (keep swap (control_outside active swap sub L hnd swap (by simp)).1).trans h.2.1,
@@ -102,15 +102,15 @@ theorem add_step (active swap sub : Wire) (L : ModInPlaceLayout)
     (n p X Y : Nat) (C W S : Bool) (hw : L.Widths n)
     (hnd : (active::swap::sub::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
     (hX : X<p) (hY : Y<p) :
-    Triple (ReplayValues active swap sub L C W S X Y) (controlledModAdd sub L p)
+    Triple (ReplayValues active swap sub L C W S X Y) (measuredControlledModAdd sub L p)
       (ReplayValues active swap sub L C W S (if S then (X+Y)%p else X) Y) := by
   intro s m h
   have hs := control_nodup active swap sub L hnd sub (by simp)
-  obtain ⟨hf,hv⟩ := controlledModAdd_spec sub L n p Y X S hw hs hp hpn (by omega) hX
+  obtain ⟨hf,hv⟩ := measuredControlledModAdd_spec sub L n p Y X S hw hs hp hpn (by omega) hX
     s m ⟨⟨⟨h.2.2.1,h.2.2.2.2.1⟩,h.2.2.2.1⟩,h.2.2.2.2.2⟩
   simp only [Holds.holds] at hv
   have keep (q : Wire) (hq : q∉L.z) :=
-    controlledModAdd_frame sub L n p Y X S hw hs hp hpn (by omega) hX
+    measuredControlledModAdd_frame sub L n p Y X S hw hs hp hpn (by omega) hX
       s m h.2.2.1 h.2.2.2.2.1 h.2.2.2.1 h.2.2.2.2.2 q hq
   exact ⟨hf,(keep active (control_outside active swap sub L hnd active (by simp)).1).trans h.1,
     (keep swap (control_outside active swap sub L hnd swap (by simp)).1).trans h.2.1,

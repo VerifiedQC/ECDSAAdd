@@ -5,10 +5,10 @@ namespace ECDSAAdd.Arithmetic
 /-- 活动比较计算/清理各十门，包含在每格账本中。 -/
 theorem replayRound_counts (L : ReplayLayout) (n p i : Nat) (rs : List RoundRecord) (r : RoundRecord)
     (hv : L.Valid n rs) (hr : r∈rs) (hn : 0<n) :
-    toffoliCount (replayRound L r p i)=13*n+21 ∧
-    measurementCount (replayRound L r p i)=8*n+19 ∧
-    toffoliCount (replayUnround L r p i)=11*n+19 ∧
-    measurementCount (replayUnround L r p i)=6*n+18 := by
+    toffoliCount (replayRound L r p i)=12*n+21 ∧
+    measurementCount (replayRound L r p i)=9*n+19 ∧
+    toffoliCount (replayUnround L r p i)=10*n+19 ∧
+    measurementCount (replayUnround L r p i)=7*n+18 := by
   have hc := counterActiveXor_counts L.counter L.active i
   rw [hv.counterWidth] at hc
   have hs := replayCell_counts L.active r.swap r.subtract L.payload n p hv.widths
@@ -19,10 +19,10 @@ theorem replayRound_counts (L : ReplayLayout) (n p i : Nat) (rs : List RoundReco
 
 theorem replayLoop_counts (L : ReplayLayout) (n p i : Nat) (rs : List RoundRecord)
     (hv : L.Valid n rs) (hn : 0<n) :
-    toffoliCount (replayLoop L p i rs)=rs.length*(13*n+21) ∧
-    measurementCount (replayLoop L p i rs)=rs.length*(8*n+19) ∧
-    toffoliCount (replayUnloop L p i rs)=rs.length*(11*n+19) ∧
-    measurementCount (replayUnloop L p i rs)=rs.length*(6*n+18) := by
+    toffoliCount (replayLoop L p i rs)=rs.length*(12*n+21) ∧
+    measurementCount (replayLoop L p i rs)=rs.length*(9*n+19) ∧
+    toffoliCount (replayUnloop L p i rs)=rs.length*(10*n+19) ∧
+    measurementCount (replayUnloop L p i rs)=rs.length*(7*n+18) := by
   induction rs generalizing i with
   | nil => simp [replayLoop,replayUnloop,toffoliCount,measurementCount]
   | cons r rs ih =>
@@ -35,10 +35,10 @@ theorem replayLoop_counts (L : ReplayLayout) (n p i : Nat) (rs : List RoundRecor
 /-- 512轮正反回放的实证账本，已包含活动比较。 -/
 theorem replay512_counts (L : ReplayLayout) (p : Nat) (rs : List RoundRecord)
     (hv : L.Valid 256 rs) (hl : rs.length=512) :
-    toffoliCount (replayLoop L p 0 rs)=1714688 ∧
-    measurementCount (replayLoop L p 0 rs)=1058304 ∧
-    toffoliCount (replayUnloop L p 0 rs)=1451520 ∧
-    measurementCount (replayUnloop L p 0 rs)=795648 := by
+    toffoliCount (replayLoop L p 0 rs)=1583616 ∧
+    measurementCount (replayLoop L p 0 rs)=1189376 ∧
+    toffoliCount (replayUnloop L p 0 rs)=1320448 ∧
+    measurementCount (replayUnloop L p 0 rs)=926720 := by
   simpa only [hl] using replayLoop_counts L 256 p 0 rs hv (by omega)
 
 private theorem comparison_subset (L : ReplayLayout) (n i : Nat) (rs : List RoundRecord)

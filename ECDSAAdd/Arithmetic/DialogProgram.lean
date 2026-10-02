@@ -40,8 +40,8 @@ theorem dialogLoad_counts (L : DialogLayout) (p : Nat) (hw : L.Widths) :
 
 /-- 完整生成/恢复、安全分母装卸及活动比较均包含在这两条门列中。 -/
 theorem dialog_counts (L : DialogLayout) (p : Nat) (hw : L.Widths) (hn : L.wires.Nodup) :
-    toffoliCount (dialogDivide L p)=3591168 ∧ measurementCount (dialogDivide L p)=2140672 ∧
-    toffoliCount (dialogMultiply L p)=3328000 ∧ measurementCount (dialogMultiply L p)=1878016 := by
+    toffoliCount (dialogDivide L p)=3460096 ∧ measurementCount (dialogDivide L p)=2271744 ∧
+    toffoliCount (dialogMultiply L p)=3196928 ∧ measurementCount (dialogMultiply L p)=2009088 := by
   have hv := valueLoop_counts L.first L.records 0 hn hw.counter
   have hd : L.first.data.width=257 := by
     simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low]

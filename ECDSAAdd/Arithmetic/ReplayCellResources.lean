@@ -27,9 +27,9 @@ theorem replayCell_wires (active swap sub : Wire) (L : ModInPlaceLayout) (n p : 
   all_goals
     first
     | rw [replayCell, wires_append, wires_append, wires_append, hs,
-        controlledModSub_wires sub L n p hw hn, hu.2]
+        measuredControlledModSub_wires sub L n p hw hn, hu.2]
     | rw [replayUncell, wires_append, wires_append, wires_append, hs,
-        controlledModAdd_wires sub L n p hw hn, hu.1]
+        measuredControlledModAdd_wires sub L n p hw hn, hu.1]
     ext q
   all_goals
     simp only [hw.core.low]
