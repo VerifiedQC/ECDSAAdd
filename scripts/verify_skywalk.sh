@@ -21,6 +21,11 @@ delta=lambda a,b: int(b)-int(a) if a and b else None
 Path(folder,'timing.json').write_text(json.dumps({
  'scope':'Skywalk development modules; full point integration pending',
  'exit_code':int(rc),'start_utc':int(start),'end_utc':int(end),
+ 'status':'completed' if int(rc)==0 else 'failed',
+ 'build_start_utc':int(start),'build_end_utc':int(be or end) if not ast else int(be),
+ 'axiom_start_utc':int(ast) if ast else None,'axiom_end_utc':int(ae or end) if ast else None,
+ 'build_status':'completed' if be else 'failed',
+ 'axiom_status':('completed' if ae else 'failed') if ast else 'not_started',
  'total_seconds':int(end)-int(start),'build_seconds':delta(start,be or end),
  'axiom_seconds':delta(ast,ae)},indent=2)+'\n')
 PY
