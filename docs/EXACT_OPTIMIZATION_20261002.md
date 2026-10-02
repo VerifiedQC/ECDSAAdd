@@ -1,6 +1,6 @@
 # 2026-10-02 精确优化与远程验证
 
-Latest complete verified checkpoint: **3,114,941 static Toffolis / 2,455,737 measurements / ≤2,994 static logical sites**. Full pod build and all 674 public axiom queries passed in 193s (87s incremental build +106s audit). See [the retained forward integration record](RETAINED_FORWARD_EXACT_20261003.md). Earlier results below are historical.
+Latest complete verified checkpoint: **2,856,381 static Toffolis / 2,197,177 measurements / ≤2,994 static logical sites**. Full pod build and all 727 public axiom queries passed in 193s (91s incremental build +102s audit). See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md). Earlier results below are historical.
 
 本阶段只接纳精确优化。公开 `controlledPointAdd_spec` 的源文件与 `9699678` 基线逐字相同，仍覆盖所有合法点、控制位、规范编码和任意测量记录，并保持控制、符号与零工作区。模型范围见 [PROOF_SCOPE](PROOF_SCOPE.md)。
 

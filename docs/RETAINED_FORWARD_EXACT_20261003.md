@@ -1,5 +1,7 @@
 # Complete exact point circuit with retained forward field arithmetic
 
+Latest integrated result: **2,856,381 Toffolis / 2,197,177 measurements / ≤2,994 static sites**, verified with 727 public audits. See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md). The checkpoint below is retained as historical component/integration evidence.
+
 The complete controlled point-addition program is Lean-verified at **3,114,941 static Toffolis**, **2,455,737 measurements**, and **at most 2,994 distinct static logical wire sites** for a finite classical addend. An identity addend still selects the empty program. Static wire support has not been converted into a peak-live qubit measurement.
 
 The same protected `ControlledPointAddSpec.lean` proves the original all-valid-input contract: point addition for both control values, restored control, complete workspace cleanup, and phase restoration for every independent measurement record. Its SHA-256 is `e3d4a181ad1e0e6d4458dc8bcc85d1de7d4ffd6c02c7ce11ee5a11296e08210d`.

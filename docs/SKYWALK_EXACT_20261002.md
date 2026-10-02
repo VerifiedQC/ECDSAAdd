@@ -1,6 +1,6 @@
 # Verified exact Skywalk point-addition circuit
 
-Latest complete verified checkpoint: **3,114,941 static Toffolis / 2,455,737 measurements / ≤2,994 static logical sites**. Full pod build and all 674 public axiom queries passed in 193s (87s incremental build +106s audit). See [the retained forward integration record](RETAINED_FORWARD_EXACT_20261003.md). Earlier results below are historical.
+Latest complete verified checkpoint: **2,856,381 static Toffolis / 2,197,177 measurements / ≤2,994 static logical sites**. Full pod build and all 727 public axiom queries passed in 193s (91s incremental build +102s audit). See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md). Earlier results below are historical.
 
 The complete `controlledPointAdd` now uses exact Skywalk division and multiplication. For every valid point, addend and control, the byte-identical original specification proves the expected point sum, unchanged control, complete allocated-work cleanup and restored phase for every measurement record. Finite addends have **3,636,669 static Toffolis**, **2,845,373 measurements** and a proved **static logical wire-support upper bound of 2,994**. The identity addend still yields an empty program. The wire result is an upper bound on distinct sites, not an independently proved peak-live or physical-qubit count.
 

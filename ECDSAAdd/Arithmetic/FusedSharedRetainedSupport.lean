@@ -7,20 +7,20 @@ namespace ECDSAAdd.Arithmetic
 
 namespace FusedHalfPorts
 
-private theorem listed_subset (L : FusedHalfPorts) {xs : List Wire}
+theorem listed_subset (L : FusedHalfPorts) {xs : List Wire}
     (h : ∀ q ∈ xs, q ∈ L.wires) : xs.toFinset ⊆ L.wires.toFinset := by
   intro q hq
   exact List.mem_toFinset.mpr (h q (List.mem_toFinset.mp hq))
 
-private theorem early_mem (L : FusedHalfPorts) (he : L.early.Sublist L.A)
+theorem early_mem (L : FusedHalfPorts) (he : L.early.Sublist L.A)
     {q : Wire} (hq : q∈L.early) : q∈L.wires := by
   simp [FusedHalfPorts.wires,he.subset hq]
 
-private theorem constant_mem (L : FusedHalfPorts) {q : Wire} (hq : q∈L.C) :
+theorem constant_mem (L : FusedHalfPorts) {q : Wire} (hq : q∈L.C) :
     q∈L.wires := by
   simp [FusedHalfPorts.wires,FusedHalfPorts.constant,hq]
 
-private theorem sourceHalf_mem (L : FusedHalfPorts) {q : Wire} (hq : q∈L.sourceHalf) :
+theorem sourceHalf_mem (L : FusedHalfPorts) {q : Wire} (hq : q∈L.sourceHalf) :
     q∈L.wires := by
   have hs : q∈L.source := by
     simp [FusedHalfPorts.source,FusedHalfPorts.sourceHalf] at hq ⊢
@@ -135,7 +135,7 @@ private theorem retainedAdd_support_ports (L : FusedHalfPorts) :
       · have hc' : q∈L.carry := List.mem_of_mem_take (List.mem_of_mem_take hc)
         simp [FusedHalfPorts.wires,hc']))
 
-private theorem correctionWordLoad_constant_support (L : FusedHalfPorts)
+theorem correctionWordLoad_constant_support (L : FusedHalfPorts)
     (he : L.early.Sublist L.A) (P D N : Nat) :
     ECDSAAdd.wires (fusedCorrectionWordLoad L.a L.j L.l L.m L.constant P D N) ⊆
       L.wires.toFinset := by
@@ -234,7 +234,7 @@ private theorem rawNormalize_support (L : FusedHalfPorts) (hw : L.Widths)
   simp only [fusedRawNormalize,wires_append,Finset.union_subset_iff]
   aesop
 
-private theorem correctionFlagsErase_support (L : FusedHalfPorts)
+theorem correctionFlagsErase_support (L : FusedHalfPorts)
     (he : L.early.Sublist L.A) :
     ECDSAAdd.wires (fusedCorrectionFlagsErase L.b L.a L.h L.j L.l L.m)⊆
       L.wires.toFinset := by
@@ -302,7 +302,7 @@ private theorem front_support (L : FusedHalfPorts) (hw : L.Widths)
   simp only [fusedSignedHalfFront,wires_append,Finset.union_subset_iff]
   aesop
 
-private theorem move_support (L : FusedHalfPorts) (he : L.early.Sublist L.A) :
+theorem move_support (L : FusedHalfPorts) (he : L.early.Sublist L.A) :
     ECDSAAdd.wires (fusedFlagsMove L.a L.h L.qOut L.hOut)⊆L.wires.toFinset := by
   intro q hq
   simp only [fusedFlagsMove,swapBits,ECDSAAdd.wires,Instr.wires,wires_append,
@@ -428,7 +428,7 @@ private theorem parityClear_support (L : FusedHalfPorts) (hw : L.Widths) :
   simp only [fusedHalfParityClear,wires_append,Finset.union_subset_iff]
   exact ⟨hcmp,hx⟩
 
-private theorem retainedBack_support (L : FusedHalfPorts) (hw : L.Widths) :
+theorem retainedBack_support (L : FusedHalfPorts) (hw : L.Widths) :
     ECDSAAdd.wires (fusedSignedHalfRetainedBack L.b L.cin L.qOut L.hOut
       L.t L.d L.e L.sourceHalf L.targetLow L.A L.C (L.carry.take L.A.length))⊆
       L.wires.toFinset := by
@@ -463,7 +463,7 @@ private theorem retained_block_subset_shared (w : Nat → Wire) (s n : Nat)
   have hi' := List.mem_range'_1.mp hi
   exact ⟨i,by simp only [List.mem_range'_1]; omega,rfl⟩
 
-private theorem retained_field_subset_shared (w : Nat → Wire) :
+theorem retained_field_subset_shared (w : Nat → Wire) :
     (skywalkSharedField w).wires⊆skywalkSharedWires w := by
   intro q hq
   unfold ModInPlaceLayout.wires at hq
@@ -483,7 +483,7 @@ private theorem retained_field_subset_shared (w : Nat → Wire) :
   · subst q
     exact retained_block_subset_shared w 2313 1 (by omega) (by simp [wireBlock])
 
-private theorem retained_tape_subset_shared (w : Nat → Wire) :
+theorem retained_tape_subset_shared (w : Nat → Wire) :
     ∀ r∈skywalkSharedTape w,r.1∈skywalkSharedWires w ∧
       r.2∈skywalkSharedWires w := by
   intro r hr

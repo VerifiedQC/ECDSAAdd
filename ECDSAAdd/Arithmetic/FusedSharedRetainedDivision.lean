@@ -54,7 +54,7 @@ private theorem retained_double_frame (active g swap : Wire) (w : Nat → Wire)
   rw [retained_double_val X] at hout
   exact ⟨hf,hout⟩
 
-private theorem retained_copy_frame (active g swap : Wire) (w : Nat → Wire)
+theorem retained_copy_frame (active g swap : Wire) (w : Nat → Wire)
     (hnd : (active::swap::g::(skywalkSharedField w).wires).Nodup)
     (base : BasisState) (X Y : Nat) :
     Triple (PairFrame (skywalkSharedField w).z (skywalkSharedField w).a base X Y)

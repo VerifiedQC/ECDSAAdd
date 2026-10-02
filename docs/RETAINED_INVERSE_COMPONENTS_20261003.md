@@ -1,5 +1,7 @@
 # Exact retained inverse endpoint, component verification
 
+Latest integrated result: **2,856,381 Toffolis / 2,197,177 measurements / ≤2,994 static sites**, verified with 727 public audits. See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md). The checkpoint below is retained as historical component/integration evidence.
+
 The independently emitted packed inverse endpoint is verified at **1,541 Toffolis and 1,541 measurements** for a 256-bit field value. Its semantic proof covers every canonical input and independent measurement record, with phase, controls, all non-target bits, full carry arrays and selector workspace restored.
 
 The physical shared-pool wrapper also passes: the output is framed against the original 257-bit target, including restoration of the additional borrowed guard. The sign-convention bridge identifies its output exactly with the existing Skywalk inverse field arithmetic.

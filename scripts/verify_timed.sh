@@ -11,6 +11,14 @@ task_build_end=""
 task_audit_start=""
 task_audit_end=""
 task_audit_script=""
+python3 - "$task_log_dir" "$task_start" "$$" <<'PY'
+import json,sys
+from pathlib import Path
+folder,start,pid=sys.argv[1:]
+Path(folder,'started.json').write_text(json.dumps({
+    'status':'running','start_utc':int(start),'build_start_utc':int(start),
+    'runner_pid':int(pid),'queue_seconds':0},indent=2)+'\n')
+PY
 finish() {
   task_rc=$?
   task_end="$(date +%s)"
@@ -23,11 +31,15 @@ num=lambda x: int(x) if x else None
 delta=lambda a,b: int(b)-int(a) if a and b else None
 Path(folder,'timing.json').write_text(json.dumps({
     'exit_code':int(rc),'start_utc':int(start),'end_utc':int(end),
+    'status':'completed' if int(rc)==0 else 'failed',
     'total_seconds':int(end)-int(start),
-    'build_start_utc':num(bs),'build_end_utc':num(be),
-    'build_seconds':delta(bs,be),
-    'axiom_start_utc':num(ast),'axiom_end_utc':num(aend),
-    'axiom_seconds':delta(ast,aend)},indent=2)+'\n')
+    'build_start_utc':num(bs),'build_end_utc':num(be or end) if not ast else num(be),
+    'build_seconds':delta(bs,be or end) if not ast else delta(bs,be),
+    'build_status':'completed' if be else 'failed',
+    'axiom_start_utc':num(ast),'axiom_end_utc':num(aend or end) if ast else None,
+    'axiom_status':('completed' if aend else 'failed') if ast else 'not_started',
+    'axiom_seconds':delta(ast,aend or end) if ast else None,
+    'queue_seconds':0},indent=2)+'\n')
 PY
   if [[ -n "$task_audit_script" ]]; then rm -f "$task_audit_script"; fi
   exit "$task_rc"

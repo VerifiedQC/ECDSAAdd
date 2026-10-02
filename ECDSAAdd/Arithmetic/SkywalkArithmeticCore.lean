@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.NarrowSkywalkRoutedLoop
 import ECDSAAdd.Arithmetic.SkywalkTerminal
 import ECDSAAdd.Arithmetic.SkywalkDialog
 import ECDSAAdd.Arithmetic.FusedSharedRetainedSupport
+import ECDSAAdd.Arithmetic.FusedSharedInverseSupport
 
 set_option maxRecDepth 4096
 set_option maxHeartbeats 200000
@@ -29,12 +30,12 @@ def skywalkArithmetic (divide : Bool) (w : Nat → Wire) : Program :=
   (narrowSkywalkRoutedLoop w 0 512 ++
   (skywalkArithmeticClear w ++
   ((if divide then skywalkFieldDivisionRetained w
-      else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w)) ++
+      else skywalkFieldMultiplicationRetained w) ++
   (skywalkArithmeticClear w ++
   (narrowSkywalkRoutedUnloop w 0 512 ++ skywalkUnseed (skywalkSharedSeed w) p)))))
 
 attribute [local irreducible] skywalkSeed skywalkUnseed narrowSkywalkRoutedLoop narrowSkywalkRoutedUnloop
-attribute [local irreducible] skywalkFieldDivisionRetained skywalkFieldMultiplication run
+attribute [local irreducible] skywalkFieldDivisionRetained skywalkFieldMultiplicationRetained run
 
 def skywalkArithmeticResult (divide : Bool) (x : Nat) (Y : Fp) : Fp :=
   if divide then Y/(x : Fp) else Y*(x : Fp)
@@ -514,7 +515,7 @@ theorem skywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hs2 : run (narrowSkywalkRoutedLoop w 0 512) m2 s1=s2)
     (hs3 : run (skywalkArithmeticClear w) m3 s2=s3)
     (hs4 : run (if divide then skywalkFieldDivisionRetained w
-      else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w)) m4 s3=s4)
+      else skywalkFieldMultiplicationRetained w) m4 s3=s4)
     (hs5 : run (skywalkArithmeticClear w) m5 s4=s5)
     (hs6 : run (narrowSkywalkRoutedUnloop w 0 512) m6 s5=s6)
     (hs7 : run (skywalkUnseed (skywalkSharedSeed w) p) m7 s6=s7) :
@@ -557,10 +558,9 @@ theorem skywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
   have h4 : s4.phase=s3.phase ∧ PairFrame F.z F.a s3.basis Z 0 s4.basis := by
     have hbefore : PairFrame F.z F.a s3.basis Y.val 0 s3.basis := ⟨hz3,hwork.1,fun _ _ _ => rfl⟩
     cases divide
-    · have hh := skywalkFieldMultiplication_spec active F (skywalkSharedTape w)
-        (skywalkShared_field_widths w) (skywalkShared_tape_layout w hn active ha)
-        s3.basis hwork.2.1 x Y hx0 hx htape s3 m4 hbefore
-      change run (skywalkFieldMultiplication F (skywalkSharedTape w)) m4 s3=s4 at hs4
+    · have hh := skywalkFieldMultiplicationRetained_spec active w hn ha
+        s3.basis hwork.2.1 hwork.2.2 x Y hx0 hx htape s3 m4 hbefore
+      change run (skywalkFieldMultiplicationRetained w) m4 s3=s4 at hs4
       rw [hs4] at hh
       exact hh
     · have hh := skywalkFieldDivisionRetained_spec active w hn ha

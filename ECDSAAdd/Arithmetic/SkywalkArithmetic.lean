@@ -26,7 +26,7 @@ theorem skywalkArithmetic_run (divide : Bool) (w : Nat → Wire)
     (skywalkSeed (skywalkSharedSeed w) p) (narrowSkywalkRoutedLoop w 0 512)
     (skywalkArithmeticClear w)
     (if divide then skywalkFieldDivisionRetained w
-      else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w))
+      else skywalkFieldMultiplicationRetained w)
     (skywalkArithmeticClear w) (narrowSkywalkRoutedUnloop w 0 512)
     (skywalkUnseed (skywalkSharedSeed w) p) P
     (by
@@ -92,18 +92,16 @@ theorem skywalkArithmetic_counts (w : Nat → Wire) (hn : (skywalkSharedWires w)
     (active : Wire) (ha : active∉skywalkSharedWires w) :
     toffoliCount (skywalkArithmetic true w)=1315841 ∧
     measurementCount (skywalkArithmetic true w)=987903 ∧
-    toffoliCount (skywalkArithmetic false w)=1574914 ∧
-    measurementCount (skywalkArithmetic false w)=1246464 := by
+    toffoliCount (skywalkArithmetic false w)=1316354 ∧
+    measurementCount (skywalkArithmetic false w)=987904 := by
   have hs := skywalkSeed_counts (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
   have hi := narrowSkywalkRouted512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)
-  have hf := skywalkFieldLeg_counts active (skywalkSharedField w) (skywalkSharedTape w) 256
-    (skywalkShared_field_widths w) (skywalkShared_tape_layout w hn active ha) (by omega)
-  rw [skywalkShared_tape_length] at hf
   have hret := skywalkFieldDivisionRetained_counts active w hn ha
+  have hmul := skywalkFieldMultiplicationRetained_counts active w hn ha
   simp only [skywalkArithmetic,skywalkArithmeticClear,if_true,Bool.false_eq_true,if_false,
     toffoliCount_append,measurementCount_append,hs.1,hs.2.1,hs.2.2.1,hs.2.2.2,
-    hi.1,hi.2.1,hi.2.2.1,hi.2.2.2,hc.1,hc.2,hret.1,hret.2,hf.2.2.1,hf.2.2.2]
+    hi.1,hi.2.1,hi.2.2.1,hi.2.2.2,hc.1,hc.2,hret.1,hret.2,hmul.1,hmul.2]
   norm_num
 
 private theorem arith_block_subset_shared (w : Nat → Wire) (a n : Nat)
@@ -247,9 +245,9 @@ theorem skywalkArithmetic_support (divide : Bool) (w : Nat → Wire)
     (skywalkShared_field_widths w) (skywalkSharedWires w)
     (arith_field_subset_shared w) (arith_tape_subset_shared w)
   have hleg : wires (if divide then skywalkFieldDivisionRetained w
-      else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w))⊆(skywalkSharedWires w).toFinset := by
+      else skywalkFieldMultiplicationRetained w)⊆(skywalkSharedWires w).toFinset := by
     cases divide
-    · exact hf.2
+    · exact skywalkFieldMultiplicationRetained_support w
     · exact skywalkFieldDivisionRetained_support w
   simp only [skywalkArithmetic,wires_append,Finset.union_subset_iff]
   exact ⟨hseed,hi.1.trans hpool,hclear,hleg,hclear,hi.2.trans hpool,hunseed⟩
