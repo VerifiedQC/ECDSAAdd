@@ -50,7 +50,7 @@ theorem dialogStep_square :
 
 theorem dialogStep_arithmetic (multiply : Bool) (hX : G=true → X≠0) :
     Triple (PointDialogValues L X Y G base)
-      (if multiply then dialogMultiply L.dialogPort p else dialogDivide L.dialogPort p)
+      (pointSkywalkArithmetic L multiply)
       (PointDialogValues L X (if G then (if multiply then Y*X else Y/X) else Y) G base) := by
   intro s m v
   have hX0 : G=true → X.val≠0 := by

@@ -8,10 +8,10 @@ open ControlledPointLayout Secp256k1
 def pointDialogGeneric (L : ControlledPointLayout) (cx cy : Fp) : Program :=
   pointDialogConstantAdd L L.point.x (-cx) ++
   pointDialogConstantAdd L L.point.y (-cy) ++
-  dialogDivide L.dialogPort p ++
+  pointSkywalkArithmetic L false ++
   pointDialogSquare L ++
   pointDialogConstantAdd L L.point.x (3*cx) ++
-  dialogMultiply L.dialogPort p ++
+  pointSkywalkArithmetic L true ++
   pointDialogNegate L ++
   pointDialogConstantAdd L L.point.x cx ++
   pointDialogConstantAdd L L.point.y (-cy)

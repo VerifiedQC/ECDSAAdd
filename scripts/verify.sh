@@ -483,13 +483,29 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.measuredShortInPlace_wires
 #print axioms ECDSAAdd.Arithmetic.triangularSquareCount_twice
 #print axioms ECDSAAdd.Arithmetic.triangularSquareCount_closed
+#print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_spec
+#print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_frame
+#print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_support
+#print axioms ECDSAAdd.Arithmetic.pointSkywalkArithmetic_correct
+#print axioms ECDSAAdd.Arithmetic.pointSkywalkArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.pointSkywalkArithmetic_support
 LEAN
 )
 printf '%s\n' "$axioms"
-printf '%s\n' "$axioms" | awk '
-/depends on axioms:/ {
-  sub(/^.*\[/, ""); sub(/\].*$/, "")
-  n = split($0, names, /, */)
-  for (i = 1; i <= n; i++)
-    if (names[i] != "propext" && names[i] != "Classical.choice" && names[i] != "Quot.sound") exit 1
-}'
+printf '%s\n' "$axioms" > "${ECDSA_EXACT_AXIOM_LOG:-/tmp/ecdsadd-point-axioms.log}"
+python3 - "${ECDSA_EXACT_AXIOM_LOG:-/tmp/ecdsadd-point-axioms.log}" "$0" <<'PY'
+import re,sys
+from pathlib import Path
+text=Path(sys.argv[1]).read_text();script=Path(sys.argv[2]).read_text()
+wanted=re.findall(r'^#print axioms (.+)$',script,re.M)
+actual=re.findall(r"^'([^']+)'",text,re.M)
+assert actual==wanted,('Missing or reordered public axiom outputs',len(actual),len(wanted))
+entries=re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms:\s*\[([^\]]*)\])",text,re.M)
+assert [name for name,_ in entries]==wanted,('Unparsed axiom outputs',len(entries),len(wanted))
+allowed={'propext','Classical.choice','Quot.sound'}
+for name,body in entries:
+ names=set(filter(None,re.split(r'[\s,]+',body)))
+ assert names<=allowed,(name,names)
+print('All',len(actual),'public entry-point axiom audits passed the exact whitelist.')
+PY

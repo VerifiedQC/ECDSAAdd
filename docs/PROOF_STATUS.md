@@ -1560,3 +1560,8 @@ n=256 时为 1279/1279/1285、1791/1791/1286。工作区和完整支持均为 O(
 ## 2026-10-02 短来源平方精确接入
 
 当前平方行只复制真实来源位，保留完整目标与进位链。每方向计数为 `(m−1)*(3m−2)/2`；128/129 位分别为 24,257/24,640。Karatsuba 每方向为 99,455，`squareSub` 为 209,593。有限常量受控点加为 6,880,186 Toffoli、4,502,202 测量、3,134 静态支持线。完整远程严格构建与 476 项公理审计通过，耗时 219 秒（142 秒构建、77 秒公理审计）。旧批次数字保留为历史；原公开点加陈述逐字未改。
+
+
+## Exact Skywalk complete-point milestone
+
+The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.

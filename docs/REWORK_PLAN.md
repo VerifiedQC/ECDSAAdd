@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-作者：Dirac；文档状态核对基线：`85530a6`（PR75）。本文件同时保存历史设计、已交付阶段和未实现选项，不能把较早章节的“当前／目标”当成最新公共入口。**当前已证整机**为 7,207,866 Toffoli / 4,305,594 测量 / 3,134 实际静态线路，依据 [`controlledPointAdd_finite_resources`](../ECDSAAdd/Arithmetic/ControlledPointResources.lean)，实现记录见 §29.10。
+作者：Dirac；文档状态核对基线：`85530a6`（PR75）。本文件同时保存历史设计、已交付阶段和未实现选项，不能把较早章节的“当前／目标”当成最新公共入口。**当前已证整机**为精确Skywalk：3,636,669 Toffoli / 2,845,373 测量 / 静态逻辑支持上界2,994，依据 [`controlledPointAdd_finite_resources`](../ECDSAAdd/Arithmetic/ControlledPointResources.lean)，实现记录见 §29.10。
 
 本文账本简写 T / M / Q 分别指 Toffoli（CCX）数、测量数、实际静态支持线数；T 不是 Clifford+T 分解中的 T 门数。
 

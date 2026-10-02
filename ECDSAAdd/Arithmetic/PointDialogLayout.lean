@@ -26,6 +26,10 @@ def dialogSquare (L : ControlledPointLayout) : SquareSubLayout :=
 def dialogPointZero (L : ControlledPointLayout) : List ZeroBit :=
   zeroPorts (PointAddLayout.pointWires L.point) (L.dialogPool.take 513)
 
+/-- Physical sites sufficient for the exact Skywalk arithmetic and existing square. -/
+def skywalkPointUsedWires (L : ControlledPointLayout) : List Wire :=
+  PointAddLayout.pointWires L.point++[L.control]++L.inPlaceFlags++L.dialogPool.take 2473
+
 theorem dialogPool_length (L : ControlledPointLayout) (hw : L.Widths) : L.dialogPool.length=2613 := by
   simp [dialogPool,hw.pool]
 
@@ -38,6 +42,15 @@ theorem dialogUsed_nodup (L : ControlledPointLayout) (hn : L.wires.Nodup) :
   simp only [dialogUsedWires,dialogPool,inPlaceFlags,wires,point,extras,selectors,
     PointAddLayout.wires,PointAddLayout.work,PointAddLayout.words,PointAddLayout.flags,
     List.flatten_cons,List.flatten_nil,List.append_nil,List.count_append,List.count_cons,List.count_nil] at h ⊢
+  omega
+
+theorem skywalkPointUsed_nodup (L : ControlledPointLayout) (hn : L.wires.Nodup) :
+    L.skywalkPointUsedWires.Nodup := by
+  apply List.nodup_iff_count.mpr
+  intro q
+  have h := List.nodup_iff_count.mp (L.dialogUsed_nodup hn) q
+  have ht := (List.take_sublist 2473 L.dialogPool).count_le q
+  simp only [skywalkPointUsedWires,dialogUsedWires,List.count_append,List.count_cons,List.count_nil] at h ⊢
   omega
 
 theorem dialogPort_fields (L : ControlledPointLayout) (hw : L.Widths) :

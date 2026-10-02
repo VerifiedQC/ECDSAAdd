@@ -38,3 +38,8 @@
 参考 ECDSA.Fail Q×T 轨道的 Skywalk。初始快照为 `1c185d1`，运行中更新至 `cc530e2`（sky14）。更新主要是近似折叠窗口的误差交换和平方门流的局部 SAT 重写。本阶段不接入任何近似窗口或只在选定测试支持上正确的构造。
 
 精确短来源加减法、终态常量保护的 Clifford 移位、保守整数宽度界与相邻交换融合已准备独立候选。短加减原语及平方行已完成整机接入与完整远程验证。保护移位原语仅通过独立检查，尚未接入整机。其他候选的编译修复和接入验证仍在进行。候选源码单独保存在工作区 `outputs/lean-exact-campaign-20261002/candidates/`，不纳入本次已证整机资源，也不计入已完成的节省。
+
+
+## Complete exact Skywalk stage
+
+The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.

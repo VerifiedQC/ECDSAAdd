@@ -191,3 +191,8 @@ Deutsch 按已复审的 §30.8/§30.11 门列，复用本仓库 `eraseMask_eq_co
 5n−1/5n−1/5n+5 与 7n−1/7n−1/5n+6，均指同一门列。
 
 本批在合入 `9bd65f9` 后完整运行 `scripts/verify.sh`，退出0：2,244项构建、468条公理实际输出；脚本入口、PROOF_STATUS 公理块与日志逐项一致。
+
+
+## Exact Skywalk source and verification
+
+The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.

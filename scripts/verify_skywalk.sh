@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks the exact Skywalk development modules, not a completed point circuit.
+# Checks selected Skywalk components; verify.sh checks the complete point circuit.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 task_log_dir="${1:-skywalk-verification-logs}"
@@ -39,6 +39,8 @@ task_modules=(
   ECDSAAdd.Arithmetic.SkywalkPointLayout ECDSAAdd.Arithmetic.SkywalkControlled
   ECDSAAdd.Math.FusedSignedHalf ECDSAAdd.Arithmetic.TrailingZeroCompare
   ECDSAAdd.Arithmetic.SkywalkIntegerLoopCore ECDSAAdd.Arithmetic.SkywalkIntegerLoop
+  ECDSAAdd.Arithmetic.SkywalkArithmeticCore ECDSAAdd.Arithmetic.SkywalkArithmetic
+  ECDSAAdd.Arithmetic.SkywalkControlledPort
   ECDSAAdd.Arithmetic.SignedHalf ECDSAAdd.Arithmetic.SkywalkSign
   ECDSAAdd.Arithmetic.SkywalkRoute ECDSAAdd.Arithmetic.SkywalkPayloadProgram
 )

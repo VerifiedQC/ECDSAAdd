@@ -1,6 +1,10 @@
-# Exact Skywalk development checkpoint
+# Verified exact Skywalk point-addition circuit
 
-The production point-addition circuit remains the verified Kaliski record/replay circuit with the exact short-source square optimization: 6,880,186 static Toffolis, 4,502,202 measurements and 3,134 distinct logical wire positions. The original public point-addition specification is unchanged. This checkpoint does not claim a completed Skywalk point circuit or its resource count.
+The complete `controlledPointAdd` now uses exact Skywalk division and multiplication. For every valid point, addend and control, the byte-identical original specification proves the expected point sum, unchanged control, complete allocated-work cleanup and restored phase for every measurement record. Finite addends have **3,636,669 static Toffolis**, **2,845,373 measurements** and a proved **static logical wire-support upper bound of 2,994**. The identity addend still yields an empty program. The wire result is an upper bound on distinct sites, not an independently proved peak-live or physical-qubit count.
+
+The complete pinned remote warnings-as-errors build passed 3,475 jobs. All 483 selected public entry-point axiom outputs matched their requested declarations and used only `propext`, `Classical.choice` and `Quot.sound`. Verification took **330 seconds: 228 build and 102 axiom audit**. All 352 source/configuration hashes on the pod match the local candidate. The first original baseline had 7,207,866 Toffolis; the exact Skywalk reduction is 3,571,197 (49.5458%). The last Kaliski checkpoint was 6,880,186 / 4,502,202 / 3,134.
+
+The 1.5M target remains unachieved. Further exact fused field arithmetic and proved width schedules are under development; no additional unconnected savings are included above.
 
 ## Verified development modules
 
@@ -20,7 +24,9 @@ All Lean execution uses the user-provided CPU pod. Run `bash scripts/verify_skyw
 
 ## Remaining proof obligations
 
-Compose the verified seed, complete integer loop, terminal clear, field leg, terminal restore, integer unloop and unseed into one arithmetic theorem. Its first remote check failed, so its source count formulas are not promoted as verified circuit results. Then preserve the safe divisor for inactive controls, integrate both arithmetic legs into the existing all-valid-input point-addition theorem, and derive final resources from that same concrete program and its actual wire support.
+The seven-stage arithmetic port and concrete controlled caller adapter are now accepted and connected to the complete original point theorem. Standalone arithmetic costs 1,706,497 Toffolis for division and 1,705,986 for multiplication, including both integer passes and seed/unseed. Safe controlled divisor load/unload adds 512 Toffolis per operation. The source point program contains those two actual calls, the exact square, and the original classification/corner path.
+
+Remaining optimization work is to prove and integrate the complete fused forward field kernel, separately prove its inverse with fresh measurement streams, connect exact width bounds to real gates, and derive tighter actual support where useful. The generic and component proofs do not yet count as additional full-point reductions.
 
 The base signed seed is `(p+x,x)`. The reference is the primary Skywalk source in the ECDSA.Fail challenge, with contributor attribution to Matt Zweil and the challenge authors preserved. The newer incumbent's alternate seeds and sampled convergence/carry schedules require independent exact proofs and are not imported by this checkpoint. No approximate widths, selected-input correctness, new axioms, `sorry` or `native_decide` are used.
 

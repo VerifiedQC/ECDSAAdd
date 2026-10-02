@@ -25,7 +25,7 @@ theorem pointDialogFinite_frame (L : ControlledPointLayout) (hw : L.Widths) (hn 
     (q : Wire) (hq : q∉PointAddLayout.pointWires L.point) :
     (run (pointDialogFinite L (.some hc) cx cy) m s).basis q=s.basis q := by
   have ho := (pointDialogFinite_spec L hw hn R hc b s m hi).2
-  exact boundary_frame_values L _ (by rw [pointDialogFinite_wires L hw hn]) R _ b s m hi ho q hq
+  exact boundary_frame_values L _ (pointDialogFinite_wires L hw hn (.some hc) cx cy) R _ b s m hi ho q hq
 
 private theorem boundary_work_subset (L : ControlledPointLayout) :
     L.inPlaceFlags++L.dialogPool ⊆ L.work := by

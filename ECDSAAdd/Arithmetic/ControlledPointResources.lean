@@ -25,12 +25,12 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
   · rw [qubitCount,controlledPointAddOut_support L h cx cy hc,List.toFinset_card_of_nodup (L.used_nodup h hn)]
     simp [ControlledPointLayout.usedWires,ControlledPointLayout.extras,ControlledPointLayout.selectors,L.core.usedWires_length h]
 
-/-- 一次原地除法、一次原地乘法、平方及四类角落的同程序精确成本；线数来自实际支持等式。 -/
+/-- Exact costs of the same complete Skywalk point program, with a physical support bound. -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=6880186 ∧
-    measurementCount (controlledPointAdd L (.some hc))=4502202 ∧
-    qubitCount (controlledPointAdd L (.some hc))=3134 := by
+    toffoliCount (controlledPointAdd L (.some hc))=3636669 ∧
+    measurementCount (controlledPointAdd L (.some hc))=2845373 ∧
+    qubitCount (controlledPointAdd L (.some hc))≤2994 := by
   have hh := pointDialogFinite_counts L h hn (.some hc) cx cy
   exact ⟨hh.1,hh.2,pointDialogFinite_qubits L h hn (.some hc) cx cy⟩
 
