@@ -1,5 +1,7 @@
 # Verified exact Skywalk point-addition circuit
 
+**Latest verified result:** 3,505,085 static Toffolis / 2,713,789 measurements / ≤2,994 static sites. Full build and 528 public axiom checks passed in 294 seconds. See [the exact narrowed-loop integration record](NARROW_SKYWALK_EXACT_20261002.md). The initial Skywalk checkpoint and development history below are retained as historical evidence.
+
 The complete `controlledPointAdd` now uses exact Skywalk division and multiplication. For every valid point, addend and control, the byte-identical original specification proves the expected point sum, unchanged control, complete allocated-work cleanup and restored phase for every measurement record. Finite addends have **3,636,669 static Toffolis**, **2,845,373 measurements** and a proved **static logical wire-support upper bound of 2,994**. The identity addend still yields an empty program. The wire result is an upper bound on distinct sites, not an independently proved peak-live or physical-qubit count.
 
 The complete pinned remote warnings-as-errors build passed 3,475 jobs. All 483 selected public entry-point axiom outputs matched their requested declarations and used only `propext`, `Classical.choice` and `Quot.sound`. Verification took **330 seconds: 228 build and 102 axiom audit**. All 352 source/configuration hashes on the pod match the local candidate. The first original baseline had 7,207,866 Toffolis; the exact Skywalk reduction is 3,571,197 (49.5458%). The last Kaliski checkpoint was 6,880,186 / 4,502,202 / 3,134.

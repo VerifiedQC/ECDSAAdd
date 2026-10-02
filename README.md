@@ -6,11 +6,11 @@
 
 ## Current status
 
-本节的“当前已证”以代码基线 `9699678` 加 2026-10-02 精确测量回放与短来源平方接入为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
+本节的“当前已证”以代码基线 `9699678` 加 2026-10-02 完整精确 Skywalk 与已证位宽缩减接入为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
 
-**当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **3,636,669 Toffoli / 2,845,373 次测量 / 实际静态线路上界2,994**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
+**当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **3,505,085 Toffoli / 2,713,789 次测量 / 实际静态线路上界2,994**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
 
-改12的当前路径是一次 `dialogDivide`、一次 `dialogMultiply`、专用平方及四类角落处理。 2026-10-02 将已证测量掩码清理接入两条回放方向，精确节省 262,144 个 Toffoli，并增加同数测量；随后短来源平方行省去零 padding 的受控复制与清理，各省 65,536 个 Toffoli 和测量。当前相对基线净省 327,680 个 Toffoli（约 4.55%）。点加正确性陈述与实际支持线数保持。验证仅在用户提供的 CPU pod 上执行，见 [精确优化记录](docs/EXACT_OPTIMIZATION_20261002.md)。独立 `fieldInverse`、`fieldMul`、XOR点加仍有各自的当前资源定理，但不能再将旧路径的调用次数套到此入口。完整的当前入口数值和定理索引见[当前已证资源索引](docs/PROOF_STATUS.md#current-resource-index)。下文未特别标为历史或预算的模块数值均属当前已证模块；优化阶段表只记录各阶段结果，收益不能重复相加。
+当前路径使用精确 Skywalk 乘除、专用平方及完整角落处理。最新接入保留全部 512 轮、完整路由和减半，只用全称位宽界缩减带符号记录加法；四次整数阶段各省 32,896 个 Toffoli 与测量，整机共省 131,584。相对最初 7,207,866 Toffoli 基线共省 3,702,781（约 51.37%）。完整远程验证通过 3,480 项构建与 528 项公开公理检查，用时 294 秒（构建 202 秒，审计 92 秒）。原公开点加规格逐字保持，验证仅在用户提供的 CPU pod 上执行，见[最新精确位宽接入记录](docs/NARROW_SKYWALK_EXACT_20261002.md)。下方旧阶段数字均为历史或独立模块结果，不能相加替代当前整机定理。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |

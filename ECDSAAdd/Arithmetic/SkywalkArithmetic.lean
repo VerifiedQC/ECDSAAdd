@@ -23,11 +23,11 @@ theorem skywalkArithmetic_run (divide : Bool) (w : Nat → Wire)
   let P : State → State → Prop := fun initial out =>
     SkywalkArithmeticInput w x Y.val initial.basis → SkywalkArithmeticStrong divide w x Y initial out
   have hh := skywalkRunSeven
-    (skywalkSeed (skywalkSharedSeed w) p) (skywalkIntegerLoop w 0 512)
+    (skywalkSeed (skywalkSharedSeed w) p) (narrowSkywalkLoop w 0 512)
     (skywalkArithmeticClear w)
     (if divide then skywalkFieldDivision (skywalkSharedField w) (skywalkSharedTape w)
       else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w))
-    (skywalkArithmeticClear w) (skywalkIntegerUnloop w 0 512)
+    (skywalkArithmeticClear w) (narrowSkywalkUnloop w 0 512)
     (skywalkUnseed (skywalkSharedSeed w) p) P
     (by
       intro initial s1 s2 s3 s4 s5 s6 s7 m1 m2 m3 m4 m5 m6 m7 hs1 hs2 hs3 hs4 hs5 hs6 hs7 hinput
@@ -90,12 +90,12 @@ theorem skywalkArithmetic_frame (divide : Bool) (w : Nat → Wire)
 /-- Counts of the actual composed programs, including both integer passes. -/
 theorem skywalkArithmetic_counts (w : Nat → Wire) (hn : (skywalkSharedWires w).Nodup)
     (active : Wire) (ha : active∉skywalkSharedWires w) :
-    toffoliCount (skywalkArithmetic true w)=1706497 ∧
-    measurementCount (skywalkArithmetic true w)=1312257 ∧
-    toffoliCount (skywalkArithmetic false w)=1705986 ∧
-    measurementCount (skywalkArithmetic false w)=1311746 := by
+    toffoliCount (skywalkArithmetic true w)=1640705 ∧
+    measurementCount (skywalkArithmetic true w)=1246465 ∧
+    toffoliCount (skywalkArithmetic false w)=1640194 ∧
+    measurementCount (skywalkArithmetic false w)=1245954 := by
   have hs := skywalkSeed_counts (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
-  have hi := skywalkInteger512_counts w (skywalkShared_integer_nodup w hn)
+  have hi := narrowSkywalk512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)
   have hf := skywalkFieldLeg_counts active (skywalkSharedField w) (skywalkSharedTape w) 256
     (skywalkShared_field_widths w) (skywalkShared_tape_layout w hn active ha) (by omega)
@@ -228,7 +228,7 @@ theorem skywalkArithmetic_support (divide : Bool) (w : Nat → Wire)
     rw [hs.2]
     intro q hq
     exact List.mem_toFinset.mpr (arith_seed_subset_shared w (List.mem_toFinset.mp hq))
-  have hi := skywalkIntegerLoop_support w 0 512 (skywalkShared_integer_nodup w hn) (by omega)
+  have hi := narrowSkywalkLoop_support w 0 512 (skywalkShared_integer_nodup w hn) (by omega)
   have hpool : (skywalkPoolWires w).toFinset⊆(skywalkSharedWires w).toFinset := by
     intro q hq
     exact List.mem_toFinset.mpr (arith_block_subset_shared w 0 1798 (by omega) (List.mem_toFinset.mp hq))
