@@ -36,6 +36,8 @@ task_modules=(
   ECDSAAdd.Arithmetic.SkywalkTerminal ECDSAAdd.Arithmetic.SkywalkDialog
   ECDSAAdd.Arithmetic.SkywalkIntegerTick ECDSAAdd.Arithmetic.SkywalkPool
   ECDSAAdd.Arithmetic.SkywalkShared ECDSAAdd.Arithmetic.SkywalkPointPool
+  ECDSAAdd.Arithmetic.SkywalkPointLayout ECDSAAdd.Arithmetic.SkywalkControlled
+  ECDSAAdd.Math.FusedSignedHalf ECDSAAdd.Arithmetic.TrailingZeroCompare
   ECDSAAdd.Arithmetic.SkywalkIntegerLoopCore ECDSAAdd.Arithmetic.SkywalkIntegerLoop
   ECDSAAdd.Arithmetic.SignedHalf ECDSAAdd.Arithmetic.SkywalkSign
   ECDSAAdd.Arithmetic.SkywalkRoute ECDSAAdd.Arithmetic.SkywalkPayloadProgram
