@@ -1,14 +1,14 @@
 import ECDSAAdd.Arithmetic.ReplayCellResources
 import ECDSAAdd.Arithmetic.ModUnaryResources
 import ECDSAAdd.Math.SkywalkPayload
+import ECDSAAdd.Arithmetic.SkywalkSignedModAdd
 
 namespace ECDSAAdd.Arithmetic
 
-/-- Exact reference signed add: the record bit chooses addition or subtraction.
-Both arithmetic branches have full modular corrections and record-safe cleanup. -/
+/-- Exact optimized signed add, with addition for g=true and subtraction for g=false.
+The copied source mask is restored and Clifford-cleared after one modular-add core. -/
 def skywalkSignedAdd (g : Wire) (L : ModInPlaceLayout) (p : Nat) : Program :=
-  measuredControlledModAdd g L p ++ [.X g] ++
-  measuredControlledModSub g L p ++ [.X g]
+  skywalkSignedModAdd g L p
 
 /-- Exact butterfly reference cell. Halving is unconditional; only the sign and swap are recorded. -/
 def skywalkFieldCell (g swap : Wire) (L : ModInPlaceLayout) (p : Nat) : Program :=
@@ -64,15 +64,17 @@ theorem skywalkSignedAdd_spec (active swap g : Wire) (L : ModInPlaceLayout)
     (hX : X<p) (hY : Y<p) :
     Triple (ReplayValues active swap g L C S G X Y) (skywalkSignedAdd g L p)
       (ReplayValues active swap g L C S G (skywalkSignedNat p G X Y) Y) := by
-  let A := if G then (X+Y)%p else X
-  have ha : A<p := by dsimp [A]; split; exact Nat.mod_lt _ hp; exact hX
-  have h1 := ReplayValues.add_step active swap g L n p X Y C S G hw hnd hp hpn hX hY
-  have h2 := skywalk_toggle_step active swap g L C S G A Y hnd
-  have h3 := ReplayValues.subtract_step active swap g L n p A Y C S (!G) hw hnd hp hpn ha hY
-  have h4 := skywalk_toggle_step active swap g L C S (!G)
-    (if !G then (A+p-Y)%p else A) Y hnd
-  have hall := ((h1.seq h2).seq h3).seq h4
-  cases G <;> simpa [skywalkSignedAdd,skywalkSignedNat,A,List.append_assoc] using hall
+  intro st m h
+  have hg := ReplayValues.control_nodup active swap g L hnd g (by simp)
+  obtain ⟨hf,hv⟩ := skywalkSignedModAdd_spec g L n p Y X G hw hg hp hpn (by omega) hX
+    st m ⟨⟨⟨h.2.2.1,h.2.2.2.2.1⟩,h.2.2.2.1⟩,h.2.2.2.2.2⟩
+  simp only [Holds.holds] at hv
+  have keep (q : Wire) (hq : q∉L.z) :=
+    (skywalkSignedModAdd_correct g L n p Y X G hw hg hp hpn (by omega) hX st m
+      h.2.2.1 h.2.2.2.2.1 h.2.2.2.1 h.2.2.2.2.2).2.2 q hq
+  exact ⟨hf,(keep active (ReplayValues.control_outside active swap g L hnd active (by simp)).1).trans h.1,
+    (keep swap (ReplayValues.control_outside active swap g L hnd swap (by simp)).1).trans h.2.1,
+    hv.1.1.1,hv.1.2,hv.1.1.2,hv.2⟩
 
 private theorem skywalk_unary_step (half : Bool) (active swap g : Wire) (L : ModInPlaceLayout)
     (n p X Y : Nat) (C S G : Bool) (hw : L.Widths n)
@@ -157,11 +159,11 @@ theorem skywalkFieldUncell_spec (active swap g : Wire) (L : ModInPlaceLayout)
 
 /-- Same actual gate streams as the specifications; static counts include all correction branches. -/
 theorem skywalkField_counts (g swap : Wire) (L : ModInPlaceLayout) (n p : Nat)
-    (hw : L.Widths n) (hnd : (g::L.wires).Nodup) (hn : 0<n) :
-    toffoliCount (skywalkFieldCell g swap L p)=15*n-2 ∧
-    measurementCount (skywalkFieldCell g swap L p)=14*n-2 ∧
-    toffoliCount (skywalkFieldUncell g swap L p)=15*n-3 ∧
-    measurementCount (skywalkFieldUncell g swap L p)=14*n-3 := by
+    (hw : L.Widths n) (_hnd : (g::L.wires).Nodup) (hn : 0<n) :
+    toffoliCount (skywalkFieldCell g swap L p)=9*n-1 ∧
+    measurementCount (skywalkFieldCell g swap L p)=8*n-1 ∧
+    toffoliCount (skywalkFieldUncell g swap L p)=9*n-2 ∧
+    measurementCount (skywalkFieldUncell g swap L p)=8*n-2 := by
   have hz : L.z.length=n+1 := by simp [ModInPlaceLayout.z,ModAddCoreLayout.z,hw.core.low]
   have hl : (L.z.take L.low.length).length=n := by simp [hw.core.low,hz]
   have hr : (L.a.take L.low.length).length=n := by simp [hw.core.low,hw.core.a]
@@ -170,12 +172,11 @@ theorem skywalkField_counts (g swap : Wire) (L : ModInPlaceLayout) (n p : Nat)
   have hs : toffoliCount (swapRegisters swap (L.z.take L.low.length) (L.a.take L.low.length))=n ∧
       measurementCount (swapRegisters swap (L.z.take L.low.length) (L.a.take L.low.length))=0 := by
     simp [swapRegisters,ca.1,ca.2,cb.1,cb.2,hl]
-  have ha := measuredControlledModAdd_resources g L n p hw hnd hn
-  have hb := measuredControlledModSub_resources g L n p hw hnd hn
+  have hSigned := skywalkSignedModAdd_counts g L n p hw hn
   have hu := modUnary_counts L.unary n p (L.unary_widths n hw) hn
+  have hFlip : toffoliCount [.X g]=0 ∧ measurementCount [.X g]=0 := ⟨rfl,rfl⟩
   simp only [skywalkFieldCell,skywalkFieldUncell,skywalkSignedAdd,toffoliCount_append,measurementCount_append,
-    ha.1,ha.2.1,hb.1,hb.2.1,hu.1,hu.2.1,hu.2.2.1,hu.2.2.2,hs.1,hs.2,
-    toffoliCount,measurementCount]
+    hSigned.1,hSigned.2,hu.1,hu.2.1,hu.2.2.1,hu.2.2.2,hs.1,hs.2,hFlip.1,hFlip.2]
   omega
 
 set_option maxHeartbeats 2000000 in
@@ -193,23 +194,6 @@ theorem skywalkField_wires_subset (g swap : Wire) (L : ModInPlaceLayout) (n p : 
     have hz : q∈L.z.take L.low.length → q∈L.z := List.mem_of_mem_take
     have ha : q∈L.a.take L.low.length → q∈L.a := List.mem_of_mem_take
     simp only [own,List.mem_toFinset,List.mem_cons,List.mem_append,ModInPlaceLayout.wires] at hq' ⊢
-    tauto
-  have hAdd : wires (measuredControlledModAdd g L p) ⊆ own := by
-    rw [measuredControlledModAdd_wires g L n p hw hn]
-    intro q hq
-    have ha : q∈L.a.take n → q∈L.a := List.mem_of_mem_take
-    simp only [own,List.mem_toFinset,List.mem_cons,List.mem_append,
-      ModInPlaceLayout.wires,ModInPlaceLayout.work,ModInPlaceLayout.maskedCore,
-      ModAddCoreLayout.wires,ModAddCoreLayout.z,ModAddCoreLayout.work,
-      ModInPlaceLayout.z,List.not_mem_nil,or_false] at hq ⊢
-    tauto
-  have hSub : wires (measuredControlledModSub g L p) ⊆ own := by
-    rw [measuredControlledModSub_wires g L n p hw hn]
-    intro q hq
-    simp only [own,List.mem_toFinset,List.mem_cons,List.mem_append,
-      ModInPlaceLayout.wires,ModInPlaceLayout.work,ModInPlaceLayout.maskedCore,
-      ModAddCoreLayout.wires,ModAddCoreLayout.z,ModAddCoreLayout.work,
-      ModInPlaceLayout.z,List.not_mem_nil,or_false] at hq ⊢
     tauto
   have hUnary := modUnary_wires L.unary n p (L.unary_widths n hw) hn
   have hHalf : wires (halfInPlace L.unary p) ⊆ own := by
@@ -230,8 +214,11 @@ theorem skywalkField_wires_subset (g swap : Wire) (L : ModInPlaceLayout) (n p : 
     tauto
   have hFlip : wires [.X g] ⊆ own := by simp [own,wires,Instr.wires]
   have hSigned : wires (skywalkSignedAdd g L p) ⊆ own := by
-    simp only [skywalkSignedAdd,wires_append,Finset.union_subset_iff]
-    exact ⟨⟨⟨hAdd,hFlip⟩,hSub⟩,hFlip⟩
+    intro q hq
+    have hh := skywalkSignedModAdd_wires_subset g L n p hw hn hq
+    simp only [own,List.mem_toFinset,List.mem_cons,List.mem_append,
+      ModInPlaceLayout.wires,ModInPlaceLayout.work] at hh ⊢
+    tauto
   simp only [skywalkFieldCell,skywalkFieldUncell,wires_append,Finset.union_subset_iff]
   exact ⟨⟨⟨hSigned,hHalf⟩,hswap⟩,⟨⟨⟨⟨hswap,hDouble⟩,hFlip⟩,hSigned⟩,hFlip⟩⟩
 
