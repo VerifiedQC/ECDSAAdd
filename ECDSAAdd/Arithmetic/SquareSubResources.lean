@@ -3,7 +3,7 @@ import ECDSAAdd.Arithmetic.SquareSubLayout
 namespace ECDSAAdd.Arithmetic
 
 theorem squareSub_counts (L : SquareSubLayout) (hw : L.Widths) (hn : L.wires.Nodup) :
-    toffoliCount (squareSub L)=275129 ∧ measurementCount (squareSub L)=275129 := by
+    toffoliCount (squareSub L)=209593 ∧ measurementCount (squareSub L)=209593 := by
   have hk := karatsubaSquare_counts L.integer (L.integer_valid hw hn)
   have hr := squareReduce_counts L.reduction (L.reduction_widths hw)
   have ho := modSubInPlace_resources L.output 256 SquareReduction.p (L.output_widths hw)

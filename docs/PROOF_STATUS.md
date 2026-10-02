@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-本文件区分当前源码的定理索引与历史交付记录。当前代码为 `9699678` 加 2026-10-02 精确测量回放接入；正文中的旧批次验证数字仅为历史证据。当前公理披露来自用户提供的 CPU pod 上重新运行 `scripts/verify.sh`：2,244 项构建、468 项公开入口检查（467 个不同声明），均通过白名单检查。接入记录见 [精确优化记录](EXACT_OPTIMIZATION_20261002.md)。
+本文件区分当前源码的定理索引与历史交付记录。当前代码为 `9699678` 加 2026-10-02 精确测量回放与短来源平方接入；正文中的旧批次验证数字仅为历史证据。当前公理披露来自用户提供的 CPU pod 上重新运行 `scripts/verify.sh`：2,245 项构建、476 项公开入口检查（475 个不同声明），均通过白名单检查。接入记录见 [精确优化记录](EXACT_OPTIMIZATION_20261002.md)。
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -13,7 +13,7 @@
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 6,945,722 / 4,567,738 / 3,134 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `controlledPointAdd`，有限 C | 6,880,186 / 4,502,202 / 3,134 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
@@ -24,8 +24,8 @@
 | `montP` / `montQ`，每段 | 189,712 / 189,712 / 2,339 | [montPQ_resources](../ECDSAAdd/Arithmetic/MontResources.lean) |
 | Montgomery 五适配器 | 逐接口计数，见下方 M2 表 | [montAdapter_counts / montControlledAdapter_counts / qubits](../ECDSAAdd/Arithmetic/MontAdapterResources.lean#L5) |
 | `dialogDivide`；`dialogMultiply` | 3,460,096 / 2,271,744 / 3,126；3,196,928 / 2,009,088 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
-| `squareSub`（当前中空间模块） | 275,129 / 275,129 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
-| 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,813,634 / 5,646,146 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
+| `squareSub`（当前中空间模块） | 209,593 / 209,593 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
+| 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,748,098 / 5,580,610 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
 | 保留的 `divideAdd`；`divideSub`（非 dialog 入口） | 3,882,022 / 2,298,918 / —；3,882,534 / 2,299,430 / — | [divide_counts](../ECDSAAdd/Arithmetic/DivideResources.lean#L17) |
 | `measuredControlledModAdd`，n>0 | 5n−1 / 5n−1 / 5n+5 | [measuredControlledModAdd_resources](../ECDSAAdd/Arithmetic/ModInPlaceWrappers.lean) |
 | `measuredControlledModSub`，n>0 | 7n−1 / 7n−1 / 5n+6 | [measuredControlledModSub_resources](../ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
@@ -906,7 +906,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,295,112 | 6,126,846 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 6,945,722 | 4,567,738 | 3,134 |
+| 有限 C 的 `controlledPointAdd` | 6,880,186 | 4,502,202 | 3,134 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointDialogFinite`门列的计数与支持定理。实际支持为点513位、控制1位、七个标志和共享池2,613位；没有独立斜率寄存器，平方与乘除按边界归零后复用同一池。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -1556,3 +1556,7 @@ n=256 时为 1279/1279/1285、1791/1791/1286。工作区和完整支持均为 O(
 本节独立原语批次当时未改旧受控入口、回放、乘除和整机，点加为 7,207,866/4,305,594/3,134。后续 2026-10-02 接入已将当前点加更新为 6,945,722/4,567,738/3,134。
 
 本批新增八条公开公理检查。合入 `9bd65f9` 后完整验证退出0：2,244项构建、468条实际公理输出；与上方披露及脚本入口逐项一致，不新增公理、测试或证明资源限制。
+
+## 2026-10-02 短来源平方精确接入
+
+当前平方行只复制真实来源位，保留完整目标与进位链。每方向计数为 `(m−1)*(3m−2)/2`；128/129 位分别为 24,257/24,640。Karatsuba 每方向为 99,455，`squareSub` 为 209,593。有限常量受控点加为 6,880,186 Toffoli、4,502,202 测量、3,134 静态支持线。完整远程严格构建与 476 项公理审计通过，耗时 219 秒（142 秒构建、77 秒公理审计）。旧批次数字保留为历史；原公开点加陈述逐字未改。

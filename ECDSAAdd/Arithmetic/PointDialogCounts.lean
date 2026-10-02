@@ -41,7 +41,7 @@ theorem pointDialogNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (hn
 
 
 theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) :
-    toffoliCount (pointDialogSquare L)=275641 ∧ measurementCount (pointDialogSquare L)=275129 := by
+    toffoliCount (pointDialogSquare L)=210105 ∧ measurementCount (pointDialogSquare L)=209593 := by
   have hc := copyRegister_counts (some L.core.generic) L.point.y (L.dialogPool.take 256)
     (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])
   have hs := squareSub_counts L.dialogSquare (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn)
@@ -51,8 +51,8 @@ theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (hn
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=6941618 ∧
-    measurementCount (pointDialogGeneric L cx cy)=4563634 := by
+    toffoliCount (pointDialogGeneric L cx cy)=6876082 ∧
+    measurementCount (pointDialogGeneric L cx cy)=4498098 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
   have hd := dialog_counts L.dialogPort p (DialogLayout.fromPool_widths _ _ _ _) (L.dialogPort_nodup hw hn)
@@ -65,8 +65,8 @@ theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=6945722 ∧
-    measurementCount (pointDialogFinite L C cx cy)=4567738 := by
+    toffoliCount (pointDialogFinite L C cx cy)=6880186 ∧
+    measurementCount (pointDialogFinite L C cx cy)=4502202 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by

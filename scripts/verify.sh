@@ -475,6 +475,14 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.replayUncell_roundTrip_spec
 #print axioms ECDSAAdd.Arithmetic.replayLoop_roundTrip_spec
 #print axioms ECDSAAdd.Arithmetic.replayUnloop_roundTrip_spec
+#print axioms ECDSAAdd.Arithmetic.measuredShortAddInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.measuredShortSubInPlace_spec
+#print axioms ECDSAAdd.Arithmetic.measuredShortInPlace_counts
+#print axioms ECDSAAdd.Arithmetic.measuredShortAddInPlace_frame
+#print axioms ECDSAAdd.Arithmetic.measuredShortSubInPlace_frame
+#print axioms ECDSAAdd.Arithmetic.measuredShortInPlace_wires
+#print axioms ECDSAAdd.Arithmetic.triangularSquareCount_twice
+#print axioms ECDSAAdd.Arithmetic.triangularSquareCount_closed
 LEAN
 )
 printf '%s\n' "$axioms"
