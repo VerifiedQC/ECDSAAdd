@@ -154,5 +154,45 @@ theorem reduction_recovery (p X Y R : Nat) (b q h : Bool) (hp : p%2=1)
     h=((h ^^ b) ^^ b) := by cases h <;> cases b <;> rfl
     _=(decide (R<threshold p b q Y) ^^ b) := congrArg (fun v : Bool => v ^^ b) hb.symm
 
+/-- Integer source constant for the threshold word; its gate load uses two AND selectors. -/
+def thresholdConstant (p : Nat) (b q : Bool) (Y : Nat) : Int :=
+  bit (b ^^ q)*(halfThreshold p : Int)+bit (b && q)*((p : Int)+1)+
+    bit ((!q) && (parity (Y : Int) ^^ b))
+
+theorem threshold_constant_identity (p Y : Nat) (b q : Bool) (hp : p%2=1) (hY : Y<p) :
+    (threshold p b q Y : Int)=
+      (if b then -1-(Y/2 : Int) else (Y/2 : Int))+thresholdConstant p b q Y := by
+  have he := parity_value (Y : Int)
+  cases b <;> cases q <;> cases hy : parity (Y : Int) <;>
+    simp [threshold,thresholdConstant,halfThreshold,bit,hy] at he ⊢ <;> omega
+
+/-- Fixed-modulus facts that justify the cheap XOR constant load and exact low-three-bit omission. -/
+theorem secp_halfThreshold_even : halfThreshold ECDSAAdd.p%2=0 := by
+  norm_num [halfThreshold,ECDSAAdd.p]
+
+theorem secp_halfThreshold_multiple_eight : halfThreshold ECDSAAdd.p%8=0 := by
+  norm_num [halfThreshold,ECDSAAdd.p]
+
+/-- The even lift is congruent to the raw signed sum for every coefficient. -/
+theorem evenLift_cast (p : Nat) (b : Bool) (s : Int) :
+    (evenLift p b s : ZMod p)=(s : ZMod p) := by
+  simp only [evenLift,Int.cast_add,Int.cast_mul,Int.cast_natCast,ZMod.natCast_self,mul_zero,add_zero]
+
+private theorem fp_two_nonzero : (2 : Fp)≠0 := by decide
+
+/-- The canonical result is exactly the signed Fp half, including X=0, Y=0 and ties. -/
+theorem field_identity (X Y : Nat) (b : Bool) (hX : X<ECDSAAdd.p) (hY : Y<ECDSAAdd.p) :
+    (result ECDSAAdd.p b X Y : Fp)=
+      ((X : Fp)+(if b then -(Y : Fp) else (Y : Fp)))/2 := by
+  have ho : ECDSAAdd.p%2=1 := by norm_num [ECDSAAdd.p]
+  have hr := result_spec ECDSAAdd.p X Y b ho hX hY
+  have hh := congrArg (fun z : Int => (z : Fp)) hr.2
+  simp only [Int.cast_mul,Int.cast_ofNat,Int.cast_natCast] at hh
+  rw [evenLift_cast] at hh
+  apply (eq_div_iff fp_two_nonzero).mpr
+  cases b
+  · simpa [signedSum,mul_comm] using hh
+  · simpa [signedSum,mul_comm] using hh
+
 
 end ECDSAAdd.FusedSignedHalf
