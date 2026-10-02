@@ -124,38 +124,4 @@ theorem step_reencode (g s : Bool) (z : SkywalkNat.State)
     (by omega) (by omega) (by omega)
   simpa only [decode_step_encode g s z hv hvo] using frame_reencode _ hf
 
-def next (z : State) : State := railsOf (step z)
-
-/-- Full signed representation remains reachable at every exact iteration.
-The witnesses retain physical orientation and small sign independently of
-the sign-flip transcript. No coprimality or finite schedule is assumed. -/
-theorem iter_encoded (i : Nat) (g s : Bool) (z : SkywalkNat.State)
-    (hv : 0<z.v) (hvo : z.v%2=1) :
-    ∃ G S : Bool, (next^[i] (encode g s (z.u : Int) (z.v : Int)))=
-      encode G S (((SkywalkNat.step^[i] z).u : Nat) : Int)
-        (((SkywalkNat.step^[i] z).v : Nat) : Int) := by
-  induction i with
-  | zero => exact ⟨g,s,rfl⟩
-  | succ i ih =>
-    obtain ⟨G,S,henc⟩ := ih
-    let zi := SkywalkNat.step^[i] z
-    have hvalid := SkywalkNat.iter_valid i z hv hvo
-    let t := step (encode G S (zi.u : Int) (zi.v : Int))
-    refine ⟨t.g,smallerSign t,?_⟩
-    rw [Function.iterate_succ_apply',henc]
-    have hr := step_reencode G S zi hvalid.1 hvalid.2.1
-    simpa only [next,zi,Function.iterate_succ_apply'] using hr
-
-/-- Every actually generated orientation/sign record lies in the ternary
-alphabet, at arbitrary depth and through terminal padding. -/
-theorem iter_ternary_history (i : Nat) (g s : Bool) (z : SkywalkNat.State)
-    (hv : 0<z.v) (hvo : z.v%2=1) :
-    let r := next^[i] (encode g s (z.u : Int) (z.v : Int))
-    ((step r).g && (step r).s)=false := by
-  dsimp only
-  obtain ⟨G,S,henc⟩ := iter_encoded i g s z hv hvo
-  rw [henc]
-  have hvalid := SkywalkNat.iter_valid i z hv hvo
-  exact ternary_history G S _ _ (by omega) (by omega) (by omega)
-
 end ECDSAAdd.SkywalkRails
