@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.SkywalkShared
-import ECDSAAdd.Arithmetic.SkywalkIntegerLoop
+import ECDSAAdd.Arithmetic.NarrowSkywalkLoop
 import ECDSAAdd.Arithmetic.SkywalkTerminal
 import ECDSAAdd.Arithmetic.SkywalkDialog
 
@@ -25,18 +25,26 @@ def skywalkArithmeticClear (w : Nat → Wire) : Program :=
 /-- Executable seven-stage exact port. `divide=false` selects multiplication. -/
 def skywalkArithmetic (divide : Bool) (w : Nat → Wire) : Program :=
   skywalkSeed (skywalkSharedSeed w) p ++
-  (skywalkIntegerLoop w 0 512 ++
+  (narrowSkywalkLoop w 0 512 ++
   (skywalkArithmeticClear w ++
   ((if divide then skywalkFieldDivision (skywalkSharedField w) (skywalkSharedTape w)
       else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w)) ++
   (skywalkArithmeticClear w ++
-  (skywalkIntegerUnloop w 0 512 ++ skywalkUnseed (skywalkSharedSeed w) p)))))
+  (narrowSkywalkUnloop w 0 512 ++ skywalkUnseed (skywalkSharedSeed w) p)))))
 
-attribute [local irreducible] skywalkSeed skywalkUnseed skywalkIntegerLoop skywalkIntegerUnloop
+attribute [local irreducible] skywalkSeed skywalkUnseed narrowSkywalkLoop narrowSkywalkUnloop
 attribute [local irreducible] skywalkFieldDivision skywalkFieldMultiplication run
 
 def skywalkArithmeticResult (divide : Bool) (x : Nat) (Y : Fp) : Fp :=
   if divide then Y/(x : Fp) else Y*(x : Fp)
+
+private theorem arith_coprime (x : Nat) (hx0 : 0 < x) (hx : x < p) : x.Coprime p := by
+  apply Nat.Coprime.symm
+  apply p_prime.coprime_iff_not_dvd.mpr
+  intro hd
+  exact (Nat.not_le_of_lt hx) (Nat.le_of_dvd hx0 hd)
+
+private theorem arith_modulus_bound : p < 2^256 := by norm_num [p]
 
 private theorem arith_mem (w : Nat → Wire) (start len j : Nat)
     (hlo : start ≤ j) (hhi : j < start+len) : w j∈wireBlock w start len := by
@@ -301,8 +309,8 @@ private theorem arith_pool_away_z (w : Nat → Wire) (hn : (skywalkSharedWires w
 private theorem arith_loop_outside (back : Bool) (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (s : State) (m : List Bool) (q : Wire)
     (hq : q∉skywalkPoolWires w) :
-    (run (if back then skywalkIntegerUnloop w 0 512 else skywalkIntegerLoop w 0 512) m s).basis q=s.basis q := by
-  have hp := skywalkIntegerLoop_support w 0 512 (skywalkShared_integer_nodup w hn) (by omega)
+    (run (if back then narrowSkywalkUnloop w 0 512 else narrowSkywalkLoop w 0 512) m s).basis q=s.basis q := by
+  have hp := narrowSkywalkLoop_support w 0 512 (skywalkShared_integer_nodup w hn) (by omega)
   apply run_preserves_outside
   intro hm
   cases back
@@ -312,13 +320,13 @@ private theorem arith_loop_outside (back : Bool) (w : Nat → Wire)
 private theorem arith_record_outside (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (s : State) (m : List Bool) (q : Wire)
     (hq : q∉skywalkPoolWires w) :
-    (run (skywalkIntegerLoop w 0 512) m s).basis q=s.basis q := by
+    (run (narrowSkywalkLoop w 0 512) m s).basis q=s.basis q := by
   simpa only [Bool.false_eq_true,if_false] using arith_loop_outside false w hn s m q hq
 
 private theorem arith_unrecord_outside (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (s : State) (m : List Bool) (q : Wire)
     (hq : q∉skywalkPoolWires w) :
-    (run (skywalkIntegerUnloop w 0 512) m s).basis q=s.basis q := by
+    (run (narrowSkywalkUnloop w 0 512) m s).basis q=s.basis q := by
   simpa only [if_true] using arith_loop_outside true w hn s m q hq
 
 private theorem arith_clear_outside (w : Nat → Wire) (hn : (skywalkSharedWires w).Nodup)
@@ -393,10 +401,10 @@ private theorem arith_z_input (w : Nat → Wire) (hn : (skywalkSharedWires w).No
 private theorem arith_preparation_frame (w : Nat → Wire) (hn : (skywalkSharedWires w).Nodup)
     (s : State) (m1 m2 m3 : List Bool) (q : Wire) (hq : q∈(skywalkSharedField w).z) :
     (run (skywalkArithmeticClear w) m3
-      (run (skywalkIntegerLoop w 0 512) m2
+      (run (narrowSkywalkLoop w 0 512) m2
         (run (skywalkSeed (skywalkSharedSeed w) p) m1 s))).basis q=s.basis q := by
   generalize hs1 : run (skywalkSeed (skywalkSharedSeed w) p) m1 s=s1
-  generalize hs2 : run (skywalkIntegerLoop w 0 512) m2 s1=s2
+  generalize hs2 : run (narrowSkywalkLoop w 0 512) m2 s1=s2
   generalize hs3 : run (skywalkArithmeticClear w) m3 s2=s3
   rw [skywalkShared_field_z] at hq
   obtain ⟨i,hi,rfl⟩ := List.mem_map.mp hq
@@ -416,16 +424,16 @@ private theorem arith_clean_preparation (w : Nat → Wire) (hn : (skywalkSharedW
     (x y : Nat) (hx0 : 0 < x) (hx : x < p) (s : State) (m1 m2 m3 : List Bool)
     (h : SkywalkArithmeticInput w x y s.basis) :
     SkywalkSharedClean w (run (skywalkArithmeticClear w) m3
-      (run (skywalkIntegerLoop w 0 512) m2
+      (run (narrowSkywalkLoop w 0 512) m2
         (run (skywalkSeed (skywalkSharedSeed w) p) m1 s))).basis := by
   generalize hs1 : run (skywalkSeed (skywalkSharedSeed w) p) m1 s=seed
-  generalize hs2 : run (skywalkIntegerLoop w 0 512) m2 seed=recorded
+  generalize hs2 : run (narrowSkywalkLoop w 0 512) m2 seed=recorded
   generalize hs3 : run (skywalkArithmeticClear w) m3 recorded=cleared
   have hp0 : 0 < p := by norm_num [p]
   have hpo : p%2=1 := by norm_num [p]
   have hst0 := arith_seed_stage0 w hn x y hx s m1 h
   rw [hs1] at hst0
-  have hstFull := skywalkInteger512_spec w (skywalkShared_integer_nodup w hn) x p hp0 hpo seed m2 hst0
+  have hstFull := narrowSkywalk512_spec w (skywalkShared_integer_nodup w hn) x p hp0 hx0 hpo arith_modulus_bound hx (arith_coprime x hx0 hx) seed m2 hst0
   rw [hs2] at hstFull
   have hst := hstFull.2
   have hr := arith_clear_words w hn x hx0 hx recorded m3 hst
@@ -502,12 +510,12 @@ theorem skywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hin : SkywalkArithmeticInput w x Y.val s.basis)
     (s1 s2 s3 s4 s5 s6 s7 : State)
     (hs1 : run (skywalkSeed (skywalkSharedSeed w) p) m1 s=s1)
-    (hs2 : run (skywalkIntegerLoop w 0 512) m2 s1=s2)
+    (hs2 : run (narrowSkywalkLoop w 0 512) m2 s1=s2)
     (hs3 : run (skywalkArithmeticClear w) m3 s2=s3)
     (hs4 : run (if divide then skywalkFieldDivision (skywalkSharedField w) (skywalkSharedTape w)
       else skywalkFieldMultiplication (skywalkSharedField w) (skywalkSharedTape w)) m4 s3=s4)
     (hs5 : run (skywalkArithmeticClear w) m5 s4=s5)
-    (hs6 : run (skywalkIntegerUnloop w 0 512) m6 s5=s6)
+    (hs6 : run (narrowSkywalkUnloop w 0 512) m6 s5=s6)
     (hs7 : run (skywalkUnseed (skywalkSharedSeed w) p) m7 s6=s7) :
     s7.phase=s.phase ∧ regValue (skywalkArithmeticNumerator w) s7.basis=
       (skywalkArithmeticResult divide x Y).val ∧
@@ -527,7 +535,7 @@ theorem skywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
   rw [hs1] at h1
   have hstage0 := arith_seed_stage0 w hn x Y.val hx s m1 hin
   rw [hs1] at hstage0
-  have h2 := skywalkInteger512_spec w hnpool x p hp0 hpo s1 m2 hstage0
+  have h2 := narrowSkywalk512_spec w hnpool x p hp0 hx0 hpo hp hx (arith_coprime x hx0 hx) s1 m2 hstage0
   rw [hs2] at h2
   have h3 := skywalkTerminalClear_correct _ _ _ (arith_clear_gates w hn) s2 m3
   change (run (skywalkArithmeticClear w) m3 s2).phase=s2.phase ∧ _ at h3
@@ -568,7 +576,7 @@ theorem skywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
   rw [hs5] at hframe5
   have hstage5 := arith_stage_congr w _ s2.basis s5.basis h2.2
     (fun q hq => hframe5 q (arith_pool_away_z w hn q hq))
-  have h6 := skywalkIntegerUnloop_restore_pool w hnpool x p hp0 hpo s1 s5 m6 hstage0 hstage5
+  have h6 := narrowSkywalkUnloop_restore_pool w hnpool x p hp0 hx0 hpo hp hx (arith_coprime x hx0 hx) s1 s5 m6 hstage0 hstage5
   rw [hs6] at h6
   have outsideZ (q : Wire) (hq : q∉F.z) : s6.basis q=s1.basis q := by
     by_cases hpool : q∈skywalkPoolWires w

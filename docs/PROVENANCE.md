@@ -196,3 +196,8 @@ Deutsch 按已复审的 §30.8/§30.11 门列，复用本仓库 `eraseMask_eq_co
 ## Exact Skywalk source and verification
 
 The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.
+
+
+## Exact universal-width Skywalk update
+
+The complete point program subsequently integrated the universally proved signed prefix schedule, preserving all 512 rounds and the unchanged public specification. It now has 3,505,085 static Toffolis, 2,713,789 measurements and support ≤2,994. Full pod verification passed 3,480 build jobs and 528 axiom checks in 294 seconds. The initial Skywalk checkpoint above remains historical. See [the exact width integration record](NARROW_SKYWALK_EXACT_20261002.md).
