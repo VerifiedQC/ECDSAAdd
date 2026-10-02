@@ -116,8 +116,8 @@ theorem pointSkywalkArithmetic_correct (L : ControlledPointLayout) (hw : L.Width
 
 /-- Counts are those of the actual kernel plus the two256-bit safe copies. -/
 theorem pointSkywalkArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) :
-    toffoliCount (pointSkywalkArithmetic L false)=1575937 ∧
-    measurementCount (pointSkywalkArithmetic L false)=1246975 ∧
+    toffoliCount (pointSkywalkArithmetic L false)=1316353 ∧
+    measurementCount (pointSkywalkArithmetic L false)=987903 ∧
     toffoliCount (pointSkywalkArithmetic L true)=1575426 ∧
     measurementCount (pointSkywalkArithmetic L true)=1246464 := by
   have ha := skywalkArithmetic_counts L.skywalkSharedMap (L.skywalkSharedMap_nodup hw hn)

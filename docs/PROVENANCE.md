@@ -201,3 +201,5 @@ The October 2, 2026 exact Skywalk point program is fully verified under the unch
 ## Exact universal-width Skywalk update
 
 The complete point program subsequently integrated the universally proved signed prefix schedule, preserving all 512 rounds and the unchanged public specification. It now has 3,505,085 static Toffolis, 2,713,789 measurements and support ≤2,994. Full pod verification passed 3,480 build jobs and 528 axiom checks in 294 seconds. The initial Skywalk checkpoint above remains historical. See [the exact width integration record](NARROW_SKYWALK_EXACT_20261002.md).
+
+The next exact checkpoint integrates universally reduced integer routing and the independently proved retained-carry forward endpoint into the complete point program. It has 3,114,941 static Toffolis, 2,455,737 measurements, and support ≤2,994. All 674 public axiom queries passed with the protected specification unchanged. See [the retained forward record](RETAINED_FORWARD_EXACT_20261003.md).
