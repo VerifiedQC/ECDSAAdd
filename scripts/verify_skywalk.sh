@@ -32,6 +32,9 @@ task_modules=(
   ECDSAAdd.Math.SkywalkPayload ECDSAAdd.Arithmetic.SignedWord
   ECDSAAdd.Math.SkywalkTrace ECDSAAdd.Arithmetic.SignedWordBits
   ECDSAAdd.Arithmetic.ControlledNegRaw ECDSAAdd.Arithmetic.SkywalkSignedModAdd
+  ECDSAAdd.Arithmetic.SignedRecordProgram ECDSAAdd.Arithmetic.SkywalkSeed
+  ECDSAAdd.Arithmetic.SkywalkTerminal ECDSAAdd.Arithmetic.SkywalkDialog
+  ECDSAAdd.Arithmetic.SkywalkIntegerTick ECDSAAdd.Arithmetic.SkywalkPool
   ECDSAAdd.Arithmetic.SignedHalf ECDSAAdd.Arithmetic.SkywalkSign
   ECDSAAdd.Arithmetic.SkywalkRoute ECDSAAdd.Arithmetic.SkywalkPayloadProgram
 )
@@ -44,6 +47,8 @@ from pathlib import Path
 folder=Path(sys.argv[1]); modules=sys.argv[2:]
 if 'ECDSAAdd.Math.SkywalkRailsBridge' in modules:
  modules.insert(modules.index('ECDSAAdd.Math.SkywalkRailsBridge'),'ECDSAAdd.Math.SkywalkRails')
+if 'ECDSAAdd.Arithmetic.SkywalkIntegerTick' in modules:
+ modules.insert(modules.index('ECDSAAdd.Arithmetic.SkywalkIntegerTick'),'ECDSAAdd.Arithmetic.SkywalkIntegerLayout')
 queries=[]; sources=[]; text=[]
 for module in modules:
  path=Path(module.replace('.','/')+'.lean'); source=path.read_text()

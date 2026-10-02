@@ -4,7 +4,7 @@ The production point-addition circuit remains the verified Kaliski record/replay
 
 ## Verified development modules
 
-Thirteen modules passed the pinned remote warnings-as-errors dependency build and a transitive axiom audit of all 121 public declarations. Only `propext`, `Classical.choice` and `Quot.sound` are allowed. The combined verification took 17 seconds, consisting of 2 seconds for the incrementally cached build and 15 seconds for the axiom audit. Earlier nine-module checkpoints with 92/90 declarations passed in 18/27 seconds. These are module verification times, separate from the production point circuit's 219-second full build/audit and the initial environment setup.
+Twenty modules passed the pinned remote warnings-as-errors dependency build and a transitive axiom audit of all 180 public declarations. Only `propext`, `Classical.choice` and `Quot.sound` are allowed. The combined verification took 23 seconds, consisting of 2 seconds for the incrementally cached build and 21 seconds for the axiom audit. The earlier thirteen-module checkpoint with 121 declarations took 17 seconds. Earlier nine-module checkpoints with 92/90 declarations passed in 18/27 seconds. These are module verification times, separate from the production point circuit's 219-second full build/audit and the initial environment setup.
 
 - `SkywalkNat`: exact min-source Stein recurrence, gcd preservation, positive odd second logical rail, universal 2n-round termination and logical width bounds.
 - `SkywalkRails` and `SkywalkRailsBridge`: signed step/reversal, zero and equality cases, orientation/sign history, ternary reachable records, magnitude frame and full signed re-encoding after a step.
@@ -23,3 +23,9 @@ All Lean execution uses the user-provided CPU pod. Run `bash scripts/verify_skyw
 Compose the signed trajectory with its actual recorded bits, establish physical MSB/LSB and width semantics, connect the executable complete tick to the integer recurrence for every measurement record, prove seed/unseed and transcript cleanup, then integrate both field arithmetic legs into the existing all-valid-input point-addition theorem. Derive final resources from that same concrete program and its actual wire support.
 
 The base signed seed is `(p+x,x)`. The reference is the primary Skywalk source in the ECDSA.Fail challenge, with contributor attribution to Matt Zweil and the challenge authors preserved. The newer incumbent's alternate seeds and sampled convergence/carry schedules require independent exact proofs and are not imported by this checkpoint. No approximate widths, selected-input correctness, new axioms, `sorry` or `native_decide` are used.
+
+## Native circuit and memory-plan checkpoint
+
+The actual integer tick and its independently implemented inverse now match the signed recurrence and restore the complete state for arbitrary independent measurement streams. At width 258, each direction has 514 Toffolis and 257 measurements. The concrete 512-step plan uses a 1,798-wire integer universe, proves every step layout valid, and proves chained/fresh rail and history sites. This is not the complete point circuit qubit count.
+
+Exact seed/unseed each cost 257 Toffolis/measurements. A three-Clifford terminal clear/restore makes both complete terminal rails zero for field workspace reuse while preserving orientation. The complete field division/multiplication legs use the actual 512-entry signed transcript and cost 1,179,647/1,179,136 Toffolis, totaling 2,358,783 before integer recording/cleanup. This particular field implementation already exceeds a 1.5M full-point target; further exact arithmetic optimization is required. The full concrete loop, shared workspace, and original point-interface replacement remain in progress.
