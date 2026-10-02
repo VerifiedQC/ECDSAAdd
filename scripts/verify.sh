@@ -6,6 +6,7 @@ lake --wfail build
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.FusedInversePackedProof
 #print axioms ECDSAAdd.andComputeErase_spec
 #print axioms ECDSAAdd.andComputeErase_correct
 #print axioms ECDSAAdd.andComputeErase_toffoliCount
@@ -734,6 +735,28 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.retained_field_subset_shared
 #print axioms ECDSAAdd.Arithmetic.retained_tape_subset_shared
 #print axioms ECDSAAdd.Arithmetic.retained_copy_frame
+#print axioms ECDSAAdd.Arithmetic.compactSignedHalfFront_correct
+#print axioms ECDSAAdd.Arithmetic.compactSignedHalfFront_counts
+#print axioms ECDSAAdd.Arithmetic.compactSignedHalfUnfront_correct
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_widths
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_forward_counts
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_inverse_counts
+#print axioms ECDSAAdd.Arithmetic.compactShared_forward_counts
+#print axioms ECDSAAdd.Arithmetic.compactShared_inverse_counts
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactSource_sublist
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactTarget_sublist
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactConstant_sublist
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactCarry_sublist
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_front_nodup
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_source_value
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_target_value
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_constant_clean
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_carry_clean
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_target_lift
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactForward_correct
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compactInverse_correct
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_forward_support
+#print axioms ECDSAAdd.Arithmetic.FusedHalfPorts.compact_inverse_support
 LEAN
 )
 printf '%s\n' "$axioms"

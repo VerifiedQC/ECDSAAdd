@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-Latest complete verified checkpoint: **2,856,381 static Toffolis / 2,197,177 measurements / ≤2,994 static logical sites**. Full pod build and all 727 public axiom queries passed in 193s (91s incremental build +102s audit). See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md). Earlier results below are historical.
+Latest complete verified checkpoint: **2,853,821 static Toffolis / 2,194,105 measurements / ≤2,994 static logical sites**. Full pod library check and all 749 public axiom queries passed in 122s (2s cached incremental build +120s audit). The preceding complete compilation took 95s; its legacy-import audit failure is recorded separately. See [the complete compact-guard integration record](COMPACT_GUARD_EXACT_20261003.md). Earlier results below are historical.
 
 本文账本简写 T / M / Q 分别指 Toffoli（CCX）数、测量数、实际静态支持线数；T 不是 Clifford+T 分解中的 T 门数。
 

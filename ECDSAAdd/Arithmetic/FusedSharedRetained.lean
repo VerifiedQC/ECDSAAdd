@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.FusedSharedInput
-import ECDSAAdd.Arithmetic.FusedRetainedThreshold
+import ECDSAAdd.Arithmetic.CompactGuardPackedForward
 
 namespace ECDSAAdd.Arithmetic
 
@@ -7,9 +7,9 @@ private theorem retained_block_one (w : Nat → Wire) (s : Nat) :
     wireBlock w s 1=[w s] := by simp [wireBlock,List.range']
 
 theorem fusedSharedRetainedKernel_counts (w : Nat → Wire) (g : Wire) :
-    toffoliCount (fusedSharedPorts w g).retainedProgram=1540 ∧
-    measurementCount (fusedSharedPorts w g).retainedProgram=1541 := by
-  have hc := (fusedSharedPorts w g).retained_counts (fusedSharedPorts_widths w g)
+    toffoliCount (fusedSharedPorts w g).compactForwardProgram=1538 ∧
+    measurementCount (fusedSharedPorts w g).compactForwardProgram=1538 := by
+  have hc := (fusedSharedPorts w g).compact_forward_counts (fusedSharedPorts_widths w g)
   have ha : (fusedSharedPorts w g).A.length=256 := wireBlock_length w 512 256
   simpa only [ha,Nat.reduceMul,Nat.reduceAdd] using hc
 
@@ -22,11 +22,11 @@ theorem fusedSharedRetainedKernel_correct (w : Nat → Wire) (g : Wire)
     (hx : regValue (skywalkSharedField w).z s.basis=X)
     (hk : regValue (skywalkSharedField w).work s.basis=0)
     (hu : regValue (skywalkSharedUnused w) s.basis=0) :
-    (run (fusedSharedPorts w g).retainedProgram record s).phase=s.phase ∧
+    (run (fusedSharedPorts w g).compactForwardProgram record s).phase=s.phase ∧
     (∀ q,q∉(skywalkSharedField w).z →
-      (run (fusedSharedPorts w g).retainedProgram record s).basis q=s.basis q) ∧
+      (run (fusedSharedPorts w g).compactForwardProgram record s).basis q=s.basis q) ∧
     regValue (skywalkSharedField w).z
-      (run (fusedSharedPorts w g).retainedProgram record s).basis=
+      (run (fusedSharedPorts w g).compactForwardProgram record s).basis=
       FusedSignedHalf.result p (s.basis g) X Y := by
   have hi := fusedSharedPorts_input w g s.basis X Y hy hx hk hu
   have hfit : p+1<2^(fusedSharedPorts w g).A.length := by
@@ -34,8 +34,8 @@ theorem fusedSharedRetainedKernel_correct (w : Nat → Wire) (g : Wire)
     rw [wireBlock_length]
     norm_num [p]
   obtain ⟨out,hout⟩ : ∃ out : State,
-      run (fusedSharedPorts w g).retainedProgram record s=out := ⟨_,rfl⟩
-  have hc := (fusedSharedPorts w g).retained_correct (fusedSharedPorts_widths w g)
+      run (fusedSharedPorts w g).compactForwardProgram record s=out := ⟨_,rfl⟩
+  have hc := (fusedSharedPorts w g).compactForward_correct (fusedSharedPorts_widths w g)
     (fusedSharedPorts_nodup w g hn hg) (fusedSharedPorts_early w g) hfit
     X Y hX hY s record hi.1 hi.2.1 hi.2.2.1 hi.2.2.2.1 hi.2.2.2.2.1 hi.2.2.2.2.2
   rw [hout] at hc

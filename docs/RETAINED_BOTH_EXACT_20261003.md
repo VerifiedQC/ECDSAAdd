@@ -1,5 +1,7 @@
 # Complete exact point circuit with retained forward and inverse arithmetic
 
+Historical checkpoint/component record. Compact guards are now integrated and fully verified at **2,853,821 Toffolis / 2,194,105 measurements / ≤2,994 static sites**. See [the current integration record](COMPACT_GUARD_EXACT_20261003.md).
+
 The **full controlled point-addition circuit** is Lean-verified at **2,856,381 static Toffolis / 2,197,177 measurements / at most 2,994 distinct static logical wire sites** for a finite classical addend. The identity-addend program remains empty. Static support is a distinct resource from peak-live qubit width, which is still unmeasured.
 
 The protected `ControlledPointAddSpec.lean` is byte-identical to the earlier checkpoints, with SHA-256 `e3d4a181ad1e0e6d4458dc8bcc85d1de7d4ffd6c02c7ce11ee5a11296e08210d`. It covers all valid input points and both control values, restores control and all workspace, and preserves phase for every independent measurement record.

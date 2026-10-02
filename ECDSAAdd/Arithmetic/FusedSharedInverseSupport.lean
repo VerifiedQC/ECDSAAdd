@@ -155,8 +155,8 @@ attribute [local irreducible] wireBlock swapRegisters copyRegister halfInPlace
 
 theorem fusedSharedInverseKernel_support (w : Nat → Wire) (g : Wire)
     (hg : g∈skywalkSharedWires w) :
-    wires (fusedSharedPorts w g).inverseProgram⊆(skywalkSharedWires w).toFinset := by
-  have hs := (fusedSharedPorts w g).inverse_support
+    wires (fusedSharedPorts w g).compactInverseProgram⊆(skywalkSharedWires w).toFinset := by
+  have hs := (fusedSharedPorts w g).compact_inverse_support
     (fusedSharedPorts_widths w g) (fusedSharedPorts_early w g)
   exact hs.trans (by
     intro q hq

@@ -117,8 +117,8 @@ theorem skywalkFieldDivisionRetained_spec (active : Wire) (w : Nat → Wire)
 
 theorem skywalkFieldDivisionRetained_counts (active : Wire) (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (ha : active∉skywalkSharedWires w) :
-    toffoliCount (skywalkFieldDivisionRetained w)=920063 ∧
-    measurementCount (skywalkFieldDivisionRetained w)=789503 := by
+    toffoliCount (skywalkFieldDivisionRetained w)=919039 ∧
+    measurementCount (skywalkFieldDivisionRetained w)=787967 := by
   have hw := skywalkShared_field_widths w
   have hu := modUnary_counts (skywalkSharedField w).unary 256 p
     ((skywalkSharedField w).unary_widths 256 hw) (by omega)

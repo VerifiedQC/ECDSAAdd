@@ -8,9 +8,9 @@
 
 本节的“当前已证”以代码基线 `9699678` 加 2026-10-02 完整精确 Skywalk 与已证位宽缩减接入为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
 
-**当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **2,856,381 Toffoli / 2,197,177 次测量 / 实际静态线路上界2,994**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
+**当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **2,853,821 Toffoli / 2,194,105 次测量 / 实际静态线路上界2,994**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
 
-当前路径使用精确 Skywalk 乘除、专用平方及完整角落处理。正向和独立逆向域运算已同时接入，全称整数位宽与路由界保留完整 512 轮。相对上一已证 3,114,941 Toffoli 检查点再省 258,560，相对最初 7,207,866 基线共省 4,351,485（约 60.37%）。完整远程增量验证通过 3,512 项构建与 727 项公开公理检查，用时 193 秒（构建 91 秒，审计 102 秒）。原公开点加规格逐字保持，全部 Lean 验证只在 CPU pod 上执行，见[最新完整接入记录](docs/RETAINED_BOTH_EXACT_20261003.md)。下方旧阶段数字均为历史或独立模块结果。
+当前路径使用精确 Skywalk 乘除、专用平方及完整角落处理。保留正向和独立逆向域运算后，257位原始运算通过显式重建符号 guard 接入整机，域值仍完整保留256位，整数记录回放仍为512轮。相对上一已证 2,856,381 Toffoli 检查点再省 2,560 Toffoli 和3,072次测量，相对最初7,207,866基线共省4,354,045（约60.41%）。完整远程检查通过3,518项构建与749项公开公理查询，用时122秒（缓存增量构建2秒，审计120秒）。前一轮完整编译95秒，随后旧模块导入缺失导致的审计失败单独保留，不计作通过。原公开点加规格逐字保持，全部 Lean 验证只在 CPU pod 上执行，见[最新完整接入记录](docs/COMPACT_GUARD_EXACT_20261003.md)。下方旧阶段数字均为历史或独立模块结果。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |

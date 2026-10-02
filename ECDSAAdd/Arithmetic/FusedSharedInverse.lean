@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.FusedSharedInput
-import ECDSAAdd.Arithmetic.FusedInversePackedProof
+import ECDSAAdd.Arithmetic.CompactGuardPackedInverse
 
 namespace ECDSAAdd.Arithmetic
 
@@ -15,11 +15,11 @@ theorem fusedSharedInverseKernel_correct (w : Nat → Wire) (g : Wire)
     (hx : regValue (skywalkSharedField w).z s.basis=X)
     (hk : regValue (skywalkSharedField w).work s.basis=0)
     (hu : regValue (skywalkSharedUnused w) s.basis=0) :
-    (run (fusedSharedPorts w g).inverseProgram record s).phase=s.phase ∧
+    (run (fusedSharedPorts w g).compactInverseProgram record s).phase=s.phase ∧
     (∀ q,q∉(skywalkSharedField w).z →
-      (run (fusedSharedPorts w g).inverseProgram record s).basis q=s.basis q) ∧
+      (run (fusedSharedPorts w g).compactInverseProgram record s).basis q=s.basis q) ∧
     regValue (skywalkSharedField w).z
-      (run (fusedSharedPorts w g).inverseProgram record s).basis=
+      (run (fusedSharedPorts w g).compactInverseProgram record s).basis=
       FusedSignedHalf.inverseValue (s.basis g) X Y := by
   have hi := fusedSharedPorts_input w g s.basis X Y hy hx hk hu
   have hfit : p+1<2^(fusedSharedPorts w g).A.length := by
@@ -27,8 +27,8 @@ theorem fusedSharedInverseKernel_correct (w : Nat → Wire) (g : Wire)
     rw [wireBlock_length]
     norm_num [p]
   obtain ⟨out,hout⟩ : ∃ out : State,
-      run (fusedSharedPorts w g).inverseProgram record s=out := ⟨_,rfl⟩
-  have hc := (fusedSharedPorts w g).inverse_correct (fusedSharedPorts_widths w g)
+      run (fusedSharedPorts w g).compactInverseProgram record s=out := ⟨_,rfl⟩
+  have hc := (fusedSharedPorts w g).compactInverse_correct (fusedSharedPorts_widths w g)
     (fusedSharedPorts_nodup w g hn hg) (fusedSharedPorts_early w g) hfit
     X Y hX hY s record hi.1 hi.2.1 hi.2.2.1 hi.2.2.2.1 hi.2.2.2.2.1 hi.2.2.2.2.2
   rw [hout] at hc

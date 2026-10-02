@@ -6,12 +6,12 @@ namespace ECDSAAdd.Arithmetic
 open Secp256k1
 
 def fusedSharedRetainedSignedHalf (w : Nat → Wire) (g : Wire) : Program :=
-  fusedFieldSignedHalf g (fusedSharedPorts w g).retainedProgram
+  fusedFieldSignedHalf g (fusedSharedPorts w g).compactForwardProgram
 
 theorem fusedSharedRetainedSignedHalf_counts (w : Nat → Wire) (g : Wire) :
-    toffoliCount (fusedSharedRetainedSignedHalf w g)=1540 ∧
-    measurementCount (fusedSharedRetainedSignedHalf w g)=1541 :=
-  fusedFieldSignedHalf_counts g (fusedSharedPorts w g).retainedProgram 1540 1541
+    toffoliCount (fusedSharedRetainedSignedHalf w g)=1538 ∧
+    measurementCount (fusedSharedRetainedSignedHalf w g)=1538 :=
+  fusedFieldSignedHalf_counts g (fusedSharedPorts w g).compactForwardProgram 1538 1538
     (fusedSharedRetainedKernel_counts w g)
 
 theorem fusedSharedRetainedSignedHalf_correct (w : Nat → Wire) (g : Wire)
@@ -34,17 +34,17 @@ theorem fusedSharedRetainedSignedHalf_correct (w : Nat → Wire) (g : Wire)
       regValue (skywalkSharedField w).z st.basis=X →
       regValue (skywalkSharedField w).work st.basis=0 →
       regValue (skywalkSharedUnused w) st.basis=0 →
-      (run (fusedSharedPorts w g).retainedProgram ms st).phase=st.phase ∧
+      (run (fusedSharedPorts w g).compactForwardProgram ms st).phase=st.phase ∧
       (∀ q,q∉(skywalkSharedField w).z →
-        (run (fusedSharedPorts w g).retainedProgram ms st).basis q=st.basis q) ∧
+        (run (fusedSharedPorts w g).compactForwardProgram ms st).basis q=st.basis q) ∧
       regValue (skywalkSharedField w).z
-        (run (fusedSharedPorts w g).retainedProgram ms st).basis=
+        (run (fusedSharedPorts w g).compactForwardProgram ms st).basis=
         FusedSignedHalf.result p (st.basis g) X Y := by
     intro st ms hy' hx' hk' hu'
     exact fusedSharedRetainedKernel_correct w g hn hg X Y hX hY st ms hy' hx' hk' hu'
   unfold fusedSharedRetainedSignedHalf
   exact fusedFieldSignedHalf_correct (skywalkSharedField w) (skywalkSharedUnused w)
-    g (fusedSharedPorts w g).retainedProgram X Y hX hY hgf hgu hkernel
+    g (fusedSharedPorts w g).compactForwardProgram X Y hX hY hgf hgu hkernel
     s record hy hx hk hu
 
 /-- A forward retained-carry cell preserves the same public ReplayValues
@@ -216,8 +216,8 @@ theorem fusedSharedRetainedCell_frame (active swap g : Wire) (w : Nat → Wire)
 
 theorem fusedSharedRetainedCell_counts (w : Nat → Wire) (g swap : Wire)
     (hnd : (swap::(skywalkSharedField w).z++(skywalkSharedField w).a).Nodup) :
-    toffoliCount (fusedSharedRetainedCell w g swap)=1796 ∧
-    measurementCount (fusedSharedRetainedCell w g swap)=1541 := by
+    toffoliCount (fusedSharedRetainedCell w g swap)=1794 ∧
+    measurementCount (fusedSharedRetainedCell w g swap)=1538 := by
   have hw := skywalkShared_field_widths w
   have hz : (skywalkSharedField w).z.length=257 := by
     simp [ModInPlaceLayout.z,ModAddCoreLayout.z,hw.core.low]

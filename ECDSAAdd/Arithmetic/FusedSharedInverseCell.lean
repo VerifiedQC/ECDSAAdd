@@ -5,13 +5,13 @@ namespace ECDSAAdd.Arithmetic
 open Secp256k1
 
 def fusedSharedInverseSigned (w : Nat → Wire) (g : Wire) : Program :=
-  fusedFieldSignedHalf g (fusedSharedPorts w g).inverseProgram
+  fusedFieldSignedHalf g (fusedSharedPorts w g).compactInverseProgram
 
 theorem fusedSharedInverseSigned_counts (w : Nat → Wire) (g : Wire) :
-    toffoliCount (fusedSharedInverseSigned w g)=1541 ∧
-    measurementCount (fusedSharedInverseSigned w g)=1541 :=
-  fusedFieldSignedHalf_counts g (fusedSharedPorts w g).inverseProgram 1541 1541
-    (fusedSharedInverseKernel_counts w g)
+    toffoliCount (fusedSharedInverseSigned w g)=1538 ∧
+    measurementCount (fusedSharedInverseSigned w g)=1538 :=
+  fusedFieldSignedHalf_counts g (fusedSharedPorts w g).compactInverseProgram 1538 1538
+    (compactShared_inverse_counts w g)
 
 theorem fusedSharedInverseSigned_correct (w : Nat → Wire) (g : Wire)
     (hn : (skywalkSharedWires w).Nodup) (hg : g∉fusedSharedIds.map w)
@@ -33,17 +33,17 @@ theorem fusedSharedInverseSigned_correct (w : Nat → Wire) (g : Wire)
       regValue (skywalkSharedField w).z st.basis=X →
       regValue (skywalkSharedField w).work st.basis=0 →
       regValue (skywalkSharedUnused w) st.basis=0 →
-      (run (fusedSharedPorts w g).inverseProgram ms st).phase=st.phase ∧
+      (run (fusedSharedPorts w g).compactInverseProgram ms st).phase=st.phase ∧
       (∀ q,q∉(skywalkSharedField w).z →
-        (run (fusedSharedPorts w g).inverseProgram ms st).basis q=st.basis q) ∧
+        (run (fusedSharedPorts w g).compactInverseProgram ms st).basis q=st.basis q) ∧
       regValue (skywalkSharedField w).z
-        (run (fusedSharedPorts w g).inverseProgram ms st).basis=
+        (run (fusedSharedPorts w g).compactInverseProgram ms st).basis=
         FusedSignedHalf.inverseValue (st.basis g) X Y := by
     intro st ms hy' hx' hk' hu'
     exact fusedSharedInverseKernel_correct w g hn hg X Y hX hY st ms hy' hx' hk' hu'
   unfold fusedSharedInverseSigned
   exact fusedFieldInverse_correct (skywalkSharedField w) (skywalkSharedUnused w)
-    g (fusedSharedPorts w g).inverseProgram X Y hX hY hgf hgu hkernel
+    g (fusedSharedPorts w g).compactInverseProgram X Y hX hY hgf hgu hkernel
     s record hy hx hk hu
 
 
@@ -171,8 +171,8 @@ theorem fusedSharedInverse_leaf_frame (active swap g : Wire) (w : Nat → Wire)
 
 theorem fusedSharedInverseCell_counts (w : Nat → Wire) (g swap : Wire)
     (hnd : (swap::(skywalkSharedField w).z++(skywalkSharedField w).a).Nodup) :
-    toffoliCount (fusedSharedInverseCell w g swap)=1797 ∧
-    measurementCount (fusedSharedInverseCell w g swap)=1541 := by
+    toffoliCount (fusedSharedInverseCell w g swap)=1794 ∧
+    measurementCount (fusedSharedInverseCell w g swap)=1538 := by
   have hw := skywalkShared_field_widths w
   have hz : (skywalkSharedField w).z.length=257 := by
     simp [ModInPlaceLayout.z,ModAddCoreLayout.z,hw.core.low]

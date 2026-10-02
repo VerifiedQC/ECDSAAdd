@@ -205,3 +205,7 @@ The complete point program subsequently integrated the universally proved signed
 The next exact checkpoint integrates universally reduced integer routing and the independently proved retained-carry forward endpoint into the complete point program. It has 3,114,941 static Toffolis, 2,455,737 measurements, and support ≤2,994. All 674 public axiom queries passed with the protected specification unchanged. See [the retained forward record](RETAINED_FORWARD_EXACT_20261003.md).
 
 The independent retained inverse endpoint and its 512-cell replay subsequently passed complete point integration. The verified full circuit now has 2,856,381 static Toffolis, 2,197,177 measurements and support ≤2,994. All 727 public axiom queries passed with the protected specification unchanged. See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md).
+
+## Exact compact-guard integration, 2026-10-03
+
+The complete controlled point circuit now uses the independently proved compact forward and inverse raw-word guards, while retaining every 256-bit field value and all 512 rounds. It passed 3,518 build jobs and all 749 public axiom queries at 2,853,821 static Toffolis, 2,194,105 measurements and support ≤2,994. The protected specification is byte-identical. The final 122s check used a cached 2s build and 120s audit; the preceding 95s compilation and failed legacy-import audit are retained separately. See [the full record](COMPACT_GUARD_EXACT_20261003.md).

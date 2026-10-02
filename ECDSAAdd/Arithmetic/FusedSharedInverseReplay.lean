@@ -36,8 +36,8 @@ theorem fusedSharedInverseReplay_spec (active : Wire) (w : Nat → Wire)
 
 theorem fusedSharedInverseReplay_counts (active : Wire) (w : Nat → Wire)
     (rs : List (Wire×Wire)) (ht : SkywalkTapeLayout active (skywalkSharedField w) rs) :
-    toffoliCount (fusedSharedInverseReplay w rs)=rs.length*1797 ∧
-    measurementCount (fusedSharedInverseReplay w rs)=rs.length*1541 := by
+    toffoliCount (fusedSharedInverseReplay w rs)=rs.length*1794 ∧
+    measurementCount (fusedSharedInverseReplay w rs)=rs.length*1538 := by
   induction rs with
   | nil => simp [fusedSharedInverseReplay,toffoliCount,measurementCount]
   | cons r rs ih =>

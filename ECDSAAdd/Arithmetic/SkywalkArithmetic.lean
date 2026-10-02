@@ -90,10 +90,10 @@ theorem skywalkArithmetic_frame (divide : Bool) (w : Nat → Wire)
 /-- Counts of the actual composed programs, including both integer passes. -/
 theorem skywalkArithmetic_counts (w : Nat → Wire) (hn : (skywalkSharedWires w).Nodup)
     (active : Wire) (ha : active∉skywalkSharedWires w) :
-    toffoliCount (skywalkArithmetic true w)=1315841 ∧
-    measurementCount (skywalkArithmetic true w)=987903 ∧
-    toffoliCount (skywalkArithmetic false w)=1316354 ∧
-    measurementCount (skywalkArithmetic false w)=987904 := by
+    toffoliCount (skywalkArithmetic true w)=1314817 ∧
+    measurementCount (skywalkArithmetic true w)=986367 ∧
+    toffoliCount (skywalkArithmetic false w)=1314818 ∧
+    measurementCount (skywalkArithmetic false w)=986368 := by
   have hs := skywalkSeed_counts (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
   have hi := narrowSkywalkRouted512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)

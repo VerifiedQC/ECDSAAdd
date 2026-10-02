@@ -142,8 +142,8 @@ theorem fusedSharedRetainedReplay_spec (active : Wire) (w : Nat → Wire)
 
 theorem fusedSharedRetainedReplay_counts (active : Wire) (w : Nat → Wire)
     (rs : List (Wire×Wire)) (ht : SkywalkTapeLayout active (skywalkSharedField w) rs) :
-    toffoliCount (fusedSharedRetainedReplay w rs)=rs.length*1796 ∧
-    measurementCount (fusedSharedRetainedReplay w rs)=rs.length*1541 := by
+    toffoliCount (fusedSharedRetainedReplay w rs)=rs.length*1794 ∧
+    measurementCount (fusedSharedRetainedReplay w rs)=rs.length*1538 := by
   induction rs with
   | nil => simp [fusedSharedRetainedReplay,toffoliCount,measurementCount]
   | cons r rs ih =>
