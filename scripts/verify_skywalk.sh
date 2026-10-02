@@ -97,10 +97,11 @@ folder=Path(sys.argv[1]); wanted=json.loads((folder/'manifest.json').read_text()
 text=(folder/'axioms.log').read_text(); actual=re.findall(r"^'([^']+)'",text,re.M)
 assert actual==wanted,(len(actual),len(wanted))
 allowed={'propext','Classical.choice','Quot.sound'}
-for line in text.splitlines():
- if 'depends on axioms:' in line:
-  names=set(re.search(r'\[(.*?)\]',line).group(1).split(', '))
-  assert names<=allowed,line
+entries=re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms:\s*\[([^\]]*)\])",text,re.M)
+assert [name for name,_ in entries]==wanted,('Unparsed axiom output',len(entries),len(wanted))
+for name,body in entries:
+ names=set(filter(None,re.split(r'[\s,]+',body)))
+ assert names<=allowed,(name,names)
 print('All',len(actual),'public Skywalk development declarations passed the axiom whitelist.')
 PY
 task_audit_end="$(date +%s)"
