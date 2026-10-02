@@ -21,7 +21,7 @@ delta=lambda a,b: int(b)-int(a) if a and b else None
 Path(folder,'timing.json').write_text(json.dumps({
  'scope':'Skywalk development modules; full point integration pending',
  'exit_code':int(rc),'start_utc':int(start),'end_utc':int(end),
- 'total_seconds':int(end)-int(start),'build_seconds':delta(start,be),
+ 'total_seconds':int(end)-int(start),'build_seconds':delta(start,be or end),
  'axiom_seconds':delta(ast,ae)},indent=2)+'\n')
 PY
   exit "$task_rc"
@@ -30,24 +30,45 @@ trap finish EXIT
 task_modules=(
   ECDSAAdd.Math.SkywalkNat ECDSAAdd.Math.SkywalkRailsBridge
   ECDSAAdd.Math.SkywalkPayload ECDSAAdd.Arithmetic.SignedWord
+  ECDSAAdd.Math.SkywalkTrace ECDSAAdd.Arithmetic.SignedWordBits
+  ECDSAAdd.Arithmetic.ControlledNegRaw ECDSAAdd.Arithmetic.SkywalkSignedModAdd
   ECDSAAdd.Arithmetic.SignedHalf ECDSAAdd.Arithmetic.SkywalkSign
   ECDSAAdd.Arithmetic.SkywalkRoute ECDSAAdd.Arithmetic.SkywalkPayloadProgram
 )
+if [[ $# -gt 1 ]]; then task_modules=("${@:2}"); fi
 lake --wfail build "${task_modules[@]}" > "$task_log_dir/build.log" 2>&1
 task_build_end="$(date +%s)"
 python3 - "$task_log_dir" "${task_modules[@]}" <<'PY'
 import hashlib,json,re,sys
 from pathlib import Path
 folder=Path(sys.argv[1]); modules=sys.argv[2:]
-modules.insert(1,'ECDSAAdd.Math.SkywalkRails')
+if 'ECDSAAdd.Math.SkywalkRailsBridge' in modules:
+ modules.insert(modules.index('ECDSAAdd.Math.SkywalkRailsBridge'),'ECDSAAdd.Math.SkywalkRails')
 queries=[]; sources=[]; text=[]
 for module in modules:
  path=Path(module.replace('.','/')+'.lean'); source=path.read_text()
- namespace=re.search(r'^namespace (\S+)',source,re.M).group(1)
- # Each module currently has one explicit namespace. Reject parser drift.
- assert len(re.findall(r'^namespace ',source,re.M))==1,path
- names=re.findall(r'^theorem ([A-Za-z_][A-Za-z_0-9]*)',source,re.M)
- queries.extend(namespace+'.'+name for name in names)
+ scopes=[]
+ for line in source.splitlines():
+  match=re.match(r'^namespace (\S+)\s*$',line)
+  if match:
+   scopes.append(('namespace',match.group(1)))
+   continue
+  match=re.match(r'^section(?: (\S+))?\s*$',line)
+  if match:
+   scopes.append(('section',match.group(1)))
+   continue
+  match=re.match(r'^end(?: (\S+))?\s*$',line)
+  if match:
+   assert scopes,(path,line)
+   kind,name=scopes.pop()
+   assert match.group(1) is None or match.group(1)==name,(path,line,name)
+   continue
+  match=re.match(r'^(?:theorem|lemma) ([A-Za-z_][A-Za-z_0-9]*)',line)
+  if match:
+   namespace='.'.join(name for kind,name in scopes if kind=='namespace')
+   assert namespace,(path,line)
+   queries.append(namespace+'.'+match.group(1))
+ assert not scopes,(path,scopes)
  sources.append({'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
  text.append('import '+module)
 assert len(set(queries))==len(queries)

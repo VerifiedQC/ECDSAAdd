@@ -4,14 +4,17 @@ The production point-addition circuit remains the verified Kaliski record/replay
 
 ## Verified development modules
 
-Nine new modules passed the pinned remote warnings-as-errors dependency build and a transitive axiom audit of all 92 public declarations. Only `propext`, `Classical.choice` and `Quot.sound` are allowed. Verification took 18 seconds, consisting of 7 seconds for the incrementally cached build and 11 seconds for the axiom audit. An earlier version with 90 declarations passed in 27 seconds. These are module verification times, separate from the production point circuit's 219-second full build/audit and the initial environment setup.
+Thirteen modules passed the pinned remote warnings-as-errors dependency build and a transitive axiom audit of all 121 public declarations. Only `propext`, `Classical.choice` and `Quot.sound` are allowed. The combined verification took 17 seconds, consisting of 2 seconds for the incrementally cached build and 15 seconds for the axiom audit. Earlier nine-module checkpoints with 92/90 declarations passed in 18/27 seconds. These are module verification times, separate from the production point circuit's 219-second full build/audit and the initial environment setup.
 
 - `SkywalkNat`: exact min-source Stein recurrence, gcd preservation, positive odd second logical rail, universal 2n-round termination and logical width bounds.
 - `SkywalkRails` and `SkywalkRailsBridge`: signed step/reversal, zero and equality cases, orientation/sign history, ternary reachable records, magnitude frame and full signed re-encoding after a step.
 - `SkywalkPayload`: reversible field butterfly for every Boolean record and field payload, the trajectory invariant and mathematical division/multiplication results. The numerator may be zero.
 - `SignedWord`: native source-complement signed addition/subtraction, complete carry propagation, source/control/work/phase restoration, exact support and w−1 Toffolis/measurements, plus two's-complement modular and bounded-integer lifting.
 - `SignedHalf`, `SkywalkSign`, `SkywalkRoute`: real Clifford sign-extension/sign-history gates and controlled high-word routing, including state/resource proofs. Connecting the physical MSB to the signed decoder remains an integration obligation.
-- `SkywalkPayloadProgram`: exact reference field gates with canonical outputs, restored controls/work/phase, frame/support and field-level correspondence. At 256 bits, the forward/inverse cells cost 3,838/3,837 Toffolis. These reference costs are not an optimized full-circuit result.
+- `SkywalkTrace`: signed trajectory re-encoding and field coupling through the actual physical-sign transcript, including both equality sign choices and zero payloads.
+- `SignedWordBits`: physical MSB/parity interpretation and exact signed gate and Clifford-half bridges.
+- `ControlledNegRaw` and `SkywalkSignedModAdd`: copy-mask conditional raw negation with complete carry propagation, exact source/control/work/phase restoration and 6n−1 Toffolis/measurements. At 256 bits the signed kernel costs 1,535.
+- `SkywalkPayloadProgram`: exact optimized field gates with canonical outputs, restored controls/work/phase, frame/support and field-level correspondence. At 256 bits, the forward/inverse cells cost 2,303/2,302 Toffolis and 2,047/2,046 measurements, reduced from the first reference's 3,838/3,837 Toffolis. The optimized cell build and public axiom audit took 21 seconds. These are component costs; the full point circuit remains to be integrated.
 
 All Lean execution uses the user-provided CPU pod. Run `bash scripts/verify_skywalk.sh LOG_DIRECTORY` there to reproduce the development module build, source manifest, public declaration audit and timing report. `scripts/verify.sh` remains the production entry-point verifier. The execution semantics and their limits remain those in [PROOF_SCOPE](PROOF_SCOPE.md).
 
