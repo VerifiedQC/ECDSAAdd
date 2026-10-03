@@ -161,11 +161,10 @@ theorem signedDiag_counts (xs dst mask carry : List Wire) (cin : Wire)
     omega
   have hcy : (carry.take (dst.length-1)).length+1=dst.length := by simp [hc]; omega
   have hcopy := copyRegister_counts none (xs.take (xs.length-1)) (mask.take (xs.length-1)) htake
-  have hnot := notRegister_counts (mask.take (xs.length-1))
   have ha := addInPlace_counts (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin hsrc hcy
   have hs := subInPlace_counts (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin hsrc hcy
   simp [signedDiagSub,signedDiagAdd,signedDiagLoad,signedDiagUnload,
-    toffoliCount_append,measurementCount_append,hcopy.1,hcopy.2,hnot.1,hnot.2,
+    toffoliCount_append,measurementCount_append,hcopy.1,hcopy.2,
     ha.1,ha.2,hs.1,hs.2]
 
 theorem signedTriangularSquare_counts (xs dst pad mask carry : List Wire) (cin : Wire)

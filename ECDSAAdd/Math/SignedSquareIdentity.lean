@@ -5,7 +5,7 @@ namespace ECDSAAdd.Arithmetic
 def signedDiagValue (X n : Nat) : Nat :=
   if n=0 then 0 else X+(2^(n-1)-1-X%2^(n-1))*2^n
 
-theorem signedDiagValue_step (b : Bool) (Y k : Nat) (hk : 1≤k) (hY : Y<2^k) :
+theorem signedDiagValue_step (b : Bool) (Y k : Nat) (hk : 1≤k) (_hY : Y<2^k) :
     signedDiagValue (b.toNat+2*Y) (k+1)+2*Y=
       4*signedDiagValue Y k+(if b then 1 else 2^(k+1)) := by
   let H := 2^(k-1)

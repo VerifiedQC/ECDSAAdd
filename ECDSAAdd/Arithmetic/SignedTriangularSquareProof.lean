@@ -20,7 +20,7 @@ theorem xorWhenFalse_correct (c : Wire) (ys : List Wire) (hnd : ys.Nodup)
   | nil =>
     apply congrArg (State.mk s.phase)
     funext w
-    simp [xorWhenFalse,xorFalseBasis,run]
+    simp [xorFalseBasis]
   | cons y ys ih =>
     obtain ⟨hy,hys⟩ := List.nodup_cons.mp hnd
     have hcy : c≠y := fun h => hc (by simp [h])
@@ -35,10 +35,10 @@ theorem xorWhenFalse_correct (c : Wire) (ys : List Wire) (hnd : ys.Nodup)
     funext w
     by_cases hwy : w=y
     · subst w
-      simp [xorFalseBasis,hy,s1,writeBit,hcy]
+      simp [xorFalseBasis,hy,s1,writeBit]
     · by_cases hws : w∈ys
       · simp [xorFalseBasis,hws,hwy,s1,writeBit,hcy]
-      · simp [xorFalseBasis,hws,hwy,s1,writeBit,hcy]
+      · simp [xorFalseBasis,hws,hwy,s1,writeBit]
 
 theorem xorWhenFalse_phase (c : Wire) (ys : List Wire) (hnd : ys.Nodup)
     (hc : c∉ys) (s : State) (m : List Bool) :
@@ -63,11 +63,11 @@ theorem xorWhenFalse_value (c : Wire) (ys : List Wire) (hnd : ys.Nodup)
       if s.basis c then regValue ys s.basis else 2^ys.length-1-regValue ys s.basis := by
   rw [xorWhenFalse_correct c ys hnd hc]
   by_cases h : s.basis c
-  · simp [xorFalseBasis,h]
+  · simp [h]
     apply regValue_congr
     intro w hw
     simp [xorFalseBasis,hw,h]
-  · simp [xorFalseBasis,h]
+  · simp [h]
     rw [regValue_congr ys _ (fun w => !s.basis w) (by intro w hw; simp [xorFalseBasis,hw,h]),
       regValue_complement]
 
@@ -315,7 +315,7 @@ theorem signedSquareRowClear_frame (c : Wire) (xs dst pad carry : List Wire)
       have v3Eq : V3=A+2^xs.length := by
         dsimp [V3]
         rw [v2Eq,srcv]
-        simp only [Bool.toNat_false,Nat.add_zero,bEq]
+        simp only [bEq]
         rw [show A+2^xs.length-regValue xs base+regValue xs base=A+2^xs.length by omega,
           Nat.mod_eq_of_lt addfit]
       have v4Eq : V4=2^xs.length-1-A := by

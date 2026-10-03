@@ -147,7 +147,7 @@ theorem signedSquareRows_correct (xs dst pad carry : List Wire)
         apply List.nodup_iff_count.mpr
         intro q
         have hh := List.nodup_iff_count.mp hnd q
-        simp only [rest,List.count_cons,List.count_append] at hh ⊢
+        simp only [List.count_cons,List.count_append] at hh ⊢
         omega
       have high0 : regValue (dst.drop n) s.basis=0 := by
         simpa [n,rest] using hhi
@@ -318,7 +318,7 @@ theorem signedSquareRows_roundtrip (xs dst pad carry : List Wire)
       have dstN : dst.Nodup := by
         apply List.nodup_iff_count.mpr; intro q
         have h := List.nodup_iff_count.mp hnd q
-        simp only [rest,List.count_cons,List.count_append] at h ⊢
+        simp only [List.count_cons,List.count_append] at h ⊢
         omega
       have high0 : regValue (dst.drop n) s.basis=0 := by simpa [n,rest] using hhi
       have rowv : regValue row s.basis=A/2 := by

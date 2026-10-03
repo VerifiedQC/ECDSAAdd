@@ -37,7 +37,7 @@ theorem signedSquareTop_correct (xs dst : List Wire)
             simpa [regValue] using htop
           simp only [signedSquareTop,run,signedTopTerm,regValue,List.foldr_cons,List.foldr_nil]
           refine ⟨True.intro,?_,?_,?_⟩
-          · simp [writeBit,top0,haz,hzx]
+          · simp [writeBit,top0,haz]
             cases s.basis x <;> cases s.basis a <;> rfl
           · intro q hq
             simp [writeBit,show q≠z from fun e => hq (by simp [e])]
