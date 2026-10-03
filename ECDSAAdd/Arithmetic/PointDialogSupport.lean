@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.PointDialogProgram
 import ECDSAAdd.Arithmetic.PointInPlaceSupport
+import ECDSAAdd.Arithmetic.SkywalkControlledPort
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
@@ -56,11 +57,17 @@ theorem pointDialogGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (hn
   have ncopy : q∉wires (copyRegister (some L.core.generic) L.point.y (L.dialogPool.take 256)) := by
     rw [copyRegister_wires _ _ _ (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])]
     split <;> simp [ng,ny,ntake]
-  have nsquare : q∉wires (squareSub L.dialogSquare) := by
-    apply square_layout_not_mem L.dialogSquare (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) q
-    · exact ntake 256
-    · exact nx
-    · rw [L.dialogSquare_work hw]; exact nslice 256 2217
+  have nsquare : q∉wires (signedSquareSub L.dialogSquare) := by
+    intro hm
+    have hs := List.mem_toFinset.mp (signedSquareSub_wires_subset L.dialogSquare
+      (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) hm)
+    change q∈L.dialogSquare.x++L.dialogSquare.out++L.dialogSquare.work at hs
+    rcases List.mem_append.mp hs with hs|hs
+    · rcases List.mem_append.mp hs with hs|hs
+      · exact ntake 256 hs
+      · exact nx hs
+    · rw [L.dialogSquare_work hw] at hs
+      exact nslice 256 2217 hs
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
   have nSmall : q∉wireBlock L.core.poolWire 0 2058 := by
     rw [L.core.pool_prefix hw 2058 (by omega)]
@@ -129,11 +136,17 @@ theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Width
   have ncopy : q∉wires (copyRegister (some L.core.generic) L.point.y (L.dialogPool.take 256)) := by
     rw [copyRegister_wires _ _ _ (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])]
     split <;> simp [ng,ny,ntake]
-  have nsquare : q∉wires (squareSub L.dialogSquare) := by
-    apply square_layout_not_mem L.dialogSquare (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) q
-    · exact ntake 256 (by omega)
-    · exact nx
-    · rw [L.dialogSquare_work hw]; exact nslice 256 2217 (by omega)
+  have nsquare : q∉wires (signedSquareSub L.dialogSquare) := by
+    intro hm
+    have hs := List.mem_toFinset.mp (signedSquareSub_wires_subset L.dialogSquare
+      (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) hm)
+    change q∈L.dialogSquare.x++L.dialogSquare.out++L.dialogSquare.work at hs
+    rcases List.mem_append.mp hs with hs|hs
+    · rcases List.mem_append.mp hs with hs|hs
+      · exact ntake 256 (by omega) hs
+      · exact nx hs
+    · rw [L.dialogSquare_work hw] at hs
+      exact nslice 256 2217 (by omega) hs
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
   have nSmall : q∉wireBlock L.core.poolWire 0 2058 := by
     rw [L.core.pool_prefix hw 2058 (by omega)]
