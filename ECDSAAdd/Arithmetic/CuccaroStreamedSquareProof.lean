@@ -1326,5 +1326,104 @@ theorem branchB_prefix_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths
   rw [exec]
   exact ⟨e2.1.trans e1.1,e2.2⟩
 
+private theorem padBit_mem (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths) :
+    L.core.pad.getD 0 0∈L.core.pad := by
+  have h : 0<L.core.pad.length := by rw [hw.core.pad]; omega
+  rw [List.getD_eq_getElem _ _ h]
+  exact List.getElem_mem h
+
+theorem prepareSum_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (A B : Nat)
+    (hA : regValue L.core.low base=A) (hB : regValue L.core.sum base=B)
+    (hbound : A+B<2^129) (hpad : regValue L.core.pad base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (SquareFrame L.core.sum base B) L.core.prepareSum
+      (SquareFrame L.core.sum base (A+B)) := by
+  let src := L.core.low++[L.core.pad.getD 0 0]
+  have slen : src.length=129 := by simp [src,L.core.low_length hw.core]
+  have dlen := L.core.sum_length hw.core
+  have bit0 : base (L.core.pad.getD 0 0)=false :=
+    (regValue_zero _ _).mp hpad _ (L.padBit_mem hw)
+  have srcv : regValue src base=A := by
+    rw [show src=L.core.low++[L.core.pad.getD 0 0] by rfl,
+      regValue_append,hA]
+    have hz : regValue [L.core.pad.getD 0 0] base=0 := by
+      change (if base (L.core.pad.getD 0 0) then 1 else 0)=0
+      rw [bit0]
+      rfl
+    rw [hz,Nat.mul_zero,Nat.add_zero]
+  have nd : (L.core.cin::src++L.core.sum).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := List.nodup_iff_count.mp hnd q
+    have hlo := (List.take_sublist 128 L.core.y).count_le q
+    have hhi1 := (List.take_sublist 128 (L.core.y.drop 128)).count_le q
+    have hhi2 := (List.drop_sublist 128 L.core.y).count_le q
+    have hsplit := congrArg (List.count q) (List.take_append_drop 128 L.core.y)
+    have hbit := (List.singleton_sublist.mpr (L.padBit_mem hw)).count_le q
+    simp only [List.count_cons,List.count_nil,Nat.add_zero] at hbit
+    simp only [List.count_append] at hsplit
+    simp only [wires,CuccaroStreamedSquareLayout.wires,src,
+      CuccaroStreamedSquareLayout.low,CuccaroStreamedSquareLayout.high,
+      CuccaroStreamedSquareLayout.sum,List.count_append,List.count_cons,
+      List.count_nil] at h ⊢
+    omega
+  have add := cuccaroAdd_cin_frame L.core.cin src L.core.sum nd
+    (slen.trans dlen.symm) base false hcin B
+  have val : (B+regValue src base+false.toNat)%2^L.core.sum.length=A+B := by
+    rw [srcv]
+    simp only [Bool.toNat_false,Nat.add_zero,dlen,Nat.mod_eq_of_lt (by omega),Nat.add_comm]
+  rw [val] at add
+  simpa only [CuccaroStreamedSquareLayout.prepareSum,src] using add
+
+theorem clearSum_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (A B : Nat)
+    (hA : regValue L.core.low base=A) (hB : regValue L.core.sum base=B)
+    (hbound : A+B<2^129) (hpad : regValue L.core.pad base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (SquareFrame L.core.sum base (A+B)) L.core.clearSum
+      (SquareFrame L.core.sum base B) := by
+  let src := L.core.low++[L.core.pad.getD 0 0]
+  have nd : (L.core.cin::src++L.core.sum).Nodup := by
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := List.nodup_iff_count.mp hnd q
+    have hlo := (List.take_sublist 128 L.core.y).count_le q
+    have hhi1 := (List.take_sublist 128 (L.core.y.drop 128)).count_le q
+    have hhi2 := (List.drop_sublist 128 L.core.y).count_le q
+    have hsplit := congrArg (List.count q) (List.take_append_drop 128 L.core.y)
+    have hbit := (List.singleton_sublist.mpr (L.padBit_mem hw)).count_le q
+    simp only [List.count_cons,List.count_nil,Nat.add_zero] at hbit
+    simp only [List.count_append] at hsplit
+    simp only [wires,CuccaroStreamedSquareLayout.wires,src,
+      CuccaroStreamedSquareLayout.low,CuccaroStreamedSquareLayout.high,
+      CuccaroStreamedSquareLayout.sum,List.count_append,List.count_cons,
+      List.count_nil] at h ⊢
+    omega
+  have ftriple := L.prepareSum_frame hw hnd base A B hA hB hbound hpad hcin
+  intro s records hs
+  let z : State := ⟨s.phase,base⟩
+  have zpre : SquareFrame L.core.sum base B z.basis := ⟨hB,fun _ _ => rfl⟩
+  have f := ftriple z [] zpre
+  let u := run L.core.prepareSum [] z
+  have us : u=s := by
+    have ph : u.phase=s.phase := f.1
+    have bs : u.basis=s.basis := by
+      funext q
+      by_cases hq : q∈L.core.sum
+      · exact (regValue_eq_iff L.core.sum u.basis s.basis).mp
+          (f.2.1.trans hs.1.symm) q hq
+      · exact (f.2.2 q hq).trans (hs.2 q hq).symm
+    calc
+      u = ⟨u.phase,u.basis⟩ := rfl
+      _ = ⟨s.phase,s.basis⟩ := by rw [ph,bs]
+      _ = s := rfl
+  have rr := run_reverse_proper L.core.prepareSum
+    (cuccaroAdd_proper src L.core.sum L.core.cin nd) z [] records
+  change run L.core.clearSum records u=z at rr
+  rw [us] at rr
+  rw [rr]
+  exact ⟨rfl,hB,fun _ _ => rfl⟩
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
