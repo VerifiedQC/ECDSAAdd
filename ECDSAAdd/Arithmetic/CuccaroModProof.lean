@@ -1,6 +1,9 @@
 import ECDSAAdd.Arithmetic.CuccaroMod
 import ECDSAAdd.Math.ModInPlace
 
+set_option linter.unusedSimpArgs false
+set_option linter.unusedVariables false
+
 namespace ECDSAAdd.Arithmetic
 
 structure CuccaroModValues (L : CuccaroModLayout)
@@ -1079,5 +1082,84 @@ theorem cuccaroModSub_spec (L : CuccaroModLayout) (n p A Z : Nat)
   simpa [cuccaroModSub,D,R,E,T,List.append_assoc] using
     (((((((((hinit.seq hmid).seq hmove).seq hsum).seq load).seq htrial').seq hclear).seq
       haddP).seq unload).seq hfinal)
+
+theorem cuccaroModAdd_preserves_outside (L : CuccaroModLayout) (n p : Nat)
+    (hw : L.Widths n) (s : State) (m : List Bool) (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroModAdd L p) m s).basis q=s.basis q := by
+  apply run_preserves_outside
+  intro hm
+  apply hq
+  simp only [cuccaroModAdd,wires_append,Finset.mem_union] at hm
+  simp only [CuccaroModLayout.wires,CuccaroModLayout.allWork,
+    CuccaroModLayout.scratch,CuccaroModLayout.z,List.mem_cons,List.mem_append,
+    List.not_mem_nil,or_false]
+  rcases hm with (((((((((((hm|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)
+  · have h := cuccaroAdd_wires_subset L.a L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.scratch p hm
+    simp only [List.mem_toFinset] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := cuccaroSub_wires_subset L.scratch L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.scratch p hm
+    simp only [List.mem_toFinset] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := maskedConstant_wires_subset L.high L.work p hm
+    simp only [List.mem_toFinset,List.mem_cons] at h
+    rcases h with h|h <;> tauto
+  · have h := cuccaroAdd_wires_subset L.work L.low L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h
+    rcases h with (h|h)|h <;> tauto
+  · have h := maskedConstant_wires_subset L.high L.work p hm
+    simp only [List.mem_toFinset,List.mem_cons] at h
+    rcases h with h|h <;> tauto
+  · rw [copyRegister_wires none L.low L.work (hw.low.trans hw.work.symm)] at hm
+    split at hm
+    · simp at hm
+    · simp only [Option.toList_none,List.nil_append,List.mem_toFinset,List.mem_append] at hm; tauto
+  · have h := cuccaroSub_wires_subset L.a L.scratch L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · simp [wires,Instr.wires] at hm; tauto
+  · have h := cuccaroAdd_wires_subset L.a L.scratch L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · rw [copyRegister_wires none L.low L.work (hw.low.trans hw.work.symm)] at hm
+    split at hm
+    · simp at hm
+    · simp only [Option.toList_none,List.nil_append,List.mem_toFinset,List.mem_append] at hm; tauto
+
+theorem cuccaroModSub_preserves_outside (L : CuccaroModLayout) (n p : Nat)
+    (hw : L.Widths n) (s : State) (m : List Bool) (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroModSub L p) m s).basis q=s.basis q := by
+  apply run_preserves_outside
+  intro hm
+  apply hq
+  simp only [cuccaroModSub,wires_append,Finset.mem_union] at hm
+  simp only [CuccaroModLayout.wires,CuccaroModLayout.allWork,
+    CuccaroModLayout.scratch,CuccaroModLayout.z,List.mem_cons,List.mem_append,
+    List.not_mem_nil,or_false]
+  rcases hm with (((((((((((hm|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)
+  · have h := cuccaroSub_wires_subset L.a L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := maskedConstant_wires_subset L.high L.work p hm
+    simp only [List.mem_toFinset,List.mem_cons] at h
+    rcases h with h|h <;> tauto
+  · have h := cuccaroAdd_wires_subset L.work L.low L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h
+    rcases h with (h|h)|h <;> tauto
+  · have h := maskedConstant_wires_subset L.high L.work p hm
+    simp only [List.mem_toFinset,List.mem_cons] at h
+    rcases h with h|h <;> tauto
+  · simp [wires,Instr.wires] at hm; tauto
+  · have h := cuccaroAdd_wires_subset L.a L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.scratch p hm
+    simp only [List.mem_toFinset] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := cuccaroSub_wires_subset L.scratch L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · simp [wires,Instr.wires] at hm; tauto
+  · have h := cuccaroAdd_wires_subset L.scratch L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.scratch p hm
+    simp only [List.mem_toFinset] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := cuccaroSub_wires_subset L.a L.z L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; try simp only [CuccaroModLayout.z,CuccaroModLayout.scratch,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h; tauto
 
 end ECDSAAdd.Arithmetic
