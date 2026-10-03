@@ -325,5 +325,79 @@ theorem subShifted_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
   exact L.subSource_frame hw hnd _ view base _ O value bound hO hw0
     hph hoh hwh hci hnf hmf
 
+def addModValue (S O : Nat) : Nat :=
+  (S%SquareReduction.p+O)%SquareReduction.p
+
+def subModValue (S O : Nat) : Nat :=
+  (O+SquareReduction.p-S%SquareReduction.p)%SquareReduction.p
+
+def addCMinusOneValue (H O : Nat) : Nat :=
+  addModValue (H*2^32)
+    (addModValue (H*2^10)
+      (subModValue (H*2^6) (addModValue (H*2^4) O)))
+
+def subCMinusOneValue (H O : Nat) : Nat :=
+  subModValue (H*2^32)
+    (subModValue (H*2^10)
+      (addModValue (H*2^6) (subModValue (H*2^4) O)))
+
+theorem addCMinusOne_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (high : List Wire)
+    (hsrc : ∀q,high.count q≤L.core.product.count q)
+    (hlo : 2≤high.length) (hhi : high.length+32≤256)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O) (L.addCMinusOne high)
+      (SquareFrame L.core.out base (addCMinusOneValue (regValue high base) O)) := by
+  let H := regValue high base
+  let O4 := addModValue (H*2^4) O
+  let O6 := subModValue (H*2^6) O4
+  let O10 := addModValue (H*2^10) O6
+  let O32 := addModValue (H*2^32) O10
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have h4 := L.addShifted_frame hw hnd high hsrc 4 hlo (by omega) base O hO
+    hpad hw0 hph hoh hwh hci hnf hmf
+  have h6 := L.subShifted_frame hw hnd high hsrc 6 hlo (by omega) base O4
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h10 := L.addShifted_frame hw hnd high hsrc 10 hlo (by omega) base O6
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h32 := L.addShifted_frame hw hnd high hsrc 32 hlo hhi base O10
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  simpa [addCMinusOne,addCMinusOneValue,addModValue,subModValue,H,O4,O6,O10,O32,
+    List.append_assoc] using h4.seq (h6.seq (h10.seq h32))
+
+theorem subCMinusOne_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (high : List Wire)
+    (hsrc : ∀q,high.count q≤L.core.product.count q)
+    (hlo : 2≤high.length) (hhi : high.length+32≤256)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O) (L.subCMinusOne high)
+      (SquareFrame L.core.out base (subCMinusOneValue (regValue high base) O)) := by
+  let H := regValue high base
+  let O4 := subModValue (H*2^4) O
+  let O6 := addModValue (H*2^6) O4
+  let O10 := subModValue (H*2^10) O6
+  let O32 := subModValue (H*2^32) O10
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have h4 := L.subShifted_frame hw hnd high hsrc 4 hlo (by omega) base O hO
+    hpad hw0 hph hoh hwh hci hnf hmf
+  have h6 := L.addShifted_frame hw hnd high hsrc 6 hlo (by omega) base O4
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h10 := L.subShifted_frame hw hnd high hsrc 10 hlo (by omega) base O6
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h32 := L.subShifted_frame hw hnd high hsrc 32 hlo hhi base O10
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  simpa [subCMinusOne,subCMinusOneValue,addModValue,subModValue,H,O4,O6,O10,O32,
+    List.append_assoc] using h4.seq (h6.seq (h10.seq h32))
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
