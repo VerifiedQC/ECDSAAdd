@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.CuccaroStreamedSquare
+import ECDSAAdd.Arithmetic.SwapLow
 
 set_option maxHeartbeats 8000000
 
@@ -965,6 +966,116 @@ theorem subSource_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
   refine ⟨runh.1,prod,runh.2.1,?_⟩
   intro q hp ho
   exact (runh.2.2 q ho).trans (h.frame q hp ho)
+
+theorem square128Clear_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hlen : src.length=128)
+    (hsrc : ∀q,src.count q≤L.core.y.count q)
+    (base : BasisState) (X O : Nat) (hX : regValue src base=X)
+    (hXb : X<2^128) (hprod : regValue L.core.product base=0)
+    (hpad : regValue L.core.pad base=0) (hwork : regValue L.core.work base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (PairFrame L base (X^2) O) (L.core.square128Clear src)
+      (PairFrame L base 0 O) := by
+  have dis := L.product_out_disjoint hnd
+  have srcAwayOut (q : Wire) (hq : q∈src) : q∉L.core.out := by
+    intro ho
+    have h := List.nodup_iff_count.mp hnd q
+    have hs := hsrc q
+    have hp := List.count_pos_iff.mpr hq
+    have hout := List.count_pos_iff.mpr ho
+    simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+      List.count_cons,List.count_nil] at h
+    omega
+  intro s records h
+  let cleanBase : BasisState := fun q => if q∈L.core.out then s.basis q else base q
+  have localProd : regValue L.core.product cleanBase=0 := by
+    rw [←hprod]
+    apply regValue_congr
+    intro q hq
+    simp only [cleanBase]
+    rw [if_neg (List.disjoint_left.mp dis hq)]
+  have localSrc : regValue src cleanBase=X := by
+    rw [←hX]
+    apply regValue_congr
+    intro q hq
+    simp [cleanBase,srcAwayOut q hq]
+  have localPad : regValue L.core.pad cleanBase=0 := by
+    rw [←hpad]
+    apply regValue_congr
+    intro q hq
+    have away : q∉L.core.out := (L.pairAuxAway hnd q (by
+      simp [foldPad,hq])).2
+    simp [cleanBase,away]
+  have localWork : regValue L.core.work cleanBase=0 := by
+    rw [←hwork]
+    apply regValue_congr
+    intro q hq
+    have away : q∉L.core.out := (L.pairAuxAway hnd q (by simp [hq])).2
+    simp [cleanBase,away]
+  have localCin : cleanBase L.core.cin=false := by
+    have away : L.core.cin∉L.core.out := (L.pairAuxAway hnd _ (by simp)).2
+    simp [cleanBase,away,hcin]
+  have sqb : X^2<2^256 := by
+    simpa only [show 2*128=256 by omega] using square_bound X 128 hXb
+  have splitS := regValue_take_drop_of_lt L.core.product 256 (X^2) s.basis
+    (by simp [hw.core.product]) h.product sqb
+  have pre : SquareFrame (L.core.product.take 256) cleanBase (X^2) s.basis := by
+    constructor
+    · exact splitS.1
+    · intro q hq
+      simp only [cleanBase]
+      by_cases ho : q∈L.core.out
+      · simp [ho]
+      rw [if_neg ho]
+      by_cases hp : q∈L.core.product
+      · have hd : q∈L.core.product.drop 256 := by
+          have he := List.mem_append.mp (show q∈L.core.product.take 256++
+            L.core.product.drop 256 by rwa [List.take_append_drop])
+          exact he.resolve_left hq
+        exact ((regValue_zero _ _).mp splitS.2 q hd).trans
+          ((regValue_zero _ _).mp hprod q hp).symm
+      · exact h.frame q hp ho
+  have clear := L.square128Clear_frame hw hnd src hlen hsrc cleanBase X localSrc
+    localProd localPad localWork localCin s records pre
+  let out := run (L.core.square128Clear src) records s
+  have drop0 : regValue (L.core.product.drop 256) out.basis=0 := by
+    apply (regValue_zero _ _).mpr
+    intro q hq
+    have qt : q∉L.core.product.take 256 := fun ht => by
+      have hp : L.core.product.Nodup := by
+        apply List.nodup_iff_count.mpr
+        intro w
+        have hh := List.nodup_iff_count.mp hnd w
+        simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+          List.count_cons,List.count_nil] at hh ⊢
+        omega
+      exact List.disjoint_left.mp (List.disjoint_take_drop hp
+        (show 256≤256 from le_rfl)) ht hq
+    rw [clear.2.2 q qt]
+    have qp : q∈L.core.product := List.mem_of_mem_drop hq
+    have qo : q∉L.core.out := List.disjoint_left.mp dis qp
+    simp only [cleanBase,if_neg qo]
+    exact (regValue_zero _ _).mp hprod q qp
+  have product0 : regValue L.core.product out.basis=0 := by
+    have split := regValue_append (L.core.product.take 256)
+      (L.core.product.drop 256) out.basis
+    rw [List.take_append_drop,clear.2.1,drop0,Nat.mul_zero,Nat.add_zero] at split
+    exact split
+  have outputO : regValue L.core.out out.basis=O := by
+    calc
+      regValue L.core.out out.basis = regValue L.core.out cleanBase :=
+        regValue_congr _ _ _ (fun q hq => clear.2.2 q
+          (fun ht => List.disjoint_left.mp dis (List.mem_of_mem_take ht) hq))
+      _ = regValue L.core.out s.basis := by
+        apply regValue_congr
+        intro q hq
+        simp [cleanBase,hq]
+      _ = O := h.out
+  refine ⟨clear.1,product0,outputO,?_⟩
+  intro q hp ho
+  have qt : q∉L.core.product.take 256 := fun ht => hp (List.mem_of_mem_take ht)
+  rw [clear.2.2 q qt]
+  simp [cleanBase,ho,h.frame q hp ho]
 
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
