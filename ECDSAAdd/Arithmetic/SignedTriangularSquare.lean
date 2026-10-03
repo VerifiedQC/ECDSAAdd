@@ -25,9 +25,9 @@ def signedSquareRow (c : Wire) (xs dst pad carry : List Wire) : Program :=
 /-- Independent measured inverse of `signedSquareRow`; no measurement stream
 is ever replayed backwards. -/
 def signedSquareRowClear (c : Wire) (xs dst pad carry : List Wire) : Program :=
-  xorWhenFalse c dst ++ notRegister dst ++
-    addInPlace (xs ++ pad.take 1) dst (carry.take xs.length) c ++
-    notRegister dst ++ xorWhenFalse c (dst.take xs.length)
+  xorWhenFalse c dst ++ (notRegister dst ++
+    (addInPlace (xs ++ pad.take 1) dst (carry.take xs.length) c ++
+      (notRegister dst ++ xorWhenFalse c (dst.take xs.length))))
 
 /-- Low-to-high signed rows.  At recursion depth `i`, `dst` begins at product
 bit `2i`; the active row is bits `2i+1 .. i+m`. -/
