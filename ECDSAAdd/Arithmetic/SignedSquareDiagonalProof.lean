@@ -4,6 +4,19 @@ import ECDSAAdd.Math.SignedSquareIdentity
 
 namespace ECDSAAdd.Arithmetic
 
+theorem xorWhenFalse_wires_subset (c : Wire) (ys : List Wire) :
+    wires (xorWhenFalse c ys)⊆(c::ys).toFinset := by
+  induction ys with
+  | nil => simp [xorWhenFalse,wires]
+  | cons y ys ih =>
+    simp only [xorWhenFalse,wires_append]
+    intro q hq
+    simp only [wires,Instr.wires,Finset.mem_union,Finset.mem_insert,
+      Finset.mem_singleton,List.mem_toFinset,List.mem_cons] at hq ⊢
+    have hi := @ih q
+    simp only [List.mem_toFinset,List.mem_cons] at hi
+    tauto
+
 private theorem take_value_mod_local (r : List Wire) (n : Nat) (hn : n≤r.length)
     (s : BasisState) : regValue (r.take n) s=regValue r s%2^n := by
   have h := regValue_append (r.take n) (r.drop n) s
@@ -107,6 +120,71 @@ theorem signedDiagSource_value (xs mask : List Wire) (hx : xs≠[])
   rw [hmask,Nat.mod_eq_of_lt hb] at takev
   rw [signedDiagSource,regValue_append,takev]
   simp [signedDiagValue,signedDiagHigh,hx,Nat.mul_comm]
+
+theorem signedDiagSub_wires_subset (cin : Wire) (xs dst mask carry : List Wire)
+    (hx : xs≠[]) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
+    (hc : dst.length-1≤carry.length) :
+    wires (signedDiagSub xs dst mask carry cin)⊆
+      (cin::xs++mask++dst++carry).toFinset := by
+  let k := xs.length-1
+  let low := xs.take k
+  let mlow := mask.take k
+  let src := signedDiagSource xs mask
+  let cy := carry.take (dst.length-1)
+  have lm : low.length=mlow.length := by simp [low,mlow,k]; omega
+  have cp := copyRegister_wires none low mlow lm
+  have xf := xorWhenFalse_wires_subset cin mlow
+  have sl : src.length=dst.length := by
+    simp [src,signedDiagSource,List.length_take,Nat.min_eq_left hm,hd]
+    omega
+  have cl : cy.length+1=dst.length := by
+    simp [cy,List.length_take,Nat.min_eq_left hc]
+    have hp : 0<dst.length := by
+      have : 0<xs.length := List.length_pos_iff.mpr hx
+      omega
+    omega
+  have ar := subInPlace_wires src dst cy cin sl cl
+  intro q hq
+  simp only [signedDiagSub,signedDiagLoad,signedDiagUnload,wires_append,
+    Finset.mem_union] at hq
+  rcases hq with hload | harith | hunload
+  · rcases hload with hcopy | hxor
+    · rw [cp] at hcopy
+      split at hcopy
+      · simp at hcopy
+      · simp only [Option.toList_none,List.nil_append,List.mem_toFinset,List.mem_append] at hcopy
+        have hl : q∈low → q∈xs := fun h => List.mem_of_mem_take h
+        have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
+        simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
+        tauto
+    · have h := xf hxor
+      have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
+      simp only [List.mem_toFinset,List.mem_cons] at h
+      simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
+      tauto
+  · rw [ar] at harith
+    have hs (h : q∈src) : q∈xs ∨ q∈mask := by
+      simp only [src,signedDiagSource,List.mem_append] at h
+      rcases h with h|h
+      · exact Or.inl h
+      · exact Or.inr (List.mem_of_mem_take h)
+    have hcy (h : q∈cy) : q∈carry := List.mem_of_mem_take h
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at harith ⊢
+    tauto
+  · rcases hunload with hxor | hcopy
+    · have h := xf hxor
+      have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
+      simp only [List.mem_toFinset,List.mem_cons] at h
+      simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
+      tauto
+    · rw [cp] at hcopy
+      split at hcopy
+      · simp at hcopy
+      · simp only [Option.toList_none,List.nil_append,List.mem_toFinset,List.mem_append] at hcopy
+        have hl : q∈low → q∈xs := fun h => List.mem_of_mem_take h
+        have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
+        simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
+        tauto
 
 theorem signedDiagSub_correct (cin : Wire) (xs dst mask carry : List Wire)
     (hnd : (cin::xs++mask++dst++carry).Nodup) (hx : xs≠[])
