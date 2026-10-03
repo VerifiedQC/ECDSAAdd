@@ -1252,5 +1252,53 @@ def branchAValue (A O : Nat) : Nat :=
 def branchBValue (B O : Nat) : Nat :=
   subTimesProductValue (B^2) (addRotateProductValue (B^2) O false)
 
+theorem branchA_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (A O : Nat)
+    (hA : regValue L.core.low base=A) (hAb : A<2^128)
+    (hprod : regValue L.core.product base=0)
+    (hO : O<SquareReduction.p) (hc : PairClean L base) :
+    Triple (PairFrame L base 0 O) L.branchA
+      (PairFrame L base 0 (branchAValue A O)) := by
+  have lowLen := L.core.low_length hw.core
+  have lowCount (q : Wire) : L.core.low.count q≤L.core.y.count q :=
+    (List.take_sublist 128 L.core.y).count_le q
+  have sqb : A^2<2^256 := by
+    simpa only [show 2*128=256 by omega] using square_bound A 128 hAb
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  let O1 := subModValue (A^2) O
+  let O2 := addRotateProductValue (A^2) O1 false
+  have sqT := L.square128_pair hw hnd L.core.low lowLen lowCount base A O hA
+    (PairClean.corePad L base hc) hc.work hc.cin
+  have subT := L.subSource_pair hw hnd (L.core.product.take 256)
+    (L.productTake256_view hw) base (A^2) O (A^2) hO hc (by
+      intro st hs
+      rw [L.product_take_value hw st (A^2) hs.product 256 (by omega),
+        Nat.mod_eq_of_lt sqb])
+  have rotT := L.addRotate128_pair hw hnd false base (A^2) O1
+    (Nat.mod_lt _ hp) hc
+  have clrT := L.square128Clear_pair hw hnd L.core.low lowLen lowCount base A O2
+    hA hAb hprod (PairClean.corePad L base hc) hc.work hc.cin
+  intro s records hs
+  let s1 := run (L.core.square128 L.core.low) [] s
+  let s2 := run (L.subSource (L.core.product.take 256)) [] s1
+  let s3 := run (L.addRotate128 false) [] s2
+  let s4 := run (L.core.square128Clear L.core.low) records s3
+  have e1 := sqT s [] hs
+  have e2 := subT s1 [] e1.2
+  have e3 := rotT s2 [] e2.2
+  have e4 := clrT s3 records e3.2
+  have sm := L.core.square128_counts hw.core L.core.low lowLen
+  have p256 : (L.core.product.take 256).length=256 := by simp [hw.core.product]
+  have subm : measurementCount (L.subSource (L.core.product.take 256))=0 := by
+    simpa [subSource] using (cuccaroNormalizedModSub_counts
+      (L.source (L.core.product.take 256)) 256 SquareReduction.c SquareReduction.p
+      (L.source_widths hw _ p256)).2
+  have rotm := L.rotate128_counts hw
+  have exec : run L.branchA records s=s4 := by
+    simp [branchA,s1,s2,s3,s4,run_append,sm.1.2,subm,rotm.1.2]
+  rw [exec]
+  exact ⟨e4.1.trans (e3.1.trans (e2.1.trans e1.1)),e4.2⟩
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
