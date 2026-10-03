@@ -12,11 +12,11 @@ namespace ECDSAAdd.Arithmetic
 
 @[simp] theorem xorWhenFalse_toffoliCount (c : Wire) (ys : List Wire) :
     toffoliCount (xorWhenFalse c ys)=0 := by
-  simp [xorWhenFalse,toffoliCount]
+  induction ys <;> simp_all [xorWhenFalse,toffoliCount]
 
 @[simp] theorem xorWhenFalse_measurementCount (c : Wire) (ys : List Wire) :
     measurementCount (xorWhenFalse c ys)=0 := by
-  simp [xorWhenFalse,measurementCount]
+  induction ys <;> simp_all [xorWhenFalse,measurementCount]
 
 theorem signedSquareRow_counts (c : Wire) (xs dst pad carry : List Wire)
     (hd : dst.length=xs.length+1) (hp : 1≤pad.length) (hc : xs.length≤carry.length) :

@@ -6,9 +6,11 @@ namespace ECDSAAdd.Arithmetic
 /-- Clifford fanout from one control into a list of targets. -/
 def cxFrom (c : Wire) (ys : List Wire) : Program := ys.map (Instr.CX c)
 
-/-- Complement every target exactly when `c` is false, preserving `c`. -/
-def xorWhenFalse (c : Wire) (ys : List Wire) : Program :=
-  [.X c] ++ cxFrom c ys ++ [.X c]
+/-- Complement every target exactly when `c` is false, preserving `c`.
+The per-target form keeps its all-state semantics easy to expose to Lean. -/
+def xorWhenFalse (c : Wire) : List Wire → Program
+  | [] => []
+  | y::ys => [.X y, .CX c y] ++ xorWhenFalse c ys
 
 /-- One exact signed triangular row.
 
