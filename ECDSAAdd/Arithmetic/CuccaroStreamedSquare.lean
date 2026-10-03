@@ -196,8 +196,9 @@ def branchB (L : CuccaroStreamedSquareWideLayout) : Program :=
     (L.subTimesC (L.core.product.take 256)++L.core.square128Clear L.core.high)
 
 def branchC (L : CuccaroStreamedSquareWideLayout) : Program :=
-  L.core.prepareSum++L.core.square129++L.subRotate128 true++
-  L.core.square129Clear++L.core.clearSum
+  L.core.prepareSum++
+    (L.core.square129++L.subRotate128 true++L.core.square129Clear)++
+    L.core.clearSum
 
 /-- Executable exact `with_square` schedule for `out -= y^2 (mod p)`. -/
 def program (L : CuccaroStreamedSquareWideLayout) : Program :=
