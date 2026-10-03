@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.PointDialogLayout
-import ECDSAAdd.Arithmetic.CuccaroStreamedSquareSupport
+import ECDSAAdd.Arithmetic.CuccaroStreamedControlledResources
 import ECDSAAdd.Framework.UnitaryControl
 
 set_option maxHeartbeats 3000000
@@ -11,7 +11,7 @@ namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
 
 def pointStreamedSquare (L : ControlledPointLayout) : Program :=
-  controlUnitary L.core.generic (L.core.poolWire 775) L.dialogStreamedSquareWide.program
+  L.dialogStreamedSquareWide.controlledProgram L.core.generic (L.core.poolWire 775)
 
 theorem ControlledPointLayout.streamedSquare_wires_eq (L : ControlledPointLayout)
     (hw : L.Widths) :
@@ -44,6 +44,19 @@ theorem ControlledPointLayout.streamedSquare_control_nodup
   simp only [dialogUsedWires,PointAddLayout.pointWires,inPlaceFlags,List.count_cons,
     List.count_append,List.count_nil] at h he ⊢
   omega
+
+theorem pointStreamedSquare_exact_control (L : ControlledPointLayout) (hw : L.Widths)
+    (hn : L.wires.Nodup) :
+    ExactControl L.core.generic (L.core.poolWire 775) L.dialogStreamedSquareWide.program
+      (pointStreamedSquare L) := by
+  have nd := L.streamedSquare_control_nodup hw hn
+  have n0 := List.nodup_cons.mp nd
+  have n1 := List.nodup_cons.mp n0.2
+  exact L.dialogStreamedSquareWide.controlledProgram_exact
+    (L.dialogStreamedSquareWide_widths hw) (L.dialogStreamedSquareWide_nodup hw hn)
+    L.core.generic (L.core.poolWire 775)
+    (fun h => n0.1 (List.mem_cons_of_mem _ h)) n1.1
+    (fun h => n0.1 (by simp [h]))
 
 theorem pointStreamedSquare_correct (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (X Y : Nat) (B : Bool) (hX : X<p)
@@ -105,25 +118,20 @@ theorem pointStreamedSquare_correct (L : ControlledPointLayout) (hw : L.Widths)
     norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c,p]
   have kernel := K.program_square_correct hwK ndK Y X (by simpa only [hp] using hX)
     s m hy hx prod0 sum0 clean
-  have guard := controlUnitary_run L.core.generic (L.core.poolWire 775) K.program
-    support.1 controlAway scratchAway
-    (fun e => n0.1 (by simp [e])) s m scratchZero
+  have guard := (pointStreamedSquare_exact_control L hw hn).execute s m scratchZero
   change run (pointStreamedSquare L) m s=_ at guard
   rw [guard,hb]
   cases B
   · simp [hx,Nat.mod_eq_of_lt hX]
   · simpa only [if_true,hp,pow_two] using kernel
 
-def pointStreamedSquareCost (L : ControlledPointLayout) : Nat :=
-  863304+cnotCount L.dialogStreamedSquareWide.program
+def pointStreamedSquareCost (_L : ControlledPointLayout) : Nat := 749338
 
 theorem pointStreamedSquare_counts (L : ControlledPointLayout) (hw : L.Widths) :
     toffoliCount (pointStreamedSquare L)=pointStreamedSquareCost L ∧
-    measurementCount (pointStreamedSquare L)=0 := by
-  have hc := L.dialogStreamedSquareWide.program_counts (L.dialogStreamedSquareWide_widths hw)
-  simp only [pointStreamedSquare,pointStreamedSquareCost,controlUnitary_toffoliCount,
-    controlUnitary_measurementCount,hc.1]
-  norm_num
+    measurementCount (pointStreamedSquare L)=0 :=
+  L.dialogStreamedSquareWide.controlledProgram_counts
+    (L.dialogStreamedSquareWide_widths hw) L.core.generic (L.core.poolWire 775)
 
 theorem pointStreamedSquare_support (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
@@ -147,8 +155,7 @@ theorem pointStreamedSquare_support (L : ControlledPointLayout) (hw : L.Widths)
     have h : L.core.poolWire 775∈L.dialogPool.take 775++[L.core.poolWire 775] := by simp
     simpa only [L.dialogBit_prefix hw 775 (by omega)] using h
   intro q hq
-  have h := controlUnitary_wires_subset L.core.generic (L.core.poolWire 775)
-    L.dialogStreamedSquareWide.program hq
+  have h := (pointStreamedSquare_exact_control L hw hn).support hq
   simp only [Finset.mem_union,Finset.mem_insert,Finset.mem_singleton] at h
   rcases h with (rfl|rfl)|h
   · simp

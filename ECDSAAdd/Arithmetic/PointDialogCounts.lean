@@ -42,13 +42,13 @@ theorem pointDialogNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (hn
 
 
 theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_hn : L.wires.Nodup) :
-    toffoliCount (pointDialogSquare L)=pointStreamedSquareCost L ∧
+    toffoliCount (pointDialogSquare L)=749338 ∧
       measurementCount (pointDialogSquare L)=0 :=
   pointStreamedSquare_counts L hw
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=2639612+pointStreamedSquareCost L ∧
+    toffoliCount (pointDialogGeneric L cx cy)=3388950 ∧
     measurementCount (pointDialogGeneric L cx cy)=1980408 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
@@ -58,13 +58,11 @@ theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
   simp only [pointDialogGeneric,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hd.1,hd.2.1,hd.2.2.1,hd.2.2.2,
     hs.1,hs.2,hn'.1,hn'.2]
-  constructor
-  · omega
-  · trivial
+  norm_num
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=2643716+pointStreamedSquareCost L ∧
+    toffoliCount (pointDialogFinite L C cx cy)=3393054 ∧
     measurementCount (pointDialogFinite L C cx cy)=1984512 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
@@ -87,6 +85,5 @@ theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     measurementCount_append,hg.1,hg.2,(hz _ _ _).1,(hz _ _ _).2,hzl,
     (maskedPointConstant_counts _ _ _).1,(maskedPointConstant_counts _ _ _).2,he.1,he.2,hh.1,hh.2]
   norm_num [pointDialogGenericFlag,pointInPlaceGenericFlag,toffoliCount,measurementCount]
-  omega
 
 end ECDSAAdd.Arithmetic

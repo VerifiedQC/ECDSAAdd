@@ -115,6 +115,17 @@ def cnotCount : Program → Nat
   | .CX _ _::p => 1+cnotCount p
   | _::p => cnotCount p
 
+@[simp] theorem cnotCount_append (p q : Program) :
+    cnotCount (p++q)=cnotCount p+cnotCount q := by
+  induction p with
+  | nil => simp [cnotCount]
+  | cons i p ih => cases i <;> simp [cnotCount,ih,Nat.add_assoc]
+
+theorem cnotCount_reverse (p : Program) : cnotCount p.reverse=cnotCount p := by
+  induction p with
+  | nil => rfl
+  | cons i p ih => cases i <;> simp [cnotCount,ih,Nat.add_comm]
+
 theorem controlUnitary_toffoliCount (c scratch : Wire) (p : Program) :
     toffoliCount (controlUnitary c scratch p)=3*toffoliCount p+cnotCount p := by
   induction p with
