@@ -441,4 +441,49 @@ theorem cuccaroNormalize_roundtrip (L : CuccaroNormalizeLayout) (c : Nat)
   apply run_reverse_proper
   exact cuccaroNormalize_proper L c hnd
 
+theorem cuccaroNormalize_wires_subset (L : CuccaroNormalizeLayout) (c : Nat) :
+    wires (cuccaroNormalize L c)⊆L.wires.toFinset := by
+  intro q hm
+  simp only [cuccaroNormalize,wires_append,Finset.mem_union] at hm
+  simp only [CuccaroNormalizeLayout.wires,CuccaroNormalizeLayout.a,
+    CuccaroNormalizeLayout.scratch,List.mem_toFinset,List.mem_cons,List.mem_append,
+    List.not_mem_nil,or_false]
+  rcases hm with ((((((((hm|hm)|hm)|hm)|hm)|hm)|hm)|hm)|hm)
+  · have h := xorConstant_wires_subset L.scratch c hm
+    simp only [List.mem_toFinset,CuccaroNormalizeLayout.scratch,List.mem_append,
+      List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := cuccaroAdd_wires_subset L.scratch L.a L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,
+      CuccaroNormalizeLayout.scratch,CuccaroNormalizeLayout.a,
+      List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.scratch c hm
+    simp only [List.mem_toFinset,CuccaroNormalizeLayout.scratch,List.mem_append,
+      List.mem_cons,List.not_mem_nil,or_false] at h; tauto
+  · have h := xorConstant_wires_subset L.work c hm
+    simp only [List.mem_toFinset] at h; tauto
+  · have h := maskedConstant_wires_subset L.high L.work c hm
+    simp only [List.mem_toFinset,List.mem_cons] at h; tauto
+  · have h := cuccaroSub_wires_subset L.work L.src L.cin hm
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at h; tauto
+  · have h := maskedConstant_wires_subset L.high L.work c hm
+    simp only [List.mem_toFinset,List.mem_cons] at h; tauto
+  · have h := xorConstant_wires_subset L.work c hm
+    simp only [List.mem_toFinset] at h; tauto
+  · simp [wires,Instr.wires] at hm; tauto
+
+theorem cuccaroNormalize_preserves_outside (L : CuccaroNormalizeLayout) (c : Nat)
+    (s : State) (m : List Bool) (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroNormalize L c) m s).basis q=s.basis q := by
+  apply run_preserves_outside
+  intro hm
+  exact hq (List.mem_toFinset.mp (cuccaroNormalize_wires_subset L c hm))
+
+theorem cuccaroNormalizeClear_preserves_outside (L : CuccaroNormalizeLayout) (c : Nat)
+    (s : State) (m : List Bool) (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroNormalizeClear L c) m s).basis q=s.basis q := by
+  apply run_preserves_outside
+  rw [cuccaroNormalizeClear,wires_reverse]
+  intro hm
+  exact hq (List.mem_toFinset.mp (cuccaroNormalize_wires_subset L c hm))
+
 end ECDSAAdd.Arithmetic
