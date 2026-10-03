@@ -82,15 +82,15 @@ def signedTriangularSquare (xs dst pad mask carry : List Wire) (cin : Wire) : Pr
   match xs, dst with
   | [], _ => []
   | [x], z::_ => [.CX x z]
-  | _::_, _ => signedSquareRows xs dst pad carry ++ signedSquareTop xs dst ++
-      signedDiagSub xs dst mask carry cin
+  | _::_, _ => signedSquareRows xs dst pad carry ++
+      (signedSquareTop xs dst ++ signedDiagSub xs dst mask carry cin)
 
 /-- Independent exact cleanup of `signedTriangularSquare`. -/
 def signedTriangularSquareClear (xs dst pad mask carry : List Wire) (cin : Wire) : Program :=
   match xs, dst with
   | [], _ => []
   | [x], z::_ => [.CX x z]
-  | _::_, _ => signedDiagAdd xs dst mask carry cin ++ signedSquareTop xs dst ++
-      signedSquareRowsClear xs dst pad carry
+  | _::_, _ => signedDiagAdd xs dst mask carry cin ++
+      (signedSquareTop xs dst ++ signedSquareRowsClear xs dst pad carry)
 
 end ECDSAAdd.Arithmetic
