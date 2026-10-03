@@ -94,6 +94,37 @@ theorem signedSquareTop_correct (xs dst : List Wire)
               simp only [List.count_cons,List.count_append,beq_self_eq_true,if_true] at hn
               omega)]
 
+theorem signedSquareTop_roundtrip (xs dst : List Wire) (hnd : (xs++dst).Nodup)
+    (s : State) (m : List Bool) :
+    run (signedSquareTop xs dst++signedSquareTop xs dst) m s=s := by
+  induction xs generalizing dst s with
+  | nil => simp [signedSquareTop,run]
+  | cons x xs ih =>
+    cases xs with
+    | nil =>
+      cases dst with
+      | nil => simp [signedSquareTop,run]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,run]
+        | cons z tail =>
+          have hxz : x≠z := by
+            intro e; subst z; simp at hnd
+          simp [signedSquareTop,run,writeBit,hxz]
+    | cons y ys =>
+      cases dst with
+      | nil => simp [signedSquareTop,run]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,run]
+        | cons b tail =>
+          have hn : (y::ys++tail).Nodup := by
+            apply List.nodup_iff_count.mpr; intro q
+            have h := List.nodup_iff_count.mp hnd q
+            simp only [List.count_cons,List.count_append] at h ⊢
+            omega
+          simpa [signedSquareTop] using ih tail hn s
+
 theorem signedTriangularSquare_forward_correct (cin : Wire)
     (xs dst pad mask carry : List Wire)
     (hnd : (cin::xs++dst++pad++mask++carry).Nodup)
