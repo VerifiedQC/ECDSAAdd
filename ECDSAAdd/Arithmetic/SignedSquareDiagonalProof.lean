@@ -157,6 +157,7 @@ theorem signedDiagSub_wires_subset (cin : Wire) (xs dst mask carry : List Wire)
         have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
         simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
         tauto
+
     · have h := xf hxor
       have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
       simp only [List.mem_toFinset,List.mem_cons] at h
@@ -185,6 +186,16 @@ theorem signedDiagSub_wires_subset (cin : Wire) (xs dst mask carry : List Wire)
         have hm' : q∈mlow → q∈mask := fun h => List.mem_of_mem_take h
         simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
         tauto
+
+theorem signedDiagSub_preserves_outside (cin : Wire) (xs dst mask carry : List Wire)
+    (hx : xs≠[]) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
+    (hc : dst.length-1≤carry.length) (s : State) (records : List Bool)
+    (q : Wire) (hq : q∉cin::xs++mask++dst++carry) :
+    (run (signedDiagSub xs dst mask carry cin) records s).basis q=s.basis q := by
+  apply run_preserves_outside
+  intro hw
+  have hs := signedDiagSub_wires_subset cin xs dst mask carry hx hd hm hc hw
+  exact hq (List.mem_toFinset.mp hs)
 
 theorem signedDiagSub_correct (cin : Wire) (xs dst mask carry : List Wire)
     (hnd : (cin::xs++mask++dst++carry).Nodup) (hx : xs≠[])
