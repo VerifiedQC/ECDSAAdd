@@ -2,9 +2,70 @@ import ECDSAAdd.Arithmetic.CuccaroStreamedSquare
 import ECDSAAdd.Arithmetic.SwapLow
 
 set_option maxHeartbeats 8000000
+set_option maxRecDepth 1000000
 
 namespace ECDSAAdd.Arithmetic
 namespace CuccaroStreamedSquareWideLayout
+
+theorem regValue_take_mod (r : List Wire) (n : Nat) (hn : n≤r.length)
+    (s : BasisState) : regValue (r.take n) s=regValue r s%2^n := by
+  have h := regValue_append (r.take n) (r.drop n) s
+  rw [List.take_append_drop,List.length_take,Nat.min_eq_left hn] at h
+  rw [h,Nat.add_mul_mod_self_left]
+  apply (Nat.mod_eq_of_lt ?_).symm
+  simpa only [List.length_take,Nat.min_eq_left hn] using regValue_lt (r.take n) s
+
+theorem regValue_drop_div (r : List Wire) (n : Nat) (hn : n≤r.length)
+    (s : BasisState) : regValue (r.drop n) s=regValue r s/2^n := by
+  have h := regValue_append (r.take n) (r.drop n) s
+  rw [List.take_append_drop,List.length_take,Nat.min_eq_left hn] at h
+  have hl : regValue (r.take n) s<2^n := by
+    simpa only [List.length_take,Nat.min_eq_left hn] using regValue_lt (r.take n) s
+  rw [h,Nat.add_mul_div_left _ _ (Nat.two_pow_pos n),Nat.div_eq_of_lt hl,Nat.zero_add]
+
+theorem product_take_value (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (s : BasisState) (P : Nat) (hP : regValue L.core.product s=P)
+    (n : Nat) (hn : n≤258) :
+    regValue (L.core.product.take n) s=P%2^n := by
+  rw [regValue_take_mod L.core.product n (by rw [hw.core.product]; exact hn),hP]
+
+theorem product_drop_value (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (s : BasisState) (P : Nat) (hP : regValue L.core.product s=P)
+    (n : Nat) (hn : n≤258) :
+    regValue (L.core.product.drop n) s=P/2^n := by
+  rw [regValue_drop_div L.core.product n (by rw [hw.core.product]; exact hn),hP]
+
+theorem rotated128_value (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (s : BasisState) (P : Nat) (hP : regValue L.core.product s=P) :
+    regValue L.rotated128 s=(P/2^128)%2^128+2^128*(P%2^128) := by
+  have high := L.product_drop_value hw s P hP 128 (by omega)
+  have highLow := regValue_take_mod (L.core.product.drop 128) 128
+    (by simp [hw.core.product]) s
+  have low := L.product_take_value hw s P hP 128 (by omega)
+  rw [rotated128,regValue_append,highLow,high,low]
+  simp [hw.core.product]
+
+theorem productTakeDrop_value (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (s : BasisState) (P : Nat) (hP : regValue L.core.product s=P)
+    (j : Nat) (hj : j≤256) :
+    regValue ((L.core.product.take 256).drop (256-j)) s=(P%2^256)/2^(256-j) := by
+  rw [regValue_drop_div _ _ (by simp [hw.core.product]),
+    L.product_take_value hw s P hP 256 (by omega)]
+
+theorem rotateFull_value (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (s : BasisState) (P : Nat) (hP : regValue L.core.product s=P)
+    (j : Nat) (hj : j≤256) :
+    regValue (rotateFull (L.core.product.take 256) j) s=
+      (P%2^256)/2^(256-j)+2^j*((P%2^256)%2^(256-j)) := by
+  let src := L.core.product.take 256
+  have slen : src.length=256 := by simp [src,hw.core.product]
+  have sv : regValue src s=P%2^256 := by
+    exact L.product_take_value hw s P hP 256 (by omega)
+  have hi := regValue_drop_div src (256-j) (by rw [slen]; omega) s
+  have lo := regValue_take_mod src (256-j) (by rw [slen]; omega) s
+  change regValue (src.drop (256-j)++src.take (256-j)) s=_
+  rw [regValue_append,hi,lo,sv,List.length_drop,slen,
+    show 256-(256-j)=j by omega]
 
 structure SourceView (L : CuccaroStreamedSquareWideLayout) (src : List Wire) : Prop where
   length : src.length=256
@@ -1076,6 +1137,120 @@ theorem square128Clear_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths
   have qt : q∉L.core.product.take 256 := fun ht => hp (List.mem_of_mem_take ht)
   rw [clear.2.2 q qt]
   simp [cleanBase,ho,h.frame q hp ho]
+
+def addRotateProductValue (P O : Nat) (withOverhang : Bool) : Nat :=
+  addRotate128Value ((P/2^128)%2^128+2^128*(P%2^128))
+    (P/2^128) (P/2^256) O withOverhang
+
+def subRotateProductValue (P O : Nat) (withOverhang : Bool) : Nat :=
+  subRotate128Value ((P/2^128)%2^128+2^128*(P%2^128))
+    (P/2^128) (P/2^256) O withOverhang
+
+theorem addRotate128_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (withOverhang : Bool)
+    (base : BasisState) (P O : Nat) (hO : O<SquareReduction.p)
+    (hc : PairClean L base) :
+    Triple (PairFrame L base P O) (L.addRotate128 withOverhang)
+      (PairFrame L base P (addRotateProductValue P O withOverhang)) := by
+  intro s records h
+  have clean := PairFrame.clean L hnd base P O s.basis h hc
+  have f := L.addRotate128_frame hw hnd withOverhang s.basis O hO clean.pad
+    clean.work clean.productHigh clean.outHigh clean.workHigh clean.cin
+    clean.normFlag clean.modFlag s records ⟨h.out,fun _ _ => rfl⟩
+  let out := run (L.addRotate128 withOverhang) records s
+  have rv := L.rotated128_value hw s.basis P h.product
+  have hv := L.product_drop_value hw s.basis P h.product 128 (by omega)
+  have ev := L.product_drop_value hw s.basis P h.product 256 (by omega)
+  have outv : regValue L.core.out out.basis=addRotateProductValue P O withOverhang := by
+    rw [f.2.1,addRotateProductValue,rv,hv,ev]
+  have dis := L.product_out_disjoint hnd
+  have prod : regValue L.core.product out.basis=P :=
+    (regValue_congr _ _ _ (fun q hq => f.2.2 q
+      (List.disjoint_left.mp dis hq))).trans h.product
+  refine ⟨f.1,prod,outv,?_⟩
+  intro q hp ho
+  exact (f.2.2 q ho).trans (h.frame q hp ho)
+
+theorem subRotate128_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (withOverhang : Bool)
+    (base : BasisState) (P O : Nat) (hO : O<SquareReduction.p)
+    (hc : PairClean L base) :
+    Triple (PairFrame L base P O) (L.subRotate128 withOverhang)
+      (PairFrame L base P (subRotateProductValue P O withOverhang)) := by
+  intro s records h
+  have clean := PairFrame.clean L hnd base P O s.basis h hc
+  have f := L.subRotate128_frame hw hnd withOverhang s.basis O hO clean.pad
+    clean.work clean.productHigh clean.outHigh clean.workHigh clean.cin
+    clean.normFlag clean.modFlag s records ⟨h.out,fun _ _ => rfl⟩
+  let out := run (L.subRotate128 withOverhang) records s
+  have rv := L.rotated128_value hw s.basis P h.product
+  have hv := L.product_drop_value hw s.basis P h.product 128 (by omega)
+  have ev := L.product_drop_value hw s.basis P h.product 256 (by omega)
+  have outv : regValue L.core.out out.basis=subRotateProductValue P O withOverhang := by
+    rw [f.2.1,subRotateProductValue,rv,hv,ev]
+  have dis := L.product_out_disjoint hnd
+  have prod : regValue L.core.product out.basis=P :=
+    (regValue_congr _ _ _ (fun q hq => f.2.2 q
+      (List.disjoint_left.mp dis hq))).trans h.product
+  refine ⟨f.1,prod,outv,?_⟩
+  intro q hp ho
+  exact (f.2.2 q ho).trans (h.frame q hp ho)
+
+def rotatedFullValue (P j : Nat) : Nat :=
+  (P%2^256)/2^(256-j)+2^j*((P%2^256)%2^(256-j))
+
+def highFullValue (P j : Nat) : Nat := (P%2^256)/2^(256-j)
+
+def subTimesProductValue (P O : Nat) : Nat :=
+  subTimesCValue (P%2^256)
+    (rotatedFullValue P 4) (highFullValue P 4)
+    (rotatedFullValue P 6) (highFullValue P 6)
+    (rotatedFullValue P 10) (highFullValue P 10)
+    (rotatedFullValue P 32) (highFullValue P 32) O
+
+theorem subTimesC_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (P O : Nat)
+    (hO : O<SquareReduction.p) (hc : PairClean L base) :
+    Triple (PairFrame L base P O) (L.subTimesC (L.core.product.take 256))
+      (PairFrame L base P (subTimesProductValue P O)) := by
+  intro s records h
+  have clean := PairFrame.clean L hnd base P O s.basis h hc
+  have f := L.subTimesC_frame hw hnd s.basis O hO clean.pad clean.work
+    clean.productHigh clean.outHigh clean.workHigh clean.cin clean.normFlag
+    clean.modFlag s records ⟨h.out,fun _ _ => rfl⟩
+  let out := run (L.subTimesC (L.core.product.take 256)) records s
+  have pv := L.product_take_value hw s.basis P h.product 256 (by omega)
+  have r4 := L.rotateFull_value hw s.basis P h.product 4 (by omega)
+  have h4 := L.productTakeDrop_value hw s.basis P h.product 4 (by omega)
+  have r6 := L.rotateFull_value hw s.basis P h.product 6 (by omega)
+  have h6 := L.productTakeDrop_value hw s.basis P h.product 6 (by omega)
+  have r10 := L.rotateFull_value hw s.basis P h.product 10 (by omega)
+  have h10 := L.productTakeDrop_value hw s.basis P h.product 10 (by omega)
+  have r32 := L.rotateFull_value hw s.basis P h.product 32 (by omega)
+  have h32 := L.productTakeDrop_value hw s.basis P h.product 32 (by omega)
+  have outv : regValue L.core.out out.basis=subTimesProductValue P O := by
+    rw [f.2.1]
+    simp only [subTimesProductValue,rotatedFullValue,highFullValue]
+    rw [pv,r4,h4,r6,h6,r10,h10,r32,h32]
+  have dis := L.product_out_disjoint hnd
+  have prod : regValue L.core.product out.basis=P :=
+    (regValue_congr _ _ _ (fun q hq => f.2.2 q
+      (List.disjoint_left.mp dis hq))).trans h.product
+  refine ⟨f.1,prod,outv,?_⟩
+  intro q hp ho
+  exact (f.2.2 q ho).trans (h.frame q hp ho)
+
+theorem PairClean.corePad (L : CuccaroStreamedSquareWideLayout)
+    (base : BasisState) (h : PairClean L base) : regValue L.core.pad base=0 := by
+  apply (regValue_zero _ _).mpr
+  intro q hq
+  exact (regValue_zero _ _).mp h.pad q (by simp [foldPad,hq])
+
+def branchAValue (A O : Nat) : Nat :=
+  addRotateProductValue (A^2) (subModValue (A^2) O) false
+
+def branchBValue (B O : Nat) : Nat :=
+  subTimesProductValue (B^2) (addRotateProductValue (B^2) O false)
 
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic

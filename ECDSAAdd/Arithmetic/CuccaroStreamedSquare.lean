@@ -186,16 +186,23 @@ def subTimesC (L : CuccaroStreamedSquareWideLayout) (src : List Wire) : Program 
   L.subShiftFull src 0++L.subShiftFull src 4++L.addShiftFull src 6++
     L.subShiftFull src 10++L.subShiftFull src 32
 
-/-- Executable exact `with_square` schedule for `out -= y^2 (mod p)`. -/
-def program (L : CuccaroStreamedSquareWideLayout) : Program :=
+def branchA (L : CuccaroStreamedSquareWideLayout) : Program :=
   L.core.square128 L.core.low++
   L.subSource (L.core.product.take 256)++L.addRotate128 false++
-  L.core.square128Clear L.core.low++
+  L.core.square128Clear L.core.low
+
+def branchB (L : CuccaroStreamedSquareWideLayout) : Program :=
   L.core.square128 L.core.high++
   L.addRotate128 false++L.subTimesC (L.core.product.take 256)++
-  L.core.square128Clear L.core.high++
+  L.core.square128Clear L.core.high
+
+def branchC (L : CuccaroStreamedSquareWideLayout) : Program :=
   L.core.prepareSum++L.core.square129++L.subRotate128 true++
   L.core.square129Clear++L.core.clearSum
+
+/-- Executable exact `with_square` schedule for `out -= y^2 (mod p)`. -/
+def program (L : CuccaroStreamedSquareWideLayout) : Program :=
+  L.branchA++L.branchB++L.branchC
 
 theorem foldPad_length (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths) :
     L.foldPad.length=254 := by simp [foldPad,hw.core.pad,hw.overflowPad]
@@ -311,7 +318,7 @@ theorem program_counts (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths) :
   have ds := L.subSource_counts hw _ p256
   have rot := L.rotate128_counts hw
   have fc := L.subTimesC_counts hw _ p256
-  simp [program,toffoliCount_append,measurementCount_append,
+  simp [program,branchA,branchB,branchC,toffoliCount_append,measurementCount_append,
     lo.1.1,lo.1.2,lo.2.1,lo.2.2,hi.1.1,hi.1.2,hi.2.1,hi.2.2,
     su.1.1,su.1.2,su.2.1,su.2.2,sm.1.1,sm.1.2,sm.2.1,sm.2.2,
     ds.1,ds.2,rot.1.1,rot.1.2,rot.2.1.1,rot.2.1.2,rot.2.2.1,rot.2.2.2,
