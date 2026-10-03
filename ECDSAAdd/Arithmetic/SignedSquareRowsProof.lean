@@ -266,4 +266,150 @@ theorem signedSquareRows_correct (xs dst pad carry : List Wire)
         change regValue (dst.drop (2*(rest.length+1)-1)) out.basis=0
         exact top
 
+theorem signedSquareRows_roundtrip (xs dst pad carry : List Wire)
+    (hnd : (xs++dst++pad++carry).Nodup) (hd : dst.length=2*xs.length)
+    (hp : xs.length≤1 ∨ 1≤pad.length) (hc : xs.length-1≤carry.length)
+    (s : State) (m : List Bool) (A : Nat) (hv : regValue dst s.basis=A)
+    (hhi : regValue (dst.drop xs.length) s.basis=0)
+    (hw : regValue (pad++carry) s.basis=0) :
+    let out := run (signedSquareRows xs dst pad carry++
+      signedSquareRowsClear xs dst pad carry) m s
+    out.phase=s.phase ∧ out.basis=s.basis := by
+  induction xs generalizing dst s m A with
+  | nil =>
+    have de : dst=[] := List.eq_nil_of_length_eq_zero (by simpa using hd)
+    subst dst
+    simp [signedSquareRows,signedSquareRowsClear,run]
+  | cons c xs ih =>
+    cases xs with
+    | nil => simp [signedSquareRows,signedSquareRowsClear,run]
+    | cons d tail =>
+      simp only [List.length_cons] at hd hp hc hhi
+      let rest := d::tail
+      let n := rest.length+1
+      let row := (dst.drop 1).take n
+      let dst2 := dst.drop 2
+      let rfwd := signedSquareRow c rest row pad carry
+      let rclr := signedSquareRowClear c rest row pad carry
+      let middle := signedSquareRows rest dst2 pad carry++signedSquareRowsClear rest dst2 pad carry
+      have hpad : 1≤pad.length := by rcases hp with hp|hp <;> omega
+      have hcarry : rest.length≤carry.length := by change tail.length+1≤carry.length; omega
+      have rowLen : row.length=rest.length+1 := by
+        have cap : n≤(dst.drop 1).length := by dsimp [n,rest]; simp; omega
+        simpa [row,n] using List.length_take_of_le cap
+      have dst2Len : dst2.length=2*rest.length := by dsimp [dst2,rest]; simp; omega
+      have rowSub : row.Sublist dst :=
+        (List.take_sublist n (dst.drop 1)).trans (List.drop_sublist 1 dst)
+      have dst2Sub : dst2.Sublist dst := List.drop_sublist 2 dst
+      have ndrow : (c::rest++row++pad++carry).Nodup := by
+        have pre := (List.Sublist.refl (c::rest)).append rowSub
+        have all := (pre.append (List.Sublist.refl pad)).append (List.Sublist.refl carry)
+        have sub : (c::rest++row++pad++carry).Sublist
+            (c::rest++dst++pad++carry) := by simpa [List.append_assoc] using all
+        exact sub.nodup hnd
+      have ndrec : (rest++dst2++pad++carry).Nodup := by
+        have pre := (List.Sublist.refl rest).append dst2Sub
+        have all := (pre.append (List.Sublist.refl pad)).append (List.Sublist.refl carry)
+        have sub0 : (rest++dst2++pad++carry).Sublist (rest++dst++pad++carry) := by
+          simpa [List.append_assoc] using all
+        have ht : (rest++dst++pad++carry).Nodup := by
+          simpa [rest,List.append_assoc] using (List.nodup_cons.mp hnd).2
+        exact sub0.nodup ht
+      have dstN : dst.Nodup := by
+        apply List.nodup_iff_count.mpr; intro q
+        have h := List.nodup_iff_count.mp hnd q
+        simp only [rest,List.count_cons,List.count_append] at h ⊢
+        omega
+      have high0 : regValue (dst.drop n) s.basis=0 := by simpa [n,rest] using hhi
+      have rowv : regValue row s.basis=A/2 := by
+        simpa [row,n] using signed_row_slice_value dst n A (by omega) s.basis hv high0
+      have hA : A/2<2^rest.length := by
+        have hnDst : n≤dst.length := by dsimp [n,rest]; omega
+        have split := regValue_append (dst.take n) (dst.drop n) s.basis
+        rw [List.take_append_drop,List.length_take,Nat.min_eq_left hnDst,
+          high0,Nat.mul_zero,Nat.add_zero,hv] at split
+        have b := regValue_lt (dst.take n) s.basis
+        rw [List.length_take,Nat.min_eq_left hnDst] at b
+        dsimp [n] at split b
+        rw [Nat.pow_succ] at b
+        omega
+      have work0 : regValue (pad++carry) s.basis=0 := hw
+      have ff := signedSquareRow_frame c rest row pad carry ndrow rowLen hpad hcarry
+        s.basis (s.basis c) rfl work0 (A/2)
+        (hA.trans (Nat.pow_lt_pow_right (by decide) (by omega)))
+      let m1 := m.drop (measurementCount rfwd)
+      let u := run rfwd (m.take (measurementCount rfwd)) s
+      have fu := ff s (m.take (measurementCount rfwd)) ⟨rowv,fun _ _ => rfl⟩
+      let D := signedDeltaValue c rest s.basis
+      have delta : signedRowValue (s.basis c) (A/2) (regValue rest s.basis) rest.length=A/2+D := by
+        have hs := regValue_lt rest s.basis
+        cases hb : s.basis c
+        · simp only [signedRowValue,hb,Bool.false_eq_true,if_false,signedDeltaValue,D]
+          have fit : A/2+2^rest.length-regValue rest s.basis<2^(rest.length+1) := by
+            rw [Nat.pow_succ]; omega
+          rw [Nat.mod_eq_of_lt fit]; omega
+        · simp only [signedRowValue,hb,if_true,signedDeltaValue,D]
+          have fit : A/2+regValue rest s.basis+1<2^(rest.length+1) := by
+            rw [Nat.pow_succ]; omega
+          rw [Nat.mod_eq_of_lt fit]; omega
+      have rowU : regValue row u.basis=A/2+D := by
+        change regValue row (run rfwd (m.take (measurementCount rfwd)) s).basis=_
+        rw [fu.2.1,delta]
+      have keepU (q : Wire) (hq : q∉row) : u.basis q=s.basis q := fu.2.2 q hq
+      have lift := signed_row_lift_update dst n A D (by omega) dstN s.basis u.basis
+        hv rowU (by
+          have sub := drop_tail_sublist dst n
+          apply (regValue_zero _ _).mpr; intro q hq
+          exact (regValue_zero _ _).mp high0 q (sub.subset hq)) keepU
+      have workU : regValue (pad++carry) u.basis=0 := by
+        rw [← hw]; apply regValue_congr; intro q hq; apply keepU q
+        intro hr
+        have hn := List.nodup_iff_count.mp ndrow q
+        have h1 := List.count_pos_iff.mpr hq
+        have h2 := List.count_pos_iff.mpr hr
+        simp only [List.count_cons,List.count_append] at hn h1
+        omega
+      have high2 : regValue (dst2.drop rest.length) u.basis=0 := by
+        simpa [dst2,n,List.drop_drop,Nat.add_comm,Nat.add_left_comm,Nat.add_assoc] using lift.2
+      let A2 := regValue dst2 u.basis
+      have hcrec : rest.length-1≤carry.length := by omega
+      have mid := ih dst2 (by simpa [rest] using ndrec) (by simpa [rest] using dst2Len)
+        (Or.inr hpad) (by simpa [rest] using hcrec) u (m1.take (measurementCount middle)) A2 rfl
+        (by simpa [rest] using high2) workU
+      let w := run middle (m1.take (measurementCount middle)) u
+      have wbasis : w.basis=u.basis := mid.2
+      have wphase : w.phase=u.phase := mid.1
+      have rr := signedSquareRowClear_frame c rest row pad carry ndrow rowLen hpad hcarry
+        s.basis (s.basis c) rfl work0 (A/2) hA
+      have preW : SquareFrame row s.basis
+          (signedRowValue (s.basis c) (A/2) (regValue rest s.basis) rest.length) w.basis := by
+        rw [wbasis]
+        exact fu.2
+      let out := run rclr (m1.drop (measurementCount middle)) w
+      have fin := rr w (m1.drop (measurementCount middle)) preW
+      change out.phase=w.phase ∧ SquareFrame row s.basis (A/2) out.basis at fin
+      have outbasis : out.basis=s.basis := by
+        funext q
+        by_cases hq : q∈row
+        · exact (regValue_eq_iff row out.basis s.basis).mp (fin.2.1.trans rowv.symm) q hq
+        · exact fin.2.2 q hq
+      have outphase : out.phase=s.phase := fin.1.trans (wphase.trans fu.1)
+      have exec : run (rfwd++(middle++rclr)) m s=out := by
+        rw [run_append]
+        change run (middle++rclr) m1 u=out
+        rw [run_append]
+      have result : (run (rfwd++(middle++rclr)) m s).phase=s.phase ∧
+          (run (rfwd++(middle++rclr)) m s).basis=s.basis := by
+        rw [exec]
+        exact ⟨outphase,outbasis⟩
+      change (run (signedSquareRows (c::rest) dst pad carry++
+        signedSquareRowsClear (c::rest) dst pad carry) m s).phase=s.phase ∧
+        (run (signedSquareRows (c::rest) dst pad carry++
+          signedSquareRowsClear (c::rest) dst pad carry) m s).basis=s.basis
+      rw [show signedSquareRows (c::rest) dst pad carry=
+        rfwd++signedSquareRows rest dst2 pad carry by rfl,
+        show signedSquareRowsClear (c::rest) dst pad carry=
+          signedSquareRowsClear rest dst2 pad carry++rclr by rfl]
+      simpa [middle,List.append_assoc] using result
+
 end ECDSAAdd.Arithmetic
