@@ -67,13 +67,13 @@ def signedDiagSource (xs mask : List Wire) : List Wire := xs ++ mask.take xs.len
 /-- Subtract the exact affine diagonal correction after all signed rows. -/
 def signedDiagSub (xs dst mask carry : List Wire) (cin : Wire) : Program :=
   signedDiagLoad xs mask cin ++
-    subInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
-    signedDiagUnload xs mask cin
+    (subInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
+      signedDiagUnload xs mask cin)
 
 def signedDiagAdd (xs dst mask carry : List Wire) (cin : Wire) : Program :=
   signedDiagLoad xs mask cin ++
-    addInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
-    signedDiagUnload xs mask cin
+    (addInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
+      signedDiagUnload xs mask cin)
 
 /-- Exact square producer with signed rows and a single exact diagonal
 correction.  The one-bit case is its direct Clifford square. -/
