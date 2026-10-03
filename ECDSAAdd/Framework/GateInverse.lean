@@ -117,4 +117,96 @@ theorem run_reverse_proper (p : Program) (h : ∀i∈p,ProperGate i)
       rw [ih hp]
       exact properGate_involution i hi s [] m₂
 
+/-- A proper gate-only program depends only on its declared wire support.
+States agreeing there and in phase still agree there after execution. -/
+theorem run_proper_congr (p : Program) (hp : ProperProgram p)
+    (s t : State) (m₁ m₂ : List Bool) (hphase : s.phase=t.phase)
+    (hbasis : ∀q∈wires p,s.basis q=t.basis q) :
+    (run p m₁ s).phase=(run p m₂ t).phase ∧
+      ∀q∈wires p,(run p m₁ s).basis q=(run p m₂ t).basis q := by
+  induction p generalizing s t m₁ m₂ with
+  | nil => exact ⟨hphase,by simp [wires]⟩
+  | cons i p ih =>
+    have hi := hp i (by simp)
+    have hpt : ProperProgram p := by intro j hj; exact hp j (by simp [hj])
+    have tailMem (q : Wire) (hq : q∈wires p) : s.basis q=t.basis q :=
+      hbasis q (Finset.mem_union_right _ hq)
+    cases i with
+    | X x =>
+      let s' : State := ⟨s.phase,writeBit s.basis x (!s.basis x)⟩
+      let t' : State := ⟨t.phase,writeBit t.basis x (!t.basis x)⟩
+      have hx : s.basis x=t.basis x := hbasis x (by simp [wires,Instr.wires])
+      have htail (q : Wire) (hq : q∈wires p) : s'.basis q=t'.basis q := by
+        by_cases e : q=x
+        · subst q; simp [s',t',writeBit,hx]
+        · simp [s',t',writeBit,e,tailMem q hq]
+      have hrec := ih hpt s' t' m₁ m₂ hphase htail
+      refine ⟨hrec.1,?_⟩
+      intro q hq
+      simp only [wires,Finset.mem_union] at hq
+      rcases hq with hq|hq
+      · by_cases hqp : q∈wires p
+        · exact hrec.2 q hqp
+        · have hqeq : s'.basis q=t'.basis q := by
+            simp only [Instr.wires,Finset.mem_singleton] at hq
+            subst q
+            simp [s',t',writeBit,hx]
+          exact (run_preserves_outside p m₁ s' q hqp).trans
+            (hqeq.trans (run_preserves_outside p m₂ t' q hqp).symm)
+      · exact hrec.2 q hq
+    | CX c x =>
+      have hcx : c≠x := hi
+      let s' : State := ⟨s.phase,writeBit s.basis x (s.basis x^^s.basis c)⟩
+      let t' : State := ⟨t.phase,writeBit t.basis x (t.basis x^^t.basis c)⟩
+      have hc : s.basis c=t.basis c := hbasis c (by simp [wires,Instr.wires])
+      have hx : s.basis x=t.basis x := hbasis x (by simp [wires,Instr.wires])
+      have htail (q : Wire) (hq : q∈wires p) : s'.basis q=t'.basis q := by
+        by_cases e : q=x
+        · subst q; simp [s',t',writeBit,hx,hc]
+        · simp [s',t',writeBit,e,tailMem q hq]
+      have hrec := ih hpt s' t' m₁ m₂ hphase htail
+      refine ⟨hrec.1,?_⟩
+      intro q hq
+      simp only [wires,Finset.mem_union] at hq
+      rcases hq with hq|hq
+      · by_cases hqp : q∈wires p
+        · exact hrec.2 q hqp
+        · have hqeq : s'.basis q=t'.basis q := by
+            simp only [Instr.wires,Finset.mem_insert,Finset.mem_singleton] at hq
+            rcases hq with rfl|rfl
+            · simp [s',t',writeBit,hcx,hc]
+            · simp [s',t',writeBit,hx,hc]
+          exact (run_preserves_outside p m₁ s' q hqp).trans
+            (hqeq.trans (run_preserves_outside p m₂ t' q hqp).symm)
+      · exact hrec.2 q hq
+    | CCX a b x =>
+      have hax : a≠x := hi.1
+      have hbx : b≠x := hi.2
+      let s' : State := ⟨s.phase,writeBit s.basis x (s.basis x^^(s.basis a&&s.basis b))⟩
+      let t' : State := ⟨t.phase,writeBit t.basis x (t.basis x^^(t.basis a&&t.basis b))⟩
+      have ha : s.basis a=t.basis a := hbasis a (by simp [wires,Instr.wires])
+      have hb : s.basis b=t.basis b := hbasis b (by simp [wires,Instr.wires])
+      have hx : s.basis x=t.basis x := hbasis x (by simp [wires,Instr.wires])
+      have htail (q : Wire) (hq : q∈wires p) : s'.basis q=t'.basis q := by
+        by_cases e : q=x
+        · subst q; simp [s',t',writeBit,hx,ha,hb]
+        · simp [s',t',writeBit,e,tailMem q hq]
+      have hrec := ih hpt s' t' m₁ m₂ hphase htail
+      refine ⟨hrec.1,?_⟩
+      intro q hq
+      simp only [wires,Finset.mem_union] at hq
+      rcases hq with hq|hq
+      · by_cases hqp : q∈wires p
+        · exact hrec.2 q hqp
+        · have hqeq : s'.basis q=t'.basis q := by
+            simp only [Instr.wires,Finset.mem_insert,Finset.mem_singleton] at hq
+            rcases hq with rfl|rfl|rfl
+            · simp [s',t',writeBit,hax,ha,hb]
+            · simp [s',t',writeBit,hbx,ha,hb]
+            · simp [s',t',writeBit,hx,ha,hb]
+          exact (run_preserves_outside p m₁ s' q hqp).trans
+            (hqeq.trans (run_preserves_outside p m₂ t' q hqp).symm)
+      · exact hrec.2 q hq
+    | measureX x c₀ c₁ => contradiction
+
 end ECDSAAdd
