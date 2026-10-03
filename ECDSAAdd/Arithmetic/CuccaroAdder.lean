@@ -283,6 +283,13 @@ theorem cuccaroAdd_counts (a b : List Wire) (cin : Wire) (hlen : a.length=b.leng
           simp [cuccaroAdd,cuccaroMaj,cuccaroUma,toffoliCount,measurementCount,h]
           omega
 
+theorem cuccaroSub_counts (a b : List Wire) (cin : Wire) (hlen : a.length=b.length) :
+    toffoliCount (cuccaroSub a b cin)=2*(b.length-1) ∧
+      measurementCount (cuccaroSub a b cin)=0 := by
+  have h := cuccaroAdd_counts a b cin hlen
+  simp [cuccaroSub,toffoliCount_append,measurementCount_append,
+    (notRegister_counts b).1,(notRegister_counts b).2,h.1,h.2]
+
 private theorem cuccaro_complement_sub (A B N : Nat) (hN : 0<N)
     (hA : A<N) (hB : B<N) :
     N-1-((A+(N-1-B))%N)=(B+N-A)%N := by
