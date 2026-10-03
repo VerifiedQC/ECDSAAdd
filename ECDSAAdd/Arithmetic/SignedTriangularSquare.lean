@@ -47,9 +47,10 @@ def signedSquareRowsClear : List Wire → List Wire → List Wire → List Wire 
         signedSquareRowClear c (d::tail) ((dst.drop 1).take ((d::tail).length+1)) pad carry
 
 /-- Copy the most significant input bit into the most significant product bit. -/
-def signedSquareTop (xs dst : List Wire) : Program :=
-  match xs.getLast?, dst.getLast? with
-  | some x, some z => [.CX x z]
+def signedSquareTop : List Wire → List Wire → Program
+  | [], _ => []
+  | [x], _::z::_ => [.CX x z]
+  | _::x::xs, _::_::dst => signedSquareTop (x::xs) dst
   | _, _ => []
 
 /-- Load `~xs[0..m-2]` into the low `m-1` mask wires. -/

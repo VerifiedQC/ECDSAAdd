@@ -106,13 +106,45 @@ theorem signedSquareRowsCount_closed (n : Nat) :
 
 @[simp] theorem signedSquareTop_toffoliCount (xs dst : List Wire) :
     toffoliCount (signedSquareTop xs dst)=0 := by
-  unfold signedSquareTop
-  split <;> simp [toffoliCount]
+  induction xs generalizing dst with
+  | nil => simp [signedSquareTop,toffoliCount]
+  | cons x xs ih =>
+    cases xs with
+    | nil =>
+      cases dst with
+      | nil => simp [signedSquareTop,toffoliCount]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,toffoliCount]
+        | cons z zs => simp [signedSquareTop,toffoliCount]
+    | cons y ys =>
+      cases dst with
+      | nil => simp [signedSquareTop,toffoliCount]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,toffoliCount]
+        | cons b tail => simpa [signedSquareTop] using ih tail
 
 @[simp] theorem signedSquareTop_measurementCount (xs dst : List Wire) :
     measurementCount (signedSquareTop xs dst)=0 := by
-  unfold signedSquareTop
-  split <;> simp [measurementCount]
+  induction xs generalizing dst with
+  | nil => simp [signedSquareTop,measurementCount]
+  | cons x xs ih =>
+    cases xs with
+    | nil =>
+      cases dst with
+      | nil => simp [signedSquareTop,measurementCount]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,measurementCount]
+        | cons z zs => simp [signedSquareTop,measurementCount]
+    | cons y ys =>
+      cases dst with
+      | nil => simp [signedSquareTop,measurementCount]
+      | cons a ds =>
+        cases ds with
+        | nil => simp [signedSquareTop,measurementCount]
+        | cons b tail => simpa [signedSquareTop] using ih tail
 
 theorem signedDiag_counts (xs dst mask carry : List Wire) (cin : Wire)
     (hx : 2≤xs.length) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
