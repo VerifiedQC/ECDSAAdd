@@ -1300,5 +1300,31 @@ theorem branchA_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
   rw [exec]
   exact ⟨e4.1.trans (e3.1.trans (e2.1.trans e1.1)),e4.2⟩
 
+theorem branchB_prefix_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (B O : Nat)
+    (hB : regValue L.core.high base=B)
+    (hO : O<SquareReduction.p) (hc : PairClean L base) :
+    Triple (PairFrame L base 0 O)
+      (L.core.square128 L.core.high++L.addRotate128 false)
+      (PairFrame L base (B^2) (addRotateProductValue (B^2) O false)) := by
+  have highLen := L.core.high_length hw.core
+  have highCount (q : Wire) : L.core.high.count q≤L.core.y.count q := by
+    have h1 := (List.take_sublist 128 (L.core.y.drop 128)).count_le q
+    have h2 := (List.drop_sublist 128 L.core.y).count_le q
+    simpa [CuccaroStreamedSquareLayout.high] using h1.trans h2
+  have sqT := L.square128_pair hw hnd L.core.high highLen highCount base B O hB
+    (PairClean.corePad L base hc) hc.work hc.cin
+  have rotT := L.addRotate128_pair hw hnd false base (B^2) O hO hc
+  intro s records hs
+  let s1 := run (L.core.square128 L.core.high) [] s
+  let s2 := run (L.addRotate128 false) records s1
+  have e1 := sqT s [] hs
+  have e2 := rotT s1 records e1.2
+  have sm := L.core.square128_counts hw.core L.core.high highLen
+  have exec : run (L.core.square128 L.core.high++L.addRotate128 false) records s=s2 := by
+    simp [s1,s2,run_append,sm.1.2]
+  rw [exec]
+  exact ⟨e2.1.trans e1.1,e2.2⟩
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic

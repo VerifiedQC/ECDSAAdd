@@ -192,9 +192,8 @@ def branchA (L : CuccaroStreamedSquareWideLayout) : Program :=
   L.core.square128Clear L.core.low
 
 def branchB (L : CuccaroStreamedSquareWideLayout) : Program :=
-  L.core.square128 L.core.high++
-  L.addRotate128 false++L.subTimesC (L.core.product.take 256)++
-  L.core.square128Clear L.core.high
+  (L.core.square128 L.core.high++L.addRotate128 false)++
+    (L.subTimesC (L.core.product.take 256)++L.core.square128Clear L.core.high)
 
 def branchC (L : CuccaroStreamedSquareWideLayout) : Program :=
   L.core.prepareSum++L.core.square129++L.subRotate128 true++
