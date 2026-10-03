@@ -26,7 +26,7 @@ theorem cuccaroSignedTriangularSquare_frame (cin : Wire)
         s.basis q := by
   let out := run (cuccaroSignedTriangularSquare xs dst pad mask carry cin) records s
   have hr := cuccaroSignedTriangularSquare_forward_correct cin xs dst pad mask carry hnd hx hd
-    hp hm hc s records hd0 hp0 hm0 hc0 hi0
+    hp hm s records hd0 hp0 hm0 hc0 hi0
   have hsupp := (cuccaroSignedTriangularSquare_wires_subset cin xs dst pad mask carry
     hx hd hp hm hc).1
   intro q hqdst
@@ -63,7 +63,7 @@ theorem cuccaroSignedTriangularSquare_spec (cin : Wire)
   simp only [Holds.holds] at h ⊢
   obtain ⟨⟨⟨⟨⟨hxv,hd0⟩,hp0⟩,hm0⟩,hc0⟩,hi0⟩ := h
   have hr := cuccaroSignedTriangularSquare_forward_correct cin xs dst pad mask carry hnd hx hd
-    hp hm hc s records hd0 hp0 hm0 hc0 hi0
+    hp hm s records hd0 hp0 hm0 hc0 hi0
   refine ⟨hr.1,⟨⟨⟨⟨⟨?_,?_⟩,hr.2.2.2.1⟩,hr.2.2.2.2.1⟩,
     hr.2.2.2.2.2.1⟩,hr.2.2.2.2.2.2⟩⟩
   · simpa [hxv] using hr.2.2.1
@@ -100,7 +100,7 @@ private theorem cuccaroSignedTriangularSquareClear_state (cin : Wire)
     (measurementCount (cuccaroSignedTriangularSquare xs dst pad mask carry cin)) false
   let u := run (cuccaroSignedTriangularSquare xs dst pad mask carry cin) forwardRecords base
   have fc := cuccaroSignedTriangularSquare_forward_correct cin xs dst pad mask carry hnd hx hd
-    hp hm hc base forwardRecords bdst bpad bmask bcarry bcin
+    hp hm base forwardRecords bdst bpad bmask bcarry bcin
   have ff := cuccaroSignedTriangularSquare_frame cin xs dst pad mask carry hnd hx hd hp hm hc
     base forwardRecords bdst bpad bmask bcarry bcin
   have xsBase : regValue xs base.basis=regValue xs s.basis := baseReg xs (Or.inl rfl)

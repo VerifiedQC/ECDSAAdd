@@ -113,7 +113,7 @@ theorem cuccaroSub_frame (cin : Wire) (src dst : List Wire)
 measured carry-bank row, while using no carry register. -/
 theorem cuccaroSignedSquareRow_frame (c : Wire) (xs dst pad carry : List Wire)
     (hnd : (c::xs++dst++pad++carry).Nodup) (hd : dst.length=xs.length+1)
-    (hp : 1≤pad.length) (_hc : xs.length≤carry.length)
+    (hp : 1≤pad.length)
     (base : BasisState) (C : Bool) (hC : base c=C)
     (hz : regValue (pad++carry) base=0) (A : Nat) (hA : A<2^dst.length) :
     Triple (SquareFrame dst base A) (cuccaroSignedSquareRow c xs dst pad carry)

@@ -3,8 +3,7 @@ import ECDSAAdd.Arithmetic.CuccaroSignedSquareRowsProof
 namespace ECDSAAdd.Arithmetic
 
 theorem cuccaroSignedDiagSub_wires_subset (cin : Wire) (xs dst mask carry : List Wire)
-    (_hx : xs≠[]) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
-    (_hc : dst.length-1≤carry.length) :
+    (_hx : xs≠[]) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length) :
     wires (cuccaroSignedDiagSub xs dst mask carry cin)⊆
       (cin::xs++mask++dst++carry).toFinset := by
   let k := xs.length-1
@@ -62,19 +61,19 @@ theorem cuccaroSignedDiagSub_wires_subset (cin : Wire) (xs dst mask carry : List
 
 theorem cuccaroSignedDiagSub_preserves_outside (cin : Wire) (xs dst mask carry : List Wire)
     (hx : xs≠[]) (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
-    (hc : dst.length-1≤carry.length) (s : State) (records : List Bool)
+    (s : State) (records : List Bool)
     (q : Wire) (hq : q∉cin::xs++mask++dst++carry) :
     (run (cuccaroSignedDiagSub xs dst mask carry cin) records s).basis q=s.basis q := by
   apply run_preserves_outside
   intro hw
-  have hs := cuccaroSignedDiagSub_wires_subset cin xs dst mask carry hx hd hm hc hw
+  have hs := cuccaroSignedDiagSub_wires_subset cin xs dst mask carry hx hd hm hw
   exact hq (List.mem_toFinset.mp hs)
 
 
 theorem cuccaroSignedDiagSub_correct (cin : Wire) (xs dst mask carry : List Wire)
     (hnd : (cin::xs++mask++dst++carry).Nodup) (hx : xs≠[])
     (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
-    (_hc : dst.length-1≤carry.length) (s : State) (records : List Bool)
+    (s : State) (records : List Bool)
     (A : Nat) (hv : regValue dst s.basis=A) (hmask : regValue mask s.basis=0)
     (hcarry : regValue carry s.basis=0) (hcin : s.basis cin=false) :
     let out := run (cuccaroSignedDiagSub xs dst mask carry cin) records s

@@ -7,7 +7,6 @@ theorem cuccaroSignedTriangularSquare_forward_correct (cin : Wire)
     (hnd : (cin::xs++dst++pad++mask++carry).Nodup)
     (hx : 2≤xs.length) (hd : dst.length=2*xs.length)
     (hp : 1≤pad.length) (hm : xs.length≤mask.length)
-    (hc : dst.length-1≤carry.length)
     (s : State) (records : List Bool)
     (hd0 : regValue dst s.basis=0) (hp0 : regValue pad s.basis=0)
     (hm0 : regValue mask s.basis=0) (hc0 : regValue carry s.basis=0)
@@ -38,7 +37,7 @@ theorem cuccaroSignedTriangularSquare_forward_correct (cin : Wire)
     exact (regValue_zero _ _).mp hd0 q (List.mem_of_mem_drop hq)
   have work0 : regValue (pad++carry) s.basis=0 := by simp [regValue_append,hp0,hc0]
   have rc := cuccaroSignedSquareRows_correct xs dst pad carry ndRows hd (Or.inr hp)
-    (by omega) s (records.take (measurementCount rows)) 0 hd0 high0 work0
+    s (records.take (measurementCount rows)) 0 hd0 high0 work0
   have tc := signedSquareTop_correct xs dst ndTop hd u
     (rest.take (measurementCount top)) rc.2.2.2.2
   have keepR (q : Wire) (hq : q∉dst) : u.basis q=s.basis q := rc.2.2.1 q hq
@@ -81,7 +80,7 @@ theorem cuccaroSignedTriangularSquare_forward_correct (cin : Wire)
     simp only [List.count_cons,List.count_append] at h ⊢
     omega
   have xsne : xs≠[] := List.ne_nil_of_length_pos (by omega)
-  have dc := cuccaroSignedDiagSub_correct cin xs dst mask carry ndDiag xsne hd hm hc v
+  have dc := cuccaroSignedDiagSub_correct cin xs dst mask carry ndDiag xsne hd hm v
     (rest.drop (measurementCount top)) (signedRawValue xs s.basis) rawV maskV carryV cinV
   have squareEq :
       (signedRawValue xs s.basis+2^dst.length-
@@ -104,7 +103,7 @@ theorem cuccaroSignedTriangularSquare_forward_correct (cin : Wire)
   have padOut : regValue pad out.basis=0 := by
     rw [← padV]
     apply regValue_congr; intro q hq
-    exact cuccaroSignedDiagSub_preserves_outside cin xs dst mask carry (by omega) hd hm hc v
+    exact cuccaroSignedDiagSub_preserves_outside cin xs dst mask carry (by omega) hd hm v
       (rest.drop (measurementCount top)) q (padAway q hq)
   have final : out.phase=s.phase ∧ regValue dst out.basis=(regValue xs s.basis)^2 ∧
       regValue xs out.basis=regValue xs s.basis ∧ regValue pad out.basis=0 ∧

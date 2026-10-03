@@ -306,5 +306,58 @@ theorem cuccaroNormalizedModSub_spec (L : CuccaroNormalizedModLayout)
   rw [exec]
   exact ⟨outPhase,⟨outSource,outTarget,outWork,outCin,outNF,outMF⟩⟩
 
+private theorem normalized_outside_views (L : CuccaroNormalizedModLayout)
+    (q : Wire) (hq : q∉L.wires) :
+    q∉L.normalize.wires ∧ q∉L.modular.wires := by
+  constructor <;> intro hm <;> apply hq
+  · simp only [CuccaroNormalizedModLayout.wires,CuccaroNormalizedModLayout.normalize,
+      CuccaroNormalizeLayout.wires,CuccaroNormalizeLayout.a,
+      CuccaroNormalizeLayout.scratch,List.mem_append,List.mem_cons,
+      List.not_mem_nil,or_false] at hm ⊢
+    tauto
+  · simp only [CuccaroNormalizedModLayout.wires,CuccaroNormalizedModLayout.modular,
+      CuccaroModLayout.wires,CuccaroModLayout.z,CuccaroModLayout.allWork,
+      CuccaroModLayout.scratch,List.mem_append,List.mem_cons,
+      List.not_mem_nil,or_false] at hm ⊢
+    tauto
+
+theorem cuccaroNormalizedModAdd_preserves_outside (L : CuccaroNormalizedModLayout)
+    (n c p : Nat) (hw : L.Widths n) (s : State) (records : List Bool)
+    (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroNormalizedModAdd L c p) records s).basis q=s.basis q := by
+  let P := cuccaroNormalize L.normalize c
+  let Q := cuccaroModAdd L.modular p
+  let R := cuccaroNormalizeClear L.normalize c
+  let rest := records.drop (measurementCount P)
+  let u := run P (records.take (measurementCount P)) s
+  let v := run Q (rest.take (measurementCount Q)) u
+  have away := normalized_outside_views L q hq
+  have h1 := cuccaroNormalize_preserves_outside L.normalize c s
+    (records.take (measurementCount P)) q away.1
+  have h2 := cuccaroModAdd_preserves_outside L.modular n p (L.modular_widths n hw) u
+    (rest.take (measurementCount Q)) q away.2
+  have h3 := cuccaroNormalizeClear_preserves_outside L.normalize c v
+    (rest.drop (measurementCount Q)) q away.1
+  simpa [cuccaroNormalizedModAdd,P,Q,R,rest,u,v,run_append] using h3.trans (h2.trans h1)
+
+theorem cuccaroNormalizedModSub_preserves_outside (L : CuccaroNormalizedModLayout)
+    (n c p : Nat) (hw : L.Widths n) (s : State) (records : List Bool)
+    (q : Wire) (hq : q∉L.wires) :
+    (run (cuccaroNormalizedModSub L c p) records s).basis q=s.basis q := by
+  let P := cuccaroNormalize L.normalize c
+  let Q := cuccaroModSub L.modular p
+  let R := cuccaroNormalizeClear L.normalize c
+  let rest := records.drop (measurementCount P)
+  let u := run P (records.take (measurementCount P)) s
+  let v := run Q (rest.take (measurementCount Q)) u
+  have away := normalized_outside_views L q hq
+  have h1 := cuccaroNormalize_preserves_outside L.normalize c s
+    (records.take (measurementCount P)) q away.1
+  have h2 := cuccaroModSub_preserves_outside L.modular n p (L.modular_widths n hw) u
+    (rest.take (measurementCount Q)) q away.2
+  have h3 := cuccaroNormalizeClear_preserves_outside L.normalize c v
+    (rest.drop (measurementCount Q)) q away.1
+  simpa [cuccaroNormalizedModSub,P,Q,R,rest,u,v,run_append] using h3.trans (h2.trans h1)
+
 
 end ECDSAAdd.Arithmetic

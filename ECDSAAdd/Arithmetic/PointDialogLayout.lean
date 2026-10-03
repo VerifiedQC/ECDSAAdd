@@ -38,6 +38,10 @@ def dialogStreamedSquare (L : ControlledPointLayout) : CuccaroStreamedSquareLayo
     modFlag:=L.core.poolWire 647,
     sumCarry:=L.core.poolWire 648 }
 
+def dialogStreamedSquareWide (L : ControlledPointLayout) : CuccaroStreamedSquareWideLayout :=
+  { core:=L.dialogStreamedSquare,
+    overflowPad:=(L.dialogPool.drop 649).take 126 }
+
 def dialogPointZero (L : ControlledPointLayout) : List ZeroBit :=
   zeroPorts (PointAddLayout.pointWires L.point) (L.dialogPool.take 513)
 
@@ -183,6 +187,61 @@ theorem dialogStreamedSquare_nodup (L : ControlledPointLayout) (hw : L.Widths)
 theorem dialogStreamedSquare_static_sites (L : ControlledPointLayout) (hw : L.Widths) :
     L.dialogStreamedSquare.wires.length=1161 :=
   L.dialogStreamedSquare.wires_length (L.dialogStreamedSquare_widths hw)
+
+theorem dialogStreamedSquareWide_widths (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquareWide.Widths := by
+  constructor
+  · exact L.dialogStreamedSquare_widths hw
+  · simp [dialogStreamedSquareWide,L.dialogPool_length hw]
+
+theorem dialogStreamedSquareWide_pool (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquareWide.core.product++L.dialogStreamedSquareWide.core.pad++
+      L.dialogStreamedSquareWide.core.work++
+      [L.dialogStreamedSquareWide.core.productHigh,
+        L.dialogStreamedSquareWide.core.outHigh,
+        L.dialogStreamedSquareWide.core.workHigh,L.dialogStreamedSquareWide.core.cin,
+        L.dialogStreamedSquareWide.core.normFlag,L.dialogStreamedSquareWide.core.modFlag,
+        L.dialogStreamedSquareWide.core.sumCarry]++
+      L.dialogStreamedSquareWide.overflowPad=L.dialogPool.take 775 := by
+  rw [show L.dialogStreamedSquareWide.core=L.dialogStreamedSquare by rfl,
+    L.dialogStreamedSquare_pool hw]
+  simp only [dialogStreamedSquareWide]
+  rw [←List.take_add]
+
+theorem dialogStreamedSquareWide_nodup (L : ControlledPointLayout) (hw : L.Widths)
+    (hn : L.wires.Nodup) : L.dialogStreamedSquareWide.wires.Nodup := by
+  have heq : L.dialogStreamedSquareWide.wires=
+      L.point.y++L.point.x++L.dialogPool.take 775 := by
+    calc
+      L.dialogStreamedSquareWide.wires =
+          L.dialogStreamedSquareWide.core.y++L.dialogStreamedSquareWide.core.out++
+            (L.dialogStreamedSquareWide.core.product++
+              L.dialogStreamedSquareWide.core.pad++L.dialogStreamedSquareWide.core.work++
+              [L.dialogStreamedSquareWide.core.productHigh,
+                L.dialogStreamedSquareWide.core.outHigh,
+                L.dialogStreamedSquareWide.core.workHigh,
+                L.dialogStreamedSquareWide.core.cin,
+                L.dialogStreamedSquareWide.core.normFlag,
+                L.dialogStreamedSquareWide.core.modFlag,
+                L.dialogStreamedSquareWide.core.sumCarry]++
+              L.dialogStreamedSquareWide.overflowPad) := by
+                simp [CuccaroStreamedSquareWideLayout.wires,
+                  CuccaroStreamedSquareLayout.wires,List.append_assoc]
+      _ = L.point.y++L.point.x++L.dialogPool.take 775 := by
+            rw [L.dialogStreamedSquareWide_pool hw]
+            simp [dialogStreamedSquareWide,dialogStreamedSquare]
+  apply List.nodup_iff_count.mpr
+  intro q
+  have h := List.nodup_iff_count.mp (L.dialogUsed_nodup hn) q
+  have hp := (List.take_sublist 775 L.dialogPool).count_le q
+  rw [heq]
+  simp only [dialogUsedWires,PointAddLayout.pointWires,List.count_append,
+    List.count_cons,List.count_nil] at h ⊢
+  omega
+
+theorem dialogStreamedSquareWide_static_sites (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquareWide.wires.length=1287 :=
+  L.dialogStreamedSquareWide.wires_length (L.dialogStreamedSquareWide_widths hw)
 
 theorem dialogUnary_widths (L : ControlledPointLayout) (hw : L.Widths) (r : List Wire)
     (hr : r.length=256) : (L.dialogUnary r).Widths 256 := by

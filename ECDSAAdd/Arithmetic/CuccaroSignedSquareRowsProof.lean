@@ -10,7 +10,7 @@ private theorem cuccaro_drop_tail_sublist (dst : List Wire) (n : Nat) :
 
 theorem cuccaroSignedSquareRows_correct (xs dst pad carry : List Wire)
     (hnd : (xs++dst++pad++carry).Nodup) (hd : dst.length=2*xs.length)
-    (hp : xs.length≤1 ∨ 1≤pad.length) (hc : xs.length-1≤carry.length)
+    (hp : xs.length≤1 ∨ 1≤pad.length)
     (s : State) (m : List Bool) (A : Nat) (hv : regValue dst s.basis=A)
     (hhi : regValue (dst.drop xs.length) s.basis=0)
     (hw : regValue (pad++carry) s.basis=0) :
@@ -36,7 +36,7 @@ theorem cuccaroSignedSquareRows_correct (xs dst pad carry : List Wire)
       · simpa [signedRowsValue] using hv
       · simpa using hhi
     | cons d tail =>
-      simp only [List.length_cons] at hd hp hc hhi
+      simp only [List.length_cons] at hd hp hhi
       let rest := d::tail
       let n := rest.length+1
       let row := (dst.drop 1).take n
@@ -45,9 +45,6 @@ theorem cuccaroSignedSquareRows_correct (xs dst pad carry : List Wire)
         rcases hp with hp|hp
         · simp at hp
         · exact hp
-      have hcarry : rest.length≤carry.length := by
-        change tail.length+1≤carry.length
-        omega
       have hdst : 2≤dst.length := by omega
       have rowLen : row.length=rest.length+1 := by
         have cap : n≤(dst.drop 1).length := by dsimp [n,rest]; simp; omega
@@ -87,7 +84,7 @@ theorem cuccaroSignedSquareRows_correct (xs dst pad carry : List Wire)
       have rowBound : A/2<2^row.length := by
         rw [← rowv]
         exact regValue_lt row s.basis
-      have rf := cuccaroSignedSquareRow_frame c rest row pad carry ndrow rowLen hpad hcarry
+      have rf := cuccaroSignedSquareRow_frame c rest row pad carry ndrow rowLen hpad
         s.basis (s.basis c) rfl work0 (A/2) rowBound
       let mr := m.take (measurementCount (cuccaroSignedSquareRow c rest row pad carry))
       let u := run (cuccaroSignedSquareRow c rest row pad carry) mr s
@@ -142,9 +139,8 @@ theorem cuccaroSignedSquareRows_correct (xs dst pad carry : List Wire)
       have high2 : regValue (dst2.drop rest.length) u.basis=0 := by
         simpa [dst2,n,List.drop_drop,Nat.add_comm,Nat.add_left_comm,Nat.add_assoc] using lift.2
       let A2 := regValue dst2 u.basis
-      have hcrec : rest.length-1≤carry.length := by omega
       have recResult := ih dst2 (by simpa [rest] using ndrec) (by simpa [rest] using dst2Len)
-        (Or.inr hpad) (by simpa [rest] using hcrec) u
+        (Or.inr hpad) u
         (m.drop (measurementCount (cuccaroSignedSquareRow c rest row pad carry))) A2 rfl
         (by simpa [rest] using high2) workU
       let out := run (cuccaroSignedSquareRows rest dst2 pad carry)

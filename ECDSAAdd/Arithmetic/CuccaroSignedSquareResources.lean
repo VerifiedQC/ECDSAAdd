@@ -101,7 +101,7 @@ theorem cuccaroSignedTriangularSquare_wires_subset (cin : Wire)
   have hr := cuccaroSignedSquareRows_wires_subset xs dst pad carry hd (Or.inr hp) (by omega)
   have ht := signedSquareTop_wires_subset xs dst
   have hs := cuccaroSignedDiagSub_wires_subset cin xs dst mask carry
-    (List.ne_nil_of_length_pos (by omega)) hd hm hc
+    (List.ne_nil_of_length_pos (by omega)) hd hm
   have forward : wires (cuccaroSignedTriangularSquare xs dst pad mask carry cin)⊆
       (cin::xs++dst++pad++mask++carry).toFinset := by
     cases xs with
