@@ -2,7 +2,7 @@ import ECDSAAdd.Arithmetic.CuccaroStreamedSquare
 import ECDSAAdd.Arithmetic.SwapLow
 
 set_option maxHeartbeats 8000000
-set_option maxRecDepth 1000000
+set_option maxRecDepth 5000000
 
 namespace ECDSAAdd.Arithmetic
 namespace CuccaroStreamedSquareWideLayout
