@@ -744,5 +744,227 @@ theorem square128Clear_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Width
   rw [rr]
   exact ⟨rfl,dst0,fun _ _ => rfl⟩
 
+/-- Simultaneous frame for the live sub-square product and the point output.
+This is the invariant needed by `with_square`: producers change `product`,
+folds change `out`, and both preserve every wire outside those two registers. -/
+structure PairFrame (L : CuccaroStreamedSquareWideLayout) (base : BasisState)
+    (P O : Nat) (s : BasisState) : Prop where
+  product : regValue L.core.product s=P
+  out : regValue L.core.out s=O
+  frame : ∀q,q∉L.core.product → q∉L.core.out → s q=base q
+
+theorem square128_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hlen : src.length=128)
+    (hsrc : ∀q,src.count q≤L.core.y.count q)
+    (base : BasisState) (X O : Nat) (hX : regValue src base=X)
+    (hpad : regValue L.core.pad base=0) (hwork : regValue L.core.work base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (PairFrame L base 0 O) (L.core.square128 src)
+      (PairFrame L base (X^2) O) := by
+  have srcAway (q : Wire) (hq : q∈src) :
+      q∉L.core.product ∧ q∉L.core.out := by
+    constructor <;> intro hm
+    · have h := List.nodup_iff_count.mp hnd q
+      have hs := hsrc q
+      have hq' := List.count_pos_iff.mpr hq
+      have hp := List.count_pos_iff.mpr hm
+      simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+        List.count_cons,List.count_nil] at h
+      omega
+    · have h := List.nodup_iff_count.mp hnd q
+      have hs := hsrc q
+      have hq' := List.count_pos_iff.mpr hq
+      have ho := List.count_pos_iff.mpr hm
+      simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+        List.count_cons,List.count_nil] at h
+      omega
+  have regAway (r : List Wire)
+      (hr : r=L.core.pad ∨ r=L.core.work) (q : Wire) (hq : q∈r) :
+      q∉L.core.product ∧ q∉L.core.out := by
+    constructor <;> intro hm
+    all_goals
+      have h := List.nodup_iff_count.mp hnd q
+      have h1 := List.count_pos_iff.mpr hq
+      have h2 := List.count_pos_iff.mpr hm
+      rcases hr with rfl|rfl
+      all_goals
+        simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+          List.count_cons,List.count_nil] at h h1
+        omega
+  have cinAway : L.core.cin∉L.core.product ∧ L.core.cin∉L.core.out := by
+    constructor <;> intro hm
+    all_goals
+      have h := List.nodup_iff_count.mp hnd L.core.cin
+      have h2 := List.count_pos_iff.mpr hm
+      simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+        List.count_cons,List.count_nil,beq_self_eq_true,if_true] at h
+      omega
+  intro s records h
+  have srcS : regValue src s.basis=X := by
+    rw [←hX]
+    apply regValue_congr
+    intro q hq
+    exact h.frame q (srcAway q hq).1 (srcAway q hq).2
+  have padS : regValue L.core.pad s.basis=0 := by
+    rw [←hpad]
+    apply regValue_congr
+    intro q hq
+    exact h.frame q (regAway _ (Or.inl rfl) q hq).1
+      (regAway _ (Or.inl rfl) q hq).2
+  have workS : regValue L.core.work s.basis=0 := by
+    rw [←hwork]
+    apply regValue_congr
+    intro q hq
+    exact h.frame q (regAway _ (Or.inr rfl) q hq).1
+      (regAway _ (Or.inr rfl) q hq).2
+  have cinS : s.basis L.core.cin=false :=
+    (h.frame _ cinAway.1 cinAway.2).trans hcin
+  have take0 : regValue (L.core.product.take 256) s.basis=0 :=
+    (regValue_zero _ _).mpr (fun q hq => (regValue_zero _ _).mp h.product q
+      (List.mem_of_mem_take hq))
+  have sq := L.square128_frame hw hnd src hlen hsrc s.basis X srcS h.product
+    padS workS cinS s records ⟨take0,fun _ _ => rfl⟩
+  let out := run (L.core.square128 src) records s
+  have high0 : regValue (L.core.product.drop 256) out.basis=0 := by
+    apply (regValue_zero _ _).mpr
+    intro q hq
+    have qt : q∉L.core.product.take 256 := by
+      intro ht
+      have hp : L.core.product.Nodup := by
+        apply List.nodup_iff_count.mpr
+        intro w
+        have hh := List.nodup_iff_count.mp hnd w
+        simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+          List.count_cons,List.count_nil] at hh ⊢
+        omega
+      exact List.disjoint_left.mp (List.disjoint_take_drop hp (show 256≤256 from le_rfl)) ht hq
+    rw [sq.2.2 q qt]
+    exact (regValue_zero _ _).mp h.product q (List.mem_of_mem_drop hq)
+  have productOut : regValue L.core.product out.basis=X^2 := by
+    have split := regValue_append (L.core.product.take 256)
+      (L.core.product.drop 256) out.basis
+    rw [List.take_append_drop,sq.2.1,high0,Nat.mul_zero,Nat.add_zero] at split
+    exact split
+  have outAway : L.core.out.Disjoint (L.core.product.take 256) := by
+    apply List.disjoint_left.mpr
+    intro q hq ho
+    have ht := List.mem_of_mem_take ho
+    have hn := List.nodup_iff_count.mp hnd q
+    have h1 := List.count_pos_iff.mpr hq
+    have h2 := List.count_pos_iff.mpr ht
+    simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+      List.count_cons,List.count_nil] at hn
+    omega
+  have outputOut : regValue L.core.out out.basis=O :=
+    (regValue_congr _ _ _ (fun q hq => sq.2.2 q
+      (List.disjoint_left.mp outAway hq))).trans h.out
+  refine ⟨sq.1,productOut,outputOut,?_⟩
+  intro q hp ho
+  exact (sq.2.2 q (fun ht => hp (List.mem_of_mem_take ht))).trans (h.frame q hp ho)
+
+structure PairClean (L : CuccaroStreamedSquareWideLayout) (base : BasisState) : Prop where
+  pad : regValue L.foldPad base=0
+  work : regValue L.core.work base=0
+  productHigh : base L.core.productHigh=false
+  outHigh : base L.core.outHigh=false
+  workHigh : base L.core.workHigh=false
+  cin : base L.core.cin=false
+  normFlag : base L.core.normFlag=false
+  modFlag : base L.core.modFlag=false
+
+private theorem pairAuxAway (L : CuccaroStreamedSquareWideLayout)
+    (hnd : L.wires.Nodup) (q : Wire)
+    (hq : q∈L.foldPad++L.core.work++[L.core.productHigh,L.core.outHigh,
+      L.core.workHigh,L.core.cin,L.core.normFlag,L.core.modFlag]) :
+    q∉L.core.product ∧ q∉L.core.out := by
+  constructor <;> intro hm
+  all_goals
+    have h := List.nodup_iff_count.mp hnd q
+    have h1 := List.count_pos_iff.mpr hq
+    have h2 := List.count_pos_iff.mpr hm
+    simp only [wires,CuccaroStreamedSquareLayout.wires,foldPad,
+      List.count_append,List.count_cons,List.count_nil] at h h1
+    omega
+
+theorem PairFrame.clean (L : CuccaroStreamedSquareWideLayout)
+    (hnd : L.wires.Nodup) (base : BasisState) (P O : Nat) (s : BasisState)
+    (h : PairFrame L base P O s) (hc : PairClean L base) : PairClean L s := by
+  have keep (q : Wire)
+      (hq : q∈L.foldPad++L.core.work++[L.core.productHigh,L.core.outHigh,
+        L.core.workHigh,L.core.cin,L.core.normFlag,L.core.modFlag]) : s q=base q :=
+    h.frame q (L.pairAuxAway hnd q hq).1 (L.pairAuxAway hnd q hq).2
+  constructor
+  · rw [←hc.pad]
+    apply regValue_congr
+    intro q hq
+    exact keep q (by simp [hq])
+  · rw [←hc.work]
+    apply regValue_congr
+    intro q hq
+    exact keep q (by simp [hq])
+  · exact (keep _ (by simp)).trans hc.productHigh
+  · exact (keep _ (by simp)).trans hc.outHigh
+  · exact (keep _ (by simp)).trans hc.workHigh
+  · exact (keep _ (by simp)).trans hc.cin
+  · exact (keep _ (by simp)).trans hc.normFlag
+  · exact (keep _ (by simp)).trans hc.modFlag
+
+private theorem product_out_disjoint (L : CuccaroStreamedSquareWideLayout)
+    (hnd : L.wires.Nodup) : L.core.product.Disjoint L.core.out := by
+  apply List.disjoint_left.mpr
+  intro q hp ho
+  have h := List.nodup_iff_count.mp hnd q
+  have h1 := List.count_pos_iff.mpr hp
+  have h2 := List.count_pos_iff.mpr ho
+  simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+    List.count_cons,List.count_nil] at h
+  omega
+
+theorem addSource_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hv : L.SourceView src)
+    (base : BasisState) (P O S : Nat) (hO : O<SquareReduction.p)
+    (hc : PairClean L base)
+    (hval : ∀s,PairFrame L base P O s → regValue src s=S) :
+    Triple (PairFrame L base P O) (L.addSource src)
+      (PairFrame L base P (addModValue S O)) := by
+  intro s records h
+  have clean := PairFrame.clean L hnd base P O s.basis h hc
+  have sf := L.addSource_frame hw hnd src hv s.basis S O (hval s.basis h)
+    (by rw [←hval s.basis h]; have hb := regValue_lt src s.basis; rw [hv.length] at hb; exact hb)
+    hO clean.work clean.productHigh clean.outHigh clean.workHigh clean.cin
+    clean.normFlag clean.modFlag
+  have runh := sf s records ⟨h.out,fun _ _ => rfl⟩
+  let out := run (L.addSource src) records s
+  have dis := L.product_out_disjoint hnd
+  have prod : regValue L.core.product out.basis=P :=
+    (regValue_congr _ _ _ (fun q hq => runh.2.2 q
+      (List.disjoint_left.mp dis hq))).trans h.product
+  refine ⟨runh.1,prod,runh.2.1,?_⟩
+  intro q hp ho
+  exact (runh.2.2 q ho).trans (h.frame q hp ho)
+
+theorem subSource_pair (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hv : L.SourceView src)
+    (base : BasisState) (P O S : Nat) (hO : O<SquareReduction.p)
+    (hc : PairClean L base)
+    (hval : ∀s,PairFrame L base P O s → regValue src s=S) :
+    Triple (PairFrame L base P O) (L.subSource src)
+      (PairFrame L base P (subModValue S O)) := by
+  intro s records h
+  have clean := PairFrame.clean L hnd base P O s.basis h hc
+  have sf := L.subSource_frame hw hnd src hv s.basis S O (hval s.basis h)
+    (by rw [←hval s.basis h]; have hb := regValue_lt src s.basis; rw [hv.length] at hb; exact hb)
+    hO clean.work clean.productHigh clean.outHigh clean.workHigh clean.cin
+    clean.normFlag clean.modFlag
+  have runh := sf s records ⟨h.out,fun _ _ => rfl⟩
+  let out := run (L.subSource src) records s
+  have dis := L.product_out_disjoint hnd
+  have prod : regValue L.core.product out.basis=P :=
+    (regValue_congr _ _ _ (fun q hq => runh.2.2 q
+      (List.disjoint_left.mp dis hq))).trans h.product
+  refine ⟨runh.1,prod,runh.2.1,?_⟩
+  intro q hp ho
+  exact (runh.2.2 q ho).trans (h.frame q hp ho)
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
