@@ -99,11 +99,11 @@ theorem pointDialogFinite_small_wires (L : ControlledPointLayout) (hw : L.Widths
   have hE := equalPoint_wires L hw
   have hB : (L.dialogPool.take 513).toFinset⊆L.skywalkPointUsedWires.toFinset := by
     intro q hq
-    have he : (L.dialogPool.take 2473).take 513=L.dialogPool.take 513 := by
-      simp only [List.take_take,Nat.min_eq_left (show 513≤2473 by omega)]
+    have he : (L.dialogPool.take 2058).take 513=L.dialogPool.take 513 := by
+      simp only [List.take_take,Nat.min_eq_left (show 513≤2058 by omega)]
     have hm := List.mem_toFinset.mp hq
     rw [←he] at hm
-    have hh := List.take_subset 513 (L.dialogPool.take 2473) hm
+    have hh := List.take_subset 513 (L.dialogPool.take 2058) hm
     simp [skywalkPointUsedWires,hh]
   have hM (c : Wire) (hc : c∈L.inPlaceFlags) (P : Point) :
       wires (maskedPointConstant c L.point P)⊆L.skywalkPointUsedWires.toFinset := by

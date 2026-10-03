@@ -4,6 +4,12 @@ import ECDSAAdd.Arithmetic.SwapLow
 set_option maxHeartbeats 8000000
 set_option maxRecDepth 5000000
 
+set_option linter.unusedSimpArgs false
+set_option linter.unusedVariables false
+set_option linter.unnecessarySimpa false
+set_option linter.unnecessarySeqFocus false
+set_option exponentiation.threshold 512
+
 namespace ECDSAAdd.Arithmetic
 namespace CuccaroStreamedSquareWideLayout
 

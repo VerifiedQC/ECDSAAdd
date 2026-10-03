@@ -41,20 +41,15 @@ theorem pointDialogNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (hn
   norm_num
 
 
-theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) :
-    toffoliCount (pointDialogSquare L)=82101 ∧ measurementCount (pointDialogSquare L)=81589 := by
-  have hc := copyRegister_counts (some L.core.generic) L.point.y (L.dialogPool.take 256)
-    (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])
-  have hs := signedSquareSub_counts L.dialogSquare (L.dialogSquare_widths hw)
-    (L.dialogSquare_nodup hw hn)
-  simp only [pointDialogSquare,toffoliCount_append,measurementCount_append,hc.1,hc.2,hs.1,hs.2]
-  rw [show L.point.y.length=256 from hw.inputY]
-  norm_num
+theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_hn : L.wires.Nodup) :
+    toffoliCount (pointDialogSquare L)=pointStreamedSquareCost L ∧
+      measurementCount (pointDialogSquare L)=0 :=
+  pointStreamedSquare_counts L hw
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=2721713 ∧
-    measurementCount (pointDialogGeneric L cx cy)=2061997 := by
+    toffoliCount (pointDialogGeneric L cx cy)=2639612+pointStreamedSquareCost L ∧
+    measurementCount (pointDialogGeneric L cx cy)=1980408 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
   have hd := pointSkywalkArithmetic_counts L hw hn
@@ -63,12 +58,14 @@ theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
   simp only [pointDialogGeneric,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hd.1,hd.2.1,hd.2.2.1,hd.2.2.2,
     hs.1,hs.2,hn'.1,hn'.2]
-  norm_num
+  constructor
+  · omega
+  · trivial
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=2725817 ∧
-    measurementCount (pointDialogFinite L C cx cy)=2066101 := by
+    toffoliCount (pointDialogFinite L C cx cy)=2643716+pointStreamedSquareCost L ∧
+    measurementCount (pointDialogFinite L C cx cy)=1984512 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by
@@ -90,5 +87,6 @@ theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     measurementCount_append,hg.1,hg.2,(hz _ _ _).1,(hz _ _ _).2,hzl,
     (maskedPointConstant_counts _ _ _).1,(maskedPointConstant_counts _ _ _).2,he.1,he.2,hh.1,hh.2]
   norm_num [pointDialogGenericFlag,pointInPlaceGenericFlag,toffoliCount,measurementCount]
+  omega
 
 end ECDSAAdd.Arithmetic

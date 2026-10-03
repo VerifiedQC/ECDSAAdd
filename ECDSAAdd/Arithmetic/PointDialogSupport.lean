@@ -54,20 +54,11 @@ theorem pointDialogGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (hn
       (by simp [ModInPlaceLayout.wires,ModInPlaceLayout.z,ModAddCoreLayout.z,h])
     change q∈(L.core.generic::L.point.x++L.dialogNegate.low).toFinset at hh
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,nx,nl,or_false] at hh
-  have ncopy : q∉wires (copyRegister (some L.core.generic) L.point.y (L.dialogPool.take 256)) := by
-    rw [copyRegister_wires _ _ _ (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])]
-    split <;> simp [ng,ny,ntake]
-  have nsquare : q∉wires (signedSquareSub L.dialogSquare) := by
-    intro hm
-    have hs := List.mem_toFinset.mp (signedSquareSub_wires_subset L.dialogSquare
-      (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) hm)
-    change q∈L.dialogSquare.x++L.dialogSquare.out++L.dialogSquare.work at hs
-    rcases List.mem_append.mp hs with hs|hs
-    · rcases List.mem_append.mp hs with hs|hs
-      · exact ntake 256 hs
-      · exact nx hs
-    · rw [L.dialogSquare_work hw] at hs
-      exact nslice 256 2217 hs
+  have nSquareFirst : q∉wires (pointDialogSquare L) := by
+    intro h
+    have hh := pointStreamedSquare_support L hw hn h
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,ny,nx,
+      ntake 776,or_false] at hh
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
   have nSmall : q∉wireBlock L.core.poolWire 0 2058 := by
     rw [L.core.pool_prefix hw 2058 (by omega)]
@@ -82,29 +73,29 @@ theorem pointDialogGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (hn
       or_false] at hh
   have nD := nArith false
   have nU := nArith true
-  simp only [pointDialogGeneric,pointDialogSquare,pointDialogNegate,wires_append,Finset.mem_union,
-    nCA L.point.x nx hw.inputX _,nCA L.point.y ny hw.inputY _,nD,nU,ncopy,nsquare,
+  simp only [pointDialogGeneric,pointDialogNegate,wires_append,Finset.mem_union,
+    nCA L.point.x nx hw.inputX _,nCA L.point.y ny hw.inputY _,nD,nU,nSquareFirst,
     nneg.2.2.1,nneg.2.2.2,nswap,false_or,not_false_eq_true]
 theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     (cx cy : Fp) :
-    wires (pointDialogGeneric L cx cy)⊆(L.core.generic::L.point.x++L.point.y++L.dialogPool.take 2473).toFinset := by
+    wires (pointDialogGeneric L cx cy)⊆(L.core.generic::L.point.x++L.point.y++L.dialogPool.take 2058).toFinset := by
   intro q
   contrapose!
   intro hnot
   simp only [List.mem_toFinset,List.mem_cons,List.mem_append,not_or] at hnot
   rcases hnot with ⟨⟨⟨ng,nx⟩,ny⟩,nb⟩
-  have ntake (n : Nat) (hn : n≤2473) : q∉L.dialogPool.take n := by
+  have ntake (n : Nat) (hn : n≤2058) : q∉L.dialogPool.take n := by
     intro hm
-    have he : (L.dialogPool.take 2473).take n=L.dialogPool.take n := by
+    have he : (L.dialogPool.take 2058).take n=L.dialogPool.take n := by
       rw [List.take_take,Nat.min_eq_left hn]
     rw [←he] at hm
     exact nb (List.take_subset _ _ hm)
-  have nslice (j n : Nat) (hj : j+n≤2473) : q∉(L.dialogPool.drop j).take n := by
+  have nslice (j n : Nat) (hj : j+n≤2058) : q∉(L.dialogPool.drop j).take n := by
     intro hm
     apply ntake (j+n) hj
     rw [List.take_add]
     exact List.mem_append_right _ hm
-  have nbit (i : Nat) (hi : i<2473) : q≠L.core.poolWire i := by
+  have nbit (i : Nat) (hi : i<2058) : q≠L.core.poolWire i := by
     intro he
     have hh : L.core.poolWire i∈L.dialogPool.take i++[L.core.poolWire i] := by simp
     rw [L.dialogBit_prefix hw i (by omega)] at hh
@@ -133,20 +124,11 @@ theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Width
       (by simp [ModInPlaceLayout.wires,ModInPlaceLayout.z,ModAddCoreLayout.z,h])
     change q∈(L.core.generic::L.point.x++L.dialogNegate.low).toFinset at hh
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,nx,nl,or_false] at hh
-  have ncopy : q∉wires (copyRegister (some L.core.generic) L.point.y (L.dialogPool.take 256)) := by
-    rw [copyRegister_wires _ _ _ (by simp [show L.point.y.length=256 from hw.inputY,L.dialogPool_length hw])]
-    split <;> simp [ng,ny,ntake]
-  have nsquare : q∉wires (signedSquareSub L.dialogSquare) := by
-    intro hm
-    have hs := List.mem_toFinset.mp (signedSquareSub_wires_subset L.dialogSquare
-      (L.dialogSquare_widths hw) (L.dialogSquare_nodup hw hn) hm)
-    change q∈L.dialogSquare.x++L.dialogSquare.out++L.dialogSquare.work at hs
-    rcases List.mem_append.mp hs with hs|hs
-    · rcases List.mem_append.mp hs with hs|hs
-      · exact ntake 256 (by omega) hs
-      · exact nx hs
-    · rw [L.dialogSquare_work hw] at hs
-      exact nslice 256 2217 (by omega) hs
+  have nSquare : q∉wires (pointDialogSquare L) := by
+    intro h
+    have hh := pointStreamedSquare_support L hw hn h
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,ny,nx,
+      ntake 776 (by omega),or_false] at hh
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
   have nSmall : q∉wireBlock L.core.poolWire 0 2058 := by
     rw [L.core.pool_prefix hw 2058 (by omega)]
@@ -161,8 +143,8 @@ theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Width
       or_false] at hh
   have nD := nArith false
   have nU := nArith true
-  simp only [pointDialogGeneric,pointDialogSquare,pointDialogNegate,wires_append,Finset.mem_union,
-    nCA L.point.x nx hw.inputX _,nCA L.point.y ny hw.inputY _,nD,nU,ncopy,nsquare,
+  simp only [pointDialogGeneric,pointDialogNegate,wires_append,Finset.mem_union,
+    nCA L.point.x nx hw.inputX _,nCA L.point.y ny hw.inputY _,nD,nU,nSquare,
     nneg.2.2.1,nneg.2.2.2,nswap,false_or,not_false_eq_true]
 
 end ECDSAAdd.Arithmetic

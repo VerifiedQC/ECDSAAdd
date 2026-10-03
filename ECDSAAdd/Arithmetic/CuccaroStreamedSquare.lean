@@ -3,6 +3,12 @@ import ECDSAAdd.Arithmetic.CuccaroNormalizedModProof
 import ECDSAAdd.Arithmetic.SquareFold
 import ECDSAAdd.Math.SquareReduction
 
+set_option linter.unusedSimpArgs false
+set_option linter.unusedVariables false
+set_option linter.unnecessarySimpa false
+set_option linter.unnecessarySeqFocus false
+set_option exponentiation.threshold 512
+
 namespace ECDSAAdd.Arithmetic
 
 /-- Exact low-width workspace for a `with_square` schedule.  `product` holds
