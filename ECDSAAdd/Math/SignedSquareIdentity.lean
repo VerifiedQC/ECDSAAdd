@@ -85,6 +85,37 @@ theorem signedRawValue_rows_top (xs : List Wire) (base : BasisState) :
       rw [ih]
       omega
 
+theorem signedTopTerm_bound (xs : List Wire) (base : BasisState) (hn : 1≤xs.length) :
+    signedTopTerm xs base≤2^(2*xs.length-1) := by
+  induction xs with
+  | nil => simp at hn
+  | cons x xs ih =>
+    cases xs with
+    | nil =>
+      cases h : base x <;> simp [signedTopTerm,h]
+    | cons y ys =>
+      let rest := y::ys
+      have hi : signedTopTerm rest base≤2^(2*rest.length-1) := by
+        simpa [rest] using ih (by simp)
+      change 4*signedTopTerm rest base≤2^(2*(rest.length+1)-1)
+      have hlen : 1≤rest.length := by simp [rest]
+      have he : 2*(rest.length+1)-1=(2*rest.length-1)+2 := by omega
+      rw [he,Nat.pow_add]
+      norm_num
+      simpa [Nat.mul_comm] using Nat.mul_le_mul_left 4 hi
+
+theorem signedRawValue_bound (xs : List Wire) (base : BasisState) (hn : 1≤xs.length) :
+    signedRawValue xs base<2^(2*xs.length) := by
+  rw [signedRawValue_rows_top]
+  have hr := signedRowsValue_bound xs base hn
+  have ht := signedTopTerm_bound xs base hn
+  have hp : 2^xs.length≤2^(2*xs.length-1) :=
+    Nat.pow_le_pow_right (by decide) (by omega)
+  have hs : 0<2^xs.length := Nat.two_pow_pos _
+  have he : 2*xs.length=(2*xs.length-1)+1 := by omega
+  rw [he,Nat.pow_succ]
+  omega
+
 theorem signedRawValue_correct (xs : List Wire) (base : BasisState) (hn : xs≠[]) :
     signedRawValue xs base=(regValue xs base)^2+
       signedDiagValue (regValue xs base) xs.length := by
