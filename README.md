@@ -6,11 +6,29 @@
 
 ## Current status
 
-本节的“当前已证”以代码基线 `9699678` 加 2026-10-02 完整精确 Skywalk 与已证位宽缩减接入为准，指本仓库带符号基态与测量记录语义下的结论，不等于完整量子算法或物理机器资源证明。M1、M2、EEA 求逆与 M3 电路入口均已实现；历史替换顺序见下方阶段表。
+本分支保存 2026-10-04 精确 streamed-square 完整接入检查点，已验证 Lean 源码提交为 `6d3196e`。结论采用本仓库带符号基态与测量记录语义；完整证明范围见[说明](docs/PROOF_SCOPE.md)。这是降低 Step 4 工作区的**实验检查点**，由于 Toffoli 成本显著增加，未取代较低门数的已证生产检查点。
 
-**当前已证整机入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的同程序精确资源为 **2,853,821 Toffoli / 2,194,105 次测量 / 实际静态线路上界2,994**；C=O 时为空程序，三项计数为零。依据为 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean#L18) 与 [`controlledPointAdd_finite_resources` / `controlledPointAdd_zero_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29)。实际静态线路是门列支持集的基数，不是布局分配数、峰值存活数或物理量子位数。
+**当前分支的完整点加入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的资源为 **4,215,192 Toffoli / 1,984,512 次测量 / ≤2,579 个静态逻辑 wire sites**；C=O 时构造为空程序。完整公开规格见 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean)，资源定理见 [`controlledPointAdd_finite_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean)。Toffoli 数值由 Lean 生成的具体门列导出；形式资源定理给出 `2643716 + pointStreamedSquareCost L`，其中 `pointStreamedSquareCost L = 863304 + cnotCount L.dialogStreamedSquareWide.program`，此布局的核心 CNOT 数为 708,172。
 
-当前路径使用精确 Skywalk 乘除、专用平方及完整角落处理。保留正向和独立逆向域运算后，257位原始运算通过显式重建符号 guard 接入整机，域值仍完整保留256位，整数记录回放仍为512轮。相对上一已证 2,856,381 Toffoli 检查点再省 2,560 Toffoli 和3,072次测量，相对最初7,207,866基线共省4,354,045（约60.41%）。完整远程检查通过3,518项构建与749项公开公理查询，用时122秒（缓存增量构建2秒，审计120秒）。前一轮完整编译95秒，随后旧模块导入缺失导致的审计失败单独保留，不计作通过。原公开点加规格逐字保持，全部 Lean 验证只在 CPU pod 上执行，见[最新完整接入记录](docs/COMPACT_GUARD_EXACT_20261003.md)。下方旧阶段数字均为历史或独立模块结果。
+当前路径保留精确的 512 轮 Skywalk 乘除与完整角落处理，Step 4 改为每次生成、折叠、清理一个 128/129 位子平方的 `with_square` 门列。完整远程 `lake --wfail build` 与 **749 项公开传递公理查询**通过：构建 **148 秒**，审计 **127 秒**，合计 **275 秒（4 分 35 秒）**，排队时间为零。另一次 755 项查询检查了新平方组件及其支持定理，只使用 `propext`、`Classical.choice`、`Quot.sound`。没有使用抽样来证明点加正确性，没有启用近似优化，全部 Lean 执行位于 CPU pod。详见[检查点说明](docs/STREAMED_SQUARE_CHECKPOINT_20261004.md)与[验证时间](docs/verification/streamed-square-20261004/timing.json)。
+
+### Six-stage decomposition (verified streamed checkpoint)
+
+| Stage | Logical Q ceiling, including resident sites | Toffolis | Measurements |
+| --- | ---: | ---: | ---: |
+| 1. Coordinate differences | ≤1,293 | 2,046 | 2,046 |
+| 2. Dialog-GCD division | ≤2,579 | 1,315,329 | 986,367 |
+| 3. Prepare X workspace | ≤1,293 | 1,023 | 1,023 |
+| 4. Streamed modular square | **≤1,297** | **1,571,476** | **0** |
+| 5. Forward multiplication | ≤2,579 | 1,315,330 | 986,368 |
+| 6. Recover output | ≤1,550 | 5,884 | 4,604 |
+| **Six-stage subtotal** | **≤2,579** | **4,211,088** | **1,980,408** |
+| Additional input/corner classification | ≤1,034 | 4,104 | 4,104 |
+| **Complete controlled finite-addend point addition** | **≤2,579** | **4,215,192** | **1,984,512** |
+
+Q 均为保守分配/支持上界，**不是新电路实测的精确 peak-live Q**。Step 4 的 1,297-site 布局包含 521 个常驻点/控制/分类位置与 776 个工作位置；其导出门列实际触及 1,289 个位置。按证书仅分配这些位置即可得到相应 peak-live 上界，最终释放调度的精确峰值扫描仍待完成。完整电路的峰值上界由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
+
+**Step 4 成本回归**：此前 signed-row Step 4 为 82,101 T、81,589 次测量、2,865 schedule-peak Q，完整较低门数检查点为 2,725,817 T / 2,066,101 次测量 / ≤2,994 静态位置。新的无控制 streamed core 为 287,768 T、零测量，包含 708,172 个 CNOT。本检查点的通用精确控制包装将每个原 CCX 转成三个 CCX、每个原 CX 转成一个 CCX，因此受控 Step 4 为 `3 × 287,768 + 708,172 = 1,571,476 T`。这不是 82,101-T 实现同时降到 1,297 Q 的结果。后续需用算术专用控制消除包装开销，并证明更窄的短窗口折叠；1,170/1,171-site 目标及候选节省尚未计入当前结果。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
@@ -53,11 +71,11 @@ M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆�
 
 M3 完整 `pointAddOut` 对有限经典常量使用 **9,295,106 个 Toffoli、6,126,846 次测量、6,727 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。空间为 O(n+N)，不声称资源最优。
 
-M3 受控原地 `controlledPointAdd` 对有限 C 使用 **3,636,669 个 Toffoli、2,845,373 次测量、实际静态线路上界2,994**。一次原地除法和一次原地乘法沿已证512轮精确Skywalk记录回放，专用平方前后受控复制并清理；斜率直接存于当前y，不另分配。输入分类与输出重算恢复七个标志，覆盖O、互逆点、倍点、C=−C、H=−(C+C)与控制false，重复H由旧角落处理。C=O在构造期为空程序，三项资源均为零。`pointDialogFinite_small_wires` 与全局互异证明给出实际支持上界，公共布局仍分配9,817位，未用工作位也恢复零。独立XOR点加接口继续保留。
+**历史精确 Skywalk 检查点（2026-10-02）**的 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **3,636,669 个 Toffoli、2,845,373 次测量、实际静态线路上界2,994**。一次原地除法和一次原地乘法沿已证512轮精确Skywalk记录回放，专用平方前后受控复制并清理；斜率直接存于当前y，不另分配。输入分类与输出重算恢复七个标志，覆盖O、互逆点、倍点、C=−C、H=−(C+C)与控制false，重复H由旧角落处理。C=O在构造期为空程序，三项资源均为零。`pointDialogFinite_small_wires` 与全局互异证明给出实际支持上界，公共布局仍分配9,817位，未用工作位也恢复零。独立XOR点加接口继续保留。
 
 基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路（受控版本为 3n+3）。求逆第二阶段已复用常数加减与受控比较器；其它原语供后续改动组合。
 
-§30.8 的独立测量清掩码包装 `measuredControlledModAdd/Sub` 已证明完整 Triple、目标外逐线保持及同程序精确支持/资源；前提与原受控模加减一致，包括 `A≤p`。n>0 时，加法资源为 `(5n−1,5n−1,5n+5)`，减法为 `(7n−1,7n−1,5n+6)`，依次为 Toffoli、测量及实际支持线。n=256 时分别为 `1279/1279/1285` 和 `1791/1791/1286`。这两个入口已于 2026-10-02 接入回放和整机，该历史阶段点加为 **6,880,186 / 4,502,202 / 3,134**；当前精确Skywalk为 **3,636,669 / 2,845,373 / 静态支持上界2,994**。见[证明状态](docs/PROOF_STATUS.md#measured-controlled-mod)。
+§30.8 的独立测量清掩码包装 `measuredControlledModAdd/Sub` 已证明完整 Triple、目标外逐线保持及同程序精确支持/资源；前提与原受控模加减一致，包括 `A≤p`。n>0 时，加法资源为 `(5n−1,5n−1,5n+5)`，减法为 `(7n−1,7n−1,5n+6)`，依次为 Toffoli、测量及实际支持线。n=256 时分别为 `1279/1279/1285` 和 `1791/1791/1286`。这两个入口已于 2026-10-02 接入回放和整机，该历史阶段点加为 **6,880,186 / 4,502,202 / 3,134**；历史精确 Skywalk 检查点为 **3,636,669 / 2,845,373 / 静态支持上界2,994**；本分支当前值见上方 Current status。见[证明状态](docs/PROOF_STATUS.md#measured-controlled-mod)。
 
 ## 优化进度与下一步计划
 
@@ -83,7 +101,7 @@ M3 受控原地 `controlledPointAdd` 对有限 C 使用 **3,636,669 个 Toffoli�
 | 改12（历史整机基线） | 值走记录回放、原地乘除与六阶段点加 | 7,207,866（已证） | 3,134（实际支持） | [实现](docs/REWORK_PLAN.md#dialog-value-walk-design)；测量4,305,594 |
 | 精确回放接入（2026-10-02，历史阶段） | 两方向使用测量掩码清理 | 6,945,722（已证） | 3,134（实际支持） | [验证记录](docs/EXACT_OPTIMIZATION_20261002.md)；测量4,567,738 |
 | 精确短来源平方（2026-10-02，历史阶段） | 完整进位；省去零 padding 复制与清理 | 6,880,186（已证） | 3,134（实际支持） | [验证记录](docs/EXACT_OPTIMIZATION_20261002.md)；测量4,502,202 |
-| 精确Skywalk整机（2026-10-02，当前已证） | 全512轮、完整进位、共享池及控制/角落/相位清理 | 3,636,669（已证） | ≤2,994（静态支持上界） | [验证记录](docs/SKYWALK_EXACT_20261002.md)；测量2,845,373 |
+| 精确Skywalk整机（2026-10-02，历史已证） | 全512轮、完整进位、共享池及控制/角落/相位清理 | 3,636,669（已证） | ≤2,994（静态支持上界） | [验证记录](docs/SKYWALK_EXACT_20261002.md)；测量2,845,373 |
 
 每项先提交设计 PR 描述（构造、逐步寄存器表、门数推导、证明义务、文件改动），复审确认后再写证明；公开定理陈述保持不变，只替换实现与资源数。
 
