@@ -345,4 +345,18 @@ theorem signedSquareRowClear_frame (c : Wire) (xs dst pad carry : List Wire)
   have final := Triple.conseq (fun _ h => h) comp (fun _ h => by simpa [heq] using h)
   simpa [signedSquareRowClear,src,cy,B,V1,V2,V3,V4,List.append_assoc] using final
 
+theorem signedSquareRow_roundtrip (c : Wire) (xs dst pad carry : List Wire)
+    (hnd : (c::xs++dst++pad++carry).Nodup) (hd : dst.length=xs.length+1)
+    (hp : 1≤pad.length) (hc : xs.length≤carry.length)
+    (base : BasisState) (hz : regValue (pad++carry) base=0)
+    (A : Nat) (hA : A<2^xs.length) :
+    Triple (SquareFrame dst base A)
+      (signedSquareRow c xs dst pad carry++signedSquareRowClear c xs dst pad carry)
+      (SquareFrame dst base A) := by
+  let C := base c
+  have f := signedSquareRow_frame c xs dst pad carry hnd hd hp hc base C rfl hz A
+    (hA.trans (Nat.pow_lt_pow_right (by decide) (by omega)))
+  have r := signedSquareRowClear_frame c xs dst pad carry hnd hd hp hc base C rfl hz A hA
+  exact f.seq r
+
 end ECDSAAdd.Arithmetic
