@@ -934,7 +934,7 @@ structure PairClean (L : CuccaroStreamedSquareWideLayout) (base : BasisState) : 
   normFlag : base L.core.normFlag=false
   modFlag : base L.core.modFlag=false
 
-private theorem pairAuxAway (L : CuccaroStreamedSquareWideLayout)
+theorem pairAuxAway (L : CuccaroStreamedSquareWideLayout)
     (hnd : L.wires.Nodup) (q : Wire)
     (hq : q∈L.foldPad++L.core.work++[L.core.productHigh,L.core.outHigh,
       L.core.workHigh,L.core.cin,L.core.normFlag,L.core.modFlag]) :
@@ -971,7 +971,7 @@ theorem PairFrame.clean (L : CuccaroStreamedSquareWideLayout)
   · exact (keep _ (by simp)).trans hc.normFlag
   · exact (keep _ (by simp)).trans hc.modFlag
 
-private theorem product_out_disjoint (L : CuccaroStreamedSquareWideLayout)
+theorem product_out_disjoint (L : CuccaroStreamedSquareWideLayout)
     (hnd : L.wires.Nodup) : L.core.product.Disjoint L.core.out := by
   apply List.disjoint_left.mpr
   intro q hp ho
