@@ -244,4 +244,146 @@ theorem signedTriangularSquare_forward_correct (cin : Wire)
     | cons y ys =>
       simpa [signedTriangularSquare,rows,top,diag,rest,u,v,out,run_append] using final
 
+/-- Give a program an exact record stream: supplied outcomes first, followed
+by the interpreter's default zero outcomes if the supplied stream is short. -/
+private def normalizedRecords : Program → List Bool → List Bool
+  | [], _ => []
+  | .measureX _ _ _ :: p, [] => false::normalizedRecords p []
+  | .measureX _ _ _ :: p, b::bs => b::normalizedRecords p bs
+  | _::p, m => normalizedRecords p m
+
+private theorem run_append_normalized (p q : Program) (m₁ m₂ : List Bool) (s : State) :
+    run (p++q) (normalizedRecords p m₁++m₂) s=run q m₂ (run p m₁ s) := by
+  induction p generalizing m₁ s with
+  | nil => rfl
+  | cons i p ih =>
+    cases i <;> simp only [normalizedRecords,List.cons_append,run]
+    all_goals try exact ih m₁ _
+    cases m₁ <;> simp [normalizedRecords,ih]
+
+private theorem signedSquareRows_roundtrip_separate (xs dst pad carry : List Wire)
+    (hnd : (xs++dst++pad++carry).Nodup) (hd : dst.length=2*xs.length)
+    (hp : xs.length≤1 ∨ 1≤pad.length) (hc : xs.length-1≤carry.length)
+    (s : State) (m₁ m₂ : List Bool) (A : Nat) (hv : regValue dst s.basis=A)
+    (hhi : regValue (dst.drop xs.length) s.basis=0)
+    (hw : regValue (pad++carry) s.basis=0) :
+    run (signedSquareRowsClear xs dst pad carry) m₂
+      (run (signedSquareRows xs dst pad carry) m₁ s)=s := by
+  let rows := signedSquareRows xs dst pad carry
+  let clear := signedSquareRowsClear xs dst pad carry
+  have hr := signedSquareRows_roundtrip xs dst pad carry hnd hd hp hc s
+    (normalizedRecords rows m₁++m₂) A hv hhi hw
+  have he := run_append_normalized rows clear m₁ m₂ s
+  rw [show signedSquareRows xs dst pad carry++signedSquareRowsClear xs dst pad carry=
+    rows++clear by rfl,he] at hr
+  let out := run clear m₂ (run rows m₁ s)
+  have hp' : out.phase=s.phase := hr.1
+  have hb' : out.basis=s.basis := hr.2
+  calc
+    run clear m₂ (run rows m₁ s) = ⟨out.phase,out.basis⟩ := rfl
+    _ = ⟨s.phase,s.basis⟩ := by rw [hp',hb']
+    _ = s := rfl
+
+private theorem signedSquareTop_roundtrip_separate (xs dst : List Wire)
+    (hnd : (xs++dst).Nodup) (s : State) (m₁ m₂ : List Bool) :
+    run (signedSquareTop xs dst) m₂ (run (signedSquareTop xs dst) m₁ s)=s := by
+  let top := signedSquareTop xs dst
+  have hr := signedSquareTop_roundtrip xs dst hnd s (normalizedRecords top m₁++m₂)
+  have he := run_append_normalized top top m₁ m₂ s
+  simpa [top,he] using hr
+
+/-- The independently measured cleanup leaf restores the complete physical
+state after the signed triangular square producer. -/
+theorem signedTriangularSquare_roundtrip (cin : Wire)
+    (xs dst pad mask carry : List Wire)
+    (hnd : (cin::xs++dst++pad++mask++carry).Nodup)
+    (hx : 2≤xs.length) (hd : dst.length=2*xs.length)
+    (hp : 1≤pad.length) (hm : xs.length≤mask.length)
+    (hc : dst.length-1≤carry.length)
+    (s : State) (forwardRecords clearRecords : List Bool)
+    (hd0 : regValue dst s.basis=0) (hp0 : regValue pad s.basis=0)
+    (hm0 : regValue mask s.basis=0) (hc0 : regValue carry s.basis=0)
+    (hi0 : s.basis cin=false) :
+    run (signedTriangularSquareClear xs dst pad mask carry cin) clearRecords
+      (run (signedTriangularSquare xs dst pad mask carry cin) forwardRecords s)=s := by
+  let rows := signedSquareRows xs dst pad carry
+  let top := signedSquareTop xs dst
+  let sub := signedDiagSub xs dst mask carry cin
+  let add := signedDiagAdd xs dst mask carry cin
+  let clearRows := signedSquareRowsClear xs dst pad carry
+  let forwardRest := forwardRecords.drop (measurementCount rows)
+  let clearRest := clearRecords.drop (measurementCount add)
+  let u := run rows (forwardRecords.take (measurementCount rows)) s
+  let v := run top (forwardRest.take (measurementCount top)) u
+  let w := run sub (forwardRest.drop (measurementCount top)) v
+  let a := run add (clearRecords.take (measurementCount add)) w
+  let b := run top (clearRest.take (measurementCount top)) a
+  let out := run clearRows (clearRest.drop (measurementCount top)) b
+  have ndRows : (xs++dst++pad++carry).Nodup := by
+    apply List.nodup_iff_count.mpr; intro q
+    have h := List.nodup_iff_count.mp hnd q
+    simp only [List.count_cons,List.count_append] at h ⊢
+    omega
+  have ndTop : (xs++dst).Nodup := by
+    apply List.nodup_iff_count.mpr; intro q
+    have h := List.nodup_iff_count.mp hnd q
+    simp only [List.count_cons,List.count_append] at h ⊢
+    omega
+  have ndDiag : (cin::xs++mask++dst++carry).Nodup := by
+    apply List.nodup_iff_count.mpr; intro q
+    have h := List.nodup_iff_count.mp hnd q
+    simp only [List.count_cons,List.count_append] at h ⊢
+    omega
+  have high0 : regValue (dst.drop xs.length) s.basis=0 := by
+    apply (regValue_zero _ _).mpr; intro q hq
+    exact (regValue_zero _ _).mp hd0 q (List.mem_of_mem_drop hq)
+  have work0 : regValue (pad++carry) s.basis=0 := by
+    simp [regValue_append,hp0,hc0]
+  have rc := signedSquareRows_correct xs dst pad carry ndRows hd (Or.inr hp)
+    (by omega) s (forwardRecords.take (measurementCount rows)) 0 hd0 high0 work0
+  have tc := signedSquareTop_correct xs dst ndTop hd u
+    (forwardRest.take (measurementCount top)) rc.2.2.2.2
+  have keepR (q : Wire) (hq : q∉dst) : u.basis q=s.basis q := rc.2.2.1 q hq
+  have keepT (q : Wire) (hq : q∉dst) : v.basis q=u.basis q := tc.2.2.1 q hq
+  have away (q : Wire) (hq : q∈cin::xs++pad++mask++carry) : q∉dst := by
+    intro hdq
+    have hn := List.nodup_iff_count.mp hnd q
+    have h1 := List.count_pos_iff.mpr hq
+    have h2 := List.count_pos_iff.mpr hdq
+    simp only [List.count_cons,List.count_append] at hn h1
+    omega
+  have regV (r : List Wire) (hr : r=mask ∨ r=carry)
+      (h0 : regValue r s.basis=0) : regValue r v.basis=0 := by
+    rw [← h0]
+    apply regValue_congr; intro q hq
+    exact (keepT q (away q (by rcases hr with rfl|rfl <;> simp [hq]))).trans
+      (keepR q (away q (by rcases hr with rfl|rfl <;> simp [hq])))
+  have maskV := regV mask (Or.inl rfl) hm0
+  have carryV := regV carry (Or.inr rfl) hc0
+  have cinV : v.basis cin=false :=
+    ((keepT cin (away cin (by simp))).trans (keepR cin (away cin (by simp)))).trans hi0
+  have diagRestore : a=v := signedDiag_roundtrip cin xs dst mask carry ndDiag
+    (List.ne_nil_of_length_pos (by omega)) hd hm hc v
+    (forwardRest.drop (measurementCount top))
+    (clearRecords.take (measurementCount add)) maskV carryV cinV
+  have topRestore : run top (clearRest.take (measurementCount top)) v=u := by
+    exact signedSquareTop_roundtrip_separate xs dst ndTop u
+      (forwardRest.take (measurementCount top)) (clearRest.take (measurementCount top))
+  have rowsRestore : run clearRows (clearRest.drop (measurementCount top)) u=s := by
+    exact signedSquareRows_roundtrip_separate xs dst pad carry ndRows hd (Or.inr hp)
+      (by omega) s (forwardRecords.take (measurementCount rows))
+      (clearRest.drop (measurementCount top)) 0 hd0 high0 work0
+  have staged : out=s := by
+    change run clearRows (clearRest.drop (measurementCount top))
+      (run top (clearRest.take (measurementCount top)) a)=s
+    rw [diagRestore,topRestore,rowsRestore]
+  cases xs with
+  | nil => simp at hx
+  | cons x tail =>
+    cases tail with
+    | nil => simp at hx
+    | cons y ys =>
+      simpa [signedTriangularSquare,signedTriangularSquareClear,rows,top,sub,add,
+        clearRows,forwardRest,clearRest,u,v,w,a,b,out,run_append] using staged
+
 end ECDSAAdd.Arithmetic

@@ -568,5 +568,89 @@ theorem signedDiagAdd_correct (cin : Wire) (xs dst mask carry : List Wire)
         _ = regValue xs s.basis := xsU
   simpa [signedDiagAdd,load,arith,unload,rest,u,v,out,run_append] using final
 
+private theorem mod_sub_add_cancel_local (A D N : Nat) (hN : 0<N)
+    (hA : A<N) (hD : D<N) :
+    (((A+N-D)%N)+D)%N=A := by
+  by_cases h : D≤A
+  · have he : A+N-D=(A-D)+N := by omega
+    have hsub : A-D<N := by omega
+    rw [he,Nat.add_mod_right,Nat.mod_eq_of_lt hsub,Nat.sub_add_cancel h,
+      Nat.mod_eq_of_lt hA]
+  · have hlt : A+N-D<N := by omega
+    rw [Nat.mod_eq_of_lt hlt]
+    have he : A+N-D+D=A+N := by omega
+    rw [he,Nat.add_mod_right,Nat.mod_eq_of_lt hA]
+
+/-- The independently measured diagonal add exactly reverses the diagonal
+subtract on every clean workspace state. -/
+theorem signedDiag_roundtrip (cin : Wire) (xs dst mask carry : List Wire)
+    (hnd : (cin::xs++mask++dst++carry).Nodup) (hx : xs≠[])
+    (hd : dst.length=2*xs.length) (hm : xs.length≤mask.length)
+    (hc : dst.length-1≤carry.length) (s : State)
+    (subRecords addRecords : List Bool)
+    (hmask : regValue mask s.basis=0) (hcarry : regValue carry s.basis=0)
+    (hcin : s.basis cin=false) :
+    run (signedDiagAdd xs dst mask carry cin) addRecords
+      (run (signedDiagSub xs dst mask carry cin) subRecords s)=s := by
+  let sub := signedDiagSub xs dst mask carry cin
+  let add := signedDiagAdd xs dst mask carry cin
+  let u := run sub subRecords s
+  let out := run add addRecords u
+  let A := regValue dst s.basis
+  let D := signedDiagValue (regValue xs s.basis) xs.length
+  let N := 2^dst.length
+  have sc := signedDiagSub_correct cin xs dst mask carry hnd hx hd hm hc s
+    subRecords A rfl hmask hcarry hcin
+  have ac := signedDiagAdd_correct cin xs dst mask carry hnd hx hd hm hc u
+    addRecords (regValue dst u.basis) rfl
+    sc.2.2.1 sc.2.2.2.1 sc.2.2.2.2.1
+  have hA : A<N := by
+    dsimp [A,N]
+    exact regValue_lt dst s.basis
+  have hD : D<N := by
+    have hr := signedRawValue_bound xs s.basis (List.length_pos_iff.mpr hx)
+    have he := signedRawValue_correct xs s.basis hx
+    rw [he] at hr
+    dsimp [D,N]
+    rw [hd]
+    omega
+  have dstOut : regValue dst out.basis=regValue dst s.basis := by
+    have ha := ac.2.1
+    rw [sc.2.1,sc.2.2.2.2.2] at ha
+    change regValue dst out.basis=A at ⊢
+    change regValue dst out.basis=(((A+N-D)%N)+D)%N at ha
+    rw [ha,mod_sub_add_cancel_local A D N (by positivity) hA hD]
+  have xsOut : regValue xs out.basis=regValue xs s.basis :=
+    ac.2.2.2.2.2.trans sc.2.2.2.2.2
+  have maskOut : regValue mask out.basis=regValue mask s.basis :=
+    ac.2.2.1.trans hmask.symm
+  have carryOut : regValue carry out.basis=regValue carry s.basis :=
+    ac.2.2.2.1.trans hcarry.symm
+  have cinOut : out.basis cin=s.basis cin := ac.2.2.2.2.1.trans hcin.symm
+  have phaseOut : out.phase=s.phase := ac.1.trans sc.1
+  change out=s
+  have basisOut : out.basis=s.basis := by
+    funext q
+    by_cases hqcin : q=cin
+    · simpa [hqcin] using cinOut
+    by_cases hqxs : q∈xs
+    · exact (regValue_eq_iff xs out.basis s.basis).mp xsOut q hqxs
+    by_cases hqmask : q∈mask
+    · exact (regValue_eq_iff mask out.basis s.basis).mp maskOut q hqmask
+    by_cases hqdst : q∈dst
+    · exact (regValue_eq_iff dst out.basis s.basis).mp dstOut q hqdst
+    by_cases hqcarry : q∈carry
+    · exact (regValue_eq_iff carry out.basis s.basis).mp carryOut q hqcarry
+    · have hout : q∉cin::xs++mask++dst++carry := by
+        simp [hqcin,hqxs,hqmask,hqdst,hqcarry]
+      exact (signedDiagAdd_preserves_outside cin xs dst mask carry hx hd hm hc u
+        addRecords q hout).trans
+        (signedDiagSub_preserves_outside cin xs dst mask carry hx hd hm hc s
+          subRecords q hout)
+  calc
+    out = ⟨out.phase,out.basis⟩ := rfl
+    _ = ⟨s.phase,s.basis⟩ := by rw [phaseOut,basisOut]
+    _ = s := rfl
+
 
 end ECDSAAdd.Arithmetic
