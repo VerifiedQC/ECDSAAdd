@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.DialogPool
+import ECDSAAdd.Arithmetic.CuccaroStreamedSquare
 import ECDSAAdd.Arithmetic.PointKaratsubaLayout
 
 namespace ECDSAAdd.Arithmetic.ControlledPointLayout
@@ -22,6 +23,20 @@ def dialogNegate (L : ControlledPointLayout) : ModInPlaceLayout :=
 
 def dialogSquare (L : ControlledPointLayout) : SquareSubLayout :=
   SquareSubLayout.fromPool (L.dialogPool.take 256) L.point.x (L.dialogPool.drop 256)
+
+/-- Concrete 649-site pool binding for the exact streamed-square core. -/
+def dialogStreamedSquare (L : ControlledPointLayout) : CuccaroStreamedSquareLayout :=
+  { y:=L.point.y,out:=L.point.x,
+    product:=L.dialogPool.take 258,
+    pad:=(L.dialogPool.drop 258).take 128,
+    work:=(L.dialogPool.drop 386).take 256,
+    productHigh:=L.core.poolWire 642,
+    outHigh:=L.core.poolWire 643,
+    workHigh:=L.core.poolWire 644,
+    cin:=L.core.poolWire 645,
+    normFlag:=L.core.poolWire 646,
+    modFlag:=L.core.poolWire 647,
+    sumCarry:=L.core.poolWire 648 }
 
 def dialogPointZero (L : ControlledPointLayout) : List ZeroBit :=
   zeroPorts (PointAddLayout.pointWires L.point) (L.dialogPool.take 513)
@@ -71,12 +86,6 @@ theorem dialogPort_nodup (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wir
     List.count_append,List.count_cons,List.count_nil] at h ⊢
   omega
 
-theorem dialogSquare_widths (L : ControlledPointLayout) (hw : L.Widths) : L.dialogSquare.Widths := by
-  apply SquareSubLayout.fromPool_widths
-  · simp [L.dialogPool_length hw]
-  · exact hw.inputX
-  · simp [L.dialogPool_length hw]
-
 theorem dialogBit_prefix (L : ControlledPointLayout) (hw : L.Widths) (i : Nat) (hi : i<2613) :
     L.dialogPool.take i++[L.core.poolWire i]=L.dialogPool.take (i+1) := by
   have h : i<L.core.pool.length := by rw [hw.pool]; omega
@@ -85,6 +94,95 @@ theorem dialogBit_prefix (L : ControlledPointLayout) (hw : L.Widths) (i : Nat) (
   change L.core.pool.take i++[L.core.pool.getD i 0]=_
   rw [List.getD_eq_getElem _ _ h,List.take_add_one,List.getElem?_eq_getElem h]
   rfl
+
+theorem dialogSquare_widths (L : ControlledPointLayout) (hw : L.Widths) : L.dialogSquare.Widths := by
+  apply SquareSubLayout.fromPool_widths
+  · simp [L.dialogPool_length hw]
+  · exact hw.inputX
+  · simp [L.dialogPool_length hw]
+
+theorem dialogStreamedSquare_widths (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquare.Widths := by
+  constructor
+  · exact hw.inputY
+  · exact hw.inputX
+  · simp [dialogStreamedSquare,L.dialogPool_length hw]
+  · simp [dialogStreamedSquare,L.dialogPool_length hw]
+  · simp [dialogStreamedSquare,L.dialogPool_length hw]
+
+theorem dialogStreamedSquare_pool (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquare.product++L.dialogStreamedSquare.pad++
+      L.dialogStreamedSquare.work++
+      [L.dialogStreamedSquare.productHigh,L.dialogStreamedSquare.outHigh,
+        L.dialogStreamedSquare.workHigh,L.dialogStreamedSquare.cin,
+        L.dialogStreamedSquare.normFlag,L.dialogStreamedSquare.modFlag,
+        L.dialogStreamedSquare.sumCarry]=L.dialogPool.take 649 := by
+  simp only [dialogStreamedSquare]
+  rw [←List.take_add,←List.take_add]
+  norm_num
+  calc
+    L.dialogPool.take 642++[L.core.poolWire 642,L.core.poolWire 643,
+        L.core.poolWire 644,L.core.poolWire 645,L.core.poolWire 646,
+        L.core.poolWire 647,L.core.poolWire 648] =
+      (L.dialogPool.take 642++[L.core.poolWire 642])++
+        [L.core.poolWire 643,L.core.poolWire 644,L.core.poolWire 645,
+          L.core.poolWire 646,L.core.poolWire 647,L.core.poolWire 648] := by simp
+    _ = (L.dialogPool.take 643++[L.core.poolWire 643])++
+        [L.core.poolWire 644,L.core.poolWire 645,L.core.poolWire 646,
+          L.core.poolWire 647,L.core.poolWire 648] := by
+            rw [L.dialogBit_prefix hw 642 (by omega)]
+            norm_num [List.append_assoc]
+    _ = (L.dialogPool.take 644++[L.core.poolWire 644])++
+        [L.core.poolWire 645,L.core.poolWire 646,L.core.poolWire 647,
+          L.core.poolWire 648] := by
+            rw [L.dialogBit_prefix hw 643 (by omega)]
+            norm_num [List.append_assoc]
+    _ = (L.dialogPool.take 645++[L.core.poolWire 645])++
+        [L.core.poolWire 646,L.core.poolWire 647,L.core.poolWire 648] := by
+          rw [L.dialogBit_prefix hw 644 (by omega)]
+          norm_num [List.append_assoc]
+    _ = (L.dialogPool.take 646++[L.core.poolWire 646])++
+        [L.core.poolWire 647,L.core.poolWire 648] := by
+          rw [L.dialogBit_prefix hw 645 (by omega)]
+          norm_num [List.append_assoc]
+    _ = (L.dialogPool.take 647++[L.core.poolWire 647])++
+        [L.core.poolWire 648] := by
+          rw [L.dialogBit_prefix hw 646 (by omega)]
+          norm_num [List.append_assoc]
+    _ = L.dialogPool.take 648++[L.core.poolWire 648] := by
+          rw [L.dialogBit_prefix hw 647 (by omega)]
+    _ = L.dialogPool.take 649 := by
+          simpa using L.dialogBit_prefix hw 648 (by omega)
+
+theorem dialogStreamedSquare_nodup (L : ControlledPointLayout) (hw : L.Widths)
+    (hn : L.wires.Nodup) : L.dialogStreamedSquare.wires.Nodup := by
+  have heq : L.dialogStreamedSquare.wires=
+      L.point.y++L.point.x++L.dialogPool.take 649 := by
+    calc
+      L.dialogStreamedSquare.wires =
+          L.dialogStreamedSquare.y++L.dialogStreamedSquare.out++
+            (L.dialogStreamedSquare.product++L.dialogStreamedSquare.pad++
+              L.dialogStreamedSquare.work++
+              [L.dialogStreamedSquare.productHigh,L.dialogStreamedSquare.outHigh,
+                L.dialogStreamedSquare.workHigh,L.dialogStreamedSquare.cin,
+                L.dialogStreamedSquare.normFlag,L.dialogStreamedSquare.modFlag,
+                L.dialogStreamedSquare.sumCarry]) := by
+                  simp [CuccaroStreamedSquareLayout.wires,List.append_assoc]
+      _ = L.point.y++L.point.x++L.dialogPool.take 649 := by
+            rw [L.dialogStreamedSquare_pool hw]
+            simp [dialogStreamedSquare]
+  apply List.nodup_iff_count.mpr
+  intro q
+  have h := List.nodup_iff_count.mp (L.dialogUsed_nodup hn) q
+  have hp := (List.take_sublist 649 L.dialogPool).count_le q
+  rw [heq]
+  simp only [dialogUsedWires,PointAddLayout.pointWires,List.count_append,
+    List.count_cons,List.count_nil] at h ⊢
+  omega
+
+theorem dialogStreamedSquare_static_sites (L : ControlledPointLayout) (hw : L.Widths) :
+    L.dialogStreamedSquare.wires.length=1161 :=
+  L.dialogStreamedSquare.wires_length (L.dialogStreamedSquare_widths hw)
 
 theorem dialogUnary_widths (L : ControlledPointLayout) (hw : L.Widths) (r : List Wire)
     (hr : r.length=256) : (L.dialogUnary r).Widths 256 := by
