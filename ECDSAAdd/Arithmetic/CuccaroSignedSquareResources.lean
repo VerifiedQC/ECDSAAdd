@@ -4,7 +4,7 @@ import ECDSAAdd.Arithmetic.SignedSquareLeafSpec
 namespace ECDSAAdd.Arithmetic
 
 theorem cuccaroSignedSquareRow_wires_subset (c : Wire) (xs dst pad carry : List Wire)
-    (hd : dst.length=xs.length+1) (hp : 1≤pad.length) (_hc : xs.length≤carry.length) :
+    (hd : dst.length=xs.length+1) (hp : 1≤pad.length) :
     wires (cuccaroSignedSquareRow c xs dst pad carry)⊆
       (c::xs++dst++pad++carry).toFinset := by
   have hs : (xs++pad.take 1).length=dst.length := by simp [hd,hp]
@@ -29,16 +29,16 @@ theorem cuccaroSignedSquareRow_wires_subset (c : Wire) (xs dst pad carry : List 
     grind
 
 theorem cuccaroSignedSquareRowClear_wires_subset (c : Wire) (xs dst pad carry : List Wire)
-    (hd : dst.length=xs.length+1) (hp : 1≤pad.length) (hc : xs.length≤carry.length) :
+    (hd : dst.length=xs.length+1) (hp : 1≤pad.length) :
     wires (cuccaroSignedSquareRowClear c xs dst pad carry)⊆
       (c::xs++dst++pad++carry).toFinset := by
   rw [cuccaroSignedSquareRowClear,wires_reverse]
-  exact cuccaroSignedSquareRow_wires_subset c xs dst pad carry hd hp hc
+  exact cuccaroSignedSquareRow_wires_subset c xs dst pad carry hd hp
 
 
 theorem cuccaroSignedSquareRows_wires_subset (xs dst pad carry : List Wire)
     (hd : dst.length=2*xs.length) (hp : xs.length≤1 ∨ 1≤pad.length)
-    (hc : xs.length-1≤carry.length) :
+    :
     wires (cuccaroSignedSquareRows xs dst pad carry)⊆(xs++dst++pad++carry).toFinset ∧
       wires (cuccaroSignedSquareRowsClear xs dst pad carry)⊆
         (xs++dst++pad++carry).toFinset := by
@@ -48,12 +48,11 @@ theorem cuccaroSignedSquareRows_wires_subset (xs dst pad carry : List Wire)
     cases xs with
     | nil => simp [cuccaroSignedSquareRows,cuccaroSignedSquareRowsClear,wires]
     | cons d tail =>
-      simp only [List.length_cons] at hd hp hc
+      simp only [List.length_cons] at hd hp
       let rest := d::tail
       let row := (dst.drop 1).take (rest.length+1)
       let dst2 := dst.drop 2
       have hpad : 1≤pad.length := by rcases hp with hp|hp <;> omega
-      have hcarry : rest.length≤carry.length := by dsimp [rest]; omega
       have rowLen : row.length=rest.length+1 := by
         apply List.length_take_of_le
         dsimp [row,rest]
@@ -63,10 +62,9 @@ theorem cuccaroSignedSquareRows_wires_subset (xs dst pad carry : List Wire)
         dsimp [dst2,rest]
         simp
         omega
-      have hrecCarry : rest.length-1≤carry.length := by omega
-      have hr := cuccaroSignedSquareRow_wires_subset c rest row pad carry rowLen hpad hcarry
-      have hrc := cuccaroSignedSquareRowClear_wires_subset c rest row pad carry rowLen hpad hcarry
-      have hi := ih dst2 dst2Len (Or.inr hpad) hrecCarry
+      have hr := cuccaroSignedSquareRow_wires_subset c rest row pad carry rowLen hpad
+      have hrc := cuccaroSignedSquareRowClear_wires_subset c rest row pad carry rowLen hpad
+      have hi := ih dst2 dst2Len (Or.inr hpad)
       have rowMem (q : Wire) (hq : q∈row) : q∈dst :=
         List.mem_of_mem_drop (List.mem_of_mem_take hq)
       have dst2Mem (q : Wire) (hq : q∈dst2) : q∈dst := List.mem_of_mem_drop hq
@@ -93,12 +91,12 @@ theorem cuccaroSignedSquareRows_wires_subset (xs dst pad carry : List Wire)
 theorem cuccaroSignedTriangularSquare_wires_subset (cin : Wire)
     (xs dst pad mask carry : List Wire) (hx : 2≤xs.length)
     (hd : dst.length=2*xs.length) (hp : 1≤pad.length)
-    (hm : xs.length≤mask.length) (hc : dst.length-1≤carry.length) :
+    (hm : xs.length≤mask.length) :
     wires (cuccaroSignedTriangularSquare xs dst pad mask carry cin)⊆
         (cin::xs++dst++pad++mask++carry).toFinset ∧
       wires (cuccaroSignedTriangularSquareClear xs dst pad mask carry cin)⊆
         (cin::xs++dst++pad++mask++carry).toFinset := by
-  have hr := cuccaroSignedSquareRows_wires_subset xs dst pad carry hd (Or.inr hp) (by omega)
+  have hr := cuccaroSignedSquareRows_wires_subset xs dst pad carry hd (Or.inr hp)
   have ht := signedSquareTop_wires_subset xs dst
   have hs := cuccaroSignedDiagSub_wires_subset cin xs dst mask carry
     (List.ne_nil_of_length_pos (by omega)) hd hm

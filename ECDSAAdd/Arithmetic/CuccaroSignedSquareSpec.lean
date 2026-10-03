@@ -28,7 +28,7 @@ theorem cuccaroSignedTriangularSquare_frame (cin : Wire)
   have hr := cuccaroSignedTriangularSquare_forward_correct cin xs dst pad mask carry hnd hx hd
     hp hm s records hd0 hp0 hm0 hc0 hi0
   have hsupp := (cuccaroSignedTriangularSquare_wires_subset cin xs dst pad mask carry
-    hx hd hp hm hc).1
+    hx hd hp hm).1
   intro q hqdst
   by_cases hqcin : q=cin
   · subst q

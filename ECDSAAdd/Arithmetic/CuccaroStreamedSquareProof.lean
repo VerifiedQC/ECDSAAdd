@@ -399,5 +399,350 @@ theorem subCMinusOne_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
   simpa [subCMinusOne,subCMinusOneValue,addModValue,subModValue,H,O4,O6,O10,O32,
     List.append_assoc] using h4.seq (h6.seq (h10.seq h32))
 
+def addRotate128Value (R H E O : Nat) (withOverhang : Bool) : Nat :=
+  let main := addCMinusOneValue H (addModValue R O)
+  if withOverhang then addModValue (E*2^128) main else main
+
+def subRotate128Value (R H E O : Nat) (withOverhang : Bool) : Nat :=
+  let main := subCMinusOneValue H (subModValue R O)
+  if withOverhang then subModValue (E*2^128) main else main
+
+theorem addRotate128_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (withOverhang : Bool)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O) (L.addRotate128 withOverhang)
+      (SquareFrame L.core.out base
+        (addRotate128Value (regValue L.rotated128 base)
+          (regValue (L.core.product.drop 128) base)
+          (regValue (L.core.product.drop 256) base) O withOverhang)) := by
+  let R := regValue L.rotated128 base
+  let H := regValue (L.core.product.drop 128) base
+  let E := regValue (L.core.product.drop 256) base
+  let O1 := addModValue R O
+  let O2 := addCMinusOneValue H O1
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have hmain := L.addSource_frame hw hnd L.rotated128 (L.rotated128_view hw)
+    base R O rfl (by
+      have hb := regValue_lt L.rotated128 base
+      rw [(L.rotated128_view hw).length] at hb
+      exact hb) hO hw0
+    hph hoh hwh hci hnf hmf
+  have hcm := L.addCMinusOne_frame hw hnd (L.core.product.drop 128)
+    (L.productDrop_count 128) (by simp [hw.core.product]) (by simp [hw.core.product])
+    base O1 (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have hover := L.addShifted_frame hw hnd (L.core.product.drop 256)
+    (L.productDrop_count 256) 128 (by simp [hw.core.product]) (by simp [hw.core.product])
+    base O2 (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  cases withOverhang
+  · simpa [addRotate128,addRotate128Value,addModValue,R,H,E,O1,O2,List.append_assoc] using hmain.seq hcm
+  · simpa [addRotate128,addRotate128Value,addModValue,R,H,E,O1,O2,List.append_assoc] using
+      hmain.seq (hcm.seq hover)
+
+theorem subRotate128_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (withOverhang : Bool)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O) (L.subRotate128 withOverhang)
+      (SquareFrame L.core.out base
+        (subRotate128Value (regValue L.rotated128 base)
+          (regValue (L.core.product.drop 128) base)
+          (regValue (L.core.product.drop 256) base) O withOverhang)) := by
+  let R := regValue L.rotated128 base
+  let H := regValue (L.core.product.drop 128) base
+  let E := regValue (L.core.product.drop 256) base
+  let O1 := subModValue R O
+  let O2 := subCMinusOneValue H O1
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have hmain := L.subSource_frame hw hnd L.rotated128 (L.rotated128_view hw)
+    base R O rfl (by
+      have hb := regValue_lt L.rotated128 base
+      rw [(L.rotated128_view hw).length] at hb
+      exact hb) hO hw0
+    hph hoh hwh hci hnf hmf
+  have hcm := L.subCMinusOne_frame hw hnd (L.core.product.drop 128)
+    (L.productDrop_count 128) (by simp [hw.core.product]) (by simp [hw.core.product])
+    base O1 (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have hover := L.subShifted_frame hw hnd (L.core.product.drop 256)
+    (L.productDrop_count 256) 128 (by simp [hw.core.product]) (by simp [hw.core.product])
+    base O2 (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  cases withOverhang
+  · simpa [subRotate128,subRotate128Value,subModValue,R,H,E,O1,O2,List.append_assoc] using hmain.seq hcm
+  · simpa [subRotate128,subRotate128Value,subModValue,R,H,E,O1,O2,List.append_assoc] using
+      hmain.seq (hcm.seq hover)
+
+def addShiftFullValue (R H O : Nat) : Nat :=
+  addCMinusOneValue H (addModValue R O)
+
+def subShiftFullValue (R H O : Nat) : Nat :=
+  subCMinusOneValue H (subModValue R O)
+
+theorem productTakeDrop_count (L : CuccaroStreamedSquareWideLayout)
+    (k : Nat) (q : Wire) :
+    ((L.core.product.take 256).drop k).count q≤L.core.product.count q := by
+  have h1 := (List.drop_sublist k (L.core.product.take 256)).count_le q
+  have h2 := (List.take_sublist 256 L.core.product).count_le q
+  omega
+
+theorem addShiftFull_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (j : Nat) (hj0 : 2≤j) (hj : j≤224)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O)
+      (L.addShiftFull (L.core.product.take 256) j)
+      (SquareFrame L.core.out base
+        (addShiftFullValue
+          (regValue (rotateFull (L.core.product.take 256) j) base)
+          (regValue ((L.core.product.take 256).drop (256-j)) base) O)) := by
+  let R := regValue (rotateFull (L.core.product.take 256) j) base
+  let H := regValue ((L.core.product.take 256).drop (256-j)) base
+  let O1 := addModValue R O
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have hm := L.addSource_frame hw hnd _ (L.rotateFull_view hw j (by omega))
+    base R O rfl (by
+      have hb := regValue_lt (rotateFull (L.core.product.take 256) j) base
+      rw [(L.rotateFull_view hw j (by omega)).length] at hb
+      exact hb) hO hw0 hph hoh hwh hci hnf hmf
+  have hlen : ((L.core.product.take 256).drop (256-j)).length=j := by
+    simp [hw.core.product]
+    omega
+  have hc := L.addCMinusOne_frame hw hnd _ (L.productTakeDrop_count (256-j))
+    (by omega) (by rw [hlen]; omega) base O1 (Nat.mod_lt _ hp)
+    hpad hw0 hph hoh hwh hci hnf hmf
+  have jn : j≠0 := by omega
+  simpa [addShiftFull,jn,addShiftFullValue,R,H,O1,List.append_assoc] using hm.seq hc
+
+theorem subShiftFull_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (j : Nat) (hj0 : 2≤j) (hj : j≤224)
+    (base : BasisState) (O : Nat) (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    Triple (SquareFrame L.core.out base O)
+      (L.subShiftFull (L.core.product.take 256) j)
+      (SquareFrame L.core.out base
+        (subShiftFullValue
+          (regValue (rotateFull (L.core.product.take 256) j) base)
+          (regValue ((L.core.product.take 256).drop (256-j)) base) O)) := by
+  let R := regValue (rotateFull (L.core.product.take 256) j) base
+  let H := regValue ((L.core.product.take 256).drop (256-j)) base
+  let O1 := subModValue R O
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have hm := L.subSource_frame hw hnd _ (L.rotateFull_view hw j (by omega))
+    base R O rfl (by
+      have hb := regValue_lt (rotateFull (L.core.product.take 256) j) base
+      rw [(L.rotateFull_view hw j (by omega)).length] at hb
+      exact hb) hO hw0 hph hoh hwh hci hnf hmf
+  have hlen : ((L.core.product.take 256).drop (256-j)).length=j := by
+    simp [hw.core.product]
+    omega
+  have hc := L.subCMinusOne_frame hw hnd _ (L.productTakeDrop_count (256-j))
+    (by omega) (by rw [hlen]; omega) base O1 (Nat.mod_lt _ hp)
+    hpad hw0 hph hoh hwh hci hnf hmf
+  have jn : j≠0 := by omega
+  simpa [subShiftFull,jn,subShiftFullValue,R,H,O1,List.append_assoc] using hm.seq hc
+
+def subTimesCValue (P R4 H4 R6 H6 R10 H10 R32 H32 O : Nat) : Nat :=
+  subShiftFullValue R32 H32
+    (subShiftFullValue R10 H10
+      (addShiftFullValue R6 H6
+        (subShiftFullValue R4 H4 (subModValue P O))))
+
+theorem subTimesC_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (base : BasisState) (O : Nat)
+    (hO : O<SquareReduction.p)
+    (hpad : regValue L.foldPad base=0) (hw0 : regValue L.core.work base=0)
+    (hph : base L.core.productHigh=false) (hoh : base L.core.outHigh=false)
+    (hwh : base L.core.workHigh=false) (hci : base L.core.cin=false)
+    (hnf : base L.core.normFlag=false) (hmf : base L.core.modFlag=false) :
+    let P := regValue (L.core.product.take 256) base
+    let R4 := regValue (rotateFull (L.core.product.take 256) 4) base
+    let H4 := regValue ((L.core.product.take 256).drop 252) base
+    let R6 := regValue (rotateFull (L.core.product.take 256) 6) base
+    let H6 := regValue ((L.core.product.take 256).drop 250) base
+    let R10 := regValue (rotateFull (L.core.product.take 256) 10) base
+    let H10 := regValue ((L.core.product.take 256).drop 246) base
+    let R32 := regValue (rotateFull (L.core.product.take 256) 32) base
+    let H32 := regValue ((L.core.product.take 256).drop 224) base
+    Triple (SquareFrame L.core.out base O)
+      (L.subTimesC (L.core.product.take 256))
+      (SquareFrame L.core.out base
+        (subTimesCValue P R4 H4 R6 H6 R10 H10 R32 H32 O)) := by
+  dsimp only
+  let P := regValue (L.core.product.take 256) base
+  let O0 := subModValue P O
+  let R4 := regValue (rotateFull (L.core.product.take 256) 4) base
+  let H4 := regValue ((L.core.product.take 256).drop 252) base
+  let O4 := subShiftFullValue R4 H4 O0
+  let R6 := regValue (rotateFull (L.core.product.take 256) 6) base
+  let H6 := regValue ((L.core.product.take 256).drop 250) base
+  let O6 := addShiftFullValue R6 H6 O4
+  let R10 := regValue (rotateFull (L.core.product.take 256) 10) base
+  let H10 := regValue ((L.core.product.take 256).drop 246) base
+  let O10 := subShiftFullValue R10 H10 O6
+  let R32 := regValue (rotateFull (L.core.product.take 256) 32) base
+  let H32 := regValue ((L.core.product.take 256).drop 224) base
+  have hp : 0<SquareReduction.p := by
+    norm_num [SquareReduction.p,SquareReduction.B,SquareReduction.c]
+  have pview := L.productTake256_view hw
+  have h0 := L.subSource_frame hw hnd _ pview base P O rfl (by
+    have hb := regValue_lt (L.core.product.take 256) base
+    rw [pview.length] at hb
+    exact hb) hO hw0 hph hoh hwh hci hnf hmf
+  have h4 := L.subShiftFull_frame hw hnd 4 (by omega) (by omega) base O0
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h6 := L.addShiftFull_frame hw hnd 6 (by omega) (by omega) base O4
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h10 := L.subShiftFull_frame hw hnd 10 (by omega) (by omega) base O6
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  have h32 := L.subShiftFull_frame hw hnd 32 (by omega) (by omega) base O10
+    (Nat.mod_lt _ hp) hpad hw0 hph hoh hwh hci hnf hmf
+  simpa [subTimesC,subShiftFull,addShiftFull,subTimesCValue,P,O0,R4,H4,O4,
+    R6,H6,O6,R10,H10,O10,R32,H32,List.append_assoc] using
+      h0.seq (h4.seq (h6.seq (h10.seq h32)))
+
+theorem square128_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hlen : src.length=128)
+    (hsrc : ∀q,src.count q≤L.core.y.count q)
+    (base : BasisState) (X : Nat) (hX : regValue src base=X)
+    (hprod : regValue L.core.product base=0)
+    (hpad : regValue L.core.pad base=0) (hwork : regValue L.core.work base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (SquareFrame (L.core.product.take 256) base 0) (L.core.square128 src)
+      (SquareFrame (L.core.product.take 256) base (X^2)) := by
+  let dst := L.core.product.take 256
+  let mask := L.core.work.take 128
+  have dlen : dst.length=256 := by simp [dst,hw.core.product]
+  have mlen : mask.length=128 := by simp [mask,hw.core.work]
+  have nd : (L.core.cin::src++dst++L.core.pad++mask++([] : List Wire)).Nodup := by
+    dsimp [dst,mask]
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := List.nodup_iff_count.mp hnd q
+    have hs := hsrc q
+    have hd := (List.take_sublist 256 L.core.product).count_le q
+    have hm := (List.take_sublist 128 L.core.work).count_le q
+    simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+      List.count_cons,List.count_nil] at h ⊢
+    omega
+  have dst0 : regValue dst base=0 := (regValue_zero _ _).mpr (fun q hq =>
+    (regValue_zero _ _).mp hprod q (List.mem_of_mem_take hq))
+  have mask0 : regValue mask base=0 := (regValue_zero _ _).mpr (fun q hq =>
+    (regValue_zero _ _).mp hwork q (List.mem_of_mem_take hq))
+  intro s records h
+  have away (q : Wire) (hq : q∈src++L.core.pad++mask++[L.core.cin]) : q∉dst := by
+    intro hdq
+    have hn := List.nodup_iff_count.mp nd q
+    have h1 := List.count_pos_iff.mpr hq
+    have h2 := List.count_pos_iff.mpr hdq
+    simp only [List.count_append,List.count_cons,List.count_nil] at hn h1
+    omega
+  have srcS : regValue src s.basis=X := by
+    rw [←hX]
+    apply regValue_congr
+    intro q hq
+    exact h.2 q (away q (by simp [hq]))
+  have padS : regValue L.core.pad s.basis=0 := by
+    rw [←hpad]
+    apply regValue_congr
+    intro q hq
+    exact h.2 q (away q (by simp [hq]))
+  have maskS : regValue mask s.basis=0 := by
+    rw [←mask0]
+    apply regValue_congr
+    intro q hq
+    exact h.2 q (away q (by simp [hq]))
+  have cinS : s.basis L.core.cin=false :=
+    (h.2 _ (away _ (by simp))).trans hcin
+  have runh := cuccaroSignedTriangularSquare_forward_correct L.core.cin src dst
+    L.core.pad mask [] nd (by omega) (by omega) (by simp [hw.core.pad])
+    (by omega) s records h.1 padS maskS rfl cinS
+  refine ⟨runh.1,?_,?_⟩
+  · simpa [srcS] using runh.2.1
+  · intro q hq
+    by_cases hs : q∈src
+    · exact ((regValue_eq_iff src _ _).mp runh.2.2.1 q hs).trans
+        (h.2 q (away q (by simp [hs])))
+    by_cases hp : q∈L.core.pad
+    · exact ((regValue_eq_iff L.core.pad _ _).mp (runh.2.2.2.1.trans padS.symm) q hp).trans
+        (h.2 q (away q (by simp [hp])))
+    by_cases hm : q∈mask
+    · exact ((regValue_eq_iff mask _ _).mp (runh.2.2.2.2.1.trans maskS.symm) q hm).trans
+        (h.2 q (away q (by simp [hm])))
+    by_cases hc : q=L.core.cin
+    · subst q; exact runh.2.2.2.2.2.2.trans hcin.symm
+    have hsupp := (cuccaroSignedTriangularSquare_wires_subset L.core.cin src dst
+      L.core.pad mask [] (by omega) (by omega) (by simp [hw.core.pad]) (by omega)).1
+    have untouched : (run (L.core.square128 src) records s).basis q=s.basis q := by
+      apply run_preserves_outside
+      intro hmemb
+      have hh := List.mem_toFinset.mp (hsupp hmemb)
+      simp only [List.mem_cons,List.mem_append,List.not_mem_nil,or_false] at hh
+      tauto
+    exact untouched.trans (h.2 q hq)
+
+theorem square128Clear_frame (L : CuccaroStreamedSquareWideLayout) (hw : L.Widths)
+    (hnd : L.wires.Nodup) (src : List Wire) (hlen : src.length=128)
+    (hsrc : ∀q,src.count q≤L.core.y.count q)
+    (base : BasisState) (X : Nat) (hX : regValue src base=X)
+    (hprod : regValue L.core.product base=0)
+    (hpad : regValue L.core.pad base=0) (hwork : regValue L.core.work base=0)
+    (hcin : base L.core.cin=false) :
+    Triple (SquareFrame (L.core.product.take 256) base (X^2))
+      (L.core.square128Clear src)
+      (SquareFrame (L.core.product.take 256) base 0) := by
+  let dst := L.core.product.take 256
+  let mask := L.core.work.take 128
+  have nd : (L.core.cin::src++dst++L.core.pad++mask++([] : List Wire)).Nodup := by
+    dsimp [dst,mask]
+    apply List.nodup_iff_count.mpr
+    intro q
+    have h := List.nodup_iff_count.mp hnd q
+    have hs := hsrc q
+    have hd := (List.take_sublist 256 L.core.product).count_le q
+    have hm := (List.take_sublist 128 L.core.work).count_le q
+    simp only [wires,CuccaroStreamedSquareLayout.wires,List.count_append,
+      List.count_cons,List.count_nil] at h ⊢
+    omega
+  have dst0 : regValue dst base=0 := (regValue_zero _ _).mpr (fun q hq =>
+    (regValue_zero _ _).mp hprod q (List.mem_of_mem_take hq))
+  intro s records hs
+  let z : State := ⟨s.phase,base⟩
+  have zpre : SquareFrame dst base 0 z.basis := ⟨dst0,fun _ _ => rfl⟩
+  have ftriple := L.square128_frame hw hnd src hlen hsrc base X hX hprod hpad hwork hcin
+  have f := ftriple z [] zpre
+  let u := run (L.core.square128 src) [] z
+  have us : u=s := by
+    have ph : u.phase=s.phase := f.1
+    have bs : u.basis=s.basis := by
+      funext q
+      by_cases hq : q∈dst
+      · exact (regValue_eq_iff dst u.basis s.basis).mp (f.2.1.trans hs.1.symm) q hq
+      · exact (f.2.2 q hq).trans (hs.2 q hq).symm
+    calc
+      u = ⟨u.phase,u.basis⟩ := rfl
+      _ = ⟨s.phase,s.basis⟩ := by rw [ph,bs]
+      _ = s := rfl
+  have rr := cuccaroSignedTriangularSquare_roundtrip L.core.cin src dst
+    L.core.pad mask [] nd z [] records
+  change run (L.core.square128Clear src) records u=z at rr
+  rw [us] at rr
+  rw [rr]
+  exact ⟨rfl,dst0,fun _ _ => rfl⟩
+
 end CuccaroStreamedSquareWideLayout
 end ECDSAAdd.Arithmetic
