@@ -53,12 +53,12 @@ def signedSquareTop (xs dst : List Wire) : Program :=
   | _, _ => []
 
 /-- Load `~xs[0..m-2]` into the low `m-1` mask wires. -/
-def signedDiagLoad (xs mask : List Wire) : Program :=
+def signedDiagLoad (xs mask : List Wire) (cin : Wire) : Program :=
   copyRegister none (xs.take (xs.length-1)) (mask.take (xs.length-1)) ++
-    notRegister (mask.take (xs.length-1))
+    xorWhenFalse cin (mask.take (xs.length-1))
 
-def signedDiagUnload (xs mask : List Wire) : Program :=
-  notRegister (mask.take (xs.length-1)) ++
+def signedDiagUnload (xs mask : List Wire) (cin : Wire) : Program :=
+  xorWhenFalse cin (mask.take (xs.length-1)) ++
     copyRegister none (xs.take (xs.length-1)) (mask.take (xs.length-1))
 
 /-- `xs ++ ~xs[0..m-2] ++ 0`, represented in `2m` wires. -/
@@ -66,14 +66,14 @@ def signedDiagSource (xs mask : List Wire) : List Wire := xs ++ mask.take xs.len
 
 /-- Subtract the exact affine diagonal correction after all signed rows. -/
 def signedDiagSub (xs dst mask carry : List Wire) (cin : Wire) : Program :=
-  signedDiagLoad xs mask ++
+  signedDiagLoad xs mask cin ++
     subInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
-    signedDiagUnload xs mask
+    signedDiagUnload xs mask cin
 
 def signedDiagAdd (xs dst mask carry : List Wire) (cin : Wire) : Program :=
-  signedDiagLoad xs mask ++
+  signedDiagLoad xs mask cin ++
     addInPlace (signedDiagSource xs mask) dst (carry.take (dst.length-1)) cin ++
-    signedDiagUnload xs mask
+    signedDiagUnload xs mask cin
 
 /-- Exact square producer with signed rows and a single exact diagonal
 correction.  The one-bit case is its direct Clifford square. -/
