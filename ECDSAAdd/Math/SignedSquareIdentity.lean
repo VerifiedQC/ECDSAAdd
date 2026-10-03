@@ -62,6 +62,17 @@ def signedTopTerm : List Wire → BasisState → Nat
   | c::[], base => 2*(base c).toNat
   | _::d::tail, base => 4*signedTopTerm (d::tail) base
 
+theorem signedTopTerm_congr (xs : List Wire) (s t : BasisState)
+    (h : ∀q∈xs,s q=t q) : signedTopTerm xs s=signedTopTerm xs t := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    cases xs with
+    | nil => simp [signedTopTerm,h x (by simp)]
+    | cons y ys =>
+      simp only [signedTopTerm]
+      rw [ih (fun q hq => h q (by simp [hq]))]
+
 theorem signedRawValue_rows_top (xs : List Wire) (base : BasisState) :
     signedRawValue xs base=signedRowsValue xs base+signedTopTerm xs base := by
   induction xs with
