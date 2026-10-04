@@ -216,3 +216,8 @@ The complete controlled point circuit now uses the independently proved compact 
 源码88aad07以三个128/129位子平方的生成/折叠/独立清理替换当前 Step4，保留精确512轮 Skywalk乘除和全部点分类。mapped literal/互补读取、全源归一化/恢复、借位测量清理、方向帧及完整控制平方组合由本项目在 Lean 中实现和证明；复用仓库的 signed-square、Gidney进位/测量修正、secp256k1模数与点加接口。旧无测量 streamed 版本保留作历史比较，未作为当前成本替代值。
 
 incumbent的 streamed `with_square` 架构用于结构参考；没有移入近似折叠窗口或截断。Rust的10K输入诊断只用于早期候选筛选，不是正确性证明或最终Lean资源证据。最终完整电路正确性、相位、控制和工作清理，以及同一程序的T/M与支持上界，均经CPU pod的完整build和931项公开传递公理白名单检查；480源哈希匹配。Step4为99,902T/99,382M/≤1,297分配位置，完整点加为2,743,618T/2,083,894M/≤2,579静态支持。详细证据见[接入记录](MEASURED_STREAMED_SQUARE_20261004.md)。
+
+
+## 2026-10-04 精确 fused output recovery
+
+源码9ea2e58把当前 Step6 改为受控规范反射、经典offset+1修正与精确y修正。结构参考 Layr-Labs/ecdsafail-challenge 的公开默认 HEAD3161bd2：`coord_rsub` 的经典+1和补码反减、共享进位及工作复用。该来源的截断折叠/高位比较窗口与乘法/y恢复边界融合未移入此实现，恢复成本全部保留在本阶段。Lean程序、规范边界、零输入、所有测量记录相位/控制/清理与资源证明在本仓库实现；常量核复用已证 MeasuredCanonicalMod。阶段为2,301T/2,301M/≤1,036分配位置；完整点加为2,740,035T/2,081,591M/≤2,579支持。完整CPU pod验证165s build +135s audit，971公开查询、487哈希匹配，无新公理或近似。

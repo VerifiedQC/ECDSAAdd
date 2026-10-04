@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-Latest complete verified checkpoint: **2,743,618 static Toffolis / 2,083,894 measurements / ≤2,579 static logical sites**, source **88aad07**. Complete measured Step 4: **99,902 T /99,382 measurements /≤1,297 allocated sites including residents**. Full remote build and all931 public transitive-axiom queries passed in493s:355s build +138s audit, queue/setup0s. All480 committed source hashes matched before and after verification. See [the measured streamed integration record](MEASURED_STREAMED_SQUARE_20261004.md). Exact peak-live Q is unmeasured; the allocation certificate provides a ceiling. Earlier results below are historical.
+Latest complete verified checkpoint: **2,740,035 static Toffolis / 2,081,591 measurements / ≤2,579 static logical sites**, source **9ea2e58**. Step6: **2,301 T /2,301 measurements /≤1,036 allocated sites including residents**. Step4 remains99,902 T /99,382 measurements /≤1,297 allocated sites. Full remote build and all971 public transitive-axiom queries passed in300s:165s build +135s audit, queue/setup0s;487 committed source hashes matched. See [exact output recovery](EXACT_OUTPUT_RECOVERY_20261004.md). Exact peak-live Q is unmeasured; certificates provide allocation ceilings. Earlier records are historical.
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -13,7 +13,7 @@ Latest complete verified checkpoint: **2,743,618 static Toffolis / 2,083,894 mea
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 2,743,618 / 2,083,894 / ≤2,579 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `controlledPointAdd`，有限 C | 2,740,035 / 2,081,591 / ≤2,579 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
