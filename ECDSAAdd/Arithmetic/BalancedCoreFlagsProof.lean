@@ -88,8 +88,8 @@ theorem prepareFold_run (L : Layout) (hn : L.wires.Nodup) (P N : Bool)
 Z/CZ correction supplies the exact measured phase for either outcome. -/
 theorem releaseSelectors_run (L : Layout) (hn : L.wires.Nodup) (P H : Bool)
     (s : State) (m : List Bool) (hp : s.basis L.parity=P) (hh : s.basis L.rmsb=H)
-    (hl : s.basis L.lower=H ^^ P) (hm : s.basis L.minus=P && !H)
-    (hu : s.basis L.plus=P ^^ (P && !H)) :
+    (hl : s.basis L.lower=(H ^^ P)) (hm : s.basis L.minus=(P && !H))
+    (hu : s.basis L.plus=(P ^^ (P && !H))) :
     run (releaseSelectors L) m s=⟨s.phase,
       writeBit (writeBit (writeBit s.basis L.lower false) L.plus false) L.minus false⟩ := by
   have nd : [L.parity,L.rmsb,L.lower,L.plus,L.minus].Nodup := by
@@ -119,3 +119,5 @@ theorem releaseSelectors_run (L : Layout) (hn : L.wires.Nodup) (P H : Bool)
         simp_all [releaseSelectors,run,measureAndCorrect,correct,writeBit,Function.update]
 
 end ECDSAAdd.Arithmetic.BalancedCircuit
+
+#print axioms ECDSAAdd.Arithmetic.BalancedCircuit.releaseSelectors_run
