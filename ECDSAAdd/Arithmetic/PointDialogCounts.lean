@@ -1,7 +1,7 @@
 import ECDSAAdd.Arithmetic.PointDialogProgram
 import ECDSAAdd.Arithmetic.PointOutputResources
 import ECDSAAdd.Arithmetic.SquareSubResources
-import ECDSAAdd.Arithmetic.SkywalkControlledPort
+import ECDSAAdd.Arithmetic.DirectSkywalkControlledPort
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1 ControlledPointLayout
@@ -26,11 +26,11 @@ theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_h
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=2735931 ∧
-    measurementCount (pointDialogGeneric L cx cy)=2077487 := by
+    toffoliCount (pointDialogGeneric L cx cy)=2737979 ∧
+    measurementCount (pointDialogGeneric L cx cy)=2080555 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
-  have hd := pointSkywalkArithmetic_counts L hw hn
+  have hd := pointDirectSkywalkArithmetic_counts L hw hn
   have hs := pointDialogSquare_counts L hw hn
   have recovery := pointRecoveryStage_counts L hw cx cy
   simp only [pointDialogGeneric,toffoliCount_append,measurementCount_append,
@@ -40,8 +40,8 @@ theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=2740035 ∧
-    measurementCount (pointDialogFinite L C cx cy)=2081591 := by
+    toffoliCount (pointDialogFinite L C cx cy)=2742083 ∧
+    measurementCount (pointDialogFinite L C cx cy)=2084659 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by

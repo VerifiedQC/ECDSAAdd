@@ -6,6 +6,30 @@ lake --wfail build
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.DisjointPrograms
+import ECDSAAdd.Arithmetic.CompressedSkywalkLayout
+import ECDSAAdd.Arithmetic.CompressedSkywalkLoop
+import ECDSAAdd.Arithmetic.CompressedSkywalkSchedule
+import ECDSAAdd.Arithmetic.CompressedSkywalkPrefix
+import ECDSAAdd.Arithmetic.CompressedSkywalkForward
+import ECDSAAdd.Arithmetic.CompressedSkywalkDecode
+import ECDSAAdd.Arithmetic.CompressedSkywalkReverse
+import ECDSAAdd.Arithmetic.CompressedSkywalkRestore
+import ECDSAAdd.Arithmetic.TranscriptSelectFlag
+import ECDSAAdd.Arithmetic.DirectZeroDivisor
+import ECDSAAdd.Arithmetic.DirectZeroControlled
+import ECDSAAdd.Arithmetic.MixedTranscriptFieldCell
+import ECDSAAdd.Arithmetic.MixedTranscriptReplay
+import ECDSAAdd.Arithmetic.MixedTranscriptDivision
+import ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
+import ECDSAAdd.Arithmetic.SkywalkDirectPointLayout
+import ECDSAAdd.Arithmetic.DirectSkywalkInput
+import ECDSAAdd.Arithmetic.DirectSkywalkCleanup
+import ECDSAAdd.Arithmetic.DirectSkywalkArithmetic
+import ECDSAAdd.Arithmetic.DirectSkywalkControlledPort
+import ECDSAAdd.Arithmetic.DirectSkywalkFieldSupport
+import ECDSAAdd.Arithmetic.DirectSkywalkKernelSupport
+import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 #print axioms ECDSAAdd.andComputeErase_spec
 #print axioms ECDSAAdd.andComputeErase_correct
@@ -979,6 +1003,148 @@ import ECDSAAdd.Arithmetic.FusedInversePackedProof
 #print axioms ECDSAAdd.Arithmetic.pointRecoveryStage_counts
 #print axioms ECDSAAdd.Arithmetic.pointRecoveryStage_support
 #print axioms ECDSAAdd.Arithmetic.pointRecoveryStage_resource_targets
+#print axioms ECDSAAdd.Arithmetic.correct_phaseShift
+#print axioms ECDSAAdd.Arithmetic.measure_phaseShift
+#print axioms ECDSAAdd.Arithmetic.run_phaseShift
+#print axioms ECDSAAdd.Arithmetic.run_basis_records
+#print axioms ECDSAAdd.Arithmetic.run_local_increment
+#print axioms ECDSAAdd.Arithmetic.run_disjoint_commute
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryId_region
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryId_bound
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryMap_injective
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryMap_above
+#print axioms ECDSAAdd.Arithmetic.skywalkRecordedSymbol_legal
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryStage_legal
+#print axioms ECDSAAdd.Arithmetic.compressedHistoryEncode_correct
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_counts
+#print axioms ECDSAAdd.Arithmetic.compressedPackAfter_counts
+#print axioms ECDSAAdd.Arithmetic.compressedSkywalkLoop_counts
+#print axioms ECDSAAdd.Arithmetic.compressedSkywalk512_counts
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_gate_mem
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_disjoint_later
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_commute_later
+#print axioms ECDSAAdd.Arithmetic.compressedPackDue_true
+#print axioms ECDSAAdd.Arithmetic.compressedPrefix_disjoint_tick
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_windows_disjoint
+#print axioms ECDSAAdd.Arithmetic.compressedPrefix_disjoint_next
+#print axioms ECDSAAdd.Arithmetic.compressedHistory_site_mem
+#print axioms ECDSAAdd.Arithmetic.compressedPrefix_raw_next
+#print axioms ECDSAAdd.Arithmetic.compressedIntegerStage_zero
+#print axioms ECDSAAdd.Arithmetic.compressedIntegerStage_step
+#print axioms ECDSAAdd.Arithmetic.compressedSkywalkLoop_spec
+#print axioms ECDSAAdd.Arithmetic.compressedDecodePrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.compressedDecodePrefix_inverse
+#print axioms ECDSAAdd.Arithmetic.compressedDecodeRange_measurements
+#print axioms ECDSAAdd.Arithmetic.compressedDecodeBefore_disjoint_unloop
+#print axioms ECDSAAdd.Arithmetic.compressedSkywalkUnloop_normalize
+#print axioms ECDSAAdd.Arithmetic.compressedDecodeRange_last
+#print axioms ECDSAAdd.Arithmetic.compressedDecodeRange_zero
+#print axioms ECDSAAdd.Arithmetic.run_no_measurement_phase
+#print axioms ECDSAAdd.Arithmetic.compressedIntegerStage_decoded
+#print axioms ECDSAAdd.Arithmetic.compressedSkywalkUnloop_restore_pool
+#print axioms ECDSAAdd.Arithmetic.transcriptSelect_value
+#print axioms ECDSAAdd.Arithmetic.transcriptSelectCompute_correct
+#print axioms ECDSAAdd.Arithmetic.transcriptSelectErase_correct
+#print axioms ECDSAAdd.Arithmetic.transcriptSelect_counts
+#print axioms ECDSAAdd.Arithmetic.transcriptSelect_finish_correct
+#print axioms ECDSAAdd.Arithmetic.transcriptSelectWindow_counts
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisorEnter_correct
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisorLeave_correct
+#print axioms ECDSAAdd.Arithmetic.directDivisor_ne_zero
+#print axioms ECDSAAdd.Arithmetic.directDivisor_lt
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisorLeave_restores_word
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisor_roundtrip
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisor_counts
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisor_counts_256
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisor_wires
+#print axioms ECDSAAdd.Arithmetic.directZeroDivisor_qubitCount
+#print axioms ECDSAAdd.Arithmetic.directZeroControlled_states
+#print axioms ECDSAAdd.Arithmetic.directZeroControlled_counts
+#print axioms ECDSAAdd.Arithmetic.transcriptSelectWindow_pairFrame
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.selection_g
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.selection_s
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.cell
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.outside
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.pair_outside
+#print axioms ECDSAAdd.Arithmetic.MixedTranscriptFieldLayout.eff_ne
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldWindow_frame
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldCell_frame
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptInverseFieldCell_frame
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldCell_counts
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptInverseFieldCell_counts
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptTape_layout
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptReplay_spec
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptInverseReplay_spec
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptReplay_counts
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptInverseReplay_counts
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptUnitTrace_length
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptTape_length
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptControls_zip
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptTape_controls
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptTape_quotient
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptTape_product
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldDivision_spec
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldDivision_counts
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldMultiplication_spec
+#print axioms ECDSAAdd.Arithmetic.mixedTranscriptFieldMultiplication_counts
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectDeclaredSites_length
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectDeclaredSites_nodup
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectMap_nodup
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectMap_coordinates
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectScalar_nodup
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.skywalkDirectMixed_layout
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_coprime
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_modulus_bound
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_mem
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_block_away
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_input_bit
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_input_zero
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_outside
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_input
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_stage0
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_trace_map
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_tape
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_terminal
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_signed_read_nat
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_terminal_words
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clear_nodup
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clear_gates
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clear_words
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_field_frame
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_pool_away_z
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_loop_outside
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_record_outside
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_unrecord_outside
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clear_outside
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_stage_congr
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clear_transport
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_z_input
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_preparation_frame
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_clean_preparation
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_tape_clear
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_components
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_away
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_block_subset_shared
+#print axioms ECDSAAdd.Arithmetic.DirectSkywalk.arith_seed_subset_shared
+#print axioms ECDSAAdd.Arithmetic.directSkywalkArithmetic_states
+#print axioms ECDSAAdd.Arithmetic.directSkywalkArithmetic_run
+#print axioms ECDSAAdd.Arithmetic.directSkywalkArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_correct
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.externalKernel
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.externalSigned
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.externalCells
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.selectWindow
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.mixedCells
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.mixedReplay
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.tapeSupport
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.unary
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.copy
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.endpoints
+#print axioms ECDSAAdd.Arithmetic.DirectSupport.kernel
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_support
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_declared_support
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_resource_certificate
 LEAN
 )
 printf '%s\n' "$axioms"

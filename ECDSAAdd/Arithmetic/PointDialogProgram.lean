@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.DirectSkywalkControlledPort
 import ECDSAAdd.Arithmetic.PointRecoveryStage
 import ECDSAAdd.Arithmetic.PointInPlaceProgram
 import ECDSAAdd.Math.DialogPointFlags
@@ -9,10 +10,10 @@ open ControlledPointLayout Secp256k1
 def pointDialogGeneric (L : ControlledPointLayout) (cx cy : Fp) : Program :=
   pointDialogConstantAdd L L.point.x (-cx) ++
   pointDialogConstantAdd L L.point.y (-cy) ++
-  pointSkywalkArithmetic L false ++
+  pointDirectSkywalkArithmetic L false ++
   pointDialogSquare L ++
   pointDialogConstantAdd L L.point.x (3*cx) ++
-  pointSkywalkArithmetic L true ++
+  pointDirectSkywalkArithmetic L true ++
   pointRecoveryStage L cx cy
 
 /-- 标志别名：equalX=hEnable，equalNegY=h；其余三个输入分类仍为o/d/i。 -/
