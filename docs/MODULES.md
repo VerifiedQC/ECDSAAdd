@@ -6,7 +6,7 @@
 
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 
-Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
+Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
 ## Arithmetic：电路算术模块
 
@@ -20,14 +20,14 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Swap](../ECDSAAdd/Arithmetic/Swap/README.md) | 交换寄存器 | 1 |
 | [Shift](../ECDSAAdd/Arithmetic/Shift/README.md) | 移动寄存器位的位置及逆向操作 | 2 |
 | [Lookup](../ECDSAAdd/Arithmetic/Lookup/README.md) | 按寄存器地址查经典常量表 | 1 |
-| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减 | 20 |
+| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减，以及高层语言适配示范 | 23 |
 | [ModularDoubling](../ECDSAAdd/Arithmetic/ModularDoubling/README.md) | 模倍增与模减半 | 4 |
 | [ModularMultiplication](../ECDSAAdd/Arithmetic/ModularMultiplication/README.md) | 标准表示模乘及累加、受控接口 | 28 |
 | [ModularInverse](../ECDSAAdd/Arithmetic/ModularInverse/README.md) | 求逆及保留历史的准备/恢复接口 | 47 |
 | [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 8 |
 | [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 69 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 217 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的四个文件集中说明。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 223 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的七个文件集中说明。
 
 ## Math：数学结论模块
 
@@ -43,7 +43,37 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Framework：语义与证明工具模块
 
-只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)，按 Syntax、Semantics、Hoare、Cost 四个文件介绍用途、必要概念和定理结论。四个 Lean 文件直接放在 Framework 下，不再拆分子模块。
+只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 分别提供高层操作、带证明的实现选择与编译、可读表达式。七个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
+
+### 高层语言阅读入口（2026-10-03）
+
+先读 [ModularAddition/README.md 的示范](../ECDSAAdd/Arithmetic/ModularAddition/README.md#languageexamplelean)，再看 `LanguageExample.lean` 的 `algorithm` / `mixedAlgorithm` 两个代码块。`arith` 保存高层操作，旧 `prog` 仍构造门列；第一版仅支持 `y = (x + y) mod q [using 名称];`。默认配置和逐句选择均已实现，不会自动选择最快实现。
+
+`QReg[n]` 引用 n 根小端物理线，额外高位放入显式工作区。接线实现连同正确性和资源证明注册；同名、同操作的重复注册按列表中第一项解析，不匹配的寄存器或模数不会静默回退。编译成功只表示找到了接线实现，输入范围和零工作区仍须通过 `Ready` 证明；`Verified` 把这些义务与高层规格一起封装为完整 Triple。
+
+当前有直接模加和固定 enable=1 的受控模加适配，两者真实门列不同；第二种用于验证替换机制，不是性能优化。三位、模 7、连续两次模加的资源为 direct/direct：22/22/16，masked/masked：34/22/20，direct/masked：28/22/21（Toffoli/测量/实际静态线路）。生产函数的表达式改写见下一节；未将整个点加搬入认证 Code，原资源不变。
+
+认证 `arith` 尚未接入一般赋值、模减、表达式树、循环、用户级 `control`、自动分配和优化；现有 monomial 分支模型的证明范围不变。与一般量子信道语义的连接不在本阶段内。
+
+### 生产函数的表达式改写（2026-10-03）
+
+本轮直接改写 6 个模块中 33 个原有程序定义，不另留示范版。它们保留 `Program` 接口，在 `prog using` 中使用 `+=`、`-=`、`^=`、模赋值与 `control { … }`；工作区仍显式绑定在 Context 中。先读下表的算法主体，再按需看配置和证明。
+
+| 文件 | 已改写的原函数 |
+| --- | --- |
+| [Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) | `modAdd`、`modSub` |
+| [ModInPlace.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlace.lean) | `modAddCore` |
+| [ModUnary.lean](../ECDSAAdd/Arithmetic/ModularDoubling/ModUnary.lean) | `dblInPlace`、`halfInPlace` |
+| [MontPrepare.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPrepare.lean) | `montLookupAdd/Sub`、`montReduce/RestoreReduce`、`montAddDigit/SubDigit`、`montConstantAdd/Sub`、`montNormalize/Denormalize` |
+| [MontAdapterLayout.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterLayout.lean) | `montMulXor`、`montMulAdd/Sub`、`montMulControlledAdd/Sub` |
+| [RoundBody.lean](../ECDSAAdd/Arithmetic/ModularInverse/RoundBody.lean) | `kaliskiBodyProgram`、`kaliskiUnbodyProgram` |
+| [Divide.lean](../ECDSAAdd/Arithmetic/Division/Divide.lean) | `divideLoad/Unload`、`divideAdd/Sub` |
+| [PointCandidate.lean](../ECDSAAdd/Arithmetic/PointAddition/PointCandidate.lean) | `pointSubConstant`、`pointSquare`、`pointCandidateCompute/Clear` |
+| [PointInPlaceProgram.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceProgram.lean) | `pointInPlaceConstantAdd`、`pointInPlaceNegate`、`pointInPlaceGeneric` |
+
+这是构造层记法迁移：`using` 在此处绑定具体函数，不是自动认证任意实现；原 `_spec` / `_correct`、门列连接和资源证明继续负责验证。不要把它误记为所有操作都已进入 `ArithmeticLanguage.Code` / `Verified`。写法和边界见 [Framework README](../ECDSAAdd/Framework/README.md#现有算法中的算术表达式)。
+
+`rippleAdder`、`addInPlace`、比较/判等/选择、交换/移位和查表的清晰门级主体不重复包装；`montWindow`、准备/恢复循环、`inverseCompute/Uncompute` 等保留已有顺序调用；`pointInPlaceClearSlope` 保留已确认的独立判零与 `CCsub/CCXor` 双控制。没有把循环移位无条件写成整数乘除，也没有用赋零代替反计算。
 
 ## Circuit：测量 AND 模块
 
@@ -61,7 +91,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 `prog` 中直接门统一写作 `X target;`、`CX control target;`、`CCX a b target;`，子电路也支持 `addXor x y total;` 这样的普通 Lean 调用。通过文件级 `open Instr` 省略门名的前缀；旧括号式调用仍兼容。
 
-辅助接线较多的主体使用 `prog using (...Context L) { ... }`：数据源、目标与必要控制仍在调用处出现，进位链、零进位、mask、工作池等在同文件的 Context 配置中绑定一次。仅给用途不直观的 `let` 别名加注释；算法阅读可先跳过 Context 的接线实现。它只做构造期展开，不分配 qubit、不自动推断可复用工作位；底层完整参数接口仍保留。例如 modAdd/modSub 内的 `addXor x y total` 使用零 cinSum 和 carrySum，不能据此删掉普通 addXor 的非零进位功能。
+辅助接线较多的主体使用 `prog using (...Context L) { ... }`：数据源、目标与必要控制仍在调用处出现，进位链、零进位、mask、工作池等在Context 配置中绑定一次。仅给用途不直观的 `let` 别名加注释；算法阅读可先跳过 Context 的接线实现。它只做构造期展开，不分配 qubit、不自动推断可复用工作位；底层完整参数接口仍保留。例如 modAdd/modSub 内的 `total ^= (x + y)` 使用零 cinSum 和 carrySum，不能据此删掉普通 addXor 的非零进位功能。
 
 已采用配置的入口包括模加减/原地模加、模倍增/减半、Montgomery 段内加减、Kaliski 数据轮、除法乘积累加/累减，以及点加候选和斜率清理。复制、选择、交换、移位等原本清楚的门级循环不额外包一层配置。
 
@@ -71,7 +101,7 @@ Arithmetic 的 196 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 重要算法的量子条件分支使用 `CXor 控制 目标 源`、`CConst 控制 目标 常数`、`CPointXor 控制 目标 常量点`；后者异或点编码，不是点加。`(c XOR 1)` 表示 c=0 的负控制，不是测量或修改 c 的语句。普通受控原地加减写为 `CAdd/CSub 控制 目标 源`，常量加减写为 `CAddConst/CSubConst 控制 目标 常数`；低位常量加法用 `CAddConstLow`。这些调用仍使用原有具体算术电路及已绑定的辅助接线，不是给任意 Program 逐门套控制。
 
-modAdd/modSub 现在以 `let n := L.width` 在代码中定义 n，随后列出无借位/有借位的两行 CXor。modArithmeticContext 明确配置 cxorCases，将相邻、同一控制与目标、先负后正的两行合并为原 chooseXor，每位仍只有一个 Toffoli。Selection 的 `selectXor_controls_equiv` 证明此优化与两个独立控制的完整状态效果等价，前提是等宽且线路互异。无此配置、不同控制/目标、或中间有语句/let 时不合并；不是任意别名和任意接线下都合法的优化。
+modAdd/modSub 以 `let n := L.width` 定义 n；当前无借位/有借位分支写成两个 control 块，展开为原来的两行 CXor。modArithmeticContext 明确配置 cxorCases，将相邻、同一控制与目标、先负后正的两行合并为原 chooseXor，每位仍只有一个 Toffoli。Selection 的 `selectXor_controls_equiv` 证明此优化与两个独立控制的完整状态效果等价，前提是等宽且线路互异。无此配置、不同控制/目标、或中间有语句/let 时不合并；不是任意别名和任意接线下都合法的优化。
 
 已检查表中 14 个模块：RegisterXor 的原值/函数值选择，Comparison 的负控制读出，ModularAddition 的借位选择与回补，ModularDoubling 的奇偶/借位回补，ModularMultiplication 的受控累加/约减，ModularInverse 的活动标志与数据轮，Division 的安全分母，PointAddition 的候选分母、点编码输出与特殊分支均采用显式控制。Lookup 的叶子为受控常量 XOR，递归树保留显式条件工作位及测量清理。Addition、Selection 的已清楚门级主体，以及 Swap/Shift 和已显式带控制的 Equality 不额外包装。按经典常量、列表长度、接线种类构造电路的 if/match 保留，不伪装成量子判断。
 

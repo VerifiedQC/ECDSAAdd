@@ -4,23 +4,40 @@ import ECDSAAdd.Math.PointAddition.PointInPlace
 namespace ECDSAAdd.Arithmetic
 open Instr
 open Secp256k1
+open scoped CircuitDSL
 
 /-- r ← (r+L.core.generic·k.val) mod p，k 是经典域元素，要求 r<p。 -/
-def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program := prog {
+def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program :=
+    prog using (modAssignContext (L.inPlaceConstant r)) {
   let M := L.inPlaceConstant r;  -- a 用于保存受控常数，low 接目标 r。
-  CConst L.core.generic M.a k.val; -- generic=1 时 M.a = k.val。
-  modAddInPlace(M, p);  -- r += M.a (mod p)
-  CConst L.core.generic M.a k.val; -- 清零 M.a。
+  let out := M.low;
+  control L.core.generic { M.a ^= const(k.val); };
+  out = (M.a + out) mod p;
+  control L.core.generic { M.a ^= const(k.val); }; -- 清零 M.a。
 }
 
+/-- 算术表达式与原布局调用生成同一门列，供既有证明展开。 -/
+theorem pointInPlaceConstantAdd_program (L : ControlledPointLayout) (r : List Wire) (k : Fp) :
+    pointInPlaceConstantAdd L r k =
+      maskedConstant L.core.generic (L.inPlaceConstant r).a k.val ++
+      modAddInPlace (L.inPlaceConstant r) p ++
+      maskedConstant L.core.generic (L.inPlaceConstant r).a k.val := by
+  simp only [pointInPlaceConstantAdd]
+
 /-- L.core.generic=1 时 L.point.x ← −L.point.x mod p，为 0 时不变。 -/
-def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog {
+def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog using (modAssignContext L.inPlaceNegate) {
   let enabled := L.core.generic;
   let negate := L.inPlaceNegate; -- a 接 x，low 用作临时寄存器。
-  controlledModSub(enabled, negate, p);                 -- enabled=1 时 negate.low = -x mod p。
+  control enabled { negate.low = (negate.low - negate.a) mod p; };
   swapRegisters(enabled, L.point.x, negate.low);        -- enabled=1 时交换 x 与 negate.low。
-  controlledModAdd(enabled, negate, p);                 -- 清零 negate.low。
+  control enabled { negate.low = (negate.a + negate.low) mod p; }; -- 清零临时结果。
 }
+
+theorem pointInPlaceNegate_program (L : ControlledPointLayout) :
+    pointInPlaceNegate L = controlledModSub L.core.generic L.inPlaceNegate p ++
+      swapRegisters L.core.generic L.point.x L.inPlaceNegate.low ++
+      controlledModAdd L.core.generic L.inPlaceNegate p := by
+  simp only [pointInPlaceNegate]
 
 /-- target ^= [输入全零]；seed 初始为零，临时置 1 后恢复。 -/
 def zeroTestWithSeed (seed target : Wire) (bs : List ZeroBit) : Program :=
@@ -88,32 +105,63 @@ theorem pointInPlaceClearSlope_program (L : ControlledPointLayout) (lambdaStar :
   simp only [pointInPlaceClearSlope, List.append_assoc]
   rfl
 
+/-- 乘积和平方使用不同的借用区；逻辑操作数和模数均来自表达式。 -/
+structure PointProductOps where
+  productAdd : List Wire → List Wire → List Wire → Nat → Program
+  productSub : List Wire → List Wire → List Wire → Nat → Program
+  squareSub : List Wire → List Wire → List Wire → Nat → Program
+
+/-- product 使用 B[2…1828]，square 使用 B[258…2084]；分别保留输入/输出高位及斜率副本。 -/
+def pointProductContext (L : ControlledPointLayout) : CircuitDSL.Context PointProductOps := {
+  operations := {
+    productAdd := fun x y out q => montMulAdd
+      (borrowedMont L.inPlaceBorrow L.control 2 (x++[L.inPlaceBit 0]) y (out++[L.inPlaceBit 1])) q
+    productSub := fun x y out q => montMulSub
+      (borrowedMont L.inPlaceBorrow L.control 2 (x++[L.inPlaceBit 0]) y (out++[L.inPlaceBit 1])) q
+    squareSub := fun x y out q => montMulSub
+      (borrowedMont L.inPlaceBorrow L.control 258 (x++[L.inPlaceBit 256]) y (out++[L.inPlaceBit 257])) q
+  }
+}
+
 /-- generic=1 时将 (x,y) 更新为 (x′,y′)：λ=(y−cy)/(x−cx)，x′=λ²−x−cx，y′=λ*(x−x′)−y，均 mod p。
 (cx,cy) 是经典常量点坐标，要求 x≠cx；lambdaStar 用于清除例外分支斜率。generic=0 时不变。 -/
-def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Program := prog {
+def pointInPlaceGeneric (L : ControlledPointLayout) (cx cy lambdaStar : Fp) : Program := prog using (pointProductContext L) {
   let x := L.point.x;
   let y := L.point.y;
   let slope := L.inPlaceSlope; -- 用于保存斜率。
   let slopeCopy := L.inPlaceSquare.y; -- 平方时所用的斜率副本。
   let division := L.inPlaceDivide L.core.generic x y; -- 分子 y、分母 x、目标 slope。
-  let product := L.inPlaceMultiply;                  -- 乘数 slope/x，目标 y。
-  let square := L.inPlaceSquare;                     -- 乘数 slope/slopeCopy，目标 x。
 
   -- 以下公式对应 generic=1，运算均 mod p。
   pointInPlaceConstantAdd(L, x, -cx);           -- x -= cx
   pointInPlaceConstantAdd(L, y, -cy);           -- y -= cy
   divideAdd(division);                         -- slope = y/x
-  montMulSub(product, p);                      -- y -= slope*x → 0
-  copyRegister(none, slope, slopeCopy);  -- slopeCopy = slope
-  montMulSub(square, p);                       -- x -= slope²
-  copyRegister(none, slope, slopeCopy);  -- 清零 slopeCopy。
+  y = (y - slope * x) mod p using productSub; -- 清零 y。
+  slopeCopy ^= slope;
+  x = (x - slope * slopeCopy) mod p using squareSub;
+  slopeCopy ^= slope;                         -- 清零 slopeCopy。
   pointInPlaceConstantAdd(L, x, 3*cx);          -- x += 3*cx，得到 cx-结果横坐标。
-  montMulAdd(product, p);                      -- y = slope*x
+  y = (y + slope * x) mod p using productAdd;
   pointInPlaceClearSlope(L, lambdaStar);       -- 清零 slope。
   pointInPlaceNegate(L);                       -- x ← -x
   pointInPlaceConstantAdd(L, x, cx);            -- x += cx，得到结果横坐标。
   pointInPlaceConstantAdd(L, y, -cy);           -- y -= cy，得到结果纵坐标。
 }
+
+/-- 两种乘积工作区的显式选择保持原来的电路及调用顺序。 -/
+theorem pointInPlaceGeneric_program (L : ControlledPointLayout) (cx cy lambdaStar : Fp) :
+    pointInPlaceGeneric L cx cy lambdaStar =
+      pointInPlaceConstantAdd L L.point.x (-cx) ++
+      pointInPlaceConstantAdd L L.point.y (-cy) ++
+      divideAdd (L.inPlaceDivide L.core.generic L.point.x L.point.y) ++
+      montMulSub L.inPlaceMultiply p ++
+      copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
+      montMulSub L.inPlaceSquare p ++
+      copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
+      pointInPlaceConstantAdd L L.point.x (3*cx) ++
+      montMulAdd L.inPlaceMultiply p ++ pointInPlaceClearSlope L lambdaStar ++
+      pointInPlaceNegate L ++ pointInPlaceConstantAdd L L.point.x cx ++
+      pointInPlaceConstantAdd L L.point.y (-cy) := rfl
 
 /-- L.core.generic ^= L.control XOR infinitySelect XOR doubleSelect XOR genericSelect。
 三个 select 分别表示输入为 O、C、−C 的互斥分支；O 是无穷远点。 -/

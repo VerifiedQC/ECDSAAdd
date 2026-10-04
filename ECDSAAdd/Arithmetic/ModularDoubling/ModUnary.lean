@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.Shift.Rotate
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped CircuitDSL
 
 /-- 单目模算术借用同一目标与 scratch；mask 在半倍期间保持零。 -/
 structure ModUnaryLayout where
@@ -81,10 +82,10 @@ def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryC
   let borrow := U.high;    -- target 的最高位：试减后 0 表示没有借位，1 表示发生借位。
   let leastBit := U.bit;   -- target 的最低位，表示结果奇偶。
   rotateLeft(target);                                  -- target *= 2
-  xorConstant(U.constant, p);                           -- constant = p
-  subInPlace U.constant target;                        -- target -= p；borrow = [倍增结果<p]
-  xorConstant(U.constant, p);                           -- 清零 constant。
-  CAddConstLow borrow U.low p;                         -- borrow=1 时 low += p。
+  U.constant ^= const(p);
+  target -= U.constant;             -- borrow = [倍增结果<p]
+  U.constant ^= const(p);          -- 清零 constant。
+  control borrow { U.low += const(p) using maskedAddConstLow; };
   X borrow;                                     -- 结果为奇数表示发生过约减。
   CX leastBit borrow;                           -- 清零 borrow。
 }
@@ -105,7 +106,7 @@ def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnary
   let target := U.z;       -- 用于保存 U.low 或 U.low+p。
   let wasOdd := U.flag;    -- 保存输入奇偶：0 为偶数，1 为奇数。
   CX U.bit wasOdd;                             -- wasOdd = target mod 2
-  CAddConst wasOdd target p;                           -- wasOdd=1 时 target += p。
+  control wasOdd { target += const(p); };
   rotateRight(target);                                -- target /= 2
   compareLtConst U.low ((p+1)/2) wasOdd;                -- wasOdd ^= [low<(p+1)/2]
   X wasOdd;                                     -- 原输入为奇数 iff 结果≥(p+1)/2，清零 wasOdd。

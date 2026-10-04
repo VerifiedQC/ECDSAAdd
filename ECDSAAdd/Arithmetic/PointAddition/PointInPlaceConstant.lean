@@ -135,6 +135,7 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
   obtain ⟨hp,hv⟩ := constant_program_spec M L.core.generic k.val Z B hM hnm k.isLt hZ
     s m ⟨⟨⟨hb,hsource⟩,hout⟩,hwork⟩
   have keep := constant_program_frame M L.core.generic k.val Z B hM hnm k.isLt hZ s m hb hsource hout hwork
+  rw [← pointInPlaceConstantAdd_program] at hp hv keep
   have hlow := (regValue_low_iff r [L.inPlaceBit 257]
     (run (pointInPlaceConstantAdd L r k) m s).basis ((Z+(if B then k.val else 0))%p)
     (by rw [hl]; exact (Nat.mod_lt _ (by norm_num [p])).trans (by norm_num [p]))).mp hv.1.2

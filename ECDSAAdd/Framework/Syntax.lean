@@ -305,4 +305,145 @@ elab "prog" "using" ctx:term:max "{" body:circuitStmt* "}" : term => do
 
 end CircuitDSL
 
+/- 算术表达式是现有电路构造器的记法；布局、取值范围和零工作区仍由各操作的规格约束。
+`const(k)` 明确表示经典数，其他操作数是寄存器；+=、-= 按目标位宽回绕，^= 是 XOR 写入。
+control 只接受下面列出的算术操作，不会给任意含测量的 Program 逐门添加控制。 -/
+declare_syntax_cat registerUpdate
+syntax term:max " += " term:max : registerUpdate
+syntax term:max " -= " term:max : registerUpdate
+syntax term:max " ^= " term:max : registerUpdate
+syntax term:max " ^= " "(" term:max " + " term:max ")" : registerUpdate
+syntax term:max " ^= " "(" term:max " - " term:max ")" : registerUpdate
+syntax term:max " ^= " "(" term:max " - " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " ^= " "(" term:max " * " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " ^= " "const" "(" term ")" : registerUpdate
+syntax term:max " += " "const" "(" term ")" : registerUpdate
+syntax term:max " -= " "const" "(" term ")" : registerUpdate
+syntax term:max " += " "const" "(" term ")" " using " ident : registerUpdate
+syntax term:max " = " "(" term:max " + " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " = " "(" term:max " - " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " = " "(" term:max " + " term:max ")" " mod " term:max " using " ident : registerUpdate
+syntax term:max " = " "(" term:max " - " term:max ")" " mod " term:max " using " ident : registerUpdate
+syntax term:max " = " "(" term:max " + " term:max " * " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " = " "(" term:max " - " term:max " * " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " = " "(" term:max " + " term:max " * " term:max ")" " mod " term:max " using " ident : registerUpdate
+syntax term:max " = " "(" term:max " - " term:max " * " term:max ")" " mod " term:max " using " ident : registerUpdate
+
+declare_syntax_cat registerUpdateLine
+syntax registerUpdate ";" : registerUpdateLine
+namespace CircuitDSL
+scoped syntax registerUpdate ";" : circuitStmt
+scoped syntax ident term:max " {" registerUpdateLine* "}" ";" : circuitStmt
+end CircuitDSL
+open scoped CircuitDSL
+
+private def checkUpdateTarget (target repeated : TSyntax `term) : MacroM Unit :=
+  unless target.raw == repeated.raw do
+    Macro.throwErrorAt repeated "原地赋值必须在右侧保留同一个目标寄存器；不支持覆盖任意量子数据"
+
+/-- 每个表达式展开到一个已有操作；实现名字在 prog using 的局部接线中解析。 -/
+private def lowerRegisterUpdate (s : TSyntax `registerUpdate)
+    (control : Option (TSyntax `term)) : MacroM (TSyntax `circuitStmt) := do
+  let unsupported := Macro.throwErrorAt s "此算术/控制形式尚无实现；请使用已有操作或显式配置实现"
+  match s with
+  | `(registerUpdate| $out:term ^= ($x - $y) mod $q) =>
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `modSubXor):ident $x $y $out $q;)
+  | `(registerUpdate| $out:term ^= ($x * $y) mod $q) =>
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `modMulXor):ident $x $y $out $q;)
+  | `(registerUpdate| $out:term ^= ($x + $y)) =>
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `addXor):ident $x $y $out;)
+  | `(registerUpdate| $out:term ^= ($x - $y)) =>
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `subXor):ident $x $y $out;)
+  | `(registerUpdate| $out:term ^= const($k)) =>
+      match control with
+      | none => `(circuitStmt| $(mkIdent `xorConstant):ident $out $k;)
+      | some c => `(circuitStmt| CConst $c $out $k;)
+  | `(registerUpdate| $out:term ^= $source) =>
+      match control with
+      | none => `(circuitStmt| $(mkIdent `copyRegister):ident none $source $out;)
+      | some c => `(circuitStmt| CXor $c $out $source;)
+  | `(registerUpdate| $out:term += const($k) using $impl:ident) =>
+      match control with
+      | none => unsupported
+      | some c => `(circuitStmt| $impl:ident $c $out $k;)
+  | `(registerUpdate| $out:term += const($k)) =>
+      match control with
+      | none => unsupported
+      | some c => `(circuitStmt| CAddConst $c $out $k;)
+  | `(registerUpdate| $out:term -= const($k)) =>
+      match control with
+      | none => unsupported
+      | some c => `(circuitStmt| CSubConst $c $out $k;)
+  | `(registerUpdate| $out:term += $source) =>
+      match control with
+      | none => `(circuitStmt| $(mkIdent `addInPlace):ident $source $out;)
+      | some c => `(circuitStmt| CAdd $c $out $source;)
+  | `(registerUpdate| $out:term -= $source) =>
+      match control with
+      | none => `(circuitStmt| $(mkIdent `subInPlace):ident $source $out;)
+      | some c => `(circuitStmt| CSub $c $out $source;)
+  | `(registerUpdate| $out:term = ($source + $old) mod $q using $impl:ident) =>
+      checkUpdateTarget out old
+      if control.isSome then unsupported else
+      `(circuitStmt| $impl:ident $source $out $q;)
+  | `(registerUpdate| $out:term = ($old - $source) mod $q using $impl:ident) =>
+      checkUpdateTarget out old
+      if control.isSome then unsupported else
+      `(circuitStmt| $impl:ident $source $out $q;)
+  | `(registerUpdate| $out:term = ($source + $old) mod $q) =>
+      checkUpdateTarget out old
+      match control with
+      | none => `(circuitStmt| $(mkIdent `modAddAssign):ident $source $out $q;)
+      | some c => `(circuitStmt| $(mkIdent `controlledModAddAssign):ident $c $source $out $q;)
+  | `(registerUpdate| $out:term = ($old - $source) mod $q) =>
+      checkUpdateTarget out old
+      match control with
+      | none => `(circuitStmt| $(mkIdent `modSubAssign):ident $source $out $q;)
+      | some c => `(circuitStmt| $(mkIdent `controlledModSubAssign):ident $c $source $out $q;)
+  | `(registerUpdate| $out:term = ($old + $x * $y) mod $q using $impl:ident) =>
+      checkUpdateTarget out old
+      if control.isSome then unsupported else
+      `(circuitStmt| $impl:ident $x $y $out $q;)
+  | `(registerUpdate| $out:term = ($old - $x * $y) mod $q using $impl:ident) =>
+      checkUpdateTarget out old
+      if control.isSome then unsupported else
+      `(circuitStmt| $impl:ident $x $y $out $q;)
+  | `(registerUpdate| $out:term = ($old + $x * $y) mod $q) =>
+      checkUpdateTarget out old
+      match control with
+      | none => `(circuitStmt| $(mkIdent `modMulAddAssign):ident $x $y $out $q;)
+      | some c => `(circuitStmt| $(mkIdent `controlledModMulAddAssign):ident $c $x $y $out $q;)
+  | `(registerUpdate| $out:term = ($old - $x * $y) mod $q) =>
+      checkUpdateTarget out old
+      match control with
+      | none => `(circuitStmt| $(mkIdent `modMulSubAssign):ident $x $y $out $q;)
+      | some c => `(circuitStmt| $(mkIdent `controlledModMulSubAssign):ident $c $x $y $out $q;)
+  | _ => unsupported
+
+-- 先展开整个块，再交给原 prog 宏；相邻的互补 XOR 分支仍可共用选择电路。
+macro_rules (kind := circuitBlock)
+  | `(prog { $body:circuitStmt* }) => do
+      let mut changed := false
+      let mut result : Array (TSyntax `circuitStmt) := #[]
+      for statement in body do
+        match statement with
+        | `(circuitStmt| $update:registerUpdate;) =>
+            result := result.push (← lowerRegisterUpdate update none)
+            changed := true
+        | `(circuitStmt| $keyword:ident $c { $updates:registerUpdateLine* };) =>
+            unless keyword.getId == `control do
+              Macro.throwErrorAt keyword "算术控制块应写为 control 条件 { ... };"
+            for line in updates do
+              let `(registerUpdateLine| $update:registerUpdate;) := line
+                | Macro.throwUnsupported
+              result := result.push (← lowerRegisterUpdate update (some c))
+            changed := true
+        | _ => result := result.push statement
+      unless changed do Macro.throwUnsupported
+      `(prog { $result* })
+
 end ECDSAAdd

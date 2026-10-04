@@ -38,7 +38,7 @@ theorem pointInPlaceGeneric_true (L : ControlledPointLayout) (hw : L.Widths) (hn
   simp only [if_true,← sub_eq_add_neg] at h11
   rw [show a*d-cy=genericY X Y cx cy from hv.2.2] at h11
   have h := (((((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9).seq h10).seq h11
-  simpa only [pointInPlaceGeneric,List.append_assoc] using h
+  simpa only [pointInPlaceGeneric_program,List.append_assoc] using h
 
 /-- 未选中的分支斜率始终为零，仍执行同一固定门列并恢复全部工作区。 -/
 theorem pointInPlaceGeneric_false (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
@@ -58,6 +58,6 @@ theorem pointInPlaceGeneric_false (L : ControlledPointLayout) (hw : L.Widths) (h
   have h11 := pointStep_addY L hw hn X Y 0 false false false (-cy)
   simp only [Bool.false_eq_true,if_false,add_zero,zero_mul,sub_zero] at h1 h2 h3 h4 h5 h6 h7 h9 h10 h11
   have h := (((((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9).seq h10).seq h11
-  simpa only [pointInPlaceGeneric,List.append_assoc] using h
+  simpa only [pointInPlaceGeneric_program,List.append_assoc] using h
 
 end ECDSAAdd.Arithmetic

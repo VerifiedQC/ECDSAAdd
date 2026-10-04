@@ -2,6 +2,10 @@
 
 本模块实现模加法、模减法及其原地、受控和 XOR 输出接口，并证明范围、清理与资源结论。
 
+算法主体已使用算术表达式：先读 [Modular.lean](Modular.lean) 的 `modAdd/modSub` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。`^=` 表示 XOR 写入，两个 `control` 块明确借位分支；工作区仍由 Context 绑定，原规格与资源不变。
+
+这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+
 算法主体使用 `modArithmeticContext` / `modAddCoreContext` 固定进位链、零输入进位及常数工作区；例如 `addXor x y total` 的参数只保留逻辑输入输出。完整接线及零初值要求在同文件的配置定义中，底层完整参数接口、规格和资源不变。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
@@ -9,6 +13,85 @@
 下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。`{前置条件} 程序 {后置条件}` 对任意满足前提的初始状态和预先给定的测量结果成立；`｜` 按顺序分隔不同程序及其对应结果。
 
 资源 T、M、Q 分别为 Toffoli 门数、测量次数、不同物理线路数，未列出的项不代表零；T=0 不表示没有其他门。资源沿用对应定理的位宽和线路条件，Nat 减法按自然数截断。
+
+## 高层语言示范目录
+
+- [LanguageExample.lean](#languageexamplelean)：用赋值形式写两次模加，证明更换实现后规格不变，并核对工作区复用和资源。
+- [LanguageAdapter.lean](#languageadapterlean)：把现有直接模加接入 n 位逻辑寄存器接口。
+- [LanguageControlledAdapter.lean](#languagecontrolledadapterlean)：将固定使能的受控模加接入同一接口，检验不同电路的可替换性。
+
+## [LanguageExample.lean](LanguageExample.lean)
+
+读算法时只需看这段；`x`、`y` 是三位寄存器，`q=7`。配置 `arithmetic` 默认选择 `direct`，将现有电路与工作区接好：
+
+```lean
+def algorithm : Request 3 := arith using arithmetic {
+  y = (x + y) mod q;
+  y = (x + y) mod q;
+}
+```
+
+`correct` 证明，对于任意 X、Y<7 和任意测量记录：
+
+```text
+{ x=X, y=Y, work=0 }
+algorithm 的编译电路
+{ x=X, y=(X + (X+Y) mod 7) mod 7, work=0 }
+```
+
+相位恢复，y 之外的所有 wire 保持。两次调用复用同一工作区，包括隐藏的扩展高位。`compiles` 证明实际编译结果就是这个定理验证的电路。
+
+只将配置的 `defaultImplementation` 改为 `"masked"`，`maskedAlgorithm` 就用另一套电路实现完全相同的算法。也可以只覆盖第二句：
+
+```lean
+def mixedAlgorithm : Request 3 := arith using arithmetic {
+  y = (x + y) mod q;
+  y = (x + y) mod q using masked;
+}
+```
+
+`masked_correct`、`mixed_correct` 证明相同的数值公式，工作区按各实现的要求扩展；通用算法证明 `twice_spec` 不变。`implementations_differ` 证明两种实现不是相同门列。`masked` 较贵，只用于检验替换机制，不推荐作为资源优化。
+
+三种电路分别有精确资源定理；Q 取线路并集，不能把两次调用的线路数相加：
+
+| 两次调用的实现 | T | M | Q |
+| --- | ---: | ---: | ---: |
+| direct / direct | 22 | 22 | 16 |
+| masked / masked | 34 | 22 | 20 |
+| direct / masked | 28 | 22 | 21 |
+
+完整语言规则见 [Framework README](../../Framework/README.md#高层算术语言第一版)。仅编译成功不代表输入范围、零工作区已成立；示范中的 `verified` / `mixedVerified` 显式完成这些证明义务。
+
+## [LanguageAdapter.lean](LanguageAdapter.lean)
+
+`direct_correct` 把 `modAddCore` 的 n+1 位物理接口接到 n 位逻辑寄存器 x、y。额外的源高位、目标高位属于 work，不要求读者把输入写成 n+1 位。
+
+布局互异、0<q<2^n、X,Y<q 时，证明：
+
+```text
+{ x=X, y=Y, work=0 }
+direct 的电路
+{ x=X, y=(X+Y) mod q, work=0 }
+```
+
+相位恢复，y 之外每根 wire 保持，包括两个高位；中间和不会先按 n 位截断。`direct` 连同证明及资源一起注册为可选实现。
+
+- 单次资源：T=M=`4n-1`，Q=`4n+4`。
+- `direct_twice_resources`：相同布局调用两次，T=M=`2*(4n-1)`，Q 仍为 `4n+4`。
+
+## [LanguageControlledAdapter.lean](LanguageControlledAdapter.lean)
+
+`enabledAdd_correct`、`controlled_correct` 证明：额外使能位初始为 0，先 X 到 1，运行已有 `controlledModAdd`，再 X 回 0，可实现与 direct 相同的原地模加规格。
+
+```text
+{ x=X, y=Y, work=0 }
+viaControlled 的电路
+{ x=X, y=(X+Y) mod q, work=0 }
+```
+
+要求 0<q<2^n、X,Y<q、接线互异；work 包含 mask 和 enable。相位恢复，目标以外逐线保持。没有给任意带测量的程序逐门套控制；这是对一个已经证明的受控模加的明确适配，也不表示高层 `control` 语法已经实现。
+
+- 单次资源：T=`6n-1`，M=`4n-1`；静态支持集合随实现一并给出并证明，两次 X 门不增加 Toffoli 或测量数。三位示范的单次 Q=20，共用同一布局两次仍为 20。
 
 ## [Accumulate.lean](Accumulate.lean)
 

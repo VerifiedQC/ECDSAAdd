@@ -19,7 +19,7 @@ theorem pointInPlaceConstantAdd_counts (L : ControlledPointLayout) (hw : L.Width
     · exact hw.inputX
     · exact hw.inputY
   have ha := modAddInPlace_resources (L.inPlaceConstant r) 256 p (L.inPlaceConstant_widths hw r hl) hn (by omega)
-  simp only [pointInPlaceConstantAdd,toffoliCount_append,measurementCount_append,
+  simp only [pointInPlaceConstantAdd_program,toffoliCount_append,measurementCount_append,
     (maskedConstant_counts _ _ _).1,(maskedConstant_counts _ _ _).2,ha.1,ha.2.1]
   norm_num
 
@@ -38,7 +38,7 @@ theorem pointInPlaceNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (h
     omega
   have he := swapRegisters_resources L.core.generic L.point.x L.inPlaceNegate.low
     (hw.inputX.trans hl.core.low.symm) hswap
-  simp only [pointInPlaceNegate,toffoliCount_append,measurementCount_append,ha.1,ha.2.1,hs.1,hs.2.1,he.1,he.2]
+  simp only [pointInPlaceNegate_program,toffoliCount_append,measurementCount_append,ha.1,ha.2.1,hs.1,hs.2.1,he.1,he.2]
   rw [show L.point.x.length=256 from hw.inputX]
   norm_num
 
@@ -67,7 +67,7 @@ theorem pointInPlaceGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     simpa only [List.length_map,show L.point.x.length=256 from hw.inputX] using hh
   rw [hzl] at hz
   have hn := pointInPlaceNegate_counts L hw hnd
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,zeroTestWithSeed,
+  simp only [pointInPlaceGeneric_program,pointInPlaceClearSlope_program,zeroTestWithSeed,
     doubleControlXor,ite_true,Bool.false_eq_true,ite_false,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hdg.1,hdg.2.1,hdq.2.2.1,hdq.2.2.2,
     hm.2.1.1,hm.2.1.2,hm.2.2.1,hm.2.2.2,hs.2.2.1,hs.2.2.2,

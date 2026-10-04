@@ -131,7 +131,7 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have nCA (r : List Wire) (nr : q∉r) (hr : r.length=256) (v : Fp) : q∉wires (pointInPlaceConstantAdd L r v) := by
     have nm := nConst r nr
     have ha : q∉(L.inPlaceConstant r).a := fun h => nm (by simp [ModInPlaceLayout.wires,h])
-    simp only [pointInPlaceConstantAdd,wires_append,Finset.mem_union,not_or]
+    simp only [pointInPlaceConstantAdd_program,wires_append,Finset.mem_union,not_or]
     exact ⟨⟨nMasked _ _ _ ng ha,(modPrograms_not_mem q L.core.generic ng _ (L.inPlaceConstant_widths hw r hr) nm).1⟩,nMasked _ _ _ ng ha⟩
   have ncopy : q∉wires (copyRegister none L.inPlaceSlope L.inPlaceSquare.y) := by
     rw [copyRegister_wires _ _ _ ((L.inPlaceSlope_length hw).trans (L.inPlaceSquare_widths hw).y.symm)]
@@ -147,8 +147,8 @@ theorem pointInPlaceGeneric_wires_subset (L : ControlledPointLayout) (hw : L.Wid
   have hm := mont_not_mem q L.inPlaceMultiply (L.inPlaceMultiply_widths hw) nM
   have hs := mont_not_mem q L.inPlaceSquare (L.inPlaceSquare_widths hw) nS
   have hneg := modPrograms_not_mem q L.core.generic ng L.inPlaceNegate (L.inPlaceNegate_widths hw) nN
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,zeroTestWithSeed,doubleControlXor,
-    ite_true,Bool.false_eq_true,ite_false,pointInPlaceNegate,wires_append,Finset.mem_union]
+  simp only [pointInPlaceGeneric_program,pointInPlaceClearSlope_program,zeroTestWithSeed,doubleControlXor,
+    ite_true,Bool.false_eq_true,ite_false,pointInPlaceNegate_program,wires_append,Finset.mem_union]
   have nmg := (nDivide L.core.generic ng).1
   have nmq := (nDivide L.core.equalNegY nq).2
   have nmask := nMasked L.core.equalNegY L.inPlaceSlope k.val nq na

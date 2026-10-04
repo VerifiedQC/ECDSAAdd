@@ -78,7 +78,7 @@ theorem pointSquare_support (L : PointAddLayout) (h : L.Widths) :
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have ho := h.words L.square (by simp [PointAddLayout.words])
   have hn : L.slope.isEmpty=false := by cases he : L.slope <;> simp_all
-  rw [pointSquare,wires_append,wires_append,copyRegister_wires _ _ _ (hs.trans hk.symm),
+  rw [pointSquare_program,wires_append,wires_append,copyRegister_wires _ _ _ (hs.trans hk.symm),
     poolMul_support L h _ _ _ hs (by simp [hk]) ho]
   simp only [hn,Bool.false_eq_true,if_false,Option.toList_none,List.nil_append]
   ext w

@@ -2,6 +2,10 @@
 
 本模块实现 secp256k1 点与经典常量点相加的电路，包括 XOR 输出、受控原地更新、特殊点分支及辅助位清理。
 
+算法阅读先看 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute/Clear` 和 [PointInPlaceProgram.lean](PointInPlaceProgram.lean) 的 `pointInPlaceGeneric`：候选值用 XOR 模表达式，原地坐标用模积赋值。`using productSub/squareSub` 显式区分借用区；斜率清理保留已确认的 `CCsub/CCXor`。原规格与资源不变。
+
+这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+
 候选点计算用 `pointCandidateContext` 固定共享零工作池。斜率清理中，`xIsZero` 只保存 `[point.x=0]`，与 `generic` 无关。主体先判零，再执行 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`，最后清零判零位。两行分别处理非零、为零的分母；`XOR 1` 表示负控制，不修改 xIsZero。`clearSlopeContext` 只绑定判零及算术工作区，复用已有 equalNegY 临时位，不新增量子位。
 
 普通分支的公式直接写在 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute` 中：dx=x−cx、dy=y−cy、slope=dy/dx、candidateX=slope²−x−cx、candidateY=slope·(x−candidateX)−y，运算均模 p。非普通分支用安全分母 1 完成计算，但不选用该候选。代码中的 `fieldSubXor/fieldMulXor/fieldInverseXor` 显式列出输入和 XOR 输出，pool 只指定共享工作区。

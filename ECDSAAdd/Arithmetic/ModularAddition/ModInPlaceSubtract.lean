@@ -32,6 +32,26 @@ def controlledModSub (c : Wire) (L : ModInPlaceLayout) (p : Nat) : Program := pr
   negRaw(L, p);                        -- source a: p-A → A；工作区恢复
 }
 
+/-- 模加减赋值的接线接口；source 含零扩展高位，target 是目标的低 n 位。 -/
+structure ModAssignOps where
+  modAddAssign : List Wire → List Wire → Nat → Program
+  modSubAssign : List Wire → List Wire → Nat → Program
+  controlledModAddAssign : Wire → List Wire → List Wire → Nat → Program
+  controlledModSubAssign : Wire → List Wire → List Wire → Nat → Program
+
+/-- L 只绑定目标高位和工作区；表达式中的源、目标、模数逐项传入原实现。
+高位初始为零并恢复；范围、互异和零工作区要求仍见原 spec，不在构造时假定成立。 -/
+def modAssignContext (L : ModInPlaceLayout) : CircuitDSL.Context ModAssignOps := {
+  operations := {
+    modAddAssign := fun source target q => modAddInPlace { L with a := source, low := target } q
+    modSubAssign := fun source target q => modSubInPlace { L with a := source, low := target } q
+    controlledModAddAssign := fun c source target q =>
+      controlledModAdd c { L with a := source, low := target } q
+    controlledModSubAssign := fun c source target q =>
+      controlledModSub c { L with a := source, low := target } q
+  }
+}
+
 theorem modSubInPlace_spec (L : ModInPlaceLayout) (n p A Z : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :

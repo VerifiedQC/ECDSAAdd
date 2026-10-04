@@ -6,6 +6,7 @@ import ECDSAAdd.Math.ModularMultiplication.Montgomery
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped CircuitDSL
 
 /-- 一个 Montgomery 段；另一段复用 table/mask/carry/pad/scratch，保留各自 acc/history/flag。 -/
 structure MontStageLayout where
@@ -75,14 +76,14 @@ def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
 /-- L.acc ← (L.acc+d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
 def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
   montLookup(L, addr, K);                           -- table = 地址值*K
-  addInPlace L.table L.acc;  -- acc += table (mod 2^261)
+  L.acc += L.table;
   montLookup(L, addr, K);                           -- 清零 table。
 }
 
 /-- L.acc ← (L.acc−d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
 def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
   montLookup(L, addr, K);                           -- table = 地址值*K
-  subInPlace L.table L.acc;  -- acc -= table (mod 2^261)
+  L.acc -= L.table;
   montLookup(L, addr, K);                           -- 清零 table。
 }
 
@@ -91,7 +92,7 @@ def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :
 def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
   let digit := L.acc.take 4; -- acc 的低四位，即约减系数 m。
   let history := L.record i; -- 用于保存第 i 轮的 m。
-  copyRegister(none, digit, history); -- history = m
+  history ^= digit;
   montLookupAdd(L, history, p);       -- acc += m*p，低四位变为零。
   rotateRightBits(L.acc, 4);          -- acc /= 16
 }
@@ -102,7 +103,7 @@ def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
   let history := L.record i; -- 第 i 轮保存的约减系数 m。
   rotateLeftBits(L.acc, 4);          -- acc *= 16
   montLookupSub(L, history, p);       -- acc -= m*p
-  copyRegister(none, digit, history); -- 清零 history。
+  history ^= digit;                  -- 清零 history。
 }
 
 /-- L.acc ← (L.acc+d*x) mod 2^261，d 是 y 的第 i 个四位窗口的值。 -/
@@ -110,7 +111,7 @@ def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in (List.range 4) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    CAdd bit L.acc shiftedX;           -- bit=1 时 acc += x*2^j。
+    control bit { L.acc += shiftedX; };
   };
 }
 
@@ -119,7 +120,7 @@ def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := 
   for j in ((List.range 4).reverse) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    CSub bit L.acc shiftedX;           -- bit=1 时 acc -= x*2^j。
+    control bit { L.acc -= shiftedX; };
   };
 }
 
@@ -155,16 +156,16 @@ def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) :
 
 /-- L.acc ← (L.acc+K) mod 2^261。 -/
 def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  xorConstant(L.table, K);  -- table = K
-  addInPlace L.table L.acc;  -- acc += K (mod 2^261)
-  xorConstant(L.table, K);  -- 清零 table。
+  L.table ^= const(K);
+  L.acc += L.table;
+  L.table ^= const(K);  -- 清零 table。
 }
 
 /-- L.acc ← (L.acc−K) mod 2^261。 -/
 def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  xorConstant(L.table, K);  -- table = K
-  subInPlace L.table L.acc;  -- acc -= K (mod 2^261)
-  xorConstant(L.table, K);  -- 清零 table。
+  L.table ^= const(K);
+  L.acc -= L.table;
+  L.table ^= const(K);  -- 清零 table。
 }
 
 /-- 将 L.acc=A 约减为 A mod p，L.flag 从零写成 [A<p]。
@@ -174,14 +175,14 @@ def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montA
   let high := L.acc.getD 260 L.flag; -- acc 的最高位，试减后表示借位。
   montConstantSub(L, p);                               -- acc -= p
   CX high borrow;                              -- borrow = [原 acc<p]
-  CAddConst borrow L.acc p;      -- borrow=1 时 acc += p。
+  control borrow { L.acc += const(p); };
 }
 
 /-- 撤销 montNormalize：L.acc ← L.acc+(L.flag=1 ? 0 : p)，清零 L.flag。 -/
 def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
   let borrow := L.flag; -- 正向约减保留的借位。
   let high := L.acc.getD 260 L.flag; -- acc 的最高位。
-  CSubConst borrow L.acc p;      -- borrow=1 时 acc -= p。
+  control borrow { L.acc -= const(p); };
   CX high borrow;                                 -- 清零 borrow。
   montConstantAdd(L, p);                                  -- 恢复 acc。
 }

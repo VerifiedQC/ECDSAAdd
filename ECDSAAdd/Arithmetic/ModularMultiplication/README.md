@@ -2,6 +2,10 @@
 
 本模块通过 Montgomery 窗口运算实现标准表示的模乘及受控累加等接口，并证明结果、历史恢复和资源用量。
 
+算法阅读先看 [MontPrepare.lean](MontPrepare.lean) 的窗口加减、约减和恢复，以及 [MontAdapterLayout.lean](MontAdapterLayout.lean) 的模乘输出接口。主体已用 `+=`、`-=`、模赋值与 `control` 表达式；准备/恢复历史仍显式保留，原规格与资源不变。
+
+这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+
 `MontPrepare.lean` 内的加减步骤用 `montArithmeticContext` 绑定 mask、table 和进位工作区；如 `controlledAdd bit shiftedX L.acc` 明确表示受 bit 控制的累加。历史位仍显式保留到对应恢复步骤，不由配置自动清理。
 
 算法从 [MontPrepare.lean](MontPrepare.lean) 的 `montWindow` 读起：向 acc 加入 x 乘以当前四位数 d，记录 m=acc mod 16，再令 acc=(acc+m·p)/16。m 保存在 history 中，恢复时先乘回 16、减去 m·p，再清除记录。

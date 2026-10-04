@@ -25,7 +25,7 @@ theorem pointSquare_counts (L : PointAddLayout) (h : L.Widths)
     (poolMul_widths _ _ _ _ hs hy ho)
   have hcopy := copyRegister_counts none L.slope L.constant (hs.trans hk.symm)
   simp only [Option.isSome_none,Bool.false_eq_true,if_false] at hcopy
-  simp only [pointSquare,toffoliCount_append,measurementCount_append,hcopy.1,hcopy.2,
+  simp only [pointSquare_program,toffoliCount_append,measurementCount_append,hcopy.1,hcopy.2,
     hc.1,hc.2.1,Nat.zero_add,Nat.add_zero,and_self]
 
 /-- 候选计算和按依赖逆序清理调用相同的前向模块，因此门数和测量数相同。 -/

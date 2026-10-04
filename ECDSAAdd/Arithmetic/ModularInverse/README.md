@@ -2,6 +2,10 @@
 
 本模块实现 Kaliski 模逆元电路，包括固定轮循环、缩放、结果输出和历史恢复，并提供相关布局与资源证明。
 
+[RoundBody.lean](RoundBody.lean) 的 `kaliskiBodyProgram/kaliskiUnbodyProgram` 已把受控加减写成 `control subtract { ... };`。移位、交换和历史恢复保持原有明确调用，`inverseCompute/Uncompute` 等组合入口不重复包装；原规格与资源不变。
+
+这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+
 Kaliski 数据轮使用 `roundArithmeticContext` 固定 mask 和进位工作区；主体中的 `controlledSub subtract v u`、`controlledAdd subtract s r` 直接标出控制、源和目标。它们展开为原有测量清理的受控加减法，历史与辅助位寿命不变。
 
 算法入口是 [InverseCompute.lean](InverseCompute.lean)：固定轮 Kaliski 循环 → 将 −r mod q 写入逆元寄存器 a → 按计数 k 缩放，得到逆元；`inverseUncompute` 按依赖逆序恢复。循环历史、计数和缩放历史要保留到恢复阶段，不能作为已清零工作区借用。

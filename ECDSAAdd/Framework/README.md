@@ -2,6 +2,55 @@
 
 本模块定义电路的状态表示、允许的操作、执行规则，以及正确性和资源计数的证明工具。
 
+## 高层算术语言（第一版）
+
+`arith` 保存高层算术操作，`prog` 保留原有门级语义；两者不混用。打开 `ECDSAAdd.ArithmeticLanguage` 后可以写：
+
+```lean
+arith using arithmetic {
+  y = (x + y) mod q;
+  y = (x + y) mod q using masked;
+}
+```
+
+`x`、`y` 是等宽 `QReg n`；`q` 是经典 Nat。表达式表示原地模加，不测量寄存器，也不是先按 n 位截断再取模。第一版只接受上述形式，右侧第二个寄存器必须与左侧是同一个标识符；不自动推断别名或化简任意代数表达式。
+
+`arithmetic : Config n` 指定默认实现和显式接线的注册表。`using masked` 是注册名称，不是对任意函数进行隐式调用；局部选择优先。相同名称可以绑定不同操作，查找同时核对源、目标和模数；重复的同名同操作条目按首项解析。没有匹配项时返回错误，不静默换电路。
+
+使用过程是：写出代码 → `Request.compile` 取得已接线计划 → 证明高层规格和 `Ready` 调用条件 → 得到 `Verified.correct` 的低层 Triple。编译成功本身不证明初始量子数据的范围或工作区为零；这些条件必须由调用方证明，不会变成运行时检查或自动重置。
+
+当前仅支持原地模加的顺序组合和实现选择，一个块内的逻辑寄存器统一使用同一位宽 n。普通加减、XOR 写入、初始化赋值、混合位宽的操作、循环、用户级 control、自动工作区分配和择优编译尚未接入。证明范围仍是本项目的带符号计算基态分支模型，并未新增一般量子信道语义。完整可运行例子见 [ModularAddition README](../Arithmetic/ModularAddition/README.md#languageexamplelean)。
+
+## 现有算法中的算术表达式
+
+现有 `... : Program` 函数使用 `open scoped ECDSAAdd.CircuitDSL`，在 `prog using` 中也可以写算术表达式。它们直接展开到配置中的具体电路，保持原接口；正确性仍由这些函数的 `_spec` / `_correct` 证明，不等于已经迁入上面的 `Code` / `Verified` 编译流程。
+
+```lean
+prog using (modArithmeticContext L) {
+  let x := L.x;
+  let y := L.y;
+  let total := L.reg .total;
+  total ^= (x + y);
+}
+```
+
+| 写法 | 含义 |
+| --- | --- |
+| `y += x;` / `y -= x;` | 原地加减，按目标位宽回绕；配置绑定进位等工作位 |
+| `out ^= (x + y);` / `out ^= (x - y);` | 将和／差 XOR 到 out，不覆盖已有值 |
+| `out ^= x;` / `out ^= const(k);` | XOR 寄存器／经典 Nat 常量；不表示重置 |
+| `out ^= (x - y) mod q;` / `out ^= (x * y) mod q;` | XOR 模差／模积 |
+| `y = (x + y) mod q;` / `y = (y - x) mod q;` | 原地模加减，不先按逻辑位宽截断 |
+| `out = (out + x * y) mod q;` / 减号版本 | 模积累加／累减 |
+| `control c { y += x; };` | 调用已有的受控加法；c=0 时数据效果为恒等 |
+| `control (c XOR 1) { out ^= x; };` | c=0 时 XOR，不测量控制位 |
+
+`q` 为经典 Nat；减法表示模减，不是 Lean Nat 的截断减法。模加减配置 `modAssignContext` 的 source 含零扩展高位，target 只传低 n 位；目标高位及工作区在配置中绑定并由原规格要求清零。其他接口的物理位宽仍以各模块规格为准，本构造层不做 `QReg n` 的静态位宽认证。
+
+`using 名称` 在此构造层选择一个局部接线函数，例如 `out = (out - x * y) mod q using squareSub;`；它不是 `arith` 的认证注册名称。这里不会自动检查自定义函数是否符合表达式：必须像生产函数一样提供门列连接和语义证明。支持显式选择的形式为非受控模加减、模积累加减，以及受控常量加法；其他未支持的形式报错。
+
+`control` 块只接受已支持的算术语句，可顺序列出多句；不是对任意 Program 的通用控制。负控制目前仅接入 XOR 寄存器／常量，其他负控制仍使用原有显式接口。循环沿用 `prog` 的构造期循环。清零仍显式写出反计算，不自动重置或分配工作区。相邻的互补 XOR 分支先降级再使用原选择优化，资源不变。
+
 ## 文件目录
 
 [Syntax.lean](#syntaxlean)
@@ -15,6 +64,18 @@
 [Hoare.lean](#hoarelean)
 
 这个文件定义如何陈述电路的正确性，并证明如何组合已有的正确性结论。
+
+[ArithmeticLanguage.lean](#arithmeticlanguagelean)
+
+这个文件定义带位宽的逻辑寄存器、原地模加的高层语义和不依赖实现的算法规格。
+
+[ArithmeticCompiler.lean](#arithmeticcompilerlean)
+
+这个文件定义带证明的实现、配置与编译计划，并证明编译结果的正确性及资源组合关系。
+
+[ArithmeticSyntax.lean](#arithmeticsyntaxlean)
+
+这个文件将可读的赋值语句解析为高层操作，并将源代码与配置一起保存。
 
 [Cost.lean](#costlean)
 
@@ -195,6 +256,142 @@ theorem frame (hc : Triple P c Q)
 ```
 
 证明了只依赖电路 c 未触及线路的额外条件 R，在执行后仍成立，因此可以同时加入前置条件和后置条件。
+
+## [ArithmeticLanguage.lean](ArithmeticLanguage.lean)
+
+```lean
+structure QReg (n : Nat)
+```
+
+QReg 是 n 位小端寄存器视图，由 wires、位宽证明 width、内部线路互异证明 distinct 组成。它引用物理线，不分配新寄存器，也不表示一个独立纯态。
+
+```lean
+def QReg.value {n : Nat} (r : QReg n) (s : BasisState) : Nat
+def Clean (work : List Wire) (s : BasisState) : Prop
+```
+
+value 读取此计算基分支中的寄存器数值；Clean 断言工作区每根线都为零，不执行清零。
+
+```lean
+structure ModAdd (n : Nat)
+```
+
+ModAdd 由 source、target 和经典 modulus 组成，描述 `target = (source + target) mod modulus`。
+
+```lean
+def ModAdd.Valid {n : Nat} (op : ModAdd n) : Prop
+def ModAdd.Pre {n : Nat} (op : ModAdd n) (s : BasisState) : Prop
+def ModAdd.Effect {n : Nat} (op : ModAdd n) (s t : BasisState) : Prop
+```
+
+Valid 要求 0<modulus<2^n，源和目标的所有线路互异。Pre 要求两个输入值均小于 modulus。Effect 描述源值保持、目标得到模加结果、目标之外所有 wire 保持。
+
+```lean
+theorem ModAdd.Effect.pre {n : Nat} {op : ModAdd n} {s t : BasisState}
+    (hv : op.Valid) (hp : op.Pre s) (he : op.Effect s t)
+theorem ModAdd.Effect.clean {n : Nat} {op : ModAdd n} {s t : BasisState}
+    (he : op.Effect s t) (work : List Wire)
+    (hd : ∀ w ∈ work, w ∉ op.target.wires) (hc : Clean work s)
+```
+
+分别证明一次模加之后，输入范围仍适合再次模加，与目标分离的零工作区仍为零。
+
+```lean
+structure Statement (n : Nat)
+abbrev Code (n : Nat) := List (Statement n)
+```
+
+Statement 包含高层 operation 和可选的实现名称 implementation；Code 是按顺序执行的语句列表。
+
+```lean
+inductive Executes {n : Nat} : Code n → BasisState → BasisState → Prop
+def Spec {n : Nat} (P : BasisState → Prop) (code : Code n) (Q : BasisState → Prop) : Prop
+```
+
+Executes 逐句连接 Pre 和 Effect，不涉及门列或实现名称。Spec 断言从 P 出发的高层执行都满足 Q；实际电路的执行存在性与相位恢复另由编译证明给出，不能只靠这条规格跳过 Ready。
+
+```lean
+def twice {n : Nat} (op : ModAdd n) (first second : Option String := none) : Code n
+theorem twice_spec {n : Nat} (op : ModAdd n) (first second : Option String)
+    (X Y : Nat) (work : List Wire) (hd : ∀ w ∈ work, w ∉ op.target.wires)
+```
+
+twice 构造两次同一模加。twice_spec 证明 x=X 保持，y 从 Y 变为 `(X + (X+Y) mod q) mod q`，与目标分离的工作区保持零；证明不依赖两次所选实现。
+
+## [ArithmeticCompiler.lean](ArithmeticCompiler.lean)
+
+```lean
+structure Resources
+structure Implementation {n : Nat} (op : ModAdd n)
+```
+
+Resources 由 Toffoli 数、测量数、静态线路集合组成。Implementation 包含具体电路、零工作区、有效性与分离条件、所有测量记录下的相位恢复和 Effect 证明，以及与同一电路一致的资源证明。
+
+```lean
+structure Binding (n : Nat)
+structure Config (n : Nat)
+def lookup {n : Nat} (name : String) (op : ModAdd n) :
+    List (Binding n) → Option (Implementation op)
+```
+
+Binding 将名称、操作及其已接线实现绑定。Config 保存默认名称和注册列表。lookup 同时匹配名称与完整操作，只返回已经带证明的实现。
+
+```lean
+inductive Lowering {n : Nat} : Code n → Type
+def Lowering.circuit {n : Nat} {code : Code n} : Lowering code → Program
+def Lowering.Ready {n : Nat} {code : Code n} : Lowering code → BasisState → Prop
+def Lowering.resources {n : Nat} {code : Code n} : Lowering code → Resources
+```
+
+Lowering 将每条高层语句配上实现；circuit 拼接门列。Ready 要求每次调用的范围和零工作区成立，包括前一条操作之后的调用条件。resources 将门数相加、线路集合取并集。
+
+```lean
+theorem Lowering.resources_correct {n : Nat} {code : Code n} (plan : Lowering code)
+theorem Lowering.run_correct {n : Nat} {code : Code n} (plan : Lowering code)
+    (s : State) (m : List Bool) (h : plan.Ready s.basis)
+theorem Lowering.sound {n : Nat} {code : Code n} (plan : Lowering code)
+    {P Q : BasisState → Prop} (spec : Spec P code Q)
+```
+
+分别证明资源报告与实际门列一致；Ready 成立时对所有测量记录实现高层 Executes 并恢复相位；以及高层 Spec 加 Ready 推出原有 Triple。
+
+```lean
+structure Verified {n : Nat} (code : Code n) (P Q : BasisState → Prop)
+theorem Verified.correct {n : Nat} {code : Code n} {P Q : BasisState → Prop}
+    (verified : Verified code P Q)
+```
+
+Verified 包含 plan、高层 specification 和由 P 推出 Ready 的证明。correct 得到 `Triple P plan.circuit Q`，不再留下未处理的调用条件。
+
+```lean
+def compile {n : Nat} (config : Config n) : (code : Code n) → Except String (Lowering code)
+```
+
+按配置解析每条语句；找不到已注册且操作匹配的实现时返回错误，不忽略语句，也不回退到其他实现。
+
+```lean
+theorem twice_ready {n : Nat} (op : ModAdd n) (first second : Option String)
+    (a b : Implementation op) (work : List Wire)
+    (ha : ∀ w ∈ a.workspace, w ∈ work) (hb : ∀ w ∈ b.workspace, w ∈ work)
+    (hd : ∀ w ∈ work, w ∉ op.target.wires)
+    (s : BasisState) (hp : op.Pre s) (hc : Clean work s)
+theorem twice_correct {n : Nat} (op : ModAdd n) (first second : Option String)
+    (a b : Implementation op) (work : List Wire)
+    (ha : ∀ w ∈ a.workspace, w ∈ work) (hb : ∀ w ∈ b.workspace, w ∈ work)
+    (hd : ∀ w ∈ work, w ∉ op.target.wires)
+    (X Y : Nat) (hX : X < op.modulus) (hY : Y < op.modulus)
+```
+
+twice_ready 证明两次调用可以借用同一初始为零的工作池，包括使用不同实现的情况。twice_correct 将这个结论与 twice_spec 组合成低层 Triple，保留源、清零工作池并恢复相位。
+
+## [ArithmeticSyntax.lean](ArithmeticSyntax.lean)
+
+```lean
+structure Request (n : Nat)
+def Request.compile {n : Nat} (request : Request n) : Except String (Lowering request.code)
+```
+
+Request 包含 config 和高层 code；compile 使用这份配置编译代码。`arith { ... }` 只产生 Code，`arith using config { ... }` 产生 Request；语法定义和宏展开无需逐条阅读。
 
 ## [Cost.lean](Cost.lean)
 

@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.RoundFrame
 import ECDSAAdd.Math.ModularInverse.KaliskiRound
 
 namespace ECDSAAdd.Arithmetic
+open scoped CircuitDSL
 
 /-- 数据寄存器承载 u/v/r/s，其他字段均为本轮清零的工作区；k 由独立计数器处理。 -/
 def roundDataValues (z : KState) : RoundField → Nat
@@ -62,8 +63,7 @@ def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Pro
   let r := L.r;
   let s := L.s;
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
-  CSub subtract u v;                         -- subtract=1 时 u -= v。
-  CAdd subtract r s;                         -- subtract=1 时 r += s。
+  control subtract { u -= v; r += s; };
   shiftRight(active, u);                     -- active=1 时 u /= 2。
   shiftLeft(active, s);                      -- active=1 时 s *= 2。
   swapDataPairs(L, swap);                    -- 交换回来。
@@ -80,8 +80,7 @@ def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : P
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
   shiftRight(active, s);                     -- active=1 时 s /= 2。
   shiftLeft(active, u);                      -- active=1 时 u *= 2。
-  CSub subtract r s;                         -- subtract=1 时 r -= s。
-  CAdd subtract u v;                         -- subtract=1 时 u += v。
+  control subtract { r -= s; u += v; };
   swapDataPairs(L, swap);                    -- 交换回来。
 }
 

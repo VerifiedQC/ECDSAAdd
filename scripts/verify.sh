@@ -8,6 +8,8 @@ lake env lean tests/ReadableLoops.lean
 lake env lean tests/ModularReadable.lean
 lake env lean tests/ContextPrograms.lean
 lake env lean tests/ControlledPrograms.lean
+lake env lean tests/ArithmeticLanguage.lean
+lake env lean tests/ArithmeticPrograms.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -20,6 +22,32 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Triple.seq
 #print axioms ECDSAAdd.Triple.conseq
 #print axioms ECDSAAdd.Triple.frame
+#print axioms ECDSAAdd.ArithmeticLanguage.twice_spec
+#print axioms ECDSAAdd.ArithmeticLanguage.Lowering.run_correct
+#print axioms ECDSAAdd.ArithmeticLanguage.Lowering.sound
+#print axioms ECDSAAdd.ArithmeticLanguage.Lowering.resources_correct
+#print axioms ECDSAAdd.ArithmeticLanguage.Verified.correct
+#print axioms ECDSAAdd.ArithmeticLanguage.twice_ready
+#print axioms ECDSAAdd.ArithmeticLanguage.twice_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.direct_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.direct_twice_resources
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.enabledAdd_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.controlled_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.compiles
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.frame
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.resources
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.masked_compiles
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.mixed_compiles
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.masked_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.mixed_correct
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.masked_resources
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.mixed_resources
+#print axioms ECDSAAdd.Arithmetic.ModAddLanguage.Example.implementations_differ
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceConstantAdd_program
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceNegate_program
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceGeneric_program
+#print axioms ECDSAAdd.Arithmetic.pointSquare_program
 #print axioms ECDSAAdd.Arithmetic.fullAdder_spec
 #print axioms ECDSAAdd.Arithmetic.eraseCarry_spec
 #print axioms ECDSAAdd.Arithmetic.rippleAdder_xor_correct
@@ -337,10 +365,4 @@ import ECDSAAdd
 LEAN
 )
 printf '%s\n' "$axioms"
-printf '%s\n' "$axioms" | awk '
-/depends on axioms:/ {
-  sub(/^.*\[/, ""); sub(/\].*$/, "")
-  n = split($0, names, /, */)
-  for (i = 1; i <= n; i++)
-    if (names[i] != "propext" && names[i] != "Classical.choice" && names[i] != "Quot.sound") exit 1
-}'
+printf '%s\n' "$axioms" | awk -f scripts/check-axioms.awk

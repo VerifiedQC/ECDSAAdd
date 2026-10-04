@@ -80,7 +80,7 @@ theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd
   have h := (hs.seq ht).seq ha
   have he : (if B then (if B then (p-A)%p else 0) else A)=(if B then (p-A)%p else A) := by cases B <;> rfl
   rw [hresult] at h
-  simpa only [pointInPlaceNegate,he] using h
+  simpa only [pointInPlaceNegate_program,he] using h
 
 /-- 取负后仅输入x的低位改变，临时差、高位与所有其它线路恢复。 -/
 theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
@@ -139,7 +139,7 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
     have hh := swapRegisters_wires L.core.generic L.point.x L.inPlaceNegate.low (hw.inputX.trans hm.core.low.symm) h
     simp [hqb,hq,hqlow] at hh
   apply run_preserves_outside
-  simp only [pointInPlaceNegate,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
+  simp only [pointInPlaceNegate_program,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
     controlledModAdd_wires _ _ 256 p hm (by omega),Finset.mem_union,List.mem_toFinset,List.mem_cons,
     List.mem_append,not_or]
   have htake : q∉L.inPlaceNegate.a.take 256 := fun h => hqa ((List.take_sublist _ _).subset h)

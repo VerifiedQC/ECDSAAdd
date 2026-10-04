@@ -4,6 +4,7 @@ import ECDSAAdd.Math.ModularAddition.ModInPlace
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped CircuitDSL
 
 /-- 模加核的固定线路：最高位借作约减标志；mask/flag 属于外层，不放入核工作区。 -/
 structure ModAddCoreLayout where
@@ -58,11 +59,11 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog using (modAddC
   let n := L.low.length;
   let lowSource := source.take n;
 
-  addInPlace source target;                         -- target += source
-  xorConstant(L.constant, p);                        -- constant = p
-  subInPlace L.constant target;                     -- target -= p；borrow = [原和<p]
-  xorConstant(L.constant, p);                        -- 清零 constant。
-  CAddConst borrow L.low p;                         -- borrow=1 时 low += p。
+  target += source;
+  L.constant ^= const(p);
+  target -= L.constant;        -- borrow = [原和<p]
+  L.constant ^= const(p);     -- 清零 constant。
+  control borrow { L.low += const(p); };
 
   -- 结果小于 source 表示曾发生约减，与借位标志相反。
   compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]，随后 X 清零 borrow。

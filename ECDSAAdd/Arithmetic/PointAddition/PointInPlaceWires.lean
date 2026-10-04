@@ -13,7 +13,7 @@ theorem pointInPlaceGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (c
     (L.inPlaceDivide_widths hw _ _ _ hw.inputX hw.inputY)).2
   have he := equalConstant_wires L.core.equalNegY L.core.equalX L.inPlaceXZero 0
   intro q
-  simp only [pointInPlaceGeneric,pointInPlaceClearSlope_program,zeroTestWithSeed,doubleControlXor,
+  simp only [pointInPlaceGeneric_program,pointInPlaceClearSlope_program,zeroTestWithSeed,doubleControlXor,
     ite_true,Bool.false_eq_true,ite_false,wires_append,hd,hs,he]
   simp only [Finset.mem_union,pointInPlaceCoreWires,DivideLayout.usedWires,inPlaceDivide,
     List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,or_false]

@@ -8,6 +8,7 @@ import ECDSAAdd.Arithmetic.ModularMultiplication.FieldMultiply
 import ECDSAAdd.Arithmetic.ModularInverse.InverseResources
 
 namespace ECDSAAdd.Arithmetic
+open scoped CircuitDSL
 
 namespace PointAddLayout
 
@@ -35,9 +36,9 @@ abbrev fieldInverseXor (pool : Nat → Wire) (x out : List Wire) : Program :=
 
 /-- out ^= (x−k) mod p，k 是经典常量，要求 x,k<p。 -/
 def pointSubConstant (L : PointAddLayout) (x out : List Wire) (k : Nat) : Program := prog {
-  xorConstant(L.constant, k);                    -- constant = k
+  L.constant ^= const(k);
   fieldSubXor(L.poolWire, x, L.constant, out);     -- out ^= (x-k) mod p
-  xorConstant(L.constant, k);                    -- 清零 constant。
+  L.constant ^= const(k);                      -- 清零 constant。
 }
 
 /-- 候选点计算的 XOR 接口；参数只保留输入、输出及经典常数。 -/
@@ -46,6 +47,8 @@ structure PointCandidateOps where
   fieldMulXor : List Wire → List Wire → List Wire → Program
   fieldInverseXor : List Wire → List Wire → Program
   pointSubConstant : List Wire → List Wire → Nat → Program
+  modSubXor : List Wire → List Wire → List Wire → Nat → Program
+  modMulXor : List Wire → List Wire → List Wire → Nat → Program
 
 /-- L 提供共用零工作池 pool 以及常数寄存器 constant；每个调用后归还零工作位。
 这里固定的是辅助接线，不隐藏输入输出，也不清除仍存活的候选点中间量。 -/
@@ -55,6 +58,8 @@ def pointCandidateContext (L : PointAddLayout) : CircuitDSL.Context PointCandida
     fieldMulXor := fun x y out => fieldMulXor L.poolWire x y out
     fieldInverseXor := fun x out => fieldInverseXor L.poolWire x out
     pointSubConstant := fun x out k => pointSubConstant L x out k
+    modSubXor := fun x y out q => modSub (poolSub L.poolWire x y out) q
+    modMulXor := fun x y out q => montMulXor (poolMul L.poolWire x y out) q
   }
 }
 
@@ -62,10 +67,15 @@ def pointCandidateContext (L : PointAddLayout) : CircuitDSL.Context PointCandida
 def pointSquare (L : PointAddLayout) : Program := prog using (pointCandidateContext L) {
   let slope := L.slope;
   let copy := L.constant; -- 用于保存 slope 的副本。
-  copyRegister(none, slope, copy);                      -- copy = slope
-  fieldMulXor slope (copy.take 256) L.square; -- square ^= slope² mod p
-  copyRegister(none, slope, copy);                      -- 清零 copy。
+  copy ^= slope;
+  L.square ^= (slope * (copy.take 256)) mod p;
+  copy ^= slope;                               -- 清零 copy。
 }
+
+theorem pointSquare_program (L : PointAddLayout) : pointSquare L =
+    copyRegister none L.slope L.constant ++
+    fieldMul (poolMul L.poolWire L.slope (L.constant.take 256) L.square) ++
+    copyRegister none L.slope L.constant := rfl
 
 /-- 计算普通点加候选：slope=(y−cy)/(x−cx)，candidateX=slope²−x−cx，candidateY=slope*(x−candidateX)−y，均 mod p。
 (cx,cy) 是经典常量点坐标。generic=1 时要求 x≠cx；为 0 时用分母 1 计算未选中的候选。 -/
@@ -75,16 +85,16 @@ def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog us
   let divisor := L.divisor.head! :: L.divisor.tail; -- 用于保存安全分母，最低位可装入 1。
   pointSubConstant x L.dx cx.val;                         -- dx = x-cx
   pointSubConstant y L.dy cy.val;                         -- dy = y-cy
-  CConst (L.generic XOR 1) [L.divisor.head!] 1; -- 非普通分支：divisor = 1。
-  CXor L.generic divisor (L.dx.take 256);     -- 普通分支：divisor = dx。
+  control (L.generic XOR 1) { [L.divisor.head!] ^= const(1); };
+  control L.generic { divisor ^= (L.dx.take 256); };
   fieldInverseXor L.divisor L.inverse;                  -- inverse = 1/divisor
-  fieldMulXor L.dy L.inverse L.slope;                  -- slope = dy/divisor
+  L.slope ^= (L.dy * L.inverse) mod p;
   pointSquare(L);                                             -- square = slope²
-  fieldSubXor L.square x L.offset;                     -- offset = square-x
+  L.offset ^= (L.square - x) mod p;
   pointSubConstant L.offset L.candidateX cx.val;           -- candidateX = offset-cx
-  fieldSubXor x L.candidateX L.delta;                   -- delta = x-candidateX
-  fieldMulXor L.delta (L.slope.take 256) L.product;       -- product = slope*delta
-  fieldSubXor L.product y L.candidateY;                 -- candidateY = product-y
+  L.delta ^= (x - L.candidateX) mod p;
+  L.product ^= (L.delta * (L.slope.take 256)) mod p;
+  L.candidateY ^= (L.product - y) mod p;
 }
 
 /-- 用 pointCandidateCompute 的匹配输入清零候选坐标、斜率及其余中间量。 -/
@@ -92,16 +102,16 @@ def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog usin
   let x := L.extendedX;
   let y := L.extendedY;
   let divisor := L.divisor.head! :: L.divisor.tail; -- 已恢复的安全分母。
-  fieldSubXor L.product y L.candidateY;            -- 清零 candidateY。
-  fieldMulXor L.delta (L.slope.take 256) L.product;  -- 清零 product。
-  fieldSubXor x L.candidateX L.delta;              -- 清零 delta。
+  L.candidateY ^= (L.product - y) mod p;              -- 清零 candidateY。
+  L.product ^= (L.delta * (L.slope.take 256)) mod p;   -- 清零 product。
+  L.delta ^= (x - L.candidateX) mod p;                -- 清零 delta。
   pointSubConstant L.offset L.candidateX cx.val;     -- 清零 candidateX。
-  fieldSubXor L.square x L.offset;                -- 清零 offset。
+  L.offset ^= (L.square - x) mod p;                 -- 清零 offset。
   pointSquare(L);                                        -- 清零 square。
-  fieldMulXor L.dy L.inverse L.slope;             -- 清零 slope。
+  L.slope ^= (L.dy * L.inverse) mod p;              -- 清零 slope。
   fieldInverseXor L.divisor L.inverse;             -- 清零 inverse。
-  CConst (L.generic XOR 1) [L.divisor.head!] 1; -- 非普通分支：清零常量 1。
-  CXor L.generic divisor (L.dx.take 256);     -- 普通分支：清零 dx 副本。
+  control (L.generic XOR 1) { [L.divisor.head!] ^= const(1); }; -- 清零常量 1。
+  control L.generic { divisor ^= (L.dx.take 256); };          -- 清零 dx 副本。
   pointSubConstant y L.dy cy.val;                    -- 清零 dy。
   pointSubConstant x L.dx cx.val;                    -- 清零 dx。
 }

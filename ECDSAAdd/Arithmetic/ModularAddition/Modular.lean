@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularAddition.ModularSteps
 
 namespace ECDSAAdd.Arithmetic
+open scoped CircuitDSL
 
 /-- 模加减主体的逻辑接口：out ^= x±y；辅助参数在 modArithmeticContext 接线。 -/
 structure ModArithmeticOps where
@@ -32,16 +33,16 @@ def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
   let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
   let out := L.lowReg .out;         -- 最终的输出。
 
-  xorConstant(modulus, q);                        -- modulus = q
-  addXor x y total;                               -- total = x+y
-  subXor total modulus diff;                      -- diff = total-q
+  modulus ^= const(q);
+  total ^= (x + y);
+  diff ^= (total - modulus);
 
-  CXor (borrow XOR 1) out (diff.take n); -- 无借位：out ^= diff 的低 n 位。
-  CXor borrow out (total.take n);       -- 有借位：out ^= total 的低 n 位。
+  control (borrow XOR 1) { out ^= (diff.take n); };
+  control borrow { out ^= (total.take n); };
 
-  subXor total modulus diff;                      -- 清零 diff。
-  addXor x y total;                               -- 清零 total。
-  xorConstant(modulus, q);                        -- 清零 modulus。
+  diff ^= (total - modulus);  -- 清零 diff。
+  total ^= (x + y);           -- 清零 total。
+  modulus ^= const(q);       -- 清零 modulus。
 }
 
 /-- 输出 L.out ^= (L.x−L.y) mod q，要求 0<q<2^n、x,y<q。
@@ -56,16 +57,16 @@ def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticConte
   let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
   let out := L.lowReg .out;         -- 最终的输出。
 
-  xorConstant(modulus, q);                              -- modulus = q
-  subXor x y diff;                                     -- diff = x-y
-  addXor diff modulus corrected;                       -- corrected = diff+q
+  modulus ^= const(q);
+  diff ^= (x - y);
+  corrected ^= (diff + modulus);
 
-  CXor (borrow XOR 1) out (diff.take n); -- 无借位：out ^= diff 的低 n 位。
-  CXor borrow out (corrected.take n);  -- 有借位：out ^= corrected 的低 n 位。
+  control (borrow XOR 1) { out ^= (diff.take n); };
+  control borrow { out ^= (corrected.take n); };
 
-  addXor diff modulus corrected;                       -- 清零 corrected。
-  subXor x y diff;                                     -- 清零 diff。
-  xorConstant(modulus, q);                              -- 清零 modulus。
+  corrected ^= (diff + modulus); -- 清零 corrected。
+  diff ^= (x - y);               -- 清零 diff。
+  modulus ^= const(q);          -- 清零 modulus。
 }
 
 private theorem registerAdderBits_map (bs : List ModBit) (a b target c : ModField) :

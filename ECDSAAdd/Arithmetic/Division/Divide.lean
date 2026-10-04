@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.ModularMultiplication.MontBorrow
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped CircuitDSL
 
 /-- 除法保留分母/分子，只累加到 acc；inner 的历史保存到乘积清理后。
 §16.2 的直接门列；完整规格、逐线保持和资源见 DivideSpec/DivideSupport。 -/
@@ -67,18 +68,18 @@ def divideLoad (L : DivideLayout) : Program := prog {
   let u := L.inner.first.u; -- 求逆所用的数据寄存器 u。
   let s := L.inner.first.s; -- 求逆所用的系数寄存器 s。
   CX (L.control XOR 1) leastBit;                 -- control=0 时 denominatorCopy=1。
-  CXor L.control denominatorCopy L.denominator; -- control=1 时 denominatorCopy=denominator。
-  xorConstant(u, p);                                    -- u = p
-  xorConstant(s, 1);                                    -- s = 1
+  control L.control { denominatorCopy ^= L.denominator; };
+  u ^= const(p);
+  s ^= const(1);
 }
 
 /-- 清零 divideLoad 装入的 v、u、s；要求它们已恢复到装载时的值。 -/
 def divideUnload (L : DivideLayout) : Program := prog {
   let denominatorCopy := L.vLow; -- 保存已恢复的安全分母。
   let leastBit := L.vBit; -- 安全分母的最低位。
-  xorConstant(L.inner.first.s, 1);                      -- 清零 s。
-  xorConstant(L.inner.first.u, p);                      -- 清零 u。
-  CXor L.control denominatorCopy L.denominator; -- control=1 时清零分母副本。
+  L.inner.first.s ^= const(1); -- 清零 s。
+  L.inner.first.u ^= const(p); -- 清零 u。
+  control L.control { denominatorCopy ^= L.denominator; }; -- 清零分母副本。
   CX (L.control XOR 1) leastBit;                 -- control=0 时清零常量 1。
 }
 
@@ -95,9 +96,12 @@ theorem divideUnload_program (L : DivideLayout) :
 structure DivisionProductOps where
   controlledMulAdd : Wire → List Wire → List Wire → List Wire → Program
   controlledMulSub : Wire → List Wire → List Wire → List Wire → Program
+  controlledModMulAddAssign : Wire → List Wire → List Wire → List Wire → Nat → Program
+  controlledModMulSubAssign : Wire → List Wire → List Wire → List Wire → Nat → Program
 
 /-- L 提供求逆后可借用的零工作位，不借走仍存活的逆元及历史。
-borrow[0] 是累加目标的零扩展高位，borrow[1…1827] 是原 Montgomery 工作区；模数固定为 p。 -/
+borrow[0] 是累加目标的零扩展高位，borrow[1…1827] 是原 Montgomery 工作区。
+表达式接口传入模数 q；旧 controlledMulAdd/Sub 接口仍固定为 p。 -/
 def divisionProductContext (L : DivideLayout) : CircuitDSL.Context DivisionProductOps := {
   operations := {
     controlledMulAdd := fun control x y out =>
@@ -106,6 +110,12 @@ def divisionProductContext (L : DivideLayout) : CircuitDSL.Context DivisionProdu
     controlledMulSub := fun control x y out =>
       montMulControlledSub control
         (borrowedMont L.borrow L.inner.first.done 1 x y (out++[L.borrowedBit 0])) p
+    controlledModMulAddAssign := fun control x y out q =>
+      montMulControlledAdd control
+        (borrowedMont L.borrow L.inner.first.done 1 x y (out++[L.borrowedBit 0])) q
+    controlledModMulSubAssign := fun control x y out q =>
+      montMulControlledSub control
+        (borrowedMont L.borrow L.inner.first.done 1 x y (out++[L.borrowedBit 0])) q
   }
 }
 
@@ -115,7 +125,7 @@ def divideAdd (L : DivideLayout) : Program := prog using (divisionProductContext
   let inverse := L.inner;    -- inverse.a 用于保存逆元。
   divideLoad(L);                                  -- v = control ? denominator : 1；u=p，s=1
   inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
-  controlledMulAdd L.control inverse.a L.numerator L.acc; -- control=1 时 acc += numerator/denominator (mod p)。
+  control L.control { L.acc = (L.acc + inverse.a * L.numerator) mod p; };
   inverseUncompute(inverse, p);                    -- 清零逆元，恢复求逆初态。
   divideUnload(L);                                -- 清零 v/u/s。
 }
@@ -126,7 +136,7 @@ def divideSub (L : DivideLayout) : Program := prog using (divisionProductContext
   let inverse := L.inner; -- inverse.a 用于保存逆元。
   divideLoad(L);                                  -- v = control ? denominator : 1；u=p，s=1
   inverseCompute(inverse, p);                      -- inverse.a = 1/v mod p
-  controlledMulSub L.control inverse.a L.numerator L.acc; -- control=1 时 acc -= numerator/denominator (mod p)。
+  control L.control { L.acc = (L.acc - inverse.a * L.numerator) mod p; };
   inverseUncompute(inverse, p);                    -- 清零逆元，恢复求逆初态。
   divideUnload(L);                                -- 清零 v/u/s。
 }

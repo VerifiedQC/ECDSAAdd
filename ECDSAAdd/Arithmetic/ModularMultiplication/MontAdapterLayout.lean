@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularMultiplication.MontResources
 import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
 
 namespace ECDSAAdd.Arithmetic
+open scoped CircuitDSL
 namespace MontLayout
 
 /-- 标准积的257位视图；中段借用共享区的前缀，历史保持存活。 -/
@@ -92,43 +93,47 @@ end MontLayout
 def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
   let product := M.product; -- 内部模积 z 的低 257 位。
   montMulCompute(M, p);                      -- product = x*y mod p
-  copyRegister(none, product, M.out);      -- out ^= product
+  M.out ^= product;
   montMulUncompute(M, p);                    -- 清零内部模积与历史。
 }
 
 /-- M.out ← (M.out+M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
-def montMulAdd (M : MontLayout) (p : Nat) : Program := prog {
-  let accumulate := M.addView; -- 输入 a 接内部模积，目标 z 接 out。
+def montMulAdd (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
+  let product := M.addView.a; -- 内部模积，含零扩展高位。
+  let out := M.addView.low;   -- 输出的低 256 位。
   montMulCompute(M, p);                      -- product = x*y mod p
-  modAddInPlace(accumulate, p); -- out += product (mod p)
+  out = (product + out) mod p;
   montMulUncompute(M, p);                    -- 清零内部模积与历史。
 }
 
 /-- M.out ← (M.out−M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
-def montMulSub (M : MontLayout) (p : Nat) : Program := prog {
-  let accumulate := M.addView; -- 输入 a 接内部模积，目标 z 接 out。
+def montMulSub (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
+  let product := M.addView.a; -- 内部模积，含零扩展高位。
+  let out := M.addView.low;   -- 输出的低 256 位。
   montMulCompute(M, p);                      -- product = x*y mod p
-  modSubInPlace(accumulate, p); -- out -= product (mod p)
+  out = (out - product) mod p;
   montMulUncompute(M, p);                    -- 清零内部模积与历史。
 }
 
 /-- M.out ← (M.out+c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulAdd。 -/
-def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
-  let accumulate := M.addView; -- 输入 a 接内部模积，目标 z 接 out。
+def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
+  let product := M.addView.a; -- 内部模积，含零扩展高位。
+  let out := M.addView.low;   -- 输出的低 256 位。
   montMulCompute(M, p);                      -- product = x*y mod p
-  controlledModAdd(c, accumulate, p); -- c=1 时 out += product (mod p)。
+  control c { out = (product + out) mod p; };
   montMulUncompute(M, p);                    -- 清零内部模积与历史。
 }
 
 /-- M.out ← (M.out−c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulSub。 -/
-def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog {
-  let accumulate := M.addView; -- 输入 a 接内部模积，目标 z 接 out。
+def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
+  let product := M.addView.a; -- 内部模积，含零扩展高位。
+  let out := M.addView.low;   -- 输出的低 256 位。
   montMulCompute(M, p);                      -- product = x*y mod p
-  controlledModSub(c, accumulate, p); -- c=1 时 out -= product (mod p)。
+  control c { out = (out - product) mod p; };
   montMulUncompute(M, p);                    -- 清零内部模积与历史。
 }
 

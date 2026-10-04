@@ -362,14 +362,15 @@ example (L : DivideLayout) :
 example (L : ControlledPointLayout) (r : List Wire) (k : Fp) :
     pointInPlaceConstantAdd L r k =
   let M := L.inPlaceConstant r
-  maskedConstant L.core.generic M.a k.val ++ modAddInPlace M p ++ maskedConstant L.core.generic M.a k.val := by rfl
+  maskedConstant L.core.generic M.a k.val ++ modAddInPlace M p ++ maskedConstant L.core.generic M.a k.val :=
+  pointInPlaceConstantAdd_program L r k
 
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceNegate
 example (L : ControlledPointLayout) :
     pointInPlaceNegate L =
   controlledModSub L.core.generic L.inPlaceNegate p ++
   swapRegisters L.core.generic L.point.x L.inPlaceNegate.low ++
-  controlledModAdd L.core.generic L.inPlaceNegate p := by rfl
+  controlledModAdd L.core.generic L.inPlaceNegate p := pointInPlaceNegate_program L
 
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceClearSlope
 example (L : ControlledPointLayout) (lambdaStar : Fp) :
