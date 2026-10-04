@@ -12,7 +12,7 @@ attribute [local irreducible] compressedHistoryEncode compressedHistoryDecode
 /-- All codec instructions and corrections stay on the six real history
 sites. This includes both encoder and decoder support. -/
 theorem compressedHistory_gate_mem (w : Nat → Wire) (hn : (skywalkPoolWires w).Nodup)
-    (hlo : ∀ j,j < 1798 → 6 ≤ w j) (start : Nat) (hs : start+3 ≤ 512)
+    (hlo : CompressedHistoryAbove w) (start : Nat) (hs : start+3 ≤ 512)
     (p : Program) (hp : p=compressedHistoryEncode w start ∨ p=compressedHistoryDecode w start)
     (q : Wire) (hq : q∈wires p) :
     ∃ j : Fin 6,q=w (compressedHistoryId start j) := by
@@ -52,7 +52,7 @@ private theorem compressedHistory_away_tick (w : Nat → Wire)
 /-- A group can commute past later ticks only after the following tick has
 consumed its final orientation. The boundary is an exact support theorem. -/
 theorem compressedHistory_disjoint_later (w : Nat → Wire)
-    (hn : (skywalkPoolWires w).Nodup) (hlo : ∀ j,j < 1798 → 6 ≤ w j)
+    (hn : (skywalkPoolWires w).Nodup) (hlo : CompressedHistoryAbove w)
     (start i : Nat) (hs : start+3 ≤ 512) (hlate : start+4 ≤ i) (hi : i < 512) :
     Disjoint (wires (compressedHistoryEncode w start)) (wires (narrowSkywalkScheduledTick w i)) ∧
     Disjoint (wires (compressedHistoryDecode w start)) (wires (narrowSkywalkScheduledUntick w i)) := by
@@ -68,7 +68,7 @@ theorem compressedHistory_disjoint_later (w : Nat → Wire)
     exact compressedHistory_away_tick w hn start i hs hlate hi j (ht.2 htq)
 
 theorem compressedHistory_commute_later (w : Nat → Wire)
-    (hn : (skywalkPoolWires w).Nodup) (hlo : ∀ j,j < 1798 → 6 ≤ w j)
+    (hn : (skywalkPoolWires w).Nodup) (hlo : CompressedHistoryAbove w)
     (start i : Nat) (hs : start+3 ≤ 512) (hlate : start+4 ≤ i) (hi : i < 512)
     (s : State) (mc mt : List Bool) :
     run (compressedHistoryEncode w start) mc (run (narrowSkywalkScheduledTick w i) mt s)=

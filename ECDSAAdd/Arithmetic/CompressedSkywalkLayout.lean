@@ -11,6 +11,20 @@ def compressedHistoryId (start : Nat) (q : Fin 6) : Nat :=
 def compressedHistoryMap (w : Nat → Wire) (start : Nat) : Fin 6 → Wire :=
   fun q => w (compressedHistoryId start q)
 
+/-- Only history labels need to avoid the local codec template labels.
+The divisor rail may therefore occupy the caller's original X register. -/
+def CompressedHistoryAbove (w : Nat → Wire) : Prop :=
+  ∀ j,(j < 512 ∨ (1028 ≤ j ∧ j < 1540)) → 6 ≤ w j
+
+theorem compressedHistoryId_region (start : Nat) (hs : start+3 ≤ 512) (q : Fin 6) :
+    compressedHistoryId start q < 512 ∨
+      (1028 ≤ compressedHistoryId start q ∧ compressedHistoryId start q < 1540) := by
+  have hq := q.isLt
+  unfold compressedHistoryId
+  split
+  · left; omega
+  · right; constructor <;> omega
+
 theorem compressedHistoryId_bound (start : Nat) (hs : start+3 ≤ 512) (q : Fin 6) :
     compressedHistoryId start q < 1798 := by
   have hq := q.isLt
@@ -30,8 +44,8 @@ theorem compressedHistoryMap_injective (w : Nat → Wire)
   split_ifs at hid  <;> omega
 
 theorem compressedHistoryMap_above (w : Nat → Wire) (start : Nat) (hs : start+3 ≤ 512)
-    (hlo : ∀ j,j < 1798 → 6 ≤ w j) : ∀ q,6 ≤ compressedHistoryMap w start q :=
-  fun q => hlo _ (compressedHistoryId_bound start hs q)
+    (hlo : CompressedHistoryAbove w) : ∀ q,6 ≤ compressedHistoryMap w start q :=
+  fun q => hlo _ (compressedHistoryId_region start hs q)
 
 theorem skywalkRecordedSymbol_legal (x p j : Nat) (hp0 : 0 < p) (hpo : p%2=1) :
     let c := SkywalkTrace.code (SkywalkTrace.next^[j]
@@ -73,7 +87,7 @@ theorem compressedHistoryStage_legal (w : Nat → Wire) (x p i start : Nat)
   simpa [compressedHistoryMap,compressedHistoryId,Nat.add_assoc] using And.intro h0 (And.intro h1 h2)
 
 theorem compressedHistoryEncode_correct (w : Nat → Wire)
-    (hn : (skywalkPoolWires w).Nodup) (hlo : ∀ j,j < 1798 → 6 ≤ w j)
+    (hn : (skywalkPoolWires w).Nodup) (hlo : CompressedHistoryAbove w)
     (x p i start : Nat) (hp0 : 0 < p) (hpo : p%2=1)
     (hs : start+3 ≤ i) (hi : i ≤ 512) (s : State) (m : List Bool)
     (h : SkywalkIntegerStage w (SkywalkRails.encode false false (x:Int) (p:Int)) i s.basis) :
