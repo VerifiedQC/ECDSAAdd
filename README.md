@@ -6,29 +6,31 @@
 
 ## Current status
 
-本分支保存 2026-10-04 精确 streamed-square 完整接入检查点，已验证 Lean 源码提交为 `6d3196e`。结论采用本仓库带符号基态与测量记录语义；完整证明范围见[说明](docs/PROOF_SCOPE.md)。这是降低 Step 4 工作区的**实验检查点**，由于 Toffoli 成本显著增加，未取代较低门数的已证生产检查点。
+本分支的完整受控点加已接入精确 measured streamed-square Step 4。已验证 Lean 源码提交为 **`88aad07`**；证明采用本仓库的带符号基态与任意测量记录模型，范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
 
-**当前分支的完整点加入口** `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，且对所有测量记录恢复模型中的相位。有限 C 的资源为 **4,215,192 Toffoli / 1,984,512 次测量 / ≤2,579 个静态逻辑 wire sites**；C=O 时构造为空程序。完整公开规格见 [`controlledPointAdd_spec`](ECDSAAdd/Arithmetic/ControlledPointAddSpec.lean)，资源定理见 [`controlledPointAdd_finite_resources`](ECDSAAdd/Arithmetic/ControlledPointResources.lean)。Toffoli 数值由 Lean 生成的具体门列导出；形式资源定理给出 `2643716 + pointStreamedSquareCost L`，其中 `pointStreamedSquareCost L = 863304 + cnotCount L.dialogStreamedSquareWide.program`，此布局的核心 CNOT 数为 708,172。
+有限 C 的完整电路资源为 **2,743,618 Toffoli / 2,083,894 次测量 / ≤2,579 个静态逻辑位置**；C=O 时为空程序。**完整 Step 4 为 99,902 Toffoli / 99,382 次测量 / ≤1,297 个分配逻辑位置（包含常驻寄存器）**。该分配证书给出 peak-live 上界；尚未测量新电路的精确存活峰值，不能把上界写成精确峰值。
 
-当前路径保留精确的 512 轮 Skywalk 乘除与完整角落处理，Step 4 改为每次生成、折叠、清理一个 128/129 位子平方的 `with_square` 门列。完整远程 `lake --wfail build` 与 **749 项公开传递公理查询**通过：构建 **148 秒**，审计 **127 秒**，合计 **275 秒（4 分 35 秒）**，排队时间为零。另一次 755 项查询检查了新平方组件及其支持定理，只使用 `propext`、`Classical.choice`、`Quot.sound`。没有使用抽样来证明点加正确性，没有启用近似优化，全部 Lean 执行位于 CPU pod。详见[检查点说明](docs/STREAMED_SQUARE_CHECKPOINT_20261004.md)与[验证时间](docs/verification/streamed-square-20261004/timing.json)。
+CPU pod 上完整 `lake --wfail build` 和 **931 项公开传递公理查询**通过：构建 **355 秒**，审计 **138 秒**，合计 **493 秒（8 分 13 秒）**；排队与验证器设置时间各为 **0 秒**。全部 **480 个提交源文件哈希**在验证前后匹配。白名单仅含 `propext`、`Classical.choice`、`Quot.sound`。正确性由 Lean 形式证明建立，没有使用抽样或近似优化。详见[完整检查点记录](docs/MEASURED_STREAMED_SQUARE_20261004.md)。
 
-### Six-stage decomposition (verified streamed checkpoint)
+### Six-stage decomposition (verified measured streamed checkpoint)
 
 | Stage | Logical Q ceiling, including resident sites | Toffolis | Measurements |
 | --- | ---: | ---: | ---: |
 | 1. Coordinate differences | ≤1,293 | 2,046 | 2,046 |
-| 2. Dialog-GCD division | ≤2,579 | 1,315,329 | 986,367 |
+| 2. Skywalk-GCD division | ≤2,579 | 1,315,329 | 986,367 |
 | 3. Prepare X workspace | ≤1,293 | 1,023 | 1,023 |
-| 4. Streamed modular square | **≤1,297** | **1,571,476** | **0** |
+| 4. Measured streamed modular square | **≤1,297** | **99,902** | **99,382** |
 | 5. Forward multiplication | ≤2,579 | 1,315,330 | 986,368 |
 | 6. Recover output | ≤1,550 | 5,884 | 4,604 |
-| **Six-stage subtotal** | **≤2,579** | **4,211,088** | **1,980,408** |
+| **Six-stage subtotal** | **≤2,579** | **2,739,514** | **2,079,790** |
 | Additional input/corner classification | ≤1,034 | 4,104 | 4,104 |
-| **Complete controlled finite-addend point addition** | **≤2,579** | **4,215,192** | **1,984,512** |
+| **Complete controlled finite-addend point addition** | **≤2,579** | **2,743,618** | **2,083,894** |
 
-Q 均为保守分配/支持上界，**不是新电路实测的精确 peak-live Q**。Step 4 的 1,297-site 布局包含 521 个常驻点/控制/分类位置与 776 个工作位置；其导出门列实际触及 1,289 个位置。按证书仅分配这些位置即可得到相应 peak-live 上界，最终释放调度的精确峰值扫描仍待完成。完整电路的峰值上界由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
+Q 是支持/分配证书给出的保守存活上界，**不是精确 peak-live 测量**。Step 4 的证书含 521 个常驻点/控制/分类位置与 776 个工作位置。完整电路 Q 上界仍由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
 
-**Step 4 成本回归**：此前 signed-row Step 4 为 82,101 T、81,589 次测量、2,865 schedule-peak Q，完整较低门数检查点为 2,725,817 T / 2,066,101 次测量 / ≤2,994 静态位置。新的无控制 streamed core 为 287,768 T、零测量，包含 708,172 个 CNOT。本检查点的通用精确控制包装将每个原 CCX 转成三个 CCX、每个原 CX 转成一个 CCX，因此受控 Step 4 为 `3 × 287,768 + 708,172 = 1,571,476 T`。这不是 82,101-T 实现同时降到 1,297 Q 的结果。后续需用算术专用控制消除包装开销，并证明更窄的短窗口折叠；1,170/1,171-site 目标及候选节省尚未计入当前结果。
+Step 4 对照前一已证低宽版本 `d477a67`：749,338 →99,902 T，省 **649,436 T（86.67%）**，保持 ≤1,297-site 证书；完整点加相应从 3,393,054 降至 2,743,618 T。较早的 signed-row 版本仍是另一空间/门数取舍：Step 4 82,101 T /2,865 schedule-peak Q，完整点加 2,725,817 T /≤2,994 静态位置。当前低宽版本比它多 17,801 T；这两个实现的资源不能相加。
+
+新路径把控制放在子平方的输入掩码中，读取隐式常量/互补位，并保留精确输出方向帧。三个 128/129 位子平方依次生成、折叠、独立清理；38 个精确模加、四个全字归一化/恢复与所有测量相位/工作清理均已接入并证明。未反转含测量的门列，未采用概率窗口、截断或近似。旧 unitary streamed 控制包装作为历史实现保留，未用于当前 `pointDialogSquare`。
 
 | 范围 | 当前状态 | 代码入口 |
 | --- | --- | --- |
