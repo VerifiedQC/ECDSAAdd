@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.BalancedFieldSupport
+import ECDSAAdd.Arithmetic.BalancedCoreLayoutProof
 import ECDSAAdd.Arithmetic.SkywalkShared
 
 set_option maxRecDepth 8192
@@ -70,8 +71,43 @@ theorem balancedSharedPorts_support (w : Nat → Wire) (sign : Wire) :
       (balancedSharedPorts w sign).wires.toFinset :=
   BalancedCircuit.support _ (balancedSharedPorts_widths w sign)
 
+private def balancedWorkIds : List Nat :=
+  [765,768,767,766,1796,1797,1027]++List.range' 1540 256
+
+private def availableWorkIds : List Nat :=
+  List.range' 1540 257++List.range' 1798 256++[1797]++List.range' 512 257++
+    [2313,769,1027,2054,2055]
+
+private theorem balancedWorkIds_subset : balancedWorkIds⊆availableWorkIds := by decide
+
+/-- All temporary balanced sites were proved zero by the existing terminal
+clear/field-work interface, including the explicitly borrowed padding bit. -/
+theorem balancedSharedPorts_work_subset (w : Nat → Wire) (sign : Wire) :
+    BalancedCircuit.work (balancedSharedPorts w sign) ⊆
+      (skywalkSharedField w).work++skywalkSharedUnused w := by
+  have used : BalancedCircuit.work (balancedSharedPorts w sign)=balancedWorkIds.map w := by
+    simp [BalancedCircuit.work,balancedSharedPorts,balancedWorkIds,wireBlock]
+  have available : (skywalkSharedField w).work++skywalkSharedUnused w=availableWorkIds.map w := by
+    simp [skywalkSharedField,skywalkSharedUnused,ModInPlaceLayout.work,
+      ModAddCoreLayout.work,availableWorkIds,wireBlock,List.map_append,List.append_assoc]
+  rw [used,available]
+  intro q hq
+  obtain ⟨j,hj,rfl⟩ := List.mem_map.mp hq
+  exact List.mem_map.mpr ⟨j,balancedWorkIds_subset hj,rfl⟩
+
+theorem balancedSharedPorts_clean (w : Nat → Wire) (sign : Wire) (base : BasisState)
+    (hw : regValue (skywalkSharedField w).work base=0)
+    (hu : regValue (skywalkSharedUnused w) base=0) :
+    ∀q∈BalancedCircuit.work (balancedSharedPorts w sign),base q=false := by
+  intro q hq
+  have h := balancedSharedPorts_work_subset w sign hq
+  rcases List.mem_append.mp h with h|h
+  · exact (regValue_zero _ _).mp hw q h
+  · exact (regValue_zero _ _).mp hu q h
+
 end ECDSAAdd.Arithmetic
 
 #print axioms ECDSAAdd.Arithmetic.balancedSharedPorts_nodup
 #print axioms ECDSAAdd.Arithmetic.balancedSharedPorts_r
 #print axioms ECDSAAdd.Arithmetic.balancedSharedPorts_y
+#print axioms ECDSAAdd.Arithmetic.balancedSharedPorts_clean
