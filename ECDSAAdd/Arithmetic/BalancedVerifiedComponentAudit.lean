@@ -1,3 +1,8 @@
+import ECDSAAdd.Arithmetic.BalancedFieldCircuitProof
+import ECDSAAdd.Arithmetic.BalancedFieldConvertProgram
+import ECDSAAdd.Arithmetic.BalancedInverseComposeFlags
+import ECDSAAdd.Arithmetic.BalancedInverseComposeFold
+import ECDSAAdd.Arithmetic.BalancedInverseComposeRaw
 import ECDSAAdd.Arithmetic.BalancedCoreSeedProof
 import ECDSAAdd.Arithmetic.BalancedFieldSupport
 import ECDSAAdd.Arithmetic.BalancedFieldInverseArithmetic
@@ -73,3 +78,15 @@ import ECDSAAdd.Arithmetic.BalancedFieldInverseParity
 #print axioms ECDSAAdd.Arithmetic.BalancedInverse.result
 #print axioms ECDSAAdd.Arithmetic.BalancedInverse.result_bounds
 #print axioms ECDSAAdd.Arithmetic.BalancedInverse.result_half
+
+#print axioms ECDSAAdd.Arithmetic.BalancedCircuit.core_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCircuit.program_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.recoverSelectors_run
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.undoPreparation_run
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.result_parity
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.result_sign
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.rotate_unfold
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.undoFold_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.rawSubtract_modular
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.rawSubtract_signed
+#print axioms ECDSAAdd.Arithmetic.BalancedConvert.counts
