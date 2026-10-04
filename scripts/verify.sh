@@ -4,6 +4,7 @@ cd "$(dirname "$0")/.."
 lake --wfail build
 
 # Report and check only the public proof entry points.
+set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
 import ECDSAAdd.Arithmetic.DisjointPrograms
@@ -1147,8 +1148,11 @@ import ECDSAAdd.Arithmetic.FusedInversePackedProof
 #print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_resource_certificate
 LEAN
 )
+task_axiom_lean_rc=$?
+set -e
 printf '%s\n' "$axioms"
 printf '%s\n' "$axioms" > "${ECDSA_EXACT_AXIOM_LOG:-/tmp/ecdsadd-point-axioms.log}"
+if [[ "$task_axiom_lean_rc" -ne 0 ]]; then exit "$task_axiom_lean_rc"; fi
 python3 - "${ECDSA_EXACT_AXIOM_LOG:-/tmp/ecdsadd-point-axioms.log}" "$0" <<'PY'
 import re,sys
 from pathlib import Path
