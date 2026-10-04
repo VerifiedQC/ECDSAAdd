@@ -56,7 +56,7 @@ theorem pointDialogGeneric_wires (L : ControlledPointLayout) (hw : L.Widths) (hn
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,nx,nl,or_false] at hh
   have nSquareFirst : q∉wires (pointDialogSquare L) := by
     intro h
-    have hh := pointStreamedSquare_support L hw hn h
+    have hh := pointMeasuredSquareCandidate_support L hw hn h
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,ny,nx,
       ntake 776,or_false] at hh
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
@@ -126,7 +126,7 @@ theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Width
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,nx,nl,or_false] at hh
   have nSquare : q∉wires (pointDialogSquare L) := by
     intro h
-    have hh := pointStreamedSquare_support L hw hn h
+    have hh := pointMeasuredSquareCandidate_support L hw hn h
     simp only [List.mem_toFinset,List.mem_cons,List.mem_append,ng,ny,nx,
       ntake 776 (by omega),or_false] at hh
   have nneg := modPrograms_not_mem q L.core.generic ng L.dialogNegate (L.dialogNegate_widths hw) nNeg
