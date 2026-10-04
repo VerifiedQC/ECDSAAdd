@@ -1,4 +1,5 @@
-import ECDSAAdd.Arithmetic.PointDialogSteps
+import ECDSAAdd.Arithmetic.PointRecoveryStage
+import ECDSAAdd.Arithmetic.PointInPlaceProgram
 import ECDSAAdd.Math.DialogPointFlags
 
 namespace ECDSAAdd.Arithmetic
@@ -12,9 +13,7 @@ def pointDialogGeneric (L : ControlledPointLayout) (cx cy : Fp) : Program :=
   pointDialogSquare L ++
   pointDialogConstantAdd L L.point.x (3*cx) ++
   pointSkywalkArithmetic L true ++
-  pointDialogNegate L ++
-  pointDialogConstantAdd L L.point.x cx ++
-  pointDialogConstantAdd L L.point.y (-cy)
+  pointRecoveryStage L cx cy
 
 /-- 标志别名：equalX=hEnable，equalNegY=h；其余三个输入分类仍为o/d/i。 -/
 def pointDialogGenericFlag (L : ControlledPointLayout) : Program :=

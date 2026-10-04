@@ -8,37 +8,15 @@ open Secp256k1 ControlledPointLayout
 
 /-- 常数掩码只含CX；每段成本完全来自同一模加核。 -/
 theorem pointDialogConstantAdd_counts (L : ControlledPointLayout) (hw : L.Widths)
-    (hnd : L.wires.Nodup) (r : List Wire) (hr : r=L.point.x ∨ r=L.point.y) (k : Fp) :
+    (_hnd : L.wires.Nodup) (r : List Wire) (hr : r=L.point.x ∨ r=L.point.y) (k : Fp) :
     toffoliCount (pointDialogConstantAdd L r k)=1023 ∧
     measurementCount (pointDialogConstantAdd L r k)=1023 := by
-  have hn := (List.nodup_cons.mp (L.dialogUnary_nodup hw hnd r hr)).2
-  have hl : r.length=256 := by
-    rcases hr with rfl | rfl
-    · exact hw.inputX
-    · exact hw.inputY
-  have ha := modAddInPlace_resources (L.dialogUnary r) 256 p (L.dialogUnary_widths hw r hl) hn (by omega)
-  simp only [pointDialogConstantAdd,toffoliCount_append,measurementCount_append,
-    (maskedConstant_counts _ _ _).1,(maskedConstant_counts _ _ _).2,ha.1,ha.2.1]
-  norm_num
+  exact pointRecoveryConstantAdd_counts L hw r hr k
 
-/-- T←−x、受控交换、T+=x的同门列计数。 -/
-theorem pointDialogNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup) :
-    toffoliCount (pointDialogNegate L)=3838 ∧ measurementCount (pointDialogNegate L)=2558 := by
-  have hn := L.dialogNegate_nodup hw hnd
-  have hl := L.dialogNegate_widths hw
-  have ha := controlledModAdd_resources L.core.generic L.dialogNegate 256 p hl hn (by omega)
-  have hs := controlledModSub_resources L.core.generic L.dialogNegate 256 p hl hn (by omega)
-  have hswap : (L.core.generic::L.point.x++L.dialogNegate.low).Nodup := by
-    apply List.nodup_iff_count.mpr; intro q
-    have h := List.nodup_iff_count.mp hn q
-    simp only [dialogNegate, ModInPlaceLayout.wires,ModInPlaceLayout.z,
-      ModAddCoreLayout.z,List.count_append,List.count_cons,List.count_nil] at h ⊢
-    omega
-  have he := swapRegisters_resources L.core.generic L.point.x L.dialogNegate.low
-    (hw.inputX.trans hl.core.low.symm) hswap
-  simp only [pointDialogNegate,toffoliCount_append,measurementCount_append,ha.1,ha.2.1,hs.1,hs.2.1,he.1,he.2]
-  rw [show L.point.x.length=256 from hw.inputX]
-  norm_num
+/-- Direct exact negation with shared zero/carry workspace; retained as a public utility. -/
+theorem pointDialogNegate_counts (L : ControlledPointLayout) (hw : L.Widths) (_hnd : L.wires.Nodup) :
+    toffoliCount (pointDialogNegate L)=1022 ∧ measurementCount (pointDialogNegate L)=1022 :=
+  pointRecoveryNegate_counts L hw
 
 
 theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_hn : L.wires.Nodup) :
@@ -48,22 +26,22 @@ theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_h
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=2739514 ∧
-    measurementCount (pointDialogGeneric L cx cy)=2079790 := by
+    toffoliCount (pointDialogGeneric L cx cy)=2735931 ∧
+    measurementCount (pointDialogGeneric L cx cy)=2077487 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
   have hd := pointSkywalkArithmetic_counts L hw hn
   have hs := pointDialogSquare_counts L hw hn
-  have hn' := pointDialogNegate_counts L hw hn
+  have recovery := pointRecoveryStage_counts L hw cx cy
   simp only [pointDialogGeneric,toffoliCount_append,measurementCount_append,
     (ha _).1,(ha _).2,(hb _).1,(hb _).2,hd.1,hd.2.1,hd.2.2.1,hd.2.2.2,
-    hs.1,hs.2,hn'.1,hn'.2]
+    hs.1,hs.2,recovery.1,recovery.2]
   norm_num
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=2743618 ∧
-    measurementCount (pointDialogFinite L C cx cy)=2083894 := by
+    toffoliCount (pointDialogFinite L C cx cy)=2740035 ∧
+    measurementCount (pointDialogFinite L C cx cy)=2081591 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by
