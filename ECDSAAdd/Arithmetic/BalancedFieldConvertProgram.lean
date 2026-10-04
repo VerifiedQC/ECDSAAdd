@@ -19,7 +19,7 @@ def Layout.word (L : Layout) := L.low++[L.msb]
 def Layout.wires (L : Layout) := [L.cin,L.one,L.flag,L.msb]++L.low++L.carry
 def Layout.Widths (L : Layout) := L.low.length=255 ∧ L.carry.length=255
 
-def bias : Nat := (sparseF+1)/2
+def bias : Nat := (sparseF-1)/2
 def inverseBias : Nat := 2^256-bias
 
 def correction (L : Layout) : List MappedBit :=

@@ -1,3 +1,5 @@
+import ECDSAAdd.Arithmetic.BalancedFieldConvertProof
+import ECDSAAdd.Arithmetic.BalancedInverseComposeSeed
 import ECDSAAdd.Arithmetic.BalancedFieldCircuitProof
 import ECDSAAdd.Arithmetic.BalancedFieldConvertProgram
 import ECDSAAdd.Arithmetic.BalancedInverseComposeFlags
@@ -90,3 +92,11 @@ import ECDSAAdd.Arithmetic.BalancedFieldInverseParity
 #print axioms ECDSAAdd.Arithmetic.BalancedInverse.rawSubtract_modular
 #print axioms ECDSAAdd.Arithmetic.BalancedInverse.rawSubtract_signed
 #print axioms ECDSAAdd.Arithmetic.BalancedConvert.counts
+
+#print axioms ECDSAAdd.Arithmetic.BalancedConvert.predicate_run
+#print axioms ECDSAAdd.Arithmetic.BalancedConvert.center_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedConvert.canonical_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.prepared_one
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.undoPreparation_word
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.unseed_run
+#print axioms ECDSAAdd.Arithmetic.BalancedInverse.unseed_correlations
