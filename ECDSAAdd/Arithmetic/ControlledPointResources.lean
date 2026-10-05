@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.ControlledPointSupport
 import ECDSAAdd.Arithmetic.PointDialogResources
+import ECDSAAdd.Arithmetic.CompressedPointDialogResources
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -28,11 +29,11 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
 /-- Exact costs of the same complete Skywalk point program, with a physical support bound. -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=2222891 ∧
-    measurementCount (controlledPointAdd L (.some hc))=1564447 ∧
-    qubitCount (controlledPointAdd L (.some hc))≤2068 := by
-  have hh := pointDialogFinite_counts L h hn (.some hc) cx cy
-  exact ⟨hh.1,hh.2,pointDialogFinite_qubits L h hn (.some hc) cx cy⟩
+    toffoliCount (controlledPointAdd L (.some hc))=2227651 ∧
+    measurementCount (controlledPointAdd L (.some hc))=1565127 ∧
+    qubitCount (controlledPointAdd L (.some hc))≤1899 := by
+  have hh := CompressedPointDialog.finite_counts L h hn (.some hc) cx cy
+  exact ⟨hh.1,hh.2,CompressedPointDialog.finite_qubits L h hn (.some hc) cx cy⟩
 
 /-- C=O 在构造期为空程序，故实际门数、测量和线路集合均为空。 -/
 theorem controlledPointAdd_zero_resources (L : ControlledPointLayout) :

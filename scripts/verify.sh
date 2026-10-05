@@ -7,6 +7,11 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.MappedCompressedPointArithmetic
+import ECDSAAdd.Arithmetic.CompressedPointDialogSteps
+import ECDSAAdd.Arithmetic.CompressedPointDialogSpec
+import ECDSAAdd.Arithmetic.CompressedPointDialogResources
+import ECDSAAdd.Arithmetic.CompressedPointSquareCorrect
 import ECDSAAdd.Arithmetic.CompactOffsetCallerSupport
 import ECDSAAdd.Arithmetic.NearestLiftMath
 import ECDSAAdd.Arithmetic.OffsetBorrowedCanonicalReplay
@@ -1363,6 +1368,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_support
 #print axioms ECDSAAdd.Arithmetic.NearestLift.correction
 #print axioms ECDSAAdd.Arithmetic.NearestLift.secp_threshold_bound
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.pointTransfer_spec
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.pointPlacement
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.pointCompressedArithmetic_correct
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.pointCompressedArithmetic_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.pointCompressedArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.generic_true
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.boundary_generic
+#print axioms ECDSAAdd.Arithmetic.CompressedPointSquare.state_eq
+#print axioms ECDSAAdd.Arithmetic.CompressedPointSquare.correct
+#print axioms ECDSAAdd.Arithmetic.CompressedPointSquare.counts
+#print axioms ECDSAAdd.Arithmetic.CompressedPointSquare.shared_support_sites
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_spec
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.full_spec
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.add_spec
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_counts
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_support
+#print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_qubits
 LEAN
 )
 task_axiom_lean_rc=$?
