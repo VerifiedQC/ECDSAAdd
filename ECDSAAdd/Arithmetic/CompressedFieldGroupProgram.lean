@@ -1,4 +1,6 @@
 import ECDSAAdd.Arithmetic.CompressedSkywalkLayout
+import ECDSAAdd.Arithmetic.OffsetBorrowedCanonicalCell
+import ECDSAAdd.Arithmetic.OffsetBorrowedInverseCanonicalCell
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
@@ -80,6 +82,37 @@ theorem codecGroups_512_counts {α : Type} (w : Nat → Wire) (cell : α → Pro
   have h := codecGroups_counts w cell hc 0 ls
   simpa only [hl,Nat.reduceMul,Nat.reduceDiv,Nat.reduceAdd] using h
 
+/-- Actual mixed-control forward field cells wrapped in three-letter codecs.
+Boundary conversions and integer/control wrappers remain separate. -/
+def compressedFieldForwardGroups (w : Nat → Wire) (b sign effS : Wire) : Program :=
+  codecGroupForward w (fun l : MixedTranscriptLetter =>
+    OffsetBorrowedCanonical.cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2) 0
+    (mixedTranscriptTape w)
+
+/-- Actual independently measured inverse field cells, not reversed MX gates. -/
+def compressedFieldBackwardGroups (w : Nat → Wire) (b sign effS : Wire) : Program :=
+  codecGroupBackward w (fun l : MixedTranscriptLetter =>
+    OffsetBorrowedInverseCanonical.cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2) 0
+    (mixedTranscriptTape w)
+
+theorem compressedFieldGroups_counts (w : Nat → Wire) (b sign effS : Wire)
+    (hsw : (effS::(balancedSharedPorts w sign).r++(balancedSharedPorts w sign).y).Nodup) :
+    toffoliCount (compressedFieldForwardGroups w b sign effS)=658086 ∧
+    measurementCount (compressedFieldForwardGroups w b sign effS)=525994 ∧
+    toffoliCount (compressedFieldBackwardGroups w b sign effS)=658086 ∧
+    measurementCount (compressedFieldBackwardGroups w b sign effS)=525994 := by
+  have fw := codecGroups_512_counts w
+    (fun l : MixedTranscriptLetter => OffsetBorrowedCanonical.cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)
+    (fun l => OffsetBorrowedCanonical.cell_counts w b l.1.1 l.1.2 sign effS l.2.1 l.2.2 hsw)
+    (mixedTranscriptTape w) (mixedTranscriptTape_length w)
+  have rv := codecGroups_512_counts w
+    (fun l : MixedTranscriptLetter => OffsetBorrowedInverseCanonical.cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)
+    (fun l => OffsetBorrowedInverseCanonical.cell_counts w b l.1.1 l.1.2 sign effS l.2.1 l.2.2 hsw)
+    (mixedTranscriptTape w) (mixedTranscriptTape_length w)
+  exact ⟨fw.1,fw.2.1,rv.2.2.1,rv.2.2.2⟩
+
 end ECDSAAdd.Arithmetic
 #print axioms ECDSAAdd.Arithmetic.codecGroups_counts
 #print axioms ECDSAAdd.Arithmetic.codecGroups_512_counts
+
+#print axioms ECDSAAdd.Arithmetic.compressedFieldGroups_counts
