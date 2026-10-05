@@ -60,6 +60,7 @@ structure ModUnaryOps where
   maskedAddConst : Wire → List Wire → Nat → Program
   maskedAddConstLow : Wire → List Wire → Nat → Program
   compareLtConst : List Wire → Nat → Wire → Program
+  subConst : List Wire → Nat → Program
 
 /-- U 提供零 constant/carry/cin；Low 接口取低 n 位常数及 n-1 根进位，其他使用全宽。
 compareLtConst 比较低 n 位目标与经典常数，使用 n 根 carry；不分配新的辅助位。 -/
@@ -72,6 +73,8 @@ def modUnaryContext (U : ModUnaryLayout) : CircuitDSL.Context ModUnaryOps := {
         (U.carry.take (U.low.length-1)) U.cin k
     compareLtConst := fun target k out =>
       compareLtConst none target (U.constant.take U.low.length) U.carry U.cin out k
+    subConst := fun target k => xorConstant U.constant k ++
+      subInPlace U.constant target U.carry U.cin ++ xorConstant U.constant k
   }
 }
 
@@ -82,9 +85,7 @@ def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryC
   let borrow := U.high;    -- target 的最高位：试减后 0 表示没有借位，1 表示发生借位。
   let leastBit := U.bit;   -- target 的最低位，表示结果奇偶。
   rotateLeft(target);                                  -- target *= 2
-  U.constant ^= const(p);
-  target -= U.constant;             -- borrow = [倍增结果<p]
-  U.constant ^= const(p);          -- 清零 constant。
+  target -= const(p);             -- borrow = [倍增结果<p]。
   control borrow { U.low += const(p) using maskedAddConstLow; };
   X borrow;                                     -- 结果为奇数表示发生过约减。
   CX leastBit borrow;                           -- 清零 borrow。

@@ -56,6 +56,8 @@ copyRegister control src dst
 
 没有控制位时 C=1，否则 C 为控制位的值；受控规格还要求控制与 src 不重叠。dst 以外的 wire 和相位保持不变。
 
+`copyRegister_fit_correct` 还允许不等宽：将 `src.take dst.length` 的值 XOR 到 dst；源更长时忽略高位，源更短时 dst 的高位保持不变。相位及 dst 以外的 wire 仍保持，互异和控制不与目标重叠的条件不变。下面的资源公式只用于等宽情形。
+
 - 资源：`copyRegister control src dst`：T = `(if control.isSome then src.length else 0)`，M = `0`，Q = `(if src.isEmpty then 0 else 2*src.length+control.toList.length)`。
 
 ## [MaskedConstant.lean](MaskedConstant.lean)

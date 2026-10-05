@@ -6,7 +6,7 @@
 
 先看[项目地图](docs/MODULES.md)，再读目标功能目录的 README。Arithmetic、Math、Circuit 按功能提供 README；Framework 共用一份[简明说明](ECDSAAdd/Framework/README.md)；例如[模乘说明](ECDSAAdd/Arithmetic/ModularMultiplication/README.md)和[求逆说明](ECDSAAdd/Arithmetic/ModularInverse/README.md)，从输入输出解释算法、证明思路和工作区恢复条件。
 
-新的[高层算术语言示范](ECDSAAdd/Arithmetic/ModularAddition/README.md#languageexamplelean)可以写 `y = (x + y) mod q;`，用 `using` 选择已认证的电路实现。认证 `arith` 第一版只接入原地模加；现有重要函数已在 `prog using` 中使用同风格算术表达式，保留原电路与规格（[改写清单](docs/MODULES.md#生产函数的表达式改写2026-10-03)）；语言规则见 [Framework](ECDSAAdd/Framework/README.md#高层算术语言第一版)。
+新的[高层算术语言示范](ECDSAAdd/Arithmetic/ModularAddition/README.md#languageexamplelean)可以写 `y = (x + y) mod q;`，用 `using` 选择已认证的电路实现。认证 `arith` 第一版只接入原地模加；生产入口已进一步采用比较表达式和 `with` 临时值作用域，把工作位装载/恢复放入明确的后端配方（[当前关键函数清单](docs/MODULES.md#当前关键算法表达式与隐藏工作区2026-10-05)）。原规格和最终资源不变；这尚非通用表达式编译器，规则及证明边界见 [Framework](ECDSAAdd/Framework/README.md#隐藏工作区的配方与作用域2026-10-05)。
 
 当前证明与资源证据见 [PROOF_STATUS](docs/PROOF_STATUS.md)，算法设计和历史见 [REWORK_PLAN](docs/REWORK_PLAN.md)。下面保留项目状态摘要；调用模块通常从地图中的公开规格开始。
 

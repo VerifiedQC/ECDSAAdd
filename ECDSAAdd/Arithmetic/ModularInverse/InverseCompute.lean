@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleState
 
 namespace ECDSAAdd.Arithmetic
+open scoped CircuitDSL
 
 /-- 从 Kaliski 初态 u=q、v=A、r=0、s=1、k=0 计算 L.a=A⁻¹ mod q，保留恢复历史。
 要求 0<A<q、A 与 q 互素，以及 inverseCompute_values 的模数/位宽/512 轮条件。 -/
@@ -24,12 +25,16 @@ def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
   kaliskiUnloop(L.first, 0, L.records);              -- 恢复 Kaliski 初态，清零分支记录。
 }
 
+/-- 求逆作用域保留全部分支/缩放历史；结束后恢复 Kaliski 初态，而非把初态寄存器清零。 -/
+abbrev inverseValue (L : InverseLoopLayout) (q : Nat) : CircuitDSL.Computed (List Wire) :=
+  ⟨L.a, inverseCompute L q, inverseUncompute L q⟩
+
 /-- L.out ^= A⁻¹ mod q，A 是初态 L.first.v 的值。
 初态及数值条件同 inverseCompute；内部恢复到该初态。 -/
 def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  inverseCompute(L, q);             -- a = A⁻¹ mod q
-  copyRegister(none, L.a, L.out);    -- out ^= a
-  inverseUncompute(L, q);           -- 清零 a，恢复 Kaliski 初态。
+  with inverse := (inverseValue L q) {
+    L.out ^= inverse;
+  };
 }
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=

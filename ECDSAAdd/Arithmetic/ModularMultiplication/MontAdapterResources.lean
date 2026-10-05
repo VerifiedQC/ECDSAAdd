@@ -10,7 +10,7 @@ theorem montAdapter_counts (M : MontLayout) (p : Nat) (hw : M.Widths) (hnd : M.w
   have hc := copyRegister_counts none M.product M.out (by simp [MontLayout.product,hw.z,hw.out])
   have ha := modAddInPlace_resources M.addView 256 p (M.add_widths hw) (M.add_nodup hw hnd) (by omega)
   have hs := modSubInPlace_resources M.addView 256 p (M.add_widths hw) (M.add_nodup hw hnd) (by omega)
-  simp only [montMulXor,montMulAdd,montMulSub,toffoliCount_append,measurementCount_append,
+  simp only [montMulXor_program,montMulAdd_program,montMulSub_program,toffoliCount_append,measurementCount_append,
     h.1.1,h.1.2,h.2.1,h.2.2,hc.1,hc.2,ha.1,ha.2.1,hs.1,hs.2.1,
     Option.isSome_none,Bool.false_eq_true,if_false]
   norm_num
@@ -23,7 +23,7 @@ theorem montControlledAdapter_counts (c : Wire) (M : MontLayout) (p : Nat)
   have hn := MontLayout.controlled_add_nodup c M hw hnd
   have ha := controlledModAdd_resources c M.addView 256 p (M.add_widths hw) hn (by omega)
   have hs := controlledModSub_resources c M.addView 256 p (M.add_widths hw) hn (by omega)
-  simp only [montMulControlledAdd,montMulControlledSub,toffoliCount_append,measurementCount_append,
+  simp only [montMulControlledAdd_program,montMulControlledSub_program,toffoliCount_append,measurementCount_append,
     h.1.1,h.1.2,h.2.1,h.2.2,ha.1,ha.2.1,hs.1,hs.2.1]
   norm_num
 
@@ -80,7 +80,7 @@ theorem montAdapter_wires (M : MontLayout) (p : Nat) (hw : M.Widths) :
   have hout : S∪M.out.toFinset=(M.x.take 256++M.y++M.out++M.work).toFinset := by
     simp only [S,List.toFinset_append]
     ac_rfl
-  simpa only [montMulXor,montMulAdd,montMulSub,modAddInPlace,wires_append,hpq.1,hpq.2,ha,hs]
+  simpa only [montMulXor_program,montMulAdd_program,montMulSub_program,modAddInPlace,wires_append,hpq.1,hpq.2,ha,hs]
     using ⟨hcopy.trans hout,hmod.trans hout,hmod.trans hout⟩
 
 
@@ -120,7 +120,7 @@ theorem montControlledAdapter_wires (c : Wire) (M : MontLayout) (p : Nat) (hw : 
   have hs := controlledModSub_wires c M.addView 256 p (M.add_widths hw) (by omega)
   rw [hv] at ha hs
   have hpq := montPQ_wires M p hw
-  simp only [montMulControlledAdd,montMulControlledSub,wires_append,hpq.1,hpq.2,ha,hs]
+  simp only [montMulControlledAdd_program,montMulControlledSub_program,wires_append,hpq.1,hpq.2,ha,hs]
   simpa only [S,List.cons_append,List.append_assoc,(M.add_ports hw).1] using
     And.intro (hcombine (M.product.take 256) (fun _ h => hprod (List.mem_of_mem_take h))) (hcombine M.product hprod)
 

@@ -34,12 +34,26 @@ abbrev fieldMulXor (pool : Nat → Wire) (x y out : List Wire) : Program :=
 abbrev fieldInverseXor (pool : Nat → Wire) (x out : List Wire) : Program :=
   fieldInverse (poolInverse pool x out)
 
-/-- out ^= (x−k) mod p，k 是经典常量，要求 x,k<p。 -/
-def pointSubConstant (L : PointAddLayout) (x out : List Wire) (k : Nat) : Program := prog {
-  L.constant ^= const(k);
-  fieldSubXor(L.poolWire, x, L.constant, out);     -- out ^= (x-k) mod p
-  L.constant ^= const(k);                      -- 清零 constant。
+structure PointConstantOps where
+  modSubConstXor : List Wire → List Wire → Nat → Nat → Program
+
+/-- 常数的装载/清理配方；q 来自表达式，不忽略传入模数。 -/
+def pointConstantContext (L : PointAddLayout) : CircuitDSL.Context PointConstantOps := {
+  operations := {
+    modSubConstXor := fun x out k q => xorConstant L.constant k ++
+      modSub (poolSub L.poolWire x L.constant out) q ++ xorConstant L.constant k
+  }
 }
+
+/-- out ^= (x−k) mod p，k 是经典常量，要求 x,k<p。 -/
+def pointSubConstant (L : PointAddLayout) (x out : List Wire) (k : Nat) : Program :=
+    prog using (pointConstantContext L) {
+  out ^= (x - const(k)) mod p;
+}
+
+theorem pointSubConstant_program (L : PointAddLayout) (x out : List Wire) (k : Nat) :
+    pointSubConstant L x out k = xorConstant L.constant k ++
+      fieldSub (poolSub L.poolWire x L.constant out) ++ xorConstant L.constant k := rfl
 
 /-- 候选点计算的 XOR 接口；参数只保留输入、输出及经典常数。 -/
 structure PointCandidateOps where
@@ -49,6 +63,7 @@ structure PointCandidateOps where
   pointSubConstant : List Wire → List Wire → Nat → Program
   modSubXor : List Wire → List Wire → List Wire → Nat → Program
   modMulXor : List Wire → List Wire → List Wire → Nat → Program
+  modSquareXor : List Wire → List Wire → Nat → Program
 
 /-- L 提供共用零工作池 pool 以及常数寄存器 constant；每个调用后归还零工作位。
 这里固定的是辅助接线，不隐藏输入输出，也不清除仍存活的候选点中间量。 -/
@@ -60,16 +75,15 @@ def pointCandidateContext (L : PointAddLayout) : CircuitDSL.Context PointCandida
     pointSubConstant := fun x out k => pointSubConstant L x out k
     modSubXor := fun x y out q => modSub (poolSub L.poolWire x y out) q
     modMulXor := fun x y out q => montMulXor (poolMul L.poolWire x y out) q
+    modSquareXor := fun x out q => copyRegister none x L.constant ++
+      montMulXor (poolMul L.poolWire x (L.constant.take 256) out) q ++
+      copyRegister none x L.constant
   }
 }
 
 /-- L.square ^= L.slope² mod p，要求 L.slope<p。 -/
 def pointSquare (L : PointAddLayout) : Program := prog using (pointCandidateContext L) {
-  let slope := L.slope;
-  let copy := L.constant; -- 用于保存 slope 的副本。
-  copy ^= slope;
-  L.square ^= (slope * (copy.take 256)) mod p;
-  copy ^= slope;                               -- 清零 copy。
+  L.square ^= (L.slope ^ 2) mod p;
 }
 
 theorem pointSquare_program (L : PointAddLayout) : pointSquare L =

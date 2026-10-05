@@ -38,7 +38,7 @@ example (L : ModLayout) (c : Wire) (x y out : List Wire) :
     (prog using (modArithmeticContext L) {
       control (c XOR 1) { out ^= x; };
       control c { out ^= y; };
-    }) = chooseXor c x y out := rfl
+    }) = chooseXorFitted c x y out := rfl
 
 example (L : ModLayout) (c d : Wire) (x y out : List Wire) :
     (prog using (modArithmeticContext L) {
@@ -54,7 +54,7 @@ example (L : ModLayout) (c : Wire) (x y out : List Wire) (q : Nat) :
       control (c XOR 1) { target ^= x; };
       control c { target ^= y; };
       out ^= const(q);
-    }) = xorConstant out q ++ (chooseXor c x y out ++ xorConstant out q) := rfl
+    }) = xorConstant out q ++ (chooseXorFitted c x y out ++ xorConstant out q) := rfl
 
 -- 控制块只把条件交给有名的具体实现，不对任意 Program 加控制。
 example (L : RoundDataLayout) (c : Wire) (x y : List Wire) :
@@ -152,7 +152,7 @@ example (L : ControlledPointLayout) (cx cy lambdaStar : Fp) :
       pointInPlaceConstantAdd L L.point.x (3*cx) ++
       montMulAdd L.inPlaceMultiply p ++ pointInPlaceClearSlope L lambdaStar ++
       pointInPlaceNegate L ++ pointInPlaceConstantAdd L L.point.x cx ++
-      pointInPlaceConstantAdd L L.point.y (-cy) := rfl
+      pointInPlaceConstantAdd L L.point.y (-cy) := pointInPlaceGeneric_program L cx cy lambdaStar
 
 -- 构造层的默认模加与上一版 certified direct 实现确实是同一电路。
 example {n : Nat} (op : ArithmeticLanguage.ModAdd n) (w : ModAddLanguage.Workspace n)

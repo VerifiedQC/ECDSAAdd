@@ -72,4 +72,12 @@ theorem frame (hc : Triple P c Q)
   obtain ⟨hp, hq⟩ := hc s m h.1
   exact ⟨hp, hq, hR _ _ (fun w hw => (run_preserves_outside c m s w hw).symm) h.2⟩
 end Triple
+
+/-- with 块的证明义务：准备、块体、恢复依次衔接；不能仅凭作用域就假定清零。
+restore 的前置条件必须包含仍存活的结果/历史及输入保持条件。 -/
+theorem CircuitDSL.Computed.correct {α : Type} (c : CircuitDSL.Computed α)
+    (body : α → Program) {P R S Q : BasisState → Prop}
+    (prepare : Triple P c.prepare R) (use : Triple R (body c.value) S)
+    (restore : Triple S c.restore Q) : Triple P (c.program body) Q :=
+  (prepare.seq use).seq restore
 end ECDSAAdd

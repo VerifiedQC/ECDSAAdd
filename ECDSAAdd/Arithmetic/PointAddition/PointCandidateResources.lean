@@ -10,7 +10,7 @@ theorem pointSubConstant_counts (L : PointAddLayout) (h : L.Widths)
   have hk := h.words L.constant (by simp [PointAddLayout.words])
   have hc := fieldSub_resources _ (L.poolSub_nodup h x L.constant out hx hk ho hnd)
     (poolSub_width _ _ _ _)
-  simp only [pointSubConstant,toffoliCount_append,measurementCount_append,
+  simp only [pointSubConstant_program,toffoliCount_append,measurementCount_append,
     (xorConstant_counts _ _).1,(xorConstant_counts _ _).2,hc.1,hc.2.1,
     Nat.zero_add,Nat.add_zero,and_self]
 

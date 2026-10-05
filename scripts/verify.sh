@@ -10,6 +10,7 @@ lake env lean tests/ContextPrograms.lean
 lake env lean tests/ControlledPrograms.lean
 lake env lean tests/ArithmeticLanguage.lean
 lake env lean tests/ArithmeticPrograms.lean
+lake env lean tests/ExpressionRecipes.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -22,6 +23,21 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Triple.seq
 #print axioms ECDSAAdd.Triple.conseq
 #print axioms ECDSAAdd.Triple.frame
+#print axioms ECDSAAdd.CircuitDSL.Computed.correct
+#print axioms ECDSAAdd.CircuitDSL.Computed.resources
+#print axioms ECDSAAdd.Arithmetic.copyRegister_fit_correct
+#print axioms ECDSAAdd.Arithmetic.chooseXorFitted_controls_equiv
+#print axioms ECDSAAdd.Arithmetic.modAddOn_spec
+#print axioms ECDSAAdd.Arithmetic.modSubOn_spec
+#print axioms ECDSAAdd.Arithmetic.modAddCore_program
+#print axioms ECDSAAdd.Arithmetic.modAdd_program
+#print axioms ECDSAAdd.Arithmetic.modSub_program
+#print axioms ECDSAAdd.Arithmetic.montMulXor_program
+#print axioms ECDSAAdd.Arithmetic.montMulAdd_program
+#print axioms ECDSAAdd.Arithmetic.montMulSub_program
+#print axioms ECDSAAdd.Arithmetic.montMulControlledAdd_program
+#print axioms ECDSAAdd.Arithmetic.montMulControlledSub_program
+#print axioms ECDSAAdd.Arithmetic.pointSubConstant_program
 #print axioms ECDSAAdd.ArithmeticLanguage.twice_spec
 #print axioms ECDSAAdd.ArithmeticLanguage.Lowering.run_correct
 #print axioms ECDSAAdd.ArithmeticLanguage.Lowering.sound

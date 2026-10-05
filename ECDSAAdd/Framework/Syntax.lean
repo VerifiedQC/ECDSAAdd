@@ -63,6 +63,16 @@ structure Context (α : Type) where
   before : Program := []
   after : Program := []
 
+/-- 由后端绑定的临时值；restore 是已知的恢复电路，不是倒转 prepare 的门列。
+值及其恢复所需的历史只在 with 块内存活；正确性须由调用者的规格证明。 -/
+structure Computed (α : Type) where
+  value : α
+  prepare : Program
+  restore : Program
+
+def Computed.program {α : Type} (c : Computed α) (body : α → Program) : Program :=
+  c.prepare ++ body c.value ++ c.restore
+
 /-- 同一使能条件下的正、反分支线。取反交换两根线，不翻转物理 wire。
 使用者负责事先准备 onTrue=enabled∧predicate、onFalse=enabled∧¬predicate。 -/
 structure Branch where
@@ -90,6 +100,8 @@ syntax ident "(" term,* ")" ";" : circuitStmt
 -- 接受普通 Lean 调用；不将 X 等名称注册成关键字，以免影响数学变量名。
 syntax (name := circuitApply) (priority := low) ident term:max* ";" : circuitStmt
 syntax "let " ident " := " term ";" : circuitStmt
+syntax "with " ident " := " term:max "{" circuitStmt* "}" ";" : circuitStmt
+syntax "computedProg% " term:max " binder% " ident "{" circuitStmt* "}" : term
 syntax "for " ident " in " "range" "(" term ")" "{" circuitStmt* "}" ";" : circuitStmt
 syntax "for " ident " in " "reversed" "(" "range" "(" term ")" ")"
   "{" circuitStmt* "}" ";" : circuitStmt
@@ -130,6 +142,8 @@ macro_rules
 
 macro_rules (kind := circuitBlock)
   | `(prog {}) => `(([] : Program))
+  | `(prog { with $name:ident := $value:term { $body:circuitStmt* }; $rest:circuitStmt* }) =>
+      `(circuitSeq% (computedProg% $value binder% $name { $body* }) { $rest* })
   | `(prog { CCsub $g ($c XOR $n:num) $target ($numerator / $denominator); $rest:circuitStmt* }) => do
       unless n.getNat == 1 do Macro.throwError "条件取反只支持 XOR 1"
       `(prog { $(mkIdent `ccsub):ident $g $c true $target $numerator $denominator; $rest* })
@@ -285,6 +299,20 @@ private def elabWithOperations (ops : Expr) (fields : List Name)
         let e ← elabWithOperations ops rest body
         return e.replaceFVar binding value
 
+elab_rules : term
+  | `(computedProg% $computation binder% $name:ident { $body:circuitStmt* }) => do
+    let c ← whnf (← elabTerm computation none)
+    unless c.isAppOfArity ``Computed.mk 4 do
+      throwErrorAt computation "with 需要后端提供 Computed 值及其准备/恢复电路"
+    let args := c.getAppArgs
+    let stx ← `(prog { $body* })
+    let result ← withLetDecl name.getId args[0]! args[1]! fun binding => do
+      let e ← elabTermEnsuringType stx (mkConst ``Program)
+      synthesizeSyntheticMVarsNoPostponing
+      return (← instantiateMVars e).replaceFVar binding args[1]!
+    let result ← mkAppM ``HAppend.hAppend #[args[2]!, result]
+    mkAppM ``HAppend.hAppend #[result, args[3]!]
+
 elab "prog" "using" ctx:term:max "{" body:circuitStmt* "}" : term => do
   let c ← whnf (← elabTerm ctx none)
   unless c.isAppOfArity ``Context.mk 4 do
@@ -316,6 +344,8 @@ syntax term:max " ^= " "(" term:max " + " term:max ")" : registerUpdate
 syntax term:max " ^= " "(" term:max " - " term:max ")" : registerUpdate
 syntax term:max " ^= " "(" term:max " - " term:max ")" " mod " term:max : registerUpdate
 syntax term:max " ^= " "(" term:max " * " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " ^= " "(" term:max " - " "const" "(" term ")" ")" " mod " term:max : registerUpdate
+syntax term:max " ^= " "(" term:max " ^ " num ")" " mod " term:max : registerUpdate
 syntax term:max " ^= " "const" "(" term ")" : registerUpdate
 syntax term:max " += " "const" "(" term ")" : registerUpdate
 syntax term:max " -= " "const" "(" term ")" : registerUpdate
@@ -328,12 +358,21 @@ syntax term:max " = " "(" term:max " + " term:max " * " term:max ")" " mod " ter
 syntax term:max " = " "(" term:max " - " term:max " * " term:max ")" " mod " term:max : registerUpdate
 syntax term:max " = " "(" term:max " + " term:max " * " term:max ")" " mod " term:max " using " ident : registerUpdate
 syntax term:max " = " "(" term:max " - " term:max " * " term:max ")" " mod " term:max " using " ident : registerUpdate
+syntax term:max " = " "(" "const" "(" term ")" " + " term:max ")" " mod " term:max : registerUpdate
+syntax term:max " = " "(" term:max " - " term:max " ^ " num ")" " mod " term:max " using " ident : registerUpdate
 
 declare_syntax_cat registerUpdateLine
 syntax registerUpdate ";" : registerUpdateLine
 namespace CircuitDSL
 scoped syntax registerUpdate ";" : circuitStmt
 scoped syntax ident term:max " {" registerUpdateLine* "}" ";" : circuitStmt
+scoped syntax "with " ident " := " "(" term:max " * " term:max ")" " mod " term:max
+  "{" circuitStmt* "}" ";" : circuitStmt
+scoped syntax "let " ident " := " "(" term:max " + " term:max ")" " < " "const" "(" term ")" ";" : circuitStmt
+scoped syntax "let " ident " := " term:max " < " term:max ";" : circuitStmt
+-- 比较约减模板中的表达式；只允许由下方的整块规则展开，不调用普通 Nat 减法。
+scoped syntax term:max " ^= " "(" "(" term:max " + " term:max ")" " - " "const" "(" term ")" ")" : registerUpdate
+scoped syntax term:max " ^= " "(" "(" term:max " - " term:max ")" " + " "const" "(" term ")" ")" : registerUpdate
 end CircuitDSL
 open scoped CircuitDSL
 
@@ -346,6 +385,23 @@ private def lowerRegisterUpdate (s : TSyntax `registerUpdate)
     (control : Option (TSyntax `term)) : MacroM (TSyntax `circuitStmt) := do
   let unsupported := Macro.throwErrorAt s "此算术/控制形式尚无实现；请使用已有操作或显式配置实现"
   match s with
+  | `(registerUpdate| $out:term ^= ($x - const($k)) mod $q) =>
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `modSubConstXor):ident $x $out $k $q;)
+  | `(registerUpdate| $out:term ^= ($x ^ $power:num) mod $q) => do
+      unless power.getNat == 2 do Macro.throwErrorAt power "此配方只支持平方"
+      if control.isSome then unsupported else
+      `(circuitStmt| $(mkIdent `modSquareXor):ident $x $out $q;)
+  | `(registerUpdate| $out:term = (const($k) + $old) mod $q) =>
+      checkUpdateTarget out old
+      match control with
+      | none => unsupported
+      | some c => `(circuitStmt| $(mkIdent `controlledModAddConst):ident $c $out $k $q;)
+  | `(registerUpdate| $out:term = ($old - $x ^ $power:num) mod $q using $impl:ident) =>
+      unless power.getNat == 2 do Macro.throwErrorAt power "此配方只支持平方"
+      checkUpdateTarget out old
+      if control.isSome then unsupported else
+      `(circuitStmt| $impl:ident $x $out $q;)
   | `(registerUpdate| $out:term ^= ($x - $y) mod $q) =>
       if control.isSome then unsupported else
       `(circuitStmt| $(mkIdent `modSubXor):ident $x $y $out $q;)
@@ -372,11 +428,11 @@ private def lowerRegisterUpdate (s : TSyntax `registerUpdate)
       | some c => `(circuitStmt| $impl:ident $c $out $k;)
   | `(registerUpdate| $out:term += const($k)) =>
       match control with
-      | none => unsupported
+      | none => `(circuitStmt| $(mkIdent `addConst):ident $out $k;)
       | some c => `(circuitStmt| CAddConst $c $out $k;)
   | `(registerUpdate| $out:term -= const($k)) =>
       match control with
-      | none => unsupported
+      | none => `(circuitStmt| $(mkIdent `subConst):ident $out $k;)
       | some c => `(circuitStmt| CSubConst $c $out $k;)
   | `(registerUpdate| $out:term += $source) =>
       match control with
@@ -427,6 +483,12 @@ private def lowerRegisterUpdate (s : TSyntax `registerUpdate)
 -- 先展开整个块，再交给原 prog 宏；相邻的互补 XOR 分支仍可共用选择电路。
 macro_rules (kind := circuitBlock)
   | `(prog { $body:circuitStmt* }) => do
+      -- 比较模板必须整体匹配，不能先把其两个分支拆成独立运算。
+      for statement in body do
+        match statement with
+        | `(circuitStmt| let $_:ident := ($_ + $_) < const($_);) => Macro.throwUnsupported
+        | `(circuitStmt| let $_:ident := $_ < $_;) => Macro.throwUnsupported
+        | _ => pure ()
       let mut changed := false
       let mut result : Array (TSyntax `circuitStmt) := #[]
       for statement in body do
@@ -445,5 +507,44 @@ macro_rules (kind := circuitBlock)
         | _ => result := result.push statement
       unless changed do Macro.throwUnsupported
       `(prog { $result* })
+
+/- 受限的比较—约减配方。匹配完整表达式、同一目标和两个互补分支后才展开。
+这不是一般比较器或任意表达式优化器；改写不匹配时必须报错，不能沿用旧配方。 -/
+private def sameReductionTerm (actual expected : TSyntax `term) : MacroM Unit :=
+  unless actual.raw == expected.raw do
+    Macro.throwErrorAt actual "比较约减配方要求两分支使用比较中的同一输入/常数和同一输出"
+
+macro_rules (kind := circuitBlock)
+  | `(prog { with $v:ident := ($x * $y) mod $q { $body:circuitStmt* }; $rest:circuitStmt* }) =>
+      `(prog { with $v := ($(mkIdent `modProductValue) $x $y $q) { $body* }; $rest* })
+  | `(prog {
+      let $b:ident := ($x + $y) < const($q);
+      $kw₀:ident ($b₀ XOR $one:num) { $out:term ^= (($x₀ + $y₀) - const($q₀)); };
+      $kw₁:ident $b₁ { $out₁:term ^= ($x₁ + $y₁); };
+    }) => do
+      unless kw₀.getId == `control && kw₁.getId == `control && one.getNat == 1 do
+        Macro.throwError "约减需要先负后正的两个 control 分支"
+      let bt : TSyntax `term := ⟨b.raw⟩
+      for (actual, expected) in [(b₀, bt), (b₁, bt), (out₁, out),
+          (x₀, x), (x₁, x), (y₀, y), (y₁, y), (q₀, q)] do
+        sameReductionTerm actual expected
+      `(prog { $(mkIdent `reduceAdd):ident $x $y $out $q; })
+  | `(prog {
+      let $b:ident := $x < $y;
+      $kw₀:ident ($b₀ XOR $one:num) { $out:term ^= ($x₀ - $y₀); };
+      $kw₁:ident $b₁ { $out₁:term ^= (($x₁ - $y₁) + const($q)); };
+    }) => do
+      unless kw₀.getId == `control && kw₁.getId == `control && one.getNat == 1 do
+        Macro.throwError "约减需要先负后正的两个 control 分支"
+      let bt : TSyntax `term := ⟨b.raw⟩
+      for (actual, expected) in [(b₀, bt), (b₁, bt), (out₁, out),
+          (x₀, x), (x₁, x), (y₀, y), (y₁, y)] do
+        sameReductionTerm actual expected
+      `(prog { $(mkIdent `reduceSub):ident $x $y $out $q; })
+
+  | `(prog { let $_:ident := ($_ + $_) < const($_); $_:circuitStmt* }) =>
+      Macro.throwError "仅支持完整的模加比较约减配方：同一表达式、互补控制、同一 XOR 输出"
+  | `(prog { let $_:ident := $_ < $_; $_:circuitStmt* }) =>
+      Macro.throwError "仅支持完整的模减比较约减配方；一般量子比较尚未接入此语法"
 
 end ECDSAAdd

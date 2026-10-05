@@ -241,4 +241,79 @@ theorem selectXor_controls_equiv (bs : List SelectBit) (flag : Wire)
     · exact (he w hw).trans ((he₂ w hw).trans ((he₁ w hw).trans (he₀ w hw))).symm
   exact congrArg₂ State.mk hphase hbasis
 
+/-- 不等宽的两个 XOR 分支不能用共同 zip 截掉较长分支；此时保留独立受控复制。
+等宽情况仍使用原单 Toffoli/位选择器。判断长度只发生在构造电路时。 -/
+def chooseXorFitted (flag : Wire) (whenZero whenOne out : List Wire) : Program :=
+  if whenZero.length = out.length ∧ whenOne.length = out.length then
+    chooseXor flag whenZero whenOne out
+  else
+    copyRegister none whenZero out ++ copyRegister (some flag) whenZero out ++
+      copyRegister (some flag) whenOne out
+
+theorem chooseXorFitted_equal (flag : Wire) (whenZero whenOne out : List Wire)
+    (hzero : whenZero.length = out.length) (hone : whenOne.length = out.length) :
+    chooseXorFitted flag whenZero whenOne out = chooseXor flag whenZero whenOne out := by
+  simp only [chooseXorFitted, hzero, hone, and_self, ↓reduceIte]
+
+theorem chooseXorFitted_unequal (flag : Wire) (whenZero whenOne out : List Wire)
+    (h : ¬(whenZero.length = out.length ∧ whenOne.length = out.length)) :
+    chooseXorFitted flag whenZero whenOne out =
+      copyRegister none whenZero out ++ copyRegister (some flag) whenZero out ++
+      copyRegister (some flag) whenOne out := by
+  simp only [chooseXorFitted, h, ↓reduceIte]
+
+private theorem choose_maps (a b o : List Wire) (ha : a.length = o.length)
+    (hb : b.length = o.length) :
+    let bs := List.zipWith (fun ab w => SelectBit.mk ab.1 ab.2 w) (a.zip b) o
+    bs.map SelectBit.no = a ∧ bs.map SelectBit.yes = b ∧ bs.map SelectBit.out = o := by
+  induction a generalizing b o with
+  | nil =>
+    have ho : o = [] := List.eq_nil_of_length_eq_zero ha.symm
+    subst o
+    have hh : b = [] := List.eq_nil_of_length_eq_zero hb
+    subst b
+    simp
+  | cons x a ih =>
+    cases o with
+    | nil => simp at ha
+    | cons z o =>
+      cases b with
+      | nil => simp at hb
+      | cons y b =>
+        simpa using ih b o (by simpa using ha) (by simpa using hb)
+
+/-- 包括不等宽情形；优化不会丢弃较长分支中的有效源位。 -/
+theorem chooseXorFitted_controls_equiv (flag : Wire) (a b o : List Wire)
+    (hnd : (a ++ b ++ o).Nodup) (hf : flag ∉ a ++ b ++ o) (s : State) (m : List Bool) :
+    run (chooseXorFitted flag a b o) m s =
+      run (copyRegister none a o ++ copyRegister (some flag) a o ++
+        copyRegister (some flag) b o) m s := by
+  by_cases hlen : a.length = o.length ∧ b.length = o.length
+  · rw [chooseXorFitted_equal flag a b o hlen.1 hlen.2]
+    let bs := List.zipWith (fun ab w => SelectBit.mk ab.1 ab.2 w) (a.zip b) o
+    have hm := choose_maps a b o hlen.1 hlen.2
+    change bs.map SelectBit.no = a ∧ bs.map SelectBit.yes = b ∧ bs.map SelectBit.out = o at hm
+    have counts (xs : List SelectBit) (w : Wire) :
+        (selectWires xs).count w = (xs.map SelectBit.no).count w +
+          (xs.map SelectBit.yes).count w + (xs.map SelectBit.out).count w := by
+      induction xs with
+      | nil => rfl
+      | cons x xs ih => simp only [selectWires, List.map_cons, List.count_cons, ih]; omega
+    have hc (w : Wire) : (selectWires bs).count w = (a ++ b ++ o).count w := by
+      rw [counts, hm.1, hm.2.1, hm.2.2]
+      simp only [List.count_append]
+    have hn : (selectWires bs).Nodup := by
+      apply List.nodup_iff_count.mpr
+      intro w
+      rw [hc]
+      exact List.nodup_iff_count.mp hnd w
+    have hflag : flag ∉ selectWires bs := by
+      intro h
+      have hp := List.count_pos_iff.mpr h
+      rw [hc] at hp
+      exact hf (List.count_pos_iff.mp hp)
+    simpa only [hm.1, hm.2.1, hm.2.2, List.append_assoc] using
+      selectXor_controls_equiv bs flag hn hflag s m
+  · rw [chooseXorFitted_unequal flag a b o hlen]
+
 end ECDSAAdd.Arithmetic

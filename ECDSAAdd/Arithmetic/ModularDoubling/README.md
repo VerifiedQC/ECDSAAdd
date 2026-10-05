@@ -4,6 +4,8 @@
 
 [ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与 `control` 表达式。旋转仍写 `rotateLeft/Right`，只有在相应规格条件下才等价于整数倍增/减半；原规格与资源不变。
 
+`dblInPlace` 的试减直接写 `target -= const(p)`；常数寄存器的装载和清理在后端。借位、奇偶位仍保留为逻辑标志，清理规则不变。
+
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
 `dblInPlace` / `halfInPlace` 用 `modUnaryContext` 绑定零常数/进位工作区；主体保留目标、控制位和经典常数。`maskedAddConstLow` 明确只更新低 n 位；它与全宽加常数使用不同长度的辅助位，接线见同文件配置。

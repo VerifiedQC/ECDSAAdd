@@ -40,7 +40,7 @@ example (L : ModLayout) (c : Wire) (a b dst : List Wire) :
     (prog using (modArithmeticContext L) {
       CXor (c XOR 1) dst a;
       CXor c dst b;
-    }) = chooseXor c a b dst := rfl
+    }) = chooseXorFitted c a b dst := rfl
 
 example (L : ModLayout) (c t : Wire) (a b dst : List Wire) :
     (prog using (modArithmeticContext L) {
@@ -49,12 +49,12 @@ example (L : ModLayout) (c t : Wire) (a b dst : List Wire) :
       CXor (c XOR 1) dst (a.take n);
       CXor c dst (b.take n);
       X t;
-    }) = [.X t] ++ (chooseXor c (a.take L.width) (b.take L.width) dst ++ [.X t]) := rfl
+    }) = [.X t] ++ (chooseXorFitted c (a.take L.width) (b.take L.width) dst ++ [.X t]) := rfl
 
 example (L : ModLayout) (cs : List Wire) (a b dst : List Wire) :
     (prog using (modArithmeticContext L) {
       for c in cs { CXor (c XOR 1) dst a; CXor c dst b; };
-    }) = cs.flatMap (fun c => chooseXor c a b dst) := rfl
+    }) = cs.flatMap (fun c => chooseXorFitted c a b dst) := rfl
 
 example (L : ModLayout) (c : Wire) :
     (prog using (modArithmeticContext L) {

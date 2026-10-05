@@ -36,6 +36,7 @@ structure ModAddCoreOps where
   subInPlace : List Wire → List Wire → Program
   maskedAddConst : Wire → List Wire → Nat → Program
   compareLt : List Wire → List Wire → Wire → Program
+  subConst : List Wire → Nat → Program
 
 /-- L 是模加核布局；carry/cin 为零进位工作区，constant 为装载常数的零寄存器。
 加回 p 只操作低 n 位，使用低 n 位 constant 和 n-1 根 carry；比较使用完整 carry。 -/
@@ -47,6 +48,8 @@ def modAddCoreContext (L : ModAddCoreLayout) : CircuitDSL.Context ModAddCoreOps 
       maskedAddConst control (L.constant.take L.low.length) target
         (L.carry.take (L.low.length-1)) L.cin k
     compareLt := fun x y out => compareLt none x y L.carry L.cin out
+    subConst := fun target k => xorConstant L.constant k ++
+      subInPlace L.constant target L.carry L.cin ++ xorConstant L.constant k
   }
 }
 
@@ -60,15 +63,22 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog using (modAddC
   let lowSource := source.take n;
 
   target += source;
-  L.constant ^= const(p);
-  target -= L.constant;        -- borrow = [原和<p]
-  L.constant ^= const(p);     -- 清零 constant。
+  target -= const(p);          -- borrow = [原和<p]；常数工作区由后端清理。
   control borrow { L.low += const(p); };
 
   -- 结果小于 source 表示曾发生约减，与借位标志相反。
   compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]，随后 X 清零 borrow。
   X borrow;
 }
+
+/-- 保留原逐步门列，供规格及资源证明使用。 -/
+theorem modAddCore_program (L : ModAddCoreLayout) (p : Nat) : modAddCore L p =
+    addInPlace L.a L.z L.carry L.cin ++ xorConstant L.constant p ++
+    subInPlace L.constant L.z L.carry L.cin ++ xorConstant L.constant p ++
+    maskedAddConst L.high (L.constant.take L.low.length) L.low
+      (L.carry.take (L.low.length-1)) L.cin p ++
+    compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high] := by
+  simp only [modAddCore, List.append_assoc]
 
 /-- 同一核门列的计数，不把尚未证明的正确性或支持集作为假设。 -/
 theorem modAddCore_counts (L : ModAddCoreLayout) (n p : Nat)
@@ -91,7 +101,7 @@ theorem modAddCore_counts (L : ModAddCoreLayout) (n p : Nat)
   have hc := compareLt_counts none L.low (L.a.take L.low.length) L.carry L.cin L.high
     (hw.low.trans hx.symm) (hw.carry.trans hx.symm)
   simp only [hw.low] at hm hc
-  simp only [modAddCore, maskedAddConst, toffoliCount_append, measurementCount_append,
+  simp only [modAddCore_program, maskedAddConst, toffoliCount_append, measurementCount_append,
     ha.1, ha.2, hs.1, hs.2, hm.1, hm.2, hc.1, hc.2,
     (xorConstant_counts _ _).1, (xorConstant_counts _ _).2,
     (maskedConstant_counts _ _ _).1, (maskedConstant_counts _ _ _).2,
@@ -446,7 +456,7 @@ theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
       · have hy : A+Z<p := he.mp hv
         simp only [B, decide_eq_true hy]
     exact ⟨⟨⟨h.1.1, hl⟩, hb⟩, h.2⟩
-  simpa only [modAddCore, List.append_assoc, D, R] using hfirst.seq hrest
+  simpa only [modAddCore_program, List.append_assoc, D, R] using hfirst.seq hrest
 
 /-- 核的实际支持恰为源、目标、常数字及进位工作线；没有隐含的 mask/flag。 -/
 theorem modAddCore_wires (L : ModAddCoreLayout) (n p : Nat)
@@ -470,7 +480,7 @@ theorem modAddCore_wires (L : ModAddCoreLayout) (n p : Nat)
   have hconst := xorConstant_wires_subset L.constant p
   apply Finset.Subset.antisymm
   · intro q hq
-    simp only [modAddCore, wires_append, Finset.mem_union, ha, hs, hc] at hq
+    simp only [modAddCore_program, wires_append, Finset.mem_union, ha, hs, hc] at hq
     have base : q ∈ L.a ∨ q ∈ L.z ∨ q ∈ L.constant ∨ q ∈ L.carry ∨ q=L.cin ∨ q=L.high := by
       rcases hq with (((((hq | hq) | hq) | hq) | hq) | hq) | hq
       · simp only [List.mem_toFinset, List.mem_cons, List.mem_append] at hq; tauto
@@ -508,7 +518,7 @@ theorem modAddCore_wires (L : ModAddCoreLayout) (n p : Nat)
       rw [ha, hs]
       simp only [List.mem_toFinset, List.mem_cons, List.mem_append]
       tauto
-    simp only [modAddCore, wires_append, Finset.mem_union]
+    simp only [modAddCore_program, wires_append, Finset.mem_union]
     rcases hbase with hb | hb
     · exact Or.inl (Or.inl (Or.inl (Or.inl (Or.inl (Or.inl hb)))))
     · exact Or.inl (Or.inl (Or.inl (Or.inl (Or.inr hb))))

@@ -53,6 +53,8 @@ structure MontArithmeticOps where
   controlledSub : Wire → List Wire → List Wire → Program
   maskedAddConst : Wire → List Wire → Nat → Program
   maskedSubConst : Wire → List Wire → Nat → Program
+  addConst : List Wire → Nat → Program
+  subConst : List Wire → Nat → Program
 
 /-- L 是单段接线：carry/cin 保存进位，mask 暂存受控源，table 暂装经典常数。
 这些工作位初始为零，每次操作后清零；acc/history/flag 不在此处自动清理。 -/
@@ -66,6 +68,10 @@ def montArithmeticContext (L : MontStageLayout) : CircuitDSL.Context MontArithme
       measuredMaskedSubInPlace control source L.mask target L.carry L.cin
     maskedAddConst := fun control target k => maskedAddConst control L.table target L.carry L.cin k
     maskedSubConst := fun control target k => maskedSubConst control L.table target L.carry L.cin k
+    addConst := fun target k => xorConstant L.table k ++
+      addInPlace L.table target L.carry L.cin ++ xorConstant L.table k
+    subConst := fun target k => xorConstant L.table k ++
+      subInPlace L.table target L.carry L.cin ++ xorConstant L.table k
   }
 }
 
@@ -73,18 +79,23 @@ def montArithmeticContext (L : MontStageLayout) : CircuitDSL.Context MontArithme
 def montLookup (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :=
   lookup (addr.headD L.flag) addr.tail L.scratch L.table (fun d => d*K)
 
+/-- 查表得到 addr*K；块结束时用同一地址清零 table，地址必须保持。 -/
+abbrev montLookupValue (L : MontStageLayout) (addr : List Wire) (K : Nat) :
+    CircuitDSL.Computed (List Wire) :=
+  ⟨L.table, montLookup L addr K, montLookup L addr K⟩
+
 /-- L.acc ← (L.acc+d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
 def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  montLookup(L, addr, K);                           -- table = 地址值*K
-  L.acc += L.table;
-  montLookup(L, addr, K);                           -- 清零 table。
+  with multiple := (montLookupValue L addr K) {
+    L.acc += multiple;
+  };
 }
 
 /-- L.acc ← (L.acc−d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
 def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  montLookup(L, addr, K);                           -- table = 地址值*K
-  L.acc -= L.table;
-  montLookup(L, addr, K);                           -- 清零 table。
+  with multiple := (montLookupValue L addr K) {
+    L.acc -= multiple;
+  };
 }
 
 /-- L.acc ← (A+m*p)/16，A 是原 L.acc，m=A mod 16，保存到第 i 轮记录。
@@ -156,16 +167,12 @@ def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) :
 
 /-- L.acc ← (L.acc+K) mod 2^261。 -/
 def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  L.table ^= const(K);
-  L.acc += L.table;
-  L.table ^= const(K);  -- 清零 table。
+  L.acc += const(K);
 }
 
 /-- L.acc ← (L.acc−K) mod 2^261。 -/
 def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  L.table ^= const(K);
-  L.acc -= L.table;
-  L.table ^= const(K);  -- 清零 table。
+  L.acc -= const(K);
 }
 
 /-- 将 L.acc=A 约减为 A mod p，L.flag 从零写成 [A<p]。

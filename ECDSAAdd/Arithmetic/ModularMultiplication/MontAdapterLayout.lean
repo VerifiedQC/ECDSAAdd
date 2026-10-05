@@ -88,53 +88,95 @@ theorem controlled_add_nodup (c : Wire) (M : MontLayout) (hw : M.Widths)
 
 end MontLayout
 
+/-- 模积的作用域配方：工作区由 M 绑定，x/y 是实际输入。
+两段历史一直存活到块结束；restore 调用原 uncompute，不倒转含测量门列。 -/
+abbrev montProductValue (M : MontLayout) (x y : List Wire) (p : Nat) :
+    CircuitDSL.Computed (List Wire) :=
+  let layout := { M with x := x, y := y }
+  ⟨M.product, montMulCompute layout p, montMulUncompute layout p⟩
+
+structure MontOutputOps where
+  modProductValue : List Wire → List Wire → Nat → CircuitDSL.Computed (List Wire)
+  modAddAssign : List Wire → List Wire → Nat → Program
+  modSubAssign : List Wire → List Wire → Nat → Program
+  controlledModAddAssign : Wire → List Wire → List Wire → Nat → Program
+  controlledModSubAssign : Wire → List Wire → List Wire → Nat → Program
+
+def montOutputContext (M : MontLayout) : CircuitDSL.Context MontOutputOps := {
+  operations := {
+    modProductValue := montProductValue M
+    modAddAssign := (modAssignContext M.addView).operations.modAddAssign
+    modSubAssign := (modAssignContext M.addView).operations.modSubAssign
+    controlledModAddAssign := (modAssignContext M.addView).operations.controlledModAddAssign
+    controlledModSubAssign := (modAssignContext M.addView).operations.controlledModSubAssign
+  }
+}
+
 /-- M.out ^= M.x*M.y mod p。
 要求 M.x<p、M.y<2^256，p 为素数、p<2^256、p mod 16=15。 -/
-def montMulXor (M : MontLayout) (p : Nat) : Program := prog {
-  let product := M.product; -- 内部模积 z 的低 257 位。
-  montMulCompute(M, p);                      -- product = x*y mod p
-  M.out ^= product;
-  montMulUncompute(M, p);                    -- 清零内部模积与历史。
-}
+def montMulXor (M : MontLayout) (p : Nat) : Program :=
+  prog using (montOutputContext M) {
+    with product := (M.x * M.y) mod p {
+      M.out ^= product;
+    };
+  }
 
 /-- M.out ← (M.out+M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
-def montMulAdd (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
-  let product := M.addView.a; -- 内部模积，含零扩展高位。
-  let out := M.addView.low;   -- 输出的低 256 位。
-  montMulCompute(M, p);                      -- product = x*y mod p
-  out = (product + out) mod p;
-  montMulUncompute(M, p);                    -- 清零内部模积与历史。
-}
+def montMulAdd (M : MontLayout) (p : Nat) : Program :=
+  prog using (montOutputContext M) {
+    let out := M.addView.low;
+    with product := (M.x * M.y) mod p {
+      out = (product + out) mod p;
+    };
+  }
 
 /-- M.out ← (M.out−M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
-def montMulSub (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
-  let product := M.addView.a; -- 内部模积，含零扩展高位。
-  let out := M.addView.low;   -- 输出的低 256 位。
-  montMulCompute(M, p);                      -- product = x*y mod p
-  out = (out - product) mod p;
-  montMulUncompute(M, p);                    -- 清零内部模积与历史。
-}
+def montMulSub (M : MontLayout) (p : Nat) : Program :=
+  prog using (montOutputContext M) {
+    let out := M.addView.low;
+    with product := (M.x * M.y) mod p {
+      out = (out - product) mod p;
+    };
+  }
 
 /-- M.out ← (M.out+c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulAdd。 -/
-def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
-  let product := M.addView.a; -- 内部模积，含零扩展高位。
-  let out := M.addView.low;   -- 输出的低 256 位。
-  montMulCompute(M, p);                      -- product = x*y mod p
-  control c { out = (product + out) mod p; };
-  montMulUncompute(M, p);                    -- 清零内部模积与历史。
-}
+def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program :=
+  prog using (montOutputContext M) {
+    let out := M.addView.low;
+    with product := (M.x * M.y) mod p {
+      control c { out = (product + out) mod p; };
+    };
+  }
 
 /-- M.out ← (M.out−c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulSub。 -/
-def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program := prog using (modAssignContext M.addView) {
-  let product := M.addView.a; -- 内部模积，含零扩展高位。
-  let out := M.addView.low;   -- 输出的低 256 位。
-  montMulCompute(M, p);                      -- product = x*y mod p
-  control c { out = (out - product) mod p; };
-  montMulUncompute(M, p);                    -- 清零内部模积与历史。
-}
+def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program :=
+  prog using (montOutputContext M) {
+    let out := M.addView.low;
+    with product := (M.x * M.y) mod p {
+      control c { out = (out - product) mod p; };
+    };
+  }
+
+/-- 作用域展开为原来的计算—使用—恢复门列。 -/
+theorem montMulXor_program (M : MontLayout) (p : Nat) : montMulXor M p =
+    montMulCompute M p ++ copyRegister none M.product M.out ++ montMulUncompute M p := rfl
+
+theorem montMulAdd_program (M : MontLayout) (p : Nat) : montMulAdd M p =
+    montMulCompute M p ++ modAddInPlace M.addView p ++ montMulUncompute M p := rfl
+
+theorem montMulSub_program (M : MontLayout) (p : Nat) : montMulSub M p =
+    montMulCompute M p ++ modSubInPlace M.addView p ++ montMulUncompute M p := rfl
+
+theorem montMulControlledAdd_program (c : Wire) (M : MontLayout) (p : Nat) :
+    montMulControlledAdd c M p =
+    montMulCompute M p ++ controlledModAdd c M.addView p ++ montMulUncompute M p := rfl
+
+theorem montMulControlledSub_program (c : Wire) (M : MontLayout) (p : Nat) :
+    montMulControlledSub c M p =
+    montMulCompute M p ++ controlledModSub c M.addView p ++ montMulUncompute M p := rfl
 
 end ECDSAAdd.Arithmetic

@@ -17,57 +17,77 @@ def modArithmeticContext (L : ModLayout) : CircuitDSL.Context ModArithmeticOps :
     addXor := fun x y out => addXor x y out (L.reg .carrySum) L.cinSum
     subXor := fun x y out => subXor x y out (L.reg .carryDiff) L.cinDiff
     -- 互补 CXor 共用原选择电路，每位仍只用一个 Toffoli。
-    cxorCases := fun flag out whenZero whenOne => chooseXor flag whenZero whenOne out
+    cxorCases := fun flag out whenZero whenOne => chooseXorFitted flag whenZero whenOne out
   }
 }
 
-/-- 输出 L.out ^= (L.x+L.y) mod q，要求 0<q<2^n、x,y<q。
-n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
-def modAdd (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
-  let n := L.width;
-  let x := L.x;
-  let y := L.y;
-  let total := L.reg .total;        -- 用于保存 x+y。
-  let modulus := L.reg .modulus;    -- 用于保存模数 q。
-  let diff := L.reg .diff;          -- 用于保存 total-q。
-  let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
-  let out := L.lowReg .out;         -- 最终的输出。
+/-- 后端工作区，不含逻辑输入输出。total/diff/modulus 保存和、差、常数；
+borrow 是 diff 的最高位，不额外分配比较器；两个进位链分别供加法和减法使用。 -/
+structure ModReductionWorkspace where
+  total : List Wire
+  modulus : List Wire
+  diff : List Wire
+  carrySum : List Wire
+  carryDiff : List Wire
+  cinSum : Wire
+  cinDiff : Wire
+  borrow : Wire
 
-  modulus ^= const(q);
-  total ^= (x + y);
-  diff ^= (total - modulus);
+abbrev ModLayout.reductionWorkspace (L : ModLayout) : ModReductionWorkspace :=
+  ⟨L.reg .total, L.reg .modulus, L.reg .diff, L.reg .carrySum,
+    L.reg .carryDiff, L.cinSum, L.cinDiff, L.high.diff⟩
 
-  control (borrow XOR 1) { out ^= (diff.take n); };
-  control borrow { out ^= (total.take n); };
+structure ModReductionOps where
+  reduceAdd : List Wire → List Wire → List Wire → Nat → Program
+  reduceSub : List Wire → List Wire → List Wire → Nat → Program
 
-  diff ^= (total - modulus);  -- 清零 diff。
-  total ^= (x + y);           -- 清零 total。
-  modulus ^= const(q);       -- 清零 modulus。
+/-- 固定配方：计算一次候选，共用 diff 最高位和原选择电路，最后恢复全部工作位。
+中间寄存器保持 n+1 位；仅写 out 时取低 out.length 位，不提前截断 x+y。 -/
+def modReductionContext (W : ModReductionWorkspace) : CircuitDSL.Context ModReductionOps := {
+  operations := {
+    reduceAdd := fun x y out q =>
+      let load := xorConstant W.modulus q
+      let sum := addXor x y W.total W.carrySum W.cinSum
+      let diff := subXor W.total W.modulus W.diff W.carryDiff W.cinDiff
+      load ++ sum ++ diff ++
+        chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
+        diff ++ sum ++ load
+    reduceSub := fun x y out q =>
+      let load := xorConstant W.modulus q
+      let diff := subXor x y W.diff W.carryDiff W.cinDiff
+      let corrected := addXor W.diff W.modulus W.total W.carrySum W.cinSum
+      load ++ diff ++ corrected ++
+        chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
+        corrected ++ diff ++ load
+  }
 }
 
-/-- 输出 L.out ^= (L.x−L.y) mod q，要求 0<q<2^n、x,y<q。
-n=L.width 是模运算的数据位宽；用于 secp256k1 坐标域时取 256。 -/
-def modSub (L : ModLayout) (q : Nat) : Program := prog using (modArithmeticContext L) {
-  let n := L.width;
-  let x := L.x;
-  let y := L.y;
-  let diff := L.reg .diff;          -- 用于保存 x-y。
-  let modulus := L.reg .modulus;    -- 用于保存模数 q。
-  let corrected := L.reg .total;    -- 用于保存 diff+q。
-  let borrow := L.high.diff;        -- diff 的最高位：0 表示没有借位，1 表示发生借位。
-  let out := L.lowReg .out;         -- 最终的输出。
-
-  modulus ^= const(q);
-  diff ^= (x - y);
-  corrected ^= (diff + modulus);
-
-  control (borrow XOR 1) { out ^= (diff.take n); };
-  control borrow { out ^= (corrected.take n); };
-
-  corrected ^= (diff + modulus); -- 清零 corrected。
-  diff ^= (x - y);               -- 清零 diff。
-  modulus ^= const(q);          -- 清零 modulus。
+/-- out ^= (x+y) mod q；n=out.length，0<q<2^n、x,y<q。
+x/y 含零扩展高位；W 只决定辅助接线，完整布局条件见 modAdd_spec。
+< 表示逐基态比较，不测量；中间和按 n+1 位计算。 -/
+abbrev modAddOn (x y out : List Wire) (q : Nat) (W : ModReductionWorkspace) : Program :=
+    prog using (modReductionContext W) {
+  let borrow := (x + y) < const(q);
+  control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+  control borrow { out ^= (x + y); };
 }
+
+/-- out ^= (x−y) mod q；位宽和工作区条件同 modAddOn。
+减法是 n+1 位补码运算；借位分支加回 q，不是 Nat 的截断减法。 -/
+abbrev modSubOn (x y out : List Wire) (q : Nat) (W : ModReductionWorkspace) : Program :=
+    prog using (modReductionContext W) {
+  let borrow := x < y;
+  control (borrow XOR 1) { out ^= (x - y); };
+  control borrow { out ^= ((x - y) + const(q)); };
+}
+
+/-- 兼容布局接口；可读算法见 modAddOn，n=L.width。 -/
+def modAdd (L : ModLayout) (q : Nat) : Program :=
+  modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+
+/-- 兼容布局接口；可读算法见 modSubOn，n=L.width。 -/
+def modSub (L : ModLayout) (q : Nat) : Program :=
+  modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
 
 private theorem registerAdderBits_map (bs : List ModBit) (a b target c : ModField) :
     registerAdderBits (bs.map (·.get a)) (bs.map (·.get b))
@@ -96,7 +116,7 @@ theorem modAdd_program (L : ModLayout) (q : Nat) : modAdd L q =
   let sum := add (L.adder .x .y .total .carrySum L.cinSum)
   let difference := sub (L.adder .total .modulus .diff .carryDiff L.cinDiff)
   load ++ sum ++ difference ++ selectXor L.selector L.high.diff ++ difference ++ sum ++ load := by
-  simp only [modAdd, take_reg]
+  simp only [modAdd, modAddOn, show (L.lowReg .out).length = L.width from List.length_map .., take_reg]
   simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
   simp only [registerAdderBits_map, add, sub, ModLayout.adder]
   simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map, ModLayout.selector]
@@ -107,7 +127,7 @@ theorem modSub_program (L : ModLayout) (q : Nat) : modSub L q =
   let difference := sub (L.adder .x .y .diff .carryDiff L.cinDiff)
   let correction := add (L.adder .diff .modulus .total .carrySum L.cinSum)
   load ++ difference ++ correction ++ selectXor L.selector L.high.diff ++ correction ++ difference ++ load := by
-  simp only [modSub, take_reg]
+  simp only [modSub, modSubOn, show (L.lowReg .out).length = L.width from List.length_map .., take_reg]
   simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
   simp only [registerAdderBits_map, add, sub, ModLayout.adder]
   simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map, ModLayout.selector]
@@ -265,5 +285,32 @@ theorem modSub_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
     (modSub_values L hnd q hq0 hq X Y O hX hY)
     (fun st h => (ModValues.clean_iff L X Y (O ^^^ ((X+q-Y)%q)) st).mp h)
+
+/-- 高层比较和两个表达式分支的规格；沿用完整布局条件与工作区恢复保证。 -/
+theorem modAddOn_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
+    {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y,
+       L.out = (O ^^^ (if X+Y < q then X+Y else X+Y-q)), L.work = 0 }} := by
+  have he : (if X+Y < q then X+Y else X+Y-q) = (X+Y)%q := by
+    split_ifs with h
+    · exact (Nat.mod_eq_of_lt h).symm
+    · have hh : X+Y = (X+Y-q)+q := by omega
+      conv_rhs => rw [hh, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : X+Y-q < q)]
+  simpa only [he] using modAdd_spec L hnd q hq0 hq X Y O hX hY
+
+theorem modSubOn_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
+    {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y,
+       L.out = (O ^^^ (if X < Y then X+q-Y else X-Y)), L.work = 0 }} := by
+  have he : (if X < Y then X+q-Y else X-Y) = (X+q-Y)%q := by
+    split_ifs with h
+    · exact (Nat.mod_eq_of_lt (by omega : X+q-Y < q)).symm
+    · have hh : X+q-Y = (X-Y)+q := by omega
+      rw [hh, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : X-Y < q)]
+  simpa only [he] using modSub_spec L hnd q hq0 hq X Y O hX hY
 
 end ECDSAAdd.Arithmetic

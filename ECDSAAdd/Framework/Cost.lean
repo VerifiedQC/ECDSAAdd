@@ -44,6 +44,16 @@ def qubitCount (p : Program) : Nat := (wires p).card
   | nil => simp [wires]
   | cons i p ih => simp [wires, ih, Finset.union_assoc]
 
+/-- 隐藏临时值不会隐藏资源：计入准备、块体、恢复的全部门、测量和物理线路。 -/
+theorem CircuitDSL.Computed.resources {α : Type} (c : CircuitDSL.Computed α)
+    (body : α → Program) :
+    toffoliCount (c.program body) =
+      toffoliCount c.prepare + toffoliCount (body c.value) + toffoliCount c.restore ∧
+    measurementCount (c.program body) =
+      measurementCount c.prepare + measurementCount (body c.value) + measurementCount c.restore ∧
+    wires (c.program body) = wires c.prepare ∪ wires (body c.value) ∪ wires c.restore := by
+  simp only [Computed.program, toffoliCount_append, measurementCount_append, wires_append, and_self]
+
 /-- 对所有测量结果，程序不会修改声明线路集合以外的位。 -/
 theorem run_preserves_outside (p : Program) (m : List Bool) (s : State) (w : Wire)
     (hw : w ∉ wires p) : (run p m s).basis w = s.basis w := by

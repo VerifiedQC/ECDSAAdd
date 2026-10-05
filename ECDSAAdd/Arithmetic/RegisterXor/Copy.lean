@@ -7,7 +7,7 @@ def copyGate (control : Option Wire) (a b : Wire) : Instr :=
   match control with | none => Instr.CX a b | some c => Instr.CCX c a b
 
 /-- dst ^= src；control=some c 时仅在 c=1 时执行，none 时无条件执行。
-完整寄存器复制要求 src/dst 等长。 -/
+只写目标位宽内的源位；源较短时等价于补零，目标高位不变。 -/
 def copyRegister (control : Option Wire) (src dst : List Wire) : Program := prog {
   for pair in (src.zip dst) {
     copyGate(control, pair.1, pair.2);  -- 目标位 ^= 源位；有控制时仅在 c=1 执行。
@@ -27,23 +27,23 @@ private theorem copyRegister_cons (control : Option Wire) (a b : Wire) (src dst 
     copyRegister control (a :: src) (b :: dst) =
       [copyGate control a b] ++ copyRegister control src dst := rfl
 
-theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
-    (hlen : src.length = dst.length) (hnd : (src ++ dst).Nodup)
+/-- 不等宽 XOR：截取源的低 dst.length 位；较短的源无需物理补零位。 -/
+theorem copyRegister_fit_correct (control : Option Wire) (src dst : List Wire)
+    (hnd : (src ++ dst).Nodup)
     (hc : ∀ c ∈ control, c ∉ dst) (s : State) (m : List Bool) :
     (run (copyRegister control src dst) m s).phase = s.phase ∧
     (∀ w, w ∉ dst → (run (copyRegister control src dst) m s).basis w = s.basis w) ∧
     regValue dst (run (copyRegister control src dst) m s).basis =
-      regValue dst s.basis ^^^ copyValue control s.basis (regValue src s.basis) := by
+      regValue dst s.basis ^^^ copyValue control s.basis (regValue (src.take dst.length) s.basis) := by
   induction src generalizing dst s with
   | nil =>
-    have hd : dst = [] := List.eq_nil_of_length_eq_zero hlen.symm
-    subst dst
-    cases control <;> simp [copyRegister_nil_right, copyValue, run, regValue]
+    cases control with
+    | none => simp [copyRegister_nil, copyValue, run, regValue]
+    | some c => cases s.basis c <;> simp [copyRegister_nil, copyValue, run, regValue, *]
   | cons a src ih =>
     cases dst with
-    | nil => simp at hlen
+    | nil => cases control <;> simp [copyRegister_nil_right, copyValue, run, regValue]
     | cons b dst =>
-      have hlen' : src.length = dst.length := by simpa using hlen
       obtain ⟨hs, hd, hsd⟩ := List.nodup_append'.mp hnd
       have hbs : b ∉ src := by
         intro h; exact List.disjoint_left.mp hsd (List.mem_cons_of_mem a h) (List.mem_cons_self)
@@ -62,7 +62,7 @@ theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
       have hm0 : measurementCount [copyGate control a b] = 0 := by
         cases control <;> rfl
       have hs1 (w : Wire) (hw : w ≠ b) : s1.basis w = s.basis w := by simp [s1, writeBit, hw]
-      obtain ⟨hp, he, hv⟩ := ih dst hlen' ht hc' s1
+      obtain ⟨hp, he, hv⟩ := ih dst ht hc' s1
       simp only [copyRegister_cons]
       rw [run_append, run_take, hm0, List.drop_zero, hfirst]
       refine ⟨hp, ?_, ?_⟩
@@ -70,12 +70,13 @@ theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
         have hw' : w ≠ b ∧ w ∉ dst := by simpa only [List.mem_cons, not_or] using hw
         exact (he w hw'.2).trans (hs1 w hw'.1)
       · have hb := he b hbd
-        have hsrc : regValue src s1.basis = regValue src s.basis :=
-          regValue_congr _ _ _ (fun w hw => hs1 w (by intro h; exact hbs (h ▸ hw)))
+        have hsrc : regValue (src.take dst.length) s1.basis = regValue (src.take dst.length) s.basis :=
+          regValue_congr _ _ _ (fun w hw => hs1 w (by
+            intro h; exact hbs (h ▸ List.mem_of_mem_take hw)))
         have hdst : regValue dst s1.basis = regValue dst s.basis :=
           regValue_congr _ _ _ (fun w hw => hs1 w (by intro h; exact hbd (h ▸ hw)))
-        have hval : copyValue control s1.basis (regValue src s1.basis) =
-            copyValue control s.basis (regValue src s.basis) := by
+        have hval : copyValue control s1.basis (regValue (src.take dst.length) s1.basis) =
+            copyValue control s.basis (regValue (src.take dst.length) s.basis) := by
           rw [hsrc]
           cases control with
           | none => rfl
@@ -84,15 +85,24 @@ theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
           2 * regValue dst (run (copyRegister control src dst) m s1).basis = _
         rw [hb, hv, hdst, hval]
         have hx := xor_value_step (s.basis b) bit (regValue dst s.basis)
-          (copyValue control s.basis (regValue src s.basis))
-        have hvbit : bit.toNat + 2 * copyValue control s.basis (regValue src s.basis) =
-            copyValue control s.basis (regValue (a :: src) s.basis) := by
+          (copyValue control s.basis (regValue (src.take dst.length) s.basis))
+        have hvbit : bit.toNat + 2 * copyValue control s.basis (regValue (src.take dst.length) s.basis) =
+            copyValue control s.basis (regValue (a :: src.take dst.length) s.basis) := by
           cases control with
           | none => simp [bit, copyValue, regValue, Bool.toNat]
           | some c => cases h : s.basis c <;> simp [bit, copyValue, regValue, Bool.toNat, Bool.cond_eq_ite, h]
         rw [hvbit] at hx
-        simpa only [s1, writeBit, Function.update_self, regValue, List.foldr_cons,
+        simpa only [s1, writeBit, Function.update_self, List.length_cons, List.take_succ_cons, regValue, List.foldr_cons,
           Bool.toNat, Bool.cond_eq_ite] using hx
+
+theorem copyRegister_correct (control : Option Wire) (src dst : List Wire)
+    (hlen : src.length = dst.length) (hnd : (src ++ dst).Nodup)
+    (hc : ∀ c ∈ control, c ∉ dst) (s : State) (m : List Bool) :
+    (run (copyRegister control src dst) m s).phase = s.phase ∧
+    (∀ w, w ∉ dst → (run (copyRegister control src dst) m s).basis w = s.basis w) ∧
+    regValue dst (run (copyRegister control src dst) m s).basis =
+      regValue dst s.basis ^^^ copyValue control s.basis (regValue src s.basis) := by
+  simpa only [← hlen, List.take_length] using copyRegister_fit_correct control src dst hnd hc s m
 
 theorem copyRegister_spec (src dst : List Wire) (hlen : src.length = dst.length)
     (hnd : (src ++ dst).Nodup) (X O : Nat) :

@@ -2,13 +2,13 @@
 
 本模块通过准备逆元和受控模乘，将模除法结果加到或减出目标寄存器，并恢复求逆历史与工作区。
 
-[Divide.lean](Divide.lean) 的 `divideAdd/Sub` 已显式写成受控模积累加/累减：`control L.control { L.acc = (L.acc + inverse.a * L.numerator) mod p; };`。装载、逆元准备和清理仍可直接看到，历史在乘积完成前不会释放；原规格与资源不变。
+[Divide.lean](Divide.lean) 的 `divideAdd/Sub` 用 `with inverse := (safeInverseValue …)` 取得安全分母的逆元，然后写 `control L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };`（或减号）。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
 `divideAdd` / `divideSub` 使用 `divisionProductContext` 固定乘法工作区与输出扩展高位。主体写出控制、逆元、分子和累加目标；接线仍只借用求逆后已清零的区域，不覆盖存活的逆元或历史。
 
-算法入口是 [Divide.lean](Divide.lean) 的 `divideAdd`、`divideSub`：先准备安全分母（control=1 用 denominator，否则用 1），求逆，再将 numerator·denominator⁻¹ 受控加到或减出 acc，最后恢复求逆并卸载分母。代码标明了 inverse、product 两个布局连接哪些寄存器；求逆历史一直保留到乘积累加结束。
+安全分母为 control=1 时的 denominator，否则为 1；禁用时不会求 0 的逆元。`safeInverseValue` 只隐藏内部装载和恢复，`divideAdd_program` / `divideSub_program` 保留与原门列的连接证明。
 
 分母装载/卸载显式使用负控制 `CX (control XOR 1) leastBit` 和正控制 `CXor control denominatorCopy denominator`：分别处理常量 1 和分母副本，不测量控制位。
 

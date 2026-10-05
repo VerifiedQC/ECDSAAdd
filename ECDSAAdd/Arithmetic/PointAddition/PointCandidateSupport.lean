@@ -69,7 +69,7 @@ theorem pointSubConstant_support (L : PointAddLayout) (h : L.Widths)
     have hh := xorConstant_wires_subset L.constant k hw
     simp only [List.mem_toFinset,List.mem_append] at hh ⊢
     tauto
-  rw [pointSubConstant,wires_append,wires_append,poolSub_support L h x L.constant out hx hk ho,
+  rw [pointSubConstant_program,wires_append,wires_append,poolSub_support L h x L.constant out hx hk ho,
     Finset.union_eq_right.mpr hc,Finset.union_eq_left.mpr hc]
 
 theorem pointSquare_support (L : PointAddLayout) (h : L.Widths) :

@@ -2,11 +2,11 @@
 
 本模块实现模加法、模减法及其原地、受控和 XOR 输出接口，并证明范围、清理与资源结论。
 
-算法主体已使用算术表达式：先读 [Modular.lean](Modular.lean) 的 `modAdd/modSub` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。`^=` 表示 XOR 写入，两个 `control` 块明确借位分支；工作区仍由 Context 绑定，原规格与资源不变。
+算法主体先读 [Modular.lean](Modular.lean) 的 `modAddOn/modSubOn` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。前两者直接接收 x/y/out/q，以比较和两个 control 块表示约减；total/modulus/diff 和进位位移到工作区配方 W。旧 `modAdd/modSub` 保留为布局兼容入口，原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
-算法主体使用 `modArithmeticContext` / `modAddCoreContext` 固定进位链、零输入进位及常数工作区；例如 `addXor x y total` 的参数只保留逻辑输入输出。完整接线及零初值要求在同文件的配置定义中，底层完整参数接口、规格和资源不变。
+`modReductionContext` 计算共享的候选和借位，再使用和清理；不是为每个表达式重新分配寄存器。`modAddCore` 的常数装载/清理由 `target -= const(p)` 的后端配方完成。位宽、互异、零工作区条件仍需满足。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 
@@ -219,9 +219,9 @@ modAddInPlace L p
 
 该文件将模和或模差异或到输出。
 
-算法入口是 `modAdd`、`modSub`。前者先算 total=x+y，再试减 q，通过借位选择 total 或 total−q；后者准备差与差+q 两个候选，再通过借位选择。选中结果 XOR 到 out 后，按依赖的逆序清除中间结果。
+`modAddOn`：比较 `x+y<q`，成立时 XOR x+y，否则 XOR x+y−q。`modSubOn`：比较 x<y，成立时 XOR x−y+q，否则 XOR x−y。这里是逐基态的量子条件，不测量。两个特殊 let/分支模板由后端整体展开，不能当成支持任意表达式的一般比较器。
 
-代码中 `let n := L.width` 定义位宽，`addXor x y total` 等调用通过配置绑定进位工作区。选择写成两个受控操作：`CXor (borrow XOR 1) out (diff.take n)` 与 `CXor borrow out (total.take n)`；模减的后一项改用 corrected。参数顺序为控制、目标、源；XOR 1 表示负控制。配置将这对互补控制合并为原来的选择电路，每位仍只用一个 Toffoli。`let` 只给现有 wire 起名，不增加量子位；精确前提与结果见下方规格。
+中间和与差使用 n+1 位，borrow 复用差的最高位。输出按目标宽度写入，无需在算法中写 `.take n`。`modAddOn_spec`、`modSubOn_spec` 证明上述分支公式；`modAdd_program`、`modSub_program` 证明与原电路门列一致，包括候选共用、选择器和反计算。
 
 L 是模运算电路的寄存器布局。输入 L.x、L.y 的初值为 X、Y，输出 L.out 初始化为 O，工作区 L.work 初始化为 0。下文 x、y、out、work 是这些字段的简写；n 是布局的位宽 L.width。设 n=L.width，0<q<2^n，X、Y<q，布局线路互异。
 

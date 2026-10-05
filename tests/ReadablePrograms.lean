@@ -41,7 +41,7 @@ example (L : ModAddCoreLayout) (p : Nat) :
   maskedAddConst L.high (L.constant.take L.low.length) L.low
     (L.carry.take (L.low.length-1)) L.cin p ++
   -- 4. 规范结果小于源当且仅当曾约减；比较后 X 清原借位。
-  compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high] := by rfl
+  compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high] := modAddCore_program L p
 
 -- ModularAddition/Modular.lean: modAdd
 example (L : ModLayout) (q : Nat) :
@@ -350,13 +350,13 @@ example (L : DivideLayout) :
 example (L : DivideLayout) :
     divideAdd L =
   divideLoad L ++ inverseCompute L.inner p ++ montMulControlledAdd L.control L.multiply p ++
-  inverseUncompute L.inner p ++ divideUnload L := by rfl
+  inverseUncompute L.inner p ++ divideUnload L := divideAdd_program L
 
 -- Division/Divide.lean: divideSub
 example (L : DivideLayout) :
     divideSub L =
   divideLoad L ++ inverseCompute L.inner p ++ montMulControlledSub L.control L.multiply p ++
-  inverseUncompute L.inner p ++ divideUnload L := by rfl
+  inverseUncompute L.inner p ++ divideUnload L := divideSub_program L
 
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceConstantAdd
 example (L : ControlledPointLayout) (r : List Wire) (k : Fp) :
@@ -399,7 +399,7 @@ example (L : ControlledPointLayout) (cx cy lambdaStar : Fp) :
   pointInPlaceClearSlope L lambdaStar ++
   pointInPlaceNegate L ++
   pointInPlaceConstantAdd L L.point.x cx ++
-  pointInPlaceConstantAdd L L.point.y (-cy) := by rfl
+  pointInPlaceConstantAdd L L.point.y (-cy) := pointInPlaceGeneric_program L cx cy lambdaStar
 
 -- PointAddition/PointInPlaceProgram.lean: pointInPlaceGenericFlag
 example (L : ControlledPointLayout) :

@@ -49,7 +49,41 @@ prog using (modArithmeticContext L) {
 
 `using 名称` 在此构造层选择一个局部接线函数，例如 `out = (out - x * y) mod q using squareSub;`；它不是 `arith` 的认证注册名称。这里不会自动检查自定义函数是否符合表达式：必须像生产函数一样提供门列连接和语义证明。支持显式选择的形式为非受控模加减、模积累加减，以及受控常量加法；其他未支持的形式报错。
 
-`control` 块只接受已支持的算术语句，可顺序列出多句；不是对任意 Program 的通用控制。负控制目前仅接入 XOR 寄存器／常量，其他负控制仍使用原有显式接口。循环沿用 `prog` 的构造期循环。清零仍显式写出反计算，不自动重置或分配工作区。相邻的互补 XOR 分支先降级再使用原选择优化，资源不变。
+`control` 块只接受已支持的算术语句，可顺序列出多句；不是对任意 Program 的通用控制。负控制目前仅接入 XOR 寄存器／常量，其他负控制仍使用原有显式接口。循环沿用 `prog` 的构造期循环。相邻互补 XOR 分支由 `chooseXorFitted` 在等宽时合并；不等宽时保留独立受控 XOR，防止漏掉较长分支的有效位。
+
+### 隐藏工作区的配方与作用域（2026-10-05）
+
+模加现在可以直接写比较和算式。实际入口是 `Modular.lean` 的 `modAddOn x y out q W`，W 只绑定工作区；旧 `modAdd L q` 是兼容调用入口。
+
+```lean
+prog using (modReductionContext W) {
+  let borrow := (x + y) < const(q);
+  control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+  control borrow { out ^= (x + y); };
+}
+```
+
+这里的 `<` 是逐计算基态的比较，不读取测量结果，也不是 Lean 在构造期比较 wire 编号。此版本只接受上述完整模加模板及对应模减模板；两分支的输入、条件、输出和常数必须匹配。改变表达式、漏掉分支或插入其他操作会报错，不能悄悄沿用旧配方。它还不是一般表达式树编译器。
+
+配方计算一次 n+1 位的和与差，以差的最高位作为 borrow；共用原选择器，随后清理差、和与常数。n 是逻辑输出的长度；x/y 的物理接口仍含一根零扩展高位。`modAddOn_spec` / `modSubOn_spec` 证明比较分支所写的数值结果，原规格继续保证清零、相位与保持性质。中间表达式不会先截成 n 位；只有最后 XOR 写入按目标位宽取低位。
+
+临时结果用 `with` 明确其存活范围：
+
+```lean
+prog using (montOutputContext M) {
+  with product := (M.x * M.y) mod p {
+    M.out ^= product;
+  };
+}
+```
+
+后端提供 `Computed` 的值、准备程序和恢复程序；展开顺序是准备 → 块体 → 恢复。模乘历史一直保留到块结束。求逆的 `inverseValue` 恢复到 Kaliski 初态，`safeInverseValue` 还负责装载/卸载安全分母；不把恢复初态误写成全部赋零。嵌套块按内层先恢复的顺序展开。临时名字不能在块外使用。
+
+`with` **不自动证明任意块体安全**。块体若修改了恢复所需的输入、临时结果或历史，就可能无法恢复；必须证明准备、使用和恢复的契约衔接。`Computed.correct` 给出这一组合规则，生产函数仍通过原 `_spec` / `_correct` 验证；`Computed.resources` 计入三个阶段全部资源。不动态分配新 wire，不倒放测量门列，不自动寻找最优实现。
+
+其他新增配方：无控制的 `target += const(k)` / `-= const(k)`、`out ^= (x - const(k)) mod q`、`out ^= (x ^ 2) mod q`、`control c { out = (const(k) + out) mod q; };`，以及 `out = (out - x ^ 2) mod q using squareSubtract`。这些形式必须有相应后端，平方只支持指数 2；装载、复制和清理移到后端，不删去实际电路。
+
+普通 `out ^= source`（含正负控制）接受不等宽：源较长取低 out.length 位；源较短等价补零，目标高位不变。`copyRegister_fit_correct` 证明此规则。它不意味着两个任意宽度的加法输入也可以无条件共用同一进位布局；其他算术的位宽要求仍见各模块规格。
 
 ## 文件目录
 
@@ -145,6 +179,13 @@ structure CircuitDSL.Context (α : Type)
 接线配置由 operations、before、after 三部分组成。`prog using context { ... }` 将 operations 中的具名字段作为该代码块的局部操作；before/after 是明确指定的准备与清理电路，默认均为空。配置必须在构造期可展开，不自动分配辅助位，也不自动推断哪些位可复用。作用域结束后原函数接口不变。
 
 ```lean
+structure CircuitDSL.Computed (α : Type)
+def CircuitDSL.Computed.program {α : Type} (c : CircuitDSL.Computed α) (body : α → Program) : Program
+```
+
+Computed 由 value、prepare、restore 三部分组成，分别是供块体使用的值、准备电路和恢复电路。program 将它们按准备、使用、恢复的顺序组合；with 语法展开为同一门列。
+
+```lean
 structure CircuitDSL.Branch
 ```
 
@@ -209,6 +250,15 @@ theorem run_append (p q : Program) (m : List Bool) (s : State)
 证明了执行拼接的电路 p ++ q，等价于先执行 p 再执行 q；测量结果记录按 p 的测量次数分成两段，分别供 p 和 q 使用。
 
 ## [Hoare.lean](Hoare.lean)
+
+```lean
+theorem CircuitDSL.Computed.correct {α : Type} (c : CircuitDSL.Computed α)
+    (body : α → Program) {P R S Q : BasisState → Prop}
+    (prepare : Triple P c.prepare R) (use : Triple R (body c.value) S)
+    (restore : Triple S c.restore Q)
+```
+
+证明了准备、块体、恢复的前后条件能衔接时，整个作用域满足 `{P} c.program body {Q}`；恢复所需的条件不能省略。
 
 ```lean
 class Holds (α : Type) (β : Type) where
@@ -394,6 +444,13 @@ def Request.compile {n : Nat} (request : Request n) : Except String (Lowering re
 Request 包含 config 和高层 code；compile 使用这份配置编译代码。`arith { ... }` 只产生 Code，`arith using config { ... }` 产生 Request；语法定义和宏展开无需逐条阅读。
 
 ## [Cost.lean](Cost.lean)
+
+```lean
+theorem CircuitDSL.Computed.resources {α : Type} (c : CircuitDSL.Computed α)
+    (body : α → Program)
+```
+
+证明了临时值作用域的门数、测量数等于准备、块体、恢复三部分之和，物理线路为三部分的并集。
 
 ```lean
 def toffoliCount : Program → Nat
