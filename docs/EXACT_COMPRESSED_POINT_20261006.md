@@ -1,7 +1,7 @@
-# Exact compressed point-addition candidate
+# Exact compressed point-addition checkpoint
 
-Verified component source: `d6d6b4f8b730faae47ca5720cae9657dcf2bd152`.
-The complete candidate point-addition correctness and resource theorems passed remote Lean. The selected public circuit is undergoing its full build and transitive axiom audit; this candidate is not yet a promoted full checkpoint.
+Verified full-circuit source: `d6d6b4f8b730faae47ca5720cae9657dcf2bd152`.
+The complete selected point-addition circuit passed the CPU-pod strict build and all 1,336 transitive axiom queries, with all 748 source hashes matching before and after verification. This is the promoted full checkpoint.
 
 The protected `ControlledPointAddSpec.lean`, `PointAddSpec.lean`, and `AffineFormula.lean` files are byte-identical to the previous checkpoint. Correctness covers every valid point, both controls, exceptional points, every measurement record, arbitrary incoming phase, and complete work restoration under the original monomial semantics.
 
@@ -33,7 +33,7 @@ All Lean execution occurred on the CPU pod. Component receipts:
 
 These component times include inline axiom queries; separate audit timing is not available for these attempts. Their public proofs use only `propext`, `Classical.choice`, and `Quot.sound`. Failed infinity-branch proof attempts are retained in the evidence ledger and are not credited.
 
-Full verification attempt: `compressed-full-point-v1`; fixed snapshot contains 748 hashed source/configuration/script files. Promotion requires the complete strict build, all selected transitive axiom checks, and matching hashes before and after verification.
+Full verification attempt: `compressed-full-point-v1`, exit 0. Build: 967s for 3,863 jobs. Audit: 194s for 1,336 queries (1,335 distinct declarations). One second between phases gives 1,162s wall time (19m 22s). All 748 hashed source/configuration/script files matched before and after verification. Verifier setup and queue were each zero seconds; source preparation and transfer were not separately timed. Only standard axioms were present.
 
 ## Remaining Stage 2/5 targets
 
