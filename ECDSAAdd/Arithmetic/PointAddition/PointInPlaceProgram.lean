@@ -21,7 +21,7 @@ def pointConstantAddContext (L : ControlledPointLayout) : CircuitDSL.Context Poi
 /-- r ← (r+L.core.generic·k.val) mod p，k 是经典域元素，要求 r<p。 -/
 def pointInPlaceConstantAdd (L : ControlledPointLayout) (r : List Wire) (k : Fp) : Program :=
     prog using (pointConstantAddContext L) {
-  control L.core.generic { r = (const(k.val) + r) mod p; };
+  if L.core.generic { r = (const(k.val) + r) mod p; };
 }
 
 /-- 算术表达式与原布局调用生成同一门列，供既有证明展开。 -/
@@ -36,9 +36,9 @@ theorem pointInPlaceConstantAdd_program (L : ControlledPointLayout) (r : List Wi
 def pointInPlaceNegate (L : ControlledPointLayout) : Program := prog using (modAssignContext L.inPlaceNegate) {
   let enabled := L.core.generic;
   let negate := L.inPlaceNegate; -- a 接 x，low 用作临时寄存器。
-  control enabled { negate.low = (negate.low - negate.a) mod p; };
+  if enabled { negate.low = (negate.low - negate.a) mod p; };
   swapRegisters(enabled, L.point.x, negate.low);        -- enabled=1 时交换 x 与 negate.low。
-  control enabled { negate.low = (negate.a + negate.low) mod p; }; -- 清零临时结果。
+  if enabled { negate.low = (negate.a + negate.low) mod p; }; -- 清零临时结果。
 }
 
 theorem pointInPlaceNegate_program (L : ControlledPointLayout) :

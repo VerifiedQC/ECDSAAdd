@@ -8,6 +8,8 @@
 
 Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
+算法正文统一用 `if c { ... };` 表示量子受控执行，不测量 c；`if (c XOR 1)` 对应 c=0。它与旧 `control` 写法生成相同门列，旧写法仍兼容。具体支持范围见 [Framework](../ECDSAAdd/Framework/README.md#现有算法中的算术表达式)。
+
 ## Arithmetic：电路算术模块
 
 | 模块说明 | 负责的操作 | Lean 文件数 |
@@ -75,11 +77,11 @@ Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 当前有直接模加和固定 enable=1 的受控模加适配，两者真实门列不同；第二种用于验证替换机制，不是性能优化。三位、模 7、连续两次模加的资源为 direct/direct：22/22/16，masked/masked：34/22/20，direct/masked：28/22/21（Toffoli/测量/实际静态线路）。生产函数的表达式改写见下一节；未将整个点加搬入认证 Code，原资源不变。
 
-认证 `arith` 尚未接入一般赋值、模减、表达式树、循环、用户级 `control`、自动分配和优化；现有 monomial 分支模型的证明范围不变。与一般量子信道语义的连接不在本阶段内。
+认证 `arith` 尚未接入一般赋值、模减、表达式树、循环、量子条件块、自动分配和优化；现有 monomial 分支模型的证明范围不变。与一般量子信道语义的连接不在本阶段内。
 
 ### 生产函数的表达式改写（2026-10-03）
 
-本轮直接改写 6 个模块中 33 个原有程序定义，不另留示范版。它们保留 `Program` 接口，在 `prog using` 中使用 `+=`、`-=`、`^=`、模赋值与 `control { … }`；工作区仍显式绑定在 Context 中。先读下表的算法主体，再按需看配置和证明。
+本轮直接改写 6 个模块中 33 个原有程序定义，不另留示范版。它们保留 `Program` 接口，在 `prog using` 中使用 `+=`、`-=`、`^=`、模赋值与受控块（现在写为 `if c { … };`）；工作区仍显式绑定在 Context 中。先读下表的算法主体，再按需看配置和证明。
 
 | 文件 | 已改写的原函数 |
 | --- | --- |
@@ -123,7 +125,7 @@ Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 重要算法的量子条件分支使用 `CXor 控制 目标 源`、`CConst 控制 目标 常数`、`CPointXor 控制 目标 常量点`；后者异或点编码，不是点加。`(c XOR 1)` 表示 c=0 的负控制，不是测量或修改 c 的语句。普通受控原地加减写为 `CAdd/CSub 控制 目标 源`，常量加减写为 `CAddConst/CSubConst 控制 目标 常数`；低位常量加法用 `CAddConstLow`。这些调用仍使用原有具体算术电路及已绑定的辅助接线，不是给任意 Program 逐门套控制。
 
-此阶段把无借位/有借位分支写成两个 control 块，等宽时合并为每位一个 Toffoli 的选择器。2026-10-05 又将模加减提升为完整表达式模板，见上方当前入口；一般 `modArithmeticContext` 的合并改为 `chooseXorFitted`，不等宽时禁止共同 zip。线路互异仍是语义证明的前提，不是任意别名下都合法的优化。
+此阶段把无借位/有借位分支写成两个受控块（现在写作 `if`），等宽时合并为每位一个 Toffoli 的选择器。2026-10-05 又将模加减提升为完整表达式模板，见上方当前入口；一般 `modArithmeticContext` 的合并改为 `chooseXorFitted`，不等宽时禁止共同 zip。线路互异仍是语义证明的前提，不是任意别名下都合法的优化。
 
 已检查表中 14 个模块：RegisterXor 的原值/函数值选择，Comparison 的负控制读出，ModularAddition 的借位选择与回补，ModularDoubling 的奇偶/借位回补，ModularMultiplication 的受控累加/约减，ModularInverse 的活动标志与数据轮，Division 的安全分母，PointAddition 的候选分母、点编码输出与特殊分支均采用显式控制。Lookup 的叶子为受控常量 XOR，递归树保留显式条件工作位及测量清理。Addition、Selection 的已清楚门级主体，以及 Swap/Shift 和已显式带控制的 Equality 不额外包装。按经典常量、列表长度、接线种类构造电路的 if/match 保留，不伪装成量子判断。
 

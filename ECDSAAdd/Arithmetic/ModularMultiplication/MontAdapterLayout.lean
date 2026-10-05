@@ -147,7 +147,7 @@ def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program :=
   prog using (montOutputContext M) {
     let out := M.addView.low;
     with product := (M.x * M.y) mod p {
-      control c { out = (product + out) mod p; };
+      if c { out = (product + out) mod p; };
     };
   }
 
@@ -157,7 +157,7 @@ def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program :=
   prog using (montOutputContext M) {
     let out := M.addView.low;
     with product := (M.x * M.y) mod p {
-      control c { out = (out - product) mod p; };
+      if c { out = (out - product) mod p; };
     };
   }
 

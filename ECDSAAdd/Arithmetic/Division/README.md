@@ -2,7 +2,7 @@
 
 本模块通过准备逆元和受控模乘，将模除法结果加到或减出目标寄存器，并恢复求逆历史与工作区。
 
-[Divide.lean](Divide.lean) 的 `divideAdd/Sub` 用 `with inverse := (safeInverseValue …)` 取得安全分母的逆元，然后写 `control L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };`（或减号）。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
+[Divide.lean](Divide.lean) 的 `divideAdd/Sub` 用 `with inverse := (safeInverseValue …)` 取得安全分母的逆元，然后写 `if L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };`（或减号）。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 

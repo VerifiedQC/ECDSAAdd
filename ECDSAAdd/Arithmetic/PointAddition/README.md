@@ -8,7 +8,7 @@
 
 候选点计算用 `pointCandidateContext` 固定共享零工作池。斜率清理中，`with xIsZero := (pointZeroValue L point.x)` 准备独立的 `[point.x=0]`，与 generic 无关；块内保留 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`。块结束重算判零以清理，point.x 在块内保持。仍复用 equalX/equalNegY，不增加量子位。
 
-候选点的 dx、dy、slope 等需要跨 `pointCandidateCompute/Clear` 保存，故保留逻辑名字；它们不是每次调用后可以归还的零工作位。原地常数加法只显示 `control generic { r = (const(k) + r) mod p; };`，其掩码装载和清理也由配方完成。
+候选点的 dx、dy、slope 等需要跨 `pointCandidateCompute/Clear` 保存，故保留逻辑名字；它们不是每次调用后可以归还的零工作位。原地常数加法只显示 `if generic { r = (const(k) + r) mod p; };`，其掩码装载和清理也由配方完成。
 
 普通分支的公式直接写在 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute` 中：dx=x−cx、dy=y−cy、slope=dy/dx、candidateX=slope²−x−cx、candidateY=slope·(x−candidateX)−y，运算均模 p。非普通分支用安全分母 1 完成计算，但不选用该候选。代码中的 `fieldSubXor/fieldMulXor/fieldInverseXor` 显式列出输入和 XOR 输出，pool 只指定共享工作区。
 

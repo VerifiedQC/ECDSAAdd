@@ -25,25 +25,25 @@ example (L : ModAddCoreLayout) (x y : List Wire) :
 
 example (x out : List Wire) : (prog { out ^= x; }) = copyRegister none x out := rfl
 example (c : Wire) (x out : List Wire) :
-    (prog { control c { out ^= x; }; }) = copyRegister (some c) x out := rfl
+    (prog { if c { out ^= x; }; }) = copyRegister (some c) x out := rfl
 example (c : Wire) (x out : List Wire) :
-    (prog { control (c XOR 1) { out ^= x; }; }) =
+    (prog { if (c XOR 1) { out ^= x; }; }) =
       copyRegister none x out ++ copyRegister (some c) x out := rfl
 example (c : Wire) (out : List Wire) (q : Nat) :
-    (prog { control (c XOR 1) { out ^= const(q); }; }) =
+    (prog { if (c XOR 1) { out ^= const(q); }; }) =
       xorConstant out q ++ maskedConstant c out q := rfl
 
 -- 整块先降级，互补控制仍走原单-Toffoli/位的选择器。
 example (L : ModLayout) (c : Wire) (x y out : List Wire) :
     (prog using (modArithmeticContext L) {
-      control (c XOR 1) { out ^= x; };
-      control c { out ^= y; };
+      if (c XOR 1) { out ^= x; };
+      if c { out ^= y; };
     }) = chooseXorFitted c x y out := rfl
 
 example (L : ModLayout) (c d : Wire) (x y out : List Wire) :
     (prog using (modArithmeticContext L) {
-      control (c XOR 1) { out ^= x; };
-      control d { out ^= y; };
+      if (c XOR 1) { out ^= x; };
+      if d { out ^= y; };
     }) = copyRegister none x out ++ copyRegister (some c) x out ++
       copyRegister (some d) y out := rfl
 
@@ -51,20 +51,20 @@ example (L : ModLayout) (c : Wire) (x y out : List Wire) (q : Nat) :
     (prog using (modArithmeticContext L) {
       out ^= const(q);
       let target := out;
-      control (c XOR 1) { target ^= x; };
-      control c { target ^= y; };
+      if (c XOR 1) { target ^= x; };
+      if c { target ^= y; };
       out ^= const(q);
     }) = xorConstant out q ++ (chooseXorFitted c x y out ++ xorConstant out q) := rfl
 
 -- 控制块只把条件交给有名的具体实现，不对任意 Program 加控制。
 example (L : RoundDataLayout) (c : Wire) (x y : List Wire) :
-    (prog using (roundArithmeticContext L) { control c { y += x; y -= x; }; }) =
+    (prog using (roundArithmeticContext L) { if c { y += x; y -= x; }; }) =
       measuredMaskedAddInPlace c x (L.reg .y) y ((L.reg .carry).take (L.width-1)) L.cin ++
       measuredMaskedSubInPlace c x (L.reg .y) y ((L.reg .carry).take (L.width-1)) L.cin := rfl
 
 example (L : ModUnaryLayout) (c : Wire) (y : List Wire) (q : Nat) :
     (prog using (modUnaryContext L) {
-      control c { y += const(q) using maskedAddConstLow; };
+      if c { y += const(q) using maskedAddConstLow; };
     }) = maskedAddConst c (L.constant.take L.low.length) y
       (L.carry.take (L.low.length-1)) L.cin q := rfl
 
@@ -75,10 +75,10 @@ example (L : ModInPlaceLayout) (x y : List Wire) (q : Nat) :
     (prog using (modAssignContext L) { y = (y - x) mod q; }) =
       modSubInPlace { L with a := x, low := y } q := rfl
 example (L : ModInPlaceLayout) (c : Wire) (x y : List Wire) (q : Nat) :
-    (prog using (modAssignContext L) { control c { y = (x + y) mod q; }; }) =
+    (prog using (modAssignContext L) { if c { y = (x + y) mod q; }; }) =
       controlledModAdd c { L with a := x, low := y } q := rfl
 example (L : ModInPlaceLayout) (c : Wire) (x y : List Wire) (q : Nat) :
-    (prog using (modAssignContext L) { control c { y = (y - x) mod q; }; }) =
+    (prog using (modAssignContext L) { if c { y = (y - x) mod q; }; }) =
       controlledModSub c { L with a := x, low := y } q := rfl
 example (L : ModInPlaceLayout) (x y : List Wire) (q : Nat) :
     (prog using (modAssignContext L) { y = (x + y) mod q using modAddAssign; }) =
@@ -89,12 +89,12 @@ example (L : ModInPlaceLayout) (x y : List Wire) (q : Nat) :
 
 example (L : DivideLayout) (c : Wire) (x y out : List Wire) (q : Nat) :
     (prog using (divisionProductContext L) {
-      control c { out = (out + x * y) mod q; };
+      if c { out = (out + x * y) mod q; };
     }) = montMulControlledAdd c
       (borrowedMont L.borrow L.inner.first.done 1 x y (out++[L.borrowedBit 0])) q := rfl
 example (L : DivideLayout) (c : Wire) (x y out : List Wire) (q : Nat) :
     (prog using (divisionProductContext L) {
-      control c { out = (out - x * y) mod q; };
+      if c { out = (out - x * y) mod q; };
     }) = montMulControlledSub c
       (borrowedMont L.borrow L.inner.first.done 1 x y (out++[L.borrowedBit 0])) q := rfl
 
@@ -119,11 +119,60 @@ example (L : ModAddCoreLayout) (x y : List Wire) (k : Nat) :
       for i in reversed(range(k)) { y -= x; };
     }) = (List.ofFn (fun (_i : Fin k) => subInPlace x y L.carry L.cin)).reverse.flatten := rfl
 example (cs : List Wire) (x y : List Wire) :
-    (prog { for c in cs { control c { y ^= x; }; }; }) =
+    (prog { for c in cs { if c { y ^= x; }; }; }) =
       cs.flatMap (fun c => copyRegister (some c) x y) := rfl
-example : (prog { control 0 {}; }) = ([] : Program) := rfl
+example : (prog { if 0 {}; }) = ([] : Program) := rfl
 example : (prog { let control := 0; Instr.X control; }) = [Instr.X 0] := rfl
 example : (prog { ([] : List Wire) ^= const(3); }) = ([] : Program) := rfl
+
+-- if 只是旧 control 的新写法：正/负控制、多句块和互补分支保持完整门列。
+example (c : Wire) (x out : List Wire) :
+    (prog { if c { out ^= x; }; }) = (prog { control c { out ^= x; }; }) := rfl
+example (c : Wire) (x out : List Wire) (k : Nat) :
+    (prog { if (c XOR 1) { out ^= x; out ^= const(k); }; }) =
+      (prog { control (c XOR 1) { out ^= x; out ^= const(k); }; }) := rfl
+example (L : RoundDataLayout) (c : Wire) (x y : List Wire) :
+    (prog using (roundArithmeticContext L) { if c { y += x; y -= x; }; }) =
+      (prog using (roundArithmeticContext L) { control c { y += x; y -= x; }; }) := rfl
+example (L : ModLayout) (c : Wire) (x y out : List Wire) :
+    (prog using (modArithmeticContext L) {
+      if (c XOR 1) { out ^= x; }; if c { out ^= y; };
+    }) = (prog using (modArithmeticContext L) {
+      control (c XOR 1) { out ^= x; }; control c { out ^= y; };
+    }) := rfl
+
+-- if/then/else 仍是普通 Lean 条件表达式；if meas 仍显式生成测量门。
+example (b : Bool) (c : Wire) (x y out : List Wire) :
+    (prog {
+      let source := if b then x else y;
+      if c { out ^= source; };
+    }) = copyRegister (some c) (if b then x else y) out := rfl
+example (b : Bool) (c d : Wire) :
+    (prog { if b then Instr.X c else Instr.X d }) =
+      [if b then Instr.X c else Instr.X d] := rfl
+example (c d : Wire) :
+    (prog { if meas c = 1 then [Correction.Z d] else skip }) =
+      [Instr.measureX c [] [Correction.Z d]] := rfl
+example (c : Wire) (x out : List Wire) :
+    (prog { let control := c; if control { out ^= x; }; }) =
+      copyRegister (some c) x out := rfl
+
+-- if 可以出现在循环和临时值作用域内，不改变准备/恢复顺序。
+example (c t : Wire) (x out : List Wire) :
+    (prog {
+      with source := (CircuitDSL.Computed.mk x [Instr.X t] [Instr.X t]) {
+        if c { out ^= source; };
+      };
+    }) = [Instr.X t] ++ copyRegister (some c) x out ++ [Instr.X t] := rfl
+example (cs : List Wire) (x out : List Wire) :
+    (prog { for c in cs { if c { out ^= x; }; }; }) =
+      (prog { for c in cs { control c { out ^= x; }; }; }) := rfl
+
+-- 0 是 wire 编号，不是经典 false；控制记法本身不插入测量。
+example : (prog { if 0 { [2] ^= [1]; }; }) = [Instr.CCX 0 1 2] := rfl
+example (c : Wire) (x out : List Wire) (hlen : x.length = out.length) :
+    measurementCount (prog { if c { out ^= x; }; }) = 0 :=
+      (copyRegister_counts (some c) x out hlen).2
 
 -- 新旧主体严格同门列（任意布局，不把有效布局条件变成构造器参数）。
 example (M : MontLayout) (q : Nat) : montMulAdd M q =
@@ -176,7 +225,15 @@ example (_L : ModInPlaceLayout) (_x _y _z : List Wire) : True := by
   fail_if_success
     have _bad : Program := prog { _y ^= (_x + _z); }
   fail_if_success
-    have _bad : Program := prog { control (0 XOR 2) { _y ^= _x; }; }
+    have _bad : Program := prog { if (0 XOR 2) { _y ^= _x; }; }
+  fail_if_success
+    have _bad : Program := prog { if true { _y ^= _x; }; }
+  fail_if_success
+    have _bad : Program := prog { if _x { _y ^= _x; }; }
+  fail_if_success
+    have _bad : Program := prog { iff 0 { _y ^= _x; }; }
+  fail_if_success
+    have _bad : Program := prog { if 0 { _y ^= (_x + _z); }; }
   trivial
 
 example (_L : ControlledPointLayout) (_x _y _z : List Wire) : True := by
@@ -197,7 +254,10 @@ run_cmd do
   | .ok _ => pure ()
   | .error e => throwError "合法算术语句未能解析：{e}"
   for source in ["prog using ctx { y = 3; }",
-      "prog { control 0 { copyRegister none x y; }; }"] do
+      "prog { if 0 { copyRegister none x y; }; }",
+      "prog { if 0 { Instr.measureX 1 [] []; }; }",
+      "prog { if 0 { if 1 { y ^= x; }; }; }",
+      "prog { if 0 { y ^= x; } else { y ^= z; }; }"] do
     match Lean.Parser.runParserCategory env `term source with
     | .error _ => pure ()
     | .ok _ => throwError "不支持的语句不应被解析：{source}"

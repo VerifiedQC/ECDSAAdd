@@ -99,8 +99,8 @@ def pointCandidateCompute (L : PointAddLayout) (cx cy : Fp) : Program := prog us
   let divisor := L.divisor.head! :: L.divisor.tail; -- 用于保存安全分母，最低位可装入 1。
   pointSubConstant x L.dx cx.val;                         -- dx = x-cx
   pointSubConstant y L.dy cy.val;                         -- dy = y-cy
-  control (L.generic XOR 1) { [L.divisor.head!] ^= const(1); };
-  control L.generic { divisor ^= (L.dx.take 256); };
+  if (L.generic XOR 1) { [L.divisor.head!] ^= const(1); };
+  if L.generic { divisor ^= (L.dx.take 256); };
   fieldInverseXor L.divisor L.inverse;                  -- inverse = 1/divisor
   L.slope ^= (L.dy * L.inverse) mod p;
   pointSquare(L);                                             -- square = slope²
@@ -124,8 +124,8 @@ def pointCandidateClear (L : PointAddLayout) (cx cy : Fp) : Program := prog usin
   pointSquare(L);                                        -- 清零 square。
   L.slope ^= (L.dy * L.inverse) mod p;              -- 清零 slope。
   fieldInverseXor L.divisor L.inverse;             -- 清零 inverse。
-  control (L.generic XOR 1) { [L.divisor.head!] ^= const(1); }; -- 清零常量 1。
-  control L.generic { divisor ^= (L.dx.take 256); };          -- 清零 dx 副本。
+  if (L.generic XOR 1) { [L.divisor.head!] ^= const(1); }; -- 清零常量 1。
+  if L.generic { divisor ^= (L.dx.take 256); };          -- 清零 dx 副本。
   pointSubConstant y L.dy cy.val;                    -- 清零 dy。
   pointSubConstant x L.dx cx.val;                    -- 清零 dx。
 }

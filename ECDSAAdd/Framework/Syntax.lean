@@ -335,7 +335,8 @@ end CircuitDSL
 
 /- 算术表达式是现有电路构造器的记法；布局、取值范围和零工作区仍由各操作的规格约束。
 `const(k)` 明确表示经典数，其他操作数是寄存器；+=、-= 按目标位宽回绕，^= 是 XOR 写入。
-control 只接受下面列出的算术操作，不会给任意含测量的 Program 逐门添加控制。 -/
+if 表示量子受控执行，不测量条件；只接受下面列出的算术操作，不给任意 Program 逐门添加控制。
+control 保留为兼容写法，也是 if 归一化后的内部形式。 -/
 declare_syntax_cat registerUpdate
 syntax term:max " += " term:max : registerUpdate
 syntax term:max " -= " term:max : registerUpdate
@@ -365,6 +366,7 @@ declare_syntax_cat registerUpdateLine
 syntax registerUpdate ";" : registerUpdateLine
 namespace CircuitDSL
 scoped syntax registerUpdate ";" : circuitStmt
+scoped syntax "if " term:max " {" registerUpdateLine* "}" ";" : circuitStmt
 scoped syntax ident term:max " {" registerUpdateLine* "}" ";" : circuitStmt
 scoped syntax "with " ident " := " "(" term:max " * " term:max ")" " mod " term:max
   "{" circuitStmt* "}" ";" : circuitStmt
@@ -498,7 +500,7 @@ macro_rules (kind := circuitBlock)
             changed := true
         | `(circuitStmt| $keyword:ident $c { $updates:registerUpdateLine* };) =>
             unless keyword.getId == `control do
-              Macro.throwErrorAt keyword "算术控制块应写为 control 条件 { ... };"
+              Macro.throwErrorAt keyword "算术控制块应写为 if 条件 { ... };（兼容 control）"
             for line in updates do
               let `(registerUpdateLine| $update:registerUpdate;) := line
                 | Macro.throwUnsupported
@@ -523,7 +525,7 @@ macro_rules (kind := circuitBlock)
       $kw₁:ident $b₁ { $out₁:term ^= ($x₁ + $y₁); };
     }) => do
       unless kw₀.getId == `control && kw₁.getId == `control && one.getNat == 1 do
-        Macro.throwError "约减需要先负后正的两个 control 分支"
+        Macro.throwError "约减需要先负后正的两个 if 分支"
       let bt : TSyntax `term := ⟨b.raw⟩
       for (actual, expected) in [(b₀, bt), (b₁, bt), (out₁, out),
           (x₀, x), (x₁, x), (y₀, y), (y₁, y), (q₀, q)] do
@@ -535,7 +537,7 @@ macro_rules (kind := circuitBlock)
       $kw₁:ident $b₁ { $out₁:term ^= (($x₁ - $y₁) + const($q)); };
     }) => do
       unless kw₀.getId == `control && kw₁.getId == `control && one.getNat == 1 do
-        Macro.throwError "约减需要先负后正的两个 control 分支"
+        Macro.throwError "约减需要先负后正的两个 if 分支"
       let bt : TSyntax `term := ⟨b.raw⟩
       for (actual, expected) in [(b₀, bt), (b₁, bt), (out₁, out),
           (x₀, x), (x₁, x), (y₀, y), (y₁, y)] do
@@ -546,5 +548,21 @@ macro_rules (kind := circuitBlock)
       Macro.throwError "仅支持完整的模加比较约减配方：同一表达式、互补控制、同一 XOR 输出"
   | `(prog { let $_:ident := $_ < $_; $_:circuitStmt* }) =>
       Macro.throwError "仅支持完整的模减比较约减配方；一般量子比较尚未接入此语法"
+
+-- 后注册的规则先执行：整块归一化后才匹配比较模板或展开算术，避免拆散互补分支。
+-- 不生成 Lean 的 if/then/else，不读取条件位；后端与旧 control 写法完全相同。
+macro_rules (kind := circuitBlock)
+  | `(prog { $body:circuitStmt* }) => do
+      let mut changed := false
+      let mut result : Array (TSyntax `circuitStmt) := #[]
+      for statement in body do
+        match statement with
+        | `(circuitStmt| if $c { $updates:registerUpdateLine* };) =>
+            result := result.push (← `(circuitStmt|
+              $(mkIdent `control):ident $c { $updates* };))
+            changed := true
+        | _ => result := result.push statement
+      unless changed do Macro.throwUnsupported
+      `(prog { $result* })
 
 end ECDSAAdd

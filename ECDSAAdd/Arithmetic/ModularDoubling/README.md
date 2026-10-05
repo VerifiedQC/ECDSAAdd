@@ -2,7 +2,7 @@
 
 本模块实现奇模数下的原地倍增和减半，并证明它们的结果、工作位清理及资源用量。
 
-[ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与 `control` 表达式。旋转仍写 `rotateLeft/Right`，只有在相应规格条件下才等价于整数倍增/减半；原规格与资源不变。
+[ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与受控 `if` 表达式。旋转仍写 `rotateLeft/Right`，只有在相应规格条件下才等价于整数倍增/减半；原规格与资源不变。
 
 `dblInPlace` 的试减直接写 `target -= const(p)`；常数寄存器的装载和清理在后端。借位、奇偶位仍保留为逻辑标志，清理规则不变。
 

@@ -68,7 +68,7 @@ def divideLoad (L : DivideLayout) : Program := prog {
   let u := L.inner.first.u; -- 求逆所用的数据寄存器 u。
   let s := L.inner.first.s; -- 求逆所用的系数寄存器 s。
   CX (L.control XOR 1) leastBit;                 -- control=0 时 denominatorCopy=1。
-  control L.control { denominatorCopy ^= L.denominator; };
+  if L.control { denominatorCopy ^= L.denominator; };
   u ^= const(p);
   s ^= const(1);
 }
@@ -79,7 +79,7 @@ def divideUnload (L : DivideLayout) : Program := prog {
   let leastBit := L.vBit; -- 安全分母的最低位。
   L.inner.first.s ^= const(1); -- 清零 s。
   L.inner.first.u ^= const(p); -- 清零 u。
-  control L.control { denominatorCopy ^= L.denominator; }; -- 清零分母副本。
+  if L.control { denominatorCopy ^= L.denominator; }; -- 清零分母副本。
   CX (L.control XOR 1) leastBit;                 -- control=0 时清零常量 1。
 }
 
@@ -131,7 +131,7 @@ abbrev safeInverseValue (inner : InverseLoopLayout) (control : Wire)
 p 是 secp256k1 坐标域的模数；除法表示乘模逆元，启用时要求分母非零，输入值均在 [0,p)。 -/
 def divideAdd (L : DivideLayout) : Program := prog using (divisionProductContext L) {
   with inverse := (safeInverseValue L.inner L.control L.denominator) {
-    control L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };
+    if L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };
   };
 }
 
@@ -139,7 +139,7 @@ def divideAdd (L : DivideLayout) : Program := prog using (divisionProductContext
 p 是 secp256k1 坐标域的模数；除法表示乘模逆元，启用时要求分母非零，输入值均在 [0,p)。 -/
 def divideSub (L : DivideLayout) : Program := prog using (divisionProductContext L) {
   with inverse := (safeInverseValue L.inner L.control L.denominator) {
-    control L.control { L.acc = (L.acc - inverse * L.numerator) mod p; };
+    if L.control { L.acc = (L.acc - inverse * L.numerator) mod p; };
   };
 }
 

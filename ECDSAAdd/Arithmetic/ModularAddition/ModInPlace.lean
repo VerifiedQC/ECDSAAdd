@@ -64,7 +64,7 @@ def modAddCore (L : ModAddCoreLayout) (p : Nat) : Program := prog using (modAddC
 
   target += source;
   target -= const(p);          -- borrow = [原和<p]；常数工作区由后端清理。
-  control borrow { L.low += const(p); };
+  if borrow { L.low += const(p); };
 
   -- 结果小于 source 表示曾发生约减，与借位标志相反。
   compareLt L.low lowSource borrow;                 -- borrow ^= [low<lowSource]，随后 X 清零 borrow。

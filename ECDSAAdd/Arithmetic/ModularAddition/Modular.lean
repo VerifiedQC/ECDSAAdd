@@ -68,8 +68,8 @@ x/y 含零扩展高位；W 只决定辅助接线，完整布局条件见 modAdd_
 abbrev modAddOn (x y out : List Wire) (q : Nat) (W : ModReductionWorkspace) : Program :=
     prog using (modReductionContext W) {
   let borrow := (x + y) < const(q);
-  control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
-  control borrow { out ^= (x + y); };
+  if (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+  if borrow { out ^= (x + y); };
 }
 
 /-- out ^= (x−y) mod q；位宽和工作区条件同 modAddOn。
@@ -77,8 +77,8 @@ abbrev modAddOn (x y out : List Wire) (q : Nat) (W : ModReductionWorkspace) : Pr
 abbrev modSubOn (x y out : List Wire) (q : Nat) (W : ModReductionWorkspace) : Program :=
     prog using (modReductionContext W) {
   let borrow := x < y;
-  control (borrow XOR 1) { out ^= (x - y); };
-  control borrow { out ^= ((x - y) + const(q)); };
+  if (borrow XOR 1) { out ^= (x - y); };
+  if borrow { out ^= ((x - y) + const(q)); };
 }
 
 /-- 兼容布局接口；可读算法见 modAddOn，n=L.width。 -/

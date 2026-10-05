@@ -74,6 +74,32 @@ example (L : ModLayout) (q : Nat) :
 example (L : ModLayout) (q : Nat) :
     modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace = modSub L q := rfl
 
+-- 比较模板也先归一化 if；与旧写法（包括混用）生成完全相同的电路。
+example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
+    modAddOn x y out q W = (prog using (modReductionContext W) {
+      let borrow := (x + y) < const(q);
+      control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+      control borrow { out ^= (x + y); };
+    }) := rfl
+example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
+    modSubOn x y out q W = (prog using (modReductionContext W) {
+      let borrow := x < y;
+      control (borrow XOR 1) { out ^= (x - y); };
+      control borrow { out ^= ((x - y) + const(q)); };
+    }) := rfl
+example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
+    modAddOn x y out q W = (prog using (modReductionContext W) {
+      let borrow := (x + y) < const(q);
+      if (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+      control borrow { out ^= (x + y); };
+    }) := rfl
+example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
+    modSubOn x y out q W = (prog using (modReductionContext W) {
+      let borrow := x < y;
+      control (borrow XOR 1) { out ^= (x - y); };
+      if borrow { out ^= ((x - y) + const(q)); };
+    }) := rfl
+
 -- 作用域准确插入恢复电路，既不倒转门列，也不从 prepare 猜测 restore。
 example (a b c : Wire) :
     (prog {
@@ -117,25 +143,25 @@ example (L : PointAddLayout) (x out : List Wire) (q : Nat) :
       copyRegister none x L.constant := rfl
 example (L : ControlledPointLayout) (c : Wire) (out : List Wire) (k q : Nat) :
     (prog using (pointConstantAddContext L) {
-      control c { out = (const(k) + out) mod q; };
+      if c { out = (const(k) + out) mod q; };
     }) = maskedConstant c (L.inPlaceConstant out).a k ++
       modAddInPlace (L.inPlaceConstant out) q ++ maskedConstant c (L.inPlaceConstant out).a k := rfl
 
 -- 不等宽：短源不清零目标高位，长源不使用超出目标宽度的位。
 example : (prog { [3, 4, 5] ^= [1]; }) = [Instr.CX 1 3] := rfl
 example : (prog { [3] ^= [0, 1, 2]; }) = [Instr.CX 0 3] := rfl
-example (c : Wire) : (prog { control c { [3, 4, 5] ^= [1]; }; }) = [Instr.CCX c 1 3] := rfl
-example (c : Wire) : (prog { control c { [3] ^= [0, 1, 2]; }; }) = [Instr.CCX c 0 3] := rfl
+example (c : Wire) : (prog { if c { [3, 4, 5] ^= [1]; }; }) = [Instr.CCX c 1 3] := rfl
+example (c : Wire) : (prog { if c { [3] ^= [0, 1, 2]; }; }) = [Instr.CCX c 0 3] := rfl
 
 example (L : ModLayout) :
     (prog using (modArithmeticContext L) {
-      control (0 XOR 1) { [4, 5] ^= [1]; };
-      control 0 { [4, 5] ^= [2, 3]; };
+      if (0 XOR 1) { [4, 5] ^= [1]; };
+      if 0 { [4, 5] ^= [2, 3]; };
     }) = [Instr.CX 1 4, Instr.CCX 0 1 4, Instr.CCX 0 2 4, Instr.CCX 0 3 5] := rfl
 example (L : ModLayout) :
     (prog using (modArithmeticContext L) {
-      control (0 XOR 1) { [4, 5] ^= [1, 2]; };
-      control 0 { [4, 5] ^= [3]; };
+      if (0 XOR 1) { [4, 5] ^= [1, 2]; };
+      if 0 { [4, 5] ^= [3]; };
     }) = [Instr.CX 1 4, Instr.CX 2 5, Instr.CCX 0 1 4, Instr.CCX 0 2 5, Instr.CCX 0 3 4] := rfl
 example (c : Wire) (a b o : List Wire) (ha : a.length = o.length) (hb : b.length = o.length) :
     chooseXorFitted c a b o = chooseXor c a b o := chooseXorFitted_equal c a b o ha hb
@@ -157,33 +183,51 @@ example (_W : ModReductionWorkspace) (_x _y _z _out : List Wire) (_q : Nat) : Tr
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) {
       let borrow := (_x + _y) < const(_q);
-      control (borrow XOR 1) { _out ^= ((_x + _z) - const(_q)); };
-      control borrow { _out ^= (_x + _y); };
+      if (borrow XOR 1) { _out ^= ((_x + _z) - const(_q)); };
+      if borrow { _out ^= (_x + _y); };
     }
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) {
       let borrow := (_x + _y) < const(_q);
-      control (borrow XOR 1) { _out ^= ((_x + _y) - const(_q+1)); };
-      control borrow { _out ^= (_x + _y); };
+      if (borrow XOR 1) { _out ^= ((_x + _y) - const(_q+1)); };
+      if borrow { _out ^= (_x + _y); };
     }
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) {
       let borrow := (_x + _y) < const(_q);
-      control (borrow XOR 1) { _out ^= ((_x + _y) - const(_q)); };
-      control borrow { _z ^= (_x + _y); };
+      if (borrow XOR 1) { _out ^= ((_x + _y) - const(_q)); };
+      if borrow { _z ^= (_x + _y); };
     }
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) {
       let borrow := (_x + _y) < const(_q);
-      control (borrow XOR 1) { _out ^= ((_x + _y) - const(_q)); };
-      control borrow { _out ^= (_x + _y); };
+      if (borrow XOR 1) { _out ^= ((_x + _y) - const(_q)); };
+      if borrow { _out ^= (_x + _y); };
       Instr.X 0;
     }
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) {
       let borrow := _x < _y;
-      control (borrow XOR 1) { _out ^= (_y - _x); };
-      control borrow { _out ^= ((_x - _y) + const(_q)); };
+      if (borrow XOR 1) { _out ^= (_y - _x); };
+      if borrow { _out ^= ((_x - _y) + const(_q)); };
+    }
+  fail_if_success
+    have _bad : Program := prog using (modReductionContext _W) {
+      let borrow := (_x + _y) < const(_q);
+      if (borrow XOR 1) { _out ^= ((_x + _y) - const(_q)); };
+      if 0 { _out ^= (_x + _y); };
+    }
+  fail_if_success
+    have _bad : Program := prog using (modReductionContext _W) {
+      let borrow := _x < _y;
+      if (borrow XOR 2) { _out ^= (_x - _y); };
+      if borrow { _out ^= ((_x - _y) + const(_q)); };
+    }
+  fail_if_success
+    have _bad : Program := prog using (modReductionContext _W) {
+      let borrow := _x < _y;
+      if borrow { _out ^= ((_x - _y) + const(_q)); };
+      if (borrow XOR 1) { _out ^= (_x - _y); };
     }
   fail_if_success
     have _bad : Program := prog using (modReductionContext _W) { let borrow := _x < _y; Instr.X borrow; }

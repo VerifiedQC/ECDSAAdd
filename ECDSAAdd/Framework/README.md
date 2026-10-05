@@ -19,7 +19,7 @@ arith using arithmetic {
 
 使用过程是：写出代码 → `Request.compile` 取得已接线计划 → 证明高层规格和 `Ready` 调用条件 → 得到 `Verified.correct` 的低层 Triple。编译成功本身不证明初始量子数据的范围或工作区为零；这些条件必须由调用方证明，不会变成运行时检查或自动重置。
 
-当前仅支持原地模加的顺序组合和实现选择，一个块内的逻辑寄存器统一使用同一位宽 n。普通加减、XOR 写入、初始化赋值、混合位宽的操作、循环、用户级 control、自动工作区分配和择优编译尚未接入。证明范围仍是本项目的带符号计算基态分支模型，并未新增一般量子信道语义。完整可运行例子见 [ModularAddition README](../Arithmetic/ModularAddition/README.md#languageexamplelean)。
+当前仅支持原地模加的顺序组合和实现选择，一个块内的逻辑寄存器统一使用同一位宽 n。普通加减、XOR 写入、初始化赋值、混合位宽的操作、循环、量子条件块、自动工作区分配和择优编译尚未接入 `arith`。证明范围仍是本项目的带符号计算基态分支模型，并未新增一般量子信道语义。完整可运行例子见 [ModularAddition README](../Arithmetic/ModularAddition/README.md#languageexamplelean)。
 
 ## 现有算法中的算术表达式
 
@@ -42,14 +42,16 @@ prog using (modArithmeticContext L) {
 | `out ^= (x - y) mod q;` / `out ^= (x * y) mod q;` | XOR 模差／模积 |
 | `y = (x + y) mod q;` / `y = (y - x) mod q;` | 原地模加减，不先按逻辑位宽截断 |
 | `out = (out + x * y) mod q;` / 减号版本 | 模积累加／累减 |
-| `control c { y += x; };` | 调用已有的受控加法；c=0 时数据效果为恒等 |
-| `control (c XOR 1) { out ^= x; };` | c=0 时 XOR，不测量控制位 |
+| `if c { y += x; };` | 调用已有的受控加法；c=0 时数据效果为恒等 |
+| `if (c XOR 1) { out ^= x; };` | c=0 时 XOR，不测量控制位 |
 
 `q` 为经典 Nat；减法表示模减，不是 Lean Nat 的截断减法。模加减配置 `modAssignContext` 的 source 含零扩展高位，target 只传低 n 位；目标高位及工作区在配置中绑定并由原规格要求清零。其他接口的物理位宽仍以各模块规格为准，本构造层不做 `QReg n` 的静态位宽认证。
 
 `using 名称` 在此构造层选择一个局部接线函数，例如 `out = (out - x * y) mod q using squareSub;`；它不是 `arith` 的认证注册名称。这里不会自动检查自定义函数是否符合表达式：必须像生产函数一样提供门列连接和语义证明。支持显式选择的形式为非受控模加减、模积累加减，以及受控常量加法；其他未支持的形式报错。
 
-`control` 块只接受已支持的算术语句，可顺序列出多句；不是对任意 Program 的通用控制。负控制目前仅接入 XOR 寄存器／常量，其他负控制仍使用原有显式接口。循环沿用 `prog` 的构造期循环。相邻互补 XOR 分支由 `chooseXorFitted` 在等宽时合并；不等宽时保留独立受控 XOR，防止漏掉较长分支的有效位。
+`prog` 内的 `if c { ... };` 表示量子受控执行：c 是一根 wire，存 1 时执行所写操作；`if (c XOR 1)` 对应存 0 的分支。它不测量条件，不是测量后的经典分支，数字条件也表示 wire 编号而不是 Bool。旧 `control` 写法仍兼容，二者展开为相同门列。普通 Lean 的 `if … then … else …` 和显式测量写法 `if meas …` 不变。
+
+`if` 块只接受已支持的算术语句，可顺序列出多句；不是对任意 Program 的通用控制，暂不支持嵌套条件块或 `else`。负控制目前仅接入 XOR 寄存器／常量及下述完整约减模板，其他负控制仍使用原有显式接口。循环沿用 `prog` 的构造期循环。相邻互补 XOR 分支由 `chooseXorFitted` 在等宽时合并；不等宽时保留独立受控 XOR，防止漏掉较长分支的有效位。
 
 ### 隐藏工作区的配方与作用域（2026-10-05）
 
@@ -58,8 +60,8 @@ prog using (modArithmeticContext L) {
 ```lean
 prog using (modReductionContext W) {
   let borrow := (x + y) < const(q);
-  control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
-  control borrow { out ^= (x + y); };
+  if (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+  if borrow { out ^= (x + y); };
 }
 ```
 
@@ -81,7 +83,7 @@ prog using (montOutputContext M) {
 
 `with` **不自动证明任意块体安全**。块体若修改了恢复所需的输入、临时结果或历史，就可能无法恢复；必须证明准备、使用和恢复的契约衔接。`Computed.correct` 给出这一组合规则，生产函数仍通过原 `_spec` / `_correct` 验证；`Computed.resources` 计入三个阶段全部资源。不动态分配新 wire，不倒放测量门列，不自动寻找最优实现。
 
-其他新增配方：无控制的 `target += const(k)` / `-= const(k)`、`out ^= (x - const(k)) mod q`、`out ^= (x ^ 2) mod q`、`control c { out = (const(k) + out) mod q; };`，以及 `out = (out - x ^ 2) mod q using squareSubtract`。这些形式必须有相应后端，平方只支持指数 2；装载、复制和清理移到后端，不删去实际电路。
+其他新增配方：无控制的 `target += const(k)` / `-= const(k)`、`out ^= (x - const(k)) mod q`、`out ^= (x ^ 2) mod q`、`if c { out = (const(k) + out) mod q; };`，以及 `out = (out - x ^ 2) mod q using squareSubtract`。这些形式必须有相应后端，平方只支持指数 2；装载、复制和清理移到后端，不删去实际电路。
 
 普通 `out ^= source`（含正负控制）接受不等宽：源较长取低 out.length 位；源较短等价补零，目标高位不变。`copyRegister_fit_correct` 证明此规则。它不意味着两个任意宽度的加法输入也可以无条件共用同一进位布局；其他算术的位宽要求仍见各模块规格。
 

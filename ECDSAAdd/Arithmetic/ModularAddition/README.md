@@ -2,7 +2,7 @@
 
 本模块实现模加法、模减法及其原地、受控和 XOR 输出接口，并证明范围、清理与资源结论。
 
-算法主体先读 [Modular.lean](Modular.lean) 的 `modAddOn/modSubOn` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。前两者直接接收 x/y/out/q，以比较和两个 control 块表示约减；total/modulus/diff 和进位位移到工作区配方 W。旧 `modAdd/modSub` 保留为布局兼容入口，原规格与资源不变。
+算法主体先读 [Modular.lean](Modular.lean) 的 `modAddOn/modSubOn` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。前两者直接接收 x/y/out/q，以比较和两个 `if` 块表示约减；`if` 是量子受控执行，不测量条件。total/modulus/diff 和进位位移到工作区配方 W。旧 `modAdd/modSub` 保留为布局兼容入口，原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
@@ -89,7 +89,7 @@ viaControlled 的电路
 { x=X, y=(X+Y) mod q, work=0 }
 ```
 
-要求 0<q<2^n、X,Y<q、接线互异；work 包含 mask 和 enable。相位恢复，目标以外逐线保持。没有给任意带测量的程序逐门套控制；这是对一个已经证明的受控模加的明确适配，也不表示高层 `control` 语法已经实现。
+要求 0<q<2^n、X,Y<q、接线互异；work 包含 mask 和 enable。相位恢复，目标以外逐线保持。没有给任意带测量的程序逐门套控制；这是对一个已经证明的受控模加的明确适配，也不表示认证 `arith` 已支持量子条件块。
 
 - 单次资源：T=`6n-1`，M=`4n-1`；静态支持集合随实现一并给出并证明，两次 X 门不增加 Toffoli 或测量数。三位示范的单次 Q=20，共用同一布局两次仍为 20。
 
