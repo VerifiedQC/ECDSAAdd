@@ -176,12 +176,20 @@ theorem pointDirectSkywalkArithmetic_correct (L : ControlledPointLayout) (hw : L
 
 theorem pointDirectSkywalkArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
-    toffoliCount (pointDirectSkywalkArithmetic L false)=1316353 ∧
-    measurementCount (pointDirectSkywalkArithmetic L false)=987901 ∧
-    toffoliCount (pointDirectSkywalkArithmetic L true)=1316354 ∧
-    measurementCount (pointDirectSkywalkArithmetic L true)=987902 := by
+    toffoliCount (pointDirectSkywalkArithmetic L false)=1185781 ∧
+    measurementCount (pointDirectSkywalkArithmetic L false)=857329 ∧
+    toffoliCount (pointDirectSkywalkArithmetic L true)=1185782 ∧
+    measurementCount (pointDirectSkywalkArithmetic L true)=857330 := by
+  have outside : ∀ q∈[L.core.generic,L.skywalkDirectSelectorG,L.skywalkDirectSelectorS],
+      q∉skywalkSharedWires L.skywalkDirectMap := by
+    have hd := List.nodup_append'.mp (show
+      ([L.core.generic,L.skywalkDirectSelectorG,L.skywalkDirectSelectorS]++
+        (L.skywalkDirectZero::skywalkSharedWires L.skywalkDirectMap)).Nodup from
+      L.skywalkDirectScalar_nodup hw hn)
+    intro q hq hs
+    exact List.disjoint_left.mp hd.2.2 hq (List.mem_cons_of_mem _ hs)
   have h := directSkywalkArithmetic_counts L.skywalkDirectMap (L.skywalkDirectMap_nodup hw hn)
-    L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS (L.skywalkDirectMixed_layout hw hn)
+    L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS outside (L.skywalkDirectMixed_layout hw hn)
   have hxlen : L.point.x.length=256 := hw.inputX
   have c (multiply : Bool) := directZeroControlled_counts L.point.x (directSkywalkCarry L)
     (directSkywalkCin L) L.skywalkDirectZero (directSkywalkArithmetic (!multiply) L.skywalkDirectMap

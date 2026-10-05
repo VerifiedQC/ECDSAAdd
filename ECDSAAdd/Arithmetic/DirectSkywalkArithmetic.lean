@@ -1,6 +1,6 @@
 import ECDSAAdd.Arithmetic.DirectSkywalkCleanup
-import ECDSAAdd.Arithmetic.MixedTranscriptDivision
-import ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
+import ECDSAAdd.Arithmetic.BalancedSharedDivision
+import ECDSAAdd.Arithmetic.BalancedInverseSharedMultiplication
 
 set_option maxRecDepth 4096
 set_option maxHeartbeats 400000
@@ -14,8 +14,8 @@ def directSkywalkArithmetic (divide : Bool) (w : Nat → Wire) (b effG effS : Wi
   skywalkSeed (skywalkSharedSeed w) p ++
   (narrowSkywalkRoutedLoop w 0 512 ++
   (skywalkArithmeticClear w ++
-  ((if divide then mixedTranscriptFieldDivision w b effG effS
-      else mixedTranscriptFieldMultiplication w b effG effS) ++
+  ((if divide then balancedSharedFieldDivision w b effG effS
+      else balancedInverseSharedFieldMultiplication w b effG effS) ++
   (skywalkArithmeticClear w ++
   (narrowSkywalkRoutedUnloop w 0 512 ++ skywalkUnseed (skywalkSharedSeed w) p)))))
 
@@ -29,9 +29,30 @@ def DirectSkywalkArithmeticStrong (divide : Bool) (w : Nat → Wire) (b : Wire)
     ∀ q,q∉skywalkArithmeticNumerator w → out.basis q=initial.basis q
 
 attribute [local irreducible] skywalkSeed skywalkUnseed narrowSkywalkRoutedLoop narrowSkywalkRoutedUnloop run
-attribute [local irreducible] mixedTranscriptFieldDivision mixedTranscriptFieldMultiplication
+attribute [local irreducible] balancedSharedFieldDivision balancedInverseSharedFieldMultiplication
 attribute [local irreducible] skywalkFieldDivisionRetained skywalkFieldMultiplicationRetained
 attribute [local irreducible] SkywalkTrace.next Nat.iterate
+
+private theorem directSkywalk_zip_records (rs : List (Wire×Wire)) (cs : List (Bool×Bool))
+    (P : Wire×Wire → Prop) (hlen : rs.length=cs.length)
+    (hl : ∀ l∈rs.zip cs,P l.1) : ∀ r∈rs,P r := by
+  induction rs generalizing cs with
+  | nil => simp
+  | cons r rs ih =>
+    cases cs with
+    | nil => simp at hlen
+    | cons c cs =>
+      have he : rs.length=cs.length := by simpa using hlen
+      intro q hq
+      rcases List.mem_cons.mp hq with rfl|hq
+      · exact hl (q,c) (by simp)
+      · exact ih cs he (fun l hm => hl l (by simp [hm])) q hq
+
+private theorem directSkywalk_record_layout (w : Nat → Wire) (b effG effS : Wire)
+    (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
+    ∀ r∈skywalkSharedTape w,MixedTranscriptFieldLayout w b r.1 r.2 effG effS :=
+  directSkywalk_zip_records _ _ _
+    ((skywalkShared_tape_length w).trans mixedTranscriptUnitTrace_length.symm) hl
 
 theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
@@ -45,8 +66,8 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hs1 : run (skywalkSeed (skywalkSharedSeed w) p) m1 s=s1)
     (hs2 : run (narrowSkywalkRoutedLoop w 0 512) m2 s1=s2)
     (hs3 : run (skywalkArithmeticClear w) m3 s2=s3)
-    (hs4 : run (if divide then mixedTranscriptFieldDivision w b effG effS
-      else mixedTranscriptFieldMultiplication w b effG effS) m4 s3=s4)
+    (hs4 : run (if divide then balancedSharedFieldDivision w b effG effS
+      else balancedInverseSharedFieldMultiplication w b effG effS) m4 s3=s4)
     (hs5 : run (skywalkArithmeticClear w) m5 s4=s5)
     (hs6 : run (narrowSkywalkRoutedUnloop w 0 512) m6 s5=s6)
     (hs7 : run (skywalkUnseed (skywalkSharedSeed w) p) m7 s6=s7) :
@@ -103,17 +124,18 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
   have hg3 : s3.basis effG=false := (keepControl effG (by simp)).trans hg0
   have hs3clean : s3.basis effS=false := (keepControl effS (by simp)).trans hs0
   have hb3 : s3.basis b=s.basis b := keepControl b (by simp)
+  have hf := directSkywalk_record_layout w b effG effS hl
   have h4 : s4.phase=s3.phase ∧ PairFrame F.z F.a s3.basis Z 0 s4.basis := by
     have hbefore : PairFrame F.z F.a s3.basis Y.val 0 s3.basis := ⟨hz3,hwork.1,fun _ _ _ => rfl⟩
     cases divide
-    · have hh := mixedTranscriptFieldMultiplication_spec w b effG effS hl
+    · have hh := balancedInverseSharedFieldMultiplication_spec w b effG effS hn hf ho
         s3.basis hg3 hs3clean hwork.2.1 hwork.2.2 x Y hx0 hx htape s3 m4 hbefore
-      change run (mixedTranscriptFieldMultiplication w b effG effS) m4 s3=s4 at hs4
+      change run (balancedInverseSharedFieldMultiplication w b effG effS) m4 s3=s4 at hs4
       rw [hs4] at hh
       simpa only [Z,directSkywalkResult,skywalkArithmeticResult,Bool.false_eq_true,if_false,hb3] using hh
-    · have hh := mixedTranscriptFieldDivision_spec w b effG effS hl
+    · have hh := balancedSharedFieldDivision_spec w b effG effS hn hf ho
         s3.basis hg3 hs3clean hwork.2.1 hwork.2.2 x Y hx0 hx htape s3 m4 hbefore
-      change run (mixedTranscriptFieldDivision w b effG effS) m4 s3=s4 at hs4
+      change run (balancedSharedFieldDivision w b effG effS) m4 s3=s4 at hs4
       rw [hs4] at hh
       simpa only [Z,directSkywalkResult,skywalkArithmeticResult,if_true,hb3] using hh
   have hframe4 := arith_field_frame F s3.basis s4.basis Z hwork.1 h4.2
@@ -233,8 +255,8 @@ theorem directSkywalkArithmetic_run (divide : Bool) (w : Nat → Wire)
   have hh := skywalkRunSeven
     (skywalkSeed (skywalkSharedSeed w) p) (narrowSkywalkRoutedLoop w 0 512)
     (skywalkArithmeticClear w)
-    (if divide then mixedTranscriptFieldDivision w b effG effS
-      else mixedTranscriptFieldMultiplication w b effG effS)
+    (if divide then balancedSharedFieldDivision w b effG effS
+      else balancedInverseSharedFieldMultiplication w b effG effS)
     (skywalkArithmeticClear w) (narrowSkywalkRoutedUnloop w 0 512)
     (skywalkUnseed (skywalkSharedSeed w) p) P
     (by
@@ -249,16 +271,18 @@ theorem directSkywalkArithmetic_run (divide : Bool) (w : Nat → Wire)
 passes and the measured selectors. These do not meet the final <600KT goal. -/
 theorem directSkywalkArithmetic_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
+    (ho : ∀ q∈[b,effG,effS],q∉skywalkSharedWires w)
     (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    toffoliCount (directSkywalkArithmetic true w b effG effS)=1315841 ∧
-    measurementCount (directSkywalkArithmetic true w b effG effS)=987391 ∧
-    toffoliCount (directSkywalkArithmetic false w b effG effS)=1315842 ∧
-    measurementCount (directSkywalkArithmetic false w b effG effS)=987392 := by
+    toffoliCount (directSkywalkArithmetic true w b effG effS)=1185269 ∧
+    measurementCount (directSkywalkArithmetic true w b effG effS)=856819 ∧
+    toffoliCount (directSkywalkArithmetic false w b effG effS)=1185270 ∧
+    measurementCount (directSkywalkArithmetic false w b effG effS)=856820 := by
   have hs := skywalkSeed_counts (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
   have hi := narrowSkywalkRouted512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)
-  have hd := mixedTranscriptFieldDivision_counts w b effG effS hl
-  have hm := mixedTranscriptFieldMultiplication_counts w b effG effS hl
+  have hf := directSkywalk_record_layout w b effG effS hl
+  have hd := balancedSharedFieldDivision_counts w b effG effS hn hf ho
+  have hm := balancedInverseSharedFieldMultiplication_counts w b effG effS hn hf ho
   simp only [directSkywalkArithmetic,skywalkArithmeticClear,if_true,Bool.false_eq_true,if_false,
     toffoliCount_append,measurementCount_append,hs.1,hs.2.1,hs.2.2.1,hs.2.2.2,
     hi.1,hi.2.1,hi.2.2.1,hi.2.2.2,hc.1,hc.2,hd.1,hd.2,hm.1,hm.2]

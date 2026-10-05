@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.DirectSkywalkFieldSupport
+import ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
 
 set_option maxRecDepth 4096
 set_option maxHeartbeats 600000
@@ -89,9 +90,9 @@ theorem kernel (divide : Bool) (w : Nat → Wire) (hn : (skywalkSharedWires w).N
     simp only [List.mem_toFinset,List.mem_cons,List.not_mem_nil,or_false] at hq
     rcases hq with rfl|rfl|rfl
     all_goals exact hW (List.mem_toFinset.mpr (arith_mem w 0 2314 _ (by omega) (by omega)))
-  have field := endpoints w b effG effS W hW hb hg hs
-  have leg : wires (if divide then mixedTranscriptFieldDivision w b effG effS
-      else mixedTranscriptFieldMultiplication w b effG effS)⊆W := by
+  have field := BalancedSharedFieldSupport.endpoints w b effG effS W hW hb hg hs
+  have leg : wires (if divide then balancedSharedFieldDivision w b effG effS
+      else balancedInverseSharedFieldMultiplication w b effG effS)⊆W := by
     cases divide
     · exact field.2
     · exact field.1

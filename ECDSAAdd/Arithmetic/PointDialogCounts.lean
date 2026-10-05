@@ -26,8 +26,8 @@ theorem pointDialogSquare_counts (L : ControlledPointLayout) (hw : L.Widths) (_h
 
 theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointDialogGeneric L cx cy)=2737979 ∧
-    measurementCount (pointDialogGeneric L cx cy)=2080555 := by
+    toffoliCount (pointDialogGeneric L cx cy)=2476835 ∧
+    measurementCount (pointDialogGeneric L cx cy)=1819411 := by
   have ha k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have hb k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
   have hd := pointDirectSkywalkArithmetic_counts L hw hn
@@ -40,8 +40,8 @@ theorem pointDialogGeneric_counts (L : ControlledPointLayout) (hw : L.Widths)
 
 theorem pointDialogFinite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointDialogFinite L C cx cy)=2742083 ∧
-    measurementCount (pointDialogFinite L C cx cy)=2084659 := by
+    toffoliCount (pointDialogFinite L C cx cy)=2480939 ∧
+    measurementCount (pointDialogFinite L C cx cy)=1823515 := by
   have hg := pointDialogGeneric_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
   have hpl : (PointAddLayout.pointWires L.point).length=513 := by
