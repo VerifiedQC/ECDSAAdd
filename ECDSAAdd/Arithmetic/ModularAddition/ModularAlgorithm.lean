@@ -1,4 +1,6 @@
-import Mathlib.Data.Nat.ModEq
+import ECDSAAdd.Framework.ProofLanguage
+
+open scoped ECDSAAdd.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic.ModReductionAlgorithm
 
@@ -17,26 +19,44 @@ def subResult (X Y q : Nat) : Nat :=
 
 /-- 模加的算法证明：分别检查两个 if 分支；只要求和小于 2q。 -/
 theorem addResult_correct (X Y q : Nat) (hSum : X + Y < 2 * q) :
-    addResult X Y q = (X + Y) % q := by
-  unfold addResult
-  split_ifs with below
-  · -- borrow=1：和已经小于 q，不必约减。
-    exact (Nat.mod_eq_of_lt below).symm
-  · -- borrow=0：和等于 (和-q)+q，而且减一次后的结果小于 q。
-    have reduced : X + Y - q < q := by omega
-    have splitSum : X + Y = (X + Y - q) + q := by omega
-    conv_rhs => rw [splitSum, Nat.add_mod_right, Nat.mod_eq_of_lt reduced]
+    addResult X Y q = (X + Y) % q := Proof
+  We split on X + Y < q
+  Case below =>
+    By definition [addResult] using [below] we get result :
+      addResult X Y q = X + Y
+    By the small remainder rule using below we get remainder :
+      (X + Y) % q = X + Y
+    From [result, remainder] we conclude addResult X Y q = (X + Y) % q
+  Otherwise notBelow =>
+    By definition [addResult] using [notBelow] we get result :
+      addResult X Y q = X + Y - q
+    From [hSum, notBelow] by arithmetic we get reduced : X + Y - q < q
+    From [notBelow] by arithmetic we get decomposition :
+      X + Y = (X + Y - q) + q
+    By the shifted remainder rule using decomposition, reduced we get remainder :
+      (X + Y) % q = X + Y - q
+    From [result, remainder] we conclude addResult X Y q = (X + Y) % q
 
 /-- 模减的算法证明：有借位时加回 q，无借位时直接保留差。 -/
 theorem subResult_correct (X Y q : Nat) (hX : X < q) (hY : Y < q) :
-    subResult X Y q = (X + q - Y) % q := by
-  unfold subResult
-  split_ifs with borrow
-  · -- borrow=1：X+q-Y 已在 [0,q) 内。
-    exact (Nat.mod_eq_of_lt (by omega : X + q - Y < q)).symm
-  · -- borrow=0：X+q-Y=(X-Y)+q，余数就是 X-Y。
-    have splitDifference : X + q - Y = (X - Y) + q := by omega
-    rw [splitDifference, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : X - Y < q)]
+    subResult X Y q = (X + q - Y) % q := Proof
+  We split on X < Y
+  Case borrow =>
+    By definition [subResult] using [borrow] we get result :
+      subResult X Y q = X + q - Y
+    From [hX, hY, borrow] by arithmetic we get reduced : X + q - Y < q
+    By the small remainder rule using reduced we get remainder :
+      (X + q - Y) % q = X + q - Y
+    From [result, remainder] we conclude subResult X Y q = (X + q - Y) % q
+  Otherwise noBorrow =>
+    By definition [subResult] using [noBorrow] we get result :
+      subResult X Y q = X - Y
+    From [hX] by arithmetic we get reduced : X - Y < q
+    From [noBorrow] by arithmetic we get decomposition :
+      X + q - Y = (X - Y) + q
+    By the shifted remainder rule using decomposition, reduced we get remainder :
+      (X + q - Y) % q = X - Y
+    From [result, remainder] we conclude subResult X Y q = (X + q - Y) % q
 
 -- 后端只需要分支结果的范围，不依赖最终“等于模运算”的结论。
 theorem addResult_lt (X Y q : Nat) (hSum : X + Y < 2 * q) :

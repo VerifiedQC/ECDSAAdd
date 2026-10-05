@@ -2,7 +2,13 @@
 
 初稿日期：2026-09-14；更新：2026-10-05。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
-## 最新阶段：模加减分层证明示范（2026-10-05）
+## 最新阶段：受控英文算法证明（2026-10-05）
+
+仅将 `ModularAlgorithm.lean` 的 `addResult_correct/subResult_correct` 改成英文证明正文，显式给出两个分支的算法值、范围、取模性质及最终结论。算法定义、两个公开定理的前提和结论、辅助范围引理、电路及其资源不变。
+
+`Framework/ProofLanguage.lean` 集中实现固定句式，展开到原有 Lean 证明工具，不新增语言模型调用或外部依赖。`From [...] by arithmetic` 只保留所列事实及必要依赖，`we conclude` 必须完成所写的当前目标，两条取模规则要求精确的范围与分解证明。它不是任意英文自动形式化，也未改写所有底层证明。语法说明和当前入口保存在 Framework、ModularAddition README 与项目地图，验证结果见 [PROOF_STATUS](PROOF_STATUS.md)。
+
+## 模加减分层证明示范（2026-10-05）
 
 保留 `modAddOn/modSubOn` 的原 `prog` 主体，新增 `ModularAlgorithm.lean`，用纯数值 if 分支证明模和/模差；该文件不导入电路框架。新增 `ModularBackend.lean`，承接原接线与逐阶段证明，但结论改为实现分支数值，而不是先假定最终模运算规格。
 

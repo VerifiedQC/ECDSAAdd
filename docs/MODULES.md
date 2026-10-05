@@ -8,6 +8,8 @@
 
 模加减的首个分层证明示范：先读 [Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的证明，修改实现时才需深入。旧规格现在由新分层证明推出；两个原 `prog` 主体及实际电路不变。
 
+`ModularAlgorithm.lean` 的两个算法证明现采用受控英文：分情况、列中间结论、引用取模规则。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)，不把底层 tactic 暴露在算法证明正文中；范围辅助引理暂不改写。
+
 Arithmetic 的 201 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
 算法正文统一用 `if c { ... };` 表示量子受控执行，不测量 c；`if (c XOR 1)` 对应 c=0。它与旧 `control` 写法生成相同门列，旧写法仍兼容。具体支持范围见 [Framework](../ECDSAAdd/Framework/README.md#现有算法中的算术表达式)。
@@ -31,7 +33,7 @@ Arithmetic 的 201 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 8 |
 | [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 69 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 223 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的七个文件集中说明。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 226 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的八个文件集中说明。
 
 ## Math：数学结论模块
 
@@ -47,7 +49,7 @@ Arithmetic 的 201 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Framework：语义与证明工具模块
 
-只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 分别提供高层操作、带证明的实现选择与编译、可读表达式。七个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
+只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 分别提供高层操作、带证明的实现选择与编译、可读表达式；ProofLanguage 提供受控英文证明句式。八个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
 
 ### 当前关键算法：表达式与隐藏工作区（2026-10-05）
 

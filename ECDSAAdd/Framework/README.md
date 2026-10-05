@@ -115,6 +115,10 @@ prog using (montOutputContext M) {
 
 这个文件将可读的赋值语句解析为高层操作，并将源代码与配置一起保存。
 
+[ProofLanguage.lean](#prooflanguagelean)
+
+这个文件提供受控英文证明句式：按情况讨论、写出中间结论、引用取模性质，并由 Lean 检查每一步。
+
 [Cost.lean](#costlean)
 
 这个文件定义电路的资源计数和实际触及的线路，并证明电路拼接时的资源关系及外部线路保持性质。
@@ -446,6 +450,28 @@ def Request.compile {n : Nat} (request : Request n) : Except String (Lowering re
 ```
 
 Request 包含 config 和高层 code；compile 使用这份配置编译代码。`arith { ... }` 只产生 Code，`arith using config { ... }` 产生 Request；语法定义和宏展开无需逐条阅读。
+
+## [ProofLanguage.lean](ProofLanguage.lean)
+
+使用 `open scoped ECDSAAdd.ProofLanguage` 开启记法，定理的证明体写成 `:= Proof`。完整示范见 [ModularAlgorithm.lean](../Arithmetic/ModularAddition/ModularAlgorithm.lean) 的 `addResult_correct/subResult_correct`。
+
+| 句式 | 含义 |
+| --- | --- |
+| `We split on P`，接 `Case h =>` 和 `Otherwise hn =>` | 分别在 P 和 ¬P 下证明原结论；两分支都必须完成 |
+| `By definition [f] using [h] we get result : P` | 展开所列定义，使用所列事实检查 P |
+| `From [h₁, h₂] by arithmetic we get bound : P` | 从所列事实及其必要依赖，用整数／自然数线性算术检查 P |
+| `By the small remainder rule using h we get result : a % q = a` | h 必须证明 a<q |
+| `By the shifted remainder rule using hs, hr we get result : a % q = r` | hs 必须证明 a=r+q，hr 必须证明 r<q |
+| `From [h₁, h₂] we conclude P` | 用所列事实的直接应用或等式化简完成当前目标；P 必须与当前目标一致 |
+
+句式固定，公式仍是 Lean 表达式，不解释任意英文，也不调用语言模型。底层 tactic 保存在本文件，读算法证明时不必展开。`by arithmetic` 会清除无关假设，不能漏列前提后从其他上下文偷偷取得结论；它不是任意数学命题的自动证明器。
+
+```lean
+theorem shiftedRemainder {value remainder modulus : Nat}
+    (decomposition : value = remainder + modulus) (small : remainder < modulus)
+```
+
+证明 value 除以 modulus 的余数是 remainder；这是 shifted remainder rule 使用的通用取模引理，不包含模加减算法的结论。
 
 ## [Cost.lean](Cost.lean)
 

@@ -17,7 +17,7 @@
 ## 算法与证明示范目录
 
 - [Modular.lean](#modularlean)：保留可读算法，将分支证明与实际电路连接成最终模加减规格。
-- [ModularAlgorithm.lean](#modularalgorithmlean)：只用两个 if 分支，证明选出的数分别是模和、模差。
+- [ModularAlgorithm.lean](#modularalgorithmlean)：用可执行的英文证明分情况讨论，证明选出的数分别是模和、模差。
 - [ModularBackend.lean](#modularbackendlean)：证明实际电路实现这些分支，并恢复输入、相位与工作区；只读算法时可跳过。
 - [ModularFrame.lean](#modularframelean)：证明任意测量记录下的最终结果，以及输出之外每根 wire 都保持。
 - [LanguageExample.lean](#languageexamplelean)：用赋值形式写两次模加，证明更换实现后规格不变，并核对工作区复用和资源。
@@ -251,6 +251,8 @@ simpa only [ModReductionAlgorithm.addResult_correct X Y q hSum] using branches
 ## [ModularAlgorithm.lean](ModularAlgorithm.lean)
 
 X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测量。
+
+两个算法证明使用 `Proof`、`We split on`、`From [...] ... we get` 等固定英文句式，直接写出分支结果、范围和取模结论。它们是由 Lean 逐步检查的证明代码，不是注释；句式及两条取模规则见 [ProofLanguage](../../Framework/README.md#prooflanguagelean)。辅助范围引理与电路后端仍保留原 tactic 写法，本次只改这两个供人阅读的证明。
 
 `addResult_correct` 证明：令 S=X+Y，要求 S<2q。S<q 时保留 S；否则减去 q，得到的 S−q 仍在 [0,q)。两个分支都得到 S mod q。
 

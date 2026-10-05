@@ -12,6 +12,7 @@ lake env lean tests/ArithmeticLanguage.lean
 lake env lean tests/ArithmeticPrograms.lean
 lake env lean tests/ExpressionRecipes.lean
 lake env lean tests/ModularProofLayers.lean
+lake env lean -DwarningAsError=true tests/ProofLanguage.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -32,6 +33,7 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.modSubOn_spec
 #print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.addResult_correct
 #print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.subResult_correct
+#print axioms ECDSAAdd.ProofLanguage.shiftedRemainder
 #print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.addResult_lt
 #print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.subResult_lt
 #print axioms ECDSAAdd.Arithmetic.addReduction_branches
