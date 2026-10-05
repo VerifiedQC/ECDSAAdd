@@ -59,3 +59,5 @@ import ECDSAAdd.Math.DialogPointFlags
 import ECDSAAdd.Arithmetic.PointDialogResources
 
 import ECDSAAdd.Arithmetic.SkywalkControlledPort
+
+import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
