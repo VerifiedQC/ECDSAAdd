@@ -1,12 +1,12 @@
 import ECDSAAdd.Arithmetic.OffsetBorrowedFieldProgram
 import ECDSAAdd.Arithmetic.OffsetCleanupBorrowedCallerClean
-import ECDSAAdd.Arithmetic.BalancedCleanupOffsetProof
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProof
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1200000
 set_option linter.unusedSimpArgs false
 namespace ECDSAAdd.Arithmetic.OffsetBorrowedField
 open BalancedField Secp256k1 DirectSkywalk
-attribute [local irreducible] run BalancedCircuit.coreProgram BalancedCleanupOffset.program
+attribute [local irreducible] run BalancedCircuit.coreProgram BalancedCleanupOffsetSlim.program
 
 private theorem scalarFacts (L : BalancedCircuit.Layout) (hn : L.wires.Nodup) :
     L.sourceGuard≠L.parity ∧ L.ymsb≠L.sourceGuard ∧ L.ymsb≠L.parity ∧
@@ -108,7 +108,7 @@ theorem program_correct (w : Nat → Wire) (sign : Wire)
     change ∀q∈L.carry,c.basis q=false
     intro q hq
     exact core.2.2.2.2.1 q (by simp [BalancedCircuit.coreClean,hq])
-  have cl := BalancedCleanupOffset.correct O oWidths oND R Y B center hy c ms
+  have cl := BalancedCleanupOffsetSlim.correct O oWidths oND R Y B center hy c ms
     core.2.1 cY cS lower one ccout ownCarry extra
     (core.2.2.1.trans parity)
   let d : State := ⟨c.phase,writeBit c.basis L.parity false⟩
@@ -120,9 +120,9 @@ theorem program_correct (w : Nat → Wire) (sign : Wire)
       (core.2.2.2.2.2 L.ymsb (yr _ hy0) ypa ysg)
   let t : State := ⟨c.phase,writeBit d.basis L.sourceGuard false⟩
   have actual : run (program w sign) m s=t := by
-    change run (BalancedCircuit.coreProgram L++(BalancedCleanupOffset.program O++[.CX L.ymsb L.sourceGuard])) m s=t
+    change run (BalancedCircuit.coreProgram L++(BalancedCleanupOffsetSlim.program O++[.CX L.ymsb L.sourceGuard])) m s=t
     rw [run_append,run_take,ec]
-    change run (BalancedCleanupOffset.program O++[.CX L.ymsb L.sourceGuard]) ms c=t
+    change run (BalancedCleanupOffsetSlim.program O++[.CX L.ymsb L.sourceGuard]) ms c=t
     rw [run_append,run_take,cl]
     change run [.CX L.ymsb L.sourceGuard] _ d=t
     simp only [run]

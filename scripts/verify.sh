@@ -7,6 +7,9 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProof
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProgram
+import ECDSAAdd.Arithmetic.FieldRenameOffsetSlim
 import ECDSAAdd.Arithmetic.MappedCompressedPointArithmetic
 import ECDSAAdd.Arithmetic.CompressedPointDialogSteps
 import ECDSAAdd.Arithmetic.CompressedPointDialogSpec
@@ -1385,6 +1388,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_counts
 #print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_support
 #print axioms ECDSAAdd.Arithmetic.CompressedPointDialog.finite_qubits
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.chain_compare
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.xor_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.chain_counts
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.counts
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.support
+#print axioms ECDSAAdd.Arithmetic.FieldRename.slim_offset_chain_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.slim_offset_program_natural
 LEAN
 )
 task_axiom_lean_rc=$?

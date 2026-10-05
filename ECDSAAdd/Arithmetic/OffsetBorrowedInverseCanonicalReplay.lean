@@ -129,8 +129,8 @@ theorem replay_counts (w : Nat → Wire) (b sign effS : Wire)
     (_hn : (skywalkSharedWires w).Nodup) (ls : List MixedTranscriptLetter)
     (hf : MixedTranscriptReplayLayout w b sign effS ls)
     (ho : ∀q∈[b,sign,effS],q∉skywalkSharedWires w) :
-    toffoliCount (replay w b sign effS ls)=ls.length*1283 ∧
-    measurementCount (replay w b sign effS ls)=ls.length*1027 := by
+    toffoliCount (replay w b sign effS ls)=ls.length*1282 ∧
+    measurementCount (replay w b sign effS ls)=ls.length*1026 := by
   induction ls with
   | nil => simp [replay,toffoliCount,measurementCount]
   | cons l ls ih =>
@@ -138,9 +138,9 @@ theorem replay_counts (w : Nat → Wire) (b sign effS : Wire)
     have c := cell_counts w b l.1.1 l.1.2 sign effS l.2.1 l.2.2 hl.swapND
     have r := ih (fun q hq => hf q (by simp [hq]))
     change toffoliCount (replay w b sign effS ls++
-        cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)=(ls.length+1)*1283 ∧
+        cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)=(ls.length+1)*1282 ∧
       measurementCount (replay w b sign effS ls++
-        cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)=(ls.length+1)*1027
+        cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)=(ls.length+1)*1026
     rw [toffoliCount_append,measurementCount_append,r.1,r.2,c.1,c.2]
     constructor <;> simp only [Nat.add_mul,Nat.one_mul]
 
@@ -148,8 +148,8 @@ theorem canonicalReplay_counts (w : Nat → Wire) (b sign effS : Wire)
     (hn : (skywalkSharedWires w).Nodup) (ls : List MixedTranscriptLetter)
     (hf : MixedTranscriptReplayLayout w b sign effS ls)
     (ho : ∀q∈[b,sign,effS],q∉skywalkSharedWires w) :
-    toffoliCount (canonicalReplay w b sign effS hn ls)=ls.length*1283+3060 ∧
-    measurementCount (canonicalReplay w b sign effS hn ls)=ls.length*1027+3060 := by
+    toffoliCount (canonicalReplay w b sign effS hn ls)=ls.length*1282+3060 ∧
+    measurementCount (canonicalReplay w b sign effS hn ls)=ls.length*1026+3060 := by
   let D := balancedSharedBoundary w sign hn
   have t := BalancedConvert.counts D.target D.targetWidths
   have s := BalancedConvert.counts D.source D.sourceWidths
@@ -159,7 +159,7 @@ theorem canonicalReplay_counts (w : Nat → Wire) (b sign effS : Wire)
   change (toffoliCount (BalancedConvert.center D.target)+toffoliCount (BalancedConvert.center D.source)+
       toffoliCount (replay w b sign effS ls)+
       (toffoliCount (BalancedConvert.canonical D.target)+toffoliCount (BalancedConvert.canonical D.source)))
-      =ls.length*1283+3060 ∧ _
+      =ls.length*1282+3060 ∧ _
   rw [t.1,t.2.1,t.2.2.1,t.2.2.2,s.1,s.2.1,s.2.2.1,s.2.2.2,r.1,r.2]
   constructor <;> omega
 
@@ -191,8 +191,8 @@ theorem canonicalTapeReplay_counts (w : Nat → Wire) (b sign effS : Wire)
     (hn : (skywalkSharedWires w).Nodup)
     (hf : MixedTranscriptReplayLayout w b sign effS (mixedTranscriptTape w))
     (ho : ∀q∈[b,sign,effS],q∉skywalkSharedWires w) :
-    toffoliCount (canonicalTapeReplay w b sign effS hn)=659956 ∧
-    measurementCount (canonicalTapeReplay w b sign effS hn)=528884 := by
+    toffoliCount (canonicalTapeReplay w b sign effS hn)=659444 ∧
+    measurementCount (canonicalTapeReplay w b sign effS hn)=528372 := by
   have h := canonicalReplay_counts w b sign effS hn (mixedTranscriptTape w) hf ho
   simpa only [canonicalTapeReplay,mixedTranscriptTape_length,Nat.reduceMul,Nat.reduceAdd] using h
 

@@ -112,10 +112,10 @@ theorem pointCompressedArithmetic_support (L : ControlledPointLayout) (hw : L.Wi
 
 /-- Relabeling preserves the exact emitted prices of both arithmetic stages. -/
 theorem pointCompressedArithmetic_counts (L : ControlledPointLayout) :
-    toffoliCount (pointCompressedArithmetic L false)=1059137 ∧
-    measurementCount (pointCompressedArithmetic L false)=728135 ∧
-    toffoliCount (pointCompressedArithmetic L true)=1059138 ∧
-    measurementCount (pointCompressedArithmetic L true)=728136 := by
+    toffoliCount (pointCompressedArithmetic L false)=1058625 ∧
+    measurementCount (pointCompressedArithmetic L false)=727623 ∧
+    toffoliCount (pointCompressedArithmetic L true)=1058626 ∧
+    measurementCount (pointCompressedArithmetic L true)=727624 := by
   have div := controlled_counts true
   have mul := controlled_counts false
   have rd := renameProgram_counts (pointWireFn L) (controlled true)

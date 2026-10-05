@@ -46,8 +46,8 @@ theorem offsetBorrowedInverseSharedFieldMultiplication_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup)
     (hf : ∀r∈skywalkSharedTape w,MixedTranscriptFieldLayout w b r.1 r.2 effG effS)
     (ho : ∀q∈[b,effG,effS],q∉skywalkSharedWires w) :
-    toffoliCount (offsetBorrowedInverseSharedFieldMultiplication w b effG effS)=660468 ∧
-    measurementCount (offsetBorrowedInverseSharedFieldMultiplication w b effG effS)=529396 := by
+    toffoliCount (offsetBorrowedInverseSharedFieldMultiplication w b effG effS)=659956 ∧
+    measurementCount (offsetBorrowedInverseSharedFieldMultiplication w b effG effS)=528884 := by
   have hw := skywalkShared_field_widths w
   have hu := modUnary_counts (borrowedSkywalkUnary w) 256 p
     (borrowedSkywalkUnary_widths w) (by omega)

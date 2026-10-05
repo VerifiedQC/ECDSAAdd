@@ -32,7 +32,7 @@ private theorem swap_nd :
     omega
 
 theorem logicalCell_counts (divide : Bool) (i : Nat) :
-    toffoliCount (logicalCell divide i)=1283 ∧ measurementCount (logicalCell divide i)=1027 := by
+    toffoliCount (logicalCell divide i)=1282 ∧ measurementCount (logicalCell divide i)=1026 := by
   cases divide <;> simp only [logicalCell,Bool.false_eq_true,if_false,if_true]
   · exact OffsetBorrowedInverseCanonical.cell_counts id 2400 i (1028+i) 2409 2410
       (mixedTranscriptUnitTrace.getD i (false,false)).1
@@ -42,7 +42,7 @@ theorem logicalCell_counts (divide : Bool) (i : Nat) :
       (mixedTranscriptUnitTrace.getD i (false,false)).2 swap_nd
 
 theorem mappedGroup_counts (divide : Bool) (j : Nat) :
-    toffoliCount (mappedGroup divide j)=3856 ∧ measurementCount (mappedGroup divide j)=3082 := by
+    toffoliCount (mappedGroup divide j)=3853 ∧ measurementCount (mappedGroup divide j)=3079 := by
   have codec := compressedHistory_counts (placed j) (3*j)
   have a := logicalCell_counts divide (3*j)
   have b := logicalCell_counts divide (3*j+1)
@@ -53,8 +53,8 @@ theorem mappedGroup_counts (divide : Bool) (j : Nat) :
   all_goals norm_num
 
 theorem mappedGroups_counts (divide : Bool) (j n : Nat) :
-    toffoliCount (mappedGroups divide j n)=3856*n ∧
-    measurementCount (mappedGroups divide j n)=3082*n := by
+    toffoliCount (mappedGroups divide j n)=3853*n ∧
+    measurementCount (mappedGroups divide j n)=3079*n := by
   induction n generalizing j with
   | zero => simp [mappedGroups,toffoliCount,measurementCount]
   | succ n ih =>
@@ -65,7 +65,7 @@ theorem mappedGroups_counts (divide : Bool) (j n : Nat) :
     all_goals constructor <;> omega
 
 theorem mappedReplay_counts (divide : Bool) :
-    toffoliCount (mappedReplay divide)=658086 ∧ measurementCount (mappedReplay divide)=525994 := by
+    toffoliCount (mappedReplay divide)=657574 ∧ measurementCount (mappedReplay divide)=525482 := by
   have groups := mappedGroups_counts divide 0 170
   have a := logicalCell_counts divide 510
   have b := logicalCell_counts divide 511
@@ -93,8 +93,8 @@ private theorem endpointCopy_counts :
   simpa only [Option.isSome_none,Bool.false_eq_true,if_false] using copy
 
 theorem fieldSegment_counts (divide : Bool) :
-    toffoliCount (fieldSegment divide)=(if divide then 661657 else 661658) ∧
-    measurementCount (fieldSegment divide)=(if divide then 529565 else 529566) := by
+    toffoliCount (fieldSegment divide)=(if divide then 661145 else 661146) ∧
+    measurementCount (fieldSegment divide)=(if divide then 529053 else 529054) := by
   have unary := modUnary_counts (borrowedSkywalkUnary id) 256 p (borrowedSkywalkUnary_widths id) (by omega)
   have center := converterPair_counts false
   have canonical := converterPair_counts true
@@ -121,8 +121,8 @@ theorem integer512_counts :
     And.intro forward.1 (And.intro forward.2 reverse)
 
 theorem kernel_counts (divide : Bool) :
-    toffoliCount (kernel divide)=(if divide then 1058625 else 1058626) ∧
-    measurementCount (kernel divide)=(if divide then 727625 else 727626) := by
+    toffoliCount (kernel divide)=(if divide then 1058113 else 1058114) ∧
+    measurementCount (kernel divide)=(if divide then 727113 else 727114) := by
   have seed := literalSkywalkPoolSeed_counts base p
   have integer := integer512_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
@@ -136,8 +136,8 @@ theorem kernel_counts (divide : Bool) :
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=(if divide then 1059137 else 1059138) ∧
-    measurementCount (controlled divide)=(if divide then 728135 else 728136) := by
+    toffoliCount (controlled divide)=(if divide then 1058625 else 1058626) ∧
+    measurementCount (controlled divide)=(if divide then 727623 else 727624) := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]
   have wrapped := directZeroControlled_counts (wireBlock base 770 256) (wireBlock base 0 255)

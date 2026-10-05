@@ -1,15 +1,16 @@
 import ECDSAAdd.Arithmetic.BalancedCoreComposeProof
 import ECDSAAdd.Arithmetic.OffsetCleanupBorrowedCallerLayout
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProgram
 set_option maxRecDepth 8192
 set_option maxHeartbeats 700000
 set_option linter.unusedSimpArgs false
 namespace ECDSAAdd.Arithmetic.OffsetBorrowedField
 
-/-- Unselected forward field emission. The second carry bank is supplied by
+/-- Forward field emission. The second carry bank is supplied by
 existing terminal-zero mask sites, deliberately excluding the live guard765. -/
 def program (w : Nat → Wire) (sign : Wire) : Program :=
   BalancedCircuit.coreProgram (balancedSharedPorts w sign)++
-    (BalancedCleanupOffset.program (OffsetCleanupBorrowedCaller.layout w sign)++
+    (BalancedCleanupOffsetSlim.program (OffsetCleanupBorrowedCaller.layout w sign)++
       [.CX (balancedSharedPorts w sign).ymsb (balancedSharedPorts w sign).sourceGuard])
 
 /-- Every used clean bank/flag, including the canonical high source site
@@ -30,9 +31,9 @@ theorem core_counts (L : BalancedCircuit.Layout) (hw : L.Widths) :
   omega
 
 theorem counts (w : Nat → Wire) (sign : Wire) :
-    toffoliCount (program w sign)=1025 ∧ measurementCount (program w sign)=1025 := by
+    toffoliCount (program w sign)=1024 ∧ measurementCount (program w sign)=1024 := by
   have c := core_counts (balancedSharedPorts w sign) (balancedSharedPorts_widths w sign)
-  have o := BalancedCleanupOffset.counts (OffsetCleanupBorrowedCaller.layout w sign)
+  have o := BalancedCleanupOffsetSlim.counts (OffsetCleanupBorrowedCaller.layout w sign)
     (OffsetCleanupBorrowedCaller.widths w sign)
   simp only [program,toffoliCount_append,measurementCount_append,c.1,c.2,o.1,o.2]
   norm_num [toffoliCount,measurementCount]

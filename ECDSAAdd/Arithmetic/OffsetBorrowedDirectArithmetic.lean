@@ -247,10 +247,10 @@ theorem offsetBorrowedDirectArithmetic_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
     (ho : ∀ q∈[b,effG,effS],q∉skywalkSharedWires w)
     (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    toffoliCount (offsetBorrowedDirectArithmetic true w b effG effS)=1056245 ∧
-    measurementCount (offsetBorrowedDirectArithmetic true w b effG effS)=727795 ∧
-    toffoliCount (offsetBorrowedDirectArithmetic false w b effG effS)=1056246 ∧
-    measurementCount (offsetBorrowedDirectArithmetic false w b effG effS)=727796 := by
+    toffoliCount (offsetBorrowedDirectArithmetic true w b effG effS)=1055733 ∧
+    measurementCount (offsetBorrowedDirectArithmetic true w b effG effS)=727283 ∧
+    toffoliCount (offsetBorrowedDirectArithmetic false w b effG effS)=1055734 ∧
+    measurementCount (offsetBorrowedDirectArithmetic false w b effG effS)=727284 := by
   have hs := literalSkywalkPoolSeed_counts w p
   have hi := narrowSkywalkRouted512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)

@@ -117,17 +117,17 @@ theorem body_frame (w : Nat → Wire) (sign effS : Wire) (hn : (skywalkSharedWir
 
 theorem cell_counts (w : Nat → Wire) (b g swap sign effS : Wire) (ig is : Bool)
     (hsw : (effS::(balancedSharedPorts w sign).r++(balancedSharedPorts w sign).y).Nodup) :
-    toffoliCount (cell w b g swap sign effS ig is)=1283 ∧
-    measurementCount (cell w b g swap sign effS ig is)=1027 := by
+    toffoliCount (cell w b g swap sign effS ig is)=1282 ∧
+    measurementCount (cell w b g swap sign effS ig is)=1026 := by
   have width := BalancedCleanup.widths (balancedSharedPorts w sign).toLayout (balancedSharedPorts_widths w sign)
   have sw := swapRegisters_resources effS _ _ (width.2.1.trans width.2.2.1.symm) hsw
   have k := OffsetBorrowedField.counts w sign
   have si := transcriptSelectWindow_counts b swap effS is (body w sign effS)
   have so := transcriptSelectWindow_counts b g sign ig (transcriptSelectWindow b swap effS is (body w sign effS))
   change toffoliCount (transcriptSelectWindow b g sign ig
-      (transcriptSelectWindow b swap effS is (body w sign effS)))=1283 ∧
+      (transcriptSelectWindow b swap effS is (body w sign effS)))=1282 ∧
     measurementCount (transcriptSelectWindow b g sign ig
-      (transcriptSelectWindow b swap effS is (body w sign effS)))=1027
+      (transcriptSelectWindow b swap effS is (body w sign effS)))=1026
   rw [so.1,so.2,si.1,si.2]
   simp only [body,toffoliCount_append,measurementCount_append,k.1,k.2,
     sw.1,sw.2.1,width.2.1]

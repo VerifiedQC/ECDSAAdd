@@ -1,6 +1,6 @@
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetPrefix
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetHead
-import ECDSAAdd.Arithmetic.OffsetBorrowedSupport
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSupport
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
@@ -153,7 +153,7 @@ theorem support (L : Layout) (hw : L.Widths) : wires (program L)⊆L.wires.toFin
   have carry : L.carry.length=256 := hw.1.2.2
   have subset := chain_support (offsetBits L) L.y L.r L.offsetCarry L.carry L.one L.cout L.parity
     (by simp [offsetBits,width.2.1]) (by omega) (by omega) (by omega)
-  have old := OffsetBorrowedSupport.offsetSupport L hw
+  have old := BalancedCleanupOffset.program_support L hw
   rw [BalancedCleanupOffset.program_sandwich] at old
   simp only [program,wires_append,wires_reverse,Finset.union_subset_iff] at old ⊢
   exact ⟨⟨old.1.1,subset.trans old.1.2⟩,old.2⟩

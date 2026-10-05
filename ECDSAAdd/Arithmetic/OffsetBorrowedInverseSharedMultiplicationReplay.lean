@@ -27,8 +27,8 @@ theorem offsetBorrowedInverseSharedReplayProgram_counts (w : Nat → Wire) (b ef
     (hn : (skywalkSharedWires w).Nodup)
     (hf : ∀r∈skywalkSharedTape w,MixedTranscriptFieldLayout w b r.1 r.2 effG effS)
     (ho : ∀q∈[b,effG,effS],q∉skywalkSharedWires w) :
-    toffoliCount (offsetBorrowedInverseSharedReplayProgram w b effG effS)=659956 ∧
-    measurementCount (offsetBorrowedInverseSharedReplayProgram w b effG effS)=528884 := by
+    toffoliCount (offsetBorrowedInverseSharedReplayProgram w b effG effS)=659444 ∧
+    measurementCount (offsetBorrowedInverseSharedReplayProgram w b effG effS)=528372 := by
   rw [offsetBorrowedInverseSharedReplayProgram_eq w b effG effS hn]
   exact OffsetBorrowedInverseCanonical.canonicalTapeReplay_counts w b effG effS hn
     (mixedTranscriptTape_layout w b effG effS hf) ho

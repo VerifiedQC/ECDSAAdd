@@ -40,10 +40,10 @@ theorem compactOffsetCallerArithmetic_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
     (ho : ∀ q∈[b,effG,effS],q∉skywalkSharedWires w)
     (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    toffoliCount (compactOffsetCallerArithmetic true w b effG effS)=1056245 ∧
-    measurementCount (compactOffsetCallerArithmetic true w b effG effS)=727285 ∧
-    toffoliCount (compactOffsetCallerArithmetic false w b effG effS)=1056246 ∧
-    measurementCount (compactOffsetCallerArithmetic false w b effG effS)=727286 := by
+    toffoliCount (compactOffsetCallerArithmetic true w b effG effS)=1055733 ∧
+    measurementCount (compactOffsetCallerArithmetic true w b effG effS)=726773 ∧
+    toffoliCount (compactOffsetCallerArithmetic false w b effG effS)=1055734 ∧
+    measurementCount (compactOffsetCallerArithmetic false w b effG effS)=726774 := by
   have hs := literalSkywalkPoolSeed_counts w p
   have hi := compactSkywalkForward_512_counts w (skywalkShared_integer_nodup w hn)
   have hr := compactSkywalkReverse_512_counts w (skywalkShared_integer_nodup w hn)

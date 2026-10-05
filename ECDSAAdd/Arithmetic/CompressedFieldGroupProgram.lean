@@ -31,17 +31,17 @@ def codecGroupBackward {α : Type} (w : Nat → Wire) (cell : α → Program)
 /-- Counts belong to these emitted packet programs. They do not assert a
 complete compressed arithmetic caller or any reduced physical allocation. -/
 theorem codecGroups_counts {α : Type} (w : Nat → Wire) (cell : α → Program)
-    (hc : ∀ a, toffoliCount (cell a)=1283 ∧ measurementCount (cell a)=1027)
+    (hc : ∀ a, toffoliCount (cell a)=1282 ∧ measurementCount (cell a)=1026)
     (start : Nat) (ls : List α) :
-    toffoliCount (codecGroupForward w cell start ls)=1283*ls.length+7*(ls.length/3) ∧
-    measurementCount (codecGroupForward w cell start ls)=1027*ls.length+ls.length/3 ∧
-    toffoliCount (codecGroupBackward w cell start ls)=1283*ls.length+7*(ls.length/3) ∧
-    measurementCount (codecGroupBackward w cell start ls)=1027*ls.length+ls.length/3 := by
+    toffoliCount (codecGroupForward w cell start ls)=1282*ls.length+7*(ls.length/3) ∧
+    measurementCount (codecGroupForward w cell start ls)=1026*ls.length+ls.length/3 ∧
+    toffoliCount (codecGroupBackward w cell start ls)=1282*ls.length+7*(ls.length/3) ∧
+    measurementCount (codecGroupBackward w cell start ls)=1026*ls.length+ls.length/3 := by
   suffices aux : ∀ n start (ls : List α), ls.length=n →
-      toffoliCount (codecGroupForward w cell start ls)=1283*ls.length+7*(ls.length/3) ∧
-      measurementCount (codecGroupForward w cell start ls)=1027*ls.length+ls.length/3 ∧
-      toffoliCount (codecGroupBackward w cell start ls)=1283*ls.length+7*(ls.length/3) ∧
-      measurementCount (codecGroupBackward w cell start ls)=1027*ls.length+ls.length/3 by
+      toffoliCount (codecGroupForward w cell start ls)=1282*ls.length+7*(ls.length/3) ∧
+      measurementCount (codecGroupForward w cell start ls)=1026*ls.length+ls.length/3 ∧
+      toffoliCount (codecGroupBackward w cell start ls)=1282*ls.length+7*(ls.length/3) ∧
+      measurementCount (codecGroupBackward w cell start ls)=1026*ls.length+ls.length/3 by
     exact aux ls.length start ls rfl
   intro n
   induction n using Nat.strong_induction_on with
@@ -73,12 +73,12 @@ theorem codecGroups_counts {α : Type} (w : Nat → Wire) (cell : α → Program
           and_intros <;> omega
 
 theorem codecGroups_512_counts {α : Type} (w : Nat → Wire) (cell : α → Program)
-    (hc : ∀ a, toffoliCount (cell a)=1283 ∧ measurementCount (cell a)=1027)
+    (hc : ∀ a, toffoliCount (cell a)=1282 ∧ measurementCount (cell a)=1026)
     (ls : List α) (hl : ls.length=512) :
-    toffoliCount (codecGroupForward w cell 0 ls)=658086 ∧
-    measurementCount (codecGroupForward w cell 0 ls)=525994 ∧
-    toffoliCount (codecGroupBackward w cell 0 ls)=658086 ∧
-    measurementCount (codecGroupBackward w cell 0 ls)=525994 := by
+    toffoliCount (codecGroupForward w cell 0 ls)=657574 ∧
+    measurementCount (codecGroupForward w cell 0 ls)=525482 ∧
+    toffoliCount (codecGroupBackward w cell 0 ls)=657574 ∧
+    measurementCount (codecGroupBackward w cell 0 ls)=525482 := by
   have h := codecGroups_counts w cell hc 0 ls
   simpa only [hl,Nat.reduceMul,Nat.reduceDiv,Nat.reduceAdd] using h
 
@@ -97,10 +97,10 @@ def compressedFieldBackwardGroups (w : Nat → Wire) (b sign effS : Wire) : Prog
 
 theorem compressedFieldGroups_counts (w : Nat → Wire) (b sign effS : Wire)
     (hsw : (effS::(balancedSharedPorts w sign).r++(balancedSharedPorts w sign).y).Nodup) :
-    toffoliCount (compressedFieldForwardGroups w b sign effS)=658086 ∧
-    measurementCount (compressedFieldForwardGroups w b sign effS)=525994 ∧
-    toffoliCount (compressedFieldBackwardGroups w b sign effS)=658086 ∧
-    measurementCount (compressedFieldBackwardGroups w b sign effS)=525994 := by
+    toffoliCount (compressedFieldForwardGroups w b sign effS)=657574 ∧
+    measurementCount (compressedFieldForwardGroups w b sign effS)=525482 ∧
+    toffoliCount (compressedFieldBackwardGroups w b sign effS)=657574 ∧
+    measurementCount (compressedFieldBackwardGroups w b sign effS)=525482 := by
   have fw := codecGroups_512_counts w
     (fun l : MixedTranscriptLetter => OffsetBorrowedCanonical.cell w b l.1.1 l.1.2 sign effS l.2.1 l.2.2)
     (fun l => OffsetBorrowedCanonical.cell_counts w b l.1.1 l.1.2 sign effS l.2.1 l.2.2 hsw)
