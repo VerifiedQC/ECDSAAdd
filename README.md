@@ -6,6 +6,8 @@
 
 ## Current status
 
+**Candidate integration:** `d6d6b4f` selects compressed Stage 2/5 and an equivalent square remap. Complete candidate correctness/count/support proofs passed at **2,227,651 T / 1,565,127 measurements / ≤1,899 sites**. The selected public circuit is undergoing its full build and transitive axiom audit; the promoted checkpoint below remains `3425244` until that audit passes. See [candidate evidence and six-stage breakdown](docs/EXACT_COMPRESSED_POINT_20261006.md).
+
 本分支的完整受控点加已接入精确 compact integer callers、borrowed-offset field kernels、direct-X Skywalk 乘除、measured streamed-square Step 4 与 fused output recovery Step 6。已验证 Lean 源码提交为 **`3425244`**；证明范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
 
 有限 C 的完整电路为 **2,222,891 Toffoli / 1,564,447 次静态测量指令 / ≤2,068 个静态逻辑位置**；C=O 时为空程序。新正向和逆向域格各为 **1,025 T /1,025 M**，原格为1,277，完整点加相对前一检查点 `580d53e` 省 **258,048 T /258,048 M**。相对原始7,207,866 T降低 **69.16%**。相对 `2c09fdc`，新整数调用器再省1,020次测量，T和Q保持。Step 4与Step 6保持原已证资源。≤2,068是支持/分配证书上界，**不是单独测量的精确 peak-live Q**。Stage 2/5 的 ≤1,297 Q 和 <600,000 T 目标仍未达到。
