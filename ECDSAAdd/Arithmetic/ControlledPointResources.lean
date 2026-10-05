@@ -30,7 +30,7 @@ theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.W
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
     toffoliCount (controlledPointAdd L (.some hc))=2480939 ∧
     measurementCount (controlledPointAdd L (.some hc))=1823515 ∧
-    qubitCount (controlledPointAdd L (.some hc))≤2326 := by
+    qubitCount (controlledPointAdd L (.some hc))≤2068 := by
   have hh := pointDialogFinite_counts L h hn (.some hc) cx cy
   exact ⟨hh.1,hh.2,pointDialogFinite_qubits L h hn (.some hc) cx cy⟩
 

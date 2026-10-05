@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.DirectSkywalkFieldSupport
 import ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
 import ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
+import ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupportKernel
 
 set_option maxRecDepth 4096
 set_option maxHeartbeats 600000
@@ -74,30 +75,7 @@ theorem kernel (divide : Bool) (w : Nat → Wire) (hn : (skywalkSharedWires w).N
     (b effG effS : Wire) (W : Finset Wire) (hW : (skywalkSharedWires w).toFinset⊆W)
     (hb : b∈W) (hg : effG∈W) (hs : effS∈W) :
     wires (directSkywalkArithmetic divide w b effG effS)⊆W := by
-  have seed := skywalkSeed_wires (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
-  have own : (skywalkSharedSeed w).usedWires.toFinset⊆W := by
-    intro q hq
-    exact hW (List.mem_toFinset.mpr (arith_seed_subset_shared w (List.mem_toFinset.mp hq)))
-  have hs1 : wires (skywalkSeed (skywalkSharedSeed w) p)⊆W := by rw [seed.1]; exact own
-  have hs7 : wires (skywalkUnseed (skywalkSharedSeed w) p)⊆W := by rw [seed.2]; exact own
-  have loops := narrowSkywalkRoutedLoop_support w 0 512 (skywalkShared_integer_nodup w hn) (by omega)
-  have pool : (skywalkPoolWires w).toFinset⊆W := by
-    intro q hq
-    exact hW (List.mem_toFinset.mpr (arith_block_subset_shared w 0 1798 (by omega)
-      (List.mem_toFinset.mp hq)))
-  have clear : wires (skywalkArithmeticClear w)⊆W := by
-    rw [skywalkArithmeticClear,skywalkTerminalClear_wires]
-    intro q hq
-    simp only [List.mem_toFinset,List.mem_cons,List.not_mem_nil,or_false] at hq
-    rcases hq with rfl|rfl|rfl
-    all_goals exact hW (List.mem_toFinset.mpr (arith_mem w 0 2314 _ (by omega) (by omega)))
-  have field := BalancedSharedFieldSupport.endpoints w b effG effS W hW hb hg hs
-  have leg : wires (if divide then balancedSharedFieldDivision w b effG effS
-      else balancedInverseSharedFieldMultiplication w b effG effS)⊆W := by
-    cases divide
-    · exact field.2
-    · exact field.1
-  simp only [directSkywalkArithmetic,wires_append,Finset.union_subset_iff]
-  exact ⟨hs1,loops.1.trans pool,clear,leg,clear,loops.2.trans pool,hs7⟩
+  exact BorrowedSkywalkCompactSupport.kernel divide w hn b effG effS W
+    ((BalancedSharedFieldSupport.compactSubsetShared w).trans hW) hb hg hs
 
 end ECDSAAdd.Arithmetic.DirectSupport

@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.BalancedSharedDivisionBridge
+import ECDSAAdd.Arithmetic.BorrowedSkywalkUnaryFrames
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -6,7 +7,7 @@ open Secp256k1
 /-- Exact Stage 2 field division: the original doubling and XOR clear
 surround the concrete balanced replay emission. -/
 def balancedSharedFieldDivision (w : Nat → Wire) (b effG effS : Wire) : Program :=
-  dblInPlace (skywalkSharedField w).unary p ++
+  dblInPlace (borrowedSkywalkUnary w) p ++
   balancedSharedReplayProgram w b effG effS ++
   copyRegister none (skywalkSharedField w).z (skywalkSharedField w).a
 
@@ -28,7 +29,7 @@ theorem balancedSharedFieldDivision_spec (w : Nat → Wire) (b effG effS : Wire)
     apply List.mem_map.mpr
     exact ⟨0,by simp,by simp⟩
   have hl := hf _ hfirst
-  have h1 := balancedSharedDivision_double_frame b effG effS w hl.cell base hk Y 0
+  have h1 := borrowedSkywalkUnary_double_frame w hn base hk hu Y 0
   have h2 := balancedSharedDivision_replay_frame w b effG effS hn hf ho base
     hg0 hs0 hk hu x Y hx0 hx hr
   have h3 := retained_copy_frame b effG effS w hl.cell base
@@ -44,8 +45,8 @@ theorem balancedSharedFieldDivision_counts (w : Nat → Wire) (b effG effS : Wir
     toffoliCount (balancedSharedFieldDivision w b effG effS)=789491 ∧
     measurementCount (balancedSharedFieldDivision w b effG effS)=658419 := by
   have hw := skywalkShared_field_widths w
-  have hd := modUnary_counts (skywalkSharedField w).unary 256 p
-    ((skywalkSharedField w).unary_widths 256 hw) (by omega)
+  have hd := modUnary_counts (borrowedSkywalkUnary w) 256 p
+    (borrowedSkywalkUnary_widths w) (by omega)
   have hr := balancedSharedReplayProgram_counts w b effG effS hn hf ho
   have hlen : (skywalkSharedField w).z.length=(skywalkSharedField w).a.length := by
     simp [ModInPlaceLayout.z,ModAddCoreLayout.z,hw.core.low,hw.core.a]

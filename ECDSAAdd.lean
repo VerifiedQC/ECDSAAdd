@@ -61,3 +61,5 @@ import ECDSAAdd.Arithmetic.PointDialogResources
 import ECDSAAdd.Arithmetic.SkywalkControlledPort
 
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
+
+import ECDSAAdd.Arithmetic.CompactIntegratedAudit

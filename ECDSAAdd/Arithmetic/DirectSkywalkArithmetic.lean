@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.DirectSkywalkCleanup
+import ECDSAAdd.Arithmetic.DirectSkywalkLiteralSeedBridge
 import ECDSAAdd.Arithmetic.BalancedSharedDivision
 import ECDSAAdd.Arithmetic.BalancedInverseSharedMultiplication
 
@@ -11,13 +11,13 @@ open Secp256k1 DirectSkywalk
 /-- Direct caller-divisor kernel: integer forward and restoration passes
 surround a field replay selected by b. No safe-copy divisor is allocated. -/
 def directSkywalkArithmetic (divide : Bool) (w : Nat → Wire) (b effG effS : Wire) : Program :=
-  skywalkSeed (skywalkSharedSeed w) p ++
+  literalSkywalkSeed (literalSkywalkPoolSeed w) p ++
   (narrowSkywalkRoutedLoop w 0 512 ++
   (skywalkArithmeticClear w ++
   ((if divide then balancedSharedFieldDivision w b effG effS
       else balancedInverseSharedFieldMultiplication w b effG effS) ++
   (skywalkArithmeticClear w ++
-  (narrowSkywalkRoutedUnloop w 0 512 ++ skywalkUnseed (skywalkSharedSeed w) p)))))
+  (narrowSkywalkRoutedUnloop w 0 512 ++ literalSkywalkUnseed (literalSkywalkPoolSeed w) p)))))
 
 def directSkywalkResult (divide enabled : Bool) (x : Nat) (Y : Fp) : Fp :=
   if enabled then skywalkArithmeticResult divide x Y else Y
@@ -28,31 +28,11 @@ def DirectSkywalkArithmeticStrong (divide : Bool) (w : Nat → Wire) (b : Wire)
     (directSkywalkResult divide (initial.basis b) x Y).val ∧
     ∀ q,q∉skywalkArithmeticNumerator w → out.basis q=initial.basis q
 
-attribute [local irreducible] skywalkSeed skywalkUnseed narrowSkywalkRoutedLoop narrowSkywalkRoutedUnloop run
+attribute [local irreducible] skywalkSeed skywalkUnseed literalSkywalkSeed literalSkywalkUnseed
+attribute [local irreducible] narrowSkywalkRoutedLoop narrowSkywalkRoutedUnloop run
 attribute [local irreducible] balancedSharedFieldDivision balancedInverseSharedFieldMultiplication
 attribute [local irreducible] skywalkFieldDivisionRetained skywalkFieldMultiplicationRetained
 attribute [local irreducible] SkywalkTrace.next Nat.iterate
-
-private theorem directSkywalk_zip_records (rs : List (Wire×Wire)) (cs : List (Bool×Bool))
-    (P : Wire×Wire → Prop) (hlen : rs.length=cs.length)
-    (hl : ∀ l∈rs.zip cs,P l.1) : ∀ r∈rs,P r := by
-  induction rs generalizing cs with
-  | nil => simp
-  | cons r rs ih =>
-    cases cs with
-    | nil => simp at hlen
-    | cons c cs =>
-      have he : rs.length=cs.length := by simpa using hlen
-      intro q hq
-      rcases List.mem_cons.mp hq with rfl|hq
-      · exact hl (q,c) (by simp)
-      · exact ih cs he (fun l hm => hl l (by simp [hm])) q hq
-
-private theorem directSkywalk_record_layout (w : Nat → Wire) (b effG effS : Wire)
-    (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    ∀ r∈skywalkSharedTape w,MixedTranscriptFieldLayout w b r.1 r.2 effG effS :=
-  directSkywalk_zip_records _ _ _
-    ((skywalkShared_tape_length w).trans mixedTranscriptUnitTrace_length.symm) hl
 
 theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
@@ -63,14 +43,14 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     (hin : SkywalkArithmeticInput w x Y.val s.basis)
     (hg0 : s.basis effG=false) (hs0 : s.basis effS=false)
     (s1 s2 s3 s4 s5 s6 s7 : State)
-    (hs1 : run (skywalkSeed (skywalkSharedSeed w) p) m1 s=s1)
+    (hs1 : run (literalSkywalkSeed (literalSkywalkPoolSeed w) p) m1 s=s1)
     (hs2 : run (narrowSkywalkRoutedLoop w 0 512) m2 s1=s2)
     (hs3 : run (skywalkArithmeticClear w) m3 s2=s3)
     (hs4 : run (if divide then balancedSharedFieldDivision w b effG effS
       else balancedInverseSharedFieldMultiplication w b effG effS) m4 s3=s4)
     (hs5 : run (skywalkArithmeticClear w) m5 s4=s5)
     (hs6 : run (narrowSkywalkRoutedUnloop w 0 512) m6 s5=s6)
-    (hs7 : run (skywalkUnseed (skywalkSharedSeed w) p) m7 s6=s7) :
+    (hs7 : run (literalSkywalkUnseed (literalSkywalkPoolSeed w) p) m7 s6=s7) :
     s7.phase=s.phase ∧ regValue (skywalkArithmeticNumerator w) s7.basis=
       (directSkywalkResult divide (s.basis b) x Y).val ∧
       ∀ q,q∉skywalkArithmeticNumerator w → s7.basis q=s.basis q := by
@@ -84,22 +64,23 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
   have hp : p < 2^256 := by norm_num [p]
   have hp0 : 0 < p := by norm_num [p]
   have hpo : p%2=1 := by norm_num [p]
+  have oldhs1 := (directSkywalkLiteralSeed_seed_eq w hn x Y.val hx s m1 hin).symm.trans hs1
   have h1 := skywalkSeed_spec L 258 p x hw hnseed (by omega) hp (hx.trans hp)
     s m1 (arith_seed_input w hn x Y.val s.basis hin)
-  rw [hs1] at h1
+  rw [oldhs1] at h1
   have hstage0 := arith_seed_stage0 w hn x Y.val hx s m1 hin
-  rw [hs1] at hstage0
+  rw [oldhs1] at hstage0
   have h2 := narrowSkywalkRouted512_spec w hnpool x p hp0 hx0 hpo hp hx (arith_coprime x hx0 hx) s1 m2 hstage0
   rw [hs2] at h2
   have h3 := skywalkTerminalClear_correct _ _ _ (arith_clear_gates w hn) s2 m3
   change (run (skywalkArithmeticClear w) m3 s2).phase=s2.phase ∧ _ at h3
   rw [hs3] at h3
   have hclean := arith_clean_preparation w hn x Y.val hx0 hx s m1 m2 m3 hin
-  rw [hs1,hs2,hs3] at hclean
+  rw [oldhs1,hs2,hs3] at hclean
   have hwork := skywalkShared_clean_to_field w s3.basis hclean
   have hz3 : regValue F.z s3.basis=Y.val := by
     have hk := arith_preparation_frame w hn s m1 m2 m3
-    rw [hs1,hs2,hs3] at hk
+    rw [oldhs1,hs2,hs3] at hk
     exact (regValue_congr _ _ _ hk).trans (arith_z_input w hn x Y.val s.basis hin)
   have htape : skywalkTapeControls s3.basis (skywalkSharedTape w)=
       SkywalkTrace.trace 512 (SkywalkRails.encode false false (x : Int) (p : Int)) :=
@@ -117,7 +98,7 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
       (skywalkShared_seed_widths w) s m1 q seedAway).1
     have k2 := arith_record_outside w hn s1 m2 q poolAway
     have k3 := arith_clear_outside w hn s2 m3 q poolAway
-    rw [hs1] at k1
+    rw [oldhs1] at k1
     rw [hs2] at k2
     rw [hs3] at k3
     exact k3.trans (k2.trans k1)
@@ -178,8 +159,10 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     · exact (readSeed L.carry (arith_seed_components L).2.2.2).trans h1.2.carry
     · exact (outsideZ _ (seedAway _ (by simp [SkywalkSeedLayout.usedWires]))).trans h1.2.cin
     · exact (h6.2 _ (arith_mem w 0 1798 1797 (by omega) (by omega))).trans h1.2.orientation
+  have oldhs7 := (directSkywalkLiteralSeed_unseed_eq w hn x Y.val hx s s1 s6 m1 m7
+    hin oldhs1 hin6 h6.2).symm.trans hs7
   have h7 := skywalkUnseed_spec L 258 p x hw hnseed (by omega) hp (hx.trans hp) s6 m7 hin6
-  rw [hs7] at h7
+  rw [oldhs7] at h7
   have frame7Z : ∀ q,q∉F.z → s7.basis q=s.basis q := by
     have hentry := arith_seed_input w hn x Y.val s.basis hin
     have readback (r : List Wire) (hb : regValue r s7.basis=regValue r s.basis) :
@@ -202,8 +185,8 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     have hout := arith_seed_away L q hcin hqa hqb hqc hqd
     have hb := skywalkSeed_frame L 258 p hw s6 m7 q hout
     have hf := skywalkSeed_frame L 258 p hw s m1 q hout
-    rw [hs7] at hb
-    rw [hs1] at hf
+    rw [oldhs7] at hb
+    rw [oldhs1] at hf
     exact hb.2.trans ((outsideZ q hq).trans hf.1)
   have hz7 : regValue F.z s7.basis=Z := by
     apply Eq.trans (regValue_congr _ _ _ ?_) h4.2.1
@@ -216,7 +199,7 @@ theorem directSkywalkArithmetic_states (divide : Bool) (w : Nat → Wire)
     have hseed := skywalkSeed_frame L 258 p hw s6 m7 (w j) hsaway
     have hloop := arith_unrecord_outside w hn s5 m6 (w j) hpaway
     have hclear := arith_clear_outside w hn s4 m5 (w j) hpaway
-    rw [hs7] at hseed
+    rw [oldhs7] at hseed
     rw [hs6] at hloop
     rw [hs5] at hclear
     exact hseed.2.trans (hloop.trans hclear)
@@ -253,12 +236,12 @@ theorem directSkywalkArithmetic_run (divide : Bool) (w : Nat → Wire)
     SkywalkArithmeticInput w x Y.val initial.basis → initial.basis effG=false →
       initial.basis effS=false → DirectSkywalkArithmeticStrong divide w b x Y initial out
   have hh := skywalkRunSeven
-    (skywalkSeed (skywalkSharedSeed w) p) (narrowSkywalkRoutedLoop w 0 512)
+    (literalSkywalkSeed (literalSkywalkPoolSeed w) p) (narrowSkywalkRoutedLoop w 0 512)
     (skywalkArithmeticClear w)
     (if divide then balancedSharedFieldDivision w b effG effS
       else balancedInverseSharedFieldMultiplication w b effG effS)
     (skywalkArithmeticClear w) (narrowSkywalkRoutedUnloop w 0 512)
-    (skywalkUnseed (skywalkSharedSeed w) p) P
+    (literalSkywalkUnseed (literalSkywalkPoolSeed w) p) P
     (by
       intro initial s1 s2 s3 s4 s5 s6 s7 m1 m2 m3 m4 m5 m6 m7 h1 h2 h3 h4 h5 h6 h7 hi hg hs
       unfold DirectSkywalkArithmeticStrong
@@ -277,7 +260,7 @@ theorem directSkywalkArithmetic_counts (w : Nat → Wire)
     measurementCount (directSkywalkArithmetic true w b effG effS)=856819 ∧
     toffoliCount (directSkywalkArithmetic false w b effG effS)=1185270 ∧
     measurementCount (directSkywalkArithmetic false w b effG effS)=856820 := by
-  have hs := skywalkSeed_counts (skywalkSharedSeed w) 258 p (skywalkShared_seed_widths w)
+  have hs := literalSkywalkPoolSeed_counts w p
   have hi := narrowSkywalkRouted512_counts w (skywalkShared_integer_nodup w hn)
   have hc := skywalkTerminalClear_counts (w 511) (w 512) (w 770)
   have hf := directSkywalk_record_layout w b effG effS hl

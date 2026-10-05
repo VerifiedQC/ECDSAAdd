@@ -33,6 +33,7 @@ import ECDSAAdd.Arithmetic.DirectSkywalkKernelSupport
 import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
+import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.andComputeErase_spec
 #print axioms ECDSAAdd.andComputeErase_correct
 #print axioms ECDSAAdd.andComputeErase_toffoliCount
@@ -1283,6 +1284,51 @@ import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.replayPrograms
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.endpoints
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.declaredEndpoints
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeed_counts
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeed_frame
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeed_spec
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkUnseed_spec
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeed_encode
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeed_roundtrip
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkUnseed_preserves_outsideA
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkPoolSeed_valid
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkPoolSeed_boundary
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkPoolSeed_qubitBound
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_oldSeed_outsideA
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_oldUnseed_outsideA
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_seed_eq
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_unseed_eq
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_seed_spec
+#print axioms ECDSAAdd.Arithmetic.literalSkywalkSeedSharedBridge_unseed_spec
+#print axioms ECDSAAdd.Arithmetic.directSkywalkLiteralSeed_seed_eq
+#print axioms ECDSAAdd.Arithmetic.directSkywalkLiteralSeed_unseed_eq
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_jointND
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_workAway
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_work_subset
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_clean_frame
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_double_frame
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_half_frame
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_support
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_no_old_bank
+#print axioms ECDSAAdd.Arithmetic.borrowedSkywalkUnary_resources
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.kernelSites
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.converters
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.replay
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.tapeSupport
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.replayPrograms
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.copy
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.copyLow
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.unary
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.integerSegments
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.endpoints
+#print axioms ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.kernel
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.compactPointSites_nodup
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.compactSharedMap_support
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_compact_support
+#print axioms ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_compact_resources
+#print axioms ECDSAAdd.Arithmetic.pointDialogGeneric_compact_wires
+#print axioms ECDSAAdd.Arithmetic.pointDialogFinite_compact_wires
+#print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.compactSubsetShared
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -1,4 +1,6 @@
 import ECDSAAdd.Arithmetic.BalancedSharedFieldSupportLayout
+import ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupportReplay
+import ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupportUnary
 import ECDSAAdd.Arithmetic.BalancedSharedDivision
 import ECDSAAdd.Arithmetic.BalancedInverseSharedMultiplication
 set_option maxRecDepth 8192
@@ -6,6 +8,18 @@ set_option maxHeartbeats 1000000
 namespace ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
 attribute [local irreducible] wireBlock dblInPlace halfInPlace copyRegister
 attribute [local irreducible] balancedTranscriptReplay balancedInverseTranscriptReplay
+
+/-- The compact allocation is a subset of the original declared shared bank. -/
+theorem compactSubsetShared (w : Nat → Wire) :
+    (compactSharedSites w).toFinset⊆(skywalkSharedWires w).toFinset := by
+  intro q hq
+  simp only [List.mem_toFinset,compactSharedSites,List.mem_append,wireBlock,List.mem_map] at hq
+  rcases hq with ⟨i,hi,rfl⟩|⟨i,hi,rfl⟩
+  all_goals
+    simp only [List.mem_range'_1] at hi
+    apply List.mem_toFinset.mpr
+    simpa only [skywalkSharedWires] using
+      (DirectSkywalk.arith_mem w 0 2314 i (by omega) (by omega))
 
 /-- Support of the proof-independent, actual entry/replay/exit emissions. -/
 theorem replayPrograms (w : Nat → Wire) (b effG effS : Wire) (W : Finset Wire)
@@ -26,9 +40,10 @@ theorem endpoints (w : Nat → Wire) (b effG effS : Wire) (W : Finset Wire)
     (hW : (skywalkSharedWires w).toFinset⊆W) (hb : b∈W) (hg : effG∈W) (hs : effS∈W) :
     wires (balancedSharedFieldDivision w b effG effS)⊆W ∧
     wires (balancedInverseSharedFieldMultiplication w b effG effS)⊆W := by
-  have hu := unary w W hW
-  have hc := copy w W hW
-  have hr := replayPrograms w b effG effS W hW hb hg hs
+  have hcompact := (compactSubsetShared w).trans hW
+  have hu := BorrowedSkywalkCompactSupport.unary w W hcompact
+  have hc := BorrowedSkywalkCompactSupport.copy w W hcompact
+  have hr := BorrowedSkywalkCompactSupport.replayPrograms w b effG effS W hcompact hb hg hs
   simp only [balancedSharedFieldDivision,balancedInverseSharedFieldMultiplication,
     wires_append,Finset.union_subset_iff]
   exact ⟨⟨⟨hu.1,hr.1⟩,hc⟩,⟨⟨hc,hr.2⟩,hu.2⟩⟩
@@ -49,3 +64,5 @@ end ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.replayPrograms
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.endpoints
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.declaredEndpoints
+
+#print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.compactSubsetShared
