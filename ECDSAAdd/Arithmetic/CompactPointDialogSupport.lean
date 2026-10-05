@@ -1,9 +1,9 @@
 import ECDSAAdd.Arithmetic.PointDialogSupport
-import ECDSAAdd.Arithmetic.CompactPointArithmeticSupport
+import ECDSAAdd.Arithmetic.OffsetBorrowedSupportPoint
 set_option maxHeartbeats 3000000
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
-attribute [local irreducible] pointDirectSkywalkArithmetic directSkywalkArithmetic directZeroControlled
+attribute [local irreducible] pointOffsetBorrowedArithmetic directSkywalkArithmetic directZeroControlled
   pointRecoveryConstantAdd compactRecoveryConstant pointRecoveryReflection CompactRecoveryNegateLayout.reflection
 theorem pointDialogGeneric_compact_wires (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     (cx cy : Fp) :
@@ -19,8 +19,8 @@ theorem pointDialogGeneric_compact_wires (L : ControlledPointLayout) (hw : L.Wid
     have p : q∈L.dialogPool.take 515 → q∈L.compactPointPool := fun h => prefixSmall 515 (by omega) h
     rcases hr with rfl|rfl
     all_goals simp only [S,List.mem_toFinset,List.mem_cons,List.mem_append] at h ⊢;tauto
-  have arith (multiply : Bool) : wires (pointDirectSkywalkArithmetic L multiply)⊆S :=
-    pointDirectSkywalkArithmetic_compact_support L hw hn multiply
+  have arith (multiply : Bool) : wires (pointOffsetBorrowedArithmetic L multiply)⊆S :=
+    pointOffsetBorrowedArithmetic_compact_support L hw hn multiply
   have square : wires (pointDialogSquare L)⊆S := by
     have sup := pointMeasuredSquareCandidate_support L hw hn
     intro q hq

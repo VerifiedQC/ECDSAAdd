@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.DirectSkywalkControlledPort
+import ECDSAAdd.Arithmetic.OffsetBorrowedControlledPort
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
@@ -10,9 +10,9 @@ theorem pointDialog_arithmetic_correct (L : ControlledPointLayout) (hw : L.Width
     (hb : s.basis L.core.generic=B) (hx : regValue L.point.x s.basis=X)
     (hy : regValue L.point.y s.basis=Y) (hc : regValue L.dialogPool s.basis=0) :
     let V := if B then (if multiply then ((Y:Fp)*(X:Fp)).val else ((Y:Fp)/(X:Fp)).val) else Y
-    (run (pointDirectSkywalkArithmetic L multiply) m s).phase=s.phase ∧
-      regValue L.point.y (run (pointDirectSkywalkArithmetic L multiply) m s).basis=V ∧
-      ∀ q∉L.point.y,(run (pointDirectSkywalkArithmetic L multiply) m s).basis q=s.basis q :=
-  pointDirectSkywalkArithmetic_correct L hw hn multiply X Y B hX hX0 hY s m hb hx hy hc
+    (run (pointOffsetBorrowedArithmetic L multiply) m s).phase=s.phase ∧
+      regValue L.point.y (run (pointOffsetBorrowedArithmetic L multiply) m s).basis=V ∧
+      ∀ q∉L.point.y,(run (pointOffsetBorrowedArithmetic L multiply) m s).basis q=s.basis q :=
+  pointOffsetBorrowedArithmetic_correct L hw hn multiply X Y B hX hX0 hY s m hb hx hy hc
 
 end ECDSAAdd.Arithmetic

@@ -1,13 +1,13 @@
 import ECDSAAdd.Arithmetic.PointDialogProgram
 import ECDSAAdd.Arithmetic.PointInPlaceSupport
-import ECDSAAdd.Arithmetic.DirectSkywalkSupport
+import ECDSAAdd.Arithmetic.OffsetBorrowedSupportPoint
 
 set_option maxHeartbeats 3000000
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
 
-attribute [local irreducible] pointDirectSkywalkArithmetic directSkywalkArithmetic directZeroControlled
+attribute [local irreducible] pointOffsetBorrowedArithmetic directSkywalkArithmetic directZeroControlled
   pointRecoveryConstantAdd compactRecoveryConstant pointRecoveryReflection CompactRecoveryNegateLayout.reflection
 
 theorem dialogPort_wires (L : ControlledPointLayout) (hw : L.Widths) :
@@ -35,15 +35,25 @@ theorem pointDialogGeneric_small_wires (L : ControlledPointLayout) (hw : L.Width
     have p : q∈L.dialogPool.take 515 → q∈L.dialogPool.take 1805 := fun h => prefixSmall 515 (by omega) h
     rcases hr with rfl|rfl
     all_goals simp only [S,List.mem_toFinset,List.mem_cons,List.mem_append] at h ⊢;tauto
-  have arith (multiply : Bool) : wires (pointDirectSkywalkArithmetic L multiply)⊆S := by
-    have sup := pointDirectSkywalkArithmetic_support L hw hn multiply
-    have pool : wireBlock L.core.poolWire 0 1805=L.dialogPool.take 1805 := by
-      rw [L.core.pool_prefix hw 1805 (by omega)]
-      simp [dialogPool,List.take_take]
+  have arith (multiply : Bool) : wires (pointOffsetBorrowedArithmetic L multiply)⊆S := by
+    have sup := pointOffsetBorrowedArithmetic_compact_support L hw hn multiply
+    have pool : L.compactPointPool⊆L.dialogPool.take 1805 := by
+      intro q hq
+      have whole : L.dialogPool.take 1805=wireBlock L.core.poolWire 0 1805 := by
+        rw [L.core.pool_prefix hw 1805 (by omega)]
+        simp [dialogPool,List.take_take]
+      rw [whole]
+      simp only [compactPointPool,List.mem_append] at hq
+      rcases hq with hq|hq
+      all_goals
+        obtain ⟨i,hi,rfl⟩ := List.mem_map.mp hq
+        simp only [List.mem_range'_1] at hi
+        exact DirectSkywalk.arith_mem L.core.poolWire 0 1805 i (by omega) (by omega)
     intro q hq
     have h := sup hq
-    rw [pool] at h
-    simpa only [S,List.mem_toFinset,List.mem_cons,List.mem_append] using h
+    simp only [S,List.mem_toFinset,List.mem_cons,List.mem_append] at h ⊢
+    have subset : q∈L.compactPointPool → q∈L.dialogPool.take 1805 := fun hq => pool hq
+    tauto
   have square : wires (pointDialogSquare L)⊆S := by
     have sup := pointMeasuredSquareCandidate_support L hw hn
     intro q hq

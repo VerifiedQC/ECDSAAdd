@@ -7,6 +7,13 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.OffsetBorrowedCanonicalReplay
+import ECDSAAdd.Arithmetic.OffsetBorrowedInverseCanonicalReplay
+import ECDSAAdd.Arithmetic.OffsetBorrowedSharedDivision
+import ECDSAAdd.Arithmetic.OffsetBorrowedInverseSharedMultiplication
+import ECDSAAdd.Arithmetic.OffsetBorrowedDirectArithmetic
+import ECDSAAdd.Arithmetic.OffsetBorrowedControlledPort
+import ECDSAAdd.Arithmetic.OffsetBorrowedSupportPoint
 import ECDSAAdd.Arithmetic.DisjointPrograms
 import ECDSAAdd.Arithmetic.CompressedSkywalkLayout
 import ECDSAAdd.Arithmetic.CompressedSkywalkLoop
@@ -1329,6 +1336,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.pointDialogGeneric_compact_wires
 #print axioms ECDSAAdd.Arithmetic.pointDialogFinite_compact_wires
 #print axioms ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.compactSubsetShared
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedField.program_correct
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedInverse.program_correct
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedCanonical.canonicalTapeReplay_quotient
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedCanonical.canonicalTapeReplay_counts
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedInverseCanonical.canonicalTapeReplay_product
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedInverseCanonical.canonicalTapeReplay_counts
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedSharedFieldDivision_spec
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedSharedFieldDivision_counts
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedInverseSharedFieldMultiplication_spec
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedInverseSharedFieldMultiplication_counts
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedDirectArithmetic_run
+#print axioms ECDSAAdd.Arithmetic.offsetBorrowedDirectArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_correct
+#print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSupport.kernel
+#print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_support
+#print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_resources
 LEAN
 )
 task_axiom_lean_rc=$?
