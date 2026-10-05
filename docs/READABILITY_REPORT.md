@@ -2,7 +2,15 @@
 
 初稿日期：2026-09-14；更新：2026-10-05。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
-## 最新阶段：受控块改用 if（2026-10-05）
+## 最新阶段：模加减分层证明示范（2026-10-05）
+
+保留 `modAddOn/modSubOn` 的原 `prog` 主体，新增 `ModularAlgorithm.lean`，用纯数值 if 分支证明模和/模差；该文件不导入电路框架。新增 `ModularBackend.lean`，承接原接线与逐阶段证明，但结论改为实现分支数值，而不是先假定最终模运算规格。
+
+`Reduction.lean` 的新分支连接定理证明借位最高位对应源码比较、候选值对应数学分支。后端独立完成输入、相位和工作区恢复；`Modular.lean` 将其与数学定理组合成 `modAddOn_mod_spec/modSubOn_mod_spec`，旧 `modAdd_spec/modSub_spec` 由新规格推出。`ModularFrame.lean` 另提供新接口的完整 `*_correct`，量化任意测量记录并保持输出之外每根 wire。
+
+原有公开定理的前提/结论和资源不变。新增边界、非零输出高位、范围反例、完整运行结论、资源以及证明依赖方向的回归检查，细节见 [PROOF_STATUS](PROOF_STATUS.md)。这只覆盖两个明确的比较约减配方，不是任意 if/表达式的通用 Hoare 自动化，也没有扩大 `arith` 的覆盖范围。
+
+## 受控块改用 if（2026-10-05）
 
 按用户要求，9 个算术源码文件中的 26 处 `control c { ... };` 改为 `if c { ... };`。算法以外的字段、变量和底层函数名不变；原有 `abbrev`、布局接口、证明和资源结论也不改动。
 

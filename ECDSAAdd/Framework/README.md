@@ -69,6 +69,8 @@ prog using (modReductionContext W) {
 
 配方计算一次 n+1 位的和与差，以差的最高位作为 borrow；共用原选择器，随后清理差、和与常数。n 是逻辑输出的长度；x/y 的物理接口仍含一根零扩展高位。`modAddOn_spec` / `modSubOn_spec` 证明比较分支所写的数值结果，原规格继续保证清零、相位与保持性质。中间表达式不会先截成 n 位；只有最后 XOR 写入按目标位宽取低位。
 
+模加减现有一套[分层证明示范](../Arithmetic/ModularAddition/README.md#modularlean)：纯数学的两个分支证明，加上后端对实际门列的分支实现证明，推出 `modAddOn_mod_spec/modSubOn_mod_spec`；再给出相位和逐线保持结论。旧模加减规格由新证明推出。这是上述两个固定配方的完整连接，不是任意 `if` 或一般表达式的自动证明，也没有扩大 `arith` 的操作范围。
+
 临时结果用 `with` 明确其存活范围：
 
 ```lean

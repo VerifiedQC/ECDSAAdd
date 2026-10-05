@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
+import ECDSAAdd.Arithmetic.ModularAddition.ModularAlgorithm
 
 namespace ECDSAAdd.Arithmetic
 
@@ -39,25 +40,53 @@ theorem xor_low_add (n a h r : Nat) (ha : a < 2^n) (hr : r < 2^n) :
   have he := Nat.mod_add_div ((a + 2^n*h) ^^^ r) (2^n)
   simpa only [hd, hm] using he
 
+/-- 后端连接：最高位给出比较条件，选择器给出对应分支的数值。
+这里不证明取模结果，只把补码寄存器与算法层的 if 对齐。 -/
+theorem addReduction_branches (t q n : Nat) (hq0 : 0 < q) (hq : q < 2^n) (ht : t < 2*q) :
+    ((2^n ≤ (t + 2^(n+1) - q) % 2^(n+1)) ↔ t < q) ∧
+    (if 2^n ≤ (t + 2^(n+1) - q) % 2^(n+1) then t
+     else (t + 2^(n+1) - q) % 2^(n+1)) = (if t < q then t else t-q) := by
+  have hp : 0 < 2^n := lt_trans hq0 hq
+  rw [Nat.pow_succ]
+  by_cases h : t < q
+  · have hr : t + 2^n * 2 - q < 2^n * 2 := by omega
+    have hh : 2^n ≤ t + 2^n * 2 - q := by omega
+    simp [Nat.mod_eq_of_lt hr, hh, h]
+  · have he : t + 2^n * 2 - q = (t-q) + 2^n * 2 := by omega
+    have hr : t-q < 2^n * 2 := by omega
+    have hh : ¬2^n ≤ t-q := by omega
+    simp [he, Nat.add_mod_right, Nat.mod_eq_of_lt hr, hh, h]
+
+/-- 后端连接：补码借位等价于 X<Y；借位时的修正候选解码为 X+q-Y。 -/
+theorem subReduction_branches (X Y q n : Nat) (hq0 : 0 < q) (hq : q < 2^n)
+    (hX : X < q) (hY : Y < q) :
+    ((2^n ≤ (X + 2^(n+1) - Y) % 2^(n+1)) ↔ X < Y) ∧
+    (if 2^n ≤ (X + 2^(n+1) - Y) % 2^(n+1)
+     then (((X + 2^(n+1) - Y) % 2^(n+1)) + q) % 2^(n+1)
+     else (X + 2^(n+1) - Y) % 2^(n+1)) = (if X < Y then X+q-Y else X-Y) := by
+  have hp : 0 < 2^n := lt_trans hq0 hq
+  rw [Nat.pow_succ]
+  by_cases h : X < Y
+  · have hr : X + 2^n * 2 - Y < 2^n * 2 := by omega
+    have hh : 2^n ≤ X + 2^n * 2 - Y := by omega
+    have he : X + 2^n * 2 - Y + q = (X+q-Y) + 2^n * 2 := by omega
+    have hs : X+q-Y < 2^n * 2 := by omega
+    simp [Nat.mod_eq_of_lt hr, hh, h, he, Nat.add_mod_right, Nat.mod_eq_of_lt hs]
+  · have he : X + 2^n * 2 - Y = (X-Y) + 2^n * 2 := by omega
+    have hr : X-Y < 2^n * 2 := by omega
+    have hh : ¬2^n ≤ X-Y := by omega
+    simp [he, Nat.add_mod_right, Nat.mod_eq_of_lt hr, hh, h]
+
 /-- t<2q 时，一次减 q 加上候选选择就得到 t mod q。
 额外高位为 1 表示减法发生借位，应保留原和 t。 -/
 theorem addReduction (t q n : Nat) (hq0 : 0 < q) (hq : q < 2^n) (ht : t < 2*q) :
     ((2^n ≤ (t + 2^(n+1) - q) % 2^(n+1)) ↔ t < q) ∧
     (if 2^n ≤ (t + 2^(n+1) - q) % 2^(n+1) then t
      else (t + 2^(n+1) - q) % 2^(n+1)) = t % q := by
-  have hp : 0 < 2^n := by positivity
-  rw [Nat.pow_succ]
-  by_cases h : t < q
-  · have hr : t + 2^n * 2 - q < 2^n * 2 := by omega
-    have hh : 2^n ≤ t + 2^n * 2 - q := by omega
-    simp [Nat.mod_eq_of_lt hr, hh, h, Nat.mod_eq_of_lt h]
-  · have he : t + 2^n * 2 - q = (t-q) + 2^n * 2 := by omega
-    have hr : t-q < 2^n * 2 := by omega
-    have hh : ¬2^n ≤ t-q := by omega
-    have hmod : t % q = t-q := by
-      conv_lhs => rw [show t = (t-q) + q by omega, Nat.add_mod_right]
-      exact Nat.mod_eq_of_lt (by omega)
-    simp [he, Nat.add_mod_right, Nat.mod_eq_of_lt hr, hh, h, hmod]
+  obtain ⟨hb, hr⟩ := addReduction_branches t q n hq0 hq ht
+  refine ⟨hb, hr.trans ?_⟩
+  simpa [ModReductionAlgorithm.addResult] using
+    ModReductionAlgorithm.addResult_correct t 0 q (by simpa using ht)
 
 /-- X,Y<q 时，借位的差加回 q；未借位则直接保留差。 -/
 theorem subReduction (X Y q n : Nat) (hq0 : 0 < q) (hq : q < 2^n)
@@ -66,22 +95,7 @@ theorem subReduction (X Y q n : Nat) (hq0 : 0 < q) (hq : q < 2^n)
     (if 2^n ≤ (X + 2^(n+1) - Y) % 2^(n+1)
      then (((X + 2^(n+1) - Y) % 2^(n+1)) + q) % 2^(n+1)
      else (X + 2^(n+1) - Y) % 2^(n+1)) = (X + q - Y) % q := by
-  have hp : 0 < 2^n := by positivity
-  rw [Nat.pow_succ]
-  by_cases h : X < Y
-  · have hr : X + 2^n * 2 - Y < 2^n * 2 := by omega
-    have hh : 2^n ≤ X + 2^n * 2 - Y := by omega
-    have he : X + 2^n * 2 - Y + q = (X+q-Y) + 2^n * 2 := by omega
-    have hs : X+q-Y < q := by omega
-    have hs' : X+q-Y < 2^n * 2 := by omega
-    simp [Nat.mod_eq_of_lt hr, hh, h, he, Nat.add_mod_right,
-      Nat.mod_eq_of_lt hs, Nat.mod_eq_of_lt hs']
-  · have he : X + 2^n * 2 - Y = (X-Y) + 2^n * 2 := by omega
-    have hr : X-Y < 2^n * 2 := by omega
-    have hh : ¬2^n ≤ X-Y := by omega
-    have hmod : (X+q-Y) % q = X-Y := by
-      rw [show X+q-Y = (X-Y)+q by omega, Nat.add_mod_right]
-      exact Nat.mod_eq_of_lt (by omega)
-    simp [he, Nat.add_mod_right, Nat.mod_eq_of_lt hr, hh, h, hmod]
+  obtain ⟨hb, hr⟩ := subReduction_branches X Y q n hq0 hq hX hY
+  exact ⟨hb, hr.trans (ModReductionAlgorithm.subResult_correct X Y q hX hY)⟩
 
 end ECDSAAdd.Arithmetic

@@ -4,7 +4,7 @@
 
 算法主体先读 [Modular.lean](Modular.lean) 的 `modAddOn/modSubOn` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。前两者直接接收 x/y/out/q，以比较和两个 `if` 块表示约减；`if` 是量子受控执行，不测量条件。total/modulus/diff 和进位位移到工作区配方 W。旧 `modAdd/modSub` 保留为布局兼容入口，原规格与资源不变。
 
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+模加减现在按“数学分支证明＋实际电路连接”验证，供人阅读的证明不展开门列。这里只认证这两个具体配方，不是已全部迁入通用 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
 `modReductionContext` 计算共享的候选和借位，再使用和清理；不是为每个表达式重新分配寄存器。`modAddCore` 的常数装载/清理由 `target -= const(p)` 的后端配方完成。位宽、互异、零工作区条件仍需满足。
 
@@ -14,8 +14,12 @@
 
 资源 T、M、Q 分别为 Toffoli 门数、测量次数、不同物理线路数，未列出的项不代表零；T=0 不表示没有其他门。资源沿用对应定理的位宽和线路条件，Nat 减法按自然数截断。
 
-## 高层语言示范目录
+## 算法与证明示范目录
 
+- [Modular.lean](#modularlean)：保留可读算法，将分支证明与实际电路连接成最终模加减规格。
+- [ModularAlgorithm.lean](#modularalgorithmlean)：只用两个 if 分支，证明选出的数分别是模和、模差。
+- [ModularBackend.lean](#modularbackendlean)：证明实际电路实现这些分支，并恢复输入、相位与工作区；只读算法时可跳过。
+- [ModularFrame.lean](#modularframelean)：证明任意测量记录下的最终结果，以及输出之外每根 wire 都保持。
 - [LanguageExample.lean](#languageexamplelean)：用赋值形式写两次模加，证明更换实现后规格不变，并核对工作区复用和资源。
 - [LanguageAdapter.lean](#languageadapterlean)：把现有直接模加接入 n 位逻辑寄存器接口。
 - [LanguageControlledAdapter.lean](#languagecontrolledadapterlean)：将固定使能的受控模加接入同一接口，检验不同电路的可替换性。
@@ -217,29 +221,60 @@ modAddInPlace L p
 
 ## [Modular.lean](Modular.lean)
 
-该文件将模和或模差异或到输出。
-
 `modAddOn`：比较 `x+y<q`，成立时 XOR x+y，否则 XOR x+y−q。`modSubOn`：比较 x<y，成立时 XOR x−y+q，否则 XOR x−y。这里是逐基态的量子条件，不测量。两个特殊 let/分支模板由后端整体展开，不能当成支持任意表达式的一般比较器。
 
-中间和与差使用 n+1 位，borrow 复用差的最高位。输出按目标宽度写入，无需在算法中写 `.take n`。`modAddOn_spec`、`modSubOn_spec` 证明上述分支公式；`modAdd_program`、`modSub_program` 证明与原电路门列一致，包括候选共用、选择器和反计算。
+`modAddOn_spec`、`modSubOn_spec` 给出上述分支公式；`modAddOn_mod_spec`、`modSubOn_mod_spec` 再使用数学分支证明，得到模运算规格。旧 `modAdd_spec/modSub_spec` 现在由这两个新证明推出，不再反过来为新接口提供结论。
 
 L 是模运算电路的寄存器布局。输入 L.x、L.y 的初值为 X、Y，输出 L.out 初始化为 O，工作区 L.work 初始化为 0。下文 x、y、out、work 是这些字段的简写；n 是布局的位宽 L.width。设 n=L.width，0<q<2^n，X、Y<q，布局线路互异。
 
-`modAdd_spec`、`modSub_spec` 证明：
+`modAddOn_mod_spec`、`modSubOn_mod_spec` 证明：
 
 ```text
 { x=X, y=Y, out=O, work=0 }
-modAdd L q ｜ modSub L q
+modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+｜ modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
 { x=X, y=Y, out=O ⊕ ((X+Y) mod q) ｜ O ⊕ ((X+q−Y) mod q), work=0 }
 ```
 
-相位保持不变。`modAdd_bounded_spec` 将加法的输入限制放宽为 X+Y<2q。
+相位保持不变。公式中的 out 指 L.out 的完整读值；电路只写低 n 位，原有输出高位保持。`modAdd_bounded_spec` 将加法的输入限制放宽为 X+Y<2q。
+
+模加最终证明的主体只有三步：
+
+```lean
+have hSum : X + Y < 2*q := by omega
+have branches := modAddOn_refines L hnd q hq0 hq X Y O hSum
+simpa only [ModReductionAlgorithm.addResult_correct X Y q hSum] using branches
+```
+
+第一步检查只减一次 q 的条件；第二步取得实际电路的分支效果；第三步用下面的算法定理把结果改写为模和。模减采用同样结构。进位和反计算只在后端证明一次。
+
+## [ModularAlgorithm.lean](ModularAlgorithm.lean)
+
+X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测量。
+
+`addResult_correct` 证明：令 S=X+Y，要求 S<2q。S<q 时保留 S；否则减去 q，得到的 S−q 仍在 [0,q)。两个分支都得到 S mod q。
+
+`subResult_correct` 证明：要求 X,Y<q。X<Y 时，数学差加回 q 得到 X+q−Y；否则保留 X−Y。两个分支都得到 (X+q−Y) mod q。这里不能把借位分支写成自然数截断减法 `(X-Y)+q`。
+
+这些分支结果与实际 `prog` 的联系由后端定理证明，不是只证明一个与电路无关的数值函数。
+
+## [ModularBackend.lean](ModularBackend.lean)
+
+在相同布局、数值范围和零工作区条件下，`ModReductionBackend.add_refines/sub_refines` 证明：
+
+```text
+{ x=X, y=Y, out=O, work=0 }
+实际模加配方 ｜ 实际模减配方
+{ x=X, y=Y, out=O ⊕ addResult X Y q ｜ O ⊕ subResult X Y q, work=0 }
+```
+
+相位恢复。中间和与差使用 n+1 位，borrow 复用差的最高位；[Reduction.lean](Reduction.lean) 中的 `addReduction_branches/subReduction_branches` 证明这个最高位正好表示源码中的比较，并将选中的补码候选转换成上述分支结果。
+
+装载、算候选、选择、清理的顺序及门列不变。后端不引用最终模加减规格，也不依赖 `addResult_correct/subResult_correct` 的取模结论；最终规格由它与算法证明组合得到。
 
 ## [ModularFrame.lean](ModularFrame.lean)
 
-该文件加强 [Modular.lean](Modular.lean) 的正确性结论。
-
-L 是模运算电路的寄存器布局。输入 L.x、L.y 的初值为 X、Y，输出 L.out 初始化为 O，工作区 L.work 初始化为 0。下文 x、y、out、work 是这些字段的简写；n 是布局的位宽 L.width。相同布局、输入范围和零工作区条件下，`modAdd_correct`、`modSub_correct` 证明：
+L 是模运算电路的寄存器布局。输入 L.x、L.y 的初值为 X、Y，输出 L.out 初始化为 O，工作区 L.work 初始化为 0。下文 x、y、out、work 是这些字段的简写；n 是布局的位宽 L.width。相同布局、输入范围和零工作区条件下，`modAddOn_correct`、`modSubOn_correct`（以及旧接口的 `modAdd_correct/modSub_correct`）证明：
 
 ```text
 { x=X, y=Y, out=O, work=0 }

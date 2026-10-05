@@ -105,6 +105,27 @@ theorem modSub_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
   rw [modSub_wires]
   exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
 
+/-- 新逻辑入口的完整运行结论：任意相位/测量记录，输出公式成立且其他 wire 保持。 -/
+theorem modAddOn_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
+    (hX : regValue L.x s.basis < q) (hY : regValue L.y s.basis < q)
+    (hwork : regValue L.work s.basis = 0) :
+    (run (modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).phase = s.phase ∧
+    (∀ w, w ∉ L.out → (run (modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).basis w = s.basis w) ∧
+    regValue L.out (run (modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).basis = regValue L.out s.basis ^^^
+      ((regValue L.x s.basis + regValue L.y s.basis)%q) :=
+  modAdd_correct L hnd q hq0 hq s m hX hY hwork
+
+theorem modSubOn_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
+    (hX : regValue L.x s.basis < q) (hY : regValue L.y s.basis < q)
+    (hwork : regValue L.work s.basis = 0) :
+    (run (modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).phase = s.phase ∧
+    (∀ w, w ∉ L.out → (run (modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).basis w = s.basis w) ∧
+    regValue L.out (run (modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace) m s).basis = regValue L.out s.basis ^^^
+      ((regValue L.x s.basis + q - regValue L.y s.basis)%q) :=
+  modSub_correct L hnd q hq0 hq s m hX hY hwork
+
 theorem ModValues.congr (L : ModLayout) (v : ModField → Nat) (s t : BasisState)
     (he : ∀ w ∈ L.wires, t w = s w) (hv : ModValues L v s) : ModValues L v t := by
   refine ⟨fun f => (regValue_congr _ _ _ ?_).trans (hv.1 f), ?_, ?_⟩

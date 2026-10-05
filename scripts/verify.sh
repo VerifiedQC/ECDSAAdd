@@ -11,6 +11,7 @@ lake env lean tests/ControlledPrograms.lean
 lake env lean tests/ArithmeticLanguage.lean
 lake env lean tests/ArithmeticPrograms.lean
 lake env lean tests/ExpressionRecipes.lean
+lake env lean tests/ModularProofLayers.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -29,6 +30,22 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.chooseXorFitted_controls_equiv
 #print axioms ECDSAAdd.Arithmetic.modAddOn_spec
 #print axioms ECDSAAdd.Arithmetic.modSubOn_spec
+#print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.addResult_correct
+#print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.subResult_correct
+#print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.addResult_lt
+#print axioms ECDSAAdd.Arithmetic.ModReductionAlgorithm.subResult_lt
+#print axioms ECDSAAdd.Arithmetic.addReduction_branches
+#print axioms ECDSAAdd.Arithmetic.subReduction_branches
+#print axioms ECDSAAdd.Arithmetic.ModReductionBackend.add_refines
+#print axioms ECDSAAdd.Arithmetic.ModReductionBackend.sub_refines
+#print axioms ECDSAAdd.Arithmetic.modAddOn_backend
+#print axioms ECDSAAdd.Arithmetic.modSubOn_backend
+#print axioms ECDSAAdd.Arithmetic.modAddOn_refines
+#print axioms ECDSAAdd.Arithmetic.modSubOn_refines
+#print axioms ECDSAAdd.Arithmetic.modAddOn_mod_spec
+#print axioms ECDSAAdd.Arithmetic.modSubOn_mod_spec
+#print axioms ECDSAAdd.Arithmetic.modAddOn_correct
+#print axioms ECDSAAdd.Arithmetic.modSubOn_correct
 #print axioms ECDSAAdd.Arithmetic.modAddCore_program
 #print axioms ECDSAAdd.Arithmetic.modAdd_program
 #print axioms ECDSAAdd.Arithmetic.modSub_program

@@ -6,7 +6,9 @@
 
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 
-Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
+模加减的首个分层证明示范：先读 [Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的证明，修改实现时才需深入。旧规格现在由新分层证明推出；两个原 `prog` 主体及实际电路不变。
+
+Arithmetic 的 201 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
 算法正文统一用 `if c { ... };` 表示量子受控执行，不测量 c；`if (c XOR 1)` 对应 c=0。它与旧 `control` 写法生成相同门列，旧写法仍兼容。具体支持范围见 [Framework](../ECDSAAdd/Framework/README.md#现有算法中的算术表达式)。
 
@@ -22,7 +24,7 @@ Arithmetic 的 199 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Swap](../ECDSAAdd/Arithmetic/Swap/README.md) | 交换寄存器 | 1 |
 | [Shift](../ECDSAAdd/Arithmetic/Shift/README.md) | 移动寄存器位的位置及逆向操作 | 2 |
 | [Lookup](../ECDSAAdd/Arithmetic/Lookup/README.md) | 按寄存器地址查经典常量表 | 1 |
-| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减，以及高层语言适配示范 | 23 |
+| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减，以及高层语言适配示范 | 25 |
 | [ModularDoubling](../ECDSAAdd/Arithmetic/ModularDoubling/README.md) | 模倍增与模减半 | 4 |
 | [ModularMultiplication](../ECDSAAdd/Arithmetic/ModularMultiplication/README.md) | 标准表示模乘及累加、受控接口 | 28 |
 | [ModularInverse](../ECDSAAdd/Arithmetic/ModularInverse/README.md) | 求逆及保留历史的准备/恢复接口 | 47 |
