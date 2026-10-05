@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.DirectSkywalkFieldSupport
+import ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
 import ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
 
 set_option maxRecDepth 4096
