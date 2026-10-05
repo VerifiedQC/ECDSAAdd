@@ -7,6 +7,7 @@ open BalancedCircuit BalancedField
 attribute [local irreducible] BalancedCircuit.coreProgram BalancedCircuit.program
   BalancedInverse.program OffsetBorrowedField.program OffsetBorrowedInverse.program
   OffsetBorrowedInverse.tail BalancedCleanupOffset.program BalancedCleanupOffset.chain
+  BalancedCleanupOffsetSlim.program BalancedCleanupOffsetSlim.chain
   BalancedCleanupOffset.view BalancedCleanup.prepareSign BalancedCleanup.program
   wires
 
@@ -57,6 +58,20 @@ theorem offset_support (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
   simp only [BalancedCleanupOffset.program,wires_append,wires_reverse,Finset.union_subset_iff]
   exact ⟨⟨⟨⟨⟨⟨sg,vw⟩,c⟩,ch⟩,c⟩,vw⟩,sg⟩
 
+private theorem slim_support_sub (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
+    wires (BalancedCleanupOffsetSlim.program L)⊆wires (BalancedCleanupOffset.program L) := by
+  have width := BalancedCleanup.widths L.toCircuit.toLayout hw.1
+  have carry : L.carry.length=256 := hw.1.2.2
+  have offset : L.offsetCarry.length=256 := hw.2
+  have subset := BalancedCleanupOffsetSlim.chain_support (BalancedCleanupOffset.offsetBits L)
+    L.y L.r L.offsetCarry L.carry L.one L.cout L.parity
+    (by simp [BalancedCleanupOffset.offsetBits,width.2.1])
+    (by omega) (by omega) (by omega)
+  rw [BalancedCleanupOffset.program_sandwich]
+  simp only [BalancedCleanupOffsetSlim.program,wires_append,wires_reverse]
+  exact Finset.union_subset_union
+    (Finset.union_subset_union (Finset.Subset.refl _) subset) (Finset.Subset.refl _)
+
 def sharedSites (w : Nat → Wire) (sign : Wire) : List Wire :=
   [sign,w 765,w 1026] ++ (balancedSharedPorts w sign).wires ++
     OffsetCleanupBorrowedCaller.carry w
@@ -97,7 +112,8 @@ theorem kernels_support (w : Nat → Wire) (sign : Wire) :
     · simp [W,sharedSites,h]
   have core := coreSub.trans ((balancedSharedPorts_support w sign).trans native)
   have tail := tailSub.trans ((BalancedInverse.support L (balancedSharedPorts_widths w sign)).trans native)
-  have off := (offset_support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans active
+  have oldOff := (offset_support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans active
+  have off := (slim_support_sub _ (OffsetCleanupBorrowedCaller.widths w sign)).trans oldOff
   have cx : wires [.CX L.ymsb L.sourceGuard]⊆W := by
     apply Finset.Subset.trans (s₂:=L.wires.toFinset) _ native
     simp [wires,Instr.wires,Finset.subset_iff,BalancedCircuit.Layout.wires,
