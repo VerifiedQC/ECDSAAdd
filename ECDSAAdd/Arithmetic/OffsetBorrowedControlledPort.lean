@@ -174,9 +174,9 @@ theorem pointOffsetBorrowedArithmetic_correct (L : ControlledPointLayout) (hw : 
 
 theorem pointOffsetBorrowedArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
-    toffoliCount (pointOffsetBorrowedArithmetic L false)=1056245 ∧
+    toffoliCount (pointOffsetBorrowedArithmetic L false)=1055733 ∧
     measurementCount (pointOffsetBorrowedArithmetic L false)=726771 ∧
-    toffoliCount (pointOffsetBorrowedArithmetic L true)=1056246 ∧
+    toffoliCount (pointOffsetBorrowedArithmetic L true)=1055734 ∧
     measurementCount (pointOffsetBorrowedArithmetic L true)=726772 := by
   have outside : ∀ q∈[L.core.generic,L.skywalkDirectSelectorG,L.skywalkDirectSelectorS],
       q∉skywalkSharedWires L.skywalkDirectMap := by
