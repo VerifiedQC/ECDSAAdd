@@ -6,25 +6,25 @@
 
 ## Current status
 
-本分支的完整受控点加已接入精确 borrowed-offset field kernels、direct-X Skywalk 乘除、measured streamed-square Step 4 与 fused output recovery Step 6。已验证 Lean 源码提交为 **`2c09fdc`**；证明范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
+本分支的完整受控点加已接入精确 compact integer callers、borrowed-offset field kernels、direct-X Skywalk 乘除、measured streamed-square Step 4 与 fused output recovery Step 6。已验证 Lean 源码提交为 **`3425244`**；证明范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
 
-有限 C 的完整电路为 **2,222,891 Toffoli / 1,565,467 次静态测量指令 / ≤2,068 个静态逻辑位置**；C=O 时为空程序。新正向和逆向域格各为 **1,025 T /1,025 M**，原格为1,277，完整点加相对前一检查点 `580d53e` 省 **258,048 T /258,048 M**。相对原始7,207,866 T降低 **69.16%**。Step 4与Step 6保持原已证资源。≤2,068是支持/分配证书上界，**不是单独测量的精确 peak-live Q**。Stage 2/5 的 ≤1,297 Q 和 <600,000 T 目标仍未达到。
+有限 C 的完整电路为 **2,222,891 Toffoli / 1,564,447 次静态测量指令 / ≤2,068 个静态逻辑位置**；C=O 时为空程序。新正向和逆向域格各为 **1,025 T /1,025 M**，原格为1,277，完整点加相对前一检查点 `580d53e` 省 **258,048 T /258,048 M**。相对原始7,207,866 T降低 **69.16%**。相对 `2c09fdc`，新整数调用器再省1,020次测量，T和Q保持。Step 4与Step 6保持原已证资源。≤2,068是支持/分配证书上界，**不是单独测量的精确 peak-live Q**。Stage 2/5 的 ≤1,297 Q 和 <600,000 T 目标仍未达到。
 
-CPU pod 上完整 `lake --wfail build` 和 **1,311 项公开传递公理查询（1,310个不同声明）**通过，全部 **657个源文件哈希**在验证前后匹配。完整检查为 **588秒构建 +172秒审计 =760秒（12分40秒）**，共3,736个构建任务。原有查询与白名单保持，排队与工具链设置各0秒；源文件准备/传输未单独计时，不计入构建/审计时间。白名单仅含 `propext`、`Classical.choice`、`Quot.sound`。正确性由 Lean 形式证明建立，没有以抽样替代证明，没有采用近似优化。详见[本次完整检查点](docs/EXACT_OFFSET_FIELDS_20261005.md)；[前一 compact 检查点](docs/EXACT_COMPACT_ALLOCATION_20261005.md)保留。
+CPU pod 上完整 `lake --wfail build` 和 **1,319 项公开传递公理查询（1,318个不同声明）**通过，全部 **662个源文件哈希**在验证前后匹配。完整检查为 **356秒构建 +184秒审计 =540秒（9分）**，共3,766个构建任务。原有查询与白名单保持，排队与工具链设置各0秒；源文件准备/传输未单独计时，不计入构建/审计时间。白名单仅含 `propext`、`Classical.choice`、`Quot.sound`。正确性由 Lean 形式证明建立，没有以抽样替代证明，没有采用近似优化。详见[本次完整检查点](docs/EXACT_COMPACT_CALLER_20261005.md)；[此前域格检查点](docs/EXACT_OFFSET_FIELDS_20261005.md)保留；[前一 compact 检查点](docs/EXACT_COMPACT_ALLOCATION_20261005.md)保留。
 
 ### Six-stage decomposition (verified exact checkpoint)
 
 | Stage | Logical Q ceiling, including resident sites | Toffolis | Measurements |
 | --- | ---: | ---: | ---: |
 | 1. Coordinate differences | ≤1,036 | 2,046 | 2,046 |
-| 2. Skywalk-GCD division | ≤2,068 | 1,056,757 | 728,305 |
+| 2. Skywalk-GCD division | ≤2,068 | 1,056,757 | 727,795 |
 | 3. Prepare X workspace | ≤1,036 | 1,023 | 1,023 |
 | 4. Measured streamed modular square | **≤1,297** | **99,902** | **99,382** |
-| 5. Forward multiplication | ≤2,068 | 1,056,758 | 728,306 |
+| 5. Forward multiplication | ≤2,068 | 1,056,758 | 727,796 |
 | 6. Recover output | **≤1,036** | **2,301** | **2,301** |
-| **Six-stage subtotal** | **≤2,068** | **2,218,787** | **1,561,363** |
+| **Six-stage subtotal** | **≤2,068** | **2,218,787** | **1,560,343** |
 | Additional input/corner classification | ≤1,034 | 4,104 | 4,104 |
-| **Complete controlled finite-addend point addition** | **≤2,068** | **2,222,891** | **1,565,467** |
+| **Complete controlled finite-addend point addition** | **≤2,068** | **2,222,891** | **1,564,447** |
 
 Q 是支持/分配证书给出的保守存活上界，**不是精确 peak-live 测量**。Step 4 的证书含 521 个常驻点/控制/分类位置与 776 个工作位置。完整电路 Q 上界仍由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
 
