@@ -6,29 +6,29 @@
 
 ## Current status
 
-本分支的完整受控点加已接入 balanced-field direct-X Skywalk 乘除、精确 measured streamed-square Step 4 与 fused output recovery Step 6。已验证 Lean 源码提交为 **`580d53e`**；证明范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
+本分支的完整受控点加已接入精确 borrowed-offset field kernels、direct-X Skywalk 乘除、measured streamed-square Step 4 与 fused output recovery Step 6。已验证 Lean 源码提交为 **`2c09fdc`**；证明范围见[说明](docs/PROOF_SCOPE.md)。当前选定 `controlledPointAdd` 对任意合法点 R、经典常量 C 与控制位 b，证明 `point = if b then R+C else R`，控制保持、全部工作位归零，并对所有测量记录恢复相位。公开正确性规格文件逐字保持。
 
-有限 C 的完整电路资源为 **2,480,939 Toffoli / 1,823,515 次静态测量指令 / ≤2,068 个静态逻辑位置**；C=O 时为空程序。精确 literal seed/unseed 与借用整数 scratch 的 half/double 已接入，两个乘除阶段各减少258个分配位置（2,326→2,068），T/M保持。完整电路相对 `b0a2cf8` 仍省 **261,144 T /261,144 M**，相对原始7,207,866 T降低 **65.58%**。**Step 6 为2,301 T /2,301 M /≤1,036位置，Step 4 为99,902 T /99,382 M /≤1,297位置**，均含常驻寄存器。分配证书给出 peak-live 上界，尚未测量精确存活峰值。Stage 2/5 的 ≤1,297 Q 和 <600,000 T 目标仍未达到。
+有限 C 的完整电路为 **2,222,891 Toffoli / 1,565,467 次静态测量指令 / ≤2,068 个静态逻辑位置**；C=O 时为空程序。新正向和逆向域格各为 **1,025 T /1,025 M**，原格为1,277，完整点加相对前一检查点 `580d53e` 省 **258,048 T /258,048 M**。相对原始7,207,866 T降低 **69.16%**。Step 4与Step 6保持原已证资源。≤2,068是支持/分配证书上界，**不是单独测量的精确 peak-live Q**。Stage 2/5 的 ≤1,297 Q 和 <600,000 T 目标仍未达到。
 
-CPU pod 上完整 `lake --wfail build` 和 **1,294 项公开传递公理查询（1,293个不同声明）**通过，全部 **599个源文件哈希**在验证前后匹配。本次完整检查为 **252秒构建 +181秒审计 =433秒（7分13秒）**。原有查询与白名单保持，排队与工具链设置各0秒，源文件准备/传输另计。白名单仅含 `propext`、`Classical.choice`、`Quot.sound`。正确性由 Lean 形式证明建立，没有使用抽样或近似优化。详见[compact分配检查点](docs/EXACT_COMPACT_ALLOCATION_20261005.md)；[balanced乘除历史检查点](docs/EXACT_BALANCED_STAGES_20261005.md)保留。
+CPU pod 上完整 `lake --wfail build` 和 **1,311 项公开传递公理查询（1,310个不同声明）**通过，全部 **657个源文件哈希**在验证前后匹配。完整检查为 **588秒构建 +172秒审计 =760秒（12分40秒）**，共3,736个构建任务。原有查询与白名单保持，排队与工具链设置各0秒；源文件准备/传输未单独计时，不计入构建/审计时间。白名单仅含 `propext`、`Classical.choice`、`Quot.sound`。正确性由 Lean 形式证明建立，没有以抽样替代证明，没有采用近似优化。详见[本次完整检查点](docs/EXACT_OFFSET_FIELDS_20261005.md)；[前一 compact 检查点](docs/EXACT_COMPACT_ALLOCATION_20261005.md)保留。
 
-### Six-stage decomposition (verified balanced-field checkpoint)
+### Six-stage decomposition (verified exact checkpoint)
 
 | Stage | Logical Q ceiling, including resident sites | Toffolis | Measurements |
 | --- | ---: | ---: | ---: |
 | 1. Coordinate differences | ≤1,036 | 2,046 | 2,046 |
-| 2. Skywalk-GCD division | ≤2,068 | 1,185,781 | 857,329 |
+| 2. Skywalk-GCD division | ≤2,068 | 1,056,757 | 728,305 |
 | 3. Prepare X workspace | ≤1,036 | 1,023 | 1,023 |
 | 4. Measured streamed modular square | **≤1,297** | **99,902** | **99,382** |
-| 5. Forward multiplication | ≤2,068 | 1,185,782 | 857,330 |
+| 5. Forward multiplication | ≤2,068 | 1,056,758 | 728,306 |
 | 6. Recover output | **≤1,036** | **2,301** | **2,301** |
-| **Six-stage subtotal** | **≤2,068** | **2,476,835** | **1,819,411** |
+| **Six-stage subtotal** | **≤2,068** | **2,218,787** | **1,561,363** |
 | Additional input/corner classification | ≤1,034 | 4,104 | 4,104 |
-| **Complete controlled finite-addend point addition** | **≤2,068** | **2,480,939** | **1,823,515** |
+| **Complete controlled finite-addend point addition** | **≤2,068** | **2,222,891** | **1,565,467** |
 
 Q 是支持/分配证书给出的保守存活上界，**不是精确 peak-live 测量**。Step 4 的证书含 521 个常驻点/控制/分类位置与 776 个工作位置。完整电路 Q 上界仍由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
 
-Step 4 对照前一已证低宽版本 `d477a67`：749,338 →99,902 T，省 **649,436 T（86.67%）**，保持 ≤1,297-site 证书；完整点加相应从 3,393,054 降至 2,743,618 T。较早的 signed-row 版本仍是另一空间/门数取舍：Step 4 82,101 T /2,865 schedule-peak Q，完整点加 2,725,817 T /≤2,994 静态位置。当前完整 balanced 版本比该历史完整电路少244,878 T；这些独立检查点的资源不能相加。
+Step 4 对照前一已证低宽版本 `d477a67`：749,338 →99,902 T，省 **649,436 T（86.67%）**，保持 ≤1,297-site 证书；完整点加相应从 3,393,054 降至 2,743,618 T。较早的 signed-row 版本仍是另一空间/门数取舍：Step 4 82,101 T /2,865 schedule-peak Q，完整点加 2,725,817 T /≤2,994 静态位置。当前完整版本比该历史完整电路少502,926 T；这些独立检查点的资源不能相加。
 
 Step 6 将取负与 `x_A` 修正合并：受控规范反射 `p−1−X` 后加经典 `x_A+1 mod p`，并精确修正 y。常量加法仍为每段1,023 T，但共享池从1,030位置缩到515位置。Stage6由5,884降至2,301 T（省60.89%），Q证书由≤1,550降至≤1,036；没有把恢复成本转移到乘法阶段。此全点检查点相对88aad07省3,583 T与2,303次测量。公开受控点加规格保持，全部合法点、控制/相位/工作清理均经完整验证。
 
