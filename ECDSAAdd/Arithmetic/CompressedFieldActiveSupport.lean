@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.OffsetBorrowedSupport
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroProgram
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
@@ -8,6 +9,7 @@ attribute [local irreducible] BalancedCircuit.coreProgram BalancedCircuit.progra
   BalancedInverse.program OffsetBorrowedField.program OffsetBorrowedInverse.program
   OffsetBorrowedInverse.tail BalancedCleanupOffset.program BalancedCleanupOffset.chain
   BalancedCleanupOffsetSlim.program BalancedCleanupOffsetSlim.chain
+  BalancedCleanupOffsetZero.program BalancedCleanupOffsetZero.core
   BalancedCleanupOffset.view BalancedCleanup.prepareSign BalancedCleanup.program
   wires
 
@@ -72,6 +74,82 @@ private theorem slim_support_sub (L : BalancedCleanupOffset.Layout) (hw : L.Widt
   exact Finset.union_subset_union
     (Finset.union_subset_union (Finset.Subset.refl _) subset) (Finset.Subset.refl _)
 
+private theorem head_member (r : List Wire) (h : 0 < r.length) : r.headD 0∈r := by
+  cases r <;> simp_all
+
+private theorem tail_member (r : List Wire) (q : Wire) (h : q∈r.tail) : q∈r := by
+  cases r with
+  | nil => simp at h
+  | cons a r => exact List.mem_cons_of_mem a h
+
+private theorem mapped_tail_subset (bits : List MappedBit) : mappedWires bits.tail⊆mappedWires bits := by
+  cases bits with
+  | nil => simp [mappedWires]
+  | cons b bits =>
+    intro q hq
+    exact BalancedCleanupOffset.mapped_tail_member b bits q hq
+
+/-- Zero-head cleanup uses only the same active roles as the old emitted
+cleanup. Neither descriptor-only Minus nor Plus is admitted to the pool. -/
+theorem zero_offset_support (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
+    wires (BalancedCleanupOffsetZero.program L)⊆(activeOffsetSites L).toFinset := by
+  let W := (activeOffsetSites L).toFinset
+  have member (q : Wire) : q∈W ↔
+      q∈[L.sourceGuard,L.cout,L.parity,L.sign,L.lower,L.one,L.rmsb,L.ymsb,L.r0] ∨
+      q∈L.rtail ∨ q∈L.ylow ∨ q∈L.carry ∨ q∈L.offsetCarry := by
+    simp [W,activeOffsetSites,BalancedCleanup.Layout.wires,or_assoc]
+  have data (q : Wire) (h : q∈L.y++L.r++L.carry++L.offsetCarry) : q∈W := by
+    simp only [BalancedCleanup.Layout.y,BalancedCleanup.Layout.r,BalancedCleanup.Layout.low,
+      List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h
+    rw [member]
+    simp only [List.mem_cons,List.not_mem_nil,or_false]
+    tauto
+  have width := BalancedCleanup.widths L.toCircuit.toLayout hw.1
+  have carry : L.carry.length=256 := hw.1.2.2
+  have offset : L.offsetCarry.length=256 := hw.2
+  have bitTail : (BalancedCleanupOffset.offsetBits L).tail.length=255 := by
+    rw [List.length_tail,BalancedCleanupOffset.offsetBits_length]
+  have rTail : L.r.tail.length=255 := by rw [List.length_tail,width.2.1]
+  have yTail : L.y.tail.length=255 := by rw [List.length_tail,width.2.2.1]
+  have cTail : L.carry.tail.length=255 := by rw [List.length_tail,carry]
+  have oTail : L.offsetCarry.tail.length=255 := by rw [List.length_tail,offset]
+  have aW : L.y.headD 0∈W := data _ (by
+    have h := head_member L.y (by omega)
+    simp [h])
+  have yW : L.r.headD 0∈W := data _ (by
+    have h := head_member L.r (by omega)
+    simp [h])
+  have dW : L.carry.headD 0∈W := data _ (by
+    have h := head_member L.carry (by omega)
+    simp [h])
+  have oneW : L.one∈W := by simp [member]
+  have coutW : L.cout∈W := by simp [member]
+  have parityW : L.parity∈W := by simp [member]
+  have pool := BalancedCleanupOffset.chain_pool_support (BalancedCleanupOffset.offsetBits L).tail
+    L.y.tail L.r.tail L.offsetCarry.tail L.carry.tail L.one (L.carry.headD 0) L.parity W
+    (fun q hq => by
+      rw [BalancedCleanupOffset.offsetSources L q (mapped_tail_subset _ hq)]
+      simp [member])
+    (fun q hq => data q (by simp [tail_member L.y q hq]))
+    (fun q hq => data q (by simp [tail_member L.r q hq]))
+    (fun q hq => data q (by simp [tail_member L.offsetCarry q hq]))
+    (fun q hq => data q (by simp [tail_member L.carry q hq])) oneW dW parityW
+  have tail := (BalancedCleanupOffsetSlim.chain_support (BalancedCleanupOffset.offsetBits L).tail
+    L.y.tail L.r.tail L.offsetCarry.tail L.carry.tail L.one (L.carry.headD 0) L.parity
+    (by omega) (by omega) (by omega) (by omega)).trans pool
+  have small : wires [.X (L.r.headD 0)]⊆W ∧
+      wires (majority (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W ∧
+      wires (eraseCarry (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W := by
+    simp [majority,eraseCarry,wires,Instr.wires,correctionWires,Finset.subset_iff,aW,yW,dW,coutW]
+  have co : wires (BalancedCleanupOffsetZero.core L)⊆W := by
+    simp only [BalancedCleanupOffsetZero.core,BalancedCleanupOffsetZeroHead.program,
+      wires_append,Finset.union_subset_iff,and_assoc]
+    exact ⟨small.1,small.2.1,tail,small.2.2,small.1⟩
+  have old := offset_support L hw
+  rw [BalancedCleanupOffset.program_sandwich] at old
+  simp only [BalancedCleanupOffsetZero.program,wires_append,Finset.union_subset_iff] at old ⊢
+  exact ⟨⟨old.1.1,co⟩,old.2⟩
+
 def sharedSites (w : Nat → Wire) (sign : Wire) : List Wire :=
   [sign,w 765,w 1026] ++ (balancedSharedPorts w sign).wires ++
     OffsetCleanupBorrowedCaller.carry w
@@ -112,8 +190,7 @@ theorem kernels_support (w : Nat → Wire) (sign : Wire) :
     · simp [W,sharedSites,h]
   have core := coreSub.trans ((balancedSharedPorts_support w sign).trans native)
   have tail := tailSub.trans ((BalancedInverse.support L (balancedSharedPorts_widths w sign)).trans native)
-  have oldOff := (offset_support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans active
-  have off := (slim_support_sub _ (OffsetCleanupBorrowedCaller.widths w sign)).trans oldOff
+  have off := (zero_offset_support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans active
   have cx : wires [.CX L.ymsb L.sourceGuard]⊆W := by
     apply Finset.Subset.trans (s₂:=L.wires.toFinset) _ native
     simp [wires,Instr.wires,Finset.subset_iff,BalancedCircuit.Layout.wires,
@@ -124,4 +201,5 @@ theorem kernels_support (w : Nat → Wire) (sign : Wire) :
 
 end ECDSAAdd.Arithmetic.CompressedFieldSupport
 #print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.offset_support
+#print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.zero_offset_support
 #print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.kernels_support

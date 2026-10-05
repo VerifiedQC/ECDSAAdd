@@ -173,7 +173,7 @@ theorem fieldPrograms (w : Nat → Wire) (sign : Wire) (W : Finset Wire)
   have core := (coreSub L).trans ((balancedSharedPorts_support w sign).trans native)
   have tail := (tailSub L).trans
     ((BalancedInverse.support L (balancedSharedPorts_widths w sign)).trans native)
-  have off := (BalancedCleanupOffsetSlim.support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans
+  have off := (BalancedCleanupOffsetZero.support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans
     (offsetSites w sign W hW hs)
   have cx := (cxSupport L).trans native
   simp only [OffsetBorrowedField.program,OffsetBorrowedInverse.program,

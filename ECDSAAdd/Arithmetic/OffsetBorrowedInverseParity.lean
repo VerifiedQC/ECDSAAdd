@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.BalancedFieldInverseParity
-import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProof
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroProgram
 import ECDSAAdd.Arithmetic.OffsetCleanupBorrowedCallerLayout
 set_option maxHeartbeats 900000
 set_option maxRecDepth 4096
@@ -9,7 +9,7 @@ open BalancedField
 attribute [local irreducible] toffoliCount measurementCount run
 
 def recoverParity (w : Nat → Wire) (sign : Wire) : Program :=
-  BalancedCleanupOffsetSlim.program (OffsetCleanupBorrowedCaller.layout w sign)
+  BalancedCleanupOffsetZero.program (OffsetCleanupBorrowedCaller.layout w sign)
 
 /-- The replacement is the same XOR oracle for every target value and for
 independent measurement streams. The caller must provide the actual clean
@@ -36,7 +36,7 @@ theorem recoverParity_equiv (w : Nat → Wire) (sign : Wire)
   have old := BalancedCleanupXor.xor_correct (balancedSharedPorts w sign).toLayout
     (balancedSharedPorts_widths w sign) (List.nodup_append'.mp nd).2.1
     R Y B hr hy s n hR hY hS hz ho hc
-  have fresh := BalancedCleanupOffsetSlim.xor_correct (OffsetCleanupBorrowedCaller.layout w sign)
+  have fresh := BalancedCleanupOffsetZero.xor_correct (OffsetCleanupBorrowedCaller.layout w sign)
     (OffsetCleanupBorrowedCaller.widths w sign) (OffsetCleanupBorrowedCaller.nodup w sign hn hsOut)
     R Y B hr hy s m hR hY hS hz ho hhigh hc hd
   exact fresh.trans old.symm
@@ -68,8 +68,8 @@ private theorem tail_counts (L : BalancedCircuit.Layout) (hw : L.Widths) :
   omega
 
 theorem counts (w : Nat → Wire) (sign : Wire) :
-    toffoliCount (program w sign)=1024 ∧ measurementCount (program w sign)=1024 := by
-  have fresh := BalancedCleanupOffsetSlim.counts (OffsetCleanupBorrowedCaller.layout w sign)
+    toffoliCount (program w sign)=1023 ∧ measurementCount (program w sign)=1023 := by
+  have fresh := BalancedCleanupOffsetZero.counts (OffsetCleanupBorrowedCaller.layout w sign)
     (OffsetCleanupBorrowedCaller.widths w sign)
   have old := tail_counts (balancedSharedPorts w sign) (balancedSharedPorts_widths w sign)
   simp only [program,recoverParity,toffoliCount_append,measurementCount_append,fresh.1,fresh.2,

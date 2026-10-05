@@ -7,6 +7,9 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroHead
+import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroProgram
+import ECDSAAdd.Arithmetic.FieldRenameOffsetZero
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProof
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlimProgram
 import ECDSAAdd.Arithmetic.FieldRenameOffsetSlim
@@ -1396,6 +1399,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetSlim.support
 #print axioms ECDSAAdd.Arithmetic.FieldRename.slim_offset_chain_natural
 #print axioms ECDSAAdd.Arithmetic.FieldRename.slim_offset_program_natural
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroHead.run_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroHead.counts
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroHead.chain_equiv
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.core_eq
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.program_eq
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.xor_correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.correct
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.counts
+#print axioms ECDSAAdd.Arithmetic.BalancedCleanupOffsetZero.support
+#print axioms ECDSAAdd.Arithmetic.FieldRename.zero_head_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.zero_offset_core_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.zero_offset_program_natural
+#print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.zero_offset_support
 LEAN
 )
 task_axiom_lean_rc=$?

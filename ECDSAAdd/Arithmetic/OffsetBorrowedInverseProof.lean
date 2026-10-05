@@ -63,8 +63,8 @@ private theorem bank_target_away (w : Nat → Wire) (sign : Wire)
     rcases ha with rfl|rfl|rfl
     all_goals exact arith_block_away w hn _ 2056 256 (by omega) (by omega) (by omega)
 
-/-- 253 padding records align the 764-record original recovery with the
-511-record replacement. Their actual XOR outputs agree on independent records. -/
+/-- 254 padding records align the 764-record original recovery with the
+510-record replacement. Their actual XOR outputs agree on independent records. -/
 theorem program_equiv (w : Nat → Wire) (sign : Wire)
     (hn : (skywalkSharedWires w).Nodup) (hsOut : sign∉skywalkSharedWires w)
     (R Y : Int) (B : Bool) (hr : Centered R) (hy : Centered Y)
@@ -77,9 +77,9 @@ theorem program_equiv (w : Nat → Wire) (sign : Wire)
     (hhigh : s.basis (w 1026)=false) :
     run (program w sign) m s=
       run (BalancedInverse.program (balancedSharedPorts w sign))
-        (List.replicate 253 false++m) s := by
+        (List.replicate 254 false++m) s := by
   let L := balancedSharedPorts w sign
-  let n := List.replicate 253 false++m
+  let n := List.replicate 254 false++m
   let u := run [.CX L.ymsb L.sourceGuard] m s
   have own : sign∉balancedSharedIds.map w := by
     intro hm
@@ -122,13 +122,13 @@ theorem program_equiv (w : Nat → Wire) (sign : Wire)
     R₁ Y₁ S₁ low₁ one₁ high₁ carry₁ bank₁
   have oldCount : measurementCount (BalancedInverse.recoverParity L)=764 := by
     simpa only [BalancedInverse.recoverParity] using (BalancedCleanup.counts L.toLayout widths).2
-  have freshCount : measurementCount (recoverParity w sign)=511 := by
-    simpa only [recoverParity] using (BalancedCleanupOffsetSlim.counts
+  have freshCount : measurementCount (recoverParity w sign)=510 := by
+    simpa only [recoverParity] using (BalancedCleanupOffsetZero.counts
       (OffsetCleanupBorrowedCaller.layout w sign) (OffsetCleanupBorrowedCaller.widths w sign)).2
-  have align : n.drop 764=m.drop 511 := by simp [n,List.drop_append]
+  have align : n.drop 764=m.drop 510 := by simp [n,List.drop_append]
   have oldGuard : run [.CX L.ymsb L.sourceGuard] n s=u := guard_records _ _ n m s
   have freshRun : run (program w sign) m s=
-      run (tail L) (m.drop 511) (run (recoverParity w sign) m u) := by
+      run (tail L) (m.drop 510) (run (recoverParity w sign) m u) := by
     rw [program,run_prefix,freshCount]
   have oldRun : run (BalancedInverse.program L) n s=
       run (tail L) (n.drop 764) (run (BalancedInverse.recoverParity L) n u) := by
@@ -160,7 +160,7 @@ theorem program_correct (w : Nat → Wire) (sign : Wire)
     exact hsOut (arith_mem w 0 2314 i (by omega) (balancedSharedIds_bound i hi))
   have native := BalancedInverse.program_correct (balancedSharedPorts w sign)
     (balancedSharedPorts_widths w sign) (balancedSharedPorts_nodup w sign hn own)
-    B R Y hr hy s (List.replicate 253 false++m) hS hR hY
+    B R Y hr hy s (List.replicate 254 false++m) hS hR hY
     (balancedSharedPorts_clean w sign s.basis hw hu)
   have eq := program_equiv w sign hn hsOut R Y B hr hy s m hR hY hS hw hu hhigh
   dsimp only
