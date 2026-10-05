@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.OffsetBorrowedDirectArithmetic
+import ECDSAAdd.Arithmetic.CompactOffsetCallerArithmetic
 import ECDSAAdd.Arithmetic.DirectSkywalkControlledPort
 import ECDSAAdd.Arithmetic.DirectZeroControlled
 import ECDSAAdd.Arithmetic.SkywalkDirectPointLayout
@@ -13,10 +13,10 @@ open Secp256k1 ControlledPointLayout DirectSkywalk
 uncomputation. The existing integer borrow scratch is reused for comparison. -/
 def pointOffsetBorrowedArithmetic (L : ControlledPointLayout) (multiply : Bool) : Program :=
   directZeroControlled L.point.x (directSkywalkCarry L) (directSkywalkCin L)
-    L.skywalkDirectZero (offsetBorrowedDirectArithmetic (!multiply) L.skywalkDirectMap
+    L.skywalkDirectZero (compactOffsetCallerArithmetic (!multiply) L.skywalkDirectMap
       L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS)
 
-attribute [local irreducible] run offsetBorrowedDirectArithmetic pointOffsetBorrowedArithmetic
+attribute [local irreducible] run compactOffsetCallerArithmetic pointOffsetBorrowedArithmetic
 
 private theorem offsetPort_regions (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) :
     (L.skywalkDirectZero::directSkywalkCin L::
@@ -75,7 +75,7 @@ theorem pointOffsetBorrowedArithmetic_correct (L : ControlledPointLayout) (hw : 
   dsimp only
   let D := directDivisor X
   let V := if B then (if multiply then ((Y:Fp)*(X:Fp)).val else ((Y:Fp)/(X:Fp)).val) else Y
-  let kernel := offsetBorrowedDirectArithmetic (!multiply) L.skywalkDirectMap
+  let kernel := compactOffsetCallerArithmetic (!multiply) L.skywalkDirectMap
     L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS
   have hxlen : L.point.x.length=256 := hw.inputX
   have hp := L.skywalkCaller_zero hw s.basis hc
@@ -151,7 +151,7 @@ theorem pointOffsetBorrowedArithmetic_correct (L : ControlledPointLayout) (hw : 
     have st : t.basis L.skywalkDirectSelectorS=false :=
       (frame _ neZero.2.2 (awayX _ (by simp))).trans (cleanBit 1803 (by omega))
     have bt : t.basis L.core.generic=B := (frame _ neZero.1 (awayX _ (by simp))).trans hb
-    have strong := offsetBorrowedDirectArithmetic_run (!multiply) L.skywalkDirectMap
+    have strong := compactOffsetCallerArithmetic_run (!multiply) L.skywalkDirectMap
       (L.skywalkDirectMap_nodup hw hn) L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS
       (fun q hq => outside q (List.mem_append_left [L.skywalkDirectZero] hq)) (L.skywalkDirectMixed_layout hw hn)
       D (Y:Fp) hd0 hdp t ms input gt st
@@ -175,9 +175,9 @@ theorem pointOffsetBorrowedArithmetic_correct (L : ControlledPointLayout) (hw : 
 theorem pointOffsetBorrowedArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
     toffoliCount (pointOffsetBorrowedArithmetic L false)=1056757 ∧
-    measurementCount (pointOffsetBorrowedArithmetic L false)=728305 ∧
+    measurementCount (pointOffsetBorrowedArithmetic L false)=727795 ∧
     toffoliCount (pointOffsetBorrowedArithmetic L true)=1056758 ∧
-    measurementCount (pointOffsetBorrowedArithmetic L true)=728306 := by
+    measurementCount (pointOffsetBorrowedArithmetic L true)=727796 := by
   have outside : ∀ q∈[L.core.generic,L.skywalkDirectSelectorG,L.skywalkDirectSelectorS],
       q∉skywalkSharedWires L.skywalkDirectMap := by
     have hd := List.nodup_append'.mp (show
@@ -186,11 +186,11 @@ theorem pointOffsetBorrowedArithmetic_counts (L : ControlledPointLayout) (hw : L
       L.skywalkDirectScalar_nodup hw hn)
     intro q hq hs
     exact List.disjoint_left.mp hd.2.2 hq (List.mem_cons_of_mem _ hs)
-  have h := offsetBorrowedDirectArithmetic_counts L.skywalkDirectMap (L.skywalkDirectMap_nodup hw hn)
+  have h := compactOffsetCallerArithmetic_counts L.skywalkDirectMap (L.skywalkDirectMap_nodup hw hn)
     L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS outside (L.skywalkDirectMixed_layout hw hn)
   have hxlen : L.point.x.length=256 := hw.inputX
   have c (multiply : Bool) := directZeroControlled_counts L.point.x (directSkywalkCarry L)
-    (directSkywalkCin L) L.skywalkDirectZero (offsetBorrowedDirectArithmetic (!multiply) L.skywalkDirectMap
+    (directSkywalkCin L) L.skywalkDirectZero (compactOffsetCallerArithmetic (!multiply) L.skywalkDirectMap
       L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS)
     (by change 255+1=L.point.x.length; exact hxlen.symm)
   have cd := c false

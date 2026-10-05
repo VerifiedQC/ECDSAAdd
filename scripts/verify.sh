@@ -7,6 +7,8 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.CompactOffsetCallerSupport
+import ECDSAAdd.Arithmetic.NearestLiftMath
 import ECDSAAdd.Arithmetic.OffsetBorrowedCanonicalReplay
 import ECDSAAdd.Arithmetic.OffsetBorrowedInverseCanonicalReplay
 import ECDSAAdd.Arithmetic.OffsetBorrowedSharedDivision
@@ -1353,6 +1355,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSupport.kernel
 #print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_support
 #print axioms ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_resources
+#print axioms ECDSAAdd.Arithmetic.compactSkywalkCaller_forward_eq
+#print axioms ECDSAAdd.Arithmetic.compactSkywalkCaller_reverse_eq
+#print axioms ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_states
+#print axioms ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_run
+#print axioms ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_counts
+#print axioms ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_support
+#print axioms ECDSAAdd.Arithmetic.NearestLift.correction
+#print axioms ECDSAAdd.Arithmetic.NearestLift.secp_threshold_bound
 LEAN
 )
 task_axiom_lean_rc=$?

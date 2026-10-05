@@ -1,11 +1,11 @@
 import ECDSAAdd.Arithmetic.CompactPointLayout
-import ECDSAAdd.Arithmetic.OffsetBorrowedSupport
+import ECDSAAdd.Arithmetic.CompactOffsetCallerSupport
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout DirectSkywalk
-attribute [local irreducible] pointOffsetBorrowedArithmetic offsetBorrowedDirectArithmetic
+attribute [local irreducible] pointOffsetBorrowedArithmetic compactOffsetCallerArithmetic
 
 /-- Instruction-derived compact support includes both exact zero-repair branches. -/
 theorem pointOffsetBorrowedArithmetic_compact_support (L : ControlledPointLayout)
@@ -26,7 +26,7 @@ theorem pointOffsetBorrowedArithmetic_compact_support (L : ControlledPointLayout
   have hs : L.skywalkDirectSelectorS∈W := pool 1803 (Or.inr ⟨by omega,by omega⟩)
   have hz : L.skywalkDirectZero∈W := pool 1804 (Or.inr ⟨by omega,by omega⟩)
   have hi : directSkywalkCin L∈W := pool 1801 (Or.inr ⟨by omega,by omega⟩)
-  have kernel := OffsetBorrowedSupport.kernel (!multiply) L.skywalkDirectMap
+  have kernel := compactOffsetCallerArithmetic_support (!multiply) L.skywalkDirectMap
     (L.skywalkDirectMap_nodup hw hn) L.core.generic L.skywalkDirectSelectorG L.skywalkDirectSelectorS
     W (L.compactSharedMap_support hw) hb hg hs
   have own : (L.skywalkDirectZero::directSkywalkCin L::(L.point.x++directSkywalkCarry L)).toFinset⊆W := by
