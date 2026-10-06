@@ -141,7 +141,9 @@ theorem zero_offset_support (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
       wires (majority (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W ∧
       wires (eraseCarry (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W := by
     simp [majority,eraseCarry,wires,Instr.wires,correctionWires,Finset.subset_iff,coutW]
-    simpa only [List.headD] using
+    have head_eq (xs : List Wire) : xs.head?.getD 0=xs.headD 0 := by
+      cases xs <;> rfl
+    simpa only [head_eq] using
       (show L.r.headD 0∈W ∧ (L.carry.headD 0∈W ∧ L.y.headD 0∈W ∧ L.r.headD 0∈W) ∧
         L.y.headD 0∈W ∧ L.r.headD 0∈W ∧ L.carry.headD 0∈W from
           ⟨yW,⟨dW,aW,yW⟩,aW,yW,dW⟩)
