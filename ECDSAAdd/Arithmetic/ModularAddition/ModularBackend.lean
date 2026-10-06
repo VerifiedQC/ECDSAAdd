@@ -66,6 +66,24 @@ def modReductionContext (W : ModReductionWorkspace) : CircuitDSL.Context ModRedu
 也不使用 addResult_correct/subResult_correct 的取模结论。 -/
 namespace ModReductionBackend
 
+def addPrepare (W : ModReductionWorkspace) (x y : List Wire) (q : Nat) : Program :=
+  xorConstant W.modulus q ++ addXor x y W.total W.carrySum W.cinSum ++
+    subXor W.total W.modulus W.diff W.carryDiff W.cinDiff
+
+def addFinish (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) : Program :=
+  chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
+    subXor W.total W.modulus W.diff W.carryDiff W.cinDiff ++
+    addXor x y W.total W.carrySum W.cinSum ++ xorConstant W.modulus q
+
+def subPrepare (W : ModReductionWorkspace) (x y : List Wire) (q : Nat) : Program :=
+  xorConstant W.modulus q ++ subXor x y W.diff W.carryDiff W.cinDiff ++
+    addXor W.diff W.modulus W.total W.carrySum W.cinSum
+
+def subFinish (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) : Program :=
+  chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
+    addXor W.diff W.modulus W.total W.carrySum W.cinSum ++
+    subXor x y W.diff W.carryDiff W.cinDiff ++ xorConstant W.modulus q
+
 def addCircuit (L : ModLayout) (q : Nat) : Program :=
   (modReductionContext L.reductionWorkspace).operations.reduceAdd L.x L.y (L.lowReg .out) q
 
@@ -151,9 +169,22 @@ theorem ModValues.clean_iff (L : ModLayout) (X Y O : Nat) (st : BasisState) :
     · apply (regValue_zero _ _).mpr; intro w hw; exact hz w (by simp [ModLayout.work, hw])
     · apply (regValue_zero _ _).mpr; intro w hw; exact hz w (by simp [ModLayout.work, hw])
 
-private theorem ModReductionBackend.add_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+def ModReductionBackend.addPrepared (n X Y O q : Nat) : ModField → Nat :=
+  Function.update (Function.update (Function.update (ModValues.clean X Y O) .modulus q)
+    .total (X+Y)) .diff ((X+Y+2^(n+1)-q)%2^(n+1))
+
+def ModReductionBackend.subPrepared (n X Y O q : Nat) : ModField → Nat :=
+  let D := (X+2^(n+1)-Y)%2^(n+1)
+  Function.update (Function.update (Function.update (ModValues.clean X Y O) .modulus q)
+    .diff D) .total ((D+q)%2^(n+1))
+
+/-- 两个阶段在同一个 prepared 断言处衔接；其中保留候选值、输出初值和零进位链。 -/
+theorem ModReductionBackend.add_stages (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X + Y < 2*q) :
-    Triple (ModValues L (ModValues.clean X Y O)) (ModReductionBackend.addCircuit L q)
+    Triple (ModValues L (ModValues.clean X Y O)) (addPrepare L.reductionWorkspace L.x L.y q)
+      (ModValues L (addPrepared L.width X Y O q)) ∧
+    Triple (ModValues L (addPrepared L.width X Y O q))
+      (addFinish L.reductionWorkspace L.x L.y (L.lowReg .out) q)
       (ModValues L (ModValues.clean X Y (O ^^^ (ModReductionAlgorithm.addResult X Y q)))) := by
   let S := X+Y
   let D := (S + 2^(L.width+1) - q) % 2^(L.width+1)
@@ -196,12 +227,25 @@ private theorem ModReductionBackend.add_values (L : ModLayout) (hnd : L.wires.No
     simpa [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean] using constant_modValues L hnd v6 .modulus q hq'
   have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
     funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
-  have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
-  simpa only [ModReductionBackend.add_program, List.append_assoc, hv7, v0, R, S] using h
+  constructor
+  · simpa [addPrepare, addXor, subXor, ModLayout.reductionWorkspace, ModLayout.x,
+      ModLayout.y, ModLayout.reg, registerAdderBits_map, add, sub, ModLayout.adder,
+      addPrepared, v3, v2, v1, v0, S, D] using (h0.seq h1).seq h2
+  · simp only [addFinish,
+      show (L.lowReg .out).length = L.width from List.length_map .., take_reg]
+    simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
+    simp only [registerAdderBits_map]
+    simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map]
+    simpa only [addPrepared, hv7, v3, v2, v1, v0, S, D, R, ModLayout.reg,
+      add, sub, ModLayout.adder, ModBit.get, ModLayout.selector] using
+      ((h3.seq h4).seq h5).seq h6
 
-private theorem ModReductionBackend.sub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+theorem ModReductionBackend.sub_stages (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
-    Triple (ModValues L (ModValues.clean X Y O)) (ModReductionBackend.subCircuit L q)
+    Triple (ModValues L (ModValues.clean X Y O)) (subPrepare L.reductionWorkspace L.x L.y q)
+      (ModValues L (subPrepared L.width X Y O q)) ∧
+    Triple (ModValues L (subPrepared L.width X Y O q))
+      (subFinish L.reductionWorkspace L.x L.y (L.lowReg .out) q)
       (ModValues L (ModValues.clean X Y (O ^^^ (ModReductionAlgorithm.subResult X Y q)))) := by
   let D := (X + 2^(L.width+1) - Y) % 2^(L.width+1)
   let S := (D+q) % 2^(L.width+1)
@@ -243,8 +287,34 @@ private theorem ModReductionBackend.sub_values (L : ModLayout) (hnd : L.wires.No
     simpa [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean] using constant_modValues L hnd v6 .modulus q hq'
   have hv7 : v7 = ModValues.clean X Y (O ^^^ R) := by
     funext f; cases f <;> simp [v7, v6, v5, v4, v3, v2, v1, v0, ModValues.clean]
-  have h := h0.seq (h1.seq (h2.seq (h3.seq (h4.seq (h5.seq h6)))))
-  simpa only [ModReductionBackend.sub_program, List.append_assoc, hv7, v0, R] using h
+  constructor
+  · simpa [subPrepare, addXor, subXor, ModLayout.reductionWorkspace, ModLayout.x,
+      ModLayout.y, ModLayout.reg, registerAdderBits_map, add, sub, ModLayout.adder,
+      subPrepared, v3, v2, v1, v0, S, D] using (h0.seq h1).seq h2
+  · simp only [subFinish,
+      show (L.lowReg .out).length = L.width from List.length_map .., take_reg]
+    simp only [addXor, subXor, ModLayout.x, ModLayout.y, ModLayout.reg]
+    simp only [registerAdderBits_map]
+    simp only [chooseXor, ModLayout.lowReg, ModBit.get, selector_map]
+    simpa only [subPrepared, hv7, v3, v2, v1, v0, S, D, R, ModLayout.reg,
+      add, sub, ModLayout.adder, ModBit.get, ModLayout.selector] using
+      ((h3.seq h4).seq h5).seq h6
+
+private theorem ModReductionBackend.add_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X+Y < 2*q) :
+    Triple (ModValues L (ModValues.clean X Y O)) (addCircuit L q)
+      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.addResult X Y q))) := by
+  obtain ⟨prepare, finish⟩ := add_stages L hnd q hq0 hq X Y O hXY
+  simpa only [addCircuit, modReductionContext, addPrepare, addFinish, List.append_assoc]
+    using prepare.seq finish
+
+private theorem ModReductionBackend.sub_values (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
+    (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
+    Triple (ModValues L (ModValues.clean X Y O)) (subCircuit L q)
+      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.subResult X Y q))) := by
+  obtain ⟨prepare, finish⟩ := sub_stages L hnd q hq0 hq X Y O hX hY
+  simpa only [subCircuit, modReductionContext, subPrepare, subFinish, List.append_assoc]
+    using prepare.seq finish
 
 /-- 后端实现算法层的模加分支，恢复工作区和相位；尚未使用“等于模加”的结论。 -/
 theorem ModReductionBackend.add_refines (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)

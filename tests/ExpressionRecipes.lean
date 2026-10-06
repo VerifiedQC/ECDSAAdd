@@ -59,7 +59,7 @@ example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
       subXor W.total W.modulus W.diff W.carryDiff W.cinDiff ++
       chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
       subXor W.total W.modulus W.diff W.carryDiff W.cinDiff ++
-      addXor x y W.total W.carrySum W.cinSum ++ xorConstant W.modulus q := rfl
+      addXor x y W.total W.carrySum W.cinSum ++ xorConstant W.modulus q := modAddOn_backend x y out q W
 
 example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
     modSubOn x y out q W =
@@ -67,7 +67,7 @@ example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
       addXor W.diff W.modulus W.total W.carrySum W.cinSum ++
       chooseXor W.borrow (W.diff.take out.length) (W.total.take out.length) out ++
       addXor W.diff W.modulus W.total W.carrySum W.cinSum ++
-      subXor x y W.diff W.carryDiff W.cinDiff ++ xorConstant W.modulus q := rfl
+      subXor x y W.diff W.carryDiff W.cinDiff ++ xorConstant W.modulus q := modSubOn_backend x y out q W
 
 example (L : ModLayout) (q : Nat) :
     modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace = modAdd L q := rfl
@@ -80,25 +80,25 @@ example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
       let borrow := (x + y) < const(q);
       control (borrow XOR 1) { out ^= ((x + y) - const(q)); };
       control borrow { out ^= (x + y); };
-    }) := rfl
+    }) := modAddOn_backend x y out q W
 example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
     modSubOn x y out q W = (prog using (modReductionContext W) {
       let borrow := x < y;
       control (borrow XOR 1) { out ^= (x - y); };
       control borrow { out ^= ((x - y) + const(q)); };
-    }) := rfl
+    }) := modSubOn_backend x y out q W
 example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
     modAddOn x y out q W = (prog using (modReductionContext W) {
       let borrow := (x + y) < const(q);
       if (borrow XOR 1) { out ^= ((x + y) - const(q)); };
       control borrow { out ^= (x + y); };
-    }) := rfl
+    }) := modAddOn_backend x y out q W
 example (W : ModReductionWorkspace) (x y out : List Wire) (q : Nat) :
     modSubOn x y out q W = (prog using (modReductionContext W) {
       let borrow := x < y;
       control (borrow XOR 1) { out ^= (x - y); };
       if borrow { out ^= ((x - y) + const(q)); };
-    }) := rfl
+    }) := modSubOn_backend x y out q W
 
 -- 作用域准确插入恢复电路，既不倒转门列，也不从 prepare 猜测 restore。
 example (a b c : Wire) :

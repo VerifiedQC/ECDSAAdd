@@ -86,8 +86,12 @@ run_cmd do
       (``modAddOn_mod_spec, ``ModReductionAlgorithm.addResult_correct),
       (``modSubOn_mod_spec, ``modSubOn_refines),
       (``modSubOn_mod_spec, ``ModReductionAlgorithm.subResult_correct),
-      (``modAddOn_refines, ``ModReductionBackend.add_refines),
-      (``modSubOn_refines, ``ModReductionBackend.sub_refines)] do
+      (``modAddOn_refines, ``reductionProgram_correct),
+      (``modAddOn_refines, ``modAddPrepare_correct),
+      (``modAddOn_refines, ``modAddSelectAndClear_correct),
+      (``modSubOn_refines, ``reductionProgram_correct),
+      (``modSubOn_refines, ``modSubPrepare_correct),
+      (``modSubOn_refines, ``modSubSelectAndClear_correct)] do
     let some info := env.find? root | throwError "找不到证明 {root}"
     let some proof := info.value? | throwError "{root} 没有证明体"
     unless proof.getUsedConstants.contains required do

@@ -260,4 +260,24 @@ macro_rules
   | `(certified { $body:certStatement* } using $circuit by $proof) =>
       `(checked (calculation { $body:certStatement* }) using $circuit by $proof)
 
+/-- 单句或整个共享块的显式认证；块内语句只描述数学计算，不分别生成电路。 -/
+syntax (name := certifiedProgAssign) (priority := 12000) "prog" "{" term:max " = " certExpr
+  "using" term "by" term ";" "}" : term
+syntax (name := certifiedProgXor) (priority := 12000) "prog" "{" term:max " ^= " certExpr
+  "using" term "by" term ";" "}" : term
+syntax (name := certifiedProgShared) (priority := 12000) "prog" "{" "{" certStatement* "}"
+  "using" term "by" term ";" "}" : term
+syntax (name := certifiedProgControl) (priority := 12000) "prog" "{"
+  "if " certCondition " {" certStatement* "}" "using" term "by" term ";" "}" : term
+
+macro_rules
+  | `(prog { $target:term = $rhs:certExpr using $circuit by $proof; }) =>
+      `(certified { $target:term = $rhs:certExpr; } using $circuit by $proof)
+  | `(prog { $target:term ^= $rhs:certExpr using $circuit by $proof; }) =>
+      `(certified { $target:term ^= $rhs:certExpr; } using $circuit by $proof)
+  | `(prog { { $body:certStatement* } using $circuit by $proof; }) =>
+      `(certified { $body:certStatement* } using $circuit by $proof)
+  | `(prog { if $c:certCondition { $body:certStatement* } using $circuit by $proof; }) =>
+      `(certified { if $c:certCondition { $body:certStatement* }; } using $circuit by $proof)
+
 end ECDSAAdd.CertifiedTranslation

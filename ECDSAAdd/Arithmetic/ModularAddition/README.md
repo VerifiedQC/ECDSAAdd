@@ -4,13 +4,14 @@
 
 ## 当前可读入口
 
-- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+- [Modular.lean](#modularlean)：原函数按“准备借位、共享选择并清理”两步写出，每步同一行指定实现和证明。
+- [Certified.lean](#certifiedlean)：保留整块计算的认证入口及原地模加核入口。
 
 ## [Certified.lean](Certified.lean)
 
 入口：`modAddOn`、`modSubOn`、`modAddCore`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
 
-原位宽/互异、模数与输入范围、零工作区条件保留。XOR 输出允许非零初值。旧 `modAddOn x y out q W` 不变；新认证入口用 `ModLayout` 绑定已验证接线，原分支算法仍在 `Modular.lean`。
+原位宽/互异、模数与输入范围、零工作区条件保留。XOR 输出允许非零初值。`modAddOn x y out q W` 的接口不变，正文已改为行内 `using/by` 的两阶段算法；这里的认证入口仍用 `ModLayout` 绑定接线。
 
 每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
 
@@ -21,7 +22,7 @@
 
 模加减现在按“数学分支证明＋实际电路连接”验证，供人阅读的证明不展开门列。这里只认证这两个具体配方，不是已全部迁入通用 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
-`modReductionContext` 计算共享的候选和借位，再使用和清理；不是为每个表达式重新分配寄存器。`modAddCore` 的常数装载/清理由 `target -= const(p)` 的后端配方完成。位宽、互异、零工作区条件仍需满足。
+原函数不再通过 `modReductionContext` 选择实现。准备步骤计算一次共享候选与借位，结束块复用候选并清理；其 `Ready` 接口包含候选值、原输入、输出初值、零进位链和实际 borrow 的含义。换错算法、工作区、实现、证明或源表达式会被拒绝。`modAddCore` 的内部仍沿用原配方；其认证入口只迁移了行内格式。位宽、互异、零工作区条件仍需满足。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 
@@ -34,6 +35,7 @@
 - [Modular.lean](#modularlean)：保留可读算法，将分支证明与实际电路连接成最终模加减规格。
 - [ModularAlgorithm.lean](#modularalgorithmlean)：用可执行的英文证明分情况讨论，证明选出的数分别是模和、模差。
 - [ModularBackend.lean](#modularbackendlean)：证明实际电路实现这些分支，并恢复输入、相位与工作区；只读算法时可跳过。
+- [ModularTranslation.lean](#modulartranslationlean)：定义两个阶段必须遵守的状态接口，检查源码及实现/证明的对应关系。
 - [ModularFrame.lean](#modularframelean)：证明任意测量记录下的最终结果，以及输出之外每根 wire 都保持。
 - [LanguageExample.lean](#languageexamplelean)：用赋值形式写两次模加，证明更换实现后规格不变，并核对工作区复用和资源。
 - [LanguageAdapter.lean](#languageadapterlean)：把现有直接模加接入 n 位逻辑寄存器接口。
@@ -274,6 +276,14 @@ X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测�
 `subResult_correct` 证明：要求 X,Y<q。X<Y 时，数学差加回 q 得到 X+q−Y；否则保留 X−Y。两个分支都得到 (X+q−Y) mod q。这里不能把借位分支写成自然数截断减法 `(X-Y)+q`。
 
 这些分支结果与实际 `prog` 的联系由后端定理证明，不是只证明一个与电路无关的数值函数。
+
+## [ModularTranslation.lean](ModularTranslation.lean)
+
+`modAddPrepare_correct/modSubPrepare_correct` 证明从零工作区得到相应候选和正确的借位位；输出原值允许任意 O。
+
+`modAddSelectAndClear_correct/modSubSelectAndClear_correct` 以同一 `Ready` 为前提，证明 XOR 分支结果并恢复全部工作区。`reductionProgram_correct` 以 Hoare 顺序组合连接两段，相位恢复对所有测量记录成立。
+
+资源没有增加：两段连接后的完整门列与旧配方相等，仍为 T=5n+4、M=4(n+1)、Q=8n+9。
 
 ## [ModularBackend.lean](ModularBackend.lean)
 

@@ -7,9 +7,12 @@
 关键算术函数现在优先读各模块的 `Certified.lean`。每个语句或共享代码块直接指定 Lean 实现及其规格证明，不经过默认实现注册表：
 
 ```lean
-certified {
-  M.out = (M.out + M.x * M.y) mod p;
-} using (Arithmetic.montMulAdd M p) by (montMulAdd_spec M p)
+prog {
+  {
+    let product := (M.x * M.y) mod p;
+    M.out = (M.out + product) mod p;
+  } using (Arithmetic.montMulAdd M p) by (montMulAdd_spec M p);
+}
 ```
 
 花括号给出独立的数学计算，`using` 给出实际 `Program`，`by` 给出已有的 Hoare 规格定理。连接器检查定理的电路就是这个实现，并生成 Lean 证明：满足其前提时，定理的后置条件蕴含所写计算。写错运算、寄存器、模数、实现或证明会报错；不是仅检查定理名字存在。
@@ -34,7 +37,24 @@ certified {
 - `if c` 表示 c=1 的受控数学效果，`if (c XOR 1)` 表示 c=0；本层不插入测量或对任意门列机械地添加控制。布尔比较快照也可作为条件。
 - 当前连接器接收结论为 `Triple` 的定理。逐状态 `_correct` 和复杂状态谓词的连接整理在各模块的 `CertifiedSpecs.lean` 中，原前提与结论保留。前提可能不可满足，因此“证书构造成功”不等于某个初态满足 `requires`。
 
-这是覆盖地图中 21 个关键函数的新增可读/认证入口，命名空间为 `ECDSAAdd.Arithmetic.Certified`；旧程序及调用链继续作为后端，尚未把所有内部调用逐句迁移。布局参数仍绑定具体工作区。资源来自同一份实际门列，不由表达式估算；本轮没有新增一般量子信道证明。
+上述入口覆盖地图中的 21 个关键函数，命名空间为 `ECDSAAdd.Arithmetic.Certified`。单句写成 `语句 using 实现 by 证明;`；共享块在结束的 `}` 后同一行写 `using 实现 by 证明;`。通用认证入口目前接收一个单句或一个完整共享块，不会自动连接任意多个证书。
+
+模加减另已直接迁移原来的 `modAddOn/modSubOn : Program`，不只改认证外层：
+
+```lean
+prog {
+  let borrow := (x + y) < const(q) using (ModAddPrepare W) by modAddPrepare_correct;
+
+  {
+    if (borrow XOR 1) { out ^= ((x + y) - const(q)); };
+    if borrow { out ^= (x + y); };
+  } using (ModAddSelectAndClear W) by modAddSelectAndClear_correct;
+}
+```
+
+第一步证明比较结果，并留下完整候选、原输入/输出值及零进位链。第二步必须使用同一工作区、同一种算法的 `Ready` 状态，证明选择结果并恢复工作区。最终规格通过 `reductionProgram_correct` 组合两段证明；不是依赖函数定义之后的规格来认证函数自身。新语法实现见 [ModularTranslation.lean](../Arithmetic/ModularAddition/ModularTranslation.lean)，它只支持完整模加/模减模板。
+
+这两种入口的范围不同：通用共享块是一个整体证书，模加减的原函数是两个连接起来的阶段证书。其余 19 个入口仍使用已证明的后端，不宣称已经将其内部步骤全部迁移。布局仍绑定具体工作区，资源来自实际门列；没有新增一般量子信道证明。
 
 以下 `arith/Config` 与 `prog using Context` 章节保留为兼容接口说明，不是新入口的默认实现机制。
 
@@ -91,7 +111,7 @@ prog using (modArithmeticContext L) {
 
 ### 隐藏工作区的配方与作用域（2026-10-05）
 
-模加现在可以直接写比较和算式。实际入口是 `Modular.lean` 的 `modAddOn x y out q W`，W 只绑定工作区；旧 `modAdd L q` 是兼容调用入口。
+以下是保留兼容的旧配置写法；当前 `Modular.lean` 的 `modAddOn x y out q W` 已采用上面的逐阶段 `using/by`，`modAdd L q` 继续作为布局兼容入口。
 
 ```lean
 prog using (modReductionContext W) {
