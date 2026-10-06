@@ -13,16 +13,6 @@ attribute [local irreducible] wires compactSkywalkTick compactSkywalkReverseTick
 attribute [local irreducible] compressedHistoryEncode compressedHistoryDecode
 attribute [local irreducible] literalSkywalkSeed literalSkywalkUnseed
 
-theorem base_pool_nodup : (skywalkPoolWires base).Nodup := by
-  apply List.Nodup.map_on
-  · intro a _ b _ h; exact base_injective h
-  · exact List.nodup_range'
-
-theorem base_above : CompressedHistoryAbove base := by
-  intro q _
-  change 6 ≤ q+16
-  omega
-
 private theorem base_integer_mem (q : Nat) (h : q < 515 ∨ (770 ≤ q ∧ q < 1798)) :
     base q∈slots.toFinset := by
   apply slot_mem

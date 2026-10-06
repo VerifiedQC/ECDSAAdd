@@ -18,6 +18,16 @@ theorem base_injective : Function.Injective base := by
   intro a b h
   change a+16=b+16 at h
   exact Nat.add_right_cancel h
+theorem base_pool_nodup : (skywalkPoolWires base).Nodup := by
+  apply List.Nodup.map_on
+  · intro a _ b _ h; exact base_injective h
+  · exact List.nodup_range'
+
+theorem base_above : CompressedHistoryAbove base := by
+  intro q _
+  change 6 ≤ q+16
+  omega
+
 theorem placed_injective (j : Nat) : Function.Injective (placed j) := by
   intro a b h
   apply (pi j).injective
