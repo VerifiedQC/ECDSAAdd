@@ -2,6 +2,26 @@
 
 本模块实现 Kaliski 模逆元电路，包括固定轮循环、缩放、结果输出和历史恢复，并提供相关布局与资源证明。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+- [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
+
+## [Certified.lean](Certified.lean)
+
+入口：`inverseLoop`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+写成 `L.out ^= inverse(L.first.v) mod q`。仍要求已经装入 Kaliski 初态；结束时恢复该初态，不将初态本身误称为零工作区。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## [CertifiedSpecs.lean](CertifiedSpecs.lean)
+
+这些连接证明只用于检查上面的源公式；没有新电路或额外资源，也不放宽原规格前提。
+
+## 后端算法与原规格
+
+
 [RoundBody.lean](RoundBody.lean) 的 `kaliskiBodyProgram/kaliskiUnbodyProgram` 已把受控加减写成 `if subtract { ... };`。移位、交换和历史恢复保持原有明确调用，`inverseCompute/Uncompute` 等组合入口不重复包装；原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。

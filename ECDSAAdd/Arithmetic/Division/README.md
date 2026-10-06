@@ -2,6 +2,21 @@
 
 本模块通过准备逆元和受控模乘，将模除法结果加到或减出目标寄存器，并恢复求逆历史与工作区。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+
+## [Certified.lean](Certified.lean)
+
+入口：`divideAdd`、`divideSub`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+写出控制位及逆元乘分子的模累加/累减；启用分支的分母非零、输入范围和零工作区条件均保留。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## 后端算法与原规格
+
+
 [Divide.lean](Divide.lean) 的 `divideAdd/Sub` 用 `with inverse := (safeInverseValue …)` 取得安全分母的逆元，然后写 `if L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };`（或减号）。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。

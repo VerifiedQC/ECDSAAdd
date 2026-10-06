@@ -2,6 +2,21 @@
 
 本模块实现奇模数下的原地倍增和减半，并证明它们的结果、工作位清理及资源用量。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+
+## [Certified.lean](Certified.lean)
+
+入口：`dblInPlace`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+写成 `U.z = (const(2) * U.z) mod p`，证书保留奇模数、位宽、输入范围和工作区清零条件。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## 后端算法与原规格
+
+
 [ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与受控 `if` 表达式。旋转仍写 `rotateLeft/Right`，只有在相应规格条件下才等价于整数倍增/减半；原规格与资源不变。
 
 `dblInPlace` 的试减直接写 `target -= const(p)`；常数寄存器的装载和清理在后端。借位、奇偶位仍保留为逻辑标志，清理规则不变。

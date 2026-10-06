@@ -13,10 +13,35 @@ lake env lean tests/ArithmeticPrograms.lean
 lake env lean tests/ExpressionRecipes.lean
 lake env lean tests/ModularProofLayers.lean
 lake env lean -DwarningAsError=true tests/ProofLanguage.lean
+lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+#print axioms ECDSAAdd.CertifiedTranslation.Certificate.ofTriple
+#print axioms ECDSAAdd.CertifiedTranslation.Certificate.abstract
+#print axioms ECDSAAdd.CertifiedTranslation.CheckedProgram.correct
+#print axioms ECDSAAdd.Arithmetic.Certified.modAddOn
+#print axioms ECDSAAdd.Arithmetic.Certified.modSubOn
+#print axioms ECDSAAdd.Arithmetic.Certified.modAddCore
+#print axioms ECDSAAdd.Arithmetic.Certified.dblInPlace
+#print axioms ECDSAAdd.Arithmetic.Certified.montLookupAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.montLookupSub
+#print axioms ECDSAAdd.Arithmetic.Certified.montConstantAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.montConstantSub
+#print axioms ECDSAAdd.Arithmetic.Certified.montMulXor
+#print axioms ECDSAAdd.Arithmetic.Certified.montMulAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.montMulSub
+#print axioms ECDSAAdd.Arithmetic.Certified.montMulControlledAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.montMulControlledSub
+#print axioms ECDSAAdd.Arithmetic.Certified.inverseLoop
+#print axioms ECDSAAdd.Arithmetic.Certified.divideAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.divideSub
+#print axioms ECDSAAdd.Arithmetic.Certified.pointSubConstant
+#print axioms ECDSAAdd.Arithmetic.Certified.pointSquare
+#print axioms ECDSAAdd.Arithmetic.Certified.pointInPlaceConstantAdd
+#print axioms ECDSAAdd.Arithmetic.Certified.pointInPlaceClearSlope
+#print axioms ECDSAAdd.Arithmetic.Certified.pointInPlaceGeneric
 #print axioms ECDSAAdd.andComputeErase_spec
 #print axioms ECDSAAdd.andComputeErase_correct
 #print axioms ECDSAAdd.andComputeErase_toffoliCount

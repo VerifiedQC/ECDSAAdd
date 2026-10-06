@@ -38,3 +38,9 @@ import ECDSAAdd.Arithmetic.ModularInverse.OneBitRoundResources
 import ECDSAAdd.Arithmetic.ModularInverse.InverseTerminalConstants
 
 import ECDSAAdd.Arithmetic.ModularAddition.LanguageExample
+import ECDSAAdd.Arithmetic.ModularAddition.Certified
+import ECDSAAdd.Arithmetic.ModularDoubling.Certified
+import ECDSAAdd.Arithmetic.ModularMultiplication.Certified
+import ECDSAAdd.Arithmetic.ModularInverse.Certified
+import ECDSAAdd.Arithmetic.Division.Certified
+import ECDSAAdd.Arithmetic.PointAddition.Certified

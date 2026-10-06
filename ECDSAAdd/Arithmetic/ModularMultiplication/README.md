@@ -2,6 +2,26 @@
 
 本模块通过 Montgomery 窗口运算实现标准表示的模乘及受控累加等接口，并证明结果、历史恢复和资源用量。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+- [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
+
+## [Certified.lean](Certified.lean)
+
+入口：`montLookupAdd/Sub`、`montConstantAdd/Sub`、`montMulXor`、`montMulAdd/Sub`、`montMulControlledAdd/Sub`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+查表、模积准备、结果使用和恢复由整块实现负责，不为每个表达式重新计算。查表/常数操作明确按累加器位宽回绕；模乘使用经典模数。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## [CertifiedSpecs.lean](CertifiedSpecs.lean)
+
+这些连接证明只用于检查上面的源公式；没有新电路或额外资源，也不放宽原规格前提。
+
+## 后端算法与原规格
+
+
 算法阅读先看 [MontPrepare.lean](MontPrepare.lean) 的窗口加减、约减和恢复，以及 [MontAdapterLayout.lean](MontAdapterLayout.lean) 的模乘输出接口。输出接口用 `with product := (M.x * M.y) mod p { … };` 包住 XOR/模加减；`montProductValue` 绑定准备和恢复，两段历史保留到块结束。各 `*_program` 定理证明原门列不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。

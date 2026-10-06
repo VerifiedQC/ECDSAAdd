@@ -2,6 +2,21 @@
 
 本模块实现模加法、模减法及其原地、受控和 XOR 输出接口，并证明范围、清理与资源结论。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+
+## [Certified.lean](Certified.lean)
+
+入口：`modAddOn`、`modSubOn`、`modAddCore`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+原位宽/互异、模数与输入范围、零工作区条件保留。XOR 输出允许非零初值。旧 `modAddOn x y out q W` 不变；新认证入口用 `ModLayout` 绑定已验证接线，原分支算法仍在 `Modular.lean`。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## 后端算法与原规格
+
+
 算法主体先读 [Modular.lean](Modular.lean) 的 `modAddOn/modSubOn` 和 [ModInPlace.lean](ModInPlace.lean) 的 `modAddCore`。前两者直接接收 x/y/out/q，以比较和两个 `if` 块表示约减；`if` 是量子受控执行，不测量条件。total/modulus/diff 和进位位移到工作区配方 W。旧 `modAdd/modSub` 保留为布局兼容入口，原规格与资源不变。
 
 模加减现在按“数学分支证明＋实际电路连接”验证，供人阅读的证明不展开门列。这里只认证这两个具体配方，不是已全部迁入通用 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。

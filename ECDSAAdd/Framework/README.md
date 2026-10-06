@@ -2,6 +2,42 @@
 
 本模块定义电路的状态表示、允许的操作、执行规则，以及正确性和资源计数的证明工具。
 
+## 当前入口：显式实现与证明（2026-10-06）
+
+关键算术函数现在优先读各模块的 `Certified.lean`。每个语句或共享代码块直接指定 Lean 实现及其规格证明，不经过默认实现注册表：
+
+```lean
+certified {
+  M.out = (M.out + M.x * M.y) mod p;
+} using (Arithmetic.montMulAdd M p) by (montMulAdd_spec M p)
+```
+
+花括号给出独立的数学计算，`using` 给出实际 `Program`，`by` 给出已有的 Hoare 规格定理。连接器检查定理的电路就是这个实现，并生成 Lean 证明：满足其前提时，定理的后置条件蕴含所写计算。写错运算、寄存器、模数、实现或证明会报错；不是仅检查定理名字存在。
+
+结果是 `CheckedProgram`，而不是裸门列：
+
+- `.circuit`：只包含 `using` 指定的一份实现。块内语句不另外生成电路。
+- `.effect`：源代码定义的输入/输出数学关系。
+- `.requires`：原规格的位宽、互异、范围、初始化等前提，调用者必须证明。
+- `.ensures`：保留所引用规格的全部后置条件，包括它已证明的输入保持、工作区恢复或 frame；不凭空补充原定理未证明的性质。
+- `.correct`：对任意初始相位及测量记录，在上述前提下证明计算、相位恢复和原后置条件。
+
+共享中间值可以放在同一块中。测试中的一位示范写 `out ^= difference` 与 `out2 ^= (difference+const(1)) mod 2`，整块指定一次共享差值电路；八条实际指令只计算一次差，使用两次，再恢复辅助位。分组本身不优化门列，共享与清理由所选实现及其证明负责。
+
+当前语义边界：
+
+- `=` 描述结果值，`^=` 描述与原目标值 XOR；前提决定覆盖操作何时可实现，不是通用量子重置。这里的数学等式不静默截位；需要截断时显式写 `mod (2^n)`，不能把旧 `prog` 的不等宽复制约定自动套用到本层。
+- `const(k)` 是经典 Nat；`(x-y) mod q` 使用模减含义，拒绝没有模数的裸减法和裸求逆。`inverse(x) mod q` 表示模逆；非零/互素条件来自证明。
+- `field(expr) mod q` 在 `ZMod q` 中计算再取标准代表元，点加公式因此不会误用 Nat 的截断减法；`/` 在这里是乘逆元。
+- 块内语句按书写顺序更新数学值；`let` 保存当时的数学值，不分配 qubit。用新名字保存输入快照；作用域内不允许重名。
+- 本层是关系规格：`effect` 约束显式写出的结果，未写出的线路性质取自 `ensures`，不自动声称全局 frame。同一寄存器的后续读取须沿用同一表达式（允许加括号）；不推断不同名字或重叠接线之间的别名关系。物理接线是否实现这些公式仍由证书检查。
+- `if c` 表示 c=1 的受控数学效果，`if (c XOR 1)` 表示 c=0；本层不插入测量或对任意门列机械地添加控制。布尔比较快照也可作为条件。
+- 当前连接器接收结论为 `Triple` 的定理。逐状态 `_correct` 和复杂状态谓词的连接整理在各模块的 `CertifiedSpecs.lean` 中，原前提与结论保留。前提可能不可满足，因此“证书构造成功”不等于某个初态满足 `requires`。
+
+这是覆盖地图中 21 个关键函数的新增可读/认证入口，命名空间为 `ECDSAAdd.Arithmetic.Certified`；旧程序及调用链继续作为后端，尚未把所有内部调用逐句迁移。布局参数仍绑定具体工作区。资源来自同一份实际门列，不由表达式估算；本轮没有新增一般量子信道证明。
+
+以下 `arith/Config` 与 `prog using Context` 章节保留为兼容接口说明，不是新入口的默认实现机制。
+
 ## 高层算术语言（第一版）
 
 `arith` 保存高层算术操作，`prog` 保留原有门级语义；两者不混用。打开 `ECDSAAdd.ArithmeticLanguage` 后可以写：
@@ -122,6 +158,48 @@ prog using (montOutputContext M) {
 [Cost.lean](#costlean)
 
 这个文件定义电路的资源计数和实际触及的线路，并证明电路拼接时的资源关系及外部线路保持性质。
+
+[CertifiedTranslation.lean](#certifiedtranslationlean)
+
+这个文件定义独立的算术块语义，把指定实现和已有规格连接成带前提与证明的可读程序。
+
+## [CertifiedTranslation.lean](CertifiedTranslation.lean)
+
+```lean
+abbrev Effect := BasisState → BasisState → Prop
+```
+
+表示初态与末态之间的数学计算关系，不依赖所选电路。
+
+```lean
+structure Certificate (effect : Effect) (circuit : Program)
+```
+
+证书由前提 `requires`、保留的后置关系 `ensures` 及证明 `correct` 组成。证明同时保证源计算、相位恢复和原后置条件。
+
+```lean
+def Certificate.ofTriple {P Q : BasisState → Prop} {circuit : Program}
+    (effect : Effect) (proof : Triple P circuit Q)
+    (meaning : ∀ s t, P s → Q t → effect s t)
+
+def Certificate.abstract {α : Sort u} {effect : Effect} {circuit : Program}
+    (family : α → Certificate effect circuit)
+```
+
+前者用已有 Hoare 定理和数学连接证明构造证书；后者保留规格参数与假设，把它们作为前提见证，不抹去证明义务。
+
+```lean
+structure CheckedProgram
+```
+
+可读程序由 `effect`、`circuit`、`certificate` 三部分组成。
+
+```lean
+theorem CheckedProgram.correct (p : CheckedProgram) (s : State) (m : List Bool)
+    (h : p.requires s.basis)
+```
+
+在调用前提成立时，实际门列实现源计算、恢复相位，并满足原规格的全部后置条件。证明解析器不承担可信逻辑：生成的证明仍由 Lean 检查。
 
 ## [Syntax.lean](Syntax.lean)
 

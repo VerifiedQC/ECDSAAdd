@@ -2,6 +2,26 @@
 
 本模块实现 secp256k1 点与经典常量点相加的电路，包括 XOR 输出、受控原地更新、特殊点分支及辅助位清理。
 
+## 当前可读入口
+
+- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+- [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
+
+## [Certified.lean](Certified.lean)
+
+入口：`pointSubConstant`、`pointSquare`、`pointInPlaceConstantAdd`、`pointInPlaceGeneric`、`pointInPlaceClearSlope`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
+
+普通点加块显式保存输入快照，计算斜率并依次更新两个坐标；清斜率的 `= const(0)` 受原斜率关系/例外值前提约束，不是任意重置。`pointSubConstant` 的新入口接收候选寄存器标识 `a/o`，旧任意接线接口保留。
+
+每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+
+## [CertifiedSpecs.lean](CertifiedSpecs.lean)
+
+这些连接证明只用于检查上面的源公式；没有新电路或额外资源，也不放宽原规格前提。
+
+## 后端算法与原规格
+
+
 算法阅读先看 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute/Clear` 和 [PointInPlaceProgram.lean](PointInPlaceProgram.lean) 的 `pointInPlaceGeneric`：常数差直接写 `out ^= (x - const(k)) mod p`，平方写 `L.square ^= (L.slope ^ 2) mod p`。原地平方累减写 `x = (x - slope ^ 2) mod p using squareSubtract`，斜率副本由配方准备和清理；普通乘积仍用 `productAdd/Sub` 选择借用区。原规格与资源不变。
 
 这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
