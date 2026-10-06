@@ -45,7 +45,7 @@ PY
   exit "$task_rc"
 }
 trap finish EXIT
-lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources > "$task_log_dir/build.log" 2>&1
+lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport > "$task_log_dir/build.log" 2>&1
 task_build_end="$(date +%s)"
 # Preserve verify.sh's selected declarations and whitelist verbatim. The
 # separately timed build above replaces only its identical build command.
