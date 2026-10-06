@@ -7,6 +7,15 @@ lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.PenultimateSwapIdentity
+import ECDSAAdd.Arithmetic.PenultimateMappedProgram
+import ECDSAAdd.Arithmetic.PenultimateMappedCellProof
+import ECDSAAdd.Arithmetic.PenultimateMappedForward
+import ECDSAAdd.Arithmetic.PenultimateMappedInverse
+import ECDSAAdd.Arithmetic.PenultimateMappedResources
+import ECDSAAdd.Framework.CertifiedProgram
+import ECDSAAdd.Framework.ProgramContextEq
+import ECDSAAdd.Framework.RecordPadding
 import ECDSAAdd.Arithmetic.EntryInversePayload
 import ECDSAAdd.Arithmetic.EntryInverseFirstGroupFrame
 import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse
@@ -1558,6 +1567,33 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_resources
 #print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_support
 #print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_saving
+#print axioms ECDSAAdd.Arithmetic.PenultimateSwapIdentity.cell_counts
+#print axioms ECDSAAdd.Arithmetic.PenultimateSwapIdentity.cell_saving
+#print axioms ECDSAAdd.Arithmetic.PenultimateSwapIdentity.penultimate_half_dup
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.replay_counts
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_counts
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.saving
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.cell_natural
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.logical_support_subset
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.support_subset
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.cell_eq
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.forward_cell_eq
+#print axioms ECDSAAdd.Arithmetic.PenultimateMappedCellProof.inverse_cell_eq
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.forward_groups_payload
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_forward_spec
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.replay_inverse_spec
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_inverse_spec
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.replay_support_sub
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support_sub
+#print axioms ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support
+#print axioms ECDSAAdd.sealedProgram_eq
+#print axioms ECDSAAdd.sealedProgram_run
+#print axioms ECDSAAdd.sealedProgram_cost
+#print axioms ECDSAAdd.append_context_eq
+#print axioms ECDSAAdd.suffix_context_eq
+#print axioms ECDSAAdd.program_shape_context_eq
+#print axioms ECDSAAdd.run_replicate_false
+#print axioms ECDSAAdd.run_pad_false
 LEAN
 )
 task_axiom_lean_rc=$?

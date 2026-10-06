@@ -1,5 +1,6 @@
-import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimTerminal
-import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse
+import ECDSAAdd.Arithmetic.PenultimateMappedForward
+import ECDSAAdd.Arithmetic.PenultimateMappedInverse
+import ECDSAAdd.Arithmetic.PenultimateMappedResources
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1500000
@@ -8,28 +9,20 @@ namespace ECDSAAdd.Arithmetic.MappedCompressed
 open Secp256k1 OffsetBorrowedCanonical CompressedFieldSupport CompressedAllocation
 attribute [local irreducible] run wires toffoliCount measurementCount
 
-/-- Both exact entry cancellations retain the terminal omission and original
-field contract. Native integer recording remains 512 rounds. -/
+/-- Both exact entry cancellations retain the terminal omission and remove the
+penultimate equal-word swap. The original field contract and all 512 native
+integer recording rounds remain unchanged. -/
 def selectedFieldSegment (divide : Bool) : Program :=
-  if divide then EntryMappedFieldSegmentTrim.terminalFieldSegment true
-  else EntryMappedFieldSegmentTrim.terminalFieldSegment false
+  PenultimateMapped.fieldSegment divide
 
 theorem selectedFieldSegment_support (divide : Bool) :
-    wires (selectedFieldSegment divide) ⊆ slots.toFinset := by
-  cases divide
-  · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      EntryMappedFieldSegmentTrim.inverse_entry_support
-  · simpa only [selectedFieldSegment, if_true] using
-      EntryMappedFieldSegmentTrim.terminalFieldSegment_support true
+    wires (selectedFieldSegment divide) ⊆ slots.toFinset :=
+  PenultimateMapped.fieldSegment_support divide
 
 theorem selectedFieldSegment_counts (divide : Bool) :
-    toffoliCount (selectedFieldSegment divide)=657817 ∧
-    measurementCount (selectedFieldSegment divide)=525981 := by
-  cases divide
-  · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      EntryMappedFieldSegmentTrim.inverse_entry_resources
-  · simpa only [selectedFieldSegment, if_true] using
-      EntryMappedFieldSegmentTrim.terminalFieldSegment_counts true
+    toffoliCount (selectedFieldSegment divide)=657560 ∧
+    measurementCount (selectedFieldSegment divide)=525980 :=
+  PenultimateMapped.fieldSegment_counts divide
 
 /-- Same hypotheses and conclusion as the current complete field contract.
 Every record stream and incoming phase remains quantified. -/
@@ -51,10 +44,10 @@ theorem selectedFieldSegment_spec (divide : Bool)
     out.phase=s.phase ∧ EncodedCanonicalFrame origin (fieldResult divide origin x Y) 0 out := by
   cases divide
   · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_inverse_spec hn hlo ho hp hf origin hg0 hs0 env legal
+      PenultimateMapped.fieldSegment_inverse_spec hn hlo ho hp hf origin hg0 hs0 env legal
         hw hu hr hy x hx0 hx trace Y s m input
   · simpa only [selectedFieldSegment, if_true] using
-      EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_forward_spec
+      PenultimateMapped.fieldSegment_forward_spec
         hn hlo ho hp hf origin hg0 hs0 env legal hw hu hr hy x hx0 hx trace Y s m input
 
 end ECDSAAdd.Arithmetic.MappedCompressed
