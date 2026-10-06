@@ -45,3 +45,22 @@ is included in production resources.
 Remaining work is the complete native ripple, exact field fold and carry
 recovery, interleaved lifetime placement, and integration into the original
 all-valid-input point contract followed by full remote build and axiom audit.
+
+## Complete native ripple certificate
+
+The complete normal unsigned ripple now passes Lean for arbitrary aligned
+widths, arbitrary input phase and all independent measurement outcomes.
+Its saved-record phase debt is explicitly evaluated on the original operands.
+The proof restores the source, carry-in, every spectator and all carry scratch,
+while updating the target by unsigned addition modulo its binary width.
+Numeric port alignment implies the recursive shape certificate.
+Causal well-formedness and the actual quantum support are proved separately.
+At width n it emits n-1 Toffolis and n-2 fresh measurements, with one carry
+bank. At 256 bits its quantum support is at most 767 sites including input
+ports. This is an unsigned component bound, not a Stage 2/5 Q measurement.
+
+The full ripple proof passed in 4 seconds. The causal/layout certificate
+passed in 7 seconds. Exact arithmetic mirror identities passed in 21 seconds:
+adding the source to the complemented sum reproduces the original carry at
+every binary prefix and returns the complemented original target. The full
+chunked Defer/Apply gate composition and signed native tick remain to be proved.
