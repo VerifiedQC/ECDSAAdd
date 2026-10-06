@@ -7,6 +7,16 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.RecordedRailApplyProgram
+import ECDSAAdd.Arithmetic.RecordedRailApplyWord
+import ECDSAAdd.Arithmetic.RecordedRailApplyDebt
+import ECDSAAdd.Arithmetic.RecordedRailApplyLayout
+import ECDSAAdd.Arithmetic.RecordedRailApplyProof
+import ECDSAAdd.Arithmetic.RecordedRailApplyResources
+import ECDSAAdd.Arithmetic.EndpointSwapTrimProgram
+import ECDSAAdd.Arithmetic.EndpointSwapTrimProof
+import ECDSAAdd.Arithmetic.OffsetBorrowedSerializedCellProgram
+import ECDSAAdd.Arithmetic.OffsetBorrowedSerializedCellProof
 import ECDSAAdd.Arithmetic.EntryFieldSeedCancellation
 import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim
 import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimProof
@@ -1511,6 +1521,30 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_spec
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_pool_frame
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_reverse_pool
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.mapped_sum
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.carry_overflow
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.sparse_debt
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.debt_forward
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.forward_ready
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.flip_state
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.correct_pair
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.pair_counts
+#print axioms ECDSAAdd.Arithmetic.RecordedRailApply.pair_site_bound
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.counts
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.partial_frame
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.swap_window_state
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.forward_dup_of_payload_equal
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.forward_support_subset
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.inverse_support_subset
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.forward_oldcell_eq
+#print axioms ECDSAAdd.Arithmetic.EndpointSwapTrim.inverse_oldcell_eq
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.counts
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.forward_counts
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.inverse_counts
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.support
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.omitted_effS_away
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.half_eq
+#print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.cell_frame
 LEAN
 )
 task_axiom_lean_rc=$?
