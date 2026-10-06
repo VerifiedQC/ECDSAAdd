@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore
+import ECDSAAdd.Arithmetic.EntryForwardSelectedPoolRestore
 import ECDSAAdd.Arithmetic.MappedCompressedCallerPreparation
 import ECDSAAdd.Arithmetic.MappedCompressedCallerFrame
 set_option maxRecDepth 8192
@@ -7,7 +7,7 @@ namespace ECDSAAdd.Arithmetic.MappedCompressed
 open Secp256k1 DirectSkywalk OffsetBorrowedCanonical CompressedFieldSupport
 attribute [local irreducible] run measurementCount skywalkSeed skywalkUnseed
   literalSkywalkSeed literalSkywalkUnseed compressedCompactForward compressedCompactReverse
-  fieldTrimSegment skywalkArithmeticClear allGroupEncode SkywalkTrace.next Nat.iterate
+  selectedFieldSegment skywalkArithmeticClear allGroupEncode SkywalkTrace.next Nat.iterate
 
 /-- Actual seven-stage caller contract on the original256-bit ports.
 Field entry and encoded-pool restoration are derived from the emitted prefix. -/
@@ -23,7 +23,7 @@ theorem kernel_states (divide : Bool)
     (hs1 : run (literalSkywalkSeed (literalSkywalkPoolSeed base) p) m1 s = s1)
     (hs2 : run (compressedCompactForward base 0 512) m2 s1 = s2)
     (hs3 : run (skywalkArithmeticClear base) m3 s2 = s3)
-    (hs4 : run (fieldTrimSegment divide) m4 s3 = s4)
+    (hs4 : run (selectedFieldSegment divide) m4 s3 = s4)
     (hs5 : run (skywalkArithmeticClear base) m5 s4 = s5)
     (hs6 : run (compressedCompactReverse base 0 512) m6 s5 = s6)
     (hs7 : run (literalSkywalkUnseed (literalSkywalkPoolSeed base) p) m7 s6 = s7) :
@@ -52,7 +52,7 @@ theorem kernel_states (divide : Bool)
     (facts.controls _ (by simp)).trans hg0
   have hs : origin.basis (base 2410) = false :=
     (facts.controls _ (by simp)).trans hs0
-  have h4 := fieldTrimSegment_spec divide hn hlo ho selectorPool hf origin.basis hg hs
+  have h4 := selectedFieldSegment_spec divide hn hlo ho selectorPool hf origin.basis hg hs
     facts.env facts.legal facts.workZero facts.unusedZero facts.targetHigh facts.sourceHigh
     x hx0 hx facts.trace Y s3 m4 entry
   rw [hs4] at h4
@@ -67,7 +67,7 @@ theorem kernel_states (divide : Bool)
       (run (skywalkArithmeticClear base) m3 (run (compressedCompactForward base 0 512) m2 s1)) := by
     rw [hs2,hs3]
     exact entry
-  have h6 := fieldTrimSegment_reverse_pool divide hn hlo ho selectorPool hf origin.basis hg hs
+  have h6 := selectedFieldSegment_reverse_pool divide hn hlo ho selectorPool hf origin.basis hg hs
     facts.env facts.legal facts.workZero facts.unusedZero facts.targetHigh facts.sourceHigh
     facts.sourceZero x hx0 hx facts.trace Y s1 m2 m3 m4 m5 m6 stage0 inputRun
   dsimp only at h6

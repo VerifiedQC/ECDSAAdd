@@ -7,6 +7,16 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.EntryFieldSeedCancellation
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimProof
+import ECDSAAdd.Arithmetic.EntryBodySupport
+import ECDSAAdd.Arithmetic.EntryBodySupportConcrete
+import ECDSAAdd.Arithmetic.EntrySelectedSwapFrame
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimForward
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimTerminal
+import ECDSAAdd.Arithmetic.EntryForwardSelectedFieldSegment
+import ECDSAAdd.Arithmetic.EntryForwardSelectedPoolRestore
 import ECDSAAdd.Math.SkywalkTerminationBudget
 import ECDSAAdd.Math.SkywalkTerminalMixedControls
 import ECDSAAdd.Math.SkywalkTerminalLastControls
@@ -1476,6 +1486,31 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.SkywalkNat.terminates_canonical_sub_one
 #print axioms ECDSAAdd.SkywalkNat.terminates_511
 #print axioms ECDSAAdd.SkywalkNat.terminal_padding
+#print axioms ECDSAAdd.Arithmetic.EntryFieldSeedCancellation.entry_frames
+#print axioms ECDSAAdd.Arithmetic.EntryFieldSeedCancellation.entry_state_eq
+#print axioms ECDSAAdd.Arithmetic.EntryFieldSeedCancellation.counts
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.fieldSegment_support
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.fieldSegment_counts
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstGroup_eq_rename
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.encoded_field_unique
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.raw_entry_suffix_eq
+#print axioms ECDSAAdd.Arithmetic.EntryBodySupport.renamed_three_support
+#print axioms ECDSAAdd.Arithmetic.EntryBodySupport.renamed_logical_support
+#print axioms ECDSAAdd.Arithmetic.EntryBodySupport.first_body_support
+#print axioms ECDSAAdd.Arithmetic.EntrySelectedSwapFrame.selectedSwap_frame
+#print axioms ECDSAAdd.Arithmetic.EntrySelectedSwapFrame.encoded_window_step
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstBody_frame
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstGroup_forward_step
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.forward_prefix_state_eq
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.fieldTrimSegment_forward_spec
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldSegment_support
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldSegment_counts
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_forward_spec
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_spec
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_pool_frame
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_reverse_pool
 LEAN
 )
 task_axiom_lean_rc=$?

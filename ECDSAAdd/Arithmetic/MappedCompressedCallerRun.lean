@@ -5,7 +5,7 @@ set_option maxHeartbeats 1800000
 namespace ECDSAAdd.Arithmetic.MappedCompressed
 open Secp256k1
 attribute [local irreducible] run measurementCount literalSkywalkSeed literalSkywalkUnseed
-  compressedCompactForward compressedCompactReverse fieldTrimSegment skywalkArithmeticClear
+  compressedCompactForward compressedCompactReverse selectedFieldSegment skywalkArithmeticClear
 
 /-- Abstract composition prevents semantic reduction of the emitted
 million-gate caller while retaining the actual take/drop measurement split. -/
@@ -33,7 +33,7 @@ theorem kernel_spec (divide : Bool)
     DirectSkywalkArithmeticStrong divide base (base 2400) x Y initial out
   have all := run_seven_states
     (literalSkywalkSeed (literalSkywalkPoolSeed base) p)
-    (compressedCompactForward base 0 512) (skywalkArithmeticClear base) (fieldTrimSegment divide)
+    (compressedCompactForward base 0 512) (skywalkArithmeticClear base) (selectedFieldSegment divide)
     (skywalkArithmeticClear base) (compressedCompactReverse base 0 512)
     (literalSkywalkUnseed (literalSkywalkPoolSeed base) p) P
     (by
