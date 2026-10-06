@@ -221,3 +221,12 @@ incumbent的 streamed `with_square` 架构用于结构参考；没有移入近�
 ## 2026-10-04 精确 fused output recovery
 
 源码9ea2e58把当前 Step6 改为受控规范反射、经典offset+1修正与精确y修正。结构参考 Layr-Labs/ecdsafail-challenge 的公开默认 HEAD3161bd2：`coord_rsub` 的经典+1和补码反减、共享进位及工作复用。该来源的截断折叠/高位比较窗口与乘法/y恢复边界融合未移入此实现，恢复成本全部保留在本阶段。Lean程序、规范边界、零输入、所有测量记录相位/控制/清理与资源证明在本仓库实现；常量核复用已证 MeasuredCanonicalMod。阶段为2,301T/2,301M/≤1,036分配位置；完整点加为2,740,035T/2,081,591M/≤2,579支持。完整CPU pod验证165s build +135s audit，971公开查询、487哈希匹配，无新公理或近似。
+
+
+## Exact penultimate swap specialization, 2026-10-06
+
+Source checkpoint `f83e51c` removes one equal-word S-selector/swap window from each selected field replay. The forward endpoint duplication follows from the original 512-round trace. The inverse starts from the corresponding duplicate pair. Complete-state equality, arbitrary independent measurement records, wire containment and resource propagation are proved by the new Penultimate modules using existing exact arithmetic. No incumbent gate code was copied for this change.
+
+`CertifiedProgram` supplies a kernel-checked opaque subtype with a proof that its value is the original program. Its aliases avoid expanding a large gate list during proof checking. They introduce no instruction, assumption or axiom. The raw emitted programs and protected point specifications remain unchanged except for the proved removed gate windows. Generic record padding preserves the original default-false behavior for short measurement lists.
+
+The full CPU build and all 1,493 public axiom queries passed. All 855 source hashes matched. Resource counts refer to the complete selected point circuit in the original signed-basis/measurement-record model. This work does not add a full quantum-channel semantics bridge. See [checkpoint evidence](EXACT_PENULTIMATE_SWAP_20261006.md).

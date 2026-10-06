@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-Latest complete verified checkpoint: **2,740,035 static Toffolis / 2,081,591 measurements / ≤2,579 static logical sites**, source **9ea2e58**. Step6: **2,301 T /2,301 measurements /≤1,036 allocated sites including residents**. Step4 remains99,902 T /99,382 measurements /≤1,297 allocated sites. Full remote build and all971 public transitive-axiom queries passed in300s:165s build +135s audit, queue/setup0s;487 committed source hashes matched. See [exact output recovery](EXACT_OUTPUT_RECOVERY_20261004.md). Exact peak-live Q is unmeasured; certificates provide allocation ceilings. Earlier records are historical.
+Latest complete verified checkpoint: **2,219,456 static Toffolis / 1,557,956 measurements / ≤1,899 static logical sites**, source **f83e51c**. Both Stages 2 and 5 use **1,055,040 T / 724,550 measurements / ≤1,899 sites**. Step 4 remains **99,902 T / 99,382 measurements / ≤1,297 sites**. Step 6 remains **2,301 T / 2,301 measurements / ≤1,036 sites**. The complete remote build and all 1,493 public transitive-axiom queries passed in 1,019s: 763s build + 256s audit. Setup and queue were 0s. All 855 source hashes matched. See [checkpoint evidence](EXACT_PENULTIMATE_SWAP_20261006.md). Exact peak-live Q is unmeasured. The certificates provide allocation ceilings, and the ≤1,297 Q / <600K T arithmetic-stage targets remain open. Earlier checkpoint records are historical.
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -13,7 +13,7 @@ Latest complete verified checkpoint: **2,740,035 static Toffolis / 2,081,591 mea
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 2,740,035 / 2,081,591 / ≤2,579 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `controlledPointAdd`，有限 C | 2,219,456 / 1,557,956 / ≤1,899 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
@@ -31,7 +31,7 @@ Latest complete verified checkpoint: **2,740,035 static Toffolis / 2,081,591 mea
 | `measuredControlledModSub`，n>0 | 7n−1 / 7n−1 / 5n+6 | [measuredControlledModSub_resources](../ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
 | `equalConstant`，n 位输入 | n / n / — | [equalConstant_counts](../ECDSAAdd/Arithmetic/EqualConstant.lean#L102) |
 
-本索引不把独立模块的资源相加当作整机结果。当前整机支持上界另见 [pointDialogFinite_wires](../ECDSAAdd/Arithmetic/PointDialogWires.lean#L26)。布局仍分配 9,817 位，实际程序支持集的基数已证不超过 2,579；这不是精确峰值存活量子位数。
+本索引不把独立模块的资源相加当作整机结果。当前整机支持上界另见 [finite_qubits](../ECDSAAdd/Arithmetic/CompressedPointDialogResources.lean)。布局仍分配 9,817 位，实际程序支持集的基数已证不超过 1,899；这不是精确峰值存活量子位数。
 
 ## 回放正逆组合：规范值与电路恢复
 
