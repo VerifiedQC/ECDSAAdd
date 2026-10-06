@@ -7,6 +7,20 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Math.SkywalkTerminationBudget
+import ECDSAAdd.Math.SkywalkTerminalMixedControls
+import ECDSAAdd.Math.SkywalkTerminalLastControls
+import ECDSAAdd.Arithmetic.TerminalMixedTapeControls
+import ECDSAAdd.Arithmetic.TerminalMappedReplayTrimProof
+import ECDSAAdd.Arithmetic.TerminalMappedReplayTrim
+import ECDSAAdd.Arithmetic.TerminalMappedReplayResources
+import ECDSAAdd.Arithmetic.TerminalMappedReplayReference
+import ECDSAAdd.Arithmetic.TerminalMappedReplayPayload
+import ECDSAAdd.Arithmetic.TerminalMappedReplayCore
+import ECDSAAdd.Arithmetic.TerminalMappedFieldSegment
+import ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore
+import ECDSAAdd.Arithmetic.PairFrameUnique
+import ECDSAAdd.Arithmetic.MappedCompressedReplayCounts
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroHead
 import ECDSAAdd.Arithmetic.BalancedCleanupOffsetZeroProgram
 import ECDSAAdd.Arithmetic.FieldRenameOffsetZero
@@ -1412,6 +1426,56 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.FieldRename.zero_offset_core_natural
 #print axioms ECDSAAdd.Arithmetic.FieldRename.zero_offset_program_natural
 #print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.zero_offset_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.logicalCell_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.mappedGroup_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.mappedGroups_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.mappedReplay_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.converterPair_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldSegment_counts
+#print axioms ECDSAAdd.Arithmetic.regValue_equal_bits
+#print axioms ECDSAAdd.Arithmetic.PairFrame.unique
+#print axioms ECDSAAdd.Arithmetic.PairFrame.program_eq
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_pool_frame
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_reverse_pool
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.canonicalTrimReplay_spec
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_spec
+#print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.trim_grouped_encoded_replays
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.indexedLetters_append
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimLetters_last
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.lastLetter_controls
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimLetters_quotient
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimLetters_product
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.baseTrimReplay_reference
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimLetters_indexed
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimCell_step
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_reference
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_saving
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_join
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_count_saving
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_frame
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_spec
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_old_eq
+#print axioms ECDSAAdd.Arithmetic.terminalMixedLetter_controls
+#print axioms ECDSAAdd.SkywalkTrace.trace_getD_code
+#print axioms ECDSAAdd.SkywalkTrace.code_terminal
+#print axioms ECDSAAdd.SkywalkTrace.code_after_budget
+#print axioms ECDSAAdd.SkywalkTrace.code511
+#print axioms ECDSAAdd.SkywalkTrace.trace512_last
+#print axioms ECDSAAdd.SkywalkTrace.unit_trace512_last
+#print axioms ECDSAAdd.SkywalkTrace.record_index511_controls
+#print axioms ECDSAAdd.SkywalkTrace.mixed_controls_index511
+#print axioms ECDSAAdd.SkywalkTrace.mixed_letter_index511
+#print axioms ECDSAAdd.SkywalkNat.iter_fixed_of_u_zero
+#print axioms ECDSAAdd.SkywalkNat.step_exponent_budget
+#print axioms ECDSAAdd.SkywalkNat.iter_u_zero_budget
+#print axioms ECDSAAdd.SkywalkNat.terminates_2n_sub_one
+#print axioms ECDSAAdd.SkywalkNat.terminates_canonical_sub_one
+#print axioms ECDSAAdd.SkywalkNat.terminates_511
+#print axioms ECDSAAdd.SkywalkNat.terminal_padding
 LEAN
 )
 task_axiom_lean_rc=$?

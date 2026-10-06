@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.TerminalMappedReplayResources
 import ECDSAAdd.Arithmetic.MappedCompressedFieldReplay
 import ECDSAAdd.Arithmetic.LiteralSkywalkSeedPool
 import ECDSAAdd.Arithmetic.SkywalkArithmeticCore
@@ -117,14 +118,14 @@ theorem clear_support : wires (skywalkArithmeticClear base)⊆slots.toFinset := 
 placement; integer codec gates are constructed above the template labels. -/
 def kernel (divide : Bool) : Program :=
   literalSkywalkSeed (literalSkywalkPoolSeed base) p++
-  compressedCompactForward base 0 512++skywalkArithmeticClear base++fieldSegment divide++
+  compressedCompactForward base 0 512++skywalkArithmeticClear base++fieldTrimSegment divide++
   skywalkArithmeticClear base++compressedCompactReverse base 0 512++
   literalSkywalkUnseed (literalSkywalkPoolSeed base) p
 
 theorem kernel_support (divide : Bool) : wires (kernel divide)⊆slots.toFinset := by
   have integer := integer_support 0 512 (by omega)
   simp only [kernel,wires_append,Finset.union_subset_iff,and_assoc]
-  exact ⟨seed_support.1,integer.1,clear_support,fieldSegment_support divide,
+  exact ⟨seed_support.1,integer.1,clear_support,fieldTrimSegment_support divide,
     clear_support,integer.2,seed_support.2⟩
 
 def controlled (divide : Bool) : Program :=

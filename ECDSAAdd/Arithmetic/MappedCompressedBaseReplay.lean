@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.MappedCompressedPacketTransport
-import ECDSAAdd.Arithmetic.MappedCompressedStageCounts
+import ECDSAAdd.Arithmetic.MappedCompressedReplayCounts
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
