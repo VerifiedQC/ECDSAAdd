@@ -31,10 +31,10 @@ def sites (w : Nat → Wire) (b g swap flag : Wire) : List Wire :=
 theorem counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
     (hn : (flag::(balancedSharedPorts w flag).r++
       (balancedSharedPorts w flag).y).Nodup) :
-    toffoliCount (forward w b g swap flag ig is)=1282 ∧
-    measurementCount (forward w b g swap flag ig is)=1026 ∧
-    toffoliCount (inverse w b g swap flag ig is)=1282 ∧
-    measurementCount (inverse w b g swap flag ig is)=1026 := by
+    toffoliCount (forward w b g swap flag ig is)=1281 ∧
+    measurementCount (forward w b g swap flag ig is)=1025 ∧
+    toffoliCount (inverse w b g swap flag ig is)=1281 ∧
+    measurementCount (inverse w b g swap flag ig is)=1025 := by
   have width := BalancedCleanup.widths (balancedSharedPorts w flag).toLayout
     (balancedSharedPorts_widths w flag)
   have sw := swapRegisters_resources flag _ _ (width.2.1.trans width.2.2.1.symm) hn
@@ -53,15 +53,15 @@ theorem counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
 
 theorem forward_counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
     (hn : (flag::(balancedSharedPorts w flag).r++(balancedSharedPorts w flag).y).Nodup) :
-    toffoliCount (forward w b g swap flag ig is)=1282 ∧
-    measurementCount (forward w b g swap flag ig is)=1026 := by
+    toffoliCount (forward w b g swap flag ig is)=1281 ∧
+    measurementCount (forward w b g swap flag ig is)=1025 := by
   have h := counts w b g swap flag ig is hn
   exact ⟨h.1,h.2.1⟩
 
 theorem inverse_counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
     (hn : (flag::(balancedSharedPorts w flag).r++(balancedSharedPorts w flag).y).Nodup) :
-    toffoliCount (inverse w b g swap flag ig is)=1282 ∧
-    measurementCount (inverse w b g swap flag ig is)=1026 := by
+    toffoliCount (inverse w b g swap flag ig is)=1281 ∧
+    measurementCount (inverse w b g swap flag ig is)=1025 := by
   have h := counts w b g swap flag ig is hn
   exact ⟨h.2.2.1,h.2.2.2⟩
 
