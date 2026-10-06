@@ -4,6 +4,8 @@ import ECDSAAdd.Arithmetic.MappedCompressedFieldReplay
 import ECDSAAdd.Arithmetic.LiteralSkywalkSeedPool
 import ECDSAAdd.Arithmetic.SkywalkArithmeticCore
 import ECDSAAdd.Arithmetic.DirectZeroControlled
+import ECDSAAdd.Arithmetic.NativeFirstDirectProgram
+import ECDSAAdd.Arithmetic.NativeFirstDirectSupport
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1200000
@@ -13,6 +15,7 @@ open CompressedAllocation Secp256k1
 attribute [local irreducible] wires compactSkywalkTick compactSkywalkReverseTick
 attribute [local irreducible] compressedHistoryEncode compressedHistoryDecode
 attribute [local irreducible] literalSkywalkSeed literalSkywalkUnseed
+  NativeFirstDirect.forward NativeFirstDirect.inverse
 
 private theorem base_integer_mem (q : Nat) (h : q < 515 ∨ (770 ≤ q ∧ q < 1798)) :
     base q∈slots.toFinset := by
@@ -105,19 +108,34 @@ theorem clear_support : wires (skywalkArithmeticClear base)⊆slots.toFinset := 
   rcases hq with rfl|rfl|rfl
   all_goals apply base_integer_mem; omega
 
-/-- Actual candidate emission. Each field group uses its own public injective
-placement; integer codec gates are constructed above the template labels. -/
+private theorem native_prefix_slots :
+    (NativeFirstDirect.prefixSites base).toFinset⊆slots.toFinset := by
+  intro q hq
+  simp only [NativeFirstDirect.prefixSites,List.mem_toFinset,List.mem_append,List.mem_cons,
+    List.not_mem_nil,or_false,wireBlock,List.mem_map,List.mem_range'_1] at hq
+  rcases hq with ((h|h)|h)|(rfl|rfl)
+  all_goals first
+    | obtain ⟨i,hi,rfl⟩ := h
+      apply slot_mem
+      · unfold live; omega
+      · unfold omitted; omega
+    | apply slot_mem
+      · unfold live; omega
+      · unfold omitted; omega
+
+/-- Exact first native prefix and independent inverse; the remaining ticks,
+codec schedule, and selected field program retain their existing allocation. -/
 def kernel (divide : Bool) : Program :=
-  literalSkywalkSeed (literalSkywalkPoolSeed base) p++
-  compressedCompactForward base 0 512++skywalkArithmeticClear base++selectedFieldSegment divide++
-  skywalkArithmeticClear base++compressedCompactReverse base 0 512++
-  literalSkywalkUnseed (literalSkywalkPoolSeed base) p
+  NativeFirstDirect.forward base++compressedCompactForward base 1 511++
+  skywalkArithmeticClear base++selectedFieldSegment divide++skywalkArithmeticClear base++
+  compressedCompactReverse base 1 511++NativeFirstDirect.inverse base
 
 theorem kernel_support (divide : Bool) : wires (kernel divide)⊆slots.toFinset := by
-  have integer := integer_support 0 512 (by omega)
+  have native := NativeFirstDirect.prefix_support base
+  have integer := integer_support 1 511 (by omega)
   simp only [kernel,wires_append,Finset.union_subset_iff,and_assoc]
-  exact ⟨seed_support.1,integer.1,clear_support,selectedFieldSegment_support divide,
-    clear_support,integer.2,seed_support.2⟩
+  exact ⟨native.1.trans native_prefix_slots,integer.1,clear_support,
+    selectedFieldSegment_support divide,clear_support,integer.2,native.2.trans native_prefix_slots⟩
 
 def controlled (divide : Bool) : Program :=
   directZeroControlled (wireBlock base 770 256) (wireBlock base 0 255)

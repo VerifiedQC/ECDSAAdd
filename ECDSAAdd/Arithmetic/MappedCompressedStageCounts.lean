@@ -32,24 +32,39 @@ theorem integer512_counts :
   simpa only [ht,hm,packets,Nat.reduceMul,Nat.reduceAdd] using
     And.intro forward.1 (And.intro forward.2 reverse)
 
+/-- The unchanged delayed codec still emits all 170 packets after tick zero. -/
+theorem integer_tail_counts :
+    toffoliCount (compressedCompactForward base 1 511)=197628 ∧
+    measurementCount (compressedCompactForward base 1 511)=98601 ∧
+    toffoliCount (compressedCompactReverse base 1 511)=197798 ∧
+    measurementCount (compressedCompactReverse base 1 511)=98431 := by
+  have f := compressedCompactForward_counts base base_pool_nodup 1 511 (by omega)
+  have r := compressedCompactReverse_counts base base_pool_nodup 1 511 (by omega)
+  have t : compactSkywalkForwardT 1 511=197118 := by decide
+  have m : compactSkywalkForwardM 1 511=98431 := by decide
+  have packs : compressedPackCount 1 511=170 := by decide
+  simpa only [t,m,packs,Nat.reduceAdd,Nat.reduceMul] using
+    And.intro f.1 (And.intro f.2 r)
+
 theorem kernel_counts (divide : Bool) :
-    toffoliCount (kernel divide)=1054528 ∧
-    measurementCount (kernel divide)=724040 := by
-  have seed := literalSkywalkPoolSeed_counts base p
-  have integer := integer512_counts
+    toffoliCount (kernel divide)=1054002 ∧
+    measurementCount (kernel divide)=724028 := by
+  have f := NativeFirstDirect.forward_counts base
+  have r := NativeFirstDirect.inverse_counts base
+  have integer := integer_tail_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
   have field := selectedFieldSegment_counts divide
-  cases divide <;> simp only [kernel,skywalkArithmeticClear,Bool.false_eq_true,if_false,if_true,
-    toffoliCount_append,measurementCount_append,seed.1,seed.2.1,seed.2.2.1,seed.2.2.2,
-    integer.1,integer.2.1,integer.2.2.1,integer.2.2.2,clear.1,clear.2,field.1,field.2]
-  all_goals norm_num
+  simp only [kernel,skywalkArithmeticClear,toffoliCount_append,measurementCount_append,
+    f.1,f.2,r.1,r.2,integer.1,integer.2.1,integer.2.2.1,integer.2.2.2,
+    clear.1,clear.2,field.1,field.2]
+  constructor <;> norm_num
 
 /-- Exact emitted gate and record counts for both candidate stages. The
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=1055040 ∧
-    measurementCount (controlled divide)=724550 := by
+    toffoliCount (controlled divide)=1054514 ∧
+    measurementCount (controlled divide)=724538 := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]
   have wrapped := directZeroControlled_counts (wireBlock base 770 256) (wireBlock base 0 255)
@@ -61,5 +76,6 @@ theorem controlled_counts (divide : Bool) :
 
 end ECDSAAdd.Arithmetic.MappedCompressed
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.mappedReplay_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.integer_tail_counts
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.kernel_counts
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.controlled_counts

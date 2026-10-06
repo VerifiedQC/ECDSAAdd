@@ -7,6 +7,28 @@ lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.NativeFirstDirectAddProof
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerFirstStage
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerForward
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerInput
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerProgram
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerStates
+import ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport
+import ECDSAAdd.Arithmetic.NativeFirstDirectForwardProof
+import ECDSAAdd.Arithmetic.NativeFirstDirectInverseFinish
+import ECDSAAdd.Arithmetic.NativeFirstDirectInverseProof
+import ECDSAAdd.Arithmetic.NativeFirstDirectInverseWrapper
+import ECDSAAdd.Arithmetic.NativeFirstDirectLayout
+import ECDSAAdd.Arithmetic.NativeFirstDirectNativeBridge
+import ECDSAAdd.Arithmetic.NativeFirstDirectProgram
+import ECDSAAdd.Arithmetic.NativeFirstDirectReferenceEq
+import ECDSAAdd.Arithmetic.NativeFirstDirectSeedInput
+import ECDSAAdd.Arithmetic.NativeFirstDirectSupport
+import ECDSAAdd.Arithmetic.NativeFirstDirectTailRestore
+import ECDSAAdd.Arithmetic.NativeFirstDirectTickUnique
+import ECDSAAdd.Arithmetic.NativeFirstDirectValues
+import ECDSAAdd.Arithmetic.NativeFirstDirectWordProof
+import ECDSAAdd.Arithmetic.NativeFirstPrefixMath
 import ECDSAAdd.Arithmetic.PenultimateSwapIdentity
 import ECDSAAdd.Arithmetic.PenultimateMappedProgram
 import ECDSAAdd.Arithmetic.PenultimateMappedCellProof
@@ -100,6 +122,85 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kTail_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_run
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_phase
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_first_stage
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_terminal_eq
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_terminal_states
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_ready
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.tail_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kernel_states
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kernel_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_slots
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_kernel_support
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_controlled_support
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.caller_total_site_bound
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.lowCopy_prepares
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.inverse_restore_after_outside
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_cancel
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_cancel
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.inverse_forward
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.inverse_forward_ready
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_post_unique
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.inverse_forward_transport
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.index_ne
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.block_not_mem
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.block_nodup
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.block_disjoint
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.block_subset
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.h_inputs_nd
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.k_inputs_nd
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hBits_wire
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kBits_wire
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.h_sources_fresh
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.k_sources_fresh
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.copy_inputs_nd
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.source_parity
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.h_nat_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.k_decode_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_native_output
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.lowCopy_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.inverse_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.forward_reference_eq
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.seed_first_input
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_support
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_qubitBound
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_pool_subset
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.tail_restore_pool
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.signed_word_unique
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.native_output_state_unique
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hScalar_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kScalar_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hBits_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kBits_value
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hConstant_low_zero
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kConstant_low_one
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_word
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_word
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.front_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.clear_spec
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_step
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_bounds
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_signs
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_frame
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.recover_x
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_first_step
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_word_bounds
+#print axioms ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_zero
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.integer_tail_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.kernel_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.controlled_counts
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.integer_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.controlled_support
+#print axioms ECDSAAdd.Arithmetic.MappedCompressed.total_site_bound
 #print axioms ECDSAAdd.andComputeErase_spec
 #print axioms ECDSAAdd.andComputeErase_correct
 #print axioms ECDSAAdd.andComputeErase_toffoliCount
