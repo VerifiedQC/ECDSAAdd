@@ -115,13 +115,13 @@ theorem zero_offset_support (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
   have oTail : L.offsetCarry.tail.length=255 := by rw [List.length_tail,offset]
   have aW : L.y.headD 0∈W := data _ (by
     have h := head_member L.y (by omega)
-    simp [h])
+    exact List.mem_append_left _ (List.mem_append_left _ (List.mem_append_left _ h)))
   have yW : L.r.headD 0∈W := data _ (by
     have h := head_member L.r (by omega)
-    simp [h])
+    exact List.mem_append_left _ (List.mem_append_left _ (List.mem_append_right _ h)))
   have dW : L.carry.headD 0∈W := data _ (by
     have h := head_member L.carry (by omega)
-    simp [h])
+    exact List.mem_append_left _ (List.mem_append_right _ h))
   have oneW : L.one∈W := by simp [member]
   have coutW : L.cout∈W := by simp [member]
   have parityW : L.parity∈W := by simp [member]
@@ -140,7 +140,11 @@ theorem zero_offset_support (L : BalancedCleanupOffset.Layout) (hw : L.Widths) :
   have small : wires [.X (L.r.headD 0)]⊆W ∧
       wires (majority (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W ∧
       wires (eraseCarry (L.y.headD 0) (L.r.headD 0) L.cout (L.carry.headD 0))⊆W := by
-    simp [majority,eraseCarry,wires,Instr.wires,correctionWires,Finset.subset_iff,aW,yW,dW,coutW]
+    simp [majority,eraseCarry,wires,Instr.wires,correctionWires,Finset.subset_iff,coutW]
+    simpa only [List.headD] using
+      (show L.r.headD 0∈W ∧ (L.carry.headD 0∈W ∧ L.y.headD 0∈W ∧ L.r.headD 0∈W) ∧
+        L.y.headD 0∈W ∧ L.r.headD 0∈W ∧ L.carry.headD 0∈W from
+          ⟨yW,⟨dW,aW,yW⟩,aW,yW,dW⟩)
   have co : wires (BalancedCleanupOffsetZero.core L)⊆W := by
     simp only [BalancedCleanupOffsetZero.core,BalancedCleanupOffsetZeroHead.program,
       wires_append,Finset.union_subset_iff,and_assoc]
