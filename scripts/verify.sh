@@ -7,6 +7,9 @@ lake --wfail build
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.EntryInversePayload
+import ECDSAAdd.Arithmetic.EntryInverseFirstGroupFrame
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse
 import ECDSAAdd.Arithmetic.RecordedRailApplyProgram
 import ECDSAAdd.Arithmetic.RecordedRailApplyWord
 import ECDSAAdd.Arithmetic.RecordedRailApplyDebt
@@ -1545,6 +1548,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.omitted_effS_away
 #print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.half_eq
 #print axioms ECDSAAdd.Arithmetic.OffsetBorrowedSerialized.cell_frame
+#print axioms ECDSAAdd.Arithmetic.EntryInversePayload.inverse_groups_payload
+#print axioms ECDSAAdd.Arithmetic.EntryInversePayload.inverse_boundary
+#print axioms ECDSAAdd.Arithmetic.EntryInversePayload.remove_final_double
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverseBody_support
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstGroup_inverse_step
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalReplay_inverse_spec
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_inverse_spec
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_resources
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_support
+#print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_saving
 LEAN
 )
 task_axiom_lean_rc=$?

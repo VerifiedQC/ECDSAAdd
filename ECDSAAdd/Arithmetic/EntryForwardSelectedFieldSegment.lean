@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimTerminal
-import ECDSAAdd.Arithmetic.TerminalMappedReplayResources
+import ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse
 
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1500000
@@ -8,26 +8,26 @@ namespace ECDSAAdd.Arithmetic.MappedCompressed
 open Secp256k1 OffsetBorrowedCanonical CompressedFieldSupport CompressedAllocation
 attribute [local irreducible] run wires toffoliCount measurementCount
 
-/-- Select only the proved forward entry cancellation; retain the existing
-inverse segment and its complete contract. Native recording remains 512 rounds. -/
+/-- Both exact entry cancellations retain the terminal omission and original
+field contract. Native integer recording remains 512 rounds. -/
 def selectedFieldSegment (divide : Bool) : Program :=
   if divide then EntryMappedFieldSegmentTrim.terminalFieldSegment true
-  else fieldTrimSegment false
+  else EntryMappedFieldSegmentTrim.terminalFieldSegment false
 
 theorem selectedFieldSegment_support (divide : Bool) :
     wires (selectedFieldSegment divide) ⊆ slots.toFinset := by
   cases divide
   · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      fieldTrimSegment_support false
+      EntryMappedFieldSegmentTrim.inverse_entry_support
   · simpa only [selectedFieldSegment, if_true] using
       EntryMappedFieldSegmentTrim.terminalFieldSegment_support true
 
 theorem selectedFieldSegment_counts (divide : Bool) :
-    toffoliCount (selectedFieldSegment divide)=(if divide then 657817 else 659353) ∧
-    measurementCount (selectedFieldSegment divide)=(if divide then 525981 else 527517) := by
+    toffoliCount (selectedFieldSegment divide)=657817 ∧
+    measurementCount (selectedFieldSegment divide)=525981 := by
   cases divide
   · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      fieldTrimSegment_counts false
+      EntryMappedFieldSegmentTrim.inverse_entry_resources
   · simpa only [selectedFieldSegment, if_true] using
       EntryMappedFieldSegmentTrim.terminalFieldSegment_counts true
 
@@ -51,7 +51,7 @@ theorem selectedFieldSegment_spec (divide : Bool)
     out.phase=s.phase ∧ EncodedCanonicalFrame origin (fieldResult divide origin x Y) 0 out := by
   cases divide
   · simpa only [selectedFieldSegment, Bool.false_eq_true, if_false] using
-      fieldTrimSegment_spec false hn hlo ho hp hf origin hg0 hs0 env legal
+      EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_inverse_spec hn hlo ho hp hf origin hg0 hs0 env legal
         hw hu hr hy x hx0 hx trace Y s m input
   · simpa only [selectedFieldSegment, if_true] using
       EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_forward_spec

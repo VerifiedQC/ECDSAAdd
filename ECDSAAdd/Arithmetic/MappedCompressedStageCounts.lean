@@ -33,8 +33,8 @@ theorem integer512_counts :
     And.intro forward.1 (And.intro forward.2 reverse)
 
 theorem kernel_counts (divide : Bool) :
-    toffoliCount (kernel divide)=(if divide then 1054785 else 1056321) ∧
-    measurementCount (kernel divide)=(if divide then 724041 else 725577) := by
+    toffoliCount (kernel divide)=1054785 ∧
+    measurementCount (kernel divide)=724041 := by
   have seed := literalSkywalkPoolSeed_counts base p
   have integer := integer512_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
@@ -48,8 +48,8 @@ theorem kernel_counts (divide : Bool) :
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=(if divide then 1055297 else 1056833) ∧
-    measurementCount (controlled divide)=(if divide then 724551 else 726087) := by
+    toffoliCount (controlled divide)=1055297 ∧
+    measurementCount (controlled divide)=724551 := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]
   have wrapped := directZeroControlled_counts (wireBlock base 770 256) (wireBlock base 0 255)
