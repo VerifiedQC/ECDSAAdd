@@ -63,7 +63,8 @@ theorem terminalFieldSegment_counts (divide : Bool) :
   simp only [terminalFieldSegment,toffoliCount_append,measurementCount_append]
   rw [full.1,full.2] at old
   rw [trim.1,trim.2]
-  constructor <;> omega
+  cases divide <;> simp only [Bool.false_eq_true,if_false,if_true] at old ⊢
+  all_goals constructor <;> omega
 
 private def oldTerminalPrefix : Program := fieldPrefix true ++
   renameProgram allPlaced (converterPair false) ++ mappedGroup true 0
