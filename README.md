@@ -6,29 +6,35 @@
 
 ## Current status
 
-The complete exact controlled point-addition circuit is verified at source commit **`a782d13`**. The native inverse now recovers its carry bits from a known output sum supplied by the existing forward copy. The reusable receiver replaces 252 Toffolis in each of Stages 2 and 5, preserving all measurement records, phase and workspace restoration. The unrestricted native inverse retains its original behavior. The exact 512-round Skywalk construction, streamed square, recovery and protected specifications remain in use. The proof covers every valid input point, classical addend, both controls, arbitrary incoming phase, independent measurement records and complete work restoration under the original monomial semantics. See [proof scope](docs/PROOF_SCOPE.md).
+The complete exact controlled point-addition circuit is verified at source commit `a782d13`. The native inverse now recovers its carry bits from a known output sum supplied by the existing forward copy. The reusable receiver replaces 252 Toffolis in each of Stages 2 and 5, preserving all measurement records, phase and workspace restoration. The unrestricted native inverse retains its original behavior. The exact 512-round Skywalk construction, streamed square, recovery and protected specifications remain in use. The proof covers every valid input point, classical addend, both controls, arbitrary incoming phase, independent measurement records and complete work restoration under the original monomial semantics. See [proof scope](docs/PROOF_SCOPE.md).
 
-For a finite addend, the circuit uses **2,217,386 static Toffolis / 1,557,928 measurement instructions / ≤1,899 logical sites**. The infinity addend emits an empty circuit. This saves **4,990,480 Toffolis (69.24%)** from the original 7,207,866-Toffoli baseline. Relative to verified `092e87c`, the full circuit saves **504 Toffolis**, with measurements and the Q ceiling unchanged. The support/allocation ceiling includes residents and is **not a separately measured exact peak-live count**. The Stage 2/5 targets **≤1,297 Q and <600,000 Toffolis** remain open.
+For a finite addend, the full circuit uses **2,217,386 static Toffolis / 1,557,928 measurement instructions / ≤1,899 static logical sites**. The infinity addend emits an empty circuit. Against the original baseline of 7,207,866 static Toffolis / 4,305,594 measurement instructions / 3,134 static logical sites, the full circuit saves **4,990,480 Toffolis (69.24%)**, **2,747,666 measurement instructions (63.82%)**, and lowers the reported static-site bound by **1,235 sites (39.41%)**. The Q percentage compares static support bounds; it does not measure a reduction in peak-live or physical qubits. Relative to verified `092e87c`, the full circuit saves 504 Toffolis, with measurements and the Q ceiling unchanged. The support/allocation ceiling includes residents and is not a separately measured exact peak-live count. The Stage 2/5 targets ≤1,297 Q and <600,000 Toffolis remain open.
 
-The CPU-pod full build passed **3,988 jobs**, and the separate audit passed **1,616 public transitive axiom queries (1,615 distinct declarations)**. All **891 selected committed Lean source hashes**, plus four build/verifier metadata files, matched before and after verification. The successful cached incremental check took **17s build + 241s audit = 258s (4m18s)**. Earlier attempts remain separate: 601s failed on kernel memory, 397s stopped an obsolete transfer check after its replacement passed, and 94s failed on a stale resource subtotal. Queue and verifier setup were zero. Source preparation and transfer are excluded. The exact whitelist is `propext`, `Classical.choice` and `Quot.sound`. Correctness is formal, with no approximations. See [checkpoint evidence](docs/EXACT_KNOWN_OUTPUT_NATIVE_20261008.md).
+The CPU-pod full build passed 3,988 jobs, and the separate audit passed 1,616 public transitive axiom queries (1,615 distinct declarations). All 891 selected committed Lean source hashes, plus four build/verifier metadata files, matched before and after verification. The successful cached incremental check took 17s build + 241s audit = 258s (4m18s). Earlier attempts remain separate: 601s failed on kernel memory, 397s stopped an obsolete transfer check after its replacement passed, and 94s failed on a stale resource subtotal. Queue and verifier setup were zero. Source preparation and transfer are excluded. The exact whitelist is `propext`, `Classical.choice` and `Quot.sound`. Correctness is formal, with no approximations. See [checkpoint evidence](docs/EXACT_KNOWN_OUTPUT_NATIVE_20261008.md) and the [source manifest](docs/verification/known-output-native-20261008/source-manifest.json), [build log](docs/verification/known-output-native-20261008/build.log), [axiom audit](docs/verification/known-output-native-20261008/axioms.log), and [timing receipt](docs/verification/known-output-native-20261008/timing.json).
 
 ### Six-stage decomposition (verified exact checkpoint)
 
-| Stage | Logical Q ceiling, including resident sites | Toffolis | Measurements |
-| --- | ---: | ---: | ---: |
-| 1. Coordinate differences | ≤1,036 | 2,046 | 2,046 |
-| 2. Skywalk-GCD division | ≤1,899 | 1,053,750 | 724,536 |
-| 3. Prepare X workspace | ≤1,036 | 1,023 | 1,023 |
-| 4. Measured streamed modular square | **≤1,297** | **99,902** | **99,382** |
-| 5. Forward multiplication | ≤1,899 | 1,054,260 | 724,536 |
-| 6. Recover output | **≤1,036** | **2,301** | **2,301** |
-| **Six-stage subtotal** | **≤1,899** | **2,213,282** | **1,553,824** |
-| Additional input/corner classification | ≤1,034 | 4,104 | 4,104 |
-| **Complete controlled finite-addend point addition** | **≤1,899** | **2,217,386** | **1,557,928** |
+Comparison reference: our previously instrumented 1,174-Q Q×T incumbent, source [`799153a`](https://github.com/ecdsafail/ecdsafail-challenge/tree/799153aac444491dcac273ad552ea8473d2a63dd), with 9,024 evaluator inputs. This intentionally retains the reference used in our earlier comparison. The incumbent columns below are from that same pinned source and are not labeled as the latest leaderboard result. See the [saved stage profile](docs/comparison/incumbent-799153a/profile.json).
 
-Q 是支持/分配证书给出的保守存活上界，**不是精确 peak-live 测量**。Step 4 的证书含 521 个常驻点/控制/分类位置与 776 个工作位置。完整电路 Q 上界仍由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
+| Stage | Lean logical Q ceiling | Lean static Toffolis | Lean measurements | Reference peak-live Q | Reference static Toffolis | Reference average executed Toffolis | Static Toffoli gap (Lean − reference) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1. Coordinate differences | ≤1,036 | 2,046 | 2,046 | 769 | 510 | 510.0 | 1,536 |
+| 2. Skywalk-GCD division | ≤1,899 | 1,053,750 | 724,536 | 1,174 | 464,759 | 450,215.5 | 588,991 |
+| 3. Prepare X workspace | ≤1,036 | 1,023 | 1,023 | 1,174 | 326 | 316.6 | 697 |
+| 4. Measured streamed modular square | ≤1,297 | 99,902 | 99,382 | 1,174 | 41,150 | 40,583.0 | 58,752 |
+| 5. Forward multiplication | ≤1,899 | 1,054,260 | 724,536 | 1,174 | 468,649 | 452,182.6 | 585,611 |
+| 6. Recover output | ≤1,036 | 2,301 | 2,301 | 1,174 | 326 | 316.6 | 1,975 |
+| Six-stage subtotal | ≤1,899 | 2,213,282 | 1,553,824 | 1,174 | 975,720 | 944,124.3 | 1,237,562 |
+| Additional input/corner classification | ≤1,034 | 4,104 | 4,104 | — | — | — | — |
+| Complete controlled finite-addend point addition | **≤1,899** | **2,217,386** | **1,557,928** | **1,174** | **975,720** | **944,124.3** | **1,241,666** |
 
-Step 4 对照前一已证低宽版本 `d477a67`：749,338 →99,902 T，省 **649,436 T（86.67%）**，保持 ≤1,297-site 证书；完整点加相应从 3,393,054 降至 2,743,618 T。较早的 signed-row 版本仍是另一空间/门数取舍：Step 4 82,101 T /2,865 schedule-peak Q，完整点加 2,725,817 T /≤2,994 静态位置。当前完整版本比该历史完整电路少508,431 T；这些独立检查点的资源不能相加。
+Lean Q is a certified static-support/allocation ceiling including resident sites. Reference Q is the peak-live allocator count within each stage, including resources retained from earlier stages. The columns therefore have different Q evidence. Lean static Toffolis should be compared with reference static Toffolis; the final column separately reports its input-sampled average executed count. Both Toffoli columns count CCX/Toffoli operations, not elementary T gates.
+
+The reference evaluator does not provide an equivalent all-valid-input corner-classification block. The dashes do not assert zero cost for equivalent coverage. Its stopping, width and comparison settings also include benchmark-tuned approximations, while the Lean checkpoint retains exact functionality on every valid input in the stated proof model. The table establishes resource gaps, not equivalent verification coverage.
+
+Q 是支持/分配证书给出的保守存活上界，不是精确 peak-live 测量。Step 4 的证书含 521 个常驻点/控制/分类位置与 776 个工作位置。完整电路 Q 上界仍由乘除阶段决定。表中采用六阶段示意图的概念顺序；源码先做平方减法，再加 `3x_A`，两者在域中可交换。
+
+Step 4 对照前一已证低宽版本 `d477a67`：749,338 →99,902 T，省 649,436 T（86.67%），保持 ≤1,297-site 证书；完整点加相应从 3,393,054 降至 2,743,618 T。较早的 signed-row 版本仍是另一空间/门数取舍：Step 4 82,101 T /2,865 schedule-peak Q，完整点加 2,725,817 T /≤2,994 静态位置。当前完整版本比该历史完整电路少508,431 T；这些独立检查点的资源不能相加。
 
 Step 6 将取负与 `x_A` 修正合并：受控规范反射 `p−1−X` 后加经典 `x_A+1 mod p`，并精确修正 y。常量加法仍为每段1,023 T，但共享池从1,030位置缩到515位置。Stage6由5,884降至2,301 T（省60.89%），Q证书由≤1,550降至≤1,036；没有把恢复成本转移到乘法阶段。此全点检查点相对88aad07省3,583 T与2,303次测量。公开受控点加规格保持，全部合法点、控制/相位/工作清理均经完整验证。
 
@@ -65,25 +71,25 @@ I2 的 w 位受控移位使用 max(w−1,0) 个 Toffoli、零测量；w≥2 时�
 
 I3 正轮与逆轮各使用 12w+31 个 Toffoli、6w+28 次测量；w≥2 时精确静态线路数为 7w+48。w=257 时分别为 3115、1570、1847。这是单轮成本，不能写成完整逆元成本；轮内共享工作区为 O(w)，只保留两位分支记录，计数器两份银行的角色按固定轮号交换。
 
-I4 固定执行512轮Kaliski正向循环，取负得到N，再用十位量子计数K查表和一段Montgomery缩放得到逆元；使用结果后显式恢复缩放、清N并执行512轮Kaliski恢复。两次查表/清表及交换在每个缩放方向精确计入154,372 Toffoli/测量；518位缩放历史借自原轮y/zero低4位/carry，1054位共享工作区在使用逆元前已清零。完整 `inverseLoop` 使用 **3,500,551 个 Toffoli、1,918,471 次测量、2,645 根实际静态线路**；内部模数前提为q%16=15且q<2^256，外部secp256k1规格不变。详见[证明状态](docs/PROOF_STATUS.md#i4固定循环第二阶段与反计算)。
+I4 固定执行512轮Kaliski正向循环，取负得到N，再用十位量子计数K查表和一段Montgomery缩放得到逆元；使用结果后显式恢复缩放、清N并执行512轮Kaliski恢复。两次查表/清表及交换在每个缩放方向精确计入154,372 Toffoli/测量；518位缩放历史借自原轮y/zero低4位/carry，1054位共享工作区在使用逆元前已清零。完整 `inverseLoop` 使用 3,500,551 个 Toffoli、1,918,471 次测量、2,645 根实际静态线路；内部模数前提为q%16=15且q<2^256，外部secp256k1规格不变。详见[证明状态](docs/PROOF_STATUS.md#i4固定循环第二阶段与反计算)。
 
 改 1 的公开接口直接列寄存器值：减半为 `data=X, counter.x=K, work=0 → data=(halveMod q)^[K] X, counter.x=K, work=0`，恢复方向相反。求逆准备段 `inversePrepare_spec` 的后置条件明确为 `middle.r=((X : ZMod q)⁻¹).val, compactBorrow=0`，另保留 `InverseHistory` 中的第一阶段数据、计数与记录；`inverseRestore_spec` 要求保留这些历史并归还逆元，然后恢复初始数据、清零全部工作区。完整源码陈述见 [公开寄存器接口](docs/PROOF_STATUS.md#改-1-的公开寄存器接口) 与 [准备/恢复接口](docs/PROOF_STATUS.md#改-1-的准备与恢复接口)。
 
-I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli 和测量数保持 **3,500,551 / 1,918,471**，完整静态线路为 **2,901**。外部输入增加 256 根线路；内核的 257 位输出被拆成 256 位公开输出与一根工作高位，后者由逆元范围证明为零。
+I5 的 `fieldInverse` 在 I4 内核前后添加 CX/X 装载与卸载，Toffoli 和测量数保持 3,500,551 / 1,918,471，完整静态线路为 2,901。外部输入增加 256 根线路；内核的 257 位输出被拆成 256 位公开输出与一根工作高位，后者由逆元范围证明为零。
 
-M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 **4,646,783 个 Toffoli、3,062,911 次测量**。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的旧分配视图；求逆分配视图仍为5,699位，但门列实际仅触及其中2,900位。布局分配数为 9,813；实际池支持为2,617位，完整电路排除dx/dy/delta/yg四根填充最高位及池中的29根旧out线。
+M3 的 `pointCandidateCompute` 计算六次模减、三次模乘和一次求逆，非普通分支将除数设为 1。`pointCandidateClear` 按依赖逆序再次执行这些前向 XOR 模块；每段分别使用 4,646,783 个 Toffoli、3,062,911 次测量。两段都已证明输入坐标与普通分支标志保持，共享池归零；清理段还恢复所有候选寄存器为零。乘法、求逆与减法直接连接调用方寄存器，工作区分别映射到同一池的旧分配视图；求逆分配视图仍为5,699位，但门列实际仅触及其中2,900位。布局分配数为 9,813；实际池支持为2,617位，完整电路排除dx/dy/delta/yg四根填充最高位及池中的29根旧out线。
 
-M3 完整 `pointAddOut` 对有限经典常量使用 **9,295,106 个 Toffoli、6,126,846 次测量、6,727 根实际静态线路**。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：**0 个 Toffoli、0 次测量、1,026 根实际线路**（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。空间为 O(n+N)，不声称资源最优。
+M3 完整 `pointAddOut` 对有限经典常量使用 9,295,106 个 Toffoli、6,126,846 次测量、6,727 根实际静态线路。`pointAddOut_support` 证明门列支持集恰好等于 `L.usedWires.toFinset`，再由全局互异条件得到基数；这不是最大同时存活线数。C=O 时构造期选择点复制分支：0 个 Toffoli、0 次测量、1,026 根实际线路（513 个 CX）。普通分支所需横坐标不等由相等检测标志推出，不向完整点加的调用者增加几何前提。空间为 O(n+N)，不声称资源最优。
 
-**历史精确 Skywalk 检查点（2026-10-02）**的 M3 受控原地 `controlledPointAdd` 对有限 C 使用 **3,636,669 个 Toffoli、2,845,373 次测量、实际静态线路上界2,994**。一次原地除法和一次原地乘法沿已证512轮精确Skywalk记录回放，专用平方前后受控复制并清理；斜率直接存于当前y，不另分配。输入分类与输出重算恢复七个标志，覆盖O、互逆点、倍点、C=−C、H=−(C+C)与控制false，重复H由旧角落处理。C=O在构造期为空程序，三项资源均为零。`pointDialogFinite_small_wires` 与全局互异证明给出实际支持上界，公共布局仍分配9,817位，未用工作位也恢复零。独立XOR点加接口继续保留。
+历史精确 Skywalk 检查点（2026-10-02）的 M3 受控原地 `controlledPointAdd` 对有限 C 使用 3,636,669 个 Toffoli、2,845,373 次测量、实际静态线路上界2,994。一次原地除法和一次原地乘法沿已证512轮精确Skywalk记录回放，专用平方前后受控复制并清理；斜率直接存于当前y，不另分配。输入分类与输出重算恢复七个标志，覆盖O、互逆点、倍点、C=−C、H=−(C+C)与控制false，重复H由旧角落处理。C=O在构造期为空程序，三项资源均为零。`pointDialogFinite_small_wires` 与全局互异证明给出实际支持上界，公共布局仍分配9,817位，未用工作位也恢复零。独立XOR点加接口继续保留。
 
 基础层原语（重做计划 §1）：n 位原地加法 `addInPlace` 与减法 `subInPlace` 各用 n−1 个 Toffoli、n−1 次测量、3n 根线路（先擦进位再写和位，最高位不算进位）；受控常数加减不增加 Toffoli，受控寄存器加减另加两次 n 位受控复制；Gidney 比较器 `compareLt` / `compareLtConst` 用 n 个 Toffoli（受控 +1）、n 次测量、3n+2 根线路（受控版本为 3n+3）。求逆第二阶段已复用常数加减与受控比较器；其它原语供后续改动组合。
 
-§30.8 的独立测量清掩码包装 `measuredControlledModAdd/Sub` 已证明完整 Triple、目标外逐线保持及同程序精确支持/资源；前提与原受控模加减一致，包括 `A≤p`。n>0 时，加法资源为 `(5n−1,5n−1,5n+5)`，减法为 `(7n−1,7n−1,5n+6)`，依次为 Toffoli、测量及实际支持线。n=256 时分别为 `1279/1279/1285` 和 `1791/1791/1286`。这两个入口已于 2026-10-02 接入回放和整机，该历史阶段点加为 **6,880,186 / 4,502,202 / 3,134**；历史精确 Skywalk 检查点为 **3,636,669 / 2,845,373 / 静态支持上界2,994**；本分支当前值见上方 Current status。见[证明状态](docs/PROOF_STATUS.md#measured-controlled-mod)。
+§30.8 的独立测量清掩码包装 `measuredControlledModAdd/Sub` 已证明完整 Triple、目标外逐线保持及同程序精确支持/资源；前提与原受控模加减一致，包括 `A≤p`。n>0 时，加法资源为 `(5n−1,5n−1,5n+5)`，减法为 `(7n−1,7n−1,5n+6)`，依次为 Toffoli、测量及实际支持线。n=256 时分别为 `1279/1279/1285` 和 `1791/1791/1286`。这两个入口已于 2026-10-02 接入回放和整机，该历史阶段点加为 6,880,186 / 4,502,202 / 3,134；历史精确 Skywalk 检查点为 3,636,669 / 2,845,373 / 静态支持上界2,994；本分支当前值见上方 Current status。见[证明状态](docs/PROOF_STATUS.md#measured-controlled-mod)。
 
 ## 优化进度与下一步计划
 
-**历史阶段记录**：本节旧实现与其资源保留用于追溯，不表示当前公共入口仍调用该实现；当前值以上方 Current status 为准。未实现选项只作为预算，不能算入当前值。
+历史阶段记录：本节旧实现与其资源保留用于追溯，不表示当前公共入口仍调用该实现；当前值以上方 Current status 为准。未实现选项只作为预算，不能算入当前值。
 
 改 2 C1 已实现普通/受控原地模加减的完整 Triple、目标外 frame 与同程序精确资源，入口为 `ModInPlaceWrappers.lean` 和 `ModInPlaceSubtract.lean`。源/目标宽 n+1，允许 A≤p、Z<p、0<p<2^n；工作区初末全零。四项 Toffoli/测量/实际线路分别为普通加 `(4n−1,4n−1,4n+4)`、普通减 `(6n−1,6n−1,4n+4)`、受控加 `(6n−1,4n−1,5n+5)`、受控减 `(8n−1,6n−1,5n+6)`（n>0）。C2 阶段曾证明无控制半倍与 Horner 内核（后者现已替换，旧文件已清理）。n=256 时，mulInto 为 523,776 Toffoli / 392,704 测量 / 1,540 线，mulClear 为 655,104 / 524,032 / 1,542；输入保持、累加器由零得到乘积或由该乘积清回零，全部工作位和相位恢复。D 已证明三个适配器并替换域乘法；旧倍数链布局已删除，该阶段完整受控点加降至 32,347,957 Toffoli / 17,585,440 测量 / 9,718 根实际线路。
 
@@ -117,7 +123,7 @@ M3 完整 `pointAddOut` 对有限经典常量使用 **9,295,106 个 Toffoli、6,
 
 改 5 的历史阶段设计见 [§15](docs/REWORK_PLAN.md#15-改-5-实施设计测量清零检测与原地受控加减已实现)：原地替换零检测并接入 Kaliski 原地受控加减，单轮已证3,629 Toffoli/1,056测量/1,847线；该阶段受控点加52,914,997 Toffoli/31,848,736测量/74,024线。不包含改2/3收益；原求逆池编号保留，实际工作支持5,442线。
 
-**历史路径**：改 3 的具体门列与寄存器表见 [§16](docs/REWORK_PLAN.md#16-改-3-实施设计除法中心的受控原地点加已实现)：总Triple、逐线保持、8,946,186 / 5,772,554及6,218线是改11时该路径的阶段值；当前公共入口已由改12替换。旧内部 `pointInPlaceFinite` 仍保留，其当前数值见证明状态索引。D兼容布局仍分配9,817位，未触及位保持零。
+历史路径：改 3 的具体门列与寄存器表见 [§16](docs/REWORK_PLAN.md#16-改-3-实施设计除法中心的受控原地点加已实现)：总Triple、逐线保持、8,946,186 / 5,772,554及6,218线是改11时该路径的阶段值；当前公共入口已由改12替换。旧内部 `pointInPlaceFinite` 仍保留，其当前数值见证明状态索引。D兼容布局仍分配9,817位，未触及位保持零。
 
 改3的八个数学引理已证明，见[证明状态](docs/PROOF_STATUS.md#改-3-数学原地更新与输出侧清理条件)：涵盖输出侧标志、普通分支域等式和第二除数为零时的例外斜率。历史除法批已完成完整规格、逐线保持与精确资源，见[除法证明状态](docs/PROOF_STATUS.md#改-3-除法保留求逆历史的受控累加)：加3,895,383 Toffoli / 2,309,207测量，减3,895,895 / 2,309,719，均6,210根实际支持线（历史批次值，非当前保留入口数值）。当前 `divideAdd/Sub` 及替代后的 `dialogDivide/Multiply` 分别见资源索引。原路径的证明记录见[完整证明](docs/PROOF_STATUS.md#改-3-原地点加本体与公开入口)。
 
@@ -125,14 +131,14 @@ M3 完整 `pointAddOut` 对有限经典常量使用 **9,295,106 个 Toffoli、6,
 
 每次创建或更新 PR 都逐项检查，并在 PR 描述里简述结果；可读性和设计必要性需要人工审阅，不能用构建通过代替。
 
-- [ ] **Human readable**：公开定理直接表达前置条件、程序与结果；使用 `r = v`、命名布局、统一 `Nodup` 和中文说明。先展示零输出等常用形式，再提供组合所需的 XOR 形式；检查程序及测量语法是否容易读。
-- [ ] **Overdesign**：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。项目文档集中在 README、PROOF_STATUS、PROVENANCE；未实现的计划只放在 REWORK_PLAN（唯一来源，README 只留摘要表）。
-- [ ] **状态真实**：逐项对照 README Current status、实际源码、公开定理和验证结果；契约不写成实现，数学群律不写成点加电路证明。
-- [ ] **Lean 验证**：固定工具链与依赖，运行 `lake --wfail build` 和选定公开定理的传递 `#print axioms` 白名单，仅允许 `propext`、`Classical.choice`、`Quot.sound`。不添加小 case 测试、Python 对照或真值表验证。
-- [ ] **语义与清理**：Triple 对任意初始相位及所有测量记录证明相位恢复、所需输入保持和工作位清零。即时 Z/CZ 修正不是自动正确；测量结果只能选择即时修正。清理必须有适用的不变量，不能直接反转带测量的程序。
-- [ ] **同一条合法电路**：正确性与 Toffoli、测量、qubit 定理指向同一具体程序；门的控制与目标满足互异要求，不含重复控制 CCX。线路数按完整程序及修正分支的实际支持集计算，不冒充最大同时存活数；披露空间复杂度，不声称未经证明的最优性。
-- [ ] **范围与完整性**：当前只做带符号基态分支模型，不加入量子态语义、桥或 Reference 树。最终点加必须覆盖无穷远、相反点和倍点等角落情形，C 是经典常量、R 是变量；模算术必要的位宽与取值范围前提仍应明确写出。一般测量分支不称为严格 monomial 矩阵，也不冒充完整量子态正确性。
-- [ ] **可审阅证据与约定**：PROOF_STATUS 保留可读陈述、证明含义、同程序资源及公理证据；频道和项目文档用中文，复制数学代码保留来源与提交说明。仓库维持 private、Apache 2.0，除非另有明确决定。
+- [ ] Human readable：公开定理直接表达前置条件、程序与结果；使用 `r = v`、命名布局、统一 `Nodup` 和中文说明。先展示零输出等常用形式，再提供组合所需的 XOR 形式；检查程序及测量语法是否容易读。
+- [ ] Overdesign：每个新增类型、谓词、文件、工具都有当前用途；避免重复公开 API、全环境审计器和无需要的抽象。项目文档集中在 README、PROOF_STATUS、PROVENANCE；未实现的计划只放在 REWORK_PLAN（唯一来源，README 只留摘要表）。
+- [ ] 状态真实：逐项对照 README Current status、实际源码、公开定理和验证结果；契约不写成实现，数学群律不写成点加电路证明。
+- [ ] Lean 验证：固定工具链与依赖，运行 `lake --wfail build` 和选定公开定理的传递 `#print axioms` 白名单，仅允许 `propext`、`Classical.choice`、`Quot.sound`。不添加小 case 测试、Python 对照或真值表验证。
+- [ ] 语义与清理：Triple 对任意初始相位及所有测量记录证明相位恢复、所需输入保持和工作位清零。即时 Z/CZ 修正不是自动正确；测量结果只能选择即时修正。清理必须有适用的不变量，不能直接反转带测量的程序。
+- [ ] 同一条合法电路：正确性与 Toffoli、测量、qubit 定理指向同一具体程序；门的控制与目标满足互异要求，不含重复控制 CCX。线路数按完整程序及修正分支的实际支持集计算，不冒充最大同时存活数；披露空间复杂度，不声称未经证明的最优性。
+- [ ] 范围与完整性：当前只做带符号基态分支模型，不加入量子态语义、桥或 Reference 树。最终点加必须覆盖无穷远、相反点和倍点等角落情形，C 是经典常量、R 是变量；模算术必要的位宽与取值范围前提仍应明确写出。一般测量分支不称为严格 monomial 矩阵，也不冒充完整量子态正确性。
+- [ ] 可审阅证据与约定：PROOF_STATUS 保留可读陈述、证明含义、同程序资源及公理证据；频道和项目文档用中文，复制数学代码保留来源与提交说明。仓库维持 private、Apache 2.0，除非另有明确决定。
 
 只有 Dirac 合并：在同一头提交上 CI 通过、独立复审通过、README 与代码一致，且无当前暂停。Lamport 与 Deutsch 不合并；Dirac 遇到需要人类决定的不确定事项，应 @runzhou-tao 并等回复。暂停及解除都以最新明确指令为准，不把已解除的暂停继续当作阻塞。
 
