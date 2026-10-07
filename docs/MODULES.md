@@ -47,7 +47,7 @@ Addition 已直接改写 [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/Ripp
 
 模加减的首个分层证明示范：先读 `Modular.lean` 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的阶段证明，修改实现时才需深入。旧规格由新分层证明推出；原 `prog` 正文已改写，实际门列不变。
 
-`ModularAlgorithm.lean` 的两个算法证明现采用受控英文：分情况、列中间结论、引用取模规则。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)，不把底层 tactic 暴露在算法证明正文中；范围辅助引理暂不改写。
+`ModularAlgorithm.lean` 的 `addResult_correct` 现为带断言的 `if/else` 示范：共同 `requires/ensures`、分支结果、范围与取模规则；每个结果都核对真实 `addResult` 定义，断言由 Lean 证明。`subResult_correct` 保留受控英文分情况写法。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)，不把底层 tactic 暴露在算法证明正文中；范围辅助引理暂不改写。这一层只证明数值结果，电路的相位和工作区恢复仍在后端规格中。
 
 Arithmetic 的 222 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
@@ -88,7 +88,7 @@ Arithmetic 的 222 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Framework：语义与证明工具模块
 
-只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 保留第一版高层语言兼容接口；ProofLanguage 提供受控英文证明句式；CertifiedTranslation 提供显式实现/证明入口；BitTranslation 将位运算注解嵌入原 `prog` 循环。十个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
+只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 保留第一版高层语言兼容接口；ProofLanguage 提供受控英文和带断言的分支证明句式；CertifiedTranslation 提供显式实现/证明入口；BitTranslation 将位运算注解嵌入原 `prog` 循环。十个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
 
 ### 当前关键算法：表达式与隐藏工作区（2026-10-05）
 

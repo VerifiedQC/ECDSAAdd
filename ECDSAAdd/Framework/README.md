@@ -203,7 +203,7 @@ prog using (montOutputContext M) {
 
 [ProofLanguage.lean](#prooflanguagelean)
 
-这个文件提供受控英文证明句式：按情况讨论、写出中间结论、引用取模性质，并由 Lean 检查每一步。
+这个文件提供受控英文和带断言的 `if/else` 证明句式，逐步检查分支结果、中间结论和取模性质。
 
 [Cost.lean](#costlean)
 
@@ -601,6 +601,21 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 
 使用 `open scoped ECDSAAdd.ProofLanguage` 开启记法，定理的证明体写成 `:= Proof`。完整示范见 [ModularAlgorithm.lean](../Arithmetic/ModularAddition/ModularAlgorithm.lean) 的 `addResult_correct/subResult_correct`。
 
+模加现在采用带断言的分支写法；模减暂时保留下表中的英文句式。新写法的外层为 `verify result := (实际表达式) unfolding [定义] { ... }`，声明要验证的真实计算，而不是另外写一段不相关的伪代码。
+
+| 分支证明句式 | 含义 |
+| --- | --- |
+| `requires { P } by h;` | h 必须证明共同前提 P；后续自动步骤只保留它、必要依赖及当前分支事实 |
+| `ensures { Q };` | Q 可以引用 result，代入实际表达式后必须就是当前定理的目标 |
+| `if (b) { ... } else { ... }` | 分别在 b 和 ¬b 下证明同一个 Q；不能省略分支 |
+| `result := value;` | 指定本分支的数学结果，并检查它等于真实表达式的分支值；不是量子赋值 |
+| `assert { R };` / `assert { R } by h;` | 检查中间结论 R；前者用线性算术，后者检查给出的证明，均不添加未经证明的假设 |
+| `conclude by small_remainder;` | 用 result<q 证明 result=result%q |
+| `conclude by shifted_remainder;` | 用 sum=result+q 和 result<q 证明 result=sum%q |
+| `conclude by arithmetic;` | 用当前已有事实的线性算术完成共同结论 |
+
+这是纯数值表达式的 Hoare 风格证明示范，目前每个分支只指定一次结果，不是通用可变状态程序验证器。这里的 if 只对数学条件分情况，不发出门或测量；电路的输入保持、相位与工作区恢复仍由原有 Triple 和后端连接证明。
+
 | 句式 | 含义 |
 | --- | --- |
 | `We split on P`，接 `Case h =>` 和 `Otherwise hn =>` | 分别在 P 和 ¬P 下证明原结论；两分支都必须完成 |
@@ -610,7 +625,7 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 | `By the shifted remainder rule using hs, hr we get result : a % q = r` | hs 必须证明 a=r+q，hr 必须证明 r<q |
 | `From [h₁, h₂] we conclude P` | 用所列事实的直接应用或等式化简完成当前目标；P 必须与当前目标一致 |
 
-句式固定，公式仍是 Lean 表达式，不解释任意英文，也不调用语言模型。底层 tactic 保存在本文件，读算法证明时不必展开。`by arithmetic` 会清除无关假设，不能漏列前提后从其他上下文偷偷取得结论；它不是任意数学命题的自动证明器。
+句式固定，公式仍是 Lean 表达式，不解释任意英文，也不调用语言模型。底层 tactic 保存在本文件，读算法证明时不必展开。旧写法的 `From [...] by arithmetic` 只使用所列前提及必要依赖；新写法在进入分支前清除未列入 `requires` 且非必要依赖的假设。两者都不是任意数学命题的自动证明器。
 
 ```lean
 theorem shiftedRemainder {value remainder modulus : Nat}

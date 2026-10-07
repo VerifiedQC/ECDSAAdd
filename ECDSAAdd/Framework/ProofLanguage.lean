@@ -72,4 +72,101 @@ macro_rules
       | solve | solve_by_elim only [$reasons,*]
       | solve | simp only [$lemmas,*]))
 
+/-- Assertions in a decorated branch are obligations, never additional assumptions. -/
+declare_syntax_cat branchAssertion
+syntax atomic(ident " {") term "}" ";" : branchAssertion
+syntax atomic(ident " {") term "}" " by " term ";" : branchAssertion
+
+declare_syntax_cat branchRule
+scoped syntax "arithmetic" : branchRule
+syntax ident : branchRule
+
+/-- A two-branch proof of an actual pure expression. Each displayed result is
+checked against its definition before proving the common postcondition. -/
+scoped syntax &"verify" ident " := " term:max &"unfolding" "[" term,* "]" " {"
+  &"requires" " {" term "}" " by " term ";"
+  &"ensures" " {" term "}" ";"
+  "if " "(" term ")" " {"
+    branchAssertion* ident " := " term ";" branchAssertion*
+    &"conclude" " by " branchRule ";" "}"
+  "else " " {"
+    branchAssertion* ident " := " term ";" branchAssertion*
+    &"conclude" " by " branchRule ";" "}" "}" : tactic
+
+open scoped ECDSAAdd.ProofLanguage
+
+private def assertion (step : TSyntax `branchAssertion) : MacroM (TSyntax `tactic) := do
+  let fact := mkIdent (← withFreshMacroScope (Macro.addMacroScope `assertion))
+  match step with
+  | `(branchAssertion| $keyword:ident { $claim:term };) => do
+      unless keyword.getId == `assert do Macro.throwErrorAt keyword "Expected assert."
+      `(tactic| have $fact : $claim := by solve | omega)
+  | `(branchAssertion| $keyword:ident { $claim:term } by $proof:term;) => do
+      unless keyword.getId == `assert do Macro.throwErrorAt keyword "Expected assert."
+      `(tactic| have $fact : $claim := $proof)
+  | _ => Macro.throwErrorAt step "Expected a checked assertion."
+
+private def conclusion (rule : TSyntax `branchRule) : MacroM (TSyntax `tactic) := do
+  match rule with
+  | `(branchRule| arithmetic) => `(tactic| solve | omega)
+  | `(branchRule| $name:ident) =>
+      match name.getId with
+      | `small_remainder => `(tactic| exact (Nat.mod_eq_of_lt (by omega)).symm)
+      | `shifted_remainder => `(tactic| exact (shiftedRemainder (by omega) (by omega)).symm)
+      | _ => Macro.throwErrorAt name "Expected small_remainder or shifted_remainder."
+  | _ => Macro.throwErrorAt rule "Expected arithmetic, small_remainder, or shifted_remainder."
+
+macro_rules
+  | `(tactic| verify $result:ident := $actual:term unfolding [$definitions,*] {
+      requires { $precondition:term } by $evidence:term;
+      ensures { $postcondition:term };
+      if ($condition:term) {
+        $beforeYes:branchAssertion* $yesName:ident := $yesValue:term;
+        $afterYes:branchAssertion* conclude by $yesRule:branchRule;
+      } else {
+        $beforeNo:branchAssertion* $noName:ident := $noValue:term;
+        $afterNo:branchAssertion* conclude by $noRule:branchRule;
+      }
+    }) => do
+      unless yesName.getId == result.getId && noName.getId == result.getId do
+        Macro.throwError "Each branch must assign the declared result name."
+      let requires := mkIdent (← Macro.addMacroScope `requires)
+      let branch := mkIdent (← Macro.addMacroScope `branch)
+      let selected := mkIdent (← Macro.addMacroScope `selected)
+      let established := mkIdent (← Macro.addMacroScope `established)
+      let yesBefore ← beforeYes.mapM assertion
+      let yesAfter ← afterYes.mapM assertion
+      let noBefore ← beforeNo.mapM assertion
+      let noAfter ← afterNo.mapM assertion
+      let yesFinish ← conclusion yesRule
+      let noFinish ← conclusion noRule
+      let rules := #[← `(if_pos), ← `(if_neg), ← `(ite_true), ← `(ite_false)]
+      let facts ← (definitions.getElems.push branch ++ rules).mapM fun fact =>
+        `(Lean.Parser.Tactic.simpLemma| $fact:term)
+      `(tactic| solve
+        | change (fun $result => $postcondition) $actual
+          have $requires : $precondition := $evidence
+          clear * - $requires:ident
+          by_cases $branch : $condition
+          · ($[$yesBefore:tactic];*)
+            have $selected : $actual = $yesValue := by
+              solve |
+                simp +zetaDelta only [] at $branch:ident
+                all_goals simp +zetaDelta only [$facts,*]
+            let $result := $yesValue
+            have $established : $postcondition := by
+              ($[$yesAfter:tactic];*)
+              $yesFinish:tactic
+            exact Eq.mpr (congrArg (fun $result => $postcondition) $selected) $established
+          · ($[$noBefore:tactic];*)
+            have $selected : $actual = $noValue := by
+              solve |
+                simp +zetaDelta only [] at $branch:ident
+                all_goals simp +zetaDelta only [$facts,*]
+            let $result := $noValue
+            have $established : $postcondition := by
+              ($[$noAfter:tactic];*)
+              $noFinish:tactic
+            exact Eq.mpr (congrArg (fun $result => $postcondition) $selected) $established)
+
 end ECDSAAdd.ProofLanguage

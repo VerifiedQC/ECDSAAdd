@@ -20,22 +20,23 @@ def subResult (X Y q : Nat) : Nat :=
 /-- 模加的算法证明：分别检查两个 if 分支；只要求和小于 2q。 -/
 theorem addResult_correct (X Y q : Nat) (hSum : X + Y < 2 * q) :
     addResult X Y q = (X + Y) % q := Proof
-  We split on X + Y < q
-  Case below =>
-    By definition [addResult] using [below] we get result :
-      addResult X Y q = X + Y
-    By the small remainder rule using below we get remainder :
-      (X + Y) % q = X + Y
-    From [result, remainder] we conclude addResult X Y q = (X + Y) % q
-  Otherwise notBelow =>
-    By definition [addResult] using [notBelow] we get result :
-      addResult X Y q = X + Y - q
-    From [hSum, notBelow] by arithmetic we get reduced : X + Y - q < q
-    From [notBelow] by arithmetic we get decomposition :
-      X + Y = (X + Y - q) + q
-    By the shifted remainder rule using decomposition, reduced we get remainder :
-      (X + Y) % q = X + Y - q
-    From [result, remainder] we conclude addResult X Y q = (X + Y) % q
+  let sum := X + Y
+  verify result := (addResult X Y q) unfolding [addResult] {
+    requires { sum < 2 * q } by hSum;
+    ensures { result = sum % q };
+
+    if (sum < q) {
+      result := sum;
+      assert { result < q };
+      conclude by small_remainder;
+    } else {
+      assert { q ≤ sum ∧ sum < 2 * q };
+      result := sum - q;
+      assert { result < q };
+      assert { sum = result + q };
+      conclude by shifted_remainder;
+    }
+  }
 
 /-- 模减的算法证明：有借位时加回 q，无借位时直接保留差。 -/
 theorem subResult_correct (X Y q : Nat) (hX : X < q) (hY : Y < q) :

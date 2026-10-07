@@ -2,7 +2,15 @@
 
 初稿日期：2026-09-14；更新：2026-10-07。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
-## 最新阶段：Arithmetic 原算法的逐步注解（2026-10-07）
+## 最新阶段：模加的带断言分支证明（2026-10-07）
+
+仅改写 `ModularAlgorithm.lean` 中 `addResult_correct` 的证明体，使用 `verify` 绑定真实数值计算、`requires/ensures` 声明共同前后条件，`if/else` 分别列出结果与中间断言，再用取模规则结束分支。证明中的自然语言关键字保持英文。模减、范围辅助引理、原有定理类型及电路不改。
+
+`Framework/ProofLanguage.lean` 将该写法展开成 Lean 证明：前提必须给证据，结果赋值必须与实际定义相符，断言必须证明，两个分支必须完成同一结论。这不是只在注释中写 Hoare triple，也不增加可信逻辑。`tests/BranchProof.lean` 覆盖正确示范、等于模数的边界、零值 else 分支，以及错误断言、前提、后置条件、赋值与缺失分支的拒绝。
+
+这次只做纯数值算法的示范，不是完整量子 Hoare 语言；电路的输入保持、相位和 ancilla 恢复继续由既有后端规格保证。具体语法与局限保存在 Framework、ModularAddition README，入口同步到项目地图；验证结果见 [PROOF_STATUS](PROOF_STATUS.md)。
+
+## Arithmetic 原算法的逐步注解（2026-10-07）
 
 在 Addition 示范基础上，直接改写另外 36 个原函数，覆盖比较、判零、原地模加、模倍增／减半、模乘、求逆、除法和点加。完整入口清单保存在 [项目地图](MODULES.md#当前关键入口显式-using--by2026-10-07)。短门级实现、固定轮循环、查表树和清楚的高层分支组合保留，不重复包装。
 

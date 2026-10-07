@@ -13,6 +13,7 @@ lake env lean tests/ArithmeticPrograms.lean
 lake env lean tests/ExpressionRecipes.lean
 lake env lean tests/ModularProofLayers.lean
 lake env lean -DwarningAsError=true tests/ProofLanguage.lean
+lake env lean -DwarningAsError=true tests/BranchProof.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
 lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
