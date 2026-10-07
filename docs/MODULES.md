@@ -6,7 +6,9 @@
 
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 
-### 当前关键入口：显式 using / by（2026-10-06）
+### 当前关键入口：显式 using / by（2026-10-07）
+
+Addition 已直接改写 [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/RippleAdder.lean) 的 `rippleAdder` 和 [InPlaceAdder.lean](../ECDSAAdd/Arithmetic/Addition/InPlaceAdder.lean) 的 `addInPlace`：正向／反向循环内写多数进位、XOR 和清理，每句或共享块同一行指定 `using` / `by`。不是新增 `Certified.lean` 外壳。`fullAdder`、`eraseCarry`、`majority` 保留门级实现，新增 `sumInto` 封装原有两个 CX。完整 `_spec/_correct` 仍证明调用条件、进位清理、相位及 frame；门列不变。语法边界见 [Addition README](../ECDSAAdd/Arithmetic/Addition/README.md)。
 
 先读 [Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 的原 `modAddOn/modSubOn`：正文现在直接采用“比较 using/by；共享选择块 using/by”，仍返回 `Program`。准备证明建立包含候选与借位的 `Ready`，结束证明消费同一接口并清零；最终规格实际组合这两个证明。语法及协议在 [ModularTranslation.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularTranslation.lean)，门列及资源未变。
 
@@ -21,7 +23,7 @@
 | [Division/Certified.lean](../ECDSAAdd/Arithmetic/Division/Certified.lean) | `divideAdd`、`divideSub` |
 | [PointAddition/Certified.lean](../ECDSAAdd/Arithmetic/PointAddition/Certified.lean) | 常数差、平方、原地常数加、普通点加、斜率清理，共 5 个 |
 
-合计 21 个。实现细节仍看以下后端地图；`CertifiedSpecs.lean` 仅整理证明连接。新语法与边界见 [Framework](../ECDSAAdd/Framework/README.md#当前入口显式实现与证明2026-10-06)。现有 Addition、比较、判零、交换、移位及已经清楚的循环不重复包装。
+合计 21 个认证外层入口，不含本轮直接迁移的两个 Addition 原函数。实现细节仍看以下后端地图；`CertifiedSpecs.lean` 仅整理证明连接。新语法与边界见 [Framework](../ECDSAAdd/Framework/README.md#当前入口显式实现与证明2026-10-06)。比较、判零、交换、移位及其他已清楚的门级函数本轮不改动。
 
 模加减的首个分层证明示范：先读 `Modular.lean` 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的阶段证明，修改实现时才需深入。旧规格由新分层证明推出；原 `prog` 正文已改写，实际门列不变。
 
@@ -50,7 +52,7 @@ Arithmetic 的 211 个 Lean 文件已归入以下 14 个功能目录，每目录
 | [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 9 |
 | [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 71 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 237 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的九个文件集中说明。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 238 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的十个文件集中说明。
 
 ## Math：数学结论模块
 
@@ -66,7 +68,7 @@ Arithmetic 的 211 个 Lean 文件已归入以下 14 个功能目录，每目录
 
 ## Framework：语义与证明工具模块
 
-只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 保留第一版高层语言兼容接口；ProofLanguage 提供受控英文证明句式；CertifiedTranslation 提供当前显式实现/证明的入口。九个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
+只读一份 [Framework/README.md](../ECDSAAdd/Framework/README.md)。Syntax、Semantics、Hoare、Cost 保留原有底层语义；ArithmeticLanguage、ArithmeticCompiler、ArithmeticSyntax 保留第一版高层语言兼容接口；ProofLanguage 提供受控英文证明句式；CertifiedTranslation 提供显式实现/证明入口；BitTranslation 将位运算注解嵌入原 `prog` 循环。十个文件直接放在 Framework 下，不再拆分子模块。通用语言层不导入具体 Arithmetic 电路，具体适配器放在对应算术模块。
 
 ### 当前关键算法：表达式与隐藏工作区（2026-10-05）
 

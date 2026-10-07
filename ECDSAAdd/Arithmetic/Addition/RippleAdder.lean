@@ -1,8 +1,11 @@
 import ECDSAAdd.Arithmetic.Addition.FullAdder
+import ECDSAAdd.Framework.BitTranslation
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
 import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
+
+attribute [local simp] sumBit carryBit
 
 /-- 每一位的两根输入线、输出线和进位工作线；列表按小端排列。 -/
 structure AddBit where
@@ -28,11 +31,14 @@ def rippleAdder (bs : List AddBit) (cin : Wire) : Program := prog {
   let c := [cin] ++ bs.map AddBit.carry; -- 进位链：c[0]=cin，c[i+1] 是第 i 位的进位。
   for i in range(n) {
     let b := bs[i];
-    fullAdder(b.x, b.y, c[i], b.out, b.carry);  -- b.out ^= x⊕y⊕cin；b.carry = 本位进位。
+    {
+      b.carry ^= MAJ(b.x, b.y, c[i]);
+      b.out ^= (b.x XOR b.y XOR c[i]);
+    } using fullAdder by fullAdder_spec;
   };
   for i in reversed(range(n)) {
     let b := bs[i];
-    eraseCarry(b.x, b.y, c[i], b.carry);  -- 清零 b.carry。
+    b.carry = 0 using (eraseCarry b.x b.y c[i]) by (eraseCarry_spec b.x b.y c[i]);
   };
 }
 

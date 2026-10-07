@@ -4,7 +4,7 @@
 
 ## 当前入口：显式实现与证明（2026-10-06）
 
-关键算术函数现在优先读各模块的 `Certified.lean`。每个语句或共享代码块直接指定 Lean 实现及其规格证明，不经过默认实现注册表：
+模加减及 Addition 先读原函数正文；其余已提供认证入口的算术函数可读各模块的 `Certified.lean`。每个语句或共享代码块直接指定 Lean 实现及其规格证明，不经过默认实现注册表：
 
 ```lean
 prog {
@@ -55,6 +55,24 @@ prog {
 第一步证明比较结果，并留下完整候选、原输入/输出值及零进位链。第二步必须使用同一工作区、同一种算法的 `Ready` 状态，证明选择结果并恢复工作区。最终规格通过 `reductionProgram_correct` 组合两段证明；不是依赖函数定义之后的规格来认证函数自身。新语法实现见 [ModularTranslation.lean](../Arithmetic/ModularAddition/ModularTranslation.lean)，它只支持完整模加/模减模板。
 
 这两种入口的范围不同：通用共享块是一个整体证书，模加减的原函数是两个连接起来的阶段证书。其余 19 个入口仍使用已证明的后端，不宣称已经将其内部步骤全部迁移。布局仍绑定具体工作区，资源来自实际门列；没有新增一般量子信道证明。
+
+### Addition：循环内部的位运算注解（2026-10-07）
+
+`rippleAdder` 和 `addInPlace` 的原 `Program` 正文现在直接使用位运算加行内注解，保留原有正向／反向循环。例如：
+
+```lean
+c[i + 1] ^= MAJ(x[i], y[i], c[i]) using majority by majority_spec;
+y[i] ^= (x[i] XOR c[i]) using sumInto by sumInto_spec;
+c[i + 1] = 0 using (eraseCarry x[i] y[i] c[i]) by (eraseCarry_spec x[i] y[i] c[i]);
+```
+
+这是三种独立语句的写法；实际反向循环先清进位，再修改 `y[i]`。`MAJ` 表示三输入位的多数值；`XOR` 是位异或，不是 wire 编号的算术。全加器的进位／和位放在一个共享块中，指定一次 `fullAdder`。
+
+[BitTranslation.lean](BitTranslation.lean) 根据显式配方把源码中的 wire 传给 `using` 实现及 `by` 定理，再检查同一电路的 Triple 是否推出所写计算。它没有默认实现搜索。源公式按顺序更新物理位，因此后续读取包含之前写入的效果，即使两个名字指向同一 wire。
+
+这些语句返回原 `Program`，并不自动证明整个循环。每条语句的证书保留原 Triple 的前后条件；调用前提及跨轮不变量仍由 `rippleAdder_xor_correct` / `addInPlace_correct` 的完整证明建立。`carry = 0` 要求它已经等于待清除的进位，不能无条件重置；互异接线也仍是外层规格的假设。与原循环逐门相同，资源和测量顺序不变。
+
+目前只支持上述三种位语句及“进位 XOR + 三输入和位 XOR”的共享块，不是任意位表达式的电路编译器。这一扩展没有迁移其他模块，也不改变已有寄存器算术入口。
 
 以下 `arith/Config` 与 `prog using Context` 章节保留为兼容接口说明，不是新入口的默认实现机制。
 
@@ -182,6 +200,24 @@ prog using (montOutputContext M) {
 [CertifiedTranslation.lean](#certifiedtranslationlean)
 
 这个文件定义独立的算术块语义，把指定实现和已有规格连接成带前提与证明的可读程序。
+
+[BitTranslation.lean](#bittranslationlean)
+
+这个文件提供 Addition 的位运算语义和行内实现／证明注解，可嵌入原有 `prog` 循环。
+
+## [BitTranslation.lean](BitTranslation.lean)
+
+```lean
+def program (effect : Effect) (circuit : Program) (_ : Certificate effect circuit) : Program
+```
+
+接收通过检查的语义、电路和证书，返回同一电路，供原有循环与门列证明使用。证书条件是否在调用时成立，仍须在外层证明。
+
+```lean
+theorem program_eq (effect : Effect) (circuit : Program) (proof : Certificate effect circuit)
+```
+
+证明了加入注解不改变所选实现的门列。
 
 ## [CertifiedTranslation.lean](CertifiedTranslation.lean)
 

@@ -1,8 +1,16 @@
 # ECDSAAdd 可读性整理报告
 
-初稿日期：2026-09-14；更新：2026-10-05。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
+初稿日期：2026-09-14；更新：2026-10-07。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
-## 最新阶段：行内注解与模加减两阶段认证（2026-10-06）
+## 最新阶段：Addition 原函数的行内注解（2026-10-07）
+
+直接修改 `rippleAdder` 和 `addInPlace` 的原算法正文，保留正向／反向循环，将循环内步骤写成位运算及同一行的 `using 实现 by 证明`。全加器的两个结果使用一个共享块；其他步骤分别为多数进位、两输入 XOR 和进位清零。`fullAdder`、`eraseCarry`、`majority` 保留，`sumInto` 只封装原有两条 CX。
+
+新增 `Framework/BitTranslation.lean`，独立解释源公式的顺序位语义，再检查所选实现的 Hoare 定理能否推出它。实现与证明由源码明确给出，没有默认注册表；不忽略 `by`，也不把清零当成无条件重置。原完整规格继续验证调用前提、输入进位、进位清理、相位和外部线路保持，资源不变。没有扩展到其他模块或重新包装 Addition 的最终规格。
+
+新增 `tests/AdditionAnnotations.lean` 检查与原循环的逐门相等、全库语法共存、非零输出与输入进位、顺序更新／别名，以及错误公式、实现和证明的拒绝。实现选择及清理条件的阅读说明保存在 Addition、Framework README 和项目地图，不依赖聊天记录。验证结果见 [PROOF_STATUS](PROOF_STATUS.md)。
+
+## 行内注解与模加减两阶段认证（2026-10-06）
 
 采用用户给出的排版：`语句 using 实现 by 证明;`，共享块在结束的 `}` 后同一行标注实现和证明。不再把正文、using 和 by 各占一行。
 

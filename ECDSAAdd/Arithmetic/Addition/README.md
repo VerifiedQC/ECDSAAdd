@@ -49,7 +49,18 @@ eraseCarry a b cin carry
 
 n 是逐位加法单元列表 bs 的长度。下文 x、y、out、carry 分别指 `bs.map AddBit.x`、`bs.map AddBit.y`、`bs.map AddBit.out`、`bs.map AddBit.carry`。给定输入 x、y 和进位输入 cin，其初值分别为 X、Y、C；输出 out 初始化为 O，进位工作区 carry 初始化为 0。
 
-`rippleAdder` 用两个 `for` 循环表示电路：先从低位到高位调用 `fullAdder`，再从高位到低位调用 `eraseCarry`。`c = [cin] ++ bs.map AddBit.carry` 连接已有进位线，第 i 位读取 `c[i]` 作为输入进位，不额外分配线路。循环版保持原来的门和测量顺序，包括空列表的情形。
+`rippleAdder` 先从低位到高位计算和位与进位，再从高位到低位清零进位。循环中的计算直接写成：
+
+```lean
+{
+  b.carry ^= MAJ(b.x, b.y, c[i]);
+  b.out ^= (b.x XOR b.y XOR c[i]);
+} using fullAdder by fullAdder_spec;
+```
+
+`MAJ` 是三位的多数值，至少两位为 1 时等于 1；这里的 XOR 操作对象是单根 wire。整个块只调用一次 `fullAdder`，`by` 检查它的规格确实实现这两行。`c = [cin] ++ bs.map AddBit.carry` 连接已有进位线，第 i 位读取 `c[i]`；不额外分配线路，门和测量顺序不变。
+
+反向循环写 `b.carry = 0 using (eraseCarry b.x b.y c[i]) by (eraseCarry_spec b.x b.y c[i]);`。这要求 carry 仍保存三输入位的多数值，不是任意重置；完整正确性证明负责建立各次调用的前提。
 
 `rippleAdder_xor_spec` 和 `rippleAdder_xor_correct` 证明：布局中的线路互异时，对任意测量结果，
 
@@ -113,7 +124,17 @@ sub L
 
 该文件实现直接更新 y 的加减法。
 
-`addInPlace` 采用 `prog` 循环写法：先从低位到高位计算进位，再写最高和位，最后从高位到低位清除进位并写回其余和位。`c := [cin] ++ carry` 只是把现有进位线路排成列表，不增加 wire。合法布局下已证明它生成的指令列表与原递归版逐项相同；递归定义仅作为私有证明参考。函数保留原参数接口，位宽不匹配时返回空电路，以下规格只适用于合法布局。
+`addInPlace` 先从低位到高位计算进位，再写最高和位，最后从高位到低位清除进位并写回其余和位。计算和清理都在原函数内部逐句指定实现和证明：
+
+```lean
+c[i + 1] ^= MAJ(x[i], y[i], c[i]) using majority by majority_spec;
+y[n - 1] ^= (x[n - 1] XOR c[n - 1]) using sumInto by sumInto_spec;
+-- 反向循环：先清进位，再修改 y[i]。
+c[i + 1] = 0 using (eraseCarry x[i] y[i] c[i]) by (eraseCarry_spec x[i] y[i] c[i]);
+y[i] ^= (x[i] XOR c[i]) using sumInto by sumInto_spec;
+```
+
+`sumInto` 就是原有的两个 CX 门；`c := [cin] ++ carry` 只是排列已有进位线。合法布局下门列与原递归版逐项相同，递归定义仅供证明使用。函数保留原参数，位宽不匹配时返回空电路，以下规格只适用于合法布局。
 
 x 是加数寄存器，y 是原地更新的目标，cin 是进位输入，carry 是进位工作区；初值分别记作 X、Y、C、0，n 是 x 的位数。受控版本的控制 wire 为 c，初值记作 B；src 是源寄存器，初值为 S，t 是寄存器版本的临时掩码；常量版本中该临时寄存器名为 T。x、y 均为 n 位，carry 有 n−1 位，所有参与线路互异。
 
@@ -138,7 +159,7 @@ y 之外的 wire 和相位保持不变。`subInPlace_spec` 给出 cin=0 时的�
 
 控制与源保持，相位恢复。用于组合的 `maskedCopyWithFrame_spec` 证明受控复制只向临时寄存器异或源值；`addInPlaceWithSource_spec`、`subInPlaceWithSource_spec` 证明用临时值加减 y 时，外部源与控制保持。
 
-另有 `majority_correct`：a、b、cin、carry 四线互异时，只把 `carryBit(A,B,C)` 异或到 carry，其他 wire 与相位不变。
+`majority_spec`、`majority_correct` 证明：a、b、cin、carry 四线互异时，`carry ^= MAJ(a,b,cin)`，其他 wire 与相位不变。`sumInto_spec` 证明：a、cin、out 三线互异时，`out ^= a XOR cin`，两根输入及相位保持；这两个接口均允许目标初值为 1。
 
 资源（n≥1）：普通加减均为 T=n−1、M=n−1、Q=3n；受控寄存器加减均为 T=3n−1、M=n−1。本文件未给出后者的精确 Q。
 

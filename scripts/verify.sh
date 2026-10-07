@@ -15,6 +15,7 @@ lake env lean tests/ModularProofLayers.lean
 lake env lean -DwarningAsError=true tests/ProofLanguage.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
+lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -22,6 +23,11 @@ import ECDSAAdd
 #print axioms ECDSAAdd.CertifiedTranslation.Certificate.ofTriple
 #print axioms ECDSAAdd.CertifiedTranslation.Certificate.abstract
 #print axioms ECDSAAdd.CertifiedTranslation.CheckedProgram.correct
+#print axioms ECDSAAdd.BitTranslation.program_eq
+#print axioms ECDSAAdd.Arithmetic.rippleAdder
+#print axioms ECDSAAdd.Arithmetic.addInPlace
+#print axioms ECDSAAdd.Arithmetic.majority_spec
+#print axioms ECDSAAdd.Arithmetic.sumInto_spec
 #print axioms ECDSAAdd.Arithmetic.ReductionKind.ready
 #print axioms ECDSAAdd.Arithmetic.modAddPrepare_correct
 #print axioms ECDSAAdd.Arithmetic.modSubPrepare_correct

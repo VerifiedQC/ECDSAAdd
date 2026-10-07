@@ -59,6 +59,8 @@ elab_rules : term
     let effect ← elabTermEnsuringType meaning (mkConst ``Effect)
     let code ← elabTermEnsuringType circuit (mkConst ``Program)
     let theoremProof ← elabTerm proof none
+    -- Indexed wires may leave pending getElem bound proofs; resolve them before checking the bridge.
+    synthesizeSyntheticMVarsNoPostponing
     let theoremType ← instantiateMVars (← inferType theoremProof)
     forallTelescope theoremType fun parameters resultType => do
       let resultType ← instantiateMVars resultType
@@ -81,7 +83,11 @@ elab_rules : term
            | solve | simpa only [before] using after.1
            | solve |
                simp_all only [Holds.holds, Nat.mod_eq_of_lt, Nat.mod_mod, Nat.add_mod_mod]
-               all_goals first | assumption | omega | aesop)))
+               all_goals first | assumption | omega | aesop
+           | solve |
+               simp_all [Holds.holds, writeBit, Function.update, List.nodup_cons,
+                 List.mem_cons, Ne.symm]
+               all_goals aesop)))
       unless remaining.isEmpty do
         throwErrorAt proof "The theorem does not establish the source computation."
       let bridge ← instantiateMVars bridgeGoal

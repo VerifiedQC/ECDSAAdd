@@ -6,10 +6,51 @@ import Mathlib.Data.List.OfFn
 namespace ECDSAAdd.Arithmetic
 open Instr
 
+attribute [local simp] carryBit
+
 /-- carry ^= MAJ(a,b,cin)，MAJ 为三个输入位的多数值。 -/
 def majority (a b cin carry : Wire) : Program := prog {
   CX a b; CX a cin; CCX b cin carry; CX a carry; CX a cin; CX a b
 }
+
+/-- 进位异或写入 carry，其余状态保持。 -/
+theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
+    (s : State) (m : List Bool) :
+    run (majority a b cin carry) m s =
+      ⟨s.phase, writeBit s.basis carry
+        (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin))⟩ := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
+    not_or, not_false_eq_true, and_true] at hnd
+  obtain ⟨⟨hab, hac, hak⟩, ⟨hbc, hbk⟩, hck⟩ := hnd
+  have hba := Ne.symm hab
+  have hca := Ne.symm hac
+  have hcb := Ne.symm hbc
+  simp only [majority, run]
+  apply congrArg (State.mk s.phase)
+  funext w
+  by_cases hwa : w = a <;> by_cases hwb : w = b <;>
+    by_cases hwc : w = cin <;> by_cases hwk : w = carry <;>
+    simp_all [writeBit, Function.update, carryBit]
+  all_goals cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;>
+    cases s.basis carry <;> simp_all
+
+/-- majority 的接口：输入保持，carry 异或写入三输入位的多数值。 -/
+theorem majority_spec (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
+    (A B C K : Bool) :
+    {{ a = A, b = B, cin = C, carry = K }} majority a b cin carry
+    {{ a = A, b = B, cin = C, carry = (K ^^ carryBit A B C) }} := by
+  intro s m hP
+  rw [majority_correct a b cin carry hnd]
+  simp_all [Holds.holds, writeBit, Function.update, List.nodup_cons]
+
+/-- out ^= a XOR cin；a、cin 是两根输入线，out 是原地更新的目标线。 -/
+def sumInto (a cin out : Wire) : Program := prog { CX a out; CX cin out; }
+
+theorem sumInto_spec (a cin out : Wire) (hnd : [a, cin, out].Nodup) (A C O : Bool) :
+    {{ a = A, cin = C, out = O }} sumInto a cin out
+    {{ a = A, cin = C, out = (O ^^ (A ^^ C)) }} := by
+  intro s m hP
+  simp_all [sumInto, run, Holds.holds, writeBit, Function.update, List.nodup_cons, Ne.symm]
 
 local macro_rules
   | `(tactic| get_elem_tactic) =>
@@ -24,14 +65,12 @@ def addInPlace (x y carry : List Wire) (cin : Wire) : Program :=
       let n := x.length;
       let c := [cin] ++ carry;  -- 进位链：c[0]=cin，其余保存各位进位。
       for i in range(n - 1) {
-        majority(x[i], y[i], c[i], c[i + 1]);  -- c[i+1] = 本位进位。
+        c[i + 1] ^= MAJ(x[i], y[i], c[i]) using majority by majority_spec;
       };
-      CX x[n - 1] y[n - 1];
-      CX c[n - 1] y[n - 1];
+      y[n - 1] ^= (x[n - 1] XOR c[n - 1]) using sumInto by sumInto_spec;
       for i in reversed(range(n - 1)) {
-        eraseCarry(x[i], y[i], c[i], c[i + 1]);  -- 在 y[i] 改变前清零 c[i+1]。
-        CX x[i] y[i];
-        CX c[i] y[i];
+        c[i + 1] = 0 using (eraseCarry x[i] y[i] c[i]) by (eraseCarry_spec x[i] y[i] c[i]);
+        y[i] ^= (x[i] XOR c[i]) using sumInto by sumInto_spec;
       };
     }
   else []
@@ -59,7 +98,7 @@ private theorem addInPlace_eq_recursive (x y carry : List Wire) (cin : Wire)
         have ha : as = [] := by simpa using hx
         have hca : carry = [] := by simpa using hc
         subst ha; subst hca
-        simp [addInPlace, addInPlaceRecursive]
+        simp [addInPlace, addInPlaceRecursive, sumInto]
       | cons b' bs =>
         cases as with
         | nil => simp at hx
@@ -70,35 +109,14 @@ private theorem addInPlace_eq_recursive (x y carry : List Wire) (cin : Wire)
             have hx' : (a'::as).length = (b'::bs).length := by simpa using hx
             have hc' : cs.length + 1 = (b'::bs).length := by simpa using hc
             have hi := ih (a'::as) cs c hx' hc'
-            simp [addInPlace, hx', hc'] at hi
-            simp [addInPlace, hx, addInPlaceRecursive, List.ofFn_succ, List.reverse_cons,
+            simp [addInPlace, sumInto, hx', hc'] at hi
+            simp [addInPlace, sumInto, hx, addInPlaceRecursive, List.ofFn_succ, List.reverse_cons,
               List.flatten_append,
               List.append_assoc] at hi ⊢
             have hcs : cs.length = bs.length := by simpa using hc'
             simp only [hcs, dite_true]
             rw [← hi]
             simp only [List.append_assoc, List.cons_append]
-
-/-- 进位异或写入 carry，其余状态保持。 -/
-theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
-    (s : State) (m : List Bool) :
-    run (majority a b cin carry) m s =
-      ⟨s.phase, writeBit s.basis carry
-        (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin))⟩ := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-    not_or, not_false_eq_true, and_true] at hnd
-  obtain ⟨⟨hab, hac, hak⟩, ⟨hbc, hbk⟩, hck⟩ := hnd
-  have hba := Ne.symm hab
-  have hca := Ne.symm hac
-  have hcb := Ne.symm hbc
-  simp only [majority, run]
-  apply congrArg (State.mk s.phase)
-  funext w
-  by_cases hwa : w = a <;> by_cases hwb : w = b <;>
-    by_cases hwc : w = cin <;> by_cases hwk : w = carry <;>
-    simp_all [writeBit, Function.update, carryBit]
-  all_goals cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;>
-    cases s.basis carry <;> simp_all
 
 /-- 进位链初始为零时：x、cin 保持，y 原地得到低 n 位的和，进位链归零，相位对所有测量记录恢复。 -/
 private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
