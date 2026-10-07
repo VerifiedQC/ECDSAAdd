@@ -174,7 +174,7 @@ theorem pointOffsetBorrowedArithmetic_correct (L : ControlledPointLayout) (hw : 
 
 theorem pointOffsetBorrowedArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
-    toffoliCount (pointOffsetBorrowedArithmetic L false)=1055733 ∧
+    toffoliCount (pointOffsetBorrowedArithmetic L false)=1055221 ∧
     measurementCount (pointOffsetBorrowedArithmetic L false)=726771 ∧
     toffoliCount (pointOffsetBorrowedArithmetic L true)=1055734 ∧
     measurementCount (pointOffsetBorrowedArithmetic L true)=726772 := by

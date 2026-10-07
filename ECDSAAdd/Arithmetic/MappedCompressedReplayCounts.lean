@@ -30,7 +30,7 @@ private theorem swap_nd :
     omega
 
 theorem logicalCell_counts (divide : Bool) (i : Nat) :
-    toffoliCount (logicalCell divide i)=1281 ∧ measurementCount (logicalCell divide i)=1025 := by
+    toffoliCount (logicalCell divide i)=(if divide then 1280 else 1281) ∧ measurementCount (logicalCell divide i)=1025 := by
   cases divide <;> simp only [logicalCell,Bool.false_eq_true,if_false,if_true]
   · exact OffsetBorrowedInverseCanonical.cell_counts id 2400 i (1028+i) 2409 2410
       (mixedTranscriptUnitTrace.getD i (false,false)).1
@@ -40,7 +40,7 @@ theorem logicalCell_counts (divide : Bool) (i : Nat) :
       (mixedTranscriptUnitTrace.getD i (false,false)).2 swap_nd
 
 theorem mappedGroup_counts (divide : Bool) (j : Nat) :
-    toffoliCount (mappedGroup divide j)=3850 ∧ measurementCount (mappedGroup divide j)=3076 := by
+    toffoliCount (mappedGroup divide j)=(if divide then 3847 else 3850) ∧ measurementCount (mappedGroup divide j)=3076 := by
   have codec := compressedHistory_counts (placed j) (3*j)
   have a := logicalCell_counts divide (3*j)
   have b := logicalCell_counts divide (3*j+1)
@@ -51,7 +51,7 @@ theorem mappedGroup_counts (divide : Bool) (j : Nat) :
   all_goals norm_num
 
 theorem mappedGroups_counts (divide : Bool) (j n : Nat) :
-    toffoliCount (mappedGroups divide j n)=3850*n ∧
+    toffoliCount (mappedGroups divide j n)=(if divide then 3847 else 3850)*n ∧
     measurementCount (mappedGroups divide j n)=3076*n := by
   induction n generalizing j with
   | zero => simp [mappedGroups,toffoliCount,measurementCount]
@@ -63,7 +63,7 @@ theorem mappedGroups_counts (divide : Bool) (j n : Nat) :
     all_goals constructor <;> omega
 
 theorem mappedReplay_counts (divide : Bool) :
-    toffoliCount (mappedReplay divide)=657062 ∧ measurementCount (mappedReplay divide)=524970 := by
+    toffoliCount (mappedReplay divide)=(if divide then 656550 else 657062) ∧ measurementCount (mappedReplay divide)=524970 := by
   have groups := mappedGroups_counts divide 0 170
   have a := logicalCell_counts divide 510
   have b := logicalCell_counts divide 511
@@ -91,7 +91,7 @@ private theorem endpointCopy_counts :
   simpa only [Option.isSome_none,Bool.false_eq_true,if_false] using copy
 
 theorem fieldSegment_counts (divide : Bool) :
-    toffoliCount (fieldSegment divide)=(if divide then 660633 else 660634) ∧
+    toffoliCount (fieldSegment divide)=(if divide then 660121 else 660634) ∧
     measurementCount (fieldSegment divide)=(if divide then 528541 else 528542) := by
   have unary := modUnary_counts (borrowedSkywalkUnary id) 256 p (borrowedSkywalkUnary_widths id) (by omega)
   have center := converterPair_counts false

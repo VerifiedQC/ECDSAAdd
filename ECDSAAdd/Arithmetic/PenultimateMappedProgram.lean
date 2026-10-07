@@ -24,7 +24,7 @@ def fieldSegment (divide : Bool) : Program :=
     (copyRegister none (skywalkSharedField id).z (skywalkSharedField id).a) else [])
 
 theorem replay_counts (divide : Bool) :
-    toffoliCount (replay divide)=654500 ∧ measurementCount (replay divide)=522920 := by
+    toffoliCount (replay divide)=(if divide then 653990 else 654500) ∧ measurementCount (replay divide)=522920 := by
   have groups := mappedGroups_counts divide 1 169
   have first := EntryMappedFieldSegmentTrim.firstGroup_counts divide
   have cell := PenultimateSwapIdentity.cell_counts divide
@@ -35,14 +35,15 @@ theorem replay_counts (divide : Bool) :
   all_goals norm_num
 
 theorem fieldSegment_counts (divide : Bool) :
-    toffoliCount (fieldSegment divide)=657560 ∧ measurementCount (fieldSegment divide)=525980 := by
+    toffoliCount (fieldSegment divide)=(if divide then 657050 else 657560) ∧ measurementCount (fieldSegment divide)=525980 := by
   have old := EntryMappedFieldSegmentTrim.terminalFieldSegment_counts divide
   have oldReplay := EntryMappedFieldSegmentTrim.terminalReplay_counts divide
   have fresh := replay_counts divide
   simp only [EntryMappedFieldSegmentTrim.terminalFieldSegment,toffoliCount_append,
     measurementCount_append,oldReplay.1,oldReplay.2] at old
   simp only [fieldSegment,toffoliCount_append,measurementCount_append,fresh.1,fresh.2]
-  constructor <;> omega
+  cases divide <;> simp only [Bool.false_eq_true,if_false,if_true] at old oldReplay fresh ⊢
+  all_goals constructor <;> omega
 
 theorem saving (divide : Bool) :
     toffoliCount (EntryMappedFieldSegmentTrim.terminalFieldSegment divide)=
@@ -52,7 +53,7 @@ theorem saving (divide : Bool) :
   rw [(EntryMappedFieldSegmentTrim.terminalFieldSegment_counts divide).1,
     (EntryMappedFieldSegmentTrim.terminalFieldSegment_counts divide).2,
     (fieldSegment_counts divide).1,(fieldSegment_counts divide).2]
-  norm_num
+  cases divide <;> norm_num
 
 end ECDSAAdd.Arithmetic.PenultimateMapped
 #print axioms ECDSAAdd.Arithmetic.PenultimateMapped.replay_counts

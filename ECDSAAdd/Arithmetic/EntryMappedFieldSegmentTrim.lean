@@ -146,7 +146,7 @@ private theorem renameM (f : Wire → Wire) (P : Program) :
     measurementCount (renameProgram f P)=measurementCount P := (renameProgram_counts f P).2
 
 theorem firstGroup_counts (divide : Bool) :
-    toffoliCount (firstGroup divide)=2826 ∧ measurementCount (firstGroup divide)=2052 := by
+    toffoliCount (firstGroup divide)=(if divide then 2824 else 2826) ∧ measurementCount (firstGroup divide)=2052 := by
   have codec := compressedHistory_counts (placed 0) 0
   have a := logicalCell_counts divide 1
   have b := logicalCell_counts divide 2
@@ -156,7 +156,7 @@ theorem firstGroup_counts (divide : Bool) :
   all_goals norm_num
 
 theorem replay_counts (divide : Bool) :
-    toffoliCount (replay divide)=656038 ∧ measurementCount (replay divide)=523946 := by
+    toffoliCount (replay divide)=(if divide then 655527 else 656038) ∧ measurementCount (replay divide)=523946 := by
   have groups := mappedGroups_counts divide 1 169
   have first := firstGroup_counts divide
   have a := logicalCell_counts divide 510
@@ -177,7 +177,7 @@ private theorem copy_counts :
   simpa only [Option.isSome_none,Bool.false_eq_true,if_false] using copy
 
 theorem fieldSegment_counts (divide : Bool) :
-    toffoliCount (fieldSegment divide)=659098 ∧ measurementCount (fieldSegment divide)=527006 := by
+    toffoliCount (fieldSegment divide)=(if divide then 658587 else 659098) ∧ measurementCount (fieldSegment divide)=527006 := by
   have center := converterPair_counts false
   have canonical := converterPair_counts true
   have rp := replay_counts divide

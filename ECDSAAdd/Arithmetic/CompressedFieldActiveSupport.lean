@@ -197,13 +197,14 @@ theorem kernels_support (w : Nat → Wire) (sign : Wire) :
   have core := coreSub.trans ((balancedSharedPorts_support w sign).trans native)
   have tail := tailSub.trans ((BalancedInverse.support L (balancedSharedPorts_widths w sign)).trans native)
   have off := (zero_offset_support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans active
+  have forwardOff := (TerminalParityOffset.support_old _ (OffsetCleanupBorrowedCaller.widths w sign)).trans off
   have cx : wires [.CX L.ymsb L.sourceGuard]⊆W := by
     apply Finset.Subset.trans (s₂:=L.wires.toFinset) _ native
     simp [wires,Instr.wires,Finset.subset_iff,BalancedCircuit.Layout.wires,
       BalancedCleanup.Layout.wires]
   simp only [OffsetBorrowedField.program,OffsetBorrowedInverse.program,
     OffsetBorrowedInverse.recoverParity,wires_append,Finset.union_subset_iff]
-  exact ⟨⟨core,⟨off,cx⟩⟩,⟨⟨cx,off⟩,tail⟩⟩
+  exact ⟨⟨core,⟨forwardOff,cx⟩⟩,⟨⟨cx,off⟩,tail⟩⟩
 
 end ECDSAAdd.Arithmetic.CompressedFieldSupport
 #print axioms ECDSAAdd.Arithmetic.CompressedFieldSupport.offset_support

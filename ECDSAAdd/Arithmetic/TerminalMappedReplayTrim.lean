@@ -24,7 +24,7 @@ theorem trimReplay_support (divide : Bool) : wires (trimReplay divide) ⊆ slots
   · exact ⟨full.1,full.2.1⟩
 
 theorem trimReplay_counts (divide : Bool) :
-    toffoliCount (trimReplay divide)=655781 ∧ measurementCount (trimReplay divide)=523945 := by
+    toffoliCount (trimReplay divide)=(if divide then 655270 else 655781) ∧ measurementCount (trimReplay divide)=523945 := by
   have groups := mappedGroups_counts divide 0 170
   have cell := logicalCell_counts divide 510
   have counts := renameProgram_counts allPlaced (logicalCell divide 510)
@@ -38,7 +38,7 @@ theorem trimReplay_count_saving (divide : Bool) :
     measurementCount (mappedReplay divide)=measurementCount (trimReplay divide)+1025 := by
   rw [(mappedReplay_counts divide).1,(mappedReplay_counts divide).2,
     (trimReplay_counts divide).1,(trimReplay_counts divide).2]
-  norm_num
+  cases divide <;> norm_num
 
 end ECDSAAdd.Arithmetic.MappedCompressed
 #print axioms ECDSAAdd.Arithmetic.MappedCompressed.trimReplay_support

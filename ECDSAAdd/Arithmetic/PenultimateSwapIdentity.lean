@@ -14,7 +14,7 @@ def cell (divide : Bool) : Program :=
   else EndpointSwapTrim.inverse id 2400 510 2409 unit.1
 
 theorem cell_counts (divide : Bool) :
-    toffoliCount (cell divide)=1024 ∧ measurementCount (cell divide)=1024 := by
+    toffoliCount (cell divide)=(if divide then 1023 else 1024) ∧ measurementCount (cell divide)=1024 := by
   have h := EndpointSwapTrim.counts id 2400 510 2409
     (mixedTranscriptUnitTrace.getD 510 (false,false)).1
   cases divide <;> simp only [cell,Bool.false_eq_true,if_false,if_true]
@@ -27,7 +27,7 @@ theorem cell_saving (divide : Bool) :
   have old := logicalCell_counts divide 510
   have fresh := cell_counts divide
   rw [old.1,old.2,fresh.1,fresh.2]
-  norm_num
+  cases divide <;> norm_num
 
 def penultimatePayload (origin : BasisState) (Y : Fp) : Fp×Fp :=
   skywalkPayloadReplay (mixedTranscriptControls origin (base 2400) (indexedLetters 0 510)) (2*Y,0)

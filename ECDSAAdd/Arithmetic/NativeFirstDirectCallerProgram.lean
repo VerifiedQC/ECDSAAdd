@@ -62,27 +62,27 @@ theorem tail_counts :
 
 /-- Counts only. Functional caller acceptance remains a separate obligation. -/
 theorem caller_counts (divide : Bool) :
-    toffoliCount (callerKernel divide)=1054002 ∧
+    toffoliCount (callerKernel divide)=(if divide then 1053492 else 1054002) ∧
     measurementCount (callerKernel divide)=724028 ∧
-    toffoliCount (callerControlled divide)=1054514 ∧
+    toffoliCount (callerControlled divide)=(if divide then 1054004 else 1054514) ∧
     measurementCount (callerControlled divide)=724538 := by
   have f := forward_counts base
   have r := inverse_counts base
   have tails := tail_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
   have fields := selectedFieldSegment_counts divide
-  have core : toffoliCount (callerKernel divide)=1054002 ∧
+  have core : toffoliCount (callerKernel divide)=(if divide then 1053492 else 1054002) ∧
       measurementCount (callerKernel divide)=724028 := by
     simp only [callerKernel,skywalkArithmeticClear,toffoliCount_append,measurementCount_append,
       f.1,f.2,r.1,r.2,tails.1,tails.2.1,tails.2.2.1,tails.2.2.2,clear.1,clear.2,
       fields.1,fields.2]
-    constructor <;> norm_num
+    cases divide <;> constructor <;> norm_num
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock_length]
   have ctrl := directZeroControlled_counts (wireBlock base 770 256) (wireBlock base 0 255)
     (base 2313) (base 2411) (callerKernel divide) width
   refine ⟨core.1,core.2,?_,?_⟩
-  · simpa only [callerControlled,core.1,wireBlock_length,Nat.reduceAdd,Nat.reduceMul,Nat.reduceSub] using ctrl.1
+  · cases divide <;> simpa only [callerControlled,core.1,wireBlock_length,Nat.reduceAdd,Nat.reduceMul,Nat.reduceSub] using ctrl.1
   · simpa only [callerControlled,core.2,wireBlock_length,Nat.reduceAdd,Nat.reduceMul,Nat.reduceSub] using ctrl.2
 
 end ECDSAAdd.Arithmetic.NativeFirstDirect

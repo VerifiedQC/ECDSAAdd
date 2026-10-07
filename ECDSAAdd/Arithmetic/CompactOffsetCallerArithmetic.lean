@@ -40,7 +40,7 @@ theorem compactOffsetCallerArithmetic_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
     (ho : ∀ q∈[b,effG,effS],q∉skywalkSharedWires w)
     (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    toffoliCount (compactOffsetCallerArithmetic true w b effG effS)=1055221 ∧
+    toffoliCount (compactOffsetCallerArithmetic true w b effG effS)=1054709 ∧
     measurementCount (compactOffsetCallerArithmetic true w b effG effS)=726261 ∧
     toffoliCount (compactOffsetCallerArithmetic false w b effG effS)=1055222 ∧
     measurementCount (compactOffsetCallerArithmetic false w b effG effS)=726262 := by

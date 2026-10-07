@@ -19,7 +19,7 @@ def inverse (w : Nat → Wire) (b g flag : Wire) (ig : Bool) : Program :=
     ([.X flag]++OffsetBorrowedInverse.program w flag++[.X flag])
 
 theorem counts (w : Nat → Wire) (b g flag : Wire) (ig : Bool) :
-    toffoliCount (forward w b g flag ig)=1024 ∧
+    toffoliCount (forward w b g flag ig)=1023 ∧
     measurementCount (forward w b g flag ig)=1024 ∧
     toffoliCount (inverse w b g flag ig)=1024 ∧
     measurementCount (inverse w b g flag ig)=1024 := by

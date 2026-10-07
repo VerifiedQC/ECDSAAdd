@@ -175,10 +175,11 @@ theorem fieldPrograms (w : Nat → Wire) (sign : Wire) (W : Finset Wire)
     ((BalancedInverse.support L (balancedSharedPorts_widths w sign)).trans native)
   have off := (BalancedCleanupOffsetZero.support _ (OffsetCleanupBorrowedCaller.widths w sign)).trans
     (offsetSites w sign W hW hs)
+  have forwardOff := (TerminalParityOffset.support_old _ (OffsetCleanupBorrowedCaller.widths w sign)).trans off
   have cx := (cxSupport L).trans native
   simp only [OffsetBorrowedField.program,OffsetBorrowedInverse.program,
     OffsetBorrowedInverse.recoverParity,wires_append,Finset.union_subset_iff,and_assoc]
-  exact ⟨core,off,cx,cx,off,tail⟩
+  exact ⟨core,forwardOff,cx,cx,off,tail⟩
 
 private theorem swapSupport (L : BalancedCircuit.Layout) (eff : Wire) (W : Finset Wire)
     (hw : L.Widths) (own : L.wires.toFinset⊆W) (he : eff∈W) :

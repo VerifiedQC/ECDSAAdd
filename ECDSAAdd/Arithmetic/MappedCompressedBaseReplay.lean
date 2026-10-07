@@ -20,7 +20,7 @@ def baseTail (divide : Bool) : Program :=
   else renameProgram base (logicalCell divide 511)++renameProgram base (logicalCell divide 510)
 
 theorem baseGroup_counts (divide : Bool) (j : Nat) :
-    toffoliCount (baseGroup divide j)=3850 ∧ measurementCount (baseGroup divide j)=3076 := by
+    toffoliCount (baseGroup divide j)=(if divide then 3847 else 3850) ∧ measurementCount (baseGroup divide j)=3076 := by
   have codec := compressedHistory_counts base (3*j)
   have a := logicalCell_counts divide (3*j)
   have b := logicalCell_counts divide (3*j+1)
@@ -31,7 +31,7 @@ theorem baseGroup_counts (divide : Bool) (j : Nat) :
   all_goals norm_num
 
 theorem baseGroups_counts (divide : Bool) (j n : Nat) :
-    toffoliCount (baseGroups divide j n)=3850*n ∧
+    toffoliCount (baseGroups divide j n)=(if divide then 3847 else 3850)*n ∧
     measurementCount (baseGroups divide j n)=3076*n := by
   induction n generalizing j with
   | zero => simp [baseGroups,toffoliCount,measurementCount]

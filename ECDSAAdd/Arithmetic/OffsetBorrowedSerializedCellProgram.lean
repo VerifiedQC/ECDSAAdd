@@ -31,7 +31,7 @@ def sites (w : Nat → Wire) (b g swap flag : Wire) : List Wire :=
 theorem counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
     (hn : (flag::(balancedSharedPorts w flag).r++
       (balancedSharedPorts w flag).y).Nodup) :
-    toffoliCount (forward w b g swap flag ig is)=1281 ∧
+    toffoliCount (forward w b g swap flag ig is)=1280 ∧
     measurementCount (forward w b g swap flag ig is)=1025 ∧
     toffoliCount (inverse w b g swap flag ig is)=1281 ∧
     measurementCount (inverse w b g swap flag ig is)=1025 := by
@@ -53,7 +53,7 @@ theorem counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
 
 theorem forward_counts (w : Nat → Wire) (b g swap flag : Wire) (ig is : Bool)
     (hn : (flag::(balancedSharedPorts w flag).r++(balancedSharedPorts w flag).y).Nodup) :
-    toffoliCount (forward w b g swap flag ig is)=1281 ∧
+    toffoliCount (forward w b g swap flag ig is)=1280 ∧
     measurementCount (forward w b g swap flag ig is)=1025 := by
   have h := counts w b g swap flag ig is hn
   exact ⟨h.1,h.2.1⟩

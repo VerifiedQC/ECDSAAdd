@@ -47,7 +47,7 @@ theorem integer_tail_counts :
     And.intro f.1 (And.intro f.2 r)
 
 theorem kernel_counts (divide : Bool) :
-    toffoliCount (kernel divide)=1054002 ∧
+    toffoliCount (kernel divide)=(if divide then 1053492 else 1054002) ∧
     measurementCount (kernel divide)=724028 := by
   have f := NativeFirstDirect.forward_counts base
   have r := NativeFirstDirect.inverse_counts base
@@ -57,13 +57,13 @@ theorem kernel_counts (divide : Bool) :
   simp only [kernel,skywalkArithmeticClear,toffoliCount_append,measurementCount_append,
     f.1,f.2,r.1,r.2,integer.1,integer.2.1,integer.2.2.1,integer.2.2.2,
     clear.1,clear.2,field.1,field.2]
-  constructor <;> norm_num
+  cases divide <;> constructor <;> norm_num
 
 /-- Exact emitted gate and record counts for both candidate stages. The
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=1054514 ∧
+    toffoliCount (controlled divide)=(if divide then 1054004 else 1054514) ∧
     measurementCount (controlled divide)=724538 := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]

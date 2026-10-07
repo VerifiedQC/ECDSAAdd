@@ -57,7 +57,7 @@ theorem generic_support (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wire
       (arith false)) square) (ca L.point.x (Or.inl rfl) (3*cx))) (arith true)) recovery
 
 theorem generic_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup) (cx cy : Fp) :
-    toffoliCount (pointCompressedDialogGeneric L cx cy)=2214300 ∧
+    toffoliCount (pointCompressedDialogGeneric L cx cy)=2213790 ∧
     measurementCount (pointCompressedDialogGeneric L cx cy)=1553828 := by
   have a k := pointDialogConstantAdd_counts L hw hn L.point.x (Or.inl rfl) k
   have b k := pointDialogConstantAdd_counts L hw hn L.point.y (Or.inr rfl) k
@@ -71,7 +71,7 @@ theorem generic_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires
 
 theorem finite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointCompressedDialogFinite L C cx cy)=2218404 ∧
+    toffoliCount (pointCompressedDialogFinite L C cx cy)=2217894 ∧
     measurementCount (pointCompressedDialogFinite L C cx cy)=1557932 := by
   have hg := generic_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k

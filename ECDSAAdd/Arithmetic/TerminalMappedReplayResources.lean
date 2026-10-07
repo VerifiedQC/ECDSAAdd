@@ -24,7 +24,7 @@ theorem fieldTrimSegment_saving (divide : Bool) :
   constructor <;> omega
 
 theorem fieldTrimSegment_counts (divide : Bool) :
-    toffoliCount (fieldTrimSegment divide)=(if divide then 659352 else 659353) ∧
+    toffoliCount (fieldTrimSegment divide)=(if divide then 658841 else 659353) ∧
     measurementCount (fieldTrimSegment divide)=(if divide then 527516 else 527517) := by
   have old := fieldSegment_counts divide
   have saving := fieldTrimSegment_saving divide

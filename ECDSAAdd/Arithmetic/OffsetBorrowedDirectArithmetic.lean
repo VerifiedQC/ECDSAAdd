@@ -247,7 +247,7 @@ theorem offsetBorrowedDirectArithmetic_counts (w : Nat → Wire)
     (hn : (skywalkSharedWires w).Nodup) (b effG effS : Wire)
     (ho : ∀ q∈[b,effG,effS],q∉skywalkSharedWires w)
     (hl : MixedTranscriptReplayLayout w b effG effS (mixedTranscriptTape w)) :
-    toffoliCount (offsetBorrowedDirectArithmetic true w b effG effS)=1055221 ∧
+    toffoliCount (offsetBorrowedDirectArithmetic true w b effG effS)=1054709 ∧
     measurementCount (offsetBorrowedDirectArithmetic true w b effG effS)=726771 ∧
     toffoliCount (offsetBorrowedDirectArithmetic false w b effG effS)=1055222 ∧
     measurementCount (offsetBorrowedDirectArithmetic false w b effG effS)=726772 := by

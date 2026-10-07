@@ -20,7 +20,7 @@ theorem selectedFieldSegment_support (divide : Bool) :
   PenultimateMapped.fieldSegment_support divide
 
 theorem selectedFieldSegment_counts (divide : Bool) :
-    toffoliCount (selectedFieldSegment divide)=657560 ∧
+    toffoliCount (selectedFieldSegment divide)=(if divide then 657050 else 657560) ∧
     measurementCount (selectedFieldSegment divide)=525980 :=
   PenultimateMapped.fieldSegment_counts divide
 

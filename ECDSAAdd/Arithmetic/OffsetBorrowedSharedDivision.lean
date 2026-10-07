@@ -42,7 +42,7 @@ theorem offsetBorrowedSharedFieldDivision_counts (w : Nat → Wire) (b effG effS
     (hn : (skywalkSharedWires w).Nodup)
     (hf : ∀r∈skywalkSharedTape w,MixedTranscriptFieldLayout w b r.1 r.2 effG effS)
     (ho : ∀q∈[b,effG,effS],q∉skywalkSharedWires w) :
-    toffoliCount (offsetBorrowedSharedFieldDivision w b effG effS)=659443 ∧
+    toffoliCount (offsetBorrowedSharedFieldDivision w b effG effS)=658931 ∧
     measurementCount (offsetBorrowedSharedFieldDivision w b effG effS)=528371 := by
   have hw := skywalkShared_field_widths w
   have hd := modUnary_counts (borrowedSkywalkUnary w) 256 p

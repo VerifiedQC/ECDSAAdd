@@ -42,7 +42,7 @@ theorem terminalFieldSegment_support (divide : Bool) : wires (terminalFieldSegme
   · exact ⟨a,rp,b,copy_support⟩
 
 theorem terminalReplay_counts (divide : Bool) :
-    toffoliCount (terminalReplay divide)=654757 ∧ measurementCount (terminalReplay divide)=522921 := by
+    toffoliCount (terminalReplay divide)=(if divide then 654247 else 654757) ∧ measurementCount (terminalReplay divide)=522921 := by
   have groups := mappedGroups_counts divide 1 169
   have first := firstGroup_counts divide
   have cell := logicalCell_counts divide 510
@@ -55,7 +55,7 @@ theorem terminalReplay_counts (divide : Bool) :
 /-- Savings here include only the separately established terminal cell.
 The1535 entry saving is relative to the current terminal-trim wrapper. -/
 theorem terminalFieldSegment_counts (divide : Bool) :
-    toffoliCount (terminalFieldSegment divide)=657817 ∧ measurementCount (terminalFieldSegment divide)=525981 := by
+    toffoliCount (terminalFieldSegment divide)=(if divide then 657307 else 657817) ∧ measurementCount (terminalFieldSegment divide)=525981 := by
   have old := fieldSegment_counts divide
   have full := replay_counts divide
   have trim := terminalReplay_counts divide

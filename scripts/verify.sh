@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport
+lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport
 
 # Report and check only the public proof entry points.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.TerminalParityMeasure
+import ECDSAAdd.Arithmetic.TerminalParityLeaf
+import ECDSAAdd.Arithmetic.TerminalParityChain
+import ECDSAAdd.Arithmetic.TerminalParityChainResources
+import ECDSAAdd.Arithmetic.TerminalParityZeroHead
+import ECDSAAdd.Arithmetic.TerminalParityZeroBridge
+import ECDSAAdd.Arithmetic.TerminalParityOffset
+import ECDSAAdd.Arithmetic.TerminalParityOffsetResources
+import ECDSAAdd.Arithmetic.TerminalParitySlimSupport
+import ECDSAAdd.Arithmetic.TerminalParityOldSupport
 import ECDSAAdd.Arithmetic.NativeFirstDirectAddProof
 import ECDSAAdd.Arithmetic.NativeFirstDirectCallerFirstStage
 import ECDSAAdd.Arithmetic.NativeFirstDirectCallerForward
@@ -122,6 +132,22 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.correct
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.counts
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.leaf_correct
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.leaf_counts
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.chain_correct
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.chain_counts
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.chain_support
+#print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.chain_support_slim
+#print axioms ECDSAAdd.Arithmetic.TerminalParityZeroHead.run_correct
+#print axioms ECDSAAdd.Arithmetic.TerminalParityZeroHead.counts
+#print axioms ECDSAAdd.Arithmetic.TerminalParityZeroHead.eq_old_of_clears
+#print axioms ECDSAAdd.Arithmetic.TerminalParityOffset.core_eq_old_of_clears
+#print axioms ECDSAAdd.Arithmetic.TerminalParityOffset.correct
+#print axioms ECDSAAdd.Arithmetic.TerminalParityOffset.counts
+#print axioms ECDSAAdd.Arithmetic.TerminalParityOffset.support
+#print axioms ECDSAAdd.Arithmetic.TerminalParityOffset.support_old
 #print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_spec
 #print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kTail_spec
 #print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_run
