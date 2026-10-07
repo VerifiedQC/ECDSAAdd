@@ -77,7 +77,7 @@ private theorem dialogLoad_wires (L : DialogLayout) (p : Nat) (hw : L.Widths) :
 theorem dialog_wires (L : DialogLayout) (p : Nat) (hw : L.Widths) (hn : L.wires.Nodup) :
     wires (dialogDivide L p)=L.wires.toFinset ∧ wires (dialogMultiply L p)=L.wires.toFinset := by
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low]
-  have hv := valueLoop_wires L.first L.records 0 hw.counter (by omega)
+  have hv := valueLoop_wires L.first L.records 0 hw.counter (by omega) (by omega)
   have he : L.records.isEmpty=false := by
     cases hh : L.records with
     | nil => have hz := hw.records; rw [hh] at hz; contradiction

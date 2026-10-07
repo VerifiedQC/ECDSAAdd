@@ -237,7 +237,8 @@ private theorem valueKIter_ghost (n : Nat) (z : KState) :
 theorem valueLoop_spec (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat) (z : ValueState)
     (hn : (L.tapeWires rs).Nodup) (hw : L.counter.width=10) (hd : 2≤L.data.width)
     (hlen : i+rs.length≤512) (hk : z.k ≤ i ∧ (z.v ≠ 0 → z.k=i))
-    (hu : z.u<2^L.data.width) (hv : z.v<2^L.data.width) :
+    (hb : ∀ j<rs.length, (valueStep^[j] z).u<2^(valueWidth L.data.width (i+j)) ∧
+      (valueStep^[j] z).v<2^(valueWidth L.data.width (i+j))) :
     Triple (fun st => ValueLoopState L z st ∧ TapeValues rs (List.replicate rs.length (false,false)) st)
       (valueLoop L i rs)
       (fun st => ValueLoopState (loopEndLayout L rs.length) (valueStep^[rs.length] z) st ∧
@@ -252,11 +253,10 @@ theorem valueLoop_spec (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat
     TapeValues.congr rs _ _ _ h.2 (fun w hw => he w
       (List.mem_toFinset.mpr (List.mem_append_left _ hw)))
   have hs := zeroGhost_full L rs hn z s h.1
-  have hc := (valueLoop_correct L rs i full hn hw hd hlen hk hu hv).1
+  have hc := (valueLoop_correct L rs i full hn hw hd hlen hk hb).1
   obtain ⟨hp,ho⟩ := hc (zeroGhost L s) m ⟨hs,ht⟩
   have hwire : wires (valueLoop L i rs) ⊆ W := by
-    rw [(valueLoop_wires L rs i hw hd).1]
-    split <;> simp [W]
+    exact (valueLoop_wires_subset L rs i hw hd).1.1
   have hr := run_agrees (valueLoop L i rs) W hwire m (zeroGhost L s) s rfl he
   refine ⟨hr.1.symm.trans hp,?_,?_⟩
   · have hh := ValueLoopState.of_full _ _ _ ho.1
@@ -273,7 +273,8 @@ theorem valueLoop_spec (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat
 theorem valueUnloop_spec (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : Nat) (z : ValueState)
     (hn : (L.tapeWires rs).Nodup) (hw : L.counter.width=10) (hd : 2≤L.data.width)
     (hlen : i+rs.length≤512) (hk : z.k ≤ i ∧ (z.v ≠ 0 → z.k=i))
-    (hu : z.u<2^L.data.width) (hv : z.v<2^L.data.width) :
+    (hb : ∀ j<rs.length, (valueStep^[j] z).u<2^(valueWidth L.data.width (i+j)) ∧
+      (valueStep^[j] z).v<2^(valueWidth L.data.width (i+j))) :
     Triple (fun st => ValueLoopState (loopEndLayout L rs.length) (valueStep^[rs.length] z) st ∧
         TapeValues rs ((valueTrace rs.length z).map Prod.snd) st)
       (valueUnloop L i rs)
@@ -312,10 +313,9 @@ theorem valueUnloop_spec (L : KaliskiRoundLayout) (rs : List RoundRecord) (i : N
     rw [valueCodes_trace]
     exact TapeValues.congr rs _ _ _ h.2 (fun w hw => he w
       (List.mem_toFinset.mpr (List.mem_append_left _ hw)))
-  obtain ⟨hp,ho⟩ := (valueLoop_correct L rs i full hn hw hd hlen hk hu hv).2 (zeroGhost L s) m ⟨hs,ht⟩
+  obtain ⟨hp,ho⟩ := (valueLoop_correct L rs i full hn hw hd hlen hk hb).2 (zeroGhost L s) m ⟨hs,ht⟩
   have hwire : wires (valueUnloop L i rs) ⊆ W := by
-    rw [(valueLoop_wires L rs i hw hd).2]
-    split <;> simp [W]
+    exact (valueLoop_wires_subset L rs i hw hd).1.2
   have hr := run_agrees (valueUnloop L i rs) W hwire m (zeroGhost L s) s rfl he
   refine ⟨hr.1.symm.trans hp,?_,?_⟩
   · exact (ValueLoopState.of_full _ _ _ ho.1).congr _ _ _ _ (fun w hw =>

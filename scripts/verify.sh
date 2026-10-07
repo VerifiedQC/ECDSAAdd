@@ -429,6 +429,16 @@ import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.valueLoop_counts
 #print axioms ECDSAAdd.Arithmetic.valueLoop_wires
 #print axioms ECDSAAdd.Arithmetic.valueLoop_qubits
+#print axioms ECDSAAdd.valueStep_env
+#print axioms ECDSAAdd.valueEnv_width
+#print axioms ECDSAAdd.valueIter_width
+#print axioms ECDSAAdd.dialogWalk_width
+#print axioms ECDSAAdd.Arithmetic.KaliskiRoundLayout.narrow_wires_perm
+#print axioms ECDSAAdd.Arithmetic.valueNarrowRound_tape
+#print axioms ECDSAAdd.Arithmetic.valueNarrowUnround_tape
+#print axioms ECDSAAdd.Arithmetic.valueNarrowRound_wires
+#print axioms ECDSAAdd.Arithmetic.valueLoop_wires_subset
+#print axioms ECDSAAdd.Arithmetic.valueWidthSum_257
 #print axioms ECDSAAdd.Arithmetic.replayControls_trace
 #print axioms ECDSAAdd.Arithmetic.dialogReplay_division
 #print axioms ECDSAAdd.Arithmetic.dialogReplay_multiplication

@@ -13,7 +13,7 @@
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 7,207,866 / 4,305,594 / 3,134 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `controlledPointAdd`，有限 C | 6,286,806 / 3,779,274 / 3,134 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
@@ -23,7 +23,7 @@
 | `fieldMul` | 379,424 / 379,424 / 2,596 | [fieldMul_resources](../ECDSAAdd/Arithmetic/FieldMultiply.lean#L28) |
 | `montP` / `montQ`，每段 | 189,712 / 189,712 / 2,339 | [montPQ_resources](../ECDSAAdd/Arithmetic/MontResources.lean) |
 | Montgomery 五适配器 | 逐接口计数，见下方 M2 表 | [montAdapter_counts / montControlledAdapter_counts / qubits](../ECDSAAdd/Arithmetic/MontAdapterResources.lean#L5) |
-| `dialogDivide`；`dialogMultiply` | 3,591,168 / 2,140,672 / 3,126；3,328,000 / 1,878,016 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
+| `dialogDivide`；`dialogMultiply` | 3,130,638 / 1,877,512 / 3,126；2,867,470 / 1,614,856 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
 | `squareSub`（当前中空间模块） | 275,129 / 275,129 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
 | 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,813,634 / 5,646,146 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
 | 保留的 `divideAdd`；`divideSub`（非 dialog 入口） | 3,882,022 / 2,298,918 / —；3,882,534 / 2,299,430 / — | [divide_counts](../ECDSAAdd/Arithmetic/DivideResources.lean#L17) |
@@ -32,6 +32,38 @@
 | `equalConstant`，n 位输入 | n / n / — | [equalConstant_counts](../ECDSAAdd/Arithmetic/EqualConstant.lean#L102) |
 
 本索引不把独立模块的资源相加当作整机结果。当前整机支持等式另见 [pointDialogFinite_wires](../ECDSAAdd/Arithmetic/PointDialogWires.lean#L26)。布局仍分配 9,817 位，实际触及 3,134 位，两数口径不同。
+
+## Value-walk width envelope
+
+Math ([ValueWalk.lean](../ECDSAAdd/Math/ValueWalk.lean), [ValueReplay.lean](../ECDSAAdd/Math/ValueReplay.lean)): `ValueEnv N i z` states that u, v are coprime and u·v·2^i<2^N. `valueStep_env` proves every value-walk step preserves it (an active round at least halves the product, a terminated round is the identity); `valueEnv_width` gives u, v<2^(N−i) for i<N; `valueIter_width` proves that, for coprime p, x with p·x<2^512, u and v fit in `valueWidth w i = min w (max 2 (512−i))` bits during the first 512 rounds; `dialogWalk_width` is the secp256k1 instance for 0<x<p. No new convergence assumption is introduced and sampling is not used as evidence.
+
+Circuit ([ValueNarrow.lean](../ECDSAAdd/Arithmetic/ValueNarrow.lean), [ValueLoopResources.lean](../ECDSAAdd/Arithmetic/ValueLoopResources.lean)): `KaliskiRoundLayout.narrow L m` keeps only the first m data bits and leaves counter, control and record wires unchanged; `narrow_wires_perm` shows the full layout is a permutation of the narrow view and the dropped data bits. `valueNarrowRound_tape` / `valueNarrowUnround_tape` lift the existing proven round spec back to the full-width `LoopState` when u, v<2^m: the low bits follow from the narrow-view spec, the high bits are outside the gate support and preserved by `run_preserves_outside`, and r/s high bits keep their values. Round i of `valueLoop`/`valueUnloop` now uses `narrow (valueWidth L.data.width i)`; the full-width version is not kept.
+
+- The premises of `valueLoop_correct`, `valueLoop_spec` and `valueUnloop_spec` change from a fixed-width bound to a per-round bound; `dialogWalk_specs` supplies it through `dialogWalk_width`. The public divide/multiply and point-addition specs are unchanged.
+- `valueLoop_counts` (now assuming `2≤L.data.width`) is 7·S+33n / 4·S+29n with S=`valueWidthSum`; `valueWidthSum_257` proves S=98,689 for the 512-round instance (131,584 at full width) by `decide +kernel`.
+- `valueLoop_wires_subset` gives support inclusion and record coverage for any start round; `valueLoop_wires` and `valueLoop_qubits` keep their original conclusions under the new premise that the first round is full width (i+w≤512), so `dialog_wires` and `pointDialogFinite_wires` are unchanged.
+
+|Same concrete program|Before (§29.10)|Width envelope (current)|
+|---|---:|---:|
+|512-round value walk, one direction|937,984 / 541,184|707,719 / 409,604|
+|`dialogDivide`|3,591,168 / 2,140,672 / 3,126|3,130,638 / 1,877,512 / 3,126|
+|`dialogMultiply`|3,328,000 / 1,878,016 / 3,126|2,867,470 / 1,614,856 / 3,126|
+|`controlledPointAdd`, finite C|7,207,866 / 4,305,594 / 3,134|6,286,806 / 3,779,274 / 3,134|
+
+The two full-width round-tape lemmas in `ValueLoopState.lean` are superseded by the narrowed versions and removed. Based on `9699678`, `scripts/verify.sh` exits 0: 2,244 build jobs and 478 actual axiom outputs; the ten new entry points print:
+
+```text
+'ECDSAAdd.valueStep_env' depends on axioms: [propext, Quot.sound]
+'ECDSAAdd.valueEnv_width' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.valueIter_width' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.dialogWalk_width' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.KaliskiRoundLayout.narrow_wires_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueNarrowRound_tape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueNarrowUnround_tape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueNarrowRound_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueLoop_wires_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ECDSAAdd.Arithmetic.valueWidthSum_257' does not depend on any axioms
+```
 
 ## 回放正逆组合：规范值与电路恢复
 
@@ -906,7 +938,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,295,112 | 6,126,846 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 7,207,866 | 4,305,594 | 3,134 |
+| 有限 C 的 `controlledPointAdd` | 6,286,806 | 3,779,274 | 3,134 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointDialogFinite`门列的计数与支持定理。实际支持为点513位、控制1位、七个标志和共享池2,613位；没有独立斜率寄存器，平方与乘除按边界归零后复用同一池。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。

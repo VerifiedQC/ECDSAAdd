@@ -128,6 +128,21 @@ theorem valueReplay_trace (n : Nat) (z : ValueState) :
   | succ n ih =>
     simp only [valueTrace,valueReplay,valueStep_replay,ih,Function.iterate_succ_apply]
 
+/-- secp256k1 instance of the width envelope: in the secp256k1 value walk, u and v at round j<512 fit in `valueWidth 257 j` bits. -/
+theorem dialogWalk_width (x j : Nat) (hx0 : 0<x) (hx : x<p) (hj : j<512) :
+    (valueStep^[j] (valueInit p x)).u<2^(valueWidth 257 j) ∧
+    (valueStep^[j] (valueInit p x)).v<2^(valueWidth 257 j) := by
+  have hp : p<2^256 := by norm_num [p]
+  have hc : p.Coprime x := by
+    apply Secp256k1.p_prime.coprime_iff_not_dvd.mpr
+    intro hd
+    exact (Nat.not_le_of_lt hx) (Nat.le_of_dvd hx0 hd)
+  have hpx : p*x<2^512 := by
+    rw [show (512:Nat)=256+256 by norm_num,pow_add]
+    exact Nat.mul_lt_mul'' hp (hx.trans hp)
+  have hp' : p<2^257 := by rw [show (257:Nat)=256+1 by norm_num,pow_succ]; omega
+  exact valueIter_width p x 257 j hc hpx hp' (hx.trans hp') hj
+
 /-- 512轮在域中把(p,X)送到(1,0)，这是商公式的数值证据。 -/
 theorem valueReplay_terminal (x : Nat) (hx0 : 0<x) (hx : x<p) :
     valueReplay (valueTrace 512 (valueInit p x)) (0,(x : Fp))=(1,0) := by

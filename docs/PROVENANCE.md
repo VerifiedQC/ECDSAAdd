@@ -191,3 +191,9 @@ Deutsch 按已复审的 §30.8/§30.11 门列，复用本仓库 `eraseMask_eq_co
 5n−1/5n−1/5n+5 与 7n−1/7n−1/5n+6，均指同一门列。
 
 本批在合入 `9bd65f9` 后完整运行 `scripts/verify.sh`，退出0：2,244项构建、468条公理实际输出；脚本入口、PROOF_STATUS 公理块与日志逐项一致。
+
+### Value-walk width envelope
+
+The idea comes from ecdsa.fail's Leapfrog (`86221ad`), which narrows its rails tick by tick, but only the idea of narrowing per round is borrowed: Leapfrog's empirical width table, 139-tick cap and window truncations are not used, and none of its code is copied. The width bound used here is proved in Lean from the Kaliski product-halving invariant (Math/ValueWalk), and the circuit reuses the existing proven round on a low-bit view (Arithmetic/ValueNarrow). No new axioms, tests, semantic extensions or `set_option` overrides are added; `valueWidthSum_257` is checked by `decide +kernel`.
+
+On `9699678`, `scripts/verify.sh` exits 0: 2,244 build jobs and 478 actual axiom outputs.

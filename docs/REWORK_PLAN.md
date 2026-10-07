@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-作者：Dirac；文档状态核对基线：`85530a6`（PR75）。本文件同时保存历史设计、已交付阶段和未实现选项，不能把较早章节的“当前／目标”当成最新公共入口。**当前已证整机**为 7,207,866 Toffoli / 4,305,594 测量 / 3,134 实际静态线路，依据 [`controlledPointAdd_finite_resources`](../ECDSAAdd/Arithmetic/ControlledPointResources.lean)，实现记录见 §29.10。
+作者：Dirac；文档状态核对基线：`85530a6`（PR75）。本文件同时保存历史设计、已交付阶段和未实现选项，不能把较早章节的“当前／目标”当成最新公共入口。**当前已证整机**为 6,286,806 Toffoli / 3,779,274 测量 / 3,134 实际静态线路，依据 [`controlledPointAdd_finite_resources`](../ECDSAAdd/Arithmetic/ControlledPointResources.lean)，实现记录见 §31.8。
 
 本文账本简写 T / M / Q 分别指 Toffoli（CCX）数、测量数、实际静态支持线数；T 不是 Clifford+T 分解中的 T 门数。
 
@@ -423,8 +423,9 @@ Montgomery 表示：x̃ = x·R mod p，R = 2^256。MontMul(x̃, ỹ) = x̃·ỹ�
 | + Q1（§24，历史阶段） | 8,920,488 | 3,939 | 测量5,750,952；共享交换位阶段 |
 | + K2（§28，历史阶段） | 8,814,658 | 3,939 | 测量5,645,122；§28.9交付记录 |
 | + Q1交换位测量清理（历史阶段） | 8,813,634 | 3,939 | 测量5,646,146；§24.8交付记录 |
-| + 改12（§29.10，**当前已证**） | **7,207,866** | **3,134** | 测量**4,305,594**；[当前整机定理](../ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
-| §30.8可选清复制（**未实现预算**） | 6,945,722 | 3,134（预算） | 测量4,567,738；不计入当前值 |
+| + 改12（§29.10, superseded by the value-walk width envelope） | 7,207,866 | 3,134 | 测量4,305,594 |
+| + Value-walk width envelope (§31, **current, proven**) | **6,286,806** | **3,134** | measurements **3,779,274**; [current theorem](../ECDSAAdd/Arithmetic/ControlledPointResources.lean) |
+| §30.8可选清复制（**未实现预算**） | 6,024,662 | 3,134（预算） | 测量4,041,418；不计入当前值 |
 | 参照：Litinski 2023 精确点加 | ≈ 8M | ≈ 3,000 | 公开构造，Gidney 受控加法器 + 13n 轮 + 融合乘加 |
 | 参照：Babbush 等 2026（保密电路，近似正确） | 2.1–2.7M | 1,175–1,425 | 不承诺复现 |
 
@@ -2642,3 +2643,98 @@ PROVENANCE 同步状态，现有 `scripts/verify.sh` 新增八条公开入口
 `outer_mask_erase` 从完整寄存器值及范围推出低 n 位的掩码关系，再通过
 `eraseMask_eq_copy` 复用原清理证明；公开规格不新增掩码前提。
 加减法各有 `_spec`、`_frame`、`_wires`、`_resources` 四条公开定理。
+
+<a id="value-walk-width-envelope"></a>
+
+## 31. Kaliski value-walk width envelope (implemented)
+
+> **Status**: current, proven. Design baseline main `9699678`. Sections 31.1–31.7 keep the design text; the implementation record and the zero-deviation check are in §31.8.
+
+**Source and scope.** The ecdsa.fail Leapfrog walk (`86221ad`, see the EcdsafailWiki note `concepts/leapfrog.md`) narrows its rails tick by tick, but its width table `env_w1_peel139.txt` is an empirical fit over 1.92M sampled walks, and its 139-tick cap and fold/compare window truncations hold only statistically (about 7e-4 failures per leg). Triples in this repository quantify over all inputs, so none of those parts are used (§31.6). Only the idea of narrowing per round is borrowed, with a provable bound instead: every active Kaliski round at least halves u·v, so the last 256 rounds have a fixed width bound. Payload replay, records, counters and public specs are unchanged.
+
+### 31.1 Mathematical bound
+
+Let the value walk start at (u₀,v₀)=(p,Xsafe) and let zᵢ=valueStep^[i](valueInit p Xsafe) be the state before round i. Define the round invariant
+
+`ValueEnv N i z := Nat.Coprime z.u z.v ∧ z.u*z.v*2^i < 2^N`.
+
+- **Initial state**: p is prime and 0<Xsafe<p, so gcd=1; p·Xsafe<2^512=2^(2n) with n=256.
+- **Preservation**: if v=0, valueStep is the identity and the product is 0. If v≠0, the four branches are: u even (gcd=1 forces v odd) gives (u/2)·v·2^(i+1)=u·v·2^i; v even is symmetric; both odd with v<u gives ((u−v)/2)·v·2^(i+1)=(u−v)·v·2^i<u·v·2^i; u≤v is symmetric (u=v only happens for u=v=1, which yields v=0). The gcd is preserved in all four branches: halving u keeps the gcd because v is odd, and gcd(u−v,v)=gcd(u,v) with 2 coprime to the odd v.
+- **Width consequence** (i<2n): if v≠0 and u,v≥1 then u,v≤u·v<2^(2n−i); if u=0 then gcd=v=1; if v=0 then gcd=u=1. In all cases u,v<2^(2n−i). The existing monotonicity also gives u≤p and v≤Xsafe<2^n.
+
+Round i can therefore use the width
+
+`valueWidth w i := min w (max 2 (512−i))`,
+
+which for w=257 is 257 for i≤255, 512−i for i≥256, and the floor 2 for the last two rounds (the existing loop requires `2≤L.data.width`). The bound is tight: sampling more than 5,000 values of Xsafe on secp256k1 (including 1, 2, 3, 2^255, p−1, p−2, (p−1)/2), the largest observed bit length at round i≥256 is exactly 511−i, one bit below the bound, so it cannot be narrowed further without changing the algorithm. Sampling is only used to check tightness, not as evidence.
+
+### 31.2 Gate list: the narrow view
+
+The existing `valueRound_state` only requires `z.u<2^L.data.width` and `z.v<2^L.data.width`, and `valueRound_counts` is already 7w+33 / 4w+29 in the width parameter. No new arithmetic primitive is needed, only a narrow view:
+
+`KaliskiRoundLayout.narrow L m`: the data bits are `(L.low++[L.high]).take m`, the first m−1 bits as `low` and bit m as `high`; cin, counters, active/done/swap/subtract/oddWork/bothWork/compareCin are unchanged.
+
+Round i of the new loop runs `valueRound ((L.withRecord r).narrow (valueWidth w i)) i`, and the reverse loop symmetrically. The dropped high bits (u, v, y, carry, zero, r, s, out) are not in the gate list of that round and are preserved wire by wire by `run_preserves_outside`: u/v high bits are zero by 31.1, work-word high bits are zero at round boundaries, and r/s/out (used by DialogLayout as X/Y/Z) keep their values. `narrow` only changes data bits, so it commutes with `withRecord` and `swapCounter`.
+
+|Round i|Width|T per direction|M per direction|
+|---|---:|---:|---:|
+|0…255|257|1,832|1,057|
+|256…509|512−i|7(512−i)+33|4(512−i)+29|
+|510, 511|2|47|37|
+
+### 31.3 Ledger
+
+Σᵢ valueWidth = 256·257 + (Σ_{j=3}^{256} j + 2 + 2) = 65,792 + 32,897 = 98,689, versus 131,584 at full width, a difference of 32,895.
+
+|Item|Before (§29.10, proven)|Width envelope|Difference|
+|---|---:|---:|---:|
+|One value walk (512 rounds, one direction) T / M|937,984 / 541,184|707,719 / 409,604|−230,265 / −131,580|
+|dialogDivide T / M|3,591,168 / 2,140,672|3,130,638 / 1,877,512|−460,530 / −263,160|
+|dialogMultiply T / M|3,328,000 / 1,878,016|2,867,470 / 1,614,856|−460,530 / −263,160|
+|**controlledPointAdd T / M**|**7,207,866 / 4,305,594**|**6,286,806 / 3,779,274**|**−921,060 / −526,320**|
+|Actual support wires|3,134|3,134|0|
+
+Toffoli drops by 12.78% and measurements drop as well (unlike §30.8, this does not trade measurements for Toffoli). The first 256 rounds stay at full width, so the value-walk support is unchanged and the equalities `dialog_wires` and `pointDialogFinite_wires` keep their statements. The §30.8 measured mask acts on a different program segment and stacks on top: 6,024,662 T / 4,041,418 M (still an unimplemented budget).
+
+### 31.4 Lean changes and proof obligations
+
+1. **Math/ValueWalk**: define `ValueEnv`, prove `valueStep_env` (preservation), the initial case (p prime, 0<Xsafe<p) and `valueEnv_width` (u,v<2^(2n−i) for i<2n). No new file, no new convergence assumption.
+2. **Narrow view**: define `narrow`; prove that it commutes with `withRecord` and `swapCounter`, that its data width is m for 2≤m≤w, and Nodup/support inclusion in the original layout.
+3. **State bridge**: for little-endian register values, `RoundValues L.data` (full width) is equivalent to `RoundValues (L.narrow m).data` plus zero dropped high bits, when z.u,z.v<2^m. This is the main proof effort.
+4. **Loop**: change `valueLoop`/`valueUnloop` to use `narrow (valueWidth …)` in every round, without keeping the full-width version. Replace the hu/hv premises of `valueLoop_correct` by per-round bounds; the induction step uses the narrowed round plus the state bridge. `valueLoop_spec` and `DialogWalk` only change where the premise comes from; public statements are unchanged.
+5. **Resources**: `valueLoop_counts` becomes the per-round sum Σ(7·valueWidth+33), Σ(4·valueWidth+29), with the 512-round closed form 707,719 / 409,604. `valueLoop_wires` keeps the original equality using "the first round is full width, later rounds are contained in it".
+6. **Downstream numbers**: `dialog_counts`/`dialog_resources`, `PointDialogCounts`, `ControlledPointResources` take the 31.3 values. The statement of `controlledPointAdd_spec` is unchanged.
+7. **Phase and measurement**: still Triples over arbitrary records, composed from the proven round specs; no measureX is run backwards and no new instruction or semantics is added.
+
+Order: 1 → 2/3 (in parallel) → 4 → 5 → 6, keeping public specs at each step and running `scripts/verify.sh`.
+
+### 31.5 Unchanged parts
+
+Payload replay (§30) stays at full width: payloads are canonical Fp values with no shrinking bound. The fixed 512 rounds, two-bit records, counter comparisons and activity generation are unchanged; identity rounds after termination are still charged at their narrowed width and are not trimmed by the actual K.
+
+### 31.6 Leapfrog parts not adopted
+
+|Technique|Reason|
+|---|---|
+|139-tick cap, empirical width table|Statistical only; no worst-case bound over all inputs|
+|Alternating ± rails with a parity-fixed target (no controlled swaps per cell)|Requires a plus-minus walk with no known provable termination bound; in Kaliski the updated coordinate depends on the data|
+|Sign choice from bit-1 XOR|Part of the same walk, same reason|
+|Barrel shift (P·2^−e by rotation plus one fold)|Kaliski halves once per round; §30.8 shows deferring halvings does not commute with the mixing steps|
+|Fold/compare window truncation|Introduces probabilistic errors, contradicting all-input Triples|
+
+### 31.7 Acceptance
+
+- The 31.3 numbers are given by Lean resource theorems with zero deviation from the budget; otherwise this section must be revised first.
+- The statements of `controlledPointAdd_spec` and `dialogDivide_spec`/`dialogMultiply_spec` are unchanged; the support equality stays at 3,134.
+- The axiom whitelist is unchanged; README Current status, the PROOF_STATUS resource index and PROVENANCE are updated before this section is marked implemented.
+
+### 31.8 Implementation record (proven)
+
+Implemented in the 31.4 order with zero deviation from the 31.3 ledger.
+
+- Math: `ValueEnv`, `valueStep_env`, `valueIter_env`, `valueEnv_width`, `valueIter_width` in Math/ValueWalk; the secp256k1 instance `dialogWalk_width` in Math/ValueReplay. Coprimality forces v odd when u is even; the difference branches use `Nat.coprime_sub_self_left`.
+- Narrow view and state bridge: new file Arithmetic/ValueNarrow. `narrow` follows 31.2; `RoundValues.narrow_down/narrow_up` split full-width values into the low m bits and the high part via `regValue_append`; `narrowK` reduces r/s to their low m bits so the narrow RoundState holds, and the preserved high bits reassemble them. `RoundAuxValues.narrow_iff` transfers the counter and control assertions.
+- Loop: `valueLoop`/`valueUnloop` use the narrowed rounds directly, without a full-width copy; the two full-width round-tape lemmas of `ValueLoopState.lean` are replaced by `valueNarrowRound_tape`/`valueNarrowUnround_tape` and the file is removed. `valueLoop_wires` and `valueLoop_qubits` gain the full-width-first-round premise `i+L.data.width≤512`, which DialogWires meets with i=0; `valueLoop_counts` gains `2≤L.data.width`; internal frame reasoning uses `valueLoop_wires_subset`.
+- Resources: `valueLoop_counts` is the per-round sum; `valueWidthSum_257` is proved by `decide +kernel` (no `set_option` override, no axiom involved). `dialog_counts`, `dialog_resources`, `pointDialogGeneric_counts` (6,282,702 / 3,775,170), `pointDialogFinite_counts` and `controlledPointAdd_finite_resources` carry the 31.3 values.
+
+The statements of `controlledPointAdd_spec` and `dialogDivide_spec`/`dialogMultiply_spec` are unchanged; the support equalities stay at 3,134 / 3,126. `scripts/verify.sh` exits 0: 2,244 build jobs, 478 actual axiom outputs, ten new entry points, existing whitelist only.
