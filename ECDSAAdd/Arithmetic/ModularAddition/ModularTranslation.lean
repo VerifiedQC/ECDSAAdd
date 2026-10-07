@@ -149,8 +149,8 @@ macro_rules (kind := circuitBlock)
   | `(prog {
       let $b:ident := ($x + $y) < const($q) using $prepare by $hp;
       {
-        if ($b₀ XOR $one:num) { $out:term ^= (($x₀ + $y₀) - const($q₀)); };
-        if $b₁ { $out₁:term ^= ($x₁ + $y₁); };
+        if ($b₀:term XOR $one:num) { $out:term ^= (($x₀:term + $y₀:term) - const($q₀)); };
+        if $b₁:term { $out₁:term ^= ($x₁:term + $y₁:term); };
       } using $finish by $hf;
     }) => do
       unless one.getNat == 1 do Macro.throwErrorAt one "A complemented control uses XOR 1."
@@ -162,8 +162,8 @@ macro_rules (kind := circuitBlock)
   | `(prog {
       let $b:ident := $x < $y using $prepare by $hp;
       {
-        if ($b₀ XOR $one:num) { $out:term ^= ($x₀ - $y₀); };
-        if $b₁ { $out₁:term ^= (($x₁ - $y₁) + const($q)); };
+        if ($b₀:term XOR $one:num) { $out:term ^= ($x₀:term - $y₀:term); };
+        if $b₁:term { $out₁:term ^= (($x₁:term - $y₁:term) + const($q)); };
       } using $finish by $hf;
     }) => do
       unless one.getNat == 1 do Macro.throwErrorAt one "A complemented control uses XOR 1."

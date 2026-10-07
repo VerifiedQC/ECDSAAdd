@@ -4,35 +4,34 @@
 
 ## 当前可读入口
 
-- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
-- [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
+- [PointCandidate.lean](PointCandidate.lean)：常数差、平方、普通点候选的计算和清理；每个算术步骤同一行标明 `using 实现 by 证明`。
+- [PointInPlaceProgram.lean](PointInPlaceProgram.lean)：原地常数加法、取负、普通点加和斜率清理；独立判零作用域也指定准备/恢复证明。
+- [PointCandidateKernels.lean](PointCandidateKernels.lean)、[PointInPlaceKernels.lean](PointInPlaceKernels.lean)：工作区接线及原门列配方，算法阅读不必展开。
+- [PointCandidateAnnotations.lean](PointCandidateAnnotations.lean)、[PointInPlaceAnnotations.lean](PointInPlaceAnnotations.lean)：把独立的步骤规格连接到源公式，不借用上层函数自身的最终证明。
+- [PointInPlaceClearSlopeKernel.lean](PointInPlaceClearSlopeKernel.lean)：独立配方的斜率清理证明；原 [PointInPlaceClearSlope.lean](#pointinplaceclearslopelean) 仍提供针对可读原函数的公开规格。
+- [Certified.lean](#certifiedlean)、[CertifiedSpecs.lean](#certifiedspecslean)：保留整段数学摘要及其证书接口。
+
+## 原函数中的显式实现与证明
+
+直接阅读两个原程序文件即可：`pointSubConstant`、`pointSquare`、`pointCandidateCompute/Clear`、`pointInPlaceConstantAdd`、`pointInPlaceNegate`、`pointInPlaceGeneric`、`pointInPlaceClearSlope` 已采用行内 `using … by …`。这次不是只增加外部摘要入口。
+
+`using` 选择已有门列；`by` 检查该门列满足源公式，并保留证明中的取值范围、布局和清零前提。整体规格继续证明各步骤调用时前提成立。原有门列、测量顺序和资源用量不变。
+
+`field(... ) mod p` 表示在坐标域中计算，避免把乘积后的模减误写成自然数截断减法。普通点加仍按原顺序修改坐标，斜率和共享工作位各只准备、清理一次。
+
+`with xIsZero := isZero(point.x) { ... } using ... by (..., ...)` 保存独立的 `[point.x=0]`，不混入 `generic`。内部两个操作分别受 `generic AND (xIsZero XOR 1)` 和 `generic AND xIsZero` 控制；前者的 XOR 1 仅选择反向控制，不对控制位施加 X 门。块结束重算判零以清理；`point.x` 在块内保持，仍复用 equalX/equalNegY。
+
+`pointInPlaceFinite`、`pointAddOut` 的分支调度和清晰门级代码保留原写法；没有给每个普通调用机械增加认证包装。候选点的 dx、dy、slope 等需跨 compute/clear 存活，也保留逻辑名字，不当作可立即归还的工作位。
 
 ## [Certified.lean](Certified.lean)
 
-入口：`pointSubConstant`、`pointSquare`、`pointInPlaceConstantAdd`、`pointInPlaceGeneric`、`pointInPlaceClearSlope`，均在 `ECDSAAdd.Arithmetic.Certified` 命名空间下。
-
-普通点加块显式保存输入快照，计算斜率并依次更新两个坐标；清斜率的 `= const(0)` 受原斜率关系/例外值前提约束，不是任意重置。`pointSubConstant` 的新入口接收候选寄存器标识 `a/o`，旧任意接线接口保留。
-
-每个块返回带 `requires/ensures/correct` 的 `CheckedProgram`；`.circuit` 与对应旧实现完全相同，所以下文各文件的资源结论原样适用。这里只指定一次整块实现，不另行编译块内表达式。旧接口继续供现有调用链使用；详细语义见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
+`ECDSAAdd.Arithmetic.Certified` 下保留常数模减、平方、原地常数模加、普通点加及斜率清理的整段数学摘要。它们返回带 `requires/ensures/correct` 的 `CheckedProgram`；原算法正文的逐步骤版本见上面两个可读入口。
 
 ## [CertifiedSpecs.lean](CertifiedSpecs.lean)
 
-这些连接证明只用于检查上面的源公式；没有新电路或额外资源，也不放宽原规格前提。
+这些连接证明用于检查整段摘要，保留原规格前提，不引入新电路或额外资源。
 
 ## 后端算法与原规格
-
-
-算法阅读先看 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute/Clear` 和 [PointInPlaceProgram.lean](PointInPlaceProgram.lean) 的 `pointInPlaceGeneric`：常数差直接写 `out ^= (x - const(k)) mod p`，平方写 `L.square ^= (L.slope ^ 2) mod p`。原地平方累减写 `x = (x - slope ^ 2) mod p using squareSubtract`，斜率副本由配方准备和清理；普通乘积仍用 `productAdd/Sub` 选择借用区。原规格与资源不变。
-
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
-
-候选点计算用 `pointCandidateContext` 固定共享零工作池。斜率清理中，`with xIsZero := (pointZeroValue L point.x)` 准备独立的 `[point.x=0]`，与 generic 无关；块内保留 `CCsub generic (xIsZero XOR 1) slope (point.y / point.x)` 和 `CCXor generic xIsZero slope lambdaStar`。块结束重算判零以清理，point.x 在块内保持。仍复用 equalX/equalNegY，不增加量子位。
-
-候选点的 dx、dy、slope 等需要跨 `pointCandidateCompute/Clear` 保存，故保留逻辑名字；它们不是每次调用后可以归还的零工作位。原地常数加法只显示 `if generic { r = (const(k) + r) mod p; };`，其掩码装载和清理也由配方完成。
-
-普通分支的公式直接写在 [PointCandidate.lean](PointCandidate.lean) 的 `pointCandidateCompute` 中：dx=x−cx、dy=y−cy、slope=dy/dx、candidateX=slope²−x−cx、candidateY=slope·(x−candidateX)−y，运算均模 p。非普通分支用安全分母 1 完成计算，但不选用该候选。代码中的 `fieldSubXor/fieldMulXor/fieldInverseXor` 显式列出输入和 XOR 输出，pool 只指定共享工作区。
-
-原地算法见 [PointInPlaceProgram.lean](PointInPlaceProgram.lean)：`pointInPlaceGeneric` 标明每一步更新后的坐标，`pointInPlaceClearSlope` 说明怎样用更新后的坐标清理斜率；`pointInPlaceFinite` 处理普通、倍点、互逆点、无穷远点分支并清除分类标志。清理始终使用明确的恢复程序，不倒放测量指令。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 

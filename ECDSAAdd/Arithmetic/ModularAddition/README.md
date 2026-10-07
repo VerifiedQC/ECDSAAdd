@@ -5,6 +5,7 @@
 ## 当前可读入口
 
 - [Modular.lean](#modularlean)：原函数按“准备借位、共享选择并清理”两步写出，每步同一行指定实现和证明。
+- [ModInPlace.lean](#modinplacelean)：原地模加核按加法、试减模数、借位回补、清除高位四步写出，每步指定实现和证明。
 - [Certified.lean](#certifiedlean)：保留整块计算的认证入口及原地模加核入口。
 
 ## [Certified.lean](Certified.lean)
@@ -22,7 +23,7 @@
 
 模加减现在按“数学分支证明＋实际电路连接”验证，供人阅读的证明不展开门列。这里只认证这两个具体配方，不是已全部迁入通用 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
 
-原函数不再通过 `modReductionContext` 选择实现。准备步骤计算一次共享候选与借位，结束块复用候选并清理；其 `Ready` 接口包含候选值、原输入、输出初值、零进位链和实际 borrow 的含义。换错算法、工作区、实现、证明或源表达式会被拒绝。`modAddCore` 的内部仍沿用原配方；其认证入口只迁移了行内格式。位宽、互异、零工作区条件仍需满足。
+原函数不再通过 `modReductionContext` 选择实现。准备步骤计算一次共享候选与借位，结束块复用候选并清理；其 `Ready` 接口包含候选值、原输入、输出初值、零进位链和实际 borrow 的含义。换错算法、工作区、实现、证明或源表达式会被拒绝。`modAddCore` 也已直接改写原正文；独立阶段证明移到 [ModAddCoreSteps.lean](ModAddCoreSteps.lean)，避免用最终规格反过来认证自己的定义。位宽、互异、零工作区条件仍需满足。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 

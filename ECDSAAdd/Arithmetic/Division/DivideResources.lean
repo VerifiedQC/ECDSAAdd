@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.Division.DivideLayoutProof
+import ECDSAAdd.Arithmetic.Division.Divide
 
 namespace ECDSAAdd.Arithmetic
 

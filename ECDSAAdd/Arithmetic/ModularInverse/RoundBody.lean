@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.ModularInverse.RoundFrame
+import ECDSAAdd.Arithmetic.ModularInverse.RoundSteps
 import ECDSAAdd.Math.ModularInverse.KaliskiRound
 
 namespace ECDSAAdd.Arithmetic
@@ -57,30 +57,36 @@ def roundArithmeticContext (L : RoundDataLayout) : CircuitDSL.Context RoundArith
 /-- 按 swap 交换 u/v、r/s；subtract=1 时 u←u−v、r←r+s；active=1 时 u←u/2、s←2*s，最后换回。
 u/v 是约简数据，r/s 是对应系数；轮不变量保证移位等价于整数乘除且无溢出。 -/
 def kaliskiBodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
-    prog using (roundArithmeticContext L) {
+    prog {
   let u := L.u;
   let v := L.v;
   let r := L.r;
   let s := L.s;
+  let mask := L.reg .y; -- 用于保存受控加减的输入副本。
+  let carry := (L.reg .carry).take (L.width-1); -- 加减法的进位工作位。
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
-  if subtract { u -= v; r += s; };
-  shiftRight(active, u);                     -- active=1 时 u /= 2。
-  shiftLeft(active, s);                      -- active=1 时 s *= 2。
+  if subtract { u = (u - v) mod (2^u.length); } using (measuredMaskedSubInPlace subtract v mask u carry L.cin) by (roundSub_step subtract L.cin v mask u carry);
+  if subtract { r = (r + s) mod (2^r.length); } using (measuredMaskedAddInPlace subtract s mask r carry L.cin) by (roundAdd_step subtract L.cin s mask r carry);
+  if active { u = u / const(2); } using (shiftRight active u) by (shiftRight_spec active u);
+  if active { s = const(2) * s; } using (shiftLeft active s) by (shiftLeft_spec active s);
   swapDataPairs(L, swap);                    -- 交换回来。
 }
 
 /-- 用匹配的分支记录撤销 kaliskiBodyProgram：交换后按 active 做 s←s/2、u←2*u，
 按 subtract 做 r←r−s、u←u+v，最后换回。 -/
 def kaliskiUnbodyProgram (L : RoundDataLayout) (active swap subtract : Wire) : Program :=
-    prog using (roundArithmeticContext L) {
+    prog {
   let u := L.u;
   let v := L.v;
   let r := L.r;
   let s := L.s;
+  let mask := L.reg .y; -- 用于保存受控加减的输入副本。
+  let carry := (L.reg .carry).take (L.width-1); -- 加减法的进位工作位。
   swapDataPairs(L, swap);                    -- swap=1 时交换 u↔v、r↔s。
-  shiftRight(active, s);                     -- active=1 时 s /= 2。
-  shiftLeft(active, u);                      -- active=1 时 u *= 2。
-  if subtract { r -= s; u += v; };
+  if active { s = s / const(2); } using (shiftRight active s) by (shiftRight_spec active s);
+  if active { u = const(2) * u; } using (shiftLeft active u) by (shiftLeft_spec active u);
+  if subtract { r = (r - s) mod (2^r.length); } using (measuredMaskedSubInPlace subtract s mask r carry L.cin) by (roundSub_step subtract L.cin s mask r carry);
+  if subtract { u = (u + v) mod (2^u.length); } using (measuredMaskedAddInPlace subtract v mask u carry L.cin) by (roundAdd_step subtract L.cin v mask u carry);
   swapDataPairs(L, swap);                    -- 交换回来。
 }
 

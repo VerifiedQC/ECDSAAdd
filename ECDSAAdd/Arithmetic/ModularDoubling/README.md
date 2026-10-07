@@ -4,7 +4,8 @@
 
 ## 当前可读入口
 
-- [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
+- [ModUnary.lean](#modunarylean)：直接阅读原 `dblInPlace/halfInPlace` 的倍增、试减、受控回补及减半，每个算术步骤行内指定实现和证明。
+- [Certified.lean](#certifiedlean)：保留整段模倍增的认证接口。
 
 ## [Certified.lean](Certified.lean)
 
@@ -17,13 +18,13 @@
 ## 后端算法与原规格
 
 
-[ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与受控 `if` 表达式。旋转仍写 `rotateLeft/Right`，只有在相应规格条件下才等价于整数倍增/减半；原规格与资源不变。
+[ModUnary.lean](ModUnary.lean) 的 `dblInPlace/halfInPlace` 已使用原地加减与受控 `if` 表达式。旋转写为 `target = const(2) * target` 或 `target = target / const(2)`，后面明确使用 `rotateLeft/Right` 及其证明；不溢出、可整除等调用条件仍由完整规格证明。
 
-`dblInPlace` 的试减直接写 `target -= const(p)`；常数寄存器的装载和清理在后端。借位、奇偶位仍保留为逻辑标志，清理规则不变。
+`dblInPlace` 的试减显式写出 `mod (2^(n+1))`，n 为低位数据位宽；常数寄存器的装载和清理在指定实现中。借位、奇偶位仍保留为逻辑标志，清理规则不变。
 
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+每个注解都检查源公式与实际实现的 Hoare 定理相符；各步前提如何衔接、最终相位和工作区恢复，仍由本模块完整定理承担。语法边界见 [Framework](../../Framework/README.md#当前入口显式实现与证明2026-10-06)。
 
-`dblInPlace` / `halfInPlace` 用 `modUnaryContext` 绑定零常数/进位工作区；主体保留目标、控制位和经典常数。`maskedAddConstLow` 明确只更新低 n 位；它与全宽加常数使用不同长度的辅助位，接线见同文件配置。
+零常数/进位工作区在 `using` 指定的实现中接线，不再依靠 `prog using` 默认选择。`maskedAddConstLow` 明确只更新低 n 位；它与全宽加常数使用不同长度的辅助位，接线见同文件配置。
 
 算法入口在 [ModUnary.lean](ModUnary.lean)。`dblInPlace` 先左移得到两倍，再试减 p、按借位加回 p，利用 p 为奇数清理借位；`halfInPlace` 先记录最低位，奇数时加 p，再右移减半，最后用输出重算并清除奇偶记录。代码中的 target 是被更新的寄存器，borrow/wasOdd 是需要恢复为零的标志位。
 

@@ -8,6 +8,7 @@ declare_syntax_cat bitExpr
 syntax:max "MAJ" "(" term "," term "," term ")" : bitExpr
 syntax:max "(" bitExpr ")" : bitExpr
 syntax:60 bitExpr:60 " XOR " bitExpr:61 : bitExpr
+syntax:65 bitExpr:65 " AND " "NOT " bitExpr:66 : bitExpr
 syntax:max term:max : bitExpr
 
 declare_syntax_cat bitStatement
@@ -22,6 +23,10 @@ private partial def value (st : Term) : TSyntax `bitExpr → MacroM Term
       let x ← value st a
       let y ← value st b
       `($x ^^ $y)
+  | `(bitExpr| $a:bitExpr AND NOT $b:bitExpr) => do
+      let x ← value st a
+      let y ← value st b
+      `($x && !$y)
   | `(bitExpr| $wire:term) => `($st $wire)
   | e => Macro.throwErrorAt e "Expected a wire, XOR, or MAJ."
 
@@ -76,6 +81,16 @@ macro_rules (kind := bitClearBlock)
           using ($impl $target) by ($proof $target))
 
 macro_rules (kind := circuitBlock)
+  | `(prog {
+      $target:term ^= ($a:term AND NOT $b:term) using $impl by $proof;
+      $rest:circuitStmt*
+    }) =>
+      `(circuitSeq% (bitChecked%
+          (bitCalculation { $target:term ^= ($a:term AND NOT $b:term); })
+          using ($impl $a $b $target) by ($proof $a $b $target)) { $rest* })
+  | `(prog { $target:term ^= $rhs:term using $code by $proof; $rest:circuitStmt* }) =>
+      `(circuitSeq% ((certified { $target:term ^= $rhs:term; } using $code by $proof).circuit)
+        { $rest* })
   | `(prog {
       $target:term ^= MAJ($a, $b, $c) using $impl by $proof;
       $rest:circuitStmt*

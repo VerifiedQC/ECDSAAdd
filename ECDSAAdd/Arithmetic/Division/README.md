@@ -4,6 +4,9 @@
 
 ## 当前可读入口
 
+- [Divide.lean](Divide.lean)：原 `divideAdd`、`divideSub` 的逆元作用域和受控乘积更新，每步都显式指定实现与证明。
+- [DivideBasis.lean](DivideBasis.lean)：布局、安全分母装载/卸载，以及准备—恢复配方。
+- [DivideSteps.lean](DivideSteps.lean)：作用域边界与乘积更新的 Hoare 证明，不依赖最终除法规格。
 - [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
 
 ## [Certified.lean](Certified.lean)
@@ -17,15 +20,15 @@
 ## 后端算法与原规格
 
 
-[Divide.lean](Divide.lean) 的 `divideAdd/Sub` 用 `with inverse := (safeInverseValue …)` 取得安全分母的逆元，然后写 `if L.control { L.acc = (L.acc + inverse * L.numerator) mod p; };`（或减号）。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
+[Divide.lean](Divide.lean) 的原 `divideAdd/Sub` 用 `with inverse := (if L.control then inverse(L.denominator) mod p else const(1)) { … } using … by (准备证明, 恢复证明);` 取得安全逆元。块内的 `if L.control { L.acc = (L.acc + inverse * L.numerator) mod p; }`（或减号）也在同一行指定 `using … by …`。作用域结束时恢复求逆、卸载分母；历史在乘积完成前不会释放，原规格与资源不变。
 
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+每个 `by` 检查数学语句与所选电路的连接；原组合定理继续证明调用前提和历史恢复。这是显式翻译，不是自动选择实现或分配工作区的通用编译器。
 
-`divideAdd` / `divideSub` 使用 `divisionProductContext` 固定乘法工作区与输出扩展高位。主体写出控制、逆元、分子和累加目标；接线仍只借用求逆后已清零的区域，不覆盖存活的逆元或历史。
+`divideAdd` / `divideSub` 的 `using` 分别指定 `montMulControlledAdd` / `montMulControlledSub`，不再通过 `divisionProductContext` 选择实现。布局 `L.multiply` 固定乘法工作区与输出扩展高位；接线仍只借用求逆后已清零的区域，不覆盖存活的逆元或历史。
 
 安全分母为 control=1 时的 denominator，否则为 1；禁用时不会求 0 的逆元。`safeInverseValue` 只隐藏内部装载和恢复，`divideAdd_program` / `divideSub_program` 保留与原门列的连接证明。
 
-分母装载/卸载显式使用负控制 `CX (control XOR 1) leastBit` 和正控制 `CXor control denominatorCopy denominator`：分别处理常量 1 和分母副本，不测量控制位。
+分母装载/卸载显式使用负控制 `CX (control XOR 1) leastBit` 和正控制 `if control { denominatorCopy ^= denominator; };`：分别处理常量 1 和分母副本，不测量控制位。
 
 下文 p、q 表示相应运算的模数；域运算中的 p 是 secp256k1 的素数模数，`Widths` 表示布局中各寄存器的位宽要求。
 

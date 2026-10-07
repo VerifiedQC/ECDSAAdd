@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.ModularAddition.UnaryModResources
 import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
+import ECDSAAdd.Framework.CertifiedTranslation
 
 namespace ECDSAAdd.Arithmetic
 
@@ -14,8 +15,11 @@ namespace ECDSAAdd.Arithmetic
 - `temp`：与 src/dst 等宽的零中间寄存器，暂存 src mod q。
 - `dst`：小端 XOR 输出寄存器，接收 (−src) mod q，初值不必为零。
 -/
-def negativeInit (L : ModLayout) (q : Nat) (src temp dst : List Wire) : Program :=
-  reduceXor L q src temp ++ negateXor L q temp dst ++ reduceXor L q src temp
+def negativeInit (L : ModLayout) (q : Nat) (src temp dst : List Wire) : Program := prog {
+  temp ^= src mod q using (reduceXor L q src temp) by (fun hn hs ht => reduceXor_spec L src temp hn hs ht q);
+  dst ^= (const(0) - temp) mod q using (negateXor L q temp dst) by (fun hn ht hd => negateXor_spec L temp dst hn ht hd q);
+  temp ^= src mod q using (reduceXor L q src temp) by (fun hn hs ht => reduceXor_spec L src temp hn hs ht q); -- 清零 temp。
+}
 
 theorem negativeInit_correct (L : ModLayout) (q : Nat) (src temp dst : List Wire)
     (hnd : (src ++ temp ++ dst ++ L.wires).Nodup)

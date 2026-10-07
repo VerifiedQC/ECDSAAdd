@@ -16,6 +16,7 @@ lake env lean -DwarningAsError=true tests/ProofLanguage.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
 lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
+lake env lean -DwarningAsError=true tests/ArithmeticAnnotations.lean
 
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
@@ -24,6 +25,47 @@ import ECDSAAdd
 #print axioms ECDSAAdd.CertifiedTranslation.Certificate.abstract
 #print axioms ECDSAAdd.CertifiedTranslation.CheckedProgram.correct
 #print axioms ECDSAAdd.BitTranslation.program_eq
+#print axioms ECDSAAdd.Arithmetic.addInPlace_zero_spec
+#print axioms ECDSAAdd.Arithmetic.subInPlace_step_spec
+#print axioms ECDSAAdd.Arithmetic.maskedAddConst_step_spec
+#print axioms ECDSAAdd.Arithmetic.maskedSubConst_step_spec
+#print axioms ECDSAAdd.Arithmetic.modAddCore_sum
+#print axioms ECDSAAdd.Arithmetic.modAddCore_addback_step
+#print axioms ECDSAAdd.Arithmetic.modAddCore_finish
+#print axioms ECDSAAdd.Arithmetic.montMaskedAdd_step_spec
+#print axioms ECDSAAdd.Arithmetic.montMaskedSub_step_spec
+#print axioms ECDSAAdd.Arithmetic.montConstantPrepare_spec
+#print axioms ECDSAAdd.Arithmetic.montConstantRestore_spec
+#print axioms ECDSAAdd.Arithmetic.montLookupPrepare_spec
+#print axioms ECDSAAdd.Arithmetic.montLookupRestore_spec
+#print axioms ECDSAAdd.Arithmetic.montProductPrepare_spec
+#print axioms ECDSAAdd.Arithmetic.montProductRestore_spec
+#print axioms ECDSAAdd.Arithmetic.roundAdd_step
+#print axioms ECDSAAdd.Arithmetic.roundSub_step
+#print axioms ECDSAAdd.Arithmetic.inverseValue_prepare
+#print axioms ECDSAAdd.Arithmetic.inverseValue_restore
+#print axioms ECDSAAdd.Arithmetic.safeInverse_prepare
+#print axioms ECDSAAdd.Arithmetic.safeInverse_restore
+#print axioms ECDSAAdd.Arithmetic.divideProductAdd_step
+#print axioms ECDSAAdd.Arithmetic.divideProductSub_step
+#print axioms ECDSAAdd.Arithmetic.pointSubConstantKernel_spec
+#print axioms ECDSAAdd.Arithmetic.pointSquareKernel_spec
+#print axioms ECDSAAdd.Arithmetic.candidateSub_spec
+#print axioms ECDSAAdd.Arithmetic.candidateMul_spec
+#print axioms ECDSAAdd.Arithmetic.candidateInverse_spec
+#print axioms ECDSAAdd.Arithmetic.candidateSafe_spec
+#print axioms ECDSAAdd.Arithmetic.pointConstantAdd_annotation
+#print axioms ECDSAAdd.Arithmetic.pointNegate_annotation
+#print axioms ECDSAAdd.Arithmetic.pointProductAdd_annotation
+#print axioms ECDSAAdd.Arithmetic.pointProductSub_annotation
+#print axioms ECDSAAdd.Arithmetic.pointSquareSub_annotation
+#print axioms ECDSAAdd.Arithmetic.pointDivideAdd_annotation
+#print axioms ECDSAAdd.Arithmetic.pointZero_prepare
+#print axioms ECDSAAdd.Arithmetic.pointZero_restore
+#print axioms ECDSAAdd.Arithmetic.pointClearQuotient_annotation
+#print axioms ECDSAAdd.Arithmetic.pointClearConstant_annotation
+#print axioms ECDSAAdd.Arithmetic.pointClearSlope_annotation
+#print axioms ECDSAAdd.Arithmetic.pointClearSlope_step
 #print axioms ECDSAAdd.Arithmetic.rippleAdder
 #print axioms ECDSAAdd.Arithmetic.addInPlace
 #print axioms ECDSAAdd.Arithmetic.majority_spec

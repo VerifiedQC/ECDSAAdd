@@ -4,6 +4,8 @@ import ECDSAAdd.Arithmetic.RegisterXor.Constant
 namespace ECDSAAdd.Arithmetic
 open Instr
 
+attribute [local simp] carryBit
+
 /-- 无控制时 t ^= NOT top；control=some c 时 t ^= c AND NOT top。
 top 是最高进位。 -/
 def flipBelow : Option Wire → Wire → Wire → Program
@@ -23,11 +25,11 @@ def compareChain (control : Option Wire) (x y carry : List Wire) (cin target : W
       flipBelow control c[n] target else []
   prog {
     for i in range(n) {
-      majority(x[i], y[i], c[i], carry[i]); -- carry[i] = 本位进位。
+      carry[i] ^= MAJ(x[i], y[i], c[i]) using majority by majority_spec;
     };
     readout(); -- target ^= NOT c[n]；有控制时仅在 control=1 执行。
     for i in reversed(range(n)) {
-      eraseCarry(x[i], y[i], c[i], carry[i]); -- 清零 carry[i]。
+      carry[i] = 0 using (eraseCarry x[i] y[i] c[i]) by (eraseCarry_spec x[i] y[i] c[i]);
     };
   }
 

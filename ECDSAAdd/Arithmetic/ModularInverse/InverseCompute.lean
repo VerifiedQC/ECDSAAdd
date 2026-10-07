@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleState
+import ECDSAAdd.Framework.CertifiedTranslation
 
 namespace ECDSAAdd.Arithmetic
 open scoped CircuitDSL
@@ -11,7 +12,7 @@ def inverseCompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
   let inverse := L.a;             -- 用于保存逆元。
   let scaling := L.scaling;       -- 按活动轮数 k 修正逆元的缩放。
   kaliskiLoop(L.first, 0, records);              -- 更新 u/v/r/s/k，保存分支记录。
-  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- inverse = (-r) mod q
+  inverse ^= field(const(0) - r) mod q using (negativeInit L.arithmetic q r L.temp inverse) by (negativeInit_spec L.arithmetic q r L.temp inverse);
   scaling.prepare(q);                           -- inverse = A⁻¹ mod q
 }
 
@@ -21,21 +22,13 @@ def inverseUncompute (L : InverseLoopLayout) (q : Nat) : Program := prog {
   let inverse := L.a; -- 保存待清零的逆元。
   let scaling := L.scaling; -- 逆元缩放的接线与历史。
   scaling.restore(q);                              -- inverse = (-r) mod q，清零缩放历史。
-  negativeInit(L.arithmetic, q, r, L.temp, inverse); -- 清零 inverse。
+  inverse ^= field(const(0) - r) mod q using (negativeInit L.arithmetic q r L.temp inverse) by (negativeInit_spec L.arithmetic q r L.temp inverse); -- 清零 inverse。
   kaliskiUnloop(L.first, 0, L.records);              -- 恢复 Kaliski 初态，清零分支记录。
 }
 
 /-- 求逆作用域保留全部分支/缩放历史；结束后恢复 Kaliski 初态，而非把初态寄存器清零。 -/
 abbrev inverseValue (L : InverseLoopLayout) (q : Nat) : CircuitDSL.Computed (List Wire) :=
   ⟨L.a, inverseCompute L q, inverseUncompute L q⟩
-
-/-- L.out ^= A⁻¹ mod q，A 是初态 L.first.v 的值。
-初态及数值条件同 inverseCompute；内部恢复到该初态。 -/
-def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
-  with inverse := (inverseValue L q) {
-    L.out ^= inverse;
-  };
-}
 
 def InverseInitial (L : InverseLoopLayout) (q a : Nat) (s : BasisState) : Prop :=
   (LoopState L.first (kaliskiInit q a) s ∧ TapeValues L.records (List.replicate L.records.length (false,false)) s) ∧
@@ -121,5 +114,41 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
       (by omega) (by omega) q z cs N (by omega) (by simpa only [hm] using hq) hr
   have hscale := inverseScaling_values L hnd hl hw ha ht hm q ho hq z cs N hN
   exact ⟨(hfirst.1.seq hneg).seq hscale.1,(hscale.2.seq hnegback).seq hfirst.2⟩
+
+/-- The preparation boundary keeps the complete inverse history, not only its numeric value. -/
+theorem inverseValue_prepare (L : InverseLoopLayout) (q : Nat) (hnd : L.wires.Nodup)
+    (hn : L.records.length=512) (hw : L.first.counter.width=10)
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
+    (ha : L.a.length=257) (ht : L.temp.length=257)
+    (a : Nat) (hq : q<2^256) (ho : q%16=15) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
+    Triple (fun s => regValue L.first.v s=a ∧ InverseInitial L q a s) (inverseCompute L q)
+      (fun s => regValue L.a s=((a : ZMod q)⁻¹).val ∧
+        InverseScaledMiddle L q (kaliskiStep^[512] (kaliskiInit q a))
+          (kaliskiCodes 512 (kaliskiInit q a)) (-((kaliskiStep^[512] (kaliskiInit q a)).r : ZMod q)).val s) := by
+  apply ((inverseCompute_values L hnd hn hw hl hm ha ht q a hq ho hx hcop).1).conseq
+  · intro s h; exact h.2
+  · intro s h
+    exact ⟨h.2.1.1.trans (kaliski_montgomery_scale q a ho hq hx0 hx hcop),h⟩
+
+/-- Restoration requires the matching history and returns the original initialized state. -/
+theorem inverseValue_restore (L : InverseLoopLayout) (q : Nat) (hnd : L.wires.Nodup)
+    (hn : L.records.length=512) (hw : L.first.counter.width=10)
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
+    (ha : L.a.length=257) (ht : L.temp.length=257)
+    (a : Nat) (hq : q<2^256) (ho : q%16=15) (hx : a<q) (hcop : q.Coprime a) :
+    Triple (InverseScaledMiddle L q (kaliskiStep^[512] (kaliskiInit q a))
+      (kaliskiCodes 512 (kaliskiInit q a)) (-((kaliskiStep^[512] (kaliskiInit q a)).r : ZMod q)).val)
+      (inverseUncompute L q) (fun s => regValue L.a s=0 ∧ InverseInitial L q a s) := by
+  apply ((inverseCompute_values L hnd hn hw hl hm ha ht q a hq ho hx hcop).2).conseq
+  · intro s h; exact h
+  · intro s h; exact ⟨h.2.1,h⟩
+
+/-- L.out ^= A⁻¹ mod q，A 是初态 L.first.v 的值。
+初态及数值条件同 inverseCompute；内部恢复到该初态。 -/
+def inverseLoop (L : InverseLoopLayout) (q : Nat) : Program := prog {
+  with inverse := (inverse(L.first.v) mod q) {
+    L.out ^= inverse using (copyRegister none inverse L.out) by (copyRegister_spec inverse L.out);
+  } using (inverseValue L q) by (inverseValue_prepare L q, inverseValue_restore L q);
+}
 
 end ECDSAAdd.Arithmetic

@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.Division.DivideSupport
+import ECDSAAdd.Arithmetic.Division.DivideLayoutProof
 import ECDSAAdd.Math.FieldPrimality.BitcoinPrimes
 
 namespace ECDSAAdd.Arithmetic

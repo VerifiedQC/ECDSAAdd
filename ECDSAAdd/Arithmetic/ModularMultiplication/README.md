@@ -4,6 +4,9 @@
 
 ## 当前可读入口
 
+- [MontPrepare.lean](MontPrepare.lean)：原查表、常数、逐位受控累加及约减函数，计算步骤直接标明 `using 实现 by 证明`。
+- [MontAdapterLayout.lean](MontAdapterLayout.lean)：五个原模乘输出接口，共享一次乘积准备和恢复。
+- [MontStepSpecs.lean](#montstepspecslean)：受控加减和常数作用域的步骤规格。
 - [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
 - [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
 
@@ -22,11 +25,21 @@
 ## 后端算法与原规格
 
 
-算法阅读先看 [MontPrepare.lean](MontPrepare.lean) 的窗口加减、约减和恢复，以及 [MontAdapterLayout.lean](MontAdapterLayout.lean) 的模乘输出接口。输出接口用 `with product := (M.x * M.y) mod p { … };` 包住 XOR/模加减；`montProductValue` 绑定准备和恢复，两段历史保留到块结束。各 `*_program` 定理证明原门列不变。
+算法阅读先看 [MontPrepare.lean](MontPrepare.lean) 的窗口加减、约减和恢复，以及 [MontAdapterLayout.lean](MontAdapterLayout.lean) 的模乘输出接口。现在修改的是这些原函数，不只是上面的 `Certified` 数学视图。输出接口的形式是：
 
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+```lean
+with product := ((M.x * M.y) mod p) {
+  M.out ^= product using (copyRegister none product M.out) by (copyRegister_spec product M.out);
+} using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
+```
 
-`MontPrepare.lean` 内的加减步骤用 `montArithmeticContext` 绑定 mask、table 和进位工作区。常数加减直接写 `L.acc += const(K)` / `-= const(K)`；查表倍数使用 `montLookupValue` 作用域，地址须保持以便清理。窗口约减历史仍按原轮次保存，不能每轮结束就释放。
+`using` 指定实际门列，`by` 检查其 Hoare 规格确实给出正文中的计算。作用域准备和恢复分别提供证明；恢复要求完整的匹配历史，不是任意赋零。中间的 XOR/模加减也分别指定实现和证明；整个作用域只准备一次乘积、恢复一次。各 `*_program` 定理保持为 `rfl`，确认原门列不变。
+
+`MontPrepare.lean` 的查表与常数加减同样采用准备—使用—恢复作用域。digit 循环的 `if` 明确选择受控加减实现；normalize/denormalize 明确选择受控常数实现，不再隐式查找 `montArithmeticContext`。约减中的除以/乘以 16 分别绑定原循环移位实现，其证明仍要求低位可整除/高位不溢出。窗口历史按原轮次保存，不能每轮结束就释放；外层窗口和准备/恢复循环保留顺序调用。
+
+## [MontStepSpecs.lean](MontStepSpecs.lean)
+
+该文件把已有受控加减规格写成 `if` 的两分支结果，并提供常数的准备/恢复规格；原线路互异、位宽、零工作区和相位条件保留，不产生新门。完整程序的前提衔接、历史恢复和资源仍由下文原定理证明。
 
 算法从 [MontPrepare.lean](MontPrepare.lean) 的 `montWindow` 读起：向 acc 加入 x 乘以当前四位数 d，记录 m=acc mod 16，再令 acc=(acc+m·p)/16。m 保存在 history 中，恢复时先乘回 16、减去 m·p，再清除记录。
 

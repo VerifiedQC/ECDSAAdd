@@ -2,49 +2,6 @@ import ECDSAAdd.Arithmetic.Division.DivideResources
 
 namespace ECDSAAdd.Arithmetic
 
-namespace DivideLayout
-
-def usedWires (L : DivideLayout) : List Wire :=
-  L.control :: L.denominator ++ L.numerator ++ L.acc ++ L.inner.usedCoreWires
-
-theorem multiply_used_subset (L : DivideLayout) (hw : L.Widths) :
-    L.multiply.wires ⊆ L.usedWires := by
-  intro q h
-  have hb : [L.borrowedBit 0]++L.multiply.work ⊆ L.borrow := by
-    rw [L.multiply_borrow hw]
-    exact (List.take_sublist _ _).subset
-  have hh : q∈L.multiply.work ∨ q=L.borrowedBit 0 → q∈L.borrow := by
-    intro hq; apply hb; simpa [or_comm] using hq
-  change q∈L.inner.a++L.numerator++(L.acc++[L.borrowedBit 0])++L.multiply.work at h
-  simp only [List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h
-  simp only [borrow,List.mem_append] at hh
-  simp only [usedWires,InverseLoopLayout.usedCoreWires,InverseLoopLayout.extra,
-    List.mem_cons,List.mem_append]
-  tauto
-
-theorem data_used_subset (L : DivideLayout) (f : RoundField) (hf : f≠.out) :
-    L.inner.first.data.reg f ⊆ L.inner.usedCoreWires := by
-  intro q h
-  have hm := L.inner.first.data.reg_used_mem f hf h
-  simp only [InverseLoopLayout.usedCoreWires,KaliskiRoundLayout.usedTapeWires,
-    KaliskiRoundLayout.usedSharedWires,List.mem_append]
-  tauto
-
-theorem vLow_used_subset (L : DivideLayout) : L.vLow ⊆ L.inner.usedCoreWires := by
-  intro q h
-  apply L.data_used_subset .v (by decide)
-  change q∈L.inverseView.inner.first.v
-  rw [L.inverseView.v_split]
-  exact List.mem_append_left _ h
-
-theorem usedWires_nodup (L : DivideLayout) (hnd : L.wires.Nodup) : L.usedWires.Nodup := by
-  apply List.nodup_iff_count.mpr; intro q
-  have h := List.nodup_iff_count.mp hnd q
-  have hi := List.Sublist.count_le q L.inner.usedWires_sublist
-  simp only [usedWires,wires,work,InverseLoopLayout.usedWires,List.count_append,List.count_cons] at h hi ⊢
-  omega
-
-end DivideLayout
 
 /-- 静态支持是三外部寄存器、控制及求逆的实际核心；不含旧XOR输出银行。 -/
 theorem divide_wires (L : DivideLayout) (hw : L.Widths) :

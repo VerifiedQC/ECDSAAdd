@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceProgram
+import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
 
 namespace ECDSAAdd.Arithmetic
@@ -101,9 +101,9 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
     (k : Fp) (Z : Nat) (B : Bool) (hZ : Z<p) (s : State) (m : List Bool)
     (hb : s.basis L.core.generic=B) (hz : regValue r s.basis=Z)
     (hc : regValue L.inPlaceBorrow s.basis=0) :
-    (run (pointInPlaceConstantAdd L r k) m s).phase=s.phase ∧
-      regValue r (run (pointInPlaceConstantAdd L r k) m s).basis=(Z+(if B then k.val else 0))%p ∧
-      ∀ q∉r,(run (pointInPlaceConstantAdd L r k) m s).basis q=s.basis q := by
+    (run (pointInPlaceConstantAddKernel L r k) m s).phase=s.phase ∧
+      regValue r (run (pointInPlaceConstantAddKernel L r k) m s).basis=(Z+(if B then k.val else 0))%p ∧
+      ∀ q∉r,(run (pointInPlaceConstantAddKernel L r k) m s).basis q=s.basis q := by
   let M := L.inPlaceConstant r
   have hl : r.length=256 := by rcases hr with rfl | rfl; exact hw.inputX; exact hw.inputY
   have hM := L.inPlaceConstant_widths hw r hl
@@ -135,9 +135,9 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
   obtain ⟨hp,hv⟩ := constant_program_spec M L.core.generic k.val Z B hM hnm k.isLt hZ
     s m ⟨⟨⟨hb,hsource⟩,hout⟩,hwork⟩
   have keep := constant_program_frame M L.core.generic k.val Z B hM hnm k.isLt hZ s m hb hsource hout hwork
-  rw [← pointInPlaceConstantAdd_program] at hp hv keep
+  rw [← pointInPlaceConstantAddKernel_program] at hp hv keep
   have hlow := (regValue_low_iff r [L.inPlaceBit 257]
-    (run (pointInPlaceConstantAdd L r k) m s).basis ((Z+(if B then k.val else 0))%p)
+    (run (pointInPlaceConstantAddKernel L r k) m s).basis ((Z+(if B then k.val else 0))%p)
     (by rw [hl]; exact (Nat.mod_lt _ (by norm_num [p])).trans (by norm_num [p]))).mp hv.1.2
   refine ⟨hp,hlow.1,?_⟩
   intro q hq

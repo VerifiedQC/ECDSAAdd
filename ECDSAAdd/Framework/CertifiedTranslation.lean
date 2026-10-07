@@ -40,6 +40,9 @@ structure CheckedProgram where
   circuit : Program
   certificate : Certificate effect circuit
 
+/-- A checked statement can be used in an existing Program; its call conditions remain proof obligations. -/
+instance : Coe CheckedProgram Program := ⟨CheckedProgram.circuit⟩
+
 def CheckedProgram.requires (p : CheckedProgram) := p.certificate.requires
 def CheckedProgram.ensures (p : CheckedProgram) := p.certificate.ensures
 
@@ -109,9 +112,11 @@ declare_syntax_cat certExpr
 syntax:max (priority := high) &"const" "(" term ")" : certExpr
 syntax:max (priority := high) ident "(" certExpr ")" : certExpr
 syntax:max (priority := high) "(" certExpr ")" : certExpr
+syntax:max (priority := high) "if " term:max " then " certExpr " else " certExpr : certExpr
 syntax:65 certExpr:65 " + " certExpr:66 : certExpr
 syntax:65 certExpr:65 " - " certExpr:66 : certExpr
 syntax:70 certExpr:70 " * " certExpr:71 : certExpr
+syntax:70 certExpr:70 " / " "const" "(" term ")" : certExpr
 syntax:70 certExpr:70 " / " certExpr:71 : certExpr
 syntax:60 certExpr:61 " mod " term:61 : certExpr
 syntax:max (priority := low) term:max : certExpr
@@ -119,6 +124,7 @@ syntax:max (priority := low) term:max : certExpr
 declare_syntax_cat certCondition
 syntax term:max : certCondition
 syntax (priority := high) "(" certCondition " XOR " num ")" : certCondition
+syntax:35 certCondition:36 " AND " certCondition:35 : certCondition
 
 declare_syntax_cat certStatement
 syntax term:max " = " certExpr ";" : certStatement
@@ -167,6 +173,10 @@ private partial def fieldExpression (initial : Term) (values : Values) (q : Term
 
 private partial def expression (initial : Term) (values : Values) : TSyntax `certExpr → MacroM Term
   | `(certExpr| const($value)) => `(($value : Nat))
+  | `(certExpr| if $control:term then $yes:certExpr else $no:certExpr) => do
+      let yes ← expression initial values yes
+      let no ← expression initial values no
+      `(if $initial $control then $yes else $no)
   | `(certExpr| ($e:certExpr)) => expression initial values e
   | `(certExpr| $a:certExpr + $b:certExpr) => do
       let x ← expression initial values a; let y ← expression initial values b
@@ -174,6 +184,9 @@ private partial def expression (initial : Term) (values : Values) : TSyntax `cer
   | `(certExpr| $a:certExpr * $b:certExpr) => do
       let x ← expression initial values a; let y ← expression initial values b
       `($x * $y)
+  | `(certExpr| $a:certExpr / const($b:term)) => do
+      let x ← expression initial values a
+      `($x / ($b : Nat))
   | `(certExpr| $a:certExpr mod $q:term) => do
       let rec strip (e : TSyntax `certExpr) : TSyntax `certExpr :=
         match e with
@@ -203,6 +216,10 @@ end
 
 private partial def condition (initial : Term) (conditions : Values) :
     TSyntax `certCondition → MacroM Term
+  | `(certCondition| $a:certCondition AND $b:certCondition) => do
+      let a ← condition initial conditions a
+      let b ← condition initial conditions b
+      `($a && $b)
   | `(certCondition| ($c:certCondition XOR $one:num)) => do
       unless one.getNat == 1 do Macro.throwErrorAt one "Only XOR 1 is a complemented control."
       let c ← condition initial conditions c
@@ -285,5 +302,49 @@ macro_rules
       `(certified { $body:certStatement* } using $circuit by $proof)
   | `(prog { if $c:certCondition { $body:certStatement* } using $circuit by $proof; }) =>
       `(certified { if $c:certCondition { $body:certStatement* }; } using $circuit by $proof)
+
+-- The same checked statements inside a larger Program, including loops and local aliases.
+syntax (priority := 11000) term:max " = " certExpr "using" term "by" term ";" : circuitStmt
+syntax (priority := 11000) term:max " ^= " certExpr "using" term "by" term ";" : circuitStmt
+syntax (priority := 11000) "{" certStatement* "}" "using" term "by" term ";" : circuitStmt
+syntax (priority := 11000) "if " certCondition " {" certStatement* "}"
+  "using" term "by" term ";" : circuitStmt
+syntax (priority := 11500) "with " ident " := " certExpr " {" circuitStmt* "}"
+  "using" term "by" "(" term "," term ")" ";" : circuitStmt
+syntax (priority := 12500) "with " ident " := " &"isZero" "(" term ")"
+  " {" circuitStmt* "}" "using" term "by" "(" term "," term ")" ";" : circuitStmt
+
+macro_rules (kind := circuitBlock)
+  | `(prog { with $name:ident := isZero($input:term) { $body:circuitStmt* }
+        using $recipe by ($prepare, $restore); $rest:circuitStmt* }) =>
+      `(let $name := ($recipe : CircuitDSL.Computed Wire).value
+        circuitSeq%
+          ((checked (fun initial final => final $name = decide (regValue $input initial = 0))
+              using ($recipe : CircuitDSL.Computed Wire).prepare by $prepare).circuit ++
+            (prog { $body* }) ++
+            (checked (fun _initial final => final $name = false)
+              using ($recipe : CircuitDSL.Computed Wire).restore by $restore).circuit)
+          { $rest* })
+  | `(prog { with $name:ident := $rhs:certExpr { $body:circuitStmt* }
+        using $recipe by ($prepare, $restore); $rest:circuitStmt* }) =>
+      `(let $name := ($recipe : CircuitDSL.Computed (List Wire)).value
+        circuitSeq%
+          ((certified { $name:term = $rhs:certExpr; }
+              using ($recipe : CircuitDSL.Computed (List Wire)).prepare by $prepare).circuit ++
+            (prog { $body* }) ++
+            (certified { $name:term = const(0); }
+              using ($recipe : CircuitDSL.Computed (List Wire)).restore by $restore).circuit)
+          { $rest* })
+  | `(prog { $target:term = $rhs:certExpr using $code by $proof; $rest:circuitStmt* }) =>
+      `(circuitSeq% ((certified { $target:term = $rhs:certExpr; } using $code by $proof).circuit)
+        { $rest* })
+  | `(prog { $target:term ^= $rhs:certExpr using $code by $proof; $rest:circuitStmt* }) =>
+      `(circuitSeq% ((certified { $target:term ^= $rhs:certExpr; } using $code by $proof).circuit)
+        { $rest* })
+  | `(prog { { $body:certStatement* } using $code by $proof; $rest:circuitStmt* }) =>
+      `(circuitSeq% ((certified { $body:certStatement* } using $code by $proof).circuit) { $rest* })
+  | `(prog { if $c:certCondition { $body:certStatement* } using $code by $proof; $rest:circuitStmt* }) =>
+      `(circuitSeq% ((certified { if $c:certCondition { $body:certStatement* }; }
+        using $code by $proof).circuit) { $rest* })
 
 end ECDSAAdd.CertifiedTranslation

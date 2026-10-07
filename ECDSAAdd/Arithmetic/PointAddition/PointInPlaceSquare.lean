@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
-import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceProgram
+import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout

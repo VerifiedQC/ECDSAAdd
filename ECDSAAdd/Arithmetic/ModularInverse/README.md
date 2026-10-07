@@ -4,6 +4,9 @@
 
 ## 当前可读入口
 
+- [InverseCompute.lean](InverseCompute.lean)：`inverseLoop` 的逆元作用域、`inverseCompute/Uncompute` 的模负元写入，直接在原函数内写出 `using … by …`。
+- [RoundBody.lean](RoundBody.lean)：Kaliski 正体和恢复体的受控加减、乘二和除二，在同一行指定电路和证明；交换及循环保持原结构。
+- [NegativeInit.lean](NegativeInit.lean)：显式写出约减、模取负和中间值清理三个步骤。
 - [Certified.lean](#certifiedlean)：用显式 `using 实现 by 规格证明` 写出本模块关键计算。
 - [CertifiedSpecs.lean](#certifiedspecslean)：把原证明整理为语义连接所需的 Hoare 形式，保留原前提和恢复结论。
 
@@ -22,13 +25,23 @@
 ## 后端算法与原规格
 
 
-[RoundBody.lean](RoundBody.lean) 的 `kaliskiBodyProgram/kaliskiUnbodyProgram` 已把受控加减写成 `if subtract { ... };`。移位、交换和历史恢复保持原有明确调用，`inverseCompute/Uncompute` 等组合入口不重复包装；原规格与资源不变。
+[InverseCompute.lean](InverseCompute.lean) 中的原 `inverseLoop` 现在写成：
 
-这些是 `prog` 构造层的记法，验证仍由本模块定理承担；不是已全部迁入认证 `arith` 编译器。语法边界见 [Framework](../../Framework/README.md#现有算法中的算术表达式)。
+```lean
+with inverse := (inverse(L.first.v) mod q) {
+  L.out ^= inverse using (copyRegister none inverse L.out) by (copyRegister_spec inverse L.out);
+} using (inverseValue L q) by (inverseValue_prepare L q, inverseValue_restore L q);
+```
 
-Kaliski 数据轮使用 `roundArithmeticContext` 固定 mask 和进位工作区；主体中的 `controlledSub subtract v u`、`controlledAdd subtract s r` 直接标出控制、源和目标。它们展开为原有测量清理的受控加减法，历史与辅助位寿命不变。
+准备证明保留完整 Kaliski/缩放历史；恢复证明要求匹配的历史，清零逆元并恢复 Kaliski 初态。作用域并不允许任意修改历史，也不是自动重置。原 `inverseLoop_values` 继续证明准备、复制和恢复之间的前提衔接。
 
-算法入口是 [InverseCompute.lean](InverseCompute.lean)：固定轮 Kaliski 循环 → 将 −r mod q 写入逆元寄存器 a → 按计数 k 缩放，得到逆元；`inverseUncompute` 按依赖逆序恢复。输出接口 `inverseLoop` 现在用 `with inverse := (inverseValue L q) { L.out ^= inverse; };`，块结束才恢复全部历史及 Kaliski 初态。循环历史、计数和缩放历史仍不能作为已清零工作区借用。
+[RoundBody.lean](RoundBody.lean) 的 `kaliskiBodyProgram/kaliskiUnbodyProgram` 把受控加减写成 `if subtract { u = (u - v) mod (2^u.length); } using … by …`。有限位宽的加减由原测量清理电路实现；[RoundSteps.lean](RoundSteps.lean) 将已有规格整理成启用分支计算、禁用分支不变的形式。乘二和除二同样绑定 `shiftLeft/Right` 及其规格；仍要求启用时不溢出或输入为偶数。交换和历史恢复保持原结构。
+
+每个 `by` 检查数学语句与所选电路的连接；原组合定理继续证明调用前提和历史恢复。这是显式翻译，不是自动选择实现或分配工作区的通用编译器。
+
+Kaliski 数据轮的每句 `using` 直接指定 `measuredMaskedAddInPlace` 或 `measuredMaskedSubInPlace`；mask 保存受控输入副本，carry 保存进位，两者由布局固定并在每次调用后清零。不再依赖 `roundArithmeticContext` 的默认实现选择，门列、历史与辅助位寿命不变。
+
+算法入口是 [InverseCompute.lean](InverseCompute.lean)：固定轮 Kaliski 循环 → 将 −r mod q 写入逆元寄存器 a → 按计数 k 缩放，得到逆元；`inverseUncompute` 按依赖逆序恢复。`inverseLoop` 的作用域结束才恢复全部历史及 Kaliski 初态。循环历史、计数和缩放历史仍不能作为已清零工作区借用。
 
 单轮在 [KaliskiRound.lean](KaliskiRound.lean) 中保存 swap/subtract 条件；[RoundBody.lean](RoundBody.lean) 直接列出 u、v、r、s，展示交换、u−=v、r+=s 和移位。条件由量子门计算，不是读取量子位后执行 Lean 的 if；对应的恢复程序负责清掉记录。[InverseScale.lean](InverseScale.lean) 明确标出查表因子、缩放结果和为恢复保留的原值。
 

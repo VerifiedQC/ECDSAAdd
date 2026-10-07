@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.PointAddition.PointCandidate
+import ECDSAAdd.Arithmetic.PointAddition.PointCandidateKernels
 
 namespace ECDSAAdd.Arithmetic
 namespace PointAddLayout

@@ -15,7 +15,7 @@ variable (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
 include hw hn
 
 theorem pointStep_addX (k : Fp) :
-    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceConstantAdd L L.point.x k)
+    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceConstantAddKernel L L.point.x k)
       (PointInPlaceValues L (X+(if G then k else 0)) Y A G E Q) := by
   intro s m v
   obtain ⟨hp,hx,hf⟩ := pointInPlaceConstantAdd_correct L hw hn L.point.x (Or.inl rfl) k X.val G X.isLt
@@ -24,7 +24,7 @@ theorem pointStep_addX (k : Fp) :
   cases G <;> simpa [ZMod.val_add,Nat.mod_eq_of_lt (ZMod.val_lt X)] using hx
 
 theorem pointStep_addY (k : Fp) :
-    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceConstantAdd L L.point.y k)
+    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceConstantAddKernel L L.point.y k)
       (PointInPlaceValues L X (Y+(if G then k else 0)) A G E Q) := by
   intro s m v
   obtain ⟨hp,hy,hf⟩ := pointInPlaceConstantAdd_correct L hw hn L.point.y (Or.inr rfl) k Y.val G Y.isLt
@@ -48,7 +48,7 @@ theorem pointStep_product :
     exact ⟨hp,v.withY hw hn (by simpa only [sub_val,ZMod.val_mul] using hy) hf⟩
 
 theorem pointStep_negate :
-    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceNegate L)
+    Triple (PointInPlaceValues L X Y A G E Q) (pointInPlaceNegateKernel L)
       (PointInPlaceValues L (if G then -X else X) Y A G E Q) := by
   intro s m v
   obtain ⟨hp,hx,hf⟩ := pointInPlaceNegate_correct L hw hn X.val G X.isLt s m v.generic v.x v.borrow

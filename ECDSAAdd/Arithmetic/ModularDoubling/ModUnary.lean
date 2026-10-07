@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
 import ECDSAAdd.Arithmetic.Shift.Rotate
+import ECDSAAdd.Arithmetic.Addition.StatementSpecs
 
 namespace ECDSAAdd.Arithmetic
 open Instr
@@ -80,13 +81,13 @@ def modUnaryContext (U : ModUnaryLayout) : CircuitDSL.Context ModUnaryOps := {
 
 /-- U.z ← 2*U.z mod p，要求 p 为奇数、0<p<2^n、U.z<p。
 n 是目标低位寄存器 U.low 的长度。 -/
-def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryContext U) {
+def dblInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;       -- 用于保存 2*U.low。
   let borrow := U.high;    -- target 的最高位：试减后 0 表示没有借位，1 表示发生借位。
   let leastBit := U.bit;   -- target 的最低位，表示结果奇偶。
-  rotateLeft(target);                                  -- target *= 2
-  target -= const(p);             -- borrow = [倍增结果<p]。
-  if borrow { U.low += const(p) using maskedAddConstLow; };
+  target = const(2) * target using (rotateLeft target) by (rotateLeft_spec target);
+  target = (target - const(p)) mod (2^(U.low.length+1)) using ((modUnaryContext U).operations.subConst target p) by (fun A Z => modAddCore_reduce U.core U.low.length A Z p);
+  if borrow { U.low = (U.low + const(p)) mod (2^U.low.length); } using ((modUnaryContext U).operations.maskedAddConstLow borrow U.low p) by (maskedAddConst_step_spec borrow (U.constant.take U.low.length) U.low (U.carry.take (U.low.length-1)) U.cin p);
   X borrow;                                     -- 结果为奇数表示发生过约减。
   CX leastBit borrow;                           -- 清零 borrow。
 }
@@ -98,18 +99,18 @@ theorem dblInPlace_program (U : ModUnaryLayout) (p : Nat) :
   xorConstant U.constant p ++
   maskedAddConst U.high (U.constant.take U.low.length) U.low
     (U.carry.take (U.low.length-1)) U.cin p ++ [.X U.high,.CX U.bit U.high] := by
-  simp only [dblInPlace, List.append_assoc]
+  simp only [dblInPlace, modUnaryContext, List.append_assoc]
   rfl
 
 /-- U.z ← (U.z+(U.z mod 2)*p)/2，即模 p 减半。
 要求 p 为奇数、0<p<2^n、U.z<p；n 是 U.low 的长度。 -/
-def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog using (modUnaryContext U) {
+def halfInPlace (U : ModUnaryLayout) (p : Nat) : Program := prog {
   let target := U.z;       -- 用于保存 U.low 或 U.low+p。
   let wasOdd := U.flag;    -- 保存输入奇偶：0 为偶数，1 为奇数。
   CX U.bit wasOdd;                             -- wasOdd = target mod 2
-  if wasOdd { target += const(p); };
-  rotateRight(target);                                -- target /= 2
-  compareLtConst U.low ((p+1)/2) wasOdd;                -- wasOdd ^= [low<(p+1)/2]
+  if wasOdd { target = (target + const(p)) mod (2^target.length); } using (maskedAddConst wasOdd U.constant target U.carry U.cin p) by (maskedAddConst_step_spec wasOdd U.constant target U.carry U.cin p);
+  target = target / const(2) using (rotateRight target) by (rotateRight_spec target);
+  compareLtConst none U.low (U.constant.take U.low.length) U.carry U.cin wasOdd ((p+1)/2); -- wasOdd ^= [low<(p+1)/2]
   X wasOdd;                                     -- 原输入为奇数 iff 结果≥(p+1)/2，清零 wasOdd。
 }
 

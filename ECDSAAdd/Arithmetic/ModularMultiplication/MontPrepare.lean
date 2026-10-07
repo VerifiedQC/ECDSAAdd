@@ -3,10 +3,11 @@ import ECDSAAdd.Arithmetic.ModularMultiplication.MontRotate
 import ECDSAAdd.Arithmetic.Lookup.Lookup
 import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 import ECDSAAdd.Math.ModularMultiplication.Montgomery
+import ECDSAAdd.Arithmetic.ModularMultiplication.MontStepSpecs
 
 namespace ECDSAAdd.Arithmetic
 open Instr
-open scoped CircuitDSL
+open CertifiedTranslation
 
 /-- 一个 Montgomery 段；另一段复用 table/mask/carry/pad/scratch，保留各自 acc/history/flag。 -/
 structure MontStageLayout where
@@ -84,18 +85,42 @@ abbrev montLookupValue (L : MontStageLayout) (addr : List Wire) (K : Nat) :
     CircuitDSL.Computed (List Wire) :=
   ⟨L.table, montLookup L addr K, montLookup L addr K⟩
 
+theorem montLookupPrepare_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
+    (hnd : (addr++L.scratch++L.table).Nodup) (ha : addr.length=4)
+    (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D : Nat) :
+    {{ addr=D,L.table=0,L.scratch=0 }} montLookup L addr K
+    {{ addr=D,L.table=D*K,L.scratch=0 }} := by
+  cases addr with
+  | nil => simp at ha
+  | cons a bs =>
+    have hb : bs.length=3 := by simpa using ha
+    simpa only [montLookup,List.headD_cons,List.tail_cons,Nat.zero_xor] using
+      lookup_spec a bs L.scratch L.table (fun d => d*K) hnd hb hs hK D 0
+
+theorem montLookupRestore_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
+    (hnd : (addr++L.scratch++L.table).Nodup) (ha : addr.length=4)
+    (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D : Nat) :
+    {{ addr=D,L.table=D*K,L.scratch=0 }} montLookup L addr K
+    {{ addr=D,L.table=0,L.scratch=0 }} := by
+  cases addr with
+  | nil => simp at ha
+  | cons a bs =>
+    have hb : bs.length=3 := by simpa using ha
+    simpa only [montLookup,List.headD_cons,List.tail_cons,Nat.xor_self] using
+      lookup_spec a bs L.scratch L.table (fun d => d*K) hnd hb hs hK D (D*K)
+
 /-- L.acc ← (L.acc+d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
-def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  with multiple := (montLookupValue L addr K) {
-    L.acc += multiple;
-  };
+def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+  with multiple := addr * const(K) {
+    L.acc = (multiple + L.acc) mod (2^L.acc.length) using (addInPlace multiple L.acc L.carry L.cin) by (addInPlace_zero_spec multiple L.acc L.carry L.cin);
+  } using (montLookupValue L addr K) by (montLookupPrepare_spec L addr K, montLookupRestore_spec L addr K);
 }
 
 /-- L.acc ← (L.acc−d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
-def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  with multiple := (montLookupValue L addr K) {
-    L.acc -= multiple;
-  };
+def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {
+  with multiple := addr * const(K) {
+    L.acc = (L.acc - multiple) mod (2^L.acc.length) using (subInPlace multiple L.acc L.carry L.cin) by (subInPlace_step_spec multiple L.acc L.carry L.cin);
+  } using (montLookupValue L addr K) by (montLookupPrepare_spec L addr K, montLookupRestore_spec L addr K);
 }
 
 /-- L.acc ← (A+m*p)/16，A 是原 L.acc，m=A mod 16，保存到第 i 轮记录。
@@ -103,35 +128,35 @@ def montLookupSub (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program :
 def montReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
   let digit := L.acc.take 4; -- acc 的低四位，即约减系数 m。
   let history := L.record i; -- 用于保存第 i 轮的 m。
-  history ^= digit;
+  history ^= digit using (copyRegister none digit history) by (copyRegister_spec digit history);
   montLookupAdd(L, history, p);       -- acc += m*p，低四位变为零。
-  rotateRightBits(L.acc, 4);          -- acc /= 16
+  L.acc = L.acc / const(16) using (rotateRightBits L.acc 4) by (rotateRightBits_spec L.acc 4);
 }
 
 /-- 撤销第 i 轮 montReduce：L.acc ← 16*L.acc−m*p，再清零该轮记录 m。 -/
 def montRestoreReduce (L : MontStageLayout) (p i : Nat) : Program := prog {
   let digit := L.acc.take 4; -- acc 的低四位。
   let history := L.record i; -- 第 i 轮保存的约减系数 m。
-  rotateLeftBits(L.acc, 4);          -- acc *= 16
+  L.acc = const(16) * L.acc using (rotateLeftBits L.acc 4) by (rotateLeftBits_spec L.acc 4);
   montLookupSub(L, history, p);       -- acc -= m*p
-  history ^= digit;                  -- 清零 history。
+  history ^= digit using (copyRegister none digit history) by (copyRegister_spec digit history); -- 清零 history。
 }
 
 /-- L.acc ← (L.acc+d*x) mod 2^261，d 是 y 的第 i 个四位窗口的值。 -/
-def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog using (montArithmeticContext L) {
+def montAddDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
   for j in (List.range 4) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    if bit { L.acc += shiftedX; };
+    if bit { L.acc = (L.acc + shiftedX) mod (2^L.acc.length); } using (measuredMaskedAddInPlace bit shiftedX L.mask L.acc L.carry L.cin) by (montMaskedAdd_step_spec bit shiftedX L.mask L.acc L.carry L.cin);
   };
 }
 
 /-- L.acc ← (L.acc−d*x) mod 2^261，d 是 y 的第 i 个四位窗口的值。 -/
-def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog using (montArithmeticContext L) {
+def montSubDigit (L : MontStageLayout) (x y : List Wire) (i : Nat) : Program := prog {
   for j in ((List.range 4).reverse) {
     let bit := y.getD (4*i+j) L.flag; -- y 的第 i 个四位窗口中的第 j 位。
     let shiftedX := L.source x j;    -- x 左移 j 位的接线，表示 x*2^j。
-    if bit { L.acc -= shiftedX; };
+    if bit { L.acc = (L.acc - shiftedX) mod (2^L.acc.length); } using (measuredMaskedSubInPlace bit shiftedX L.mask L.acc L.carry L.cin) by (montMaskedSub_step_spec bit shiftedX L.mask L.acc L.carry L.cin);
   };
 }
 
@@ -166,30 +191,34 @@ def constMontRestoreWindow (L : MontStageLayout) (y : List Wire) (p K i : Nat) :
 }
 
 /-- L.acc ← (L.acc+K) mod 2^261。 -/
-def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  L.acc += const(K);
+def montConstantAdd (L : MontStageLayout) (K : Nat) : Program := prog {
+  with constant := const(K) {
+    L.acc = (constant + L.acc) mod (2^L.acc.length) using (addInPlace constant L.acc L.carry L.cin) by (addInPlace_zero_spec constant L.acc L.carry L.cin);
+  } using (⟨L.table, xorConstant L.table K, xorConstant L.table K⟩) by (montConstantPrepare_spec L.table K, montConstantRestore_spec L.table K);
 }
 
 /-- L.acc ← (L.acc−K) mod 2^261。 -/
-def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog using (montArithmeticContext L) {
-  L.acc -= const(K);
+def montConstantSub (L : MontStageLayout) (K : Nat) : Program := prog {
+  with constant := const(K) {
+    L.acc = (L.acc - constant) mod (2^L.acc.length) using (subInPlace constant L.acc L.carry L.cin) by (subInPlace_step_spec constant L.acc L.carry L.cin);
+  } using (⟨L.table, xorConstant L.table K, xorConstant L.table K⟩) by (montConstantPrepare_spec L.table K, montConstantRestore_spec L.table K);
 }
 
 /-- 将 L.acc=A 约减为 A mod p，L.flag 从零写成 [A<p]。
 要求 A<2*p、0<p<2^256；flag 留给恢复步骤。 -/
-def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
+def montNormalize (L : MontStageLayout) (p : Nat) : Program := prog {
   let borrow := L.flag; -- 保存原 acc<p：1 表示成立，0 表示不成立；留给恢复步骤。
   let high := L.acc.getD 260 L.flag; -- acc 的最高位，试减后表示借位。
   montConstantSub(L, p);                               -- acc -= p
   CX high borrow;                              -- borrow = [原 acc<p]
-  if borrow { L.acc += const(p); };
+  if borrow { L.acc = (L.acc + const(p)) mod (2^L.acc.length); } using (maskedAddConst borrow L.table L.acc L.carry L.cin p) by (maskedAddConst_step_spec borrow L.table L.acc L.carry L.cin p);
 }
 
 /-- 撤销 montNormalize：L.acc ← L.acc+(L.flag=1 ? 0 : p)，清零 L.flag。 -/
-def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog using (montArithmeticContext L) {
+def montDenormalize (L : MontStageLayout) (p : Nat) : Program := prog {
   let borrow := L.flag; -- 正向约减保留的借位。
   let high := L.acc.getD 260 L.flag; -- acc 的最高位。
-  if borrow { L.acc -= const(p); };
+  if borrow { L.acc = (L.acc - const(p)) mod (2^L.acc.length); } using (maskedSubConst borrow L.table L.acc L.carry L.cin p) by (maskedSubConst_step_spec borrow L.table L.acc L.carry L.cin p);
   CX high borrow;                                 -- 清零 borrow。
   montConstantAdd(L, p);                                  -- 恢复 acc。
 }

@@ -8,11 +8,31 @@
 
 ### 当前关键入口：显式 using / by（2026-10-07）
 
+现在已把同一写法扩展到下表的原函数正文：数学语句后同一行写 `using 实现 by 证明`；临时值用带准备／恢复证明的 `with`。不是只给旧算法加一层 `Certified.lean` 外壳。
+
+| 模块／原源码入口 | 本轮改写的计算 |
+| --- | --- |
+| [Comparison/Compare.lean](../ECDSAAdd/Arithmetic/Comparison/Compare.lean) | `compareChain` 的多数进位及反向清理 |
+| [Equality/ZeroControl.lean](../ECDSAAdd/Arithmetic/Equality/ZeroControl.lean) | `zeroControlled` 的逐位条件计算及清理 |
+| [ModularAddition/ModInPlace.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlace.lean) | `modAddCore` 的求和、试减、借位回补、清除高位 |
+| [ModularDoubling/ModUnary.lean](../ECDSAAdd/Arithmetic/ModularDoubling/ModUnary.lean) | `dblInPlace`、`halfInPlace` 的乘除 2 与常量加减 |
+| [ModularMultiplication/MontPrepare.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPrepare.lean) | 查表／常量加减、四位约减与恢复、逐位受控加减、规范化与恢复 |
+| [ModularMultiplication/MontAdapterLayout.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterLayout.lean) | `montMulXor/Add/Sub/ControlledAdd/ControlledSub` 的乘积作用域与输出 |
+| [ModularInverse/InverseCompute.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseCompute.lean) | `inverseLoop` 的逆元作用域；`inverseCompute/Uncompute` 的负系数装载 |
+| [ModularInverse/NegativeInit.lean](../ECDSAAdd/Arithmetic/ModularInverse/NegativeInit.lean)、[RoundBody.lean](../ECDSAAdd/Arithmetic/ModularInverse/RoundBody.lean) | 约减、取负、清理；Kaliski 正／逆轮的受控加减、乘除 2 |
+| [Division/Divide.lean](../ECDSAAdd/Arithmetic/Division/Divide.lean) | `divideAdd/Sub` 的安全逆元准备、受控乘积累加减和恢复 |
+| [PointAddition/PointCandidate.lean](../ECDSAAdd/Arithmetic/PointAddition/PointCandidate.lean) | `pointSubConstant`、`pointSquare`、`pointCandidateCompute/Clear` 的各步算术 |
+| [PointAddition/PointInPlaceProgram.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceProgram.lean) | `pointInPlaceConstantAdd/Negate/ClearSlope/Generic`；斜率清理保留独立判零与两个双控制分支 |
+
+复制、选择、交换、基本移位的短门级主体，以及固定轮循环、查表树、特殊点分支的上层组合保留；不机械地给每个门或已清楚的调用再包一层。阶段证明放在相应模块的 `*Steps`、`*Annotations` 等文件；点加的 `*Kernels` 先给出原门列，以便在可读算法定义之前独立证明其步骤。直接使用点加原函数时应导入 `PointCandidate` 或 `PointInPlaceProgram`，不能依赖任意低层证明文件间接导出算法入口。
+
+每条注解核对公式与指定电路的证明；整段程序的步间前提、历史存活、相位及工作区恢复，仍由原完整 `_spec/_correct` 负责。`with` 只准备一次、执行块体、恢复一次，不自动分配工作位，也不保证任意块体都可安全清理。原门列与资源结论保持。
+
 Addition 已直接改写 [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/RippleAdder.lean) 的 `rippleAdder` 和 [InPlaceAdder.lean](../ECDSAAdd/Arithmetic/Addition/InPlaceAdder.lean) 的 `addInPlace`：正向／反向循环内写多数进位、XOR 和清理，每句或共享块同一行指定 `using` / `by`。不是新增 `Certified.lean` 外壳。`fullAdder`、`eraseCarry`、`majority` 保留门级实现，新增 `sumInto` 封装原有两个 CX。完整 `_spec/_correct` 仍证明调用条件、进位清理、相位及 frame；门列不变。语法边界见 [Addition README](../ECDSAAdd/Arithmetic/Addition/README.md)。
 
 先读 [Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) 的原 `modAddOn/modSubOn`：正文现在直接采用“比较 using/by；共享选择块 using/by”，仍返回 `Program`。准备证明建立包含候选与借位的 `Ready`，结束证明消费同一接口并清零；最终规格实际组合这两个证明。语法及协议在 [ModularTranslation.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularTranslation.lean)，门列及资源未变。
 
-下表的 21 个 `Certified.lean` 入口也统一为 `prog { 语句 using 实现 by 证明; }` 或结束括号后同一行注解的共享块。查表/模乘/求逆/除法块保留可读的中间值；整块实现只发出一次。它们位于 `ECDSAAdd.Arithmetic.Certified`，保留 `requires/ensures/correct`；`.circuit` 是原实现。其余 19 个原后端函数尚未全部逐步骤认证，不能把格式迁移等同于那项工作。
+下表的 21 个 `Certified.lean` 入口继续保留 `requires/ensures/correct`，位于 `ECDSAAdd.Arithmetic.Certified`；`.circuit` 是原实现。它们是整块接口，与上表直接改写的原算法正文分工不同。
 
 | 文件 | 关键入口 |
 | --- | --- |
@@ -23,13 +43,13 @@ Addition 已直接改写 [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/Ripp
 | [Division/Certified.lean](../ECDSAAdd/Arithmetic/Division/Certified.lean) | `divideAdd`、`divideSub` |
 | [PointAddition/Certified.lean](../ECDSAAdd/Arithmetic/PointAddition/Certified.lean) | 常数差、平方、原地常数加、普通点加、斜率清理，共 5 个 |
 
-合计 21 个认证外层入口，不含本轮直接迁移的两个 Addition 原函数。实现细节仍看以下后端地图；`CertifiedSpecs.lean` 仅整理证明连接。新语法与边界见 [Framework](../ECDSAAdd/Framework/README.md#当前入口显式实现与证明2026-10-06)。比较、判零、交换、移位及其他已清楚的门级函数本轮不改动。
+合计 21 个认证外层入口。实现细节仍看以下后端地图；`CertifiedSpecs.lean` 仅整理证明连接。新语法与边界见 [Framework](../ECDSAAdd/Framework/README.md#当前入口显式实现与证明2026-10-06)。
 
 模加减的首个分层证明示范：先读 `Modular.lean` 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的阶段证明，修改实现时才需深入。旧规格由新分层证明推出；原 `prog` 正文已改写，实际门列不变。
 
 `ModularAlgorithm.lean` 的两个算法证明现采用受控英文：分情况、列中间结论、引用取模规则。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)，不把底层 tactic 暴露在算法证明正文中；范围辅助引理暂不改写。
 
-Arithmetic 的 211 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
+Arithmetic 的 222 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 
 算法正文统一用 `if c { ... };` 表示量子受控执行，不测量 c；`if (c XOR 1)` 对应 c=0。它与旧 `control` 写法生成相同门列，旧写法仍兼容。具体支持范围见 [Framework](../ECDSAAdd/Framework/README.md#现有算法中的算术表达式)。
 
@@ -38,21 +58,21 @@ Arithmetic 的 211 个 Lean 文件已归入以下 14 个功能目录，每目录
 | 模块说明 | 负责的操作 | Lean 文件数 |
 | --- | --- | ---: |
 | [RegisterXor](../ECDSAAdd/Arithmetic/RegisterXor/README.md) | 寄存器或常量 XOR，包括受控形式 | 5 |
-| [Addition](../ECDSAAdd/Arithmetic/Addition/README.md) | 二进制加法及逆操作，包括计数和掩码接口 | 7 |
+| [Addition](../ECDSAAdd/Arithmetic/Addition/README.md) | 二进制加法及逆操作，包括计数和掩码接口 | 8 |
 | [Comparison](../ECDSAAdd/Arithmetic/Comparison/README.md) | 比较大小 | 1 |
 | [Equality](../ECDSAAdd/Arithmetic/Equality/README.md) | 检测零值或等于常量 | 2 |
 | [Selection](../ECDSAAdd/Arithmetic/Selection/README.md) | 按控制位选择输入并 XOR 到目标 | 1 |
 | [Swap](../ECDSAAdd/Arithmetic/Swap/README.md) | 交换寄存器 | 1 |
 | [Shift](../ECDSAAdd/Arithmetic/Shift/README.md) | 移动寄存器位的位置及逆向操作 | 2 |
 | [Lookup](../ECDSAAdd/Arithmetic/Lookup/README.md) | 按寄存器地址查经典常量表 | 1 |
-| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减，以及高层语言适配示范 | 27 |
+| [ModularAddition](../ECDSAAdd/Arithmetic/ModularAddition/README.md) | 模加与模减，以及高层语言适配示范 | 28 |
 | [ModularDoubling](../ECDSAAdd/Arithmetic/ModularDoubling/README.md) | 模倍增与模减半 | 5 |
-| [ModularMultiplication](../ECDSAAdd/Arithmetic/ModularMultiplication/README.md) | 标准表示模乘及累加、受控接口 | 30 |
-| [ModularInverse](../ECDSAAdd/Arithmetic/ModularInverse/README.md) | 求逆及保留历史的准备/恢复接口 | 49 |
-| [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 9 |
-| [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 71 |
+| [ModularMultiplication](../ECDSAAdd/Arithmetic/ModularMultiplication/README.md) | 标准表示模乘及累加、受控接口 | 31 |
+| [ModularInverse](../ECDSAAdd/Arithmetic/ModularInverse/README.md) | 求逆及保留历史的准备/恢复接口 | 50 |
+| [Division](../ECDSAAdd/Arithmetic/Division/README.md) | 模除法结果的受控累加或累减 | 11 |
+| [PointAddition](../ECDSAAdd/Arithmetic/PointAddition/README.md) | 加经典常量曲线点，包括 XOR 和受控原地接口 | 76 |
 
-布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 238 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的十个文件集中说明。
+布局、程序、辅助 lemma、规格和资源证明随所属功能归档。其余三个目录也已按功能整理；同名数学模块解释数值结论，Arithmetic 模块解释电路实现与状态恢复，两者不是重复说明。全库 ECDSAAdd 下共 249 个 Lean 文件；Arithmetic、Math、Circuit 按功能分目录，Framework 的十个文件集中说明。
 
 ## Math：数学结论模块
 

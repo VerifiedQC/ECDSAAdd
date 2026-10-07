@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointCandidateBlocks
+import ECDSAAdd.Arithmetic.PointAddition.PointCandidate
 
 namespace ECDSAAdd.Arithmetic
 

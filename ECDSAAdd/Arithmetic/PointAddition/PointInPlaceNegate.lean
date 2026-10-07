@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
-import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceProgram
+import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
@@ -55,7 +55,7 @@ private theorem negate_swap (L : ControlledPointLayout) (hw : L.Widths) (hnd : L
 theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (A : Nat) (B : Bool) (hA : A<p) :
     {{ L.core.generic=B,L.inPlaceNegate.a=A,L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
-      pointInPlaceNegate L
+      pointInPlaceNegateKernel L
     {{ L.core.generic=B,L.inPlaceNegate.a=(if B then (p-A)%p else A),
       L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }} := by
   have hp : 0<p := by norm_num [p]
@@ -80,16 +80,16 @@ theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd
   have h := (hs.seq ht).seq ha
   have he : (if B then (if B then (p-A)%p else 0) else A)=(if B then (p-A)%p else A) := by cases B <;> rfl
   rw [hresult] at h
-  simpa only [pointInPlaceNegate_program,he] using h
+  simpa only [pointInPlaceNegateKernel_program,he] using h
 
 /-- 取负后仅输入x的低位改变，临时差、高位与所有其它线路恢复。 -/
 theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (A : Nat) (B : Bool) (hA : A<p) (s : State) (m : List Bool)
     (hb : s.basis L.core.generic=B) (hx : regValue L.point.x s.basis=A)
     (hc : regValue L.inPlaceBorrow s.basis=0) :
-    (run (pointInPlaceNegate L) m s).phase=s.phase ∧
-      regValue L.point.x (run (pointInPlaceNegate L) m s).basis=(if B then (p-A)%p else A) ∧
-      ∀ q∉L.point.x,(run (pointInPlaceNegate L) m s).basis q=s.basis q := by
+    (run (pointInPlaceNegateKernel L) m s).phase=s.phase ∧
+      regValue L.point.x (run (pointInPlaceNegateKernel L) m s).basis=(if B then (p-A)%p else A) ∧
+      ∀ q∉L.point.x,(run (pointInPlaceNegateKernel L) m s).basis q=s.basis q := by
   have hm := L.inPlaceNegate_widths hw
   have hp : 0<p := by norm_num [p]
   have hp2 : p<2^256 := by norm_num [p]
@@ -108,7 +108,7 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
     (fun q hq => clean q (hs (List.mem_append_right _ hq)))
   obtain ⟨hphase,hv⟩ := pointInPlaceNegate_spec L hw hnd A B hA s m ⟨⟨⟨hb,ha⟩,hz⟩,hwork⟩
   have hvbound : (if B then (p-A)%p else A)<p := by split; exact Nat.mod_lt _ hp; exact hA
-  have hlow := (regValue_low_iff L.point.x [L.inPlaceBit 0] (run (pointInPlaceNegate L) m s).basis
+  have hlow := (regValue_low_iff L.point.x [L.inPlaceBit 0] (run (pointInPlaceNegateKernel L) m s).basis
     (if B then (p-A)%p else A) (by rw [show L.point.x.length=256 from hw.inputX]; exact hvbound.trans hp2)).mp
     (he ▸ hv.1.1.2)
   refine ⟨hphase,hlow.1,?_⟩
@@ -139,7 +139,7 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
     have hh := swapRegisters_wires L.core.generic L.point.x L.inPlaceNegate.low (hw.inputX.trans hm.core.low.symm) h
     simp [hqb,hq,hqlow] at hh
   apply run_preserves_outside
-  simp only [pointInPlaceNegate_program,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
+  simp only [pointInPlaceNegateKernel_program,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
     controlledModAdd_wires _ _ 256 p hm (by omega),Finset.mem_union,List.mem_toFinset,List.mem_cons,
     List.mem_append,not_or]
   have htake : q∉L.inPlaceNegate.a.take 256 := fun h => hqa ((List.take_sublist _ _).subset h)

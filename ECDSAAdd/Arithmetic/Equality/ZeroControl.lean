@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
+import ECDSAAdd.Framework.BitTranslation
 import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
@@ -17,34 +18,6 @@ private def negAnd (c a t : Wire) : Program := [.X a, .CCX c a t, .X a]
 /-- 已知 t=c AND NOT a 时，测量清零 t。 -/
 private def negAndErase (c a t : Wire) : Program :=
   [.X a, .measureX t [] [.CZ c a], .X a]
-
-local macro_rules
-  | `(tactic| get_elem_tactic) =>
-      `(tactic| (simp_all +zetaDelta only
-          [List.length_cons, List.length_map]
-                 omega))
-
-/-- target ^= c AND [bs 中所有 input 位均为零]。
-bs 将每个输入位 input 与检测工作位 work 配对。 -/
-def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
-  let n := bs.length;
-  let chain := c :: bs.map ZeroBit.work; -- chain[i] 表示 c=1 且前 i 个输入全零。
-  for i in range(n) {
-    negAnd(chain[i], bs[i].input, bs[i].work); -- chain[i+1] = chain[i] AND NOT input。
-  };
-  CX chain[n] target; -- target ^= chain[n]
-  for i in reversed(range(n)) {
-    negAndErase(chain[i], bs[i].input, bs[i].work);  -- 清零 work。
-  };
-}
-
-private theorem zeroControlled_nil (c target : Wire) :
-    zeroControlled c target [] = [.CX c target] := rfl
-
-private theorem zeroControlled_cons (c target : Wire) (b : ZeroBit) (bs : List ZeroBit) :
-    zeroControlled c target (b :: bs) =
-      negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work := by
-  simp [zeroControlled, List.ofFn_succ, List.reverse_cons, List.flatten_append, List.append_assoc]
 
 private theorem negAnd_run (c a t : Wire) (hca : c≠a) (hat : a≠t)
     (s : State) (m : List Bool) :
@@ -71,6 +44,53 @@ private theorem negAndErase_run (c a t : Wire) (hca : c≠a) (hat : a≠t)
     by_cases hw : w=a
     · subst w; simp [hat]
     · simp [Function.update_apply, hw]
+
+private theorem negAnd_spec (c a t : Wire) (hnd : [c, a, t].Nodup) (C A T : Bool) :
+    {{ c = C, a = A, t = T }} negAnd c a t
+    {{ c = C, a = A, t = (T ^^ (C && !A)) }} := by
+  intro s m hP
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
+    not_or, not_false_eq_true, and_true] at hnd
+  rw [negAnd_run c a t hnd.1.1 hnd.2]
+  simp_all [Holds.holds, writeBit, Function.update]
+
+private theorem negAndErase_spec (c a t : Wire) (hnd : [c, a, t].Nodup) (C A : Bool) :
+    {{ c = C, a = A, t = (C && !A) }} negAndErase c a t
+    {{ c = C, a = A, t = false }} := by
+  intro s m hP
+  simp only [Holds.holds] at hP ⊢
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
+    not_or, not_false_eq_true, and_true] at hnd
+  rw [negAndErase_run c a t hnd.1.1 hnd.2 hnd.1.2 s m (by simp_all)]
+  simp_all [writeBit, Function.update]
+
+local macro_rules
+  | `(tactic| get_elem_tactic) =>
+      `(tactic| (simp_all +zetaDelta only
+          [List.length_cons, List.length_map]
+                 omega))
+
+/-- target ^= c AND [bs 中所有 input 位均为零]。
+bs 将每个输入位 input 与检测工作位 work 配对。 -/
+def zeroControlled (c target : Wire) (bs : List ZeroBit) : Program := prog {
+  let n := bs.length;
+  let chain := c :: bs.map ZeroBit.work; -- chain[i] 表示 c=1 且前 i 个输入全零。
+  for i in range(n) {
+    bs[i].work ^= (chain[i] AND NOT bs[i].input) using negAnd by negAnd_spec;
+  };
+  CX chain[n] target; -- target ^= chain[n]
+  for i in reversed(range(n)) {
+    bs[i].work = 0 using (negAndErase chain[i] bs[i].input) by (negAndErase_spec chain[i] bs[i].input);
+  };
+}
+
+private theorem zeroControlled_nil (c target : Wire) :
+    zeroControlled c target [] = [.CX c target] := rfl
+
+private theorem zeroControlled_cons (c target : Wire) (b : ZeroBit) (bs : List ZeroBit) :
+    zeroControlled c target (b :: bs) =
+      negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work := by
+  simp [zeroControlled, List.ofFn_succ, List.reverse_cons, List.flatten_append, List.append_assoc]
 
 theorem zeroControlled_counts (c target : Wire) (bs : List ZeroBit) :
     toffoliCount (zeroControlled c target bs) = bs.length ∧

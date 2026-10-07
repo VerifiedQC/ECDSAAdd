@@ -1,8 +1,9 @@
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontResources
 import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceSubtract
+import ECDSAAdd.Framework.CertifiedTranslation
 
 namespace ECDSAAdd.Arithmetic
-open scoped CircuitDSL
+open CertifiedTranslation
 namespace MontLayout
 
 /-- 标准积的257位视图；中段借用共享区的前缀，历史保持存活。 -/
@@ -112,53 +113,113 @@ def montOutputContext (M : MontLayout) : CircuitDSL.Context MontOutputOps := {
   }
 }
 
+/-- Product preparation retains both Montgomery histories for the matching restoration. -/
+theorem montProductPrepare_spec (M : MontLayout) (p X Y : Nat) (prime : p.Prime)
+    (hw : M.Widths) (hnd : M.wires.Nodup) (hp : p<2^256) (hp16 : p%16=15)
+    (hX : X<p) (hY : Y<2^256) :
+    Triple (fun s => (regValue M.x s=X ∧ regValue M.y s=Y) ∧ regValue M.work s=0)
+      (montMulCompute M p) (fun t => regValue M.product t=(X*Y)%p ∧ MontPrepared M p X Y t) := by
+  letI : Fact p.Prime := ⟨prime⟩
+  intro s m h
+  have result := montP_correct M p X Y hw hnd hp hp16 hX hY s m h.1.1 h.1.2 h.2
+  have bound : (X*Y)%p<2^257 := by
+    have hpow : (2:Nat)^256<2^257 := by
+      rw [show (257:Nat)=256+1 from rfl,Nat.pow_succ]
+      have hpos := Nat.two_pow_pos 256
+      omega
+    exact lt_trans (Nat.mod_lt _ prime.pos) (lt_trans hp hpow)
+  exact ⟨result.1,M.product_value hw _ _ result.2.2.z bound,result.2.2⟩
+
+/-- Clearing the product requires the complete live Montgomery state, not just its value. -/
+theorem montProductRestore_spec (M : MontLayout) (p X Y : Nat) (prime : p.Prime)
+    (hw : M.Widths) (hnd : M.wires.Nodup) (hp : p<2^256) (hp16 : p%16=15)
+    (hX : X<p) (hY : Y<2^256) :
+    Triple (MontPrepared M p X Y) (montMulUncompute M p)
+      (fun t => regValue M.product t=0 ∧ regValue M.x t=X ∧ regValue M.y t=Y ∧ regValue M.work t=0) := by
+  letI : Fact p.Prime := ⟨prime⟩
+  intro s m h
+  have result := montQ_correct M p X Y hw hnd hp hp16 hX hY s m h
+  refine ⟨result.1,(regValue_zero _ _).mpr ?_,result.2.2⟩
+  intro w hw
+  apply (regValue_zero _ _).mp result.2.2.2.2 w
+  have hz : w∈M.z := List.mem_of_mem_take hw
+  simp [MontLayout.work,MontLayout.activeZ,hz]
+
+theorem montProductAdd_spec (M : MontLayout) (p n A Z : Nat)
+    (hw : M.addView.Widths n) (hnd : M.addView.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ M.product=A,M.addView.z=Z,M.addView.work=0 }} modAddInPlace M.addView p
+    {{ M.product=A,M.addView.z=((A+Z)%p),M.addView.work=0 }} := by
+  simpa only [Nat.add_comm] using modAddInPlace_spec M.addView n p A Z hw hnd hp hpn hA hZ
+
+theorem montProductSub_spec (M : MontLayout) (p n A Z : Nat)
+    (hw : M.addView.Widths n) (hnd : M.addView.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A<p) (hZ : Z<p) :
+    {{ M.product=A,M.addView.z=Z,M.addView.work=0 }} modSubInPlace M.addView p
+    {{ M.product=A,M.addView.z=((Z+p-A%p)%p),M.addView.work=0 }} := by
+  simpa only [Nat.mod_eq_of_lt hA] using modSubInPlace_spec M.addView n p A Z hw hnd hp hpn hA.le hZ
+
+theorem montProductControlledAdd_spec (c : Wire) (M : MontLayout) (p n A Z : Nat) (B : Bool)
+    (hw : M.addView.Widths n) (hnd : (c::M.addView.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ c=B,M.product=A,M.addView.z=Z,M.addView.work=0 }} controlledModAdd c M.addView p
+    {{ c=B,M.product=A,M.addView.z=(if B then (A+Z)%p else Z),M.addView.work=0 }} := by
+  simpa only [Nat.add_comm] using controlledModAdd_spec c M.addView n p A Z B hw hnd hp hpn hA hZ
+
+theorem montProductControlledSub_spec (c : Wire) (M : MontLayout) (p n A Z : Nat) (B : Bool)
+    (hw : M.addView.Widths n) (hnd : (c::M.addView.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A<p) (hZ : Z<p) :
+    {{ c=B,M.product=A,M.addView.z=Z,M.addView.work=0 }} controlledModSub c M.addView p
+    {{ c=B,M.product=A,M.addView.z=(if B then (Z+p-A%p)%p else Z),M.addView.work=0 }} := by
+  simpa only [Nat.mod_eq_of_lt hA] using controlledModSub_spec c M.addView n p A Z B hw hnd hp hpn hA.le hZ
+
 /-- M.out ^= M.x*M.y mod p。
 要求 M.x<p、M.y<2^256，p 为素数、p<2^256、p mod 16=15。 -/
 def montMulXor (M : MontLayout) (p : Nat) : Program :=
-  prog using (montOutputContext M) {
-    with product := (M.x * M.y) mod p {
-      M.out ^= product;
-    };
+  prog {
+    with product := ((M.x * M.y) mod p) {
+      M.out ^= product using (copyRegister none product M.out) by (copyRegister_spec product M.out);
+    } using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
   }
 
 /-- M.out ← (M.out+M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
 def montMulAdd (M : MontLayout) (p : Nat) : Program :=
-  prog using (montOutputContext M) {
-    let out := M.addView.low;
-    with product := (M.x * M.y) mod p {
-      out = (product + out) mod p;
-    };
+  prog {
+    let out := M.addView.z;
+    with product := ((M.x * M.y) mod p) {
+      out = (product + out) mod p using (modAddInPlace M.addView p) by (montProductAdd_spec M p);
+    } using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
   }
 
 /-- M.out ← (M.out−M.x*M.y) mod p，M.out 的初值小于 p。
 乘数和模数条件同 montMulXor。 -/
 def montMulSub (M : MontLayout) (p : Nat) : Program :=
-  prog using (montOutputContext M) {
-    let out := M.addView.low;
-    with product := (M.x * M.y) mod p {
-      out = (out - product) mod p;
-    };
+  prog {
+    let out := M.addView.z;
+    with product := ((M.x * M.y) mod p) {
+      out = (out - product) mod p using (modSubInPlace M.addView p) by (montProductSub_spec M p);
+    } using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
   }
 
 /-- M.out ← (M.out+c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulAdd。 -/
 def montMulControlledAdd (c : Wire) (M : MontLayout) (p : Nat) : Program :=
-  prog using (montOutputContext M) {
-    let out := M.addView.low;
-    with product := (M.x * M.y) mod p {
-      if c { out = (product + out) mod p; };
-    };
+  prog {
+    let out := M.addView.z;
+    with product := ((M.x * M.y) mod p) {
+      if c { out = (product + out) mod p; } using (controlledModAdd c M.addView p) by (montProductControlledAdd_spec c M p);
+    } using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
   }
 
 /-- M.out ← (M.out−c·M.x*M.y) mod p；c 是控制位。
 输入与模数条件同 montMulSub。 -/
 def montMulControlledSub (c : Wire) (M : MontLayout) (p : Nat) : Program :=
-  prog using (montOutputContext M) {
-    let out := M.addView.low;
-    with product := (M.x * M.y) mod p {
-      if c { out = (out - product) mod p; };
-    };
+  prog {
+    let out := M.addView.z;
+    with product := ((M.x * M.y) mod p) {
+      if c { out = (out - product) mod p; } using (controlledModSub c M.addView p) by (montProductControlledSub_spec c M p);
+    } using (montProductValue M M.x M.y p) by (montProductPrepare_spec M p, montProductRestore_spec M p);
   }
 
 /-- 作用域展开为原来的计算—使用—恢复门列。 -/

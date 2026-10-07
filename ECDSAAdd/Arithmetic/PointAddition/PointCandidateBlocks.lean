@@ -8,7 +8,7 @@ theorem CandidateValues.subConstant (L : PointAddLayout) (h : L.Widths) (hnd : L
     (haK : a≠.constant) (hoK : o≠.constant)
     (hn : (L.reg a++L.constant++L.reg o++L.pool).Nodup)
     (hA : v a<p) (hK : v .constant=0) (k : Nat) (hk : k<p) :
-    Triple (CandidateValues L v G) (pointSubConstant L (L.reg a) (L.reg o) k)
+    Triple (CandidateValues L v G) (pointSubConstantKernel L (L.reg a) (L.reg o) k)
       (CandidateValues L (Function.update v o (v o ^^^ ((v a+p-k)%p))) G) := by
   have hkl : (L.reg .constant).length=257 := h.words L.constant (by simp [PointAddLayout.words])
   have hkb : k<2^(L.reg .constant).length := by rw [hkl]; exact hk.trans (show p<2^257 by norm_num [p, Nat.pow_succ])
@@ -38,7 +38,7 @@ theorem CandidateValues.square (L : PointAddLayout) (h : L.Widths) (hnd : L.wire
     (v : CandidateField → Nat) (G : Bool)
     (hn : (L.slope++L.constant.take 256++L.square++L.pool).Nodup)
     (hS : v .slope<p) (hK : v .constant=0) :
-    Triple (CandidateValues L v G) (pointSquare L)
+    Triple (CandidateValues L v G) (pointSquareKernel L)
       (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G) := by
   have hs : (L.reg .slope).length=257 := h.words L.slope (by simp [PointAddLayout.words])
   have hk : (L.reg .constant).length=257 := h.words L.constant (by simp [PointAddLayout.words])
