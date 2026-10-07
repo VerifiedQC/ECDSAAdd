@@ -62,6 +62,7 @@ theorem codecGroups_counts {α : Type} {cost : Nat} (w : Nat → Wire) (cell : �
             measurementCount_append,(hc a).1,(hc a).2,(hc b).1,(hc b).2,
             List.length_cons,List.length_nil]
           norm_num
+          and_intros <;> omega
         | cons c tail =>
           have ht : tail.length < n := by simp only [List.length_cons] at hlen; omega
           have next := ih tail.length ht (start+3) tail rfl
