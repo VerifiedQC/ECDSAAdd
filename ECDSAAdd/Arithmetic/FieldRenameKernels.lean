@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.FieldRenameOffsetZero
+import ECDSAAdd.Arithmetic.FieldRenameMeasuredOffset
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
 namespace ECDSAAdd.Arithmetic.FieldRename
@@ -82,7 +83,7 @@ theorem forward_program_natural (f w : Wire → Wire) (sign : Wire) :
       OffsetBorrowedField.program (f ∘ w) (f sign) := by
   simp only [OffsetBorrowedField.program,rename_append,
     coreProgram_natural f _ (shared_ylow_nonempty w sign),sharedPorts_map,
-    zero_offset_program_natural f _ (OffsetCleanupBorrowedCaller.widths w sign),callerLayout_map]
+    measured_zero_offset_program_natural f _ (OffsetCleanupBorrowedCaller.widths w sign),callerLayout_map]
   rfl
 
 theorem inverse_program_natural (f w : Wire → Wire) (sign : Wire) :

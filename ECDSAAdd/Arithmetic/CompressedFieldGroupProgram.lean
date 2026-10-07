@@ -30,17 +30,17 @@ def codecGroupBackward {α : Type} (w : Nat → Wire) (cell : α → Program)
 
 /-- Counts belong to these emitted packet programs. They do not assert a
 complete compressed arithmetic caller or any reduced physical allocation. -/
-theorem codecGroups_counts {α : Type} (w : Nat → Wire) (cell : α → Program)
-    (hc : ∀ a, toffoliCount (cell a)=1281 ∧ measurementCount (cell a)=1025)
+theorem codecGroups_counts {α : Type} {cost : Nat} (w : Nat → Wire) (cell : α → Program)
+    (hc : ∀ a, toffoliCount (cell a)=cost ∧ measurementCount (cell a)=1025)
     (start : Nat) (ls : List α) :
-    toffoliCount (codecGroupForward w cell start ls)=1281*ls.length+7*(ls.length/3) ∧
+    toffoliCount (codecGroupForward w cell start ls)=cost*ls.length+7*(ls.length/3) ∧
     measurementCount (codecGroupForward w cell start ls)=1025*ls.length+ls.length/3 ∧
-    toffoliCount (codecGroupBackward w cell start ls)=1281*ls.length+7*(ls.length/3) ∧
+    toffoliCount (codecGroupBackward w cell start ls)=cost*ls.length+7*(ls.length/3) ∧
     measurementCount (codecGroupBackward w cell start ls)=1025*ls.length+ls.length/3 := by
   suffices aux : ∀ n start (ls : List α), ls.length=n →
-      toffoliCount (codecGroupForward w cell start ls)=1281*ls.length+7*(ls.length/3) ∧
+      toffoliCount (codecGroupForward w cell start ls)=cost*ls.length+7*(ls.length/3) ∧
       measurementCount (codecGroupForward w cell start ls)=1025*ls.length+ls.length/3 ∧
-      toffoliCount (codecGroupBackward w cell start ls)=1281*ls.length+7*(ls.length/3) ∧
+      toffoliCount (codecGroupBackward w cell start ls)=cost*ls.length+7*(ls.length/3) ∧
       measurementCount (codecGroupBackward w cell start ls)=1025*ls.length+ls.length/3 by
     exact aux ls.length start ls rfl
   intro n
@@ -70,14 +70,15 @@ theorem codecGroups_counts {α : Type} (w : Nat → Wire) (cell : α → Program
             measurementCount_append,codec.1,codec.2.1,codec.2.2.1,codec.2.2.2,
             (hc a).1,(hc a).2,(hc b).1,(hc b).2,(hc c).1,(hc c).2,
             next.1,next.2.1,next.2.2.1,next.2.2.2,List.length_cons]
+          simp only [Nat.mul_succ,Nat.mul_add]
           and_intros <;> omega
 
-theorem codecGroups_512_counts {α : Type} (w : Nat → Wire) (cell : α → Program)
-    (hc : ∀ a, toffoliCount (cell a)=1281 ∧ measurementCount (cell a)=1025)
+theorem codecGroups_512_counts {α : Type} {cost : Nat} (w : Nat → Wire) (cell : α → Program)
+    (hc : ∀ a, toffoliCount (cell a)=cost ∧ measurementCount (cell a)=1025)
     (ls : List α) (hl : ls.length=512) :
-    toffoliCount (codecGroupForward w cell 0 ls)=657062 ∧
+    toffoliCount (codecGroupForward w cell 0 ls)=cost*512+1190 ∧
     measurementCount (codecGroupForward w cell 0 ls)=524970 ∧
-    toffoliCount (codecGroupBackward w cell 0 ls)=657062 ∧
+    toffoliCount (codecGroupBackward w cell 0 ls)=cost*512+1190 ∧
     measurementCount (codecGroupBackward w cell 0 ls)=524970 := by
   have h := codecGroups_counts w cell hc 0 ls
   simpa only [hl,Nat.reduceMul,Nat.reduceDiv,Nat.reduceAdd] using h
@@ -97,7 +98,7 @@ def compressedFieldBackwardGroups (w : Nat → Wire) (b sign effS : Wire) : Prog
 
 theorem compressedFieldGroups_counts (w : Nat → Wire) (b sign effS : Wire)
     (hsw : (effS::(balancedSharedPorts w sign).r++(balancedSharedPorts w sign).y).Nodup) :
-    toffoliCount (compressedFieldForwardGroups w b sign effS)=657062 ∧
+    toffoliCount (compressedFieldForwardGroups w b sign effS)=656550 ∧
     measurementCount (compressedFieldForwardGroups w b sign effS)=524970 ∧
     toffoliCount (compressedFieldBackwardGroups w b sign effS)=657062 ∧
     measurementCount (compressedFieldBackwardGroups w b sign effS)=524970 := by

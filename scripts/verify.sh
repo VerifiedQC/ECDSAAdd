@@ -7,6 +7,8 @@ lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.FieldRenameMeasuredChain
+import ECDSAAdd.Arithmetic.FieldRenameMeasuredOffset
 import ECDSAAdd.Arithmetic.TerminalParityMeasure
 import ECDSAAdd.Arithmetic.TerminalParityLeaf
 import ECDSAAdd.Arithmetic.TerminalParityChain
@@ -132,6 +134,10 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.FieldRename.measured_offset_chain_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.measured_zero_head_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.measured_zero_offset_core_natural
+#print axioms ECDSAAdd.Arithmetic.FieldRename.measured_zero_offset_program_natural
 #print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.correct
 #print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.counts
 #print axioms ECDSAAdd.Arithmetic.TerminalParityMeasure.leaf_correct
