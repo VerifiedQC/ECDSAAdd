@@ -28,7 +28,7 @@ Comparison reference: our previously instrumented 1,174-Q Q×T incumbent, source
 | Additional input/corner classification | ≤1,034 | 4,104 | 4,104 | — | — | — | — |
 | Complete controlled finite-addend point addition | **≤1,899** | **2,217,386** | **1,557,928** | **1,174** | **975,720** | **944,124.3** | **1,241,666** |
 
-Lean Q is a certified static-support/allocation ceiling including resident sites. Reference Q is the peak-live allocator count within each stage, including resources retained from earlier stages. The columns therefore have different Q evidence. Lean static Toffolis should be compared with reference static Toffolis; the final column separately reports its input-sampled average executed count. Both Toffoli columns count CCX/Toffoli operations, not elementary T gates.
+Lean Q is a certified static-support/allocation ceiling including resident sites. Reference Q is the peak-live allocator count within each stage, including resources retained from earlier stages. The columns therefore have different Q evidence. Lean static Toffolis should be compared with reference static Toffolis; the reference average-executed column separately reports its input-sampled average count. Both Toffoli columns count CCX/Toffoli operations, not elementary T gates.
 
 The reference evaluator does not provide an equivalent all-valid-input corner-classification block. The dashes do not assert zero cost for equivalent coverage. Its stopping, width and comparison settings also include benchmark-tuned approximations, while the Lean checkpoint retains exact functionality on every valid input in the stated proof model. The table establishes resource gaps, not equivalent verification coverage.
 
