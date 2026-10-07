@@ -34,7 +34,7 @@ theorem trimReplay_counts (divide : Bool) :
   all_goals norm_num
 
 theorem trimReplay_count_saving (divide : Bool) :
-    toffoliCount (mappedReplay divide)=toffoliCount (trimReplay divide)+1281 ∧
+    toffoliCount (mappedReplay divide)=toffoliCount (trimReplay divide)+(if divide then 1280 else 1281) ∧
     measurementCount (mappedReplay divide)=measurementCount (trimReplay divide)+1025 := by
   rw [(mappedReplay_counts divide).1,(mappedReplay_counts divide).2,
     (trimReplay_counts divide).1,(trimReplay_counts divide).2]

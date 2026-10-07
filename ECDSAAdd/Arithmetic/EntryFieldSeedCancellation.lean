@@ -177,7 +177,7 @@ theorem entry_state_eq (w : Nat → Wire) (b g swap sign effS : Wire) (ig is : B
 
 theorem counts (w : Nat → Wire) (b g swap sign effS : Wire) (ig is : Bool)
     (hn : (effS::(balancedSharedPorts w sign).r++(balancedSharedPorts w sign).y).Nodup) :
-    toffoliCount (oldEntry w b g swap sign effS ig is)=3322 ∧
+    toffoliCount (oldEntry w b g swap sign effS ig is)=3321 ∧
     measurementCount (oldEntry w b g swap sign effS ig is)=3066 ∧
     toffoliCount (newEntry w b swap sign effS is)=1787 ∧
     measurementCount (newEntry w b swap sign effS is)=1531 := by

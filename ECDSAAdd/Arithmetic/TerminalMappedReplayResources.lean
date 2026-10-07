@@ -15,7 +15,7 @@ theorem fieldTrimSegment_support (divide : Bool) :
   exact ⟨full.1,full.2.1,trimReplay_support divide,full.2.2.2.1,full.2.2.2.2⟩
 
 theorem fieldTrimSegment_saving (divide : Bool) :
-    toffoliCount (fieldSegment divide)=toffoliCount (fieldTrimSegment divide)+1281 ∧
+    toffoliCount (fieldSegment divide)=toffoliCount (fieldTrimSegment divide)+(if divide then 1280 else 1281) ∧
     measurementCount (fieldSegment divide)=measurementCount (fieldTrimSegment divide)+1025 := by
   have saving := trimReplay_count_saving divide
   rw [fieldSegment_join]
