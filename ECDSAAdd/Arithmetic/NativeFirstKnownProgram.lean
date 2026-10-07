@@ -1,3 +1,4 @@
+import ECDSAAdd.Framework.CertifiedProgram
 import ECDSAAdd.Arithmetic.KnownOutputAdder
 import ECDSAAdd.Arithmetic.NativeFirstDirectInverseFinish
 
@@ -15,8 +16,8 @@ def desired (w : Nat → Wire) : List MappedBit :=
   mappedRead (wireBlock w 774 252) false++[{wire:=none,flip:=false}]
 
 def hReceiver (w : Nat → Wire) : Program :=
-  KnownOutputAdder.program (hBits w true) (wireBlock w 4 253) (desired w)
-    (wireBlock w 1540 252) (w 1797)
+  sealedProgram (KnownOutputAdder.program (hBits w true) (wireBlock w 4 253) (desired w)
+    (wireBlock w 1540 252) (w 1797))
 
 /-- Specialized clean-caller inverse; the unrestricted inverse is unchanged. -/
 def inverse (w : Nat → Wire) : Program :=
@@ -54,7 +55,7 @@ theorem hReceiver_counts (w : Nat → Wire) :
     (wireBlock w 4 253) (wireBlock w 1540 252) (w 1797)
     (by simp [hBits_length,wireBlock_length])
     (by simp [desired_length,wireBlock_length]) (by simp [wireBlock_length])
-  simpa [hReceiver,wireBlock_length] using h
+  simpa only [hReceiver,sealedProgram_eq,wireBlock_length] using h
 
 theorem inverse_counts (w : Nat → Wire) :
     toffoliCount (inverse w)=256 ∧ measurementCount (inverse w)=508 := by
@@ -71,6 +72,7 @@ theorem hReceiver_eq (w : Nat → Wire) (hn : (skywalkPoolWires w).Nodup)
       (mappedValue (hBits w true) s.basis+regValue (wireBlock w 4 253) s.basis+
         (s.basis (w 1797)).toNat)%2^253) :
     run (hReceiver w) m s=run (hAdd w true) m s := by
+  rw [hReceiver,sealedProgram_run]
   apply KnownOutputAdder.program_eq_mappedAdd _ _ _ _ _ (h_inputs_nd w hn)
     (h_sources_fresh w hn true) (desired_fresh w hn)
     (by simp [hBits_length,wireBlock_length])
@@ -98,7 +100,7 @@ private theorem block_inside (w : Nat → Wire) (a n : Nat)
 theorem hReceiver_support (w : Nat → Wire) :
     wires (hReceiver w)⊆(prefixSites w).toFinset := by
   intro q hq
-  rw [hReceiver] at hq
+  rw [hReceiver,(sealedProgram_cost _).2.2] at hq
   have h := KnownOutputAdder.program_support (hBits w true) (desired w)
     (wireBlock w 4 253) (wireBlock w 1540 252) (w 1797) hq
   simp only [List.mem_toFinset,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at h ⊢
