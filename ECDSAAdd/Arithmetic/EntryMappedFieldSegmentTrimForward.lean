@@ -10,6 +10,8 @@ namespace ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim
 open Secp256k1 BalancedField MappedCompressed CompressedAllocation CompressedFieldSupport
 attribute [local irreducible] run wires logicalCell compressedHistoryEncode compressedHistoryDecode
   OffsetBorrowedCanonical.cell OffsetBorrowedInverseCanonical.cell
+  OffsetBorrowedField.program TerminalParityOffset.program TerminalParityOffset.core
+  TerminalParityMeasure.chain TerminalParityMeasure.leaf
 
 private theorem zero_natural : renameProgram base logicalZero =
     EntryFieldSeedCancellation.selectedSwap base (base 2400) (base 1028) (base 2409) (base 2410)
