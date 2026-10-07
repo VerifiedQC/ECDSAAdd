@@ -1,6 +1,6 @@
 import ECDSAAdd.Arithmetic.FieldRenameMeasuredChain
 import ECDSAAdd.Arithmetic.TerminalParityOffset
-import ECDSAAdd.Arithmetic.TerminalParityOffsetProgram
+import ECDSAAdd.Arithmetic.TerminalParityOffset
 set_option maxRecDepth 8192
 set_option maxHeartbeats 1000000
 namespace ECDSAAdd.Arithmetic.FieldRename
