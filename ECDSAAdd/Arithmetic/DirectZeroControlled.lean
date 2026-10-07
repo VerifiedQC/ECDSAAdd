@@ -89,9 +89,9 @@ theorem directZeroControlled_states (xs ys carry : List Wire) (cin flag : Wire)
 /-- Exact emitted cost of the complete zero-repair wrapper. -/
 theorem directZeroControlled_counts (xs carry : List Wire) (cin flag : Wire) (kernel : Program)
     (hc : carry.length+1=xs.length) :
-    toffoliCount (directZeroControlled xs carry cin flag kernel)=toffoliCount kernel+2*xs.length ∧
+    toffoliCount (directZeroControlled xs carry cin flag kernel)=toffoliCount kernel+2*(xs.length-1) ∧
     measurementCount (directZeroControlled xs carry cin flag kernel)=
-      measurementCount kernel+2*(xs.length-1) := by
+      measurementCount kernel+2*(xs.length-2) := by
   have h := directZeroDivisor_counts xs carry cin flag hc
   simp only [directZeroControlled,toffoliCount_append,measurementCount_append,
     h.1,h.2.1,h.2.2.1,h.2.2.2]

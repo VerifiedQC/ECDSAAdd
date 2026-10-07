@@ -64,8 +64,8 @@ theorem tail_counts :
 theorem caller_counts (divide : Bool) :
     toffoliCount (callerKernel divide)=(if divide then 1053492 else 1054002) ∧
     measurementCount (callerKernel divide)=724028 ∧
-    toffoliCount (callerControlled divide)=(if divide then 1054004 else 1054514) ∧
-    measurementCount (callerControlled divide)=724538 := by
+    toffoliCount (callerControlled divide)=(if divide then 1054002 else 1054512) ∧
+    measurementCount (callerControlled divide)=724536 := by
   have f := forward_counts base
   have r := inverse_counts base
   have tails := tail_counts

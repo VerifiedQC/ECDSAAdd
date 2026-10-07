@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.ConstantBorrow
+import ECDSAAdd.Arithmetic.ZeroSeededConstantCompare
 import ECDSAAdd.Arithmetic.MaskedConstant
 
 namespace ECDSAAdd.Arithmetic
@@ -6,12 +6,12 @@ namespace ECDSAAdd.Arithmetic
 /-- Replace the zero divisor by one while retaining the original-zero flag.
 The literal comparator uses n-1 borrow scratch bits and no constant register. -/
 def directZeroDivisorEnter (xs carry : List Wire) (cin flag : Wire) : Program :=
-  compareConstantLt xs carry cin flag 1 ++ maskedConstant flag xs 1
+  ZeroSeededConstantCompare.program xs carry cin flag ++ maskedConstant flag xs 1
 
 /-- The caller returns the repaired word unchanged; other caller coordinates
 may have changed. Undo the repair before uncomputing the original-zero flag. -/
 def directZeroDivisorLeave (xs carry : List Wire) (cin flag : Wire) : Program :=
-  maskedConstant flag xs 1 ++ compareConstantLt xs carry cin flag 1
+  maskedConstant flag xs 1 ++ ZeroSeededConstantCompare.program xs carry cin flag
 
 def directDivisor (X : Nat) : Nat := if X=0 then 1 else X
 
@@ -39,6 +39,17 @@ private theorem directWidth (xs carry : List Wire)
   have hp : 0<xs.length := by omega
   exact Nat.one_lt_two_pow (by omega)
 
+private theorem directZeroCompare_correct (xs carry : List Wire) (cin flag : Wire)
+    (hn : (flag::cin::(xs++carry)).Nodup) (hc : carry.length+1=xs.length)
+    (s : State) (m : List Bool) (hclean : ∀q∈carry,s.basis q=false)
+    (hcin : s.basis cin=false) :
+    (run (ZeroSeededConstantCompare.program xs carry cin flag) m s).phase=s.phase ∧
+    (∀q,q≠flag → (run (ZeroSeededConstantCompare.program xs carry cin flag) m s).basis q=s.basis q) ∧
+    (run (ZeroSeededConstantCompare.program xs carry cin flag) m s).basis flag=
+      (s.basis flag ^^ decide (regValue xs s.basis<1+(s.basis cin).toNat)) := by
+  rw [ZeroSeededConstantCompare.equiv xs carry cin flag hn hc s m hcin hclean]
+  exact compareConstantLt_correct xs carry cin flag 1 hn hc (directWidth xs carry hc) s m hclean
+
 /-- Complete enter contract, valid on every n-bit word (including 0 and 1),
 with arbitrary measurement records and unrestricted incoming phase. -/
 theorem directZeroDivisorEnter_correct (xs carry : List Wire) (cin flag : Wire)
@@ -55,10 +66,10 @@ theorem directZeroDivisorEnter_correct (xs carry : List Wire) (cin flag : Wire)
     (run (directZeroDivisorEnter xs carry cin flag) m s).basis cin=false ∧
     (∀ q∈carry,(run (directZeroDivisorEnter xs carry cin flag) m s).basis q=false) := by
   obtain ⟨hxs,hfx,hcf,hcarry⟩ := directLayout xs carry cin flag hn
-  let a := compareConstantLt xs carry cin flag 1
+  let a := ZeroSeededConstantCompare.program xs carry cin flag
   let t := run a (m.take (measurementCount a)) s
-  have cmp := compareConstantLt_correct xs carry cin flag 1 hn hc
-    (directWidth xs carry hc) s (m.take (measurementCount a)) hclean
+  have cmp := directZeroCompare_correct xs carry cin flag hn hc
+    s (m.take (measurementCount a)) hclean hcin
   change t.phase=s.phase ∧ (∀ q,q≠flag → t.basis q=s.basis q) ∧ _ at cmp
   have tz : t.basis flag=decide (regValue xs s.basis=0) := by
     simpa [hcin,hflag,Nat.lt_one_iff] using cmp.2.2
@@ -107,11 +118,10 @@ theorem directZeroDivisorLeave_correct (xs carry : List Wire) (cin flag : Wire)
   have ti : t.basis cin=false := (mask.2.1 cin hcx).trans hcin
   have tc : ∀ q∈carry,t.basis q=false := by
     intro q hq; exact (mask.2.1 q (hcarry q hq).2).trans (hclean q hq)
-  have cmp := compareConstantLt_correct xs carry cin flag 1 hn hc
-    (directWidth xs carry hc) t m tc
+  have cmp := directZeroCompare_correct xs carry cin flag hn hc t m tc ti
   have count := maskedConstant_counts flag xs 1
   rw [directZeroDivisorLeave,run_append,run_take,count.2,List.drop_zero]
-  change (run (compareConstantLt xs carry cin flag 1) m t).phase=_ ∧ _
+  change (run (ZeroSeededConstantCompare.program xs carry cin flag) m t).phase=_ ∧ _
   refine ⟨cmp.1.trans mask.1,?_,?_,?_,?_,?_⟩
   · intro q hq hx; exact (cmp.2.1 q hq).trans (mask.2.1 q hx)
   · simpa [tz,tx,ti,Nat.lt_one_iff] using cmp.2.2
@@ -176,21 +186,21 @@ theorem directZeroDivisor_roundtrip (xs carry : List Wire) (cin flag : Wire)
 
 theorem directZeroDivisor_counts (xs carry : List Wire) (cin flag : Wire)
     (hc : carry.length+1=xs.length) :
-    toffoliCount (directZeroDivisorEnter xs carry cin flag)=xs.length ∧
-    measurementCount (directZeroDivisorEnter xs carry cin flag)=xs.length-1 ∧
-    toffoliCount (directZeroDivisorLeave xs carry cin flag)=xs.length ∧
-    measurementCount (directZeroDivisorLeave xs carry cin flag)=xs.length-1 := by
-  have cmp := compareConstantLt_counts xs carry cin flag 1 hc
+    toffoliCount (directZeroDivisorEnter xs carry cin flag)=xs.length-1 ∧
+    measurementCount (directZeroDivisorEnter xs carry cin flag)=xs.length-2 ∧
+    toffoliCount (directZeroDivisorLeave xs carry cin flag)=xs.length-1 ∧
+    measurementCount (directZeroDivisorLeave xs carry cin flag)=xs.length-2 := by
+  have cmp := ZeroSeededConstantCompare.counts xs carry cin flag hc
   have mask := maskedConstant_counts flag xs 1
   simp [directZeroDivisorEnter,directZeroDivisorLeave,toffoliCount_append,
     measurementCount_append,cmp.1,cmp.2,mask.1,mask.2]
 
 theorem directZeroDivisor_counts_256 (xs carry : List Wire) (cin flag : Wire)
     (hx : xs.length=256) (hc : carry.length=255) :
-    toffoliCount (directZeroDivisorEnter xs carry cin flag)=256 ∧
-    measurementCount (directZeroDivisorEnter xs carry cin flag)=255 ∧
-    toffoliCount (directZeroDivisorLeave xs carry cin flag)=256 ∧
-    measurementCount (directZeroDivisorLeave xs carry cin flag)=255 := by
+    toffoliCount (directZeroDivisorEnter xs carry cin flag)=255 ∧
+    measurementCount (directZeroDivisorEnter xs carry cin flag)=254 ∧
+    toffoliCount (directZeroDivisorLeave xs carry cin flag)=255 ∧
+    measurementCount (directZeroDivisorLeave xs carry cin flag)=254 := by
   simpa [hx] using directZeroDivisor_counts xs carry cin flag (by omega)
 
 private theorem directBorrow_wires (bit : Bool) (x cin target : Wire) :
@@ -237,7 +247,11 @@ theorem directZeroDivisor_wires (xs carry : List Wire) (cin flag : Wire) :
   intro q hq
   simp only [directZeroDivisorEnter,directZeroDivisorLeave,wires_append,
     Finset.mem_union] at hq
-  have cmp := directCompare_wires xs carry cin flag 1
+  have cmp : wires (ZeroSeededConstantCompare.program xs carry cin flag) ⊆
+      (flag::cin::(xs++carry)).toFinset := by
+    intro q hq
+    exact directCompare_wires xs carry cin flag 1
+      (ZeroSeededConstantCompare.support xs carry cin flag hq)
   have mask := maskedConstant_wires_subset flag xs 1
   rcases hq with (hq|hq)|(hq|hq)
   · exact cmp hq

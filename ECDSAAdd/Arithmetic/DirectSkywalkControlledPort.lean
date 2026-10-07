@@ -176,10 +176,10 @@ theorem pointDirectSkywalkArithmetic_correct (L : ControlledPointLayout) (hw : L
 
 theorem pointDirectSkywalkArithmetic_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) :
-    toffoliCount (pointDirectSkywalkArithmetic L false)=1185781 ∧
-    measurementCount (pointDirectSkywalkArithmetic L false)=857329 ∧
-    toffoliCount (pointDirectSkywalkArithmetic L true)=1185782 ∧
-    measurementCount (pointDirectSkywalkArithmetic L true)=857330 := by
+    toffoliCount (pointDirectSkywalkArithmetic L false)=1185779 ∧
+    measurementCount (pointDirectSkywalkArithmetic L false)=857327 ∧
+    toffoliCount (pointDirectSkywalkArithmetic L true)=1185780 ∧
+    measurementCount (pointDirectSkywalkArithmetic L true)=857328 := by
   have outside : ∀ q∈[L.core.generic,L.skywalkDirectSelectorG,L.skywalkDirectSelectorS],
       q∉skywalkSharedWires L.skywalkDirectMap := by
     have hd := List.nodup_append'.mp (show

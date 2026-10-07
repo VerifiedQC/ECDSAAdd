@@ -63,8 +63,8 @@ theorem kernel_counts (divide : Bool) :
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=(if divide then 1054004 else 1054514) ∧
-    measurementCount (controlled divide)=724538 := by
+    toffoliCount (controlled divide)=(if divide then 1054002 else 1054512) ∧
+    measurementCount (controlled divide)=724536 := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]
   have wrapped := directZeroControlled_counts (wireBlock base 770 256) (wireBlock base 0 255)
