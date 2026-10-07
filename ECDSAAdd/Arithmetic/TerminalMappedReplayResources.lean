@@ -28,7 +28,7 @@ theorem fieldTrimSegment_counts (divide : Bool) :
     measurementCount (fieldTrimSegment divide)=(if divide then 527516 else 527517) := by
   have old := fieldSegment_counts divide
   have saving := fieldTrimSegment_saving divide
-  cases divide <;> simp only [Bool.false_eq_true,if_false,if_true] at old ⊢
+  cases divide <;> simp only [Bool.false_eq_true,if_false,if_true] at old saving ⊢
   all_goals constructor <;> omega
 
 end ECDSAAdd.Arithmetic.MappedCompressed
