@@ -3,7 +3,7 @@ import ECDSAAdd.Arithmetic.NativeFirstDirectCallerInput
 import ECDSAAdd.Arithmetic.NativeFirstDirectCallerForward
 import ECDSAAdd.Arithmetic.NativeFirstDirectCallerFirstStage
 import ECDSAAdd.Arithmetic.NativeFirstDirectTailRestore
-import ECDSAAdd.Arithmetic.NativeFirstDirectInverseFinish
+import ECDSAAdd.Arithmetic.NativeFirstKnownInverse
 import ECDSAAdd.Arithmetic.MappedCompressedCallerStates
 
 set_option maxRecDepth 8192
@@ -11,7 +11,7 @@ set_option maxHeartbeats 1800000
 set_option linter.unusedSimpArgs false
 namespace ECDSAAdd.Arithmetic.NativeFirstDirect
 open Secp256k1 DirectSkywalk OffsetBorrowedCanonical CompressedFieldSupport MappedCompressed
-attribute [local irreducible] run measurementCount forward inverse reference callerKernel
+attribute [local irreducible] run measurementCount forward inverse NativeFirstKnown.inverse reference callerKernel
   literalSkywalkSeed compressedCompactForward compressedCompactReverse selectedFieldSegment
   skywalkArithmeticClear allGroupEncode SkywalkTrace.next Nat.iterate
 
@@ -32,7 +32,7 @@ private theorem kernel_states_from_first (divide : Bool)
     (hs4 : run (selectedFieldSegment divide) m4 s3 = s4)
     (hs5 : run (skywalkArithmeticClear base) m5 s4 = s5)
     (hs6 : run (compressedCompactReverse base 1 511) m6 s5 = s6)
-    (hs7 : run (inverse base) m7 s6 = s7)
+    (hs7 : run (NativeFirstKnown.inverse base) m7 s6 = s7)
     (first : CompactSkywalkStage base (SkywalkRails.encode false false (x:Int) (p:Int)) 1 s1.basis) :
     DirectSkywalkArithmeticStrong divide base (base 2400) x Y s s7 := by
   letI : NeZero p := ⟨p_prime.ne_zero⟩
@@ -95,7 +95,7 @@ private theorem kernel_states_from_first (divide : Bool)
   have pool6 : ∀q∈skywalkPoolWires base,s6.basis q=s1.basis q := by
     intro q hq
     exact (agrees.2 q (List.mem_toFinset.mpr hq)).trans (restored.2.1 q hq)
-  have h7 := inverse_restore_after_outside base pool x s s6 m1 m7 ready.1
+  have h7 := NativeFirstKnown.inverse_restore_after_outside base pool x s s6 m1 m7 ready.1
     (by rw [hs1]; exact phase6)
     (by intro q hq; rw [hs1]; exact pool6 q hq)
   rw [hs7] at h7
@@ -163,7 +163,7 @@ theorem kernel_states (divide : Bool)
     (hs4 : run (selectedFieldSegment divide) m4 s3=s4)
     (hs5 : run (skywalkArithmeticClear base) m5 s4=s5)
     (hs6 : run (compressedCompactReverse base 1 511) m6 s5=s6)
-    (hs7 : run (inverse base) m7 s6=s7) :
+    (hs7 : run (NativeFirstKnown.inverse base) m7 s6=s7) :
     DirectSkywalkArithmeticStrong divide base (base 2400) x Y s s7 := by
   have first := caller_first_stage base hn x Y.val hx0 hx s m1 hin
   rw [hs1] at first
@@ -185,7 +185,7 @@ theorem kernel_spec (divide : Bool)
     DirectSkywalkArithmeticStrong divide base (base 2400) x Y initial out
   have all := skywalkRunSeven (forward base) (compressedCompactForward base 1 511)
     (skywalkArithmeticClear base) (selectedFieldSegment divide) (skywalkArithmeticClear base)
-    (compressedCompactReverse base 1 511) (inverse base) P
+    (compressedCompactReverse base 1 511) (NativeFirstKnown.inverse base) P
     (by
       intro initial s1 s2 s3 s4 s5 s6 s7 m1 m2 m3 m4 m5 m6 m7 h1 h2 h3 h4 h5 h6 h7 input hg hs
       exact kernel_states divide hn hlo ho hf x Y hx0 hx initial m1 m2 m3 m4 m5 m6 m7

@@ -47,10 +47,10 @@ theorem integer_tail_counts :
     And.intro f.1 (And.intro f.2 r)
 
 theorem kernel_counts (divide : Bool) :
-    toffoliCount (kernel divide)=(if divide then 1053492 else 1054002) ∧
+    toffoliCount (kernel divide)=(if divide then 1053240 else 1053750) ∧
     measurementCount (kernel divide)=724028 := by
   have f := NativeFirstDirect.forward_counts base
-  have r := NativeFirstDirect.inverse_counts base
+  have r := NativeFirstKnown.inverse_counts base
   have integer := integer_tail_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
   have field := selectedFieldSegment_counts divide
@@ -63,7 +63,7 @@ theorem kernel_counts (divide : Bool) :
 separate support certificate includes resident ports; caller semantics are
 transported separately across the public placement changes. -/
 theorem controlled_counts (divide : Bool) :
-    toffoliCount (controlled divide)=(if divide then 1054002 else 1054512) ∧
+    toffoliCount (controlled divide)=(if divide then 1053750 else 1054260) ∧
     measurementCount (controlled divide)=724536 := by
   have width : (wireBlock base 0 255).length+1=(wireBlock base 770 256).length := by
     simp [wireBlock]

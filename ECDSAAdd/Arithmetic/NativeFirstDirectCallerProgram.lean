@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.NativeFirstDirectSupport
+import ECDSAAdd.Arithmetic.NativeFirstKnownProgram
 import ECDSAAdd.Arithmetic.MappedCompressedStageCounts
 
 set_option maxRecDepth 4096
@@ -8,14 +9,14 @@ namespace ECDSAAdd.Arithmetic.NativeFirstDirect
 open Secp256k1 MappedCompressed CompressedAllocation
 attribute [local irreducible] toffoliCount measurementCount compactSkywalkTick
   compactSkywalkReverseTick compressedCompactForward compressedCompactReverse
-  selectedFieldSegment forward inverse
+  selectedFieldSegment forward inverse NativeFirstKnown.inverse
 
 /-- The new prefix and independent inverse replace seed and tick zero only.
 The 511 remaining ticks and the entire codec/field schedule are unchanged. -/
 def callerKernel (divide : Bool) : Program :=
   forward base ++ compressedCompactForward base 1 511 ++ skywalkArithmeticClear base ++
     selectedFieldSegment divide ++ skywalkArithmeticClear base ++
-    compressedCompactReverse base 1 511 ++ inverse base
+    compressedCompactReverse base 1 511 ++ NativeFirstKnown.inverse base
 
 def callerControlled (divide : Bool) : Program :=
   directZeroControlled (wireBlock base 770 256) (wireBlock base 0 255)
@@ -62,16 +63,16 @@ theorem tail_counts :
 
 /-- Counts only. Functional caller acceptance remains a separate obligation. -/
 theorem caller_counts (divide : Bool) :
-    toffoliCount (callerKernel divide)=(if divide then 1053492 else 1054002) ∧
+    toffoliCount (callerKernel divide)=(if divide then 1053240 else 1053750) ∧
     measurementCount (callerKernel divide)=724028 ∧
-    toffoliCount (callerControlled divide)=(if divide then 1054002 else 1054512) ∧
+    toffoliCount (callerControlled divide)=(if divide then 1053750 else 1054260) ∧
     measurementCount (callerControlled divide)=724536 := by
   have f := forward_counts base
-  have r := inverse_counts base
+  have r := NativeFirstKnown.inverse_counts base
   have tails := tail_counts
   have clear := skywalkTerminalClear_counts (base 511) (base 512) (base 770)
   have fields := selectedFieldSegment_counts divide
-  have core : toffoliCount (callerKernel divide)=(if divide then 1053492 else 1054002) ∧
+  have core : toffoliCount (callerKernel divide)=(if divide then 1053240 else 1053750) ∧
       measurementCount (callerKernel divide)=724028 := by
     simp only [callerKernel,skywalkArithmeticClear,toffoliCount_append,measurementCount_append,
       f.1,f.2,r.1,r.2,tails.1,tails.2.1,tails.2.2.1,tails.2.2.2,clear.1,clear.2,

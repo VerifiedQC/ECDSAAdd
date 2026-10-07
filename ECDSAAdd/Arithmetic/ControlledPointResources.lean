@@ -29,7 +29,7 @@ theorem controlledPointAddOut_finite_resources (L : ControlledPointLayout) (h : 
 /-- Exact costs of the same complete Skywalk point program, with a physical support bound. -/
 theorem controlledPointAdd_finite_resources (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (cx cy : Fp) (hc : curve.toAffine.Nonsingular cx cy) :
-    toffoliCount (controlledPointAdd L (.some hc))=2217890 ∧
+    toffoliCount (controlledPointAdd L (.some hc))=2217386 ∧
     measurementCount (controlledPointAdd L (.some hc))=1557928 ∧
     qubitCount (controlledPointAdd L (.some hc))≤1899 := by
   have hh := CompressedPointDialog.finite_counts L h hn (.some hc) cx cy

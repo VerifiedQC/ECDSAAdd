@@ -5,7 +5,7 @@ set_option maxHeartbeats 1000000
 set_option linter.unusedSimpArgs false
 namespace ECDSAAdd.Arithmetic.NativeFirstDirect
 open MappedCompressed CompressedAllocation
-attribute [local irreducible] wires callerKernel callerControlled forward inverse
+attribute [local irreducible] wires callerKernel callerControlled forward inverse NativeFirstKnown.inverse
   compressedCompactForward compressedCompactReverse selectedFieldSegment
 
 theorem prefix_slots : (prefixSites base).toFinset ⊆ slots.toFinset := by
@@ -28,7 +28,7 @@ theorem caller_kernel_support (divide : Bool) :
   have ints := integer_support 1 511 (by omega)
   simp only [callerKernel,wires_append,Finset.union_subset_iff,and_assoc]
   exact ⟨hpfx.1.trans prefix_slots,ints.1,clear_support,selectedFieldSegment_support divide,
-    clear_support,ints.2,hpfx.2.trans prefix_slots⟩
+    clear_support,ints.2,(NativeFirstKnown.inverse_support base).trans prefix_slots⟩
 
 theorem caller_controlled_support (divide : Bool) :
     wires (callerControlled divide) ⊆ slots.toFinset := by

@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.NativeFirstKnownProgram
 import ECDSAAdd.Arithmetic.TerminalMappedReplayResources
 import ECDSAAdd.Arithmetic.EntryForwardSelectedFieldSegment
 import ECDSAAdd.Arithmetic.MappedCompressedFieldReplay
@@ -15,7 +16,7 @@ open CompressedAllocation Secp256k1
 attribute [local irreducible] wires compactSkywalkTick compactSkywalkReverseTick
 attribute [local irreducible] compressedHistoryEncode compressedHistoryDecode
 attribute [local irreducible] literalSkywalkSeed literalSkywalkUnseed
-  NativeFirstDirect.forward NativeFirstDirect.inverse
+  NativeFirstDirect.forward NativeFirstDirect.inverse NativeFirstKnown.inverse
 
 private theorem base_integer_mem (q : Nat) (h : q < 515 ∨ (770 ≤ q ∧ q < 1798)) :
     base q∈slots.toFinset := by
@@ -128,14 +129,14 @@ codec schedule, and selected field program retain their existing allocation. -/
 def kernel (divide : Bool) : Program :=
   NativeFirstDirect.forward base++compressedCompactForward base 1 511++
   skywalkArithmeticClear base++selectedFieldSegment divide++skywalkArithmeticClear base++
-  compressedCompactReverse base 1 511++NativeFirstDirect.inverse base
+  compressedCompactReverse base 1 511++NativeFirstKnown.inverse base
 
 theorem kernel_support (divide : Bool) : wires (kernel divide)⊆slots.toFinset := by
   have native := NativeFirstDirect.prefix_support base
   have integer := integer_support 1 511 (by omega)
   simp only [kernel,wires_append,Finset.union_subset_iff,and_assoc]
   exact ⟨native.1.trans native_prefix_slots,integer.1,clear_support,
-    selectedFieldSegment_support divide,clear_support,integer.2,native.2.trans native_prefix_slots⟩
+    selectedFieldSegment_support divide,clear_support,integer.2,(NativeFirstKnown.inverse_support base).trans native_prefix_slots⟩
 
 def controlled (divide : Bool) : Program :=
   directZeroControlled (wireBlock base 770 256) (wireBlock base 0 255)

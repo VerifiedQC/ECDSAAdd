@@ -7,6 +7,11 @@ lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.KnownOutputCarry
+import ECDSAAdd.Arithmetic.KnownOutputAdder
+import ECDSAAdd.Arithmetic.NativeFirstKnownProgram
+import ECDSAAdd.Arithmetic.NativeFirstKnownFrame
+import ECDSAAdd.Arithmetic.NativeFirstKnownInverse
 import ECDSAAdd.Arithmetic.ZeroSeededConstantCompare
 import ECDSAAdd.Arithmetic.FieldRenameMeasuredChain
 import ECDSAAdd.Arithmetic.FieldRenameMeasuredOffset
@@ -135,6 +140,26 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.incoming_from_sum
+#print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.completed_sum_carry
+#print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.erasePost_counts
+#print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.erasePost_correct
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.sumBits_value
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.ready_of_value
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.program_counts
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.prepare_correct
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.program_eq_mappedAdd
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.program_correct
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.program_support
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.hReceiver_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_counts
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.hReceiver_eq
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_support
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.front_known_sum
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.hReceiver_after_forward
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_roundtrip
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_eq_old_on_forward
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_restore_after_outside
 #print axioms ECDSAAdd.Arithmetic.ZeroSeededConstantCompare.equiv
 #print axioms ECDSAAdd.Arithmetic.ZeroSeededConstantCompare.equiv_records
 #print axioms ECDSAAdd.Arithmetic.ZeroSeededConstantCompare.counts

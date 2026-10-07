@@ -71,7 +71,7 @@ theorem generic_counts (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires
 
 theorem finite_counts (L : ControlledPointLayout) (hw : L.Widths)
     (hn : L.wires.Nodup) (C : Point) (cx cy : Fp) :
-    toffoliCount (pointCompressedDialogFinite L C cx cy)=2217890 ∧
+    toffoliCount (pointCompressedDialogFinite L C cx cy)=2217386 ∧
     measurementCount (pointCompressedDialogFinite L C cx cy)=1557928 := by
   have hg := generic_counts L hw hn cx cy
   have hz c t k := equalConstant_counts c t L.dialogPointZero k
