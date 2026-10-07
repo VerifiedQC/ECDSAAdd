@@ -71,7 +71,7 @@ theorem codecGroups_counts {α : Type} {cost : Nat} (w : Nat → Wire) (cell : �
             measurementCount_append,codec.1,codec.2.1,codec.2.2.1,codec.2.2.2,
             (hc a).1,(hc a).2,(hc b).1,(hc b).2,(hc c).1,(hc c).2,
             next.1,next.2.1,next.2.2.1,next.2.2.2,List.length_cons]
-          simp only [Nat.mul_succ,Nat.mul_add]
+          simp only [Nat.mul_succ]
           and_intros <;> omega
 
 theorem codecGroups_512_counts {α : Type} {cost : Nat} (w : Nat → Wire) (cell : α → Program)
