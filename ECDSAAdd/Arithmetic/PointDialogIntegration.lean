@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.PointDialogWires
 import ECDSAAdd.Arithmetic.PointDialogCounts
+import ECDSAAdd.Arithmetic.CompressedPointDialogSpec
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
@@ -25,7 +26,7 @@ theorem pointDialogFinite_frame (L : ControlledPointLayout) (hw : L.Widths) (hn 
     (q : Wire) (hq : q∉PointAddLayout.pointWires L.point) :
     (run (pointDialogFinite L (.some hc) cx cy) m s).basis q=s.basis q := by
   have ho := (pointDialogFinite_spec L hw hn R hc b s m hi).2
-  exact boundary_frame_values L _ (by rw [pointDialogFinite_wires L hw hn]) R _ b s m hi ho q hq
+  exact boundary_frame_values L _ (pointDialogFinite_wires L hw hn (.some hc) cx cy) R _ b s m hi ho q hq
 
 private theorem boundary_work_subset (L : ControlledPointLayout) :
     L.inPlaceFlags++L.dialogPool ⊆ L.work := by
@@ -51,20 +52,8 @@ private theorem work_not_point (L : ControlledPointLayout) (hn : L.wires.Nodup)
 /-- 公共布局的全部分配工作位恢复为零，包括本实现未使用的旧银行。 -/
 theorem pointDialogFinite_full_spec (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     (R : Point) {cx cy : Fp} (hc : curve.toAffine.Nonsingular cx cy) (b : Bool) :
-    {{ L.control=b,L.point=R,L.work=0 }} pointDialogFinite L (.some hc) cx cy
+    {{ L.control=b,L.point=R,L.work=0 }} pointCompressedDialogFinite L (.some hc) cx cy
     {{ L.control=b,L.point=(if b then R+.some hc else R),L.work=0 }} := by
-  intro s m hs
-  have hz : regValue L.work s.basis=0 := hs.2
-  have clean (q : Wire) (hq : q∈L.inPlaceFlags++L.dialogPool) : s.basis q=false :=
-    (regValue_zero _ _).mp hz q (boundary_work_subset L hq)
-  have hi : PointDialogBoundary L R b (fun _ => false) s.basis := by
-    refine ⟨hs.1.2,hs.1.1,fun q hq => clean q (by simp [hq]),?_⟩
-    · exact (regValue_zero _ _).mpr (fun q hq => clean q (by simp [hq]))
-  obtain ⟨hp,ho⟩ := pointDialogFinite_spec L hw hn R hc b s m hi
-  refine ⟨hp,⟨ho.control,ho.point⟩,?_⟩
-  apply (regValue_zero _ _).mpr
-  intro q hq
-  rw [pointDialogFinite_frame L hw hn R hc b s m hi q (work_not_point L hn q hq)]
-  exact (regValue_zero _ _).mp hz q hq
+  exact CompressedPointDialog.full_spec L hw hn R hc b
 
 end ECDSAAdd.Arithmetic

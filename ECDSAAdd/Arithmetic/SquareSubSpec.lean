@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.SquareSubLayout
 import ECDSAAdd.Arithmetic.KaratsubaSquareState
 import ECDSAAdd.Arithmetic.SquareReduceSpec
+import ECDSAAdd.Arithmetic.SignedKaratsubaSquareState
 
 namespace ECDSAAdd.Arithmetic
 
@@ -453,5 +454,161 @@ theorem squareSub_frame (L : SquareSubLayout) (hw : L.Widths) (hn : L.wires.Nodu
     (hz : regValue L.work s.basis=0) (w : Wire) (hwout : w∉L.out) :
     (run (squareSub L) m s).basis w=s.basis w :=
   (squareSub_correct L hw hn s.basis X O hx hz hO s m ⟨ho,fun _ _=>rfl⟩).2.2 w hwout
+
+/-- Full exact signed-row square-subtract correctness with an explicit target-only frame. -/
+theorem signedSquareSub_correct (L : SquareSubLayout) (hw : L.Widths) (hn : L.wires.Nodup)
+    (base : BasisState) (X O : Nat) (hx : regValue L.x base=X)
+    (hz : regValue L.work base=0) (hO : O<SquareReduction.p) :
+    Triple (SquareFrame L.out base O) (signedSquareSub L)
+      (SquareFrame L.out base ((O+SquareReduction.p-X^2%SquareReduction.p)%SquareReduction.p)) := by
+  let lo:=regValue (L.x.take 128) base
+  let hi:=regValue (L.x.drop 128) base
+  let K:=L.integer
+  let O':=(O+SquareReduction.p-X^2%SquareReduction.p)%SquareReduction.p
+  have wk:=L.integer_valid hw hn
+  have dis:=out_integer_disjoint L hn
+  have pre:=integer_initial L base hz
+  have xsum : lo+2^128*hi=X := by
+    have he:=regValue_append (L.x.take 128) (L.x.drop 128) base
+    rw [List.take_append_drop,hx,List.length_take,hw.x] at he
+    simpa only [Nat.min_eq_left (by decide : 128≤256)] using he.symm
+  have dn : ∀w,w∈L.out→w∉integerDirty L := by
+    intro w ho hd
+    apply List.disjoint_left.mp dis ho
+    simp only [integerDirty,List.mem_append] at hd
+    simp only [SquareSubLayout.integer,KaratsubaSquareLayout.wires,List.mem_cons,List.mem_append]
+    tauto
+  have first : Triple (SquareFrame L.out base O) (signedKaratsubaSquare K)
+      (IntegerStage L (KaratsubaValues K lo hi (lo^2) (hi^2) 0 (X^2) 0) base O) := by
+    intro s m hs
+    have ps:=integer_values_congr K lo hi 0 0 0 0 0 base s.basis pre
+      (fun w hw=>hs.2 w (fun ho=>List.disjoint_left.mp dis ho hw))
+    have sp:=signedKaratsubaSquare_spec K wk lo hi s m ps
+    rw [xsum] at sp
+    have fr:=signedKaratsubaSquare_frame K wk lo hi s m ps
+    refine ⟨sp.1,sp.2,?_,?_⟩
+    · exact (regValue_congr _ _ _ (fun w hw=>fr w (dn w hw))).trans hs.1
+    · intro w hw'
+      simp only [List.mem_append,not_or] at hw'
+      exact (fr w hw'.2).trans (hs.2 w hw'.1)
+  have middle : Triple
+      (IntegerStage L (KaratsubaValues K lo hi (lo^2) (hi^2) 0 (X^2) 0) base O)
+      (squareReduce L.reduction ++ modSubInPlace L.output SquareReduction.p ++ squareReduceClear L.reduction)
+      (IntegerStage L (KaratsubaValues K lo hi (lo^2) (hi^2) 0 (X^2) 0) base O') := by
+    intro s m hs
+    have cz : regValue (integerClean L) s.basis=0 := by
+      apply (regValue_zero _ _).mpr; intro w hw'
+      rw [hs.2.2 w (fun hm=>List.disjoint_left.mp (integerClean_disjoint L hn) hw' hm)]
+      exact (regValue_zero _ _).mp hz w (integerClean_sub L hw')
+    have oz : regValue (outputClean L) s.basis=0 :=
+      (regValue_zero _ _).mpr (fun w hw'=>(regValue_zero _ _).mp cz w (outputClean_sub L hw'))
+    have rp:=reduction_initial L s.basis cz
+    have sp:=squareSub_middle L hw hn s.basis _ _ O rp oz hO s m ⟨hs.2.1,fun _ _=>rfl⟩
+    have zsum : regValue (L.z.take 256) s.basis+SquareReduction.B*regValue (L.z.drop 256) s.basis=X^2 := by
+      have he:=regValue_append (L.z.take 256) (L.z.drop 256) s.basis
+      rw [List.take_append_drop,List.length_take,hw.z] at he
+      have hv : regValue L.z s.basis=X^2 := hs.1.z
+      rw [hv] at he
+      simpa only [Nat.min_eq_left (by decide : 256≤512),SquareReduction.B] using he.symm
+    rw [zsum] at sp
+    refine ⟨sp.1,?_,sp.2.1,?_⟩
+    · exact integer_values_congr K _ _ _ _ _ _ _ s.basis _ hs.1
+        (fun w hw=>sp.2.2 w (fun ho=>List.disjoint_left.mp dis ho hw))
+    · intro w hw'
+      exact (sp.2.2 w (fun ho=>hw' (by simp [ho]))).trans (hs.2.2 w hw')
+  have last : Triple
+      (IntegerStage L (KaratsubaValues K lo hi (lo^2) (hi^2) 0 (X^2) 0) base O')
+      (signedKaratsubaSquareClear K) (SquareFrame L.out base O') := by
+    intro s m hs
+    have ps : KaratsubaValues K lo hi (lo^2) (hi^2) 0 ((lo+2^128*hi)^2) 0 s.basis := by
+      simpa only [xsum] using hs.1
+    have sp:=signedKaratsubaSquareClear_spec K wk lo hi s m ps
+    have fr:=signedKaratsubaSquareClear_frame K wk lo hi s m ps
+    refine ⟨sp.1,?_,?_⟩
+    · exact (regValue_congr _ _ _ (fun w hw=>fr w (dn w hw))).trans hs.2.1
+    · intro w ho
+      by_cases hd : w∈integerDirty L
+      · have dz : regValue (integerDirty L) (run (signedKaratsubaSquareClear K) m s).basis=0 := by
+          simp only [integerDirty,regValue_append]
+          have ha : regValue L.a (run (signedKaratsubaSquareClear K) m s).basis=0 := sp.2.a
+          have hd : regValue L.d (run (signedKaratsubaSquareClear K) m s).basis=0 := sp.2.d
+          have hz : regValue L.z (run (signedKaratsubaSquareClear K) m s).basis=0 := sp.2.z
+          simp only [ha,hd,hz,Nat.mul_zero,Nat.add_zero]
+        have hb : base w=false := (regValue_zero _ _).mp hz w (by
+          simp only [integerDirty,List.mem_append] at hd
+          simp only [SquareSubLayout.work,List.mem_append]; tauto)
+        exact ((regValue_zero _ _).mp dz w hd).trans hb.symm
+      · exact (fr w hd).trans (hs.2.2 w (by simp [ho,hd]))
+  simpa only [signedSquareSub,List.append_assoc] using (first.seq middle).seq last
+
+
+/-- Signed-row Step 4 is exact for every 256-bit input; only the output must be canonical. -/
+theorem signedSquareSub_spec (L : SquareSubLayout) (hw : L.Widths) (hn : L.wires.Nodup)
+    (X O : Nat) (hO : O<SquareReduction.p) :
+    {{ L.x=X,L.out=O,L.work=0 }} signedSquareSub L
+    {{ L.x=X,L.out=(O+SquareReduction.p-X^2%SquareReduction.p)%SquareReduction.p,L.work=0 }} := by
+  intro s m hs
+  have sp:=signedSquareSub_correct L hw hn s.basis X O hs.1.1 hs.2 hO s m
+    ⟨hs.1.2,fun _ _=>rfl⟩
+  have dx : List.Disjoint L.x L.out := by
+    apply count_disjoint L hn; intro w
+    simp only [SquareSubLayout.wires,List.count_append]; omega
+  have dw : List.Disjoint L.work L.out := by
+    apply count_disjoint L hn; intro w
+    simp only [SquareSubLayout.wires,List.count_append]; omega
+  refine ⟨sp.1,⟨?_,sp.2.1⟩,?_⟩
+  · exact (regValue_congr _ _ _ (fun w hw=>sp.2.2 w
+      (fun ho=>List.disjoint_left.mp dx hw ho))).trans hs.1.1
+  · exact (regValue_congr _ _ _ (fun w hw=>sp.2.2 w
+      (fun ho=>List.disjoint_left.mp dw hw ho))).trans hs.2
+
+/-- Target-only frame for the signed-row Step 4 implementation. -/
+theorem signedSquareSub_frame (L : SquareSubLayout) (hw : L.Widths) (hn : L.wires.Nodup)
+    (X O : Nat) (hO : O<SquareReduction.p) (s : State) (m : List Bool)
+    (hx : regValue L.x s.basis=X) (ho : regValue L.out s.basis=O)
+    (hz : regValue L.work s.basis=0) (w : Wire) (hwout : w∉L.out) :
+    (run (signedSquareSub L) m s).basis w=s.basis w :=
+  (signedSquareSub_correct L hw hn s.basis X O hx hz hO s m ⟨ho,fun _ _=>rfl⟩).2.2 w hwout
+
+theorem signedSquareSub_wires_subset (L : SquareSubLayout) (hw : L.Widths)
+    (hn : L.wires.Nodup) : wires (signedSquareSub L)⊆L.wires.toFinset := by
+  have ik : L.integer.wires.toFinset⊆L.wires.toFinset := by
+    intro w hm
+    have h := List.count_pos_iff.mpr (List.mem_toFinset.mp hm)
+    have hx := congrArg (List.count w) (List.take_append_drop 128 L.x)
+    have hp := congrArg (List.count w) (List.take_append_drop 128 L.pad)
+    have hr := (List.take_sublist 258 L.r).count_le w
+    apply List.mem_toFinset.mpr
+    apply List.count_pos_iff.mp
+    simp only [SquareSubLayout.wires,SquareSubLayout.work,SquareSubLayout.integer,
+      KaratsubaSquareLayout.wires,List.count_append,List.count_cons,List.count_nil] at h hx hp ⊢
+    omega
+  have ir : L.reduction.wires.toFinset⊆L.wires.toFinset := by
+    intro w hm
+    have h := List.count_pos_iff.mpr (List.mem_toFinset.mp hm)
+    have hz := congrArg (List.count w) (List.take_append_drop 256 L.z)
+    apply List.mem_toFinset.mpr
+    apply List.count_pos_iff.mp
+    simp only [SquareSubLayout.wires,SquareSubLayout.work,SquareSubLayout.reduction,
+      SquareReduceLayout.wires,List.count_append,List.count_cons,List.count_nil] at h hz ⊢
+    omega
+  have io : L.output.toModAddCoreLayout.wires.toFinset⊆L.wires.toFinset := by
+    intro w hm
+    have h := List.count_pos_iff.mpr (List.mem_toFinset.mp hm)
+    have hr := (List.take_sublist 256 L.r).count_le w
+    have hc := (List.take_sublist 256 L.carry).count_le w
+    apply List.mem_toFinset.mpr
+    apply List.count_pos_iff.mp
+    simp only [SquareSubLayout.wires,SquareSubLayout.work,SquareSubLayout.output,
+      ModAddCoreLayout.wires,ModAddCoreLayout.z,ModAddCoreLayout.work,
+      List.count_append,List.count_cons,List.count_nil] at h ⊢
+    omega
+  have hk := signedKaratsubaSquare_wires_subset L.integer (L.integer_valid hw hn)
+  have hr := squareReduce_wires_subset L.reduction (L.reduction_widths hw)
+  have ho : wires (modSubInPlace L.output SquareReduction.p)⊆L.wires.toFinset := by
+    rw [modSubInPlace_wires L.output 256 SquareReduction.p (L.output_widths hw) (by omega)]
+    exact io
+  simp only [signedSquareSub,wires_append,Finset.union_subset_iff]
+  exact ⟨⟨⟨⟨hk.1.trans ik,hr.1.trans ir⟩,ho⟩,hr.2.trans ir⟩,hk.2.trans ik⟩
 
 end ECDSAAdd.Arithmetic

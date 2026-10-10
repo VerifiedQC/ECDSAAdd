@@ -2,7 +2,11 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-本文件区分当前源码的定理索引与历史交付记录。当前代码为 `9bd65f9` 加本批独立测量模加减；正文中的旧批次验证数字仅为历史证据。当前公理披露来自本批重新运行 `scripts/verify.sh`：2,244 项构建、468 个选定入口，均通过白名单检查。
+当前公开交付有两个独立 submission，分别保持 PR #80 与 #81 的具体程序和资源结果，使用同一套基础语义与成本定义。`Submissions/ValueWalk.lean` 与 `Submissions/Skywalk.lean` 各自集中给出完整正确性、Toffoli、测量和线路资源定理。原 `controlledPointAdd` 入口保留为 Skywalk 的兼容名。
+
+整合验证：2026-10-10 在固定 Lean v4.28.0 工具链执行 `bash scripts/verify.sh`，退出0；完整构建4,011项、1,639项公理查询（1,638个不同声明），名称与顺序均与脚本一致，只有三项允许公理。完整[构建日志](verification/dual-submissions-20261010/build.log)与[公理输出](verification/dual-submissions-20261010/axioms.log)保留在仓库；这是使用独立缓存副本的增量验证，未声称无缓存从零构建。旧 checkpoint 的3988/1616、f83e51c的1493项以及旧批次468项均为历史记录；当前脚本选择1639项公理查询，其中新增10项 submission 入口。白名单仍为 `propext`、`Classical.choice`、`Quot.sound`。
+
+随后对五个高内存证明作了仅证明项的重构：先证明符号索引/任意程序的引理再实例化，公开定理和电路不变。原因、实测内存与远端验证失败记录见[CI 内存说明](CI_MEMORY.md)。
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -13,7 +17,9 @@
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 7,207,866 / 4,305,594 / 3,134 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `Submissions.ValueWalk.program`，有限 C | 6,286,806 / 3,779,274 / =3,134 | [ValueWalk submission](../ECDSAAdd/Submissions/ValueWalk.lean) |
+| `Submissions.Skywalk.program`，有限 C | 2,217,386 / 1,557,928 / ≤1,899 | [Skywalk submission](../ECDSAAdd/Submissions/Skywalk.lean) |
+| `controlledPointAdd`（Skywalk兼容入口），有限 C | 2,217,386 / 1,557,928 / ≤1,899 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
@@ -23,7 +29,7 @@
 | `fieldMul` | 379,424 / 379,424 / 2,596 | [fieldMul_resources](../ECDSAAdd/Arithmetic/FieldMultiply.lean#L28) |
 | `montP` / `montQ`，每段 | 189,712 / 189,712 / 2,339 | [montPQ_resources](../ECDSAAdd/Arithmetic/MontResources.lean) |
 | Montgomery 五适配器 | 逐接口计数，见下方 M2 表 | [montAdapter_counts / montControlledAdapter_counts / qubits](../ECDSAAdd/Arithmetic/MontAdapterResources.lean#L5) |
-| `dialogDivide`；`dialogMultiply` | 3,591,168 / 2,140,672 / 3,126；3,328,000 / 1,878,016 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
+| `dialogDivide`；`dialogMultiply` | 3,130,638 / 1,877,512 / 3,126；2,867,470 / 1,614,856 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
 | `squareSub`（当前中空间模块） | 275,129 / 275,129 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
 | 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,813,634 / 5,646,146 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
 | 保留的 `divideAdd`；`divideSub`（非 dialog 入口） | 3,882,022 / 2,298,918 / —；3,882,534 / 2,299,430 / — | [divide_counts](../ECDSAAdd/Arithmetic/DivideResources.lean#L17) |
@@ -31,7 +37,7 @@
 | `measuredControlledModSub`，n>0 | 7n−1 / 7n−1 / 5n+6 | [measuredControlledModSub_resources](../ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
 | `equalConstant`，n 位输入 | n / n / — | [equalConstant_counts](../ECDSAAdd/Arithmetic/EqualConstant.lean#L102) |
 
-本索引不把独立模块的资源相加当作整机结果。当前整机支持等式另见 [pointDialogFinite_wires](../ECDSAAdd/Arithmetic/PointDialogWires.lean#L26)。布局仍分配 9,817 位，实际触及 3,134 位，两数口径不同。
+本索引不把独立模块的资源相加当作整机结果。当前整机支持上界另见 [finite_qubits](../ECDSAAdd/Arithmetic/CompressedPointDialogResources.lean)。布局仍分配 9,817 位，实际程序支持集的基数已证不超过 1,899；这不是精确峰值存活量子位数。
 
 ## 回放正逆组合：规范值与电路恢复
 
@@ -332,7 +338,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-**本批实际验证证据**：在合入 `9bd65f9` 的实现版本运行 `scripts/verify.sh`，退出0；`lake --wfail build` 完成2,244项构建，以下468个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+**历史批次验证证据**：在合入 `9bd65f9` 的实现版本运行 `scripts/verify.sh`，退出0；`lake --wfail build` 完成2,244项构建，以下468个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -906,7 +912,7 @@ theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn :
 | 同一具体程序 | Toffoli | 测量 | 实际静态线路 |
 | --- | ---: | ---: | ---: |
 | 有限 C 的独立 `controlledPointAddOut` | 9,295,112 | 6,126,846 | 6,731 |
-| 有限 C 的 `controlledPointAdd` | 7,207,866 | 4,305,594 | 3,134 |
+| 有限 C 的 `controlledPointAdd` | 6,880,186 | 4,502,202 | 3,134 |
 | C=O 的 `controlledPointAdd` | 0 | 0 | 0 |
 
 `controlledPointAdd_finite_resources`复用相同`pointDialogFinite`门列的计数与支持定理。实际支持为点513位、控制1位、七个标志和共享池2,613位；没有独立斜率寄存器，平方与乘除按边界归零后复用同一池。公共布局仍分配9,817位，未用银行通过frame保持零。空间为O(n+N)，不称为最大同时存活数或最优结果。
@@ -1514,7 +1520,7 @@ DialogPoint/Flags已证明H几何排除、普通路径双分母非零、四类�
 
 ### 改12批④：六阶段点加完整接入
 
-> **当前已证整机／历史验证证据**：本节资源对应当前入口；构建项数与公理数记录 PR75 的验证，不是文档核查新运行。
+> **历史整机批次／历史验证证据**：本节资源与验证项数记录 PR75 时点；当前入口已接入精确测量回放，资源及新验证见上方索引与 2026-10-02 记录。
 
 PointDialogProgram以一次原地除法、一次原地乘法、K2专用平方及E段替换controlledPointAdd的有限常量分支；公开controlledPointAdd_spec陈述逐字不变。全记录Triple覆盖控制false、C=O、输入O、±C、倍点为O以及H=−(C+C)，四类角落互斥并从输出清全部七个标志。H禁用重复类，不使用群阶假设。
 
@@ -1553,6 +1559,32 @@ theorem measuredControlledModSub_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z
 `_resources` 分别为 `(5n−1,5n−1,5n+5)`、`(7n−1,7n−1,5n+6)`；
 n=256 时为 1279/1279/1285、1791/1791/1286。工作区和完整支持均为 O(n)，未声称最优。
 源高位不参与加法支持，但减法取负使用源高位；flag 均不在支持中。
-旧受控入口、回放、乘除和整机调用未改，点加仍为 7,207,866/4,305,594/3,134。
+本节独立原语批次当时未改旧受控入口、回放、乘除和整机，点加为 7,207,866/4,305,594/3,134。后续 2026-10-02 接入已将当前点加更新为 6,945,722/4,567,738/3,134。
 
 本批新增八条公开公理检查。合入 `9bd65f9` 后完整验证退出0：2,244项构建、468条实际公理输出；与上方披露及脚本入口逐项一致，不新增公理、测试或证明资源限制。
+
+## 2026-10-02 短来源平方精确接入
+
+当前平方行只复制真实来源位，保留完整目标与进位链。每方向计数为 `(m−1)*(3m−2)/2`；128/129 位分别为 24,257/24,640。Karatsuba 每方向为 99,455，`squareSub` 为 209,593。有限常量受控点加为 6,880,186 Toffoli、4,502,202 测量、3,134 静态支持线。完整远程严格构建与 476 项公理审计通过，耗时 219 秒（142 秒构建、77 秒公理审计）。旧批次数字保留为历史；原公开点加陈述逐字未改。
+
+
+## Exact Skywalk complete-point milestone
+
+The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.
+
+## 双 submission 接口
+
+两份 `correctness` 使用同一份 `ControlledPointLayout`、`Point`、`Program` 和 Hoare 语法：
+
+```lean
+{{ L.control=b,L.point=R,L.work=0 }} program L C
+{{ L.control=b,L.point=(if b then R+C else R),L.work=0 }}
+```
+
+前提仅为布局位宽和全局线路互异。有限 C 的三个资源定理对应这个相同程序；无穷远 C 的三项资源均为零。Skywalk 的线路定理是 ≤1899，ValueWalk 是 =3134，未将上界伪装成等式。旧值走的回放与 Karatsuba 平方继续使用 PR #80 的版本，Skywalk 使用自己的压缩算术和 streamed square 路径。
+
+`ValueWalkPoint*` 模块从 PR #80 提取并改名，以便和 Skywalk 同时加载；分类标志、角落程序、状态断言与布局复用既有定义。其完整正逆算术、清理、逐线保持和同程序计数均通过原证明链组合。新增 submission 包装未新增公理、native_decide 或证明资源上限。
+
+ValueWalk 的位宽依据为 `Nat.Coprime u v` 与 `u*v*2^i < 2^512` 不变量；第i轮使用 `min 257 (max 2 (512-i))` 位，完整执行512轮，宽度和为98689。安全除数的取值界在调用处证明，不增加公开点加的几何或算术前提。被截去的高位位于门列支持之外，正逆轮证明均恢复完整状态；第一轮仍为全宽，因此完整静态支持精确为3134根。新增位宽定理与两份 submission 的公开资源/正确性入口都纳入同一公理审计。
+
+PR #81 的短源三角平方作为 `Arithmetic.ShortTriangular` 独立变体保留，原三角平方仍服务于 ValueWalk。两者共享基本加法器与 `SquareFrame` 状态断言；短源变体的完整平方/清理、计数和支持定理另外纳入公理审计。

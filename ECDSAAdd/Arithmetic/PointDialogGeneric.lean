@@ -23,15 +23,11 @@ theorem pointDialogGeneric_true (L : ControlledPointLayout) (hw : L.Widths) (hn 
   rw [show (X-cx)-a*a+3*cx=d from hv.2.1] at h5
   have h6 := dialogStep_arithmetic L hw hn d a true base true (fun _=>hd)
   simp only [if_true] at h6
-  have h7 := dialogStep_negate L hw hn d (a*d) true base
-  simp only [if_true] at h7
-  have h8 := dialogStep_addX L hw hn (-d) (a*d) true base cx
-  simp only [if_true] at h8
-  rw [show -d+cx=genericX X Y cx cy by dsimp [d]; ring] at h8
-  have h9 := dialogStep_addY L hw hn (genericX X Y cx cy) (a*d) true base (-cy)
-  simp only [if_true,←sub_eq_add_neg] at h9
-  rw [show a*d-cy=genericY X Y cx cy from hv.2.2] at h9
-  have h := (((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9
+  have recovery := pointRecoveryStage_correct L hw hn d (a*d) cx cy true base
+  simp only [if_true] at recovery
+  rw [show cx-d=genericX X Y cx cy by dsimp [d];ring] at recovery
+  rw [show a*d-cy=genericY X Y cx cy from hv.2.2] at recovery
+  have h := (((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq recovery
   simpa only [pointDialogGeneric,List.append_assoc] using h
 
 theorem pointDialogGeneric_false (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
@@ -44,11 +40,9 @@ theorem pointDialogGeneric_false (L : ControlledPointLayout) (hw : L.Widths) (hn
   have h4 := dialogStep_square L hw hn X Y false base
   have h5 := dialogStep_addX L hw hn X Y false base (3*cx)
   have h6 := dialogStep_arithmetic L hw hn X Y false base true (by simp)
-  have h7 := dialogStep_negate L hw hn X Y false base
-  have h8 := dialogStep_addX L hw hn X Y false base cx
-  have h9 := dialogStep_addY L hw hn X Y false base (-cy)
-  simp only [Bool.false_eq_true,if_false,if_true,add_zero,sub_zero] at h1 h2 h3 h4 h5 h6 h7 h8 h9
-  have h := (((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9
+  have recovery := pointRecoveryStage_correct L hw hn X Y cx cy false base
+  simp only [Bool.false_eq_true,if_false,if_true,add_zero,sub_zero] at h1 h2 h3 h4 h5 h6 recovery
+  have h := (((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq recovery
   simpa only [pointDialogGeneric,List.append_assoc] using h
 
 end ECDSAAdd.Arithmetic

@@ -1,4 +1,6 @@
-import ECDSAAdd.Arithmetic.PointDialogSteps
+import ECDSAAdd.Arithmetic.OffsetBorrowedControlledPort
+import ECDSAAdd.Arithmetic.PointRecoveryStage
+import ECDSAAdd.Arithmetic.PointInPlaceProgram
 import ECDSAAdd.Math.DialogPointFlags
 
 namespace ECDSAAdd.Arithmetic
@@ -8,13 +10,11 @@ open ControlledPointLayout Secp256k1
 def pointDialogGeneric (L : ControlledPointLayout) (cx cy : Fp) : Program :=
   pointDialogConstantAdd L L.point.x (-cx) ++
   pointDialogConstantAdd L L.point.y (-cy) ++
-  dialogDivide L.dialogPort p ++
+  pointOffsetBorrowedArithmetic L false ++
   pointDialogSquare L ++
   pointDialogConstantAdd L L.point.x (3*cx) ++
-  dialogMultiply L.dialogPort p ++
-  pointDialogNegate L ++
-  pointDialogConstantAdd L L.point.x cx ++
-  pointDialogConstantAdd L L.point.y (-cy)
+  pointOffsetBorrowedArithmetic L true ++
+  pointRecoveryStage L cx cy
 
 /-- 标志别名：equalX=hEnable，equalNegY=h；其余三个输入分类仍为o/d/i。 -/
 def pointDialogGenericFlag (L : ControlledPointLayout) : Program :=

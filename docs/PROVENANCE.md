@@ -191,3 +191,50 @@ Deutsch 按已复审的 §30.8/§30.11 门列，复用本仓库 `eraseMask_eq_co
 5n−1/5n−1/5n+5 与 7n−1/7n−1/5n+6，均指同一门列。
 
 本批在合入 `9bd65f9` 后完整运行 `scripts/verify.sh`，退出0：2,244项构建、468条公理实际输出；脚本入口、PROOF_STATUS 公理块与日志逐项一致。
+
+
+## Exact Skywalk source and verification
+
+The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.
+
+
+## Exact universal-width Skywalk update
+
+The complete point program subsequently integrated the universally proved signed prefix schedule, preserving all 512 rounds and the unchanged public specification. It now has 3,505,085 static Toffolis, 2,713,789 measurements and support ≤2,994. Full pod verification passed 3,480 build jobs and 528 axiom checks in 294 seconds. The initial Skywalk checkpoint above remains historical. See [the exact width integration record](NARROW_SKYWALK_EXACT_20261002.md).
+
+The next exact checkpoint integrates universally reduced integer routing and the independently proved retained-carry forward endpoint into the complete point program. It has 3,114,941 static Toffolis, 2,455,737 measurements, and support ≤2,994. All 674 public axiom queries passed with the protected specification unchanged. See [the retained forward record](RETAINED_FORWARD_EXACT_20261003.md).
+
+The independent retained inverse endpoint and its 512-cell replay subsequently passed complete point integration. The verified full circuit now has 2,856,381 static Toffolis, 2,197,177 measurements and support ≤2,994. All 727 public axiom queries passed with the protected specification unchanged. See [the complete retained arithmetic record](RETAINED_BOTH_EXACT_20261003.md).
+
+## Exact compact-guard integration, 2026-10-03
+
+The complete controlled point circuit now uses the independently proved compact forward and inverse raw-word guards, while retaining every 256-bit field value and all 512 rounds. It passed 3,518 build jobs and all 749 public axiom queries at 2,853,821 static Toffolis, 2,194,105 measurements and support ≤2,994. The protected specification is byte-identical. The final 122s check used a cached 2s build and 120s audit; the preceding 95s compilation and failed legacy-import audit are retained separately. See [the full record](COMPACT_GUARD_EXACT_20261003.md).
+
+
+## 2026-10-04 精确 measured streamed-square 接入
+
+源码88aad07以三个128/129位子平方的生成/折叠/独立清理替换当前 Step4，保留精确512轮 Skywalk乘除和全部点分类。mapped literal/互补读取、全源归一化/恢复、借位测量清理、方向帧及完整控制平方组合由本项目在 Lean 中实现和证明；复用仓库的 signed-square、Gidney进位/测量修正、secp256k1模数与点加接口。旧无测量 streamed 版本保留作历史比较，未作为当前成本替代值。
+
+incumbent的 streamed `with_square` 架构用于结构参考；没有移入近似折叠窗口或截断。Rust的10K输入诊断只用于早期候选筛选，不是正确性证明或最终Lean资源证据。最终完整电路正确性、相位、控制和工作清理，以及同一程序的T/M与支持上界，均经CPU pod的完整build和931项公开传递公理白名单检查；480源哈希匹配。Step4为99,902T/99,382M/≤1,297分配位置，完整点加为2,743,618T/2,083,894M/≤2,579静态支持。详细证据见[接入记录](MEASURED_STREAMED_SQUARE_20261004.md)。
+
+
+## 2026-10-04 精确 fused output recovery
+
+源码9ea2e58把当前 Step6 改为受控规范反射、经典offset+1修正与精确y修正。结构参考 Layr-Labs/ecdsafail-challenge 的公开默认 HEAD3161bd2：`coord_rsub` 的经典+1和补码反减、共享进位及工作复用。该来源的截断折叠/高位比较窗口与乘法/y恢复边界融合未移入此实现，恢复成本全部保留在本阶段。Lean程序、规范边界、零输入、所有测量记录相位/控制/清理与资源证明在本仓库实现；常量核复用已证 MeasuredCanonicalMod。阶段为2,301T/2,301M/≤1,036分配位置；完整点加为2,740,035T/2,081,591M/≤2,579支持。完整CPU pod验证165s build +135s audit，971公开查询、487哈希匹配，无新公理或近似。
+
+
+## Exact penultimate swap specialization, 2026-10-06
+
+Source checkpoint `f83e51c` removes one equal-word S-selector/swap window from each selected field replay. The forward endpoint duplication follows from the original 512-round trace. The inverse starts from the corresponding duplicate pair. Complete-state equality, arbitrary independent measurement records, wire containment and resource propagation are proved by the new Penultimate modules using existing exact arithmetic. No incumbent gate code was copied for this change.
+
+`CertifiedProgram` supplies a kernel-checked opaque subtype with a proof that its value is the original program. Its aliases avoid expanding a large gate list during proof checking. They introduce no instruction, assumption or axiom. The raw emitted programs and protected point specifications remain unchanged except for the proved removed gate windows. Generic record padding preserves the original default-false behavior for short measurement lists.
+
+The full CPU build and all 1,493 public axiom queries passed. All 855 source hashes matched. Resource counts refer to the complete selected point circuit in the original signed-basis/measurement-record model. This work does not add a full quantum-channel semantics bridge. See [checkpoint evidence](EXACT_PENULTIMATE_SWAP_20261006.md).
+
+## 双 submission 整合（PR #80 / #81）
+
+ValueWalk 来源为 `d9ae6002dc99b0d38fdeeb9a4961820470a0abcb`，Skywalk 来源为 `eca407ae621ac22ff9c48ec00103d37ead3b57fb`，共同基线为 `9699678f71cab2bcd84e75fb8def64f01c482e6c`。整合历史保留两条父提交。`ValueWalkPoint*` 的程序与证明取自前者，改名后与后者共存；共用分类、布局、基础库与唯一成本模型。未复制另一套 Framework。
+
+原 #81 验证脚本的构建集合未覆盖三个审计导入模块，在缺失其 `.olean` 时会先构建成功、随后导入失败。本次将 `TerminalMappedFieldPoolRestore`、`NearestLiftMath`、`FusedInversePackedProof` 纳入显式构建。历史 source-manifest 证明当时源码哈希，不保证任何新检出的缓存已预先包含这些模块。当前复现以仓库脚本及本次 PROOF_STATUS 记录为准。
+
+短源三角平方的三个 `ShortTriangularSquare*` 模块同样取自 #81，在 `Arithmetic.ShortTriangular` 命名空间保留完整平方、独立清理、精确计数与支持证明；复用原有 `SquareFrame`，避免改变 ValueWalk 的原平方。

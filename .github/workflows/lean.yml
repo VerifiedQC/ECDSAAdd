@@ -7,7 +7,9 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 120
+    env:
+      LEAN_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
@@ -16,5 +18,37 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Fetch pinned Mathlib cache
         run: lake exe cache get
+      - name: Provide swap for large kernel checks
+        run: |
+          # Large Skywalk proofs exceed the hosted runner's physical memory.
+          sudo fallocate -l 48G /swapfile-lean
+          sudo chmod 600 /swapfile-lean
+          sudo mkswap /swapfile-lean
+          sudo swapon /swapfile-lean
+          free -m
       - name: Check Lean proofs and public theorem axioms
-        run: scripts/verify.sh
+        run: |
+          # Preserve evidence if the runner terminates a memory-heavy build.
+          (
+            while true; do
+              date -u
+              free -m
+              df -h .
+              ps -eo pid,comm,rss --sort=-rss | head -n 12 || true
+              for lean_pid in $(pgrep -x lean || true); do
+                tr '\0' ' ' < "/proc/$lean_pid/cmdline" || true
+                echo
+              done
+              cat /sys/fs/cgroup/memory.events 2>/dev/null || true
+              sleep 30
+            done
+          ) &
+          monitor_pid=$!
+          trap 'kill "$monitor_pid" 2>/dev/null || true' EXIT
+          scripts/verify.sh
+      - name: Capture runner termination diagnostics
+        if: failure()
+        run: |
+          free -m
+          cat /sys/fs/cgroup/memory.events 2>/dev/null || true
+          sudo dmesg -T | tail -n 80 || true

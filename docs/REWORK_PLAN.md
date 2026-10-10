@@ -2,7 +2,7 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-作者：Dirac；文档状态核对基线：`85530a6`（PR75）。本文件同时保存历史设计、已交付阶段和未实现选项，不能把较早章节的“当前／目标”当成最新公共入口。**当前已证整机**为 7,207,866 Toffoli / 4,305,594 测量 / 3,134 实际静态线路，依据 [`controlledPointAdd_finite_resources`](../ECDSAAdd/Arithmetic/ControlledPointResources.lean)，实现记录见 §29.10。
+Latest complete verified checkpoint: **2,853,821 static Toffolis / 2,194,105 measurements / ≤2,994 static logical sites**. Full pod library check and all 749 public axiom queries passed in 122s (2s cached incremental build +120s audit). The preceding complete compilation took 95s; its legacy-import audit failure is recorded separately. See [the complete compact-guard integration record](COMPACT_GUARD_EXACT_20261003.md). Earlier results below are historical.
 
 本文账本简写 T / M / Q 分别指 Toffoli（CCX）数、测量数、实际静态支持线数；T 不是 Clifford+T 分解中的 T 门数。
 
@@ -2642,3 +2642,17 @@ PROVENANCE 同步状态，现有 `scripts/verify.sh` 新增八条公开入口
 `outer_mask_erase` 从完整寄存器值及范围推出低 n 位的掩码关系，再通过
 `eraseMask_eq_copy` 复用原清理证明；公开规格不新增掩码前提。
 加减法各有 `_spec`、`_frame`、`_wires`、`_resources` 四条公开定理。
+
+<a id="dual-submissions"></a>
+## 双 submission 整合
+
+目标是同时保留 PR #80 的值走位宽收窄电路与 PR #81 的压缩 Skywalk 电路，共享语义、成本模型、曲线定义及基础算术。两者不能通过直接叠加收益合成一个新数字。
+
+- `ECDSAAdd/Submissions/ValueWalk.lean`：完整512轮值走，6,286,806 T / 3,779,274 M / =3,134线路。
+- `ECDSAAdd/Submissions/Skywalk.lean`：原压缩点加，2,217,386 T / 1,557,928 M / ≤1,899线路。
+- 两者各自提供相同形式的完整 correctness 和三类同程序资源定理，C=O另列零成本。
+- `ECDSAAdd/Submissions.lean` 同时导入两者；根库也公开此聚合入口。
+- 旧回放和 Karatsuba 平方保留 ValueWalk 所需版本；Skywalk 的实际压缩路径保持独立。点加组合层用 `ValueWalkPoint*` 命名区分，共享输入分类、角落处理、状态断言及布局，避免复制整套基础库。
+- 验证脚本修复三个未构建的审计模块，并新增两份 submission 各5项公理检查。完整构建与公理白名单通过后再由独立复审者合并。
+
+PR #81 的短源三角平方作为 `Arithmetic.ShortTriangular` 独立变体保留，原三角平方仍服务于 ValueWalk。两者共享基本加法器与 `SquareFrame` 状态断言；短源变体的完整平方/清理、计数和支持定理另外纳入公理审计。

@@ -18,28 +18,26 @@ theorem dialogWalk_specs (L : DialogLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     Triple (DialogPrepared L S B X Y Z) (valueUnloop L.first 0 L.records)
       (DialogValues L B X Y Z p S) := by
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low]
-  have hpn : p<2^L.first.data.width := by rw [hd,show (257:Nat)=256+1 from rfl,pow_succ]; norm_num [p]
+  have hb : ∀ j<L.records.length, (valueStep^[j] (valueInit p S)).u<2^(valueWidth L.first.data.width (0+j)) ∧
+      (valueStep^[j] (valueInit p S)).v<2^(valueWidth L.first.data.width (0+j)) := by
+    intro j hj
+    rw [hd,Nat.zero_add]
+    exact dialogWalk_width S j hs0 hs (by rw [hw.records] at hj; exact hj)
   have f := valueLoop_spec L.first L.records 0 (valueInit p S) hn hw.counter (by omega)
-    (by simp [hw.records]) (by simp [valueInit]) hpn (hs.trans hpn)
+    (by simp [hw.records]) (by simp [valueInit]) hb
   have b := valueUnloop_spec L.first L.records 0 (valueInit p S) hn hw.counter (by omega)
-    (by simp [hw.records]) (by simp [valueInit]) hpn (hs.trans hpn)
+    (by simp [hw.records]) (by simp [valueInit]) hb
   have hend : loopEndLayout L.first L.records.length=L.first := by
     rw [hw.records]; exact valueEnd_even L.first 256
   rw [hend,hw.records] at f b
-  have wires := valueLoop_wires L.first L.records 0 hw.counter (by omega)
-  have he : L.records.isEmpty=false := by
-    cases hh : L.records with
-    | nil => have hz := hw.records; rw [hh] at hz; contradiction
-    | cons r rs => rfl
-  simp only [he,Bool.false_eq_true,if_false] at wires
-  have frame (P : Program) (hP : ECDSAAdd.wires P=(L.first.valueTapeWires L.records).toFinset)
+  have wires := (valueLoop_wires_subset L.first L.records 0 hw.counter (by omega)).1
+  have frame (P : Program) (hP : ECDSAAdd.wires P⊆(L.first.valueTapeWires L.records).toFinset)
       (s t : BasisState) (ht : ∀ q,q∉ECDSAAdd.wires P → s q=t q)
       (h : DialogExternal L B X Y Z s) : DialogExternal L B X Y Z t := by
     have keep (q : Wire) (hq : q∈L.external) : t q=s q := by
       apply (ht q ?_).symm
-      rw [hP]
       intro hh
-      exact List.disjoint_left.mp (L.external_value_disjoint hn) hq (List.mem_toFinset.mp hh)
+      exact List.disjoint_left.mp (L.external_value_disjoint hn) hq (List.mem_toFinset.mp (hP hh))
     exact ⟨(keep _ (by simp [DialogLayout.external])).trans h.1,
       (regValue_congr _ _ _ (fun q hq => keep q (by simp [DialogLayout.external,hq]))).trans h.2.1,
       (regValue_congr _ _ _ (fun q hq => keep q (by simp [DialogLayout.external,hq]))).trans h.2.2.1,

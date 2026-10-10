@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.ControlledPointPorts
-import ECDSAAdd.Arithmetic.PointDialogProgram
+import ECDSAAdd.Arithmetic.CompressedPointDialogProgram
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
@@ -31,6 +31,6 @@ def controlledPointAddOut (L : ControlledPointLayout) (C : Point) : Program :=
 def controlledPointAdd (L : ControlledPointLayout) (C : Point) : Program :=
   match C with
   | .zero => []
-  | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => pointDialogFinite L C cx cy
+  | @WeierstrassCurve.Affine.Point.some _ _ _ cx cy _ => pointCompressedDialogFinite L C cx cy
 
 end ECDSAAdd.Arithmetic
