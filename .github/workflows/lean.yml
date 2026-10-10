@@ -7,9 +7,9 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 120
     env:
-      LEAN_NUM_THREADS: '2'
+      LEAN_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
@@ -35,6 +35,10 @@ jobs:
               free -m
               df -h .
               ps -eo pid,comm,rss --sort=-rss | head -n 12 || true
+              for lean_pid in $(pgrep -x lean || true); do
+                tr '\0' ' ' < "/proc/$lean_pid/cmdline" || true
+                echo
+              done
               cat /sys/fs/cgroup/memory.events 2>/dev/null || true
               sleep 30
             done
