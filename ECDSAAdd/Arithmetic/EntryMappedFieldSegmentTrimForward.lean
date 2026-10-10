@@ -88,6 +88,24 @@ private theorem firstBody_support (hn : (skywalkSharedWires base).Nodup)
   unfold firstBody
   exact EntryBodySupport.first_body_support hn hlo
 
+-- Check the transport once on arbitrary programs, before specializing to the packet.
+private theorem transport_encoded (P Q : Program)
+    (hn : (skywalkSharedWires base).Nodup) (hlo : CompressedHistoryAbove base)
+    (origin : BasisState) (env : OffsetBorrowedCanonical.Env base origin)
+    (X Y A B : Fp) (s : State) (m : List Bool)
+    (input : EncodedFieldFrame base (base 2409) origin X Y s)
+    (ref : (run P m s).phase=s.phase ∧
+      EncodedFieldFrame base (base 2409) origin A B (run P m s))
+    (same : (∀q,zeroRegion q → s.basis (base q)=false) →
+      (∀q,zeroRegion q → (run P m s).basis (base q)=false) →
+      run Q m s=run P m s) :
+    (run Q m s).phase=s.phase ∧
+      EncodedFieldFrame base (base 2409) origin A B (run Q m s) := by
+  have cleanIn := encoded_zero_region base (base 2409) hn hlo origin env X Y s input
+  have cleanOut := encoded_zero_region base (base 2409) hn hlo origin env A B (run P m s) ref.2
+  rw [same cleanIn cleanOut]
+  exact ref
+
 /-- Exact native first packet, with both clean placement boundaries derived
 from the encoded frame and the accepted selected-swap frame. -/
 theorem firstGroup_forward_step
@@ -105,15 +123,12 @@ theorem firstGroup_forward_step
   have ref := EntrySelectedSwapFrame.encoded_window_step base (base 2400) (base 2409) (base 2410)
     hn hlo hp 0 (by decide) origin legal Y 0 _ _ firstBody (firstBody_support hn hlo)
     (firstBody_frame hn ho hf origin hg0 hs0 env Y) s m input
+  simp only [Nat.mul_zero] at ref
   have shape : baseFirstGroup true=compressedHistoryDecode base 0++firstBody++compressedHistoryEncode base 0 := by
     simp only [baseFirstGroup,firstBody,if_true]
   rw [←shape] at ref
-  have cleanIn := encoded_zero_region base (base 2409) hn hlo origin env Y 0 s input
-  have cleanOut := encoded_zero_region base (base 2409) hn hlo origin env _ _
-    (run (baseFirstGroup true) m s) ref.2
-  rw [firstGroup_state_eq true s m cleanIn cleanOut]
-  exact ref
-
+  exact transport_encoded (baseFirstGroup true) (firstGroup true) hn hlo origin env Y 0 _ _
+    s m input ref (firstGroup_state_eq true s m)
 
 private def oldPrefix : Program := fieldPrefix true ++
   renameProgram allPlaced (converterPair false) ++ mappedGroup true 0
@@ -171,13 +186,27 @@ theorem forward_prefix_state_eq
     exact ⟨last.1.trans first'.1,last.2⟩
   exact encoded_field_unique origin Q.1 Q.2 _ _ old.2 current.2 (old.1.trans current.1.symm)
 
+private theorem forward_groups_succ (j n : Nat) :
+    mappedGroups true j (n+1)=mappedGroup true j++mappedGroups true (j+1) n := by
+  simp only [mappedGroups,if_true]
+
 private theorem old_forward_join : MappedCompressed.fieldSegment true=oldPrefix++commonSuffix := by
-  have groups : mappedGroups true 0 170=mappedGroup true 0++mappedGroups true 1 169 := by rfl
+  have groups : mappedGroups true 0 170=mappedGroup true 0++mappedGroups true 1 169 :=
+    forward_groups_succ 0 169
   simp only [MappedCompressed.fieldSegment,oldPrefix,commonSuffix,fieldPrefix,copyPairAt,
     if_true,MappedCompressed.mappedReplay,groups,tailProgram,List.append_assoc]
 private theorem new_forward_join : fieldSegment true=newPrefix++commonSuffix := by
   simp only [fieldSegment,newPrefix,commonSuffix,replay,copyPairAt,if_true,tailProgram,
     List.nil_append,List.append_assoc]
+
+-- Keep programs symbolic so kernel conversion does not evaluate concrete gate lists.
+private theorem replace_prefix (P Q R : Program) (s : State) (m : List Bool)
+    (same : ∀ a b, run P a s = run Q b s) :
+    run (P ++ R) (List.replicate (measurementCount P) false ++
+      m.drop (measurementCount Q)) s = run (Q ++ R) m s := by
+  rw [run_append,run_append,same _ (m.take (measurementCount Q))]
+  simp only [List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
+    List.drop_replicate,List.replicate_zero,List.nil_append]
 
 /-- Full actual forward field wrapper. The fixed170 packet encoding, raw
 510/511 tail and complete caller State are retained for all independent MX
@@ -203,18 +232,11 @@ theorem fieldTrimSegment_forward_spec
   have old := MappedCompressed.fieldSegment_spec true hn hlo ho hp hf origin hg0 hs0 env legal
     hw hu hr hy x hx0 hx trace Y s records input
   have actualStateEq : run (MappedCompressed.fieldSegment true) records s=run (fieldSegment true) m s := by
-    rw [old_forward_join,new_forward_join,run_append,run_append]
-    have headEq : run oldPrefix (records.take (measurementCount oldPrefix)) s=
-        run newPrefix (m.take (measurementCount newPrefix)) s :=
+    rw [old_forward_join,new_forward_join]
+    exact replace_prefix oldPrefix newPrefix commonSuffix s m (fun a b =>
       forward_prefix_state_eq hn hlo ho hp
         (packet_layouts (base 2400) (base 2409) (base 2410) hf 0 (by decide))
-        origin hg0 hs0 env legal hw hu hr hy Y s
-        (records.take (measurementCount oldPrefix)) (m.take (measurementCount newPrefix)) input
-    rw [headEq]
-    have tailEq : records.drop (measurementCount oldPrefix)=suffixRecords := by
-      simp only [records,List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
-        List.drop_replicate,Nat.sub_self,List.replicate_zero,List.nil_append]
-    rw [tailEq]
+        origin hg0 hs0 env legal hw hu hr hy Y s a b input)
   rw [actualStateEq] at old
   exact old
 

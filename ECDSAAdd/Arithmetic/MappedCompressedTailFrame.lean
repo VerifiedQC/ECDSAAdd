@@ -24,14 +24,26 @@ theorem tailLetters_indexed : IndexedLetters base 510 tailLetters := by
   rw [tailLetters,mixedTape_base_getD 510 (by decide),mixedTape_base_getD 511 (by decide)]
   simp [IndexedLetters]
 
-theorem baseTail_eq_replay (divide : Bool) :
-    baseTail divide=directionalReplay (!divide) base (base 2400) (base 2409) (base 2410) tailLetters := by
-  have a := mixedTape_base_getD 510 (by decide)
-  have b := mixedTape_base_getD 511 (by decide)
-  cases divide <;> simp only [baseTail,tailLetters,a,b,base_cell_eq,directionalReplay,
+/-- Keep the tape indices symbolic while the kernel checks the replay identity. -/
+private theorem two_cells_eq_replay (divide : Bool) (i j : Nat)
+    (hi : i < 512) (hj : j < 512) :
+    (if divide then renameProgram base (logicalCell divide i) ++
+        renameProgram base (logicalCell divide j)
+      else renameProgram base (logicalCell divide j) ++
+        renameProgram base (logicalCell divide i)) =
+    directionalReplay (!divide) base (base 2400) (base 2409) (base 2410)
+      [(mixedTranscriptTape base).getD i ((0,0),(false,false)),
+       (mixedTranscriptTape base).getD j ((0,0),(false,false))] := by
+  have a := mixedTape_base_getD i hi
+  have b := mixedTape_base_getD j hj
+  cases divide <;> simp only [a,b,base_cell_eq,directionalReplay,
     OffsetBorrowedCanonical.replay,OffsetBorrowedInverseCanonical.replay,
     Bool.not_false,Bool.not_true,Bool.false_eq_true,if_false,if_true,
     List.append_nil,List.nil_append]
+
+theorem baseTail_eq_replay (divide : Bool) :
+    baseTail divide=directionalReplay (!divide) base (base 2400) (base 2409) (base 2410) tailLetters := by
+  exact two_cells_eq_replay divide 510 511 (by decide) (by decide)
 
 private theorem shifted_all_cell (divide : Bool) (i : Nat) :
     renameProgram (shifted pi0) (renameProgram base (logicalCell divide i))=

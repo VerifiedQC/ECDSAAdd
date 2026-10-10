@@ -86,6 +86,15 @@ private theorem newTerminal_join : terminalFieldSegment true=newTerminalPrefix++
   simp only [terminalFieldSegment,terminalReplay,newTerminalPrefix,terminalSuffix,copyPairAt,
     if_true,List.nil_append,List.append_assoc]
 
+-- Keep programs symbolic so kernel conversion does not evaluate concrete gate lists.
+private theorem replace_prefix (P Q R : Program) (s : State) (m : List Bool)
+    (same : ∀ a b, run P a s = run Q b s) :
+    run (P ++ R) (List.replicate (measurementCount P) false ++
+      m.drop (measurementCount Q)) s = run (Q ++ R) m s := by
+  rw [run_append,run_append,same _ (m.take (measurementCount Q))]
+  simp only [List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
+    List.drop_replicate,List.replicate_zero,List.nil_append]
+
 /-- Closed forward entry cancellation on the current511-cell wrapper.
 Terminal omission is inherited from its accepted512-trace derivation,
 without adding any terminal-source, activation or measurement premise. -/
@@ -110,17 +119,10 @@ theorem terminalFieldTrimSegment_forward_spec
   have old := MappedCompressed.fieldTrimSegment_spec true hn hlo ho hp hf origin hg0 hs0 env legal
     hw hu hr hy x hx0 hx trace Y s records input
   have actualStateEq : run (MappedCompressed.fieldTrimSegment true) records s=run (terminalFieldSegment true) m s := by
-    rw [oldTerminal_join,newTerminal_join,run_append,run_append]
-    have headEq := forward_prefix_state_eq hn hlo ho hp (packet_layouts _ _ _ hf 0 (by decide))
-      origin hg0 hs0 env legal hw hu hr hy Y s
-      (records.take (measurementCount oldTerminalPrefix)) (m.take (measurementCount newTerminalPrefix)) input
-    change run oldTerminalPrefix (records.take (measurementCount oldTerminalPrefix)) s=
-      run newTerminalPrefix (m.take (measurementCount newTerminalPrefix)) s at headEq
-    rw [headEq]
-    have tailEq : records.drop (measurementCount oldTerminalPrefix)=suffixRecords := by
-      simp only [records,List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
-        List.drop_replicate,Nat.sub_self,List.replicate_zero,List.nil_append]
-    rw [tailEq]
+    rw [oldTerminal_join,newTerminal_join]
+    exact replace_prefix oldTerminalPrefix newTerminalPrefix terminalSuffix s m (fun a b =>
+      forward_prefix_state_eq hn hlo ho hp (packet_layouts _ _ _ hf 0 (by decide))
+        origin hg0 hs0 env legal hw hu hr hy Y s a b input)
   rw [actualStateEq] at old
   exact old
 

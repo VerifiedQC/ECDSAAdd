@@ -117,6 +117,24 @@ theorem inverseZeroPayload_of_old (origin : BasisState) (X Y Z : Fp)
       List.map_nil,skywalkPayloadReplayInverse,aEq] using old
   exact EntryInversePayload.remove_final_double _ _ _ Z value
 
+-- Check the transport once on arbitrary programs, before specializing to the packet.
+private theorem transport_encoded (P Q : Program)
+    (hn : (skywalkSharedWires base).Nodup) (hlo : CompressedHistoryAbove base)
+    (origin : BasisState) (env : OffsetBorrowedCanonical.Env base origin)
+    (X Y A B : Fp) (s : State) (m : List Bool)
+    (input : EncodedFieldFrame base (base 2409) origin X Y s)
+    (ref : (run P m s).phase=s.phase ∧
+      EncodedFieldFrame base (base 2409) origin A B (run P m s))
+    (same : (∀q,zeroRegion q → s.basis (base q)=false) →
+      (∀q,zeroRegion q → (run P m s).basis (base q)=false) →
+      run Q m s=run P m s) :
+    (run Q m s).phase=s.phase ∧
+      EncodedFieldFrame base (base 2409) origin A B (run Q m s) := by
+  have cleanIn := encoded_zero_region base (base 2409) hn hlo origin env X Y s input
+  have cleanOut := encoded_zero_region base (base 2409) hn hlo origin env A B (run P m s) ref.2
+  rw [same cleanIn cleanOut]
+  exact ref
+
 /-- Actual mapped packet-zero inverse, with clean placement boundaries
 derived from its complete encoded field frames. -/
 theorem firstGroup_inverse_step
@@ -132,14 +150,12 @@ theorem firstGroup_inverse_step
   have ref := EntrySelectedSwapFrame.encoded_window_step base (base 2400) (base 2409) (base 2410)
     hn hlo hp 0 (by decide) origin legal X Y _ _ inverseBody (inverseBody_support hn hlo)
     (inverseBody_frame hn ho hf origin hg0 hs0 env X Y) s m input
+  simp only [Nat.mul_zero] at ref
   have shape : baseFirstGroup false=compressedHistoryDecode base 0++inverseBody++compressedHistoryEncode base 0 := by
     simp only [baseFirstGroup,inverseBody,Bool.false_eq_true,if_false]
   rw [←shape] at ref
-  have cleanIn := encoded_zero_region base (base 2409) hn hlo origin env X Y s input
-  have cleanOut := encoded_zero_region base (base 2409) hn hlo origin env _ _
-    (run (baseFirstGroup false) m s) ref.2
-  rw [firstGroup_state_eq false s m cleanIn cleanOut]
-  exact ref
+  exact transport_encoded (baseFirstGroup false) (firstGroup false) hn hlo origin env X Y _ _
+    s m input ref (firstGroup_state_eq false s m)
 
 end ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim
 #print axioms ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverseBody_support
