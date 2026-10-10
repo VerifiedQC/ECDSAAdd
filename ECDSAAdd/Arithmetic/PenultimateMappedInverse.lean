@@ -21,6 +21,15 @@ private theorem old_replay_inverse_join :
   simp only [EntryMappedFieldSegmentTrim.terminalReplay,oldHead,commonSuffix,
     Bool.false_eq_true,if_false,List.append_assoc]
 
+-- Keep programs symbolic so kernel conversion does not evaluate concrete gate lists.
+private theorem replace_prefix (P Q R : Program) (s : State) (m : List Bool)
+    (same : ∀ a b, run P a s = run Q b s) :
+    run (P ++ R) (List.replicate (measurementCount P) false ++
+      m.drop (measurementCount Q)) s = run (Q ++ R) m s := by
+  rw [run_append,run_append,same _ (m.take (measurementCount Q))]
+  simp only [List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
+    List.drop_replicate,List.replicate_zero,List.nil_append]
+
 /-- Complete encoded inverse replay under the existing caller domain.
 Only cell510 changes; the common packet/entry suffix keeps its actual record
 stream, and the legacy head uses an independent padded record prefix. -/
@@ -44,17 +53,10 @@ theorem replay_inverse_spec
     origin hg0 hs0 env legal x Y hx0 hx trace s records input
   have stateEq : run (replay false) m s=
       run (EntryMappedFieldSegmentTrim.terminalReplay false) records s := by
-    rw [replay_inverse_join,old_replay_inverse_join,run_append,run_append]
-    have headEq := PenultimateMappedCellProof.inverse_cell_eq hn hlo ho hp hf
-      origin hg0 hs0 env legal Y s (m.take (measurementCount newHead))
-      (records.take (measurementCount oldHead)) input
-    change run newHead (m.take (measurementCount newHead)) s=
-      run oldHead (records.take (measurementCount oldHead)) s at headEq
-    rw [headEq]
-    have tailEq : records.drop (measurementCount oldHead)=m.drop (measurementCount newHead) := by
-      simp only [records,List.drop_append,List.length_replicate,Nat.sub_self,List.drop_zero,
-        List.drop_replicate,Nat.sub_self,List.replicate_zero,List.nil_append]
-    rw [tailEq]
+    rw [replay_inverse_join,old_replay_inverse_join]
+    exact (replace_prefix oldHead newHead commonSuffix s m (fun a b =>
+      (PenultimateMappedCellProof.inverse_cell_eq hn hlo ho hp hf
+        origin hg0 hs0 env legal Y s b a input).symm)).symm
   rw [←stateEq] at old
   exact old
 

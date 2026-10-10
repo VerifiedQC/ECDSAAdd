@@ -1207,9 +1207,16 @@ info: ECDSAAdd/Arithmetic/EntryInversePayload.lean:70:0: 'ECDSAAdd.Arithmetic.En
  Quot.sound]
 info: ECDSAAdd/Arithmetic/EntryInversePayload.lean:71:0: 'ECDSAAdd.Arithmetic.EntryInversePayload.inverse_boundary' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/EntryInversePayload.lean:72:0: 'ECDSAAdd.Arithmetic.EntryInversePayload.remove_final_double' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3758/4011] Replayed ECDSAAdd.Arithmetic.EntryBodySupportConcrete
+ℹ [3758/4011] Replayed ECDSAAdd.Arithmetic.EntryInverseFirstGroupFrame
+info: ECDSAAdd/Arithmetic/EntryInverseFirstGroupFrame.lean:161:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverseBody_support' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/EntryInverseFirstGroupFrame.lean:162:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstGroup_inverse_step' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+ℹ [3759/4011] Replayed ECDSAAdd.Arithmetic.EntryBodySupportConcrete
 info: ECDSAAdd/Arithmetic/EntryBodySupportConcrete.lean:31:0: 'ECDSAAdd.Arithmetic.EntryBodySupport.first_body_support' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3759/4011] Replayed ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimForward
+ℹ [3760/4011] Replayed ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimForward
 info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimForward.lean:244:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstBody_frame' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1222,7 +1229,7 @@ info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimForward.lean:247:0: 'ECDSAA
 info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimForward.lean:248:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.fieldTrimSegment_forward_spec' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3760/4011] Replayed ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimTerminal
+ℹ [3761/4011] Replayed ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimTerminal
 info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimTerminal.lean:130:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldSegment_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1232,7 +1239,27 @@ info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimTerminal.lean:131:0: 'ECDSA
 info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimTerminal.lean:132:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_forward_spec' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3761/4011] Replayed ECDSAAdd.Arithmetic.PenultimateMappedCellProof
+ℹ [3762/4011] Replayed ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse
+info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:145:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalReplay_inverse_spec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:146:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_inverse_spec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:147:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_resources' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:148:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_support' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:149:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_saving' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+ℹ [3763/4011] Replayed ECDSAAdd.Arithmetic.PenultimateMappedProgram
+info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:59:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:60:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:61:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.saving' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3764/4011] Replayed ECDSAAdd.Arithmetic.PenultimateMappedCellProof
 info: ECDSAAdd/Arithmetic/PenultimateMappedCellProof.lean:207:0: 'ECDSAAdd.Arithmetic.PenultimateMappedCellProof.cell_natural' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/PenultimateMappedCellProof.lean:208:0: 'ECDSAAdd.Arithmetic.PenultimateMappedCellProof.support_subset' depends on axioms: [propext,
  Classical.choice,
@@ -1243,26 +1270,39 @@ info: ECDSAAdd/Arithmetic/PenultimateMappedCellProof.lean:209:0: 'ECDSAAdd.Arith
 info: ECDSAAdd/Arithmetic/PenultimateMappedCellProof.lean:210:0: 'ECDSAAdd.Arithmetic.PenultimateMappedCellProof.inverse_cell_eq' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3762/4011] Replayed ECDSAAdd.Framework.ProgramContextEq
+ℹ [3765/4011] Replayed ECDSAAdd.Framework.ProgramContextEq
 info: ECDSAAdd/Framework/ProgramContextEq.lean:37:0: 'ECDSAAdd.append_context_eq' depends on axioms: [propext]
 info: ECDSAAdd/Framework/ProgramContextEq.lean:38:0: 'ECDSAAdd.suffix_context_eq' depends on axioms: [propext]
 info: ECDSAAdd/Framework/ProgramContextEq.lean:39:0: 'ECDSAAdd.program_shape_context_eq' does not depend on any axioms
-ℹ [3763/4011] Replayed ECDSAAdd.Framework.RecordPadding
+ℹ [3766/4011] Replayed ECDSAAdd.Framework.RecordPadding
 info: ECDSAAdd/Framework/RecordPadding.lean:40:0: 'ECDSAAdd.run_replicate_false' does not depend on any axioms
 info: ECDSAAdd/Framework/RecordPadding.lean:41:0: 'ECDSAAdd.run_pad_false' does not depend on any axioms
-ℹ [3764/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectSeedInput
+ℹ [3767/4011] Replayed ECDSAAdd.Arithmetic.PenultimateMappedForward
+info: ECDSAAdd/Arithmetic/PenultimateMappedForward.lean:278:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.forward_groups_payload' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedForward.lean:279:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_forward_spec' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+ℹ [3768/4011] Replayed ECDSAAdd.Arithmetic.PenultimateMappedResources
+info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:49:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_support_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:50:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support_sub' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:51:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+ℹ [3769/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectSeedInput
 info: ECDSAAdd/Arithmetic/NativeFirstDirectSeedInput.lean:56:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.seed_first_input' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3765/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerInput
+ℹ [3770/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerInput
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerInput.lean:53:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_ready' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3766/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectWordProof
+ℹ [3771/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectWordProof
 info: ECDSAAdd/Arithmetic/NativeFirstDirectWordProof.lean:143:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.hAdd_word' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectWordProof.lean:144:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.kAdd_word' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectWordProof.lean:146:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.front_spec' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectWordProof.lean:147:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.clear_spec' depends on axioms: [propext]
-ℹ [3767/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectForwardProof
+ℹ [3772/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectForwardProof
 info: ECDSAAdd/Arithmetic/NativeFirstDirectForwardProof.lean:272:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.lowCopy_prepares' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectForwardProof.lean:273:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.forward_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3768/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstPrefixMath
+ℹ [3773/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstPrefixMath
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:120:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_step' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:121:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:122:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.direct_signs' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1271,33 +1311,33 @@ info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:124:0: 'ECDSAAdd.Arithmetic
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:125:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_first_step' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:126:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_word_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstPrefixMath.lean:127:0: 'ECDSAAdd.Arithmetic.NativeFirstPrefixMath.secp_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3769/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectNativeBridge
+ℹ [3774/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectNativeBridge
 info: ECDSAAdd/Arithmetic/NativeFirstDirectNativeBridge.lean:184:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.source_parity' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectNativeBridge.lean:185:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.h_nat_value' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectNativeBridge.lean:186:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.k_decode_value' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectNativeBridge.lean:187:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.forward_native_output' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3770/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectTickUnique
+ℹ [3775/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectTickUnique
 info: ECDSAAdd/Arithmetic/NativeFirstDirectTickUnique.lean:52:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.signed_word_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectTickUnique.lean:53:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.native_output_state_unique' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3771/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectReferenceEq
+ℹ [3776/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectReferenceEq
 info: ECDSAAdd/Arithmetic/NativeFirstDirectReferenceEq.lean:139:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.forward_reference_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3772/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerForward
+ℹ [3777/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerForward
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerForward.lean:77:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.forward_terminal_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerForward.lean:78:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.forward_terminal_states' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3773/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerFirstStage
+ℹ [3778/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectCallerFirstStage
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerFirstStage.lean:40:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_first_stage' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3774/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectTailRestore
+ℹ [3779/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstDirectTailRestore
 info: ECDSAAdd/Arithmetic/NativeFirstDirectTailRestore.lean:74:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.tail_restore_pool' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3775/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstKnownFrame
+ℹ [3780/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstKnownFrame
 info: ECDSAAdd/Arithmetic/NativeFirstKnownFrame.lean:122:0: 'ECDSAAdd.Arithmetic.NativeFirstKnown.front_known_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstKnownFrame.lean:123:0: 'ECDSAAdd.Arithmetic.NativeFirstKnown.hReceiver_after_forward' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3776/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstKnownInverse
+ℹ [3781/4011] Replayed ECDSAAdd.Arithmetic.NativeFirstKnownInverse
 info: ECDSAAdd/Arithmetic/NativeFirstKnownInverse.lean:258:0: 'ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_roundtrip' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstKnownInverse.lean:259:0: 'ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_eq_old_on_forward' depends on axioms: [propext,
  Classical.choice,
@@ -1305,11 +1345,11 @@ info: ECDSAAdd/Arithmetic/NativeFirstKnownInverse.lean:259:0: 'ECDSAAdd.Arithmet
 info: ECDSAAdd/Arithmetic/NativeFirstKnownInverse.lean:260:0: 'ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_restore_after_outside' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3777/4011] Replayed ECDSAAdd.Arithmetic.RunPoolBasisAgreement
+ℹ [3782/4011] Replayed ECDSAAdd.Arithmetic.RunPoolBasisAgreement
 info: ECDSAAdd/Arithmetic/RunPoolBasisAgreement.lean:19:0: 'ECDSAAdd.Arithmetic.run_pool_basis_agreement' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3778/4011] Replayed ECDSAAdd.Arithmetic.EncodedFieldPoolBasis
+ℹ [3783/4011] Replayed ECDSAAdd.Arithmetic.EncodedFieldPoolBasis
 info: ECDSAAdd/Arithmetic/EncodedFieldPoolBasis.lean:28:0: 'ECDSAAdd.Arithmetic.encoded_field_pool_basis' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3779/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedFieldPoolRestore
+ℹ [3784/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedFieldPoolRestore
 info: ECDSAAdd/Arithmetic/MappedCompressedFieldPoolRestore.lean:136:0: 'ECDSAAdd.Arithmetic.MappedCompressed.encodedCanonical_pool_basis' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1322,7 +1362,7 @@ info: ECDSAAdd/Arithmetic/MappedCompressedFieldPoolRestore.lean:138:0: 'ECDSAAdd
 info: ECDSAAdd/Arithmetic/MappedCompressedFieldPoolRestore.lean:139:0: 'ECDSAAdd.Arithmetic.MappedCompressed.fieldSegment_reverse_pool' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3780/4011] Replayed ECDSAAdd.Arithmetic.CompressedTerminalEncodingBridge
+ℹ [3785/4011] Replayed ECDSAAdd.Arithmetic.CompressedTerminalEncodingBridge
 info: ECDSAAdd/Arithmetic/CompressedTerminalEncodingBridge.lean:103:0: 'ECDSAAdd.Arithmetic.CompressedFieldSupport.compact_terminal_raw_legal' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1335,37 +1375,37 @@ info: ECDSAAdd/Arithmetic/CompressedTerminalEncodingBridge.lean:105:0: 'ECDSAAdd
 info: ECDSAAdd/Arithmetic/CompressedTerminalEncodingBridge.lean:106:0: 'ECDSAAdd.Arithmetic.CompressedFieldSupport.compressed_terminal_clear_encoding' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3781/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedRawPreparation
+ℹ [3786/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedRawPreparation
 info: ECDSAAdd/Arithmetic/MappedCompressedRawPreparation.lean:133:0: 'ECDSAAdd.Arithmetic.MappedCompressed.rawPreparation_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3782/4011] Replayed ECDSAAdd.Arithmetic.CompressedForwardCallerEquality
+ℹ [3787/4011] Replayed ECDSAAdd.Arithmetic.CompressedForwardCallerEquality
 info: ECDSAAdd/Arithmetic/CompressedForwardCallerEquality.lean:80:0: 'ECDSAAdd.Arithmetic.allGroupEncode_pool_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedForwardCallerEquality.lean:81:0: 'ECDSAAdd.Arithmetic.compressedCompactForward_caller_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3783/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedCallerPreparation
+ℹ [3788/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedCallerPreparation
 info: ECDSAAdd/Arithmetic/MappedCompressedCallerPreparation.lean:49:0: 'ECDSAAdd.Arithmetic.MappedCompressed.compressedPreparation_facts' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3784/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedCallerFrame
+ℹ [3789/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedCallerFrame
 info: ECDSAAdd/Arithmetic/MappedCompressedCallerFrame.lean:50:0: 'ECDSAAdd.Arithmetic.MappedCompressed.encodedCanonical_caller_frame' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3785/4011] Replayed ECDSAAdd.Framework.WireRenamePool
+ℹ [3790/4011] Replayed ECDSAAdd.Framework.WireRenamePool
 info: ECDSAAdd/Framework/WireRenamePool.lean:133:0: 'ECDSAAdd.run_rename_pool' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Framework/WireRenamePool.lean:134:0: 'ECDSAAdd.run_rename_pool_outside' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3786/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedPointPlacement
+ℹ [3791/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedPointPlacement
 info: ECDSAAdd/Arithmetic/MappedCompressedPointPlacement.lean:137:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointWireFn_injective_slots' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedPointPlacement.lean:138:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointWireFn_coordinates' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3829/4011] Replayed ECDSAAdd.Arithmetic.CompressedPointSquarePool
+ℹ [3834/4011] Replayed ECDSAAdd.Arithmetic.CompressedPointSquarePool
 info: ECDSAAdd/Arithmetic/CompressedPointSquarePool.lean:278:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.indexPermutation' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquarePool.lean:279:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.poolPermutation' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquarePool.lean:280:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.measured_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquarePool.lean:282:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.computable_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3830/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedPointImages
+ℹ [3835/4011] Replayed ECDSAAdd.Arithmetic.MappedCompressedPointImages
 info: ECDSAAdd/Arithmetic/MappedCompressedPointImages.lean:133:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointWireFn_sharedWork' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedPointImages.lean:134:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointWireFn_scalar_dialog' depends on axioms: [propext,
  Classical.choice,
@@ -1373,41 +1413,41 @@ info: ECDSAAdd/Arithmetic/MappedCompressedPointImages.lean:134:0: 'ECDSAAdd.Arit
 info: ECDSAAdd/Arithmetic/MappedCompressedPointImages.lean:135:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointWireFn_slots_image' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3831/4011] Replayed ECDSAAdd.Arithmetic.CompressedPointSquareCorrect
+ℹ [3836/4011] Replayed ECDSAAdd.Arithmetic.CompressedPointSquareCorrect
 info: ECDSAAdd/Arithmetic/CompressedPointSquareCorrect.lean:125:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.state_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquareCorrect.lean:126:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquareCorrect.lean:127:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointSquareCorrect.lean:128:0: 'ECDSAAdd.Arithmetic.CompressedPointSquare.shared_support_sites' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3884/4011] Replayed ECDSAAdd.Arithmetic.CompactPointLayout
+ℹ [3889/4011] Replayed ECDSAAdd.Arithmetic.CompactPointLayout
 info: ECDSAAdd/Arithmetic/CompactPointLayout.lean:113:0: 'ECDSAAdd.Arithmetic.ControlledPointLayout.compactPointSites_nodup' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/CompactPointLayout.lean:114:0: 'ECDSAAdd.Arithmetic.ControlledPointLayout.compactSharedMap_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3885/4011] Replayed ECDSAAdd.Arithmetic.CompactOffsetCallerSupport
+ℹ [3890/4011] Replayed ECDSAAdd.Arithmetic.CompactOffsetCallerSupport
 info: ECDSAAdd/Arithmetic/CompactOffsetCallerSupport.lean:30:0: 'ECDSAAdd.Arithmetic.compactOffsetCallerArithmetic_support' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3886/4011] Replayed ECDSAAdd.Arithmetic.OffsetBorrowedSupportPoint
+ℹ [3891/4011] Replayed ECDSAAdd.Arithmetic.OffsetBorrowedSupportPoint
 info: ECDSAAdd/Arithmetic/OffsetBorrowedSupportPoint.lean:77:0: 'ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/OffsetBorrowedSupportPoint.lean:78:0: 'ECDSAAdd.Arithmetic.pointOffsetBorrowedArithmetic_compact_resources' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3890/4011] Replayed ECDSAAdd.Arithmetic.CompactPointDialogSupport
+ℹ [3895/4011] Replayed ECDSAAdd.Arithmetic.CompactPointDialogSupport
 info: ECDSAAdd/Arithmetic/CompactPointDialogSupport.lean:47:0: 'ECDSAAdd.Arithmetic.pointDialogGeneric_compact_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3891/4011] Replayed ECDSAAdd.Arithmetic.CompactPointFiniteSupport
+ℹ [3896/4011] Replayed ECDSAAdd.Arithmetic.CompactPointFiniteSupport
 info: ECDSAAdd/Arithmetic/CompactPointFiniteSupport.lean:84:0: 'ECDSAAdd.Arithmetic.pointDialogFinite_compact_wires' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3903/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupportHelpers
+ℹ [3908/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupportHelpers
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupportHelpers.lean:53:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.unary' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupportHelpers.lean:54:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.copy' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3904/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupportLayout
+ℹ [3909/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupportLayout
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupportLayout.lean:91:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.kernelSites' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupportLayout.lean:92:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.converters' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupportLayout.lean:93:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.replay' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3905/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
+ℹ [3910/4011] Replayed ECDSAAdd.Arithmetic.BalancedSharedFieldSupport
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupport.lean:64:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.replayPrograms' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -1418,7 +1458,7 @@ info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupport.lean:66:0: 'ECDSAAdd.Arithm
 info: ECDSAAdd/Arithmetic/BalancedSharedFieldSupport.lean:68:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.compactSubsetShared' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3906/4011] Replayed ECDSAAdd.Arithmetic.BalancedIntegratedAudit
+ℹ [3911/4011] Replayed ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 info: ECDSAAdd/Arithmetic/BalancedIntegratedAudit.lean:43:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.work' does not depend on any axioms
 info: ECDSAAdd/Arithmetic/BalancedIntegratedAudit.lean:44:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.scalarND' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/BalancedIntegratedAudit.lean:45:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.seedND' depends on axioms: [propext, Quot.sound]
@@ -1585,27 +1625,27 @@ info: ECDSAAdd/Arithmetic/BalancedIntegratedAudit.lean:177:0: 'ECDSAAdd.Arithmet
 info: ECDSAAdd/Arithmetic/BalancedIntegratedAudit.lean:178:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.declaredEndpoints' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3907/4011] Replayed ECDSAAdd.Arithmetic.BorrowedSkywalkUnarySupport
+ℹ [3912/4011] Replayed ECDSAAdd.Arithmetic.BorrowedSkywalkUnarySupport
 info: ECDSAAdd/Arithmetic/BorrowedSkywalkUnarySupport.lean:84:0: 'ECDSAAdd.Arithmetic.borrowedSkywalkUnary_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BorrowedSkywalkUnarySupport.lean:85:0: 'ECDSAAdd.Arithmetic.borrowedSkywalkUnary_no_old_bank' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BorrowedSkywalkUnarySupport.lean:86:0: 'ECDSAAdd.Arithmetic.borrowedSkywalkUnary_resources' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3908/4011] Replayed ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupportKernel
+ℹ [3913/4011] Replayed ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupportKernel
 info: ECDSAAdd/Arithmetic/BorrowedSkywalkCompactSupportKernel.lean:42:0: 'ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.endpoints' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/BorrowedSkywalkCompactSupportKernel.lean:43:0: 'ECDSAAdd.Arithmetic.BorrowedSkywalkCompactSupport.kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3909/4011] Replayed ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
+ℹ [3914/4011] Replayed ECDSAAdd.Arithmetic.MixedTranscriptMultiplication
 info: ECDSAAdd/Arithmetic/MixedTranscriptMultiplication.lean:111:0: 'ECDSAAdd.Arithmetic.mixedTranscriptFieldMultiplication_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MixedTranscriptMultiplication.lean:112:0: 'ECDSAAdd.Arithmetic.mixedTranscriptFieldMultiplication_counts' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/MixedTranscriptMultiplication.lean:114:0: 'ECDSAAdd.Arithmetic.mixedTranscriptFieldMultiplication' depends on axioms: [propext]
-ℹ [3912/4011] Replayed ECDSAAdd.Arithmetic.CompactPointArithmeticSupport
+ℹ [3917/4011] Replayed ECDSAAdd.Arithmetic.CompactPointArithmeticSupport
 info: ECDSAAdd/Arithmetic/CompactPointArithmeticSupport.lean:78:0: 'ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_compact_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/CompactPointArithmeticSupport.lean:79:0: 'ECDSAAdd.Arithmetic.pointDirectSkywalkArithmetic_compact_resources' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3913/4011] Replayed ECDSAAdd.Arithmetic.CompactIntegratedAudit
+ℹ [3918/4011] Replayed ECDSAAdd.Arithmetic.CompactIntegratedAudit
 info: ECDSAAdd/Arithmetic/CompactIntegratedAudit.lean:23:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.work' does not depend on any axioms
 info: ECDSAAdd/Arithmetic/CompactIntegratedAudit.lean:24:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.scalarND' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompactIntegratedAudit.lean:25:0: 'ECDSAAdd.Arithmetic.BalancedCircuit.seedND' depends on axioms: [propext, Quot.sound]
@@ -1847,187 +1887,147 @@ info: ECDSAAdd/Arithmetic/CompactIntegratedAudit.lean:202:0: 'ECDSAAdd.Arithmeti
 info: ECDSAAdd/Arithmetic/CompactIntegratedAudit.lean:203:0: 'ECDSAAdd.Arithmetic.BalancedSharedFieldSupport.compactSubsetShared' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3933/4011] Replayed ECDSAAdd.Framework.RecordedSyntax
+ℹ [3938/4011] Replayed ECDSAAdd.Framework.RecordedSyntax
 info: ECDSAAdd/Framework/RecordedSyntax.lean:142:0: 'ECDSAAdd.embedRecorded_counts' depends on axioms: [propext]
 info: ECDSAAdd/Framework/RecordedSyntax.lean:143:0: 'ECDSAAdd.recordedSources_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3934/4011] Replayed ECDSAAdd.Framework.RecordedSemantics
+ℹ [3939/4011] Replayed ECDSAAdd.Framework.RecordedSemantics
 info: ECDSAAdd/Framework/RecordedSemantics.lean:109:0: 'ECDSAAdd.runWithTape_embedRecorded' depends on axioms: [propext]
 info: ECDSAAdd/Framework/RecordedSemantics.lean:110:0: 'ECDSAAdd.runWithTape_append' depends on axioms: [propext]
 info: ECDSAAdd/Framework/RecordedSemantics.lean:111:0: 'ECDSAAdd.runWithTape_preserves_outside' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3935/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailCarryProgram
+ℹ [3940/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailCarryProgram
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProgram.lean:74:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.counts' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProgram.lean:75:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.support_some' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3936/4011] Replayed ECDSAAdd.Arithmetic.RecordedCarryPhaseProof
+ℹ [3941/4011] Replayed ECDSAAdd.Arithmetic.RecordedCarryPhaseProof
 info: ECDSAAdd/Arithmetic/RecordedCarryPhaseProof.lean:127:0: 'ECDSAAdd.Arithmetic.RecordedCarryPhase.correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedCarryPhaseProof.lean:128:0: 'ECDSAAdd.Arithmetic.RecordedCarryPhase.recorded_Z_cancel' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedCarryPhaseProof.lean:129:0: 'ECDSAAdd.Arithmetic.RecordedCarryPhase.counts' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedCarryPhaseProof.lean:130:0: 'ECDSAAdd.Arithmetic.RecordedCarryPhase.support' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3937/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailCarryProof
+ℹ [3942/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailCarryProof
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProof.lean:185:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.carryStep_some' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProof.lean:186:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.retire_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProof.lean:187:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.correct_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailCarryProof.lean:188:0: 'ECDSAAdd.Arithmetic.RecordedRailCarry.correct_none' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3938/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProgram
+ℹ [3943/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProgram
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProgram.lean:68:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.terminal_counts' depends on axioms: [propext]
-ℹ [3939/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleTerminalProof
+ℹ [3944/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleTerminalProof
 info: ECDSAAdd/Arithmetic/RecordedRailRippleTerminalProof.lean:117:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.terminal_state_some' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleTerminalProof.lean:118:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.terminal_value_some' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleTerminalProof.lean:119:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.terminal_value_none' depends on axioms: [propext, Quot.sound]
-ℹ [3940/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleInvariant
+ℹ [3945/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleInvariant
 info: ECDSAAdd/Arithmetic/RecordedRailRippleInvariant.lean:83:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.carryFn_eq' does not depend on any axioms
 info: ECDSAAdd/Arithmetic/RecordedRailRippleInvariant.lean:84:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.unsigned_step' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3941/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleResources
+ℹ [3946/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleResources
 info: ECDSAAdd/Arithmetic/RecordedRailRippleResources.lean:67:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.ripple_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3942/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofFrame
+ℹ [3947/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofFrame
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofFrame.lean:121:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.phaseDebt_congr' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofFrame.lean:122:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.carryStep_state' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofFrame.lean:123:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.oldCorrection_state' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofFrame.lean:124:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.unwind_state' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3943/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofLayout
+ℹ [3948/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofLayout
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofLayout.lean:102:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.step_layout' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofLayout.lean:103:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.computed_head' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofLayout.lean:104:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.unwound_head' depends on axioms: [propext]
-ℹ [3944/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedProgram
+ℹ [3949/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedProgram
 info: ECDSAAdd/Arithmetic/RecordedRailVentedProgram.lean:127:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.aligned_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedProgram.lean:128:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedProgram.lean:129:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.support' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3945/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedFrame
+ℹ [3950/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedFrame
 info: ECDSAAdd/Arithmetic/RecordedRailVentedFrame.lean:127:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.top_state' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedFrame.lean:128:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.top_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedFrame.lean:129:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.step_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3946/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedProof
+ℹ [3951/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedProof
 info: ECDSAAdd/Arithmetic/RecordedRailVentedProof.lean:124:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.vented_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3947/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedSpec
+ℹ [3952/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailVentedSpec
 info: ECDSAAdd/Arithmetic/RecordedRailVentedSpec.lean:118:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.correct' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedSpec.lean:119:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.wide_mod' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailVentedSpec.lean:120:0: 'ECDSAAdd.Arithmetic.RecordedRailVented.site_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3948/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofBase
+ℹ [3953/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProofBase
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofBase.lean:77:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.one_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProofBase.lean:78:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.two_frame' depends on axioms: [propext, Quot.sound]
-ℹ [3949/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProof
+ℹ [3954/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleProof
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProof.lean:172:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.ripple_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleProof.lean:173:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.unsignedContract_of_shape' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3950/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleLayout
+ℹ [3955/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleLayout
 info: ECDSAAdd/Arithmetic/RecordedRailRippleLayout.lean:132:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.aligned_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleLayout.lean:133:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.ripple_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleLayout.lean:134:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.ripple_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3951/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleCertificate
+ℹ [3956/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailRippleCertificate
 info: ECDSAAdd/Arithmetic/RecordedRailRippleCertificate.lean:29:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.unsignedContract_of_aligned' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailRippleCertificate.lean:30:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.certificate256' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3952/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferProgram
+ℹ [3957/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferProgram
 info: ECDSAAdd/Arithmetic/RecordedRailDeferProgram.lean:83:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.advance_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3953/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferBareProof
+ℹ [3958/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferBareProof
 info: ECDSAAdd/Arithmetic/RecordedRailDeferBareProof.lean:46:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.drop_head_getD' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferBareProof.lean:47:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.bare_state' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferBareProof.lean:48:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.advance_state' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3954/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferTwoLayout
+ℹ [3959/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferTwoLayout
 info: ECDSAAdd/Arithmetic/RecordedRailDeferTwoLayout.lean:98:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.two_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferTwoLayout.lean:99:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.concatenate_value' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferTwoLayout.lean:100:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.first_carry' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3955/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferTwoProof
+ℹ [3960/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferTwoProof
 info: ECDSAAdd/Arithmetic/RecordedRailDeferTwoProof.lean:137:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.two_correct' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3956/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferRolling
+ℹ [3961/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferRolling
 info: ECDSAAdd/Arithmetic/RecordedRailDeferRolling.lean:136:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.prefix_boundary' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferRolling.lean:137:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.advance_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3957/4011] Replayed ECDSAAdd.Math.RecordedCarryWordMirror
+ℹ [3962/4011] Replayed ECDSAAdd.Math.RecordedCarryWordMirror
 info: ECDSAAdd/Math/RecordedCarryWordMirror.lean:68:0: 'ECDSAAdd.Math.RecordedCarryWordMirror.mirror_carries' depends on axioms: [propext]
 info: ECDSAAdd/Math/RecordedCarryWordMirror.lean:69:0: 'ECDSAAdd.Math.RecordedCarryWordMirror.mirror_sum' depends on axioms: [propext]
 info: ECDSAAdd/Math/RecordedCarryWordMirror.lean:70:0: 'ECDSAAdd.Math.RecordedCarryWordMirror.mirror_debt' depends on axioms: [propext]
-ℹ [3958/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailMirrorDebt
+ℹ [3963/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailMirrorDebt
 info: ECDSAAdd/Arithmetic/RecordedRailMirrorDebt.lean:34:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.phaseDebt_word' depends on axioms: [propext]
 info: ECDSAAdd/Arithmetic/RecordedRailMirrorDebt.lean:35:0: 'ECDSAAdd.Arithmetic.RecordedRailRipple.mirror_phaseDebt' depends on axioms: [propext]
-ℹ [3959/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferFinish
+ℹ [3964/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferFinish
 info: ECDSAAdd/Arithmetic/RecordedRailDeferFinish.lean:97:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.wrapped_result' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferFinish.lean:98:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.finish_state' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3960/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferFinishPrefix
+ℹ [3965/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferFinishPrefix
 info: ECDSAAdd/Arithmetic/RecordedRailDeferFinishPrefix.lean:127:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.finish_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3961/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferResources
+ℹ [3966/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferResources
 info: ECDSAAdd/Arithmetic/RecordedRailDeferResources.lean:74:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.forward32_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferResources.lean:75:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.ordinals_earlier' does not depend on any axioms
-ℹ [3962/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferPrefixLayout
+ℹ [3967/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferPrefixLayout
 info: ECDSAAdd/Arithmetic/RecordedRailDeferPrefixLayout.lean:87:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.prepare_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3963/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferPrefixStep
+ℹ [3968/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferPrefixStep
 info: ECDSAAdd/Arithmetic/RecordedRailDeferPrefixStep.lean:72:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.initial_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferPrefixStep.lean:73:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.step_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3964/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferEight
+ℹ [3969/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferEight
 info: ECDSAAdd/Arithmetic/RecordedRailDeferEight.lean:111:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.correct32' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3966/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyWord
+ℹ [3971/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyWord
 info: ECDSAAdd/Arithmetic/RecordedRailApplyWord.lean:159:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.mapped_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailApplyWord.lean:160:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.carry_overflow' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3967/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyDebt
+ℹ [3972/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyDebt
 info: ECDSAAdd/Arithmetic/RecordedRailApplyDebt.lean:82:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.sparse_debt' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailApplyDebt.lean:83:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.debt_forward' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3968/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyLayout
+ℹ [3973/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyLayout
 info: ECDSAAdd/Arithmetic/RecordedRailApplyLayout.lean:70:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.forward_ready' depends on axioms: [propext, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailApplyLayout.lean:71:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.flip_state' depends on axioms: [propext, Quot.sound]
-ℹ [3969/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyProof
+ℹ [3974/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyProof
 info: ECDSAAdd/Arithmetic/RecordedRailApplyProof.lean:111:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.correct_pair' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3970/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferSupport
+ℹ [3975/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailDeferSupport
 info: ECDSAAdd/Arithmetic/RecordedRailDeferSupport.lean:114:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.forward32_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailDeferSupport.lean:115:0: 'ECDSAAdd.Arithmetic.RecordedRailDefer.forward32_site_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3971/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyResources
+ℹ [3976/4011] Replayed ECDSAAdd.Arithmetic.RecordedRailApplyResources
 info: ECDSAAdd/Arithmetic/RecordedRailApplyResources.lean:99:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.pair_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/RecordedRailApplyResources.lean:100:0: 'ECDSAAdd.Arithmetic.RecordedRailApply.pair_site_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3972/4011] Replayed ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore
+ℹ [3977/4011] Replayed ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore
 info: ECDSAAdd/Arithmetic/TerminalMappedFieldPoolRestore.lean:70:0: 'ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_pool_frame' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/TerminalMappedFieldPoolRestore.lean:71:0: 'ECDSAAdd.Arithmetic.MappedCompressed.fieldTrimSegment_reverse_pool' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3973/4011] Replayed ECDSAAdd.Arithmetic.NearestLiftMath
+ℹ [3978/4011] Replayed ECDSAAdd.Arithmetic.NearestLiftMath
 info: ECDSAAdd/Arithmetic/NearestLiftMath.lean:32:0: 'ECDSAAdd.Arithmetic.NearestLift.correction' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NearestLiftMath.lean:33:0: 'ECDSAAdd.Arithmetic.NearestLift.secp_threshold_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3975/4011] Built ECDSAAdd.Arithmetic.EntryInverseFirstGroupFrame (3.5s)
-info: ECDSAAdd/Arithmetic/EntryInverseFirstGroupFrame.lean:161:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverseBody_support' depends on axioms: [propext,
+ℹ [3980/4011] Built ECDSAAdd.Arithmetic.PenultimateMappedInverse (3.6s)
+info: ECDSAAdd/Arithmetic/PenultimateMappedInverse.lean:126:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_inverse_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: ECDSAAdd/Arithmetic/PenultimateMappedInverse.lean:127:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_inverse_spec' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-info: ECDSAAdd/Arithmetic/EntryInverseFirstGroupFrame.lean:162:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.firstGroup_inverse_step' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-ℹ [3976/4011] Built ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrimInverse (3.9s)
-info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:145:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalReplay_inverse_spec' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:146:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.terminalFieldTrimSegment_inverse_spec' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:147:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_resources' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:148:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_support' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/EntryMappedFieldSegmentTrimInverse.lean:149:0: 'ECDSAAdd.Arithmetic.EntryMappedFieldSegmentTrim.inverse_entry_saving' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-ℹ [3977/4011] Built ECDSAAdd.Arithmetic.PenultimateMappedProgram (3.3s)
-info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:59:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:60:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedProgram.lean:61:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.saving' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3978/4011] Built ECDSAAdd.Arithmetic.PenultimateMappedResources (3.7s)
-info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:49:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_support_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:50:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support_sub' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedResources.lean:51:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_support' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3979/4011] Built ECDSAAdd.Arithmetic.PenultimateMappedForward (4.4s)
-info: ECDSAAdd/Arithmetic/PenultimateMappedForward.lean:278:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.forward_groups_payload' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedForward.lean:279:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_forward_spec' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-ℹ [3980/4011] Built ECDSAAdd.Arithmetic.PenultimateMappedInverse (58s)
-info: ECDSAAdd/Arithmetic/PenultimateMappedInverse.lean:124:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.replay_inverse_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-info: ECDSAAdd/Arithmetic/PenultimateMappedInverse.lean:125:0: 'ECDSAAdd.Arithmetic.PenultimateMapped.fieldSegment_inverse_spec' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-ℹ [3981/4011] Built ECDSAAdd.Arithmetic.EntryForwardSelectedFieldSegment (4.2s)
+ℹ [3981/4011] Built ECDSAAdd.Arithmetic.EntryForwardSelectedFieldSegment (3.3s)
 info: ECDSAAdd/Arithmetic/EntryForwardSelectedFieldSegment.lean:54:0: 'ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_support' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
@@ -2037,28 +2037,28 @@ info: ECDSAAdd/Arithmetic/EntryForwardSelectedFieldSegment.lean:55:0: 'ECDSAAdd.
 info: ECDSAAdd/Arithmetic/EntryForwardSelectedFieldSegment.lean:56:0: 'ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_spec' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3982/4011] Built ECDSAAdd.Arithmetic.MappedCompressedStageSupport (3.7s)
+ℹ [3982/4011] Built ECDSAAdd.Arithmetic.MappedCompressedStageSupport (3.6s)
 info: ECDSAAdd/Arithmetic/MappedCompressedStageSupport.lean:188:0: 'ECDSAAdd.Arithmetic.MappedCompressed.integer_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedStageSupport.lean:189:0: 'ECDSAAdd.Arithmetic.MappedCompressed.controlled_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedStageSupport.lean:190:0: 'ECDSAAdd.Arithmetic.MappedCompressed.total_site_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3983/4011] Built ECDSAAdd.Arithmetic.EntryForwardSelectedPoolRestore (4.1s)
+ℹ [3983/4011] Built ECDSAAdd.Arithmetic.EntryForwardSelectedPoolRestore (3.9s)
 info: ECDSAAdd/Arithmetic/EntryForwardSelectedPoolRestore.lean:70:0: 'ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_pool_frame' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
 info: ECDSAAdd/Arithmetic/EntryForwardSelectedPoolRestore.lean:71:0: 'ECDSAAdd.Arithmetic.MappedCompressed.selectedFieldSegment_reverse_pool' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3984/4011] Built ECDSAAdd.Arithmetic.MappedCompressedStageCounts (3.7s)
+ℹ [3984/4011] Built ECDSAAdd.Arithmetic.MappedCompressedStageCounts (3.5s)
 info: ECDSAAdd/Arithmetic/MappedCompressedStageCounts.lean:78:0: 'ECDSAAdd.Arithmetic.MappedCompressed.mappedReplay_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedStageCounts.lean:79:0: 'ECDSAAdd.Arithmetic.MappedCompressed.integer_tail_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedStageCounts.lean:80:0: 'ECDSAAdd.Arithmetic.MappedCompressed.kernel_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedStageCounts.lean:81:0: 'ECDSAAdd.Arithmetic.MappedCompressed.controlled_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3985/4011] Built ECDSAAdd.Arithmetic.MappedCompressedCallerStates (3.9s)
+ℹ [3985/4011] Built ECDSAAdd.Arithmetic.MappedCompressedCallerStates (3.7s)
 info: ECDSAAdd/Arithmetic/MappedCompressedCallerStates.lean:173:0: 'ECDSAAdd.Arithmetic.MappedCompressed.kernel_states' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3986/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerProgram (3.4s)
+ℹ [3986/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerProgram (3.2s)
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerProgram.lean:90:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.tail_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerProgram.lean:91:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3987/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport (3.6s)
+ℹ [3987/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport (3.5s)
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerSupport.lean:67:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.prefix_slots' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerSupport.lean:68:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_kernel_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerSupport.lean:69:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_controlled_support' depends on axioms: [propext,
@@ -2067,16 +2067,16 @@ info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerSupport.lean:69:0: 'ECDSAAdd.Ar
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerSupport.lean:70:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.caller_total_site_bound' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-ℹ [3988/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerStates (4.4s)
+ℹ [3988/4011] Built ECDSAAdd.Arithmetic.NativeFirstDirectCallerStates (4.1s)
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerStates.lean:196:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.kernel_states' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/NativeFirstDirectCallerStates.lean:197:0: 'ECDSAAdd.Arithmetic.NativeFirstDirect.kernel_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3989/4011] Built ECDSAAdd.Arithmetic.MappedCompressedCallerRun (3.5s)
+ℹ [3989/4011] Built ECDSAAdd.Arithmetic.MappedCompressedCallerRun (3.3s)
 info: ECDSAAdd/Arithmetic/MappedCompressedCallerRun.lean:24:0: 'ECDSAAdd.Arithmetic.MappedCompressed.kernel_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3990/4011] Built ECDSAAdd.Arithmetic.MappedCompressedControlledSpec (3.7s)
+ℹ [3990/4011] Built ECDSAAdd.Arithmetic.MappedCompressedControlledSpec (3.5s)
 info: ECDSAAdd/Arithmetic/MappedCompressedControlledSpec.lean:123:0: 'ECDSAAdd.Arithmetic.MappedCompressed.controlled_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3991/4011] Built ECDSAAdd.Arithmetic.MappedCompressedPointTransfer (3.6s)
+ℹ [3991/4011] Built ECDSAAdd.Arithmetic.MappedCompressedPointTransfer (3.4s)
 info: ECDSAAdd/Arithmetic/MappedCompressedPointTransfer.lean:157:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointTransfer_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3992/4011] Built ECDSAAdd.Arithmetic.MappedCompressedPointArithmetic (3.9s)
+ℹ [3992/4011] Built ECDSAAdd.Arithmetic.MappedCompressedPointArithmetic (3.6s)
 info: ECDSAAdd/Arithmetic/MappedCompressedPointArithmetic.lean:128:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointPlacement' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/MappedCompressedPointArithmetic.lean:129:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointCompressedArithmetic_correct' depends on axioms: [propext,
  Classical.choice,
@@ -2087,30 +2087,30 @@ info: ECDSAAdd/Arithmetic/MappedCompressedPointArithmetic.lean:130:0: 'ECDSAAdd.
 info: ECDSAAdd/Arithmetic/MappedCompressedPointArithmetic.lean:131:0: 'ECDSAAdd.Arithmetic.MappedCompressed.pointCompressedArithmetic_counts' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
-✔ [3993/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogProgram (3.0s)
-✔ [3994/4011] Built ECDSAAdd.Arithmetic.ControlledPointLayout (3.5s)
-ℹ [3995/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogResources (4.8s)
+✔ [3993/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogProgram (2.9s)
+✔ [3994/4011] Built ECDSAAdd.Arithmetic.ControlledPointLayout (3.4s)
+ℹ [3995/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogResources (4.6s)
 info: ECDSAAdd/Arithmetic/CompressedPointDialogResources.lean:192:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.finite_counts' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointDialogResources.lean:193:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.finite_support' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointDialogResources.lean:194:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.finite_qubits' depends on axioms: [propext, Classical.choice, Quot.sound]
-ℹ [3996/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogSteps (5.3s)
+ℹ [3996/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogSteps (5.0s)
 info: ECDSAAdd/Arithmetic/CompressedPointDialogSteps.lean:119:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.generic_true' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointDialogSteps.lean:120:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.boundary_generic' depends on axioms: [propext, Classical.choice, Quot.sound]
-✔ [3997/4011] Built ECDSAAdd.Arithmetic.PointSelectors (3.5s)
+✔ [3997/4011] Built ECDSAAdd.Arithmetic.PointSelectors (3.4s)
 ✔ [3998/4011] Built ECDSAAdd.Arithmetic.SelectedPointOutput (3.3s)
-✔ [3999/4011] Built ECDSAAdd.Arithmetic.ControlledPointOutput (3.6s)
-✔ [4000/4011] Built ECDSAAdd.Arithmetic.ControlledPointStages (4.3s)
-✔ [4001/4011] Built ECDSAAdd.Arithmetic.ControlledPointOutSpec (3.3s)
-ℹ [4002/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogSpec (17s)
+✔ [3999/4011] Built ECDSAAdd.Arithmetic.ControlledPointOutput (3.5s)
+✔ [4000/4011] Built ECDSAAdd.Arithmetic.ControlledPointStages (4.1s)
+✔ [4001/4011] Built ECDSAAdd.Arithmetic.ControlledPointOutSpec (3.1s)
+ℹ [4002/4011] Built ECDSAAdd.Arithmetic.CompressedPointDialogSpec (16s)
 info: ECDSAAdd/Arithmetic/CompressedPointDialogSpec.lean:219:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.finite_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointDialogSpec.lean:220:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.full_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 info: ECDSAAdd/Arithmetic/CompressedPointDialogSpec.lean:221:0: 'ECDSAAdd.Arithmetic.CompressedPointDialog.add_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 ✔ [4003/4011] Built ECDSAAdd.Arithmetic.PointDialogIntegration (3.1s)
-✔ [4004/4011] Built ECDSAAdd.Arithmetic.ControlledPointAddSpec (3.3s)
-✔ [4005/4011] Built ECDSAAdd.Arithmetic.PointDialogResources (3.3s)
-✔ [4006/4011] Built ECDSAAdd.Arithmetic.ControlledPointSupport (7.6s)
-✔ [4007/4011] Built ECDSAAdd.Arithmetic.ControlledPointResources (3.0s)
-✔ [4008/4011] Built ECDSAAdd.Submissions.Skywalk (3.1s)
-✔ [4009/4011] Built ECDSAAdd.Submissions (2.0s)
-✔ [4010/4011] Built ECDSAAdd (3.0s)
+✔ [4004/4011] Built ECDSAAdd.Arithmetic.ControlledPointAddSpec (3.2s)
+✔ [4005/4011] Built ECDSAAdd.Arithmetic.PointDialogResources (3.2s)
+✔ [4006/4011] Built ECDSAAdd.Arithmetic.ControlledPointSupport (7.3s)
+✔ [4007/4011] Built ECDSAAdd.Arithmetic.ControlledPointResources (2.0s)
+✔ [4008/4011] Built ECDSAAdd.Submissions.Skywalk (2.0s)
+✔ [4009/4011] Built ECDSAAdd.Submissions (2.9s)
+✔ [4010/4011] Built ECDSAAdd (2.9s)
 Build completed successfully (4011 jobs).

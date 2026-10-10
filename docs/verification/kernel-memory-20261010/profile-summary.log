@@ -20,3 +20,7 @@ Forward generic helpers (dual-forward-generic-final.log)
 Inverse generic transport (dual-inverse-generic.log)
         5.44 real         1.63 user         3.29 sys
           3239854080  maximum resident set size
+
+Penultimate inverse generic prefix (dual-penultimate-generic.log)
+        5.86 real         1.87 user         2.72 sys
+          3251535872  maximum resident set size
