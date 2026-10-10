@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.NegativeInit
 import ECDSAAdd.Math.ModularDoubling.ModularHalving
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 theorem negativeInit_value (q R : Nat) (hq : 0<q) :
     (q-(R%q))%q = (-(R : ZMod q)).val := by
@@ -34,9 +35,10 @@ theorem negativeInit_spec (L : ModLayout) (q : Nat) (src temp dst : List Wire)
     (hs : src.length=L.width+1) (ht : temp.length=L.width+1) (hd : dst.length=L.width+1)
     (X O : Nat) (hq0 : 0<q) (hq : q<2^L.width) (hx : X<2*q) :
     {{ src=X, temp=0, dst=O, L.wires=0 }} negativeInit L q src temp dst
-    {{ src=X, temp=0, dst=(O ^^^ (-(X : ZMod q)).val), L.wires=0 }} := by
-  intro s m h
+    {{ src=X, temp=0, dst=(O ^^^ (-(X : ZMod q)).val), L.wires=0 }} := Proof
+  For every s, m assuming h
   simp only [Holds.holds] at h ⊢
+  { (q-(X%q))%q = (-(X : ZMod q)).val } as modularNegative by (negativeInit_value q X hq0);
   have hh := List.nodup_append'.mp hnd
   have htd := (List.nodup_append'.mp hh.1).2.2
   have hsdis : src.Disjoint dst := List.disjoint_left.mpr (fun _ ha hb =>
@@ -50,7 +52,15 @@ theorem negativeInit_spec (L : ModLayout) (q : Nat) (src temp dst : List Wire)
   have keep (r : List Wire) (hr : r.Disjoint dst) :
       regValue r (run (negativeInit L q src temp dst) m s).basis=regValue r s.basis :=
     regValue_congr _ _ _ (fun w hm => he w (List.disjoint_left.mp hr hm))
-  exact ⟨hp,⟨⟨(keep src hsdis).trans h.1.1.1,(keep temp htdis).trans h.1.1.2⟩,
-    by simpa [h.1.2,h.1.1.1,negativeInit_value q X hq0] using hz⟩,(keep L.wires hwdis).trans h.2⟩
+  { regValue dst (run (negativeInit L q src temp dst) m s).basis = (O ^^^ (-(X : ZMod q)).val)
+  } as output by (by simpa only [h.1.2,h.1.1.1,modularNegative] using hz);
+  conclude {
+    (run (negativeInit L q src temp dst) m s).phase = s.phase ∧
+    (((regValue src (run (negativeInit L q src temp dst) m s).basis = X ∧
+       regValue temp (run (negativeInit L q src temp dst) m s).basis = 0) ∧
+       regValue dst (run (negativeInit L q src temp dst) m s).basis = (O ^^^ (-(X : ZMod q)).val)) ∧
+       regValue L.wires (run (negativeInit L q src temp dst) m s).basis = 0)
+  } by ⟨hp,⟨⟨(keep src hsdis).trans h.1.1.1,(keep temp htdis).trans h.1.1.2⟩,output⟩,
+    (keep L.wires hwdis).trans h.2⟩;
 
 end ECDSAAdd.Arithmetic

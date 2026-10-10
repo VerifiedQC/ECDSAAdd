@@ -15,10 +15,12 @@ theorem shiftedRemainder {value remainder modulus : Nat}
 
 open Lean
 
-scoped syntax "Proof" ppLine Lean.Parser.Tactic.tacticSeq : term
+-- Use an indented sequence: a leading { proposition } is an assertion, not
+-- Lean's alternative syntax for a brace-delimited block of tactics.
+scoped syntax "Proof" ppLine Lean.Parser.Tactic.tacticSeq1Indented : term
 scoped syntax "We " "split " "on " term ppLine
-  "Case " ident " => " Lean.Parser.Tactic.tacticSeq ppLine
-  "Otherwise " ident " => " Lean.Parser.Tactic.tacticSeq : tactic
+  "Case " ident " => " Lean.Parser.Tactic.tacticSeq1Indented ppLine
+  "Otherwise " ident " => " Lean.Parser.Tactic.tacticSeq1Indented : tactic
 scoped syntax "By " "definition " "[" term,* "]" " using " "[" term,* "]"
   " we " "get " ident " : " term : tactic
 scoped syntax "From " "[" term,* "]" " by " "arithmetic "
@@ -30,10 +32,17 @@ scoped syntax "By " "the " &"shifted " &"remainder " &"rule " "using " term ", "
 scoped syntax "From " "[" term,* "]" " we " "conclude " term : tactic
 
 macro_rules
-  | `(Proof $body:tacticSeq) => `(by $body:tacticSeq)
+  | `(Proof $body:tacticSeq1Indented) => do
+    let sequence : TSyntax ``Lean.Parser.Tactic.tacticSeq :=
+      ⟨Syntax.node SourceInfo.none ``Lean.Parser.Tactic.tacticSeq #[body.raw]⟩
+    `(by $sequence:tacticSeq)
   | `(tactic| We split on $condition:term
-      Case $yes:ident => $positive:tacticSeq
-      Otherwise $no:ident => $negative:tacticSeq) =>
+      Case $yes:ident => $positive:tacticSeq1Indented
+      Otherwise $no:ident => $negative:tacticSeq1Indented) => do
+    let positive : TSyntax ``Lean.Parser.Tactic.tacticSeq :=
+      ⟨Syntax.node SourceInfo.none ``Lean.Parser.Tactic.tacticSeq #[positive.raw]⟩
+    let negative : TSyntax ``Lean.Parser.Tactic.tacticSeq :=
+      ⟨Syntax.node SourceInfo.none ``Lean.Parser.Tactic.tacticSeq #[negative.raw]⟩
     `(tactic| solve
       | by_cases $yes : $condition
         · $positive:tacticSeq
@@ -175,6 +184,10 @@ scoped syntax "{" term "}" " by " &"the " &"small " &"remainder " &"rule" ";" : 
 scoped syntax "{" term "}" " by " &"definition" ";" : equationFact
 scoped syntax "{" term "}" " by " &"one " &"subtraction " "using " term:max
   &"and " &"the " &"branch " &"condition" ";" : equationFact
+scoped syntax "{" term "}" " by " &"the " &"small " &"remainder " &"rule "
+  "using " "[" term,* "]" ";" : equationFact
+scoped syntax "{" term "}" " by " &"the " &"shifted " &"remainder " &"rule "
+  "using " "[" term,* "]" &"and " &"the " &"branch " &"condition" ";" : equationFact
 
 /-- Each case proves explicit facts, then closes the original goal with them. -/
 scoped syntax "if " "(" term ")" " {"
@@ -197,7 +210,24 @@ private def equationStep (step : TSyntax `equationFact) (branch : Ident) :
     MacroM (Ident × TSyntax `tactic) := do
   let name := mkIdent (← withFreshMacroScope (Macro.addMacroScope `fact))
   let branchRule ← `(Lean.Parser.Tactic.simpLemma| $branch:term)
+  let citedArithmetic (facts : Array Term) : MacroM (TSyntax `tactic) := do
+    let names ← facts.mapM fun _ => withFreshMacroScope (Macro.addMacroScope `cited)
+    let ids := names.map mkIdent
+    let premises ← (ids.zip facts).mapM fun (id, fact) =>
+      `(tactic| have $id := (fun {p : Prop} (evidence : p) => evidence) $fact)
+    `(tactic| (
+      ($[$premises:tactic];*)
+      clear * - $branch:ident $ids:ident*
+      omega))
   let proof ← match step with
+    | `(equationFact| { $claim:term } by the small remainder rule using [$facts,*];) => do
+      let bounds ← citedArithmetic facts.getElems
+      `(tactic| have $name : $claim := by exact Nat.mod_eq_of_lt (by $bounds:tactic))
+    | `(equationFact| { $claim:term }
+        by the shifted remainder rule using [$facts,*] and the branch condition;) => do
+      let bounds ← citedArithmetic facts.getElems
+      `(tactic| have $name : $claim := by
+        exact shiftedRemainder (by $bounds:tactic) (by $bounds:tactic))
     | `(equationFact| { $claim:term } by the small remainder rule;) =>
       `(tactic| have $name : $claim := by
         clear * - $branch:ident
@@ -242,5 +272,23 @@ macro_rules
         | by_cases $branch : $condition
           · $yes:tactic
           · $no:tactic)
+
+/-- Named, checked intermediate propositions for state and Hoare proofs. -/
+scoped syntax (priority := high) "{" term "}" &"as " ident " by " term ";" : tactic
+scoped syntax &"conclude" " {" term "}" " by " term ";" : tactic
+scoped syntax &"conclude" " {" term "}" " using " "[" term,* "]" ";" : tactic
+scoped syntax &"For " &"every " ident,+ &"assuming " ident : tactic
+
+open scoped ECDSAAdd.ProofLanguage
+
+macro_rules
+  | `(tactic| { $claim:term } as $name:ident by $proof:term;) =>
+    `(tactic| have $name : $claim := by solve | exact $proof)
+  | `(tactic| conclude { $claim:term } by $proof:term;) =>
+    `(tactic| solve | change $claim; exact $proof)
+  | `(tactic| conclude { $claim:term } using [$facts,*];) =>
+    `(tactic| solve | From [$facts,*] we conclude $claim)
+  | `(tactic| For every $names:ident,* assuming $precondition:ident) =>
+    `(tactic| intro $names:ident* $precondition:ident)
 
 end ECDSAAdd.ProofLanguage

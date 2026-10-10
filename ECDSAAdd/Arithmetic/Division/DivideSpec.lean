@@ -1,7 +1,9 @@
 import ECDSAAdd.Arithmetic.Division.DivideSteps
 import ECDSAAdd.Arithmetic.Division.DivideSupport
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 
 /-- 加减除法保留控制、分母、分子，清零全部工作位；只要求启用时分母非零。 -/
@@ -12,8 +14,9 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
        L.acc=(if B then (Z+(((D : Fp)⁻¹).val*E)%p)%p else Z),L.work=0 }}) ∧
     ({{ L.control=B,L.denominator=D,L.numerator=E,L.acc=Z,L.work=0 }} divideSub L
      {{ L.control=B,L.denominator=D,L.numerator=E,
-       L.acc=(if B then (Z+p-(((D : Fp)⁻¹).val*E)%p)%p else Z),L.work=0 }}) := by
+       L.acc=(if B then (Z+p-(((D : Fp)⁻¹).val*E)%p)%p else Z),L.work=0 }}) := Proof
   letI : NeZero p := ⟨by norm_num [p]⟩
+  -- Disabled division uses the safe denominator 1, so its inverse is always defined.
   let S := if B then D else 1
   let A := ((S : Fp)⁻¹).val
   have hp : p<2^256 := by norm_num [p]
@@ -23,17 +26,21 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
     · exact Nat.pos_of_ne_zero (hD0 ‹B=true›)
     · decide
   have hS : S<p := by dsimp [S]; split; exact hD; norm_num [p]
-  have hA : A<p := ZMod.val_lt _
+  { A < p } as inverseBound by (ZMod.val_lt _);
   have hscale := kaliski_montgomery_scale p S (by norm_num [p]) hp hS0 hS
     (Secp256k1.p_prime.coprime_iff_not_dvd.mpr (fun h => (Nat.not_le_of_lt hS) (Nat.le_of_dvd hS0 h)))
-  let ready := fun Z st =>
+  let clean := fun V st =>
+    (InverseValues L.inverseView (inverseValues D 0 0 0 0) st ∧ st L.control=B) ∧
+      (regValue L.numerator st=E ∧ regValue L.acc st=V)
+  let ready := fun V st =>
     (InverseValues L.inverseView (inverseValues D p S 1 0) st ∧ st L.control=B) ∧
-      (regValue L.numerator st=E ∧ regValue L.acc st=Z)
-  let prepared := fun Z st =>
+      (regValue L.numerator st=E ∧ regValue L.acc st=V)
+  let prepared := fun V st =>
     InverseScaledMiddle L.inner p (kaliskiStep^[512] (kaliskiInit p S)) (kaliskiCodes 512 (kaliskiInit p S))
       (-((kaliskiStep^[512] (kaliskiInit p S)).r : Fp)).val st ∧
       (st L.control=B ∧ regValue L.denominator st=D ∧ regValue L.numerator st=E ∧
-        regValue L.acc st=Z ∧ regValue L.inner.out st=0)
+        regValue L.acc st=V ∧ regValue L.inner.out st=0)
+  -- These states retain the complete inverse history, not just the value A.
   have hinverse (V : Nat) :
       Triple (ready V) (inverseCompute L.inner p) (prepared V) ∧
       Triple (prepared V) (inverseUncompute L.inner p) (ready V) := by
@@ -74,39 +81,63 @@ private theorem divide_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.No
       simp [hi]
     constructor
     · intro s m h
-      have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
+      have hc := divideProduct_correct L hw hnd A E Z B inverseBound (hE.trans hp) hZ s m h.2.1
         (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
       exact finish _ _ s m h hc.1
     · intro s m h
-      have hc := divideProduct_correct L hw hnd A E Z B hA (hE.trans hp) hZ s m h.2.1
+      have hc := divideProduct_correct L hw hnd A E Z B inverseBound (hE.trans hp) hZ s m h.2.1
         (h.1.2.1.1.trans hscale) h.2.2.2.1 h.2.2.2.2.1 h.1.2.1.2.2
       exact finish _ _ s m h hc.2
-  have hload := (divideLoad_extra L hw hnd D E Z B).1
-  have hadd := (((hload.seq (hinverse Z).1).seq hproduct.1).seq
-    (hinverse (if B then (Z+(A*E)%p)%p else Z)).2).seq
-    (divideLoad_extra L hw hnd D E (if B then (Z+(A*E)%p)%p else Z) B).2
-  have hsub := (((hload.seq (hinverse Z).1).seq hproduct.2).seq
-    (hinverse (if B then (Z+p-(A*E)%p)%p else Z)).2).seq
-    (divideLoad_extra L hw hnd D E (if B then (Z+p-(A*E)%p)%p else Z) B).2
-  have heA : (if B then (Z+(A*E)%p)%p else Z)=(if B then (Z+(((D : Fp)⁻¹).val*E)%p)%p else Z) := by
-    cases B <;> simp [A,S]
-  have heS : (if B then (Z+p-(A*E)%p)%p else Z)=(if B then (Z+p-(((D : Fp)⁻¹).val*E)%p)%p else Z) := by
-    cases B <;> simp [A,S]
-  simp only [heA] at hadd
-  simp only [heS] at hsub
-  constructor
-  · apply Triple.conseq ?_ (by simpa only [divideAdd_program,List.append_assoc] using hadd) ?_
+
+  -- Both variants load S, compute A=S⁻¹, update acc, then restore and unload the inverse.
+  { Triple (clean Z) (divideLoad L) (ready Z) } as loadInputs by
+    (divideLoad_extra L hw hnd D E Z B).1;
+  { Triple (ready Z) (inverseCompute L.inner p) (prepared Z) } as prepareInverse by (hinverse Z).1;
+  { Triple (prepared Z) (montMulControlledAdd L.control L.multiply p)
+      (prepared (if B then (Z+(A*E)%p)%p else Z)) } as addProduct by hproduct.1;
+  { Triple (prepared Z) (montMulControlledSub L.control L.multiply p)
+      (prepared (if B then (Z+p-(A*E)%p)%p else Z)) } as subtractProduct by hproduct.2;
+  have restoreInverse (V : Nat) : Triple (prepared V) (inverseUncompute L.inner p) (ready V) :=
+    (hinverse V).2
+  have unloadInputs (V : Nat) : Triple (ready V) (divideUnload L) (clean V) :=
+    (divideLoad_extra L hw hnd D E V B).2
+
+  { Triple (clean Z) (divideAdd L) (clean (if B then (Z+(A*E)%p)%p else Z))
+  } as addition by (by
+    simpa only [divideAdd_program,List.append_assoc] using
+      ((((loadInputs.seq prepareInverse).seq addProduct).seq (restoreInverse _)).seq (unloadInputs _)));
+  { Triple (clean Z) (divideSub L) (clean (if B then (Z+p-(A*E)%p)%p else Z))
+  } as subtraction by (by
+    simpa only [divideSub_program,List.append_assoc] using
+      ((((loadInputs.seq prepareInverse).seq subtractProduct).seq (restoreInverse _)).seq (unloadInputs _)));
+
+  -- Enabled: A=D⁻¹. Disabled: neither result depends on A, and acc remains Z.
+  { (if B then (Z+(A*E)%p)%p else Z) =
+      (if B then (Z+(((D : Fp)⁻¹).val*E)%p)%p else Z)
+  } as additionValue by (by cases B <;> simp [A,S]);
+  { (if B then (Z+p-(A*E)%p)%p else Z) =
+      (if B then (Z+p-(((D : Fp)⁻¹).val*E)%p)%p else Z)
+  } as subtractionValue by (by cases B <;> simp [A,S]);
+
+  -- Translate only the register packaging; phase preservation is already part of each Triple.
+  have externalSpec (P : Program) (V : Nat) (hc : Triple (clean Z) P (clean V)) :
+      {{ L.control=B,L.denominator=D,L.numerator=E,L.acc=Z,L.work=0 }} P
+      {{ L.control=B,L.denominator=D,L.numerator=E,L.acc=V,L.work=0 }} := by
+    apply hc.conseq
     · intro st h
       exact ⟨⟨(divideZero_iff L D st).mpr ⟨h.1.1.1.2,h.2⟩,h.1.1.1.1⟩,h.1.1.2,h.1.2⟩
     · intro st h
       have hz := (divideZero_iff L D st).mp h.1.1
       exact ⟨⟨⟨⟨h.1.2,hz.1⟩,h.2.1⟩,h.2.2⟩,hz.2⟩
-  · apply Triple.conseq ?_ (by simpa only [divideSub_program,List.append_assoc] using hsub) ?_
-    · intro st h
-      exact ⟨⟨(divideZero_iff L D st).mpr ⟨h.1.1.1.2,h.2⟩,h.1.1.1.1⟩,h.1.1.2,h.1.2⟩
-    · intro st h
-      have hz := (divideZero_iff L D st).mp h.1.1
-      exact ⟨⟨⟨⟨h.1.2,hz.1⟩,h.2.1⟩,h.2.2⟩,hz.2⟩
+  conclude {
+    ({{ L.control=B,L.denominator=D,L.numerator=E,L.acc=Z,L.work=0 }} divideAdd L
+     {{ L.control=B,L.denominator=D,L.numerator=E,
+       L.acc=(if B then (Z+(((D : Fp)⁻¹).val*E)%p)%p else Z),L.work=0 }}) ∧
+    ({{ L.control=B,L.denominator=D,L.numerator=E,L.acc=Z,L.work=0 }} divideSub L
+     {{ L.control=B,L.denominator=D,L.numerator=E,
+       L.acc=(if B then (Z+p-(((D : Fp)⁻¹).val*E)%p)%p else Z),L.work=0 }})
+  } by ⟨by simpa only [additionValue] using externalSpec _ _ addition,
+        by simpa only [subtractionValue] using externalSpec _ _ subtraction⟩;
 
 /-- 受控除法模加，输入保持且全部工作区清零。 -/
 theorem divideAdd_spec (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)

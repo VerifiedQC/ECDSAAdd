@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseScaleState
 import ECDSAAdd.Framework.CertifiedTranslation
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open scoped CircuitDSL
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 从 Kaliski 初态 u=q、v=A、r=0、s=1、k=0 计算 L.a=A⁻¹ mod q，保留恢复历史。
 要求 0<A<q、A 与 q 互素，以及 inverseCompute_values 的模数/位宽/512 轮条件。 -/
@@ -92,7 +94,7 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     let cs := kaliskiCodes 512 (kaliskiInit q a)
     let N := (-(z.r : ZMod q)).val
     Triple (InverseInitial L q a) (inverseCompute L q) (InverseScaledMiddle L q z cs N) ∧
-    Triple (InverseScaledMiddle L q z cs N) (inverseUncompute L q) (InverseInitial L q a) := by
+    Triple (InverseScaledMiddle L q z cs N) (inverseUncompute L q) (InverseInitial L q a) := Proof
   dsimp only
   letI : NeZero q := ⟨by omega⟩
   let z := kaliskiStep^[512] (kaliskiInit q a)
@@ -101,19 +103,36 @@ theorem inverseCompute_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   have hwidth : L.first.data.width=L.arithmetic.width+1 := by
     simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl,hm]
   have hbnd := kaliski_register_bounds q a 512 (by omega) hcop
-  have hr : z.r<2*q := hbnd.2.2.1
-  have hN : N<q := ZMod.val_lt _
+  { z.r < 2*q } as coefficientBound by hbnd.2.2.1;
+  { N < q } as negativeBound by (ZMod.val_lt _);
   have hfirst := inverseFirst_values L hnd hn hw q a (by omega) (by simpa only [hl] using hq) hx hcop
-  have hneg : Triple (InverseMiddle L z cs 0) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
-      (InverseMiddle L z cs N) := by
+  have hscale := inverseScaling_values L hnd hl hw ha ht hm q ho hq z cs N negativeBound
+
+  -- Run 512 rounds, form N = -r mod q, then remove the power-of-two scaling.
+  -- Each intermediate state includes the history needed to reverse this computation.
+  { Triple (InverseInitial L q a) (kaliskiLoop L.first 0 L.records)
+      (InverseMiddle L z cs 0) } as rounds by hfirst.1;
+  { Triple (InverseMiddle L z cs 0) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
+      (InverseMiddle L z cs N) } as negate by (by
     simpa only [Nat.zero_xor] using inverseNegative_values L hnd hwidth
-      (by omega) (by omega) q z cs 0 (by omega) (by simpa only [hm] using hq) hr
-  have hnegback : Triple (InverseMiddle L z cs N) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
-      (InverseMiddle L z cs 0) := by
+      (by omega) (by omega) q z cs 0 (by omega) (by simpa only [hm] using hq) coefficientBound);
+  { Triple (InverseMiddle L z cs N) (L.scaling.prepare q)
+      (InverseScaledMiddle L q z cs N) } as scale by hscale.1;
+
+  -- Undo the scaling, XOR the same N a second time, then reverse the recorded rounds.
+  { Triple (InverseScaledMiddle L q z cs N) (L.scaling.restore q)
+      (InverseMiddle L z cs N) } as unscale by hscale.2;
+  { Triple (InverseMiddle L z cs N) (negativeInit L.arithmetic q L.middle.r L.temp L.a)
+      (InverseMiddle L z cs 0) } as clearInverse by (by
     simpa only [N,Nat.xor_self] using inverseNegative_values L hnd hwidth
-      (by omega) (by omega) q z cs N (by omega) (by simpa only [hm] using hq) hr
-  have hscale := inverseScaling_values L hnd hl hw ha ht hm q ho hq z cs N hN
-  exact ⟨(hfirst.1.seq hneg).seq hscale.1,(hscale.2.seq hnegback).seq hfirst.2⟩
+      (by omega) (by omega) q z cs N (by omega) (by simpa only [hm] using hq) coefficientBound);
+  { Triple (InverseMiddle L z cs 0) (kaliskiUnloop L.first 0 L.records)
+      (InverseInitial L q a) } as reverseRounds by hfirst.2;
+
+  conclude {
+    Triple (InverseInitial L q a) (inverseCompute L q) (InverseScaledMiddle L q z cs N) ∧
+    Triple (InverseScaledMiddle L q z cs N) (inverseUncompute L q) (InverseInitial L q a)
+  } by ⟨(rounds.seq negate).seq scale, (unscale.seq clearInverse).seq reverseRounds⟩;
 
 /-- The preparation boundary keeps the complete inverse history, not only its numeric value. -/
 theorem inverseValue_prepare (L : InverseLoopLayout) (q : Nat) (hnd : L.wires.Nodup)

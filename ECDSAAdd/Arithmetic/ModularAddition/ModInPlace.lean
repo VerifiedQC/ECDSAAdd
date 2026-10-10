@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModAddCoreSteps
 namespace ECDSAAdd.Arithmetic
 open Instr
 open scoped CircuitDSL
+open scoped ECDSAAdd.ProofLanguage
 
 /-- L.z ← (L.z+L.a) mod p，要求 0<p<2^n、L.a≤p、L.z<p。
 n 是目标低位寄存器 L.low 的长度，L.z=L.low++[L.high]。 -/
@@ -61,33 +62,43 @@ theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ L.a=A, L.z=Z, L.work=0 }} modAddCore L p
-    {{ L.a=A, L.z=(A+Z)%p, L.work=0 }} := by
+    {{ L.a=A, L.z=(A+Z)%p, L.work=0 }} := Proof
   have hn : 0<n := by
     by_contra h
     have he : n=0 := by omega
     rw [he] at hpn
     simp at hpn
     omega
-  have hsum : A+Z<2^(n+1) := by rw [Nat.pow_succ]; omega
+  { A+Z<2^(n+1) } as hsum by (by rw [Nat.pow_succ]; omega);
   have hwide : p<2^(n+1) := by rw [Nat.pow_succ]; omega
   let D := (A+Z+2^(n+1)-p)%2^(n+1)
   let R := (A+Z)%p
   let B := decide (A+Z<p)
-  have hfirst := (modAddCore_sum L n A Z hw hnd).seq
-    (modAddCore_reduce L n A ((A+Z)%2^(n+1)) p hw hnd hwide)
-  simp only [Nat.mod_eq_of_lt hsum] at hfirst
-  have hlow := modAddCore_low (A+Z) p n hp hpn (by omega)
-  have hborrow := (addReduction (A+Z) p n hp hpn (by omega)).1
-  have hlast : B = !decide (R<A) := by
+  { {{ L.a=A, L.z=Z, L.work=0 }} addInPlace L.a L.z L.carry L.cin
+      {{ L.a=A, L.z=A+Z, L.work=0 }} } as sum by (by
+    simpa only [Nat.mod_eq_of_lt hsum] using modAddCore_sum L n A Z hw hnd);
+  { {{ L.a=A, L.z=A+Z, L.work=0 }}
+      (xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++
+        xorConstant L.constant p)
+      {{ L.a=A, L.z=D, L.work=0 }} }
+    as subtractModulus by (modAddCore_reduce L n A (A+Z) p hw hnd hwide);
+  { (D%2^n+(if B then p else 0))%2^n=R } as reducedValue by (by
+    simpa only [D,B,R,decide_eq_true_eq] using modAddCore_low (A+Z) p n hp hpn (by omega));
+  { 2^n≤D ↔ A+Z<p } as hborrow by (addReduction (A+Z) p n hp hpn (by omega)).1;
+  -- The final result and unchanged source determine the old borrow, so it is erasable.
+  { B = !decide (R<A) } as hlast by (by
     have hh := modAddCore_cleanup A Z p hA hZ
     dsimp [B, R]
     by_cases h : A+Z<p
     · have hh' := hh.mp h
       simp [h, Nat.not_lt.mpr hh']
     · have hh' : ¬ A≤(A+Z)%p := fun he => h (hh.mpr he)
-      simp [h, Nat.lt_of_not_ge hh']
+      simp [h, Nat.lt_of_not_ge hh']);
   have hadd := modAddCore_addback L n A (D%2^n) p B hw hnd hn hpn
-  have hfinish := modAddCore_finish L n A R B hw hnd (by omega) hlast
+  { {{ L.a=A, L.low=R, L.high=B, L.work=0 }}
+      (compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high])
+      {{ L.a=A, L.z=R, L.work=0 }} }
+    as hfinish by (modAddCore_finish L n A R B hw hnd (by omega) hlast);
   have hrest :
       {{ L.a=A, L.z=D, L.work=0 }}
         (maskedAddConst L.high (L.constant.take L.low.length) L.low
@@ -100,9 +111,7 @@ theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
             (L.carry.take (L.low.length-1)) L.cin p
         {{ L.a=A, L.low=R, L.high=B, L.work=0 }} := hadd.conseq (fun _ h => h) (fun st h => by
       simp only [Holds.holds] at h ⊢
-      have he : (D%2^n+(if B then p else 0))%2^n=R := by
-        simpa only [D, B, R, decide_eq_true_eq] using hlow
-      exact ⟨⟨⟨h.1.1.1, he ▸ h.1.1.2⟩, h.1.2⟩, h.2⟩)
+      exact ⟨⟨⟨h.1.1.1, reducedValue ▸ h.1.1.2⟩, h.1.2⟩, h.2⟩)
     apply (hmiddle.seq hfinish).conseq ?_ (fun _ h => h)
     intro st h
     simp only [Holds.holds] at h ⊢
@@ -118,7 +127,10 @@ theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
       · have hy : A+Z<p := he.mp hv
         simp only [B, decide_eq_true hy]
     exact ⟨⟨⟨h.1.1, hl⟩, hb⟩, h.2⟩
-  simpa only [modAddCore_program, List.append_assoc, D, R] using hfirst.seq hrest
+  conclude { {{ L.a=A, L.z=Z, L.work=0 }} modAddCore L p
+    {{ L.a=A, L.z=R, L.work=0 }} } by (by
+    simpa only [modAddCore_program, List.append_assoc, D, R] using
+      (sum.seq subtractModulus).seq hrest);
 
 /-- 核的实际支持恰为源、目标、常数字及进位工作线；没有隐含的 mask/flag。 -/
 theorem modAddCore_wires (L : ModAddCoreLayout) (n p : Nat)

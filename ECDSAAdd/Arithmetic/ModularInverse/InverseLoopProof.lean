@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseLoopSupport
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 theorem InversePhase.congr (L : InverseLoopLayout) (K A : Nat)
     (s t : BasisState) (h : InversePhase L K A s) (he : ∀ w∈L.phaseWires,t w=s w) :
@@ -65,14 +66,14 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
     (q a O : Nat) (hq : q<2^256) (ho : q%16=15) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
     Triple (fun s => InverseInitial L q a s ∧ regValue L.out s=O) (inverseLoop L q)
-      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ kaliskiInverse q a 256)) := by
+      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ kaliskiInverse q a 256)) := Proof
   let z := kaliskiStep^[512] (kaliskiInit q a)
   let cs := kaliskiCodes 512 (kaliskiInit q a)
   let N := (-(z.r : ZMod q)).val
   let R := montgomeryValue q (inverseScaleFactor q z.k) N 64%q
-  have heq : R=kaliskiInverse q a 256 :=
+  { R = kaliskiInverse q a 256 } as inverseValue by
     (kaliski_montgomery_scale q a ho hq hx0 hx hcop).trans
-      (kaliski_correct q a 256 (by omega) hq hx0 (hx.trans hq) hcop).symm
+      (kaliski_correct q a 256 (by omega) hq hx0 (hx.trans hq) hcop).symm;
   have hcompute := inverseCompute_values L hnd hn hw hl hm ha ht q a hq ho hx hcop
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl]
   have hwires := inverseCompute_wires L hn hw (by omega) (by omega) (by omega) (by omega) hl hm q
@@ -85,10 +86,23 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     apply (he w ?_).symm
     rw [hc]
     exact fun hh => List.disjoint_left.mp hdis (L.usedCoreWires_sublist.subset (List.mem_toFinset.mp hh)) hw
-  have hf := hcompute.1.frame (frame _ hwires.1 O)
-  have hb := hcompute.2.frame (frame _ hwires.2 (O ^^^ R))
-  have hc := inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O
-  have hall := (hf.seq hc).seq hb
-  simpa only [heq] using hall
+  -- Prepare the inverse without touching out; copying retains the full inverse history.
+  { Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=O)
+      (inverseCompute L q)
+      (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=O)
+  } as prepare by (hcompute.1.frame (frame _ hwires.1 O));
+  { Triple (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=O)
+      (copyRegister none L.a L.out)
+      (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=(O ^^^ R))
+  } as copyInverse by (inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O);
+  -- The matching history restores the initialized registers while preserving the copied result.
+  { Triple (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=(O ^^^ R))
+      (inverseUncompute L q)
+      (fun st => InverseInitial L q a st ∧ regValue L.out st=(O ^^^ R))
+  } as restore by (hcompute.2.frame (frame _ hwires.2 (O ^^^ R)));
+  conclude {
+    Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=O) (inverseLoop L q)
+      (fun st => InverseInitial L q a st ∧ regValue L.out st=(O ^^^ kaliskiInverse q a 256))
+  } by (by simpa only [inverseValue] using (prepare.seq copyInverse).seq restore);
 
 end ECDSAAdd.Arithmetic

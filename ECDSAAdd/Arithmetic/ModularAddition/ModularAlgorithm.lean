@@ -43,23 +43,17 @@ theorem addResult_correct (X Y q : Nat) (hSum : X + Y < 2 * q) :
 /-- 模减的算法证明：有借位时加回 q，无借位时直接保留差。 -/
 theorem subResult_correct (X Y q : Nat) (hX : X < q) (hY : Y < q) :
     subResult X Y q = (X + q - Y) % q := Proof
-  We split on X < Y
-  Case borrow =>
-    By definition [subResult] using [borrow] we get result :
-      subResult X Y q = X + q - Y
-    From [hX, hY, borrow] by arithmetic we get reduced : X + q - Y < q
-    By the small remainder rule using reduced we get remainder :
-      (X + q - Y) % q = X + q - Y
-    From [result, remainder] we conclude subResult X Y q = (X + q - Y) % q
-  Otherwise noBorrow =>
-    By definition [subResult] using [noBorrow] we get result :
-      subResult X Y q = X - Y
-    From [hX] by arithmetic we get reduced : X - Y < q
-    From [noBorrow] by arithmetic we get decomposition :
-      X + q - Y = (X - Y) + q
-    By the shifted remainder rule using decomposition, reduced we get remainder :
-      (X + q - Y) % q = X - Y
-    From [result, remainder] we conclude subResult X Y q = (X + q - Y) % q
+  if (X < Y) {
+    { (X + q - Y) % q = X + q - Y }
+      by the small remainder rule using [hX, hY];
+    { subResult X Y q = X + q - Y } by definition;
+    conclude { subResult X Y q = (X + q - Y) % q };
+  } else {
+    { (X + q - Y) % q = X - Y }
+      by the shifted remainder rule using [hX] and the branch condition;
+    { subResult X Y q = X - Y } by definition;
+    conclude { subResult X Y q = (X + q - Y) % q };
+  }
 
 -- 后端只需要分支结果的范围，不依赖最终“等于模运算”的结论。
 theorem addResult_lt (X Y q : Nat) (hSum : X + Y < 2 * q) :

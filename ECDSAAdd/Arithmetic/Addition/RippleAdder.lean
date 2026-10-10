@@ -4,6 +4,7 @@ import ECDSAAdd.Arithmetic.RegisterXor.Registers
 import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 attribute [local simp] sumBit carryBit
 
@@ -88,7 +89,7 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
     regValue (bs.map AddBit.out) (run (rippleAdder bs cin) m s).basis =
       regValue (bs.map AddBit.out) s.basis ^^^
       ((regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
-        (s.basis cin).toNat) % 2^bs.length) := by
+        (s.basis cin).toNat) % 2^bs.length) := Proof
   induction bs generalizing cin s m with
   | nil => simp [rippleAdder_nil, run, regValue, Nat.mod_one]
   | cons b bs ih =>
@@ -104,9 +105,12 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
     let C := s.basis cin
     let s1 : State := ⟨s.phase,
       writeBit (writeBit s.basis b.carry (carryBit A B C)) b.out (s.basis b.out ^^ sumBit A B C)⟩
-    have hfirst (record : List Bool) : run (fullAdder b.x b.y cin b.out b.carry) record s = s1 := by
+    -- Compute the low sum bit and pass its carry to the higher bits.
+    { ∀ record, run (fullAdder b.x b.y cin b.out b.carry) record s = s1 }
+      as hfirst by (by
+      intro record
       rw [fullAdder_correct _ _ _ _ _ h5]
-      simp [s1, hzero, A, B, C]
+      simp [s1, hzero, A, B, C]);
     have htail : ∀ w ∈ addWires bs, s1.basis w = s.basis w := by
       intro w hw
       have ho : w ≠ b.out := by intro h; apply hor; simpa [h] using hw
@@ -117,7 +121,13 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
       rw [htail _ (mem_addWires hd).2.2.2]
       exact hclean d (by simp [hd])
     let t := run (rippleAdder bs b.carry) m s1
-    obtain ⟨hphase, hsame, hsum⟩ := ih b.carry (List.nodup_cons.mpr ⟨hkr, hrest⟩) s1 m hclean'
+    { t.phase = s1.phase ∧
+      (∀ w, w ∉ bs.map AddBit.out → t.basis w = s1.basis w) ∧
+      regValue (bs.map AddBit.out) t.basis = regValue (bs.map AddBit.out) s1.basis ^^^
+        ((regValue (bs.map AddBit.x) s1.basis + regValue (bs.map AddBit.y) s1.basis +
+          (s1.basis b.carry).toNat) % 2^bs.length) }
+      as higherBits by (ih b.carry (List.nodup_cons.mpr ⟨hkr, hrest⟩) s1 m hclean');
+    obtain ⟨hphase, hsame, hsum⟩ := higherBits
     have hout_mem : ∀ w ∈ bs.map AddBit.out, w ∈ addWires bs := by
       intro w hw
       obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hw
@@ -131,24 +141,34 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
     have htK : t.basis b.carry = carryBit A B C := by
       rw [heq _ hkr]; simp [s1, writeBit, Ne.symm hok]
     have htO : t.basis b.out = (s.basis b.out ^^ sumBit A B C) := by rw [heq _ hor]; simp [s1, writeBit]
-    have herase (record : List Bool) : run (eraseCarry b.x b.y cin b.carry) record t =
-        ⟨t.phase, writeBit t.basis b.carry false⟩ :=
-      eraseCarry_correct _ _ _ _ hxk hyk hck t (by rw [htX, htY, htC, htK]) record
-    simp only [rippleAdder_cons, run_append, run_take]
-    rw [hfirst]
-    simp only [measurementCount_append, fullAdder_measurementCount, zero_add,
-      List.drop_zero]
-    change (run (eraseCarry b.x b.y cin b.carry) _ t).phase = _ ∧ _
-    rw [herase]
-    refine ⟨hphase, ?_, ?_⟩
-    · intro w hw
+    -- The recursive call preserved the inputs needed to erase this carry.
+    { ∀ record, run (eraseCarry b.x b.y cin b.carry) record t =
+        ⟨t.phase, writeBit t.basis b.carry false⟩ } as herase by
+      (fun record => eraseCarry_correct _ _ _ _ hxk hyk hck t
+        (by rw [htX, htY, htC, htK]) record);
+    { run (rippleAdder (b :: bs) cin) m s =
+        ⟨t.phase, writeBit t.basis b.carry false⟩ } as execution by (by
+      simp only [rippleAdder_cons, run_append, run_take]
+      rw [hfirst]
+      simp only [measurementCount_append, fullAdder_measurementCount, zero_add,
+        List.drop_zero]
+      exact herase _);
+    { ∀ w, w ∉ (b :: bs).map AddBit.out →
+        (writeBit t.basis b.carry false) w = s.basis w } as restored by (by
+      intro w hw
       have hw' : w ≠ b.out ∧ w ∉ bs.map AddBit.out := by simpa only [List.map_cons, List.mem_cons, not_or] using hw
       have ht := hsame w hw'.2
       change t.basis w = s1.basis w at ht
       by_cases hk : w = b.carry
       · subst w; simp [writeBit, hzero]
-      · simp [writeBit, hk, ht, s1, hw'.1]
-    · have hx := regValue_congr (bs.map AddBit.x) s1.basis s.basis (by
+      · simp [writeBit, hk, ht, s1, hw'.1]);
+    -- Combine the low sum bit with the recursively computed higher sum.
+    { regValue ((b :: bs).map AddBit.out) (writeBit t.basis b.carry false) =
+        regValue ((b :: bs).map AddBit.out) s.basis ^^^
+        ((regValue ((b :: bs).map AddBit.x) s.basis +
+          regValue ((b :: bs).map AddBit.y) s.basis + (s.basis cin).toNat) %
+          2^(b :: bs).length) } as sum by (by
+      have hx := regValue_congr (bs.map AddBit.x) s1.basis s.basis (by
         intro w hw
         obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hw
         exact htail _ (mem_addWires hd).1)
@@ -177,7 +197,15 @@ theorem rippleAdder_xor_correct (bs : List AddBit) (cin : Wire)
         ((regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
           (carryBit A B C).toNat) % 2^bs.length)
       rw [hnum] at hxor
-      simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hxor
+      simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hxor);
+    conclude { (run (rippleAdder (b :: bs) cin) m s).phase = s.phase ∧
+      (∀ w, w ∉ (b :: bs).map AddBit.out →
+        (run (rippleAdder (b :: bs) cin) m s).basis w = s.basis w) ∧
+      regValue ((b :: bs).map AddBit.out) (run (rippleAdder (b :: bs) cin) m s).basis =
+        regValue ((b :: bs).map AddBit.out) s.basis ^^^
+        ((regValue ((b :: bs).map AddBit.x) s.basis +
+          regValue ((b :: bs).map AddBit.y) s.basis + (s.basis cin).toNat) %
+          2^(b :: bs).length) } by (by rw [execution]; exact ⟨hphase, restored, sum⟩);
 
 /-- 零输出的加法是 XOR 接口的特例。 -/
 theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
@@ -187,13 +215,20 @@ theorem rippleAdder_correct (bs : List AddBit) (cin : Wire)
     (∀ w, w ∉ bs.map AddBit.out → (run (rippleAdder bs cin) m s).basis w = s.basis w) ∧
     regValue (bs.map AddBit.out) (run (rippleAdder bs cin) m s).basis =
       (regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
-        (s.basis cin).toNat) % 2^bs.length := by
-  have hz : regValue (bs.map AddBit.out) s.basis = 0 := (regValue_zero _ _).mpr (by
+        (s.basis cin).toNat) % 2^bs.length := Proof
+  { regValue (bs.map AddBit.out) s.basis = 0 } as outputInitiallyZero by
+    ((regValue_zero _ _).mpr (by
     intro w hw
     obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
-    exact (hclean b hb).1)
-  simpa only [hz, Nat.zero_xor] using
-    rippleAdder_xor_correct bs cin hnd s m (fun b hb => (hclean b hb).2)
+    exact (hclean b hb).1));
+  -- XOR into zero is the ordinary, truncated sum; phase and frame are unchanged.
+  conclude { (run (rippleAdder bs cin) m s).phase = s.phase ∧
+    (∀ w, w ∉ bs.map AddBit.out → (run (rippleAdder bs cin) m s).basis w = s.basis w) ∧
+    regValue (bs.map AddBit.out) (run (rippleAdder bs cin) m s).basis =
+      (regValue (bs.map AddBit.x) s.basis + regValue (bs.map AddBit.y) s.basis +
+        (s.basis cin).toNat) % 2^bs.length } by (by
+    simpa only [outputInitiallyZero, Nat.zero_xor] using
+      rippleAdder_xor_correct bs cin hnd s m (fun b hb => (hclean b hb).2));
 
 
 theorem inputs_not_output (bs : List AddBit) (hnd : (addWires bs).Nodup) :
@@ -225,13 +260,13 @@ theorem rippleAdder_xor_spec (bs : List AddBit) (cin : Wire)
        bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
        bs.map AddBit.out = (O ^^^ ((X + Y + C.toNat) % 2^bs.length)),
-       bs.map AddBit.carry = (0 : Nat) }} := by
-  intro s m hP
+       bs.map AddBit.carry = (0 : Nat) }} := Proof
+  For every s, m assuming hP
   simp only [Holds.holds] at hP ⊢
   obtain ⟨⟨⟨⟨hx, hy⟩, hc⟩, ho⟩, hk⟩ := hP
-  have hclean : ∀ b ∈ bs, s.basis b.carry = false := by
+  { ∀ b ∈ bs, s.basis b.carry = false } as hclean by (by
     intro b hb
-    exact (regValue_zero _ _).mp hk _ (List.mem_map.mpr ⟨b, hb, rfl⟩)
+    exact (regValue_zero _ _).mp hk _ (List.mem_map.mpr ⟨b, hb, rfl⟩));
   obtain ⟨hp, hsame, hsum⟩ := rippleAdder_xor_correct bs cin hnd s m hclean
   have hn := inputs_not_output bs (List.nodup_cons.mp hnd).2
   have hr (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ bs.map AddBit.out) :
@@ -248,8 +283,21 @@ theorem rippleAdder_xor_spec (bs : List AddBit) (cin : Wire)
     intro h
     obtain ⟨b, hb, he⟩ := List.mem_map.mp h
     exact (List.nodup_cons.mp hnd).1 (he ▸ (mem_addWires hb).2.2.1)
-  exact ⟨hp, ⟨⟨⟨hx'.trans hx, hy'.trans hy⟩, hc'.trans hc⟩,
-    by simpa only [hx, hy, hc, ho] using hsum⟩, hk'.trans hk⟩
+  let final := run (rippleAdder bs cin) m s
+  { regValue (bs.map AddBit.x) final.basis = X ∧
+      regValue (bs.map AddBit.y) final.basis = Y ∧ final.basis cin = C }
+    as inputs by ⟨hx'.trans hx, hy'.trans hy, hc'.trans hc⟩;
+  { regValue (bs.map AddBit.out) final.basis =
+      O ^^^ ((X + Y + C.toNat) % 2^bs.length) }
+    as output by (by simpa only [hx, hy, hc, ho] using hsum);
+  { regValue (bs.map AddBit.carry) final.basis = 0 }
+    as clean by (hk'.trans hk);
+  conclude { final.phase = s.phase ∧
+    (((regValue (bs.map AddBit.x) final.basis = X ∧
+        regValue (bs.map AddBit.y) final.basis = Y) ∧ final.basis cin = C) ∧
+      regValue (bs.map AddBit.out) final.basis = O ^^^ ((X + Y + C.toNat) % 2^bs.length)) ∧
+    regValue (bs.map AddBit.carry) final.basis = 0 }
+    by ⟨hp, ⟨⟨⟨inputs.1, inputs.2.1⟩, inputs.2.2⟩, output⟩, clean⟩;
 
 /-- 输出初始为零时，XOR 写入就是普通加法。 -/
 theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
@@ -258,8 +306,14 @@ theorem rippleAdder_spec (bs : List AddBit) (cin : Wire)
        bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
        bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
-       bs.map AddBit.carry = (0 : Nat) }} := by
-  simpa only [Nat.zero_xor] using rippleAdder_xor_spec bs cin hnd X Y 0 C
+       bs.map AddBit.carry = (0 : Nat) }} := Proof
+  -- The same circuit accepts arbitrary XOR output; here that output starts at zero.
+  conclude { {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+      bs.map AddBit.out = (0 : Nat), bs.map AddBit.carry = (0 : Nat) }} rippleAdder bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = C,
+      bs.map AddBit.out = ((X + Y + C.toNat) % 2^bs.length),
+      bs.map AddBit.carry = (0 : Nat) }} }
+    by (by simpa only [Nat.zero_xor] using rippleAdder_xor_spec bs cin hnd X Y 0 C);
 
 /-- 加一个高位后，n 位输入的和完整保留在 n+1 位输出中。
 高位是输出的一部分；只清理进位工作线，不清理最高输出位。 -/
@@ -271,12 +325,21 @@ theorem rippleAdder_wide_spec (bs : List AddBit) (high : AddBit) (cin : Wire)
        (bs ++ [high]).map AddBit.carry = (0 : Nat) }} rippleAdder (bs ++ [high]) cin
     {{ (bs ++ [high]).map AddBit.x = X, (bs ++ [high]).map AddBit.y = Y, cin = C,
        (bs ++ [high]).map AddBit.out = (X + Y + C.toNat),
-       (bs ++ [high]).map AddBit.carry = (0 : Nat) }} := by
-  have hbound : X + Y + C.toNat < 2^(bs ++ [high]).length := by
+       (bs ++ [high]).map AddBit.carry = (0 : Nat) }} := Proof
+  { X + Y + C.toNat < 2^(bs ++ [high]).length } as fitsExtraBit by (by
     have hc := C.toNat_le
     simp only [List.length_append, List.length_singleton, Nat.pow_succ]
-    omega
-  simpa only [Nat.mod_eq_of_lt hbound] using rippleAdder_spec (bs ++ [high]) cin hnd X Y C
+    omega);
+  { (X + Y + C.toNat) % 2^(bs ++ [high]).length = X + Y + C.toNat }
+    as noTruncation by (Nat.mod_eq_of_lt fitsExtraBit);
+  conclude { {{ (bs ++ [high]).map AddBit.x = X,
+      (bs ++ [high]).map AddBit.y = Y, cin = C,
+      (bs ++ [high]).map AddBit.out = (0 : Nat),
+      (bs ++ [high]).map AddBit.carry = (0 : Nat) }} rippleAdder (bs ++ [high]) cin
+    {{ (bs ++ [high]).map AddBit.x = X, (bs ++ [high]).map AddBit.y = Y, cin = C,
+      (bs ++ [high]).map AddBit.out = (X + Y + C.toNat),
+      (bs ++ [high]).map AddBit.carry = (0 : Nat) }} } by (by
+    simpa only [noTruncation] using rippleAdder_spec (bs ++ [high]) cin hnd X Y C);
 
 /-- 每位一次 Toffoli，进位清理不增加 Toffoli。 -/
 theorem rippleAdder_toffoliCount (bs : List AddBit) (cin : Wire) :

@@ -15,6 +15,7 @@ lake env lean tests/ModularProofLayers.lean
 lake env lean -DwarningAsError=true tests/ProofLanguage.lean
 lake env lean -DwarningAsError=true tests/BranchProof.lean
 lake env lean -DwarningAsError=true tests/EquationalProof.lean
+lake env lean -DwarningAsError=true tests/StateProof.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
 lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
@@ -23,6 +24,29 @@ lake env lean -DwarningAsError=true tests/ArithmeticAnnotations.lean
 # Report and check only the public proof entry points.
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+#print axioms ECDSAAdd.Arithmetic.fullAdder_correct
+#print axioms ECDSAAdd.Arithmetic.eraseCarry_correct
+#print axioms ECDSAAdd.Arithmetic.compareChain_correct
+#print axioms ECDSAAdd.Arithmetic.compareLt_correct
+#print axioms ECDSAAdd.Arithmetic.modAddCore_spec
+#print axioms ECDSAAdd.Arithmetic.modAdd_bounded_correct
+#print axioms ECDSAAdd.Arithmetic.modAdd_correct
+#print axioms ECDSAAdd.Arithmetic.modSub_correct
+#print axioms ECDSAAdd.Arithmetic.inverseCompute_values
+#print axioms ECDSAAdd.Arithmetic.inverseLoop_values
+#print axioms ECDSAAdd.Arithmetic.kaliskiRound_state
+#print axioms ECDSAAdd.Arithmetic.kaliskiUnround_state
+#print axioms ECDSAAdd.Arithmetic.negativeInit_correct
+#print axioms ECDSAAdd.Arithmetic.CandidateValues.subConstant
+#print axioms ECDSAAdd.Arithmetic.CandidateValues.square
+#print axioms ECDSAAdd.Arithmetic.pointCandidate_compute_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceClearSlopeKernel_spec
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceClearSlopeKernel_disabled
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceConstantAdd_correct
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceGeneric_true
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceGeneric_false
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceNegate_correct
+#print axioms ECDSAAdd.Arithmetic.pointInPlaceProduct_correct
 #print axioms ECDSAAdd.CertifiedTranslation.Certificate.ofTriple
 #print axioms ECDSAAdd.CertifiedTranslation.Certificate.abstract
 #print axioms ECDSAAdd.CertifiedTranslation.CheckedProgram.correct

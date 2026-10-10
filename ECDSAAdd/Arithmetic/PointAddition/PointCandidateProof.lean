@@ -1,7 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointCandidateBlocks
 import ECDSAAdd.Arithmetic.PointAddition.PointCandidate
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
+
+open scoped ECDSAAdd.ProofLanguage
 
 def candidateInitial (X Y : Nat) : CandidateField → Nat
   | .inputX => X | .inputY => Y | _ => 0
@@ -40,7 +43,7 @@ theorem pointCandidate_compute_spec (L : PointAddLayout) (h : L.Widths) (hnd : L
     (G : Bool) (X Y : Nat) (cx cy : Fp) (hX : X<p) (hY : Y<p)
     (hG : G=true → X≠cx.val) :
     Triple (CandidateValues L (candidateInitial X Y) G) (pointCandidateCompute L cx cy)
-      (CandidateValues L (candidateResult G X Y cx.val cy.val) G) := by
+      (CandidateValues L (candidateResult G X Y cx.val cy.val) G) := Proof
   letI : NeZero p := ⟨by norm_num [p]⟩
   have hp : 0<p := by norm_num [p]
   have hp1 : 1<p := by norm_num [p]
@@ -70,64 +73,66 @@ theorem pointCandidate_compute_spec (L : PointAddLayout) (h : L.Widths) (hnd : L
   let v9 := Function.update v8 CandidateField.delta ((X+p-v8 .x)%p)
   let v10 := Function.update v9 CandidateField.product ((v9 .delta*v9 .slope)%p)
   let v11 := Function.update v10 CandidateField.y ((v10 .product+p-Y)%p)
-  have h1 : Triple (CandidateValues L v0 G) (pointSubConstant L L.extendedX L.dx cx.val) (CandidateValues L v1 G) := by
+  { Triple (CandidateValues L v0 G) (pointSubConstant L L.extendedX L.dx cx.val) (CandidateValues L v1 G) } as differenceX by (by
     simpa [v0,v1,candidateInitial] using CandidateValues.subConstant L h hnd v0 G .inputX .dx
-      heX hdX (by decide) (by decide) nDx hX rfl cx.val hcX
-  have h2 : Triple (CandidateValues L v1 G) (pointSubConstant L L.extendedY L.dy cy.val) (CandidateValues L v2 G) := by
+      heX hdX (by decide) (by decide) nDx hX rfl cx.val hcX);
+  { Triple (CandidateValues L v1 G) (pointSubConstant L L.extendedY L.dy cy.val) (CandidateValues L v2 G) } as differenceY by (by
     simpa [v0,v1,v2,candidateInitial] using CandidateValues.subConstant L h hnd v1 G .inputY .dy
-      heY hdY (by decide) (by decide) nDy hY rfl cy.val hcY
-  have h3 : Triple (CandidateValues L v2 G)
-      (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail) (CandidateValues L v3 G) := by
+      heY hdY (by decide) (by decide) nDy hY rfl cy.val hcY);
+  { Triple (CandidateValues L v2 G)
+      (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail) (CandidateValues L v3 G) } as safeDenominator by (by
     simpa [v0,v1,v2,v3,candidateInitial] using CandidateValues.safe L h hnd v2 G
-      (by simpa [v2,v1] using (Nat.mod_lt (X+p-cx.val) hp).trans hpb)
+      (by simpa [v2,v1] using (Nat.mod_lt (X+p-cx.val) hp).trans hpb));
   have hDiv0 : 0<v3 .divisor := by
     cases hg : G <;> simp [v3,v2,v1,hg]
     exact difference_pos X cx.val hX hcX (hG hg)
   have hDiv : v3 .divisor<p := by
     cases hg : G <;> simp [v3,v2,v1,hg,hp1,Nat.mod_lt _ hp]
-  have h4 : Triple (CandidateValues L v3 G)
-      (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) (CandidateValues L v4 G) := by
+  { Triple (CandidateValues L v3 G)
+      (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) (CandidateValues L v4 G) } as inverseDenominator by (by
     simpa [v0,v1,v2,v3,v4,candidateInitial] using CandidateValues.inverse L h hnd v3 G .divisor .inverse
-      h.divisor h.inverse nInverse hDiv0 hDiv
-  have h5 : Triple (CandidateValues L v4 G)
-      (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)) (CandidateValues L v5 G) := by
+      h.divisor h.inverse nInverse hDiv0 hDiv);
+  { Triple (CandidateValues L v4 G)
+      (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)) (CandidateValues L v5 G) } as slope by (by
     have hn : (L.reg .dy++(L.reg .inverse).take 256++L.reg .slope++L.pool).Nodup := by
       simpa [PointAddLayout.reg,List.take_of_length_le (show L.inverse.length≤256 by rw [h.inverse])] using nSlope
     simpa [PointAddLayout.reg,v0,v1,v2,v3,v4,v5,candidateInitial,
       List.take_of_length_le (show L.inverse.length≤256 by rw [h.inverse])] using
       CandidateValues.mul L h hnd v4 G .dy .inverse .slope hdY (by change 256≤L.inverse.length; rw [h.inverse]) hS hn
         (by simp [v4,v3,v2,Nat.mod_lt _ hp])
-        (by simpa [v4] using (ZMod.val_lt ((v3 .divisor : Fp)⁻¹)).trans hpb)
-  have h6 : Triple (CandidateValues L v5 G) (pointSquare L) (CandidateValues L v6 G) := by
+        (by simpa [v4] using (ZMod.val_lt ((v3 .divisor : Fp)⁻¹)).trans hpb));
+  { Triple (CandidateValues L v5 G) (pointSquare L) (CandidateValues L v6 G) } as squaredSlope by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,candidateInitial] using CandidateValues.square L h hnd v5 G nSquare
-      (by simp [v5,Nat.mod_lt _ hp]) rfl
-  have h7 : Triple (CandidateValues L v6 G)
-      (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)) (CandidateValues L v7 G) := by
+      (by simp [v5,Nat.mod_lt _ hp]) rfl);
+  { Triple (CandidateValues L v6 G)
+      (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)) (CandidateValues L v7 G) } as subtractInputX by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,v7,candidateInitial] using CandidateValues.sub L h hnd v6 G .square .inputX .offset
-      hSq heX hO nOffset (by simp [v6,Nat.mod_lt _ hp]) hX
-  have h8 : Triple (CandidateValues L v7 G)
-      (pointSubConstant L L.offset L.candidateX cx.val) (CandidateValues L v8 G) := by
+      hSq heX hO nOffset (by simp [v6,Nat.mod_lt _ hp]) hX);
+  { Triple (CandidateValues L v7 G)
+      (pointSubConstant L L.offset L.candidateX cx.val) (CandidateValues L v8 G) } as candidateX by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,v7,v8,candidateInitial] using CandidateValues.subConstant L h hnd v7 G .offset .x
-      hO hCX (by decide) (by decide) nX (by simp [v7,Nat.mod_lt _ hp]) rfl cx.val hcX
-  have h9 : Triple (CandidateValues L v8 G)
-      (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)) (CandidateValues L v9 G) := by
+      hO hCX (by decide) (by decide) nX (by simp [v7,Nat.mod_lt _ hp]) rfl cx.val hcX);
+  { Triple (CandidateValues L v8 G)
+      (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)) (CandidateValues L v9 G) } as deltaX by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,candidateInitial] using CandidateValues.sub L h hnd v8 G .inputX .x .delta
-      heX hCX hD nDelta hX (by simp [v8,Nat.mod_lt _ hp])
-  have h10 : Triple (CandidateValues L v9 G)
-      (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)) (CandidateValues L v10 G) := by
+      heX hCX hD nDelta hX (by simp [v8,Nat.mod_lt _ hp]));
+  { Triple (CandidateValues L v9 G)
+      (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)) (CandidateValues L v10 G) } as slopeProduct by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,candidateInitial] using CandidateValues.mul L h hnd v9 G .delta .slope .product
       hD (by omega) hP nProduct (by simp [v9,Nat.mod_lt _ hp])
-      (by simpa [v9,v8,v7,v6,v5] using (Nat.mod_lt (v4 .dy*v4 .inverse) hp).trans hpb)
-  have h11 : Triple (CandidateValues L v10 G)
-      (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)) (CandidateValues L v11 G) := by
+      (by simpa [v9,v8,v7,v6,v5] using (Nat.mod_lt (v4 .dy*v4 .inverse) hp).trans hpb));
+  { Triple (CandidateValues L v10 G)
+      (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)) (CandidateValues L v11 G) } as candidateY by (by
     simpa [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11,candidateInitial] using CandidateValues.sub L h hnd v10 G .product .inputY .y
-      hP heY hCY nY (by simp [v10,Nat.mod_lt _ hp]) hY
+      hP heY hCY nY (by simp [v10,Nat.mod_lt _ hp]) hY);
   have hf : v11=candidateResult G X Y cx.val cy.val := by
     funext f
     cases f <;> simp [v11,v10,v9,v8,v7,v6,v5,v4,v3,v2,v1,v0,candidateInitial,candidateResult]
   rw [← hf]
-  simpa only [pointCandidateCompute_program] using
-    (((((((((h1.seq h2).seq h3).seq h4).seq h5).seq h6).seq h7).seq h8).seq h9).seq h10).seq h11
+  conclude {
+    Triple (CandidateValues L v0 G) (pointCandidateCompute L cx cy) (CandidateValues L v11 G)
+  } by (by simpa only [pointCandidateCompute_program] using
+      (((((((((differenceX.seq differenceY).seq safeDenominator).seq inverseDenominator).seq slope).seq squaredSlope).seq subtractInputX).seq candidateX).seq deltaX).seq slopeProduct).seq candidateY);
 
 /-- 候选寄存器按依赖逆序清零，输入、普通分支标志和共享池保持。 -/
 private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
@@ -143,8 +148,7 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       | .inputX => X | .inputY => Y | .dx => DX | .dy => DY | .slope => SL
       | .square => SQ | .offset => OF | .x => CX | .delta => DE | .product => PR
       | .y => CY | .constant => 0 | .divisor => DV | .inverse => IV) G) (pointCandidateClear L cx cy)
-      (CandidateValues L (candidateInitial X Y) G) := by
-  rw [pointCandidateClear_program]
+      (CandidateValues L (candidateInitial X Y) G) := Proof
   letI : NeZero p := ⟨by norm_num [p]⟩
   have hp : 0<p := by norm_num [p]
   have hp1 : 1<p := by norm_num [p]
@@ -194,7 +198,7 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
     change DV<p
     rw [← eDiv]
     split <;> assumption
-  have c11 : Triple (CandidateValues L v11 G) (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)) (CandidateValues L v10 G) := by
+  { Triple (CandidateValues L v11 G) (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)) (CandidateValues L v10 G) } as clearCandidateY by (by
     have hf : Function.update v11 CandidateField.y (v11 .y ^^^ ((v11 .product+p-v11 .inputY)%p))=v10 := by
       change Function.update (Function.update v10 CandidateField.y CY) CandidateField.y
         (CY ^^^ ((PR+p-Y)%p))=v10
@@ -202,8 +206,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.sub L h hnd v11 G .product .inputY .y hP heY hCY nY bPR hY)
     intro st hv
-    simpa only [hf] using hv
-  have c10 : Triple (CandidateValues L v10 G) (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)) (CandidateValues L v9 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v10 G) (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)) (CandidateValues L v9 G) } as clearProduct by (by
     have hf : Function.update v10 CandidateField.product (v10 .product ^^^ ((v10 .delta*v10 .slope)%p))=v9 := by
       change Function.update (Function.update v9 CandidateField.product PR) CandidateField.product
         (PR ^^^ ((DE*SL)%p))=v9
@@ -211,8 +215,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.mul L h hnd v10 G .delta .slope .product hD (by omega) hP nProduct bDE (bSL.trans hpb))
     intro st hv
-    simpa only [hf] using hv
-  have c9 : Triple (CandidateValues L v9 G) (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)) (CandidateValues L v8 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v9 G) (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)) (CandidateValues L v8 G) } as clearDelta by (by
     have hf : Function.update v9 CandidateField.delta (v9 .delta ^^^ ((v9 .inputX+p-v9 .x)%p))=v8 := by
       change Function.update (Function.update v8 CandidateField.delta DE) CandidateField.delta
         (DE ^^^ ((X+p-CX)%p))=v8
@@ -220,8 +224,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.sub L h hnd v9 G .inputX .x .delta heX hCX hD nDelta hX bCX)
     intro st hv
-    simpa only [hf] using hv
-  have c8 : Triple (CandidateValues L v8 G) (pointSubConstant L L.offset L.candidateX cx.val) (CandidateValues L v7 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v8 G) (pointSubConstant L L.offset L.candidateX cx.val) (CandidateValues L v7 G) } as clearCandidateX by (by
     have hf : Function.update v8 CandidateField.x (v8 .x ^^^ ((v8 .offset+p-cx.val)%p))=v7 := by
       change Function.update (Function.update v7 CandidateField.x CX) CandidateField.x
         (CX ^^^ ((OF+p-cx.val)%p))=v7
@@ -229,8 +233,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.subConstant L h hnd v8 G .offset .x hO hCX (by decide) (by decide) nX bOF rfl cx.val hcX)
     intro st hv
-    simpa only [hf] using hv
-  have c7 : Triple (CandidateValues L v7 G) (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)) (CandidateValues L v6 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v7 G) (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)) (CandidateValues L v6 G) } as clearOffset by (by
     have hf : Function.update v7 CandidateField.offset (v7 .offset ^^^ ((v7 .square+p-v7 .inputX)%p))=v6 := by
       change Function.update (Function.update v6 CandidateField.offset OF) CandidateField.offset
         (OF ^^^ ((SQ+p-X)%p))=v6
@@ -238,8 +242,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.sub L h hnd v7 G .square .inputX .offset hSq heX hO nOffset bSQ hX)
     intro st hv
-    simpa only [hf] using hv
-  have c6 : Triple (CandidateValues L v6 G) (pointSquare L) (CandidateValues L v5 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v6 G) (pointSquare L) (CandidateValues L v5 G) } as clearSquare by (by
     have hf : Function.update v6 CandidateField.square (v6 .square ^^^ ((v6 .slope*v6 .slope)%p))=v5 := by
       change Function.update (Function.update v5 CandidateField.square SQ) CandidateField.square
         (SQ ^^^ ((SL*SL)%p))=v5
@@ -247,8 +251,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.square L h hnd v6 G nSquare bSL rfl)
     intro st hv
-    simpa only [hf] using hv
-  have c5 : Triple (CandidateValues L v5 G) (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)) (CandidateValues L v4 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v5 G) (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)) (CandidateValues L v4 G) } as clearSlope by (by
     have hn : (L.reg .dy++(L.reg .inverse).take 256++L.reg .slope++L.pool).Nodup := by
       simpa [PointAddLayout.reg,List.take_of_length_le (show L.inverse.length≤256 by rw [h.inverse])] using nSlope
     have hf : Function.update v5 CandidateField.slope (v5 .slope ^^^ ((v5 .dy*v5 .inverse)%p))=v4 := by
@@ -261,8 +265,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
     rw [he] at hc
     apply Triple.conseq (fun _ hv => hv) hc
     intro st hv
-    simpa only [hf] using hv
-  have c4 : Triple (CandidateValues L v4 G) (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) (CandidateValues L v3 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v4 G) (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)) (CandidateValues L v3 G) } as clearInverse by (by
     have hf : Function.update v4 CandidateField.inverse (v4 .inverse ^^^ ((v4 .divisor : Fp)⁻¹).val)=v3 := by
       change Function.update (Function.update v3 CandidateField.inverse IV) CandidateField.inverse
         (IV ^^^ (((DV : Fp)⁻¹).val))=v3
@@ -270,8 +274,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.inverse L h hnd v4 G .divisor .inverse h.divisor h.inverse nInverse hDiv0 hDiv)
     intro st hv
-    simpa only [hf] using hv
-  have c3 : Triple (CandidateValues L v3 G) (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail) (CandidateValues L v2 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v3 G) (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail) (CandidateValues L v2 G) } as clearDenominator by (by
     have hf : Function.update v3 CandidateField.divisor (v3 .divisor ^^^ (if G then v3 .dx else 1))=v2 := by
       change Function.update (Function.update v2 CandidateField.divisor DV) CandidateField.divisor
         (DV ^^^ ((if G then DX else 1)))=v2
@@ -279,8 +283,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.safe L h hnd v3 G (bDX.trans hpb))
     intro st hv
-    simpa only [hf] using hv
-  have c2 : Triple (CandidateValues L v2 G) (pointSubConstant L L.extendedY L.dy cy.val) (CandidateValues L v1 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v2 G) (pointSubConstant L L.extendedY L.dy cy.val) (CandidateValues L v1 G) } as clearDifferenceY by (by
     have hf : Function.update v2 CandidateField.dy (v2 .dy ^^^ ((v2 .inputY+p-cy.val)%p))=v1 := by
       change Function.update (Function.update v1 CandidateField.dy DY) CandidateField.dy
         (DY ^^^ ((Y+p-cy.val)%p))=v1
@@ -288,8 +292,8 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.subConstant L h hnd v2 G .inputY .dy heY hdY (by decide) (by decide) nDy hY rfl cy.val hcY)
     intro st hv
-    simpa only [hf] using hv
-  have c1 : Triple (CandidateValues L v1 G) (pointSubConstant L L.extendedX L.dx cx.val) (CandidateValues L v0 G) := by
+    simpa only [hf] using hv);
+  { Triple (CandidateValues L v1 G) (pointSubConstant L L.extendedX L.dx cx.val) (CandidateValues L v0 G) } as clearDifferenceX by (by
     have hf : Function.update v1 CandidateField.dx (v1 .dx ^^^ ((v1 .inputX+p-cx.val)%p))=v0 := by
       change Function.update (Function.update v0 CandidateField.dx DX) CandidateField.dx
         (DX ^^^ ((X+p-cx.val)%p))=v0
@@ -297,7 +301,7 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
       exact Function.update_eq_self_iff.mpr rfl
     apply Triple.conseq (fun _ hv => hv) (CandidateValues.subConstant L h hnd v1 G .inputX .dx heX hdX (by decide) (by decide) nDx hX rfl cx.val hcX)
     intro st hv
-    simpa only [hf] using hv
+    simpa only [hf] using hv);
   have hf : v11=(fun f => match f with
       | .inputX => X | .inputY => Y | .dx => DX | .dy => DY | .slope => SL
       | .square => SQ | .offset => OF | .x => CX | .delta => DE | .product => PR
@@ -305,7 +309,10 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
     funext f
     cases f <;> simp [v11,v10,v9,v8,v7,v6,v5,v4,v3,v2,v1,v0,candidateInitial]
   rw [← hf]
-  exact (((((((((c11.seq c10).seq c9).seq c8).seq c7).seq c6).seq c5).seq c4).seq c3).seq c2).seq c1
+  conclude {
+    Triple (CandidateValues L v11 G) (pointCandidateClear L cx cy) (CandidateValues L v0 G)
+  } by (by simpa only [pointCandidateClear_program] using
+      (((((((((clearCandidateY.seq clearProduct).seq clearDelta).seq clearCandidateX).seq clearOffset).seq clearSquare).seq clearSlope).seq clearInverse).seq clearDenominator).seq clearDifferenceY).seq clearDifferenceX);
 
 /-- 同一组前向 XOR 模块按依赖逆序清零所有候选寄存器。 -/
 theorem pointCandidate_clear_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)

@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.ModularAddition.UnaryModResources
 import ECDSAAdd.Arithmetic.RegisterXor.ConditionalXor
 import ECDSAAdd.Framework.CertifiedTranslation
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 /-- dst ^= (−src) mod q，src 保持；允许 src≥q，但要求 src<2*q、0<q<2^L.width。
 在有效布局下 temp 和 L.wires 初始为零并恢复；先约减再取负，最后清零中间约减值。
@@ -30,7 +32,7 @@ theorem negativeInit_correct (L : ModLayout) (q : Nat) (src temp dst : List Wire
     (run (negativeInit L q src temp dst) m s).phase=s.phase ∧
     (∀ w, w∉dst → (run (negativeInit L q src temp dst) m s).basis w=s.basis w) ∧
     regValue dst (run (negativeInit L q src temp dst) m s).basis =
-      regValue dst s.basis ^^^ ((q-(regValue src s.basis%q))%q) := by
+      regValue dst s.basis ^^^ ((q-(regValue src s.basis%q))%q) := Proof
   have h0 := List.nodup_append'.mp hnd
   have h1 := List.nodup_append'.mp h0.1
   have h2 := List.nodup_append'.mp h1.1
@@ -56,6 +58,7 @@ theorem negativeInit_correct (L : ModLayout) (q : Nat) (src temp dst : List Wire
   let R := X%q
   let N := (q-R)%q
   let P := PairFrame temp dst s.basis
+  -- P T B records temp=T and dst=B, and preserves every other initial wire.
   have reduction (T B : Nat) : Triple (P T B) (reduceXor L q src temp) (P (T ^^^ R) B) := by
     intro st ms h
     have hx' := PairFrame.read temp dst src s.basis st.basis T B h hst hsd
@@ -71,19 +74,28 @@ theorem negativeInit_correct (L : ModLayout) (q : Nat) (src temp dst : List Wire
       (by rw [h.1]; exact Nat.mod_lt X hq0) (hw'.trans hW)
     exact ⟨hp,PairFrame.update_dst temp dst _ _ _ R O _ htd h he
       (by simpa [h.1,h.2.1,N] using hz)⟩
-  have first : Triple (P 0 O) (reduceXor L q src temp) (P R O) := by simpa using reduction 0 O
-  have last : Triple (P R (O ^^^ N)) (reduceXor L q src temp) (P 0 (O ^^^ N)) := by
-    simpa using reduction R (O ^^^ N)
-  have proof := first.seq (negation.seq last)
-  obtain ⟨hp,hf⟩ := proof s m ⟨hT,rfl,fun _ _ _ => rfl⟩
+  -- Reduce src, XOR its modular negative into dst, then erase the temporary reduction.
+  { Triple (P 0 O) (reduceXor L q src temp) (P R O) } as reduceSource by
+    (by simpa only [Nat.zero_xor] using reduction 0 O);
+  { Triple (P R O) (negateXor L q temp dst) (P R (O ^^^ N)) } as writeNegative by negation;
+  { Triple (P R (O ^^^ N)) (reduceXor L q src temp) (P 0 (O ^^^ N)) } as clearTemporary by
+    (by simpa only [Nat.xor_self] using reduction R (O ^^^ N));
+  have complete := reduceSource.seq (writeNegative.seq clearTemporary)
+  obtain ⟨phase,post⟩ := complete s m ⟨hT,rfl,fun _ _ _ => rfl⟩
   have heq : negativeInit L q src temp dst =
       reduceXor L q src temp ++ (negateXor L q temp dst ++ reduceXor L q src temp) := by
     simp only [negativeInit,List.append_assoc]
-  rw [heq]
-  refine ⟨hp,?_,hf.2.1⟩
-  intro w hw
-  by_cases hm : w∈temp
-  · exact ((regValue_zero _ _).mp hf.1 w hm).trans ((regValue_zero _ _).mp hT w hm).symm
-  · exact hf.2.2 w hm hw
+  { ∀ w∉dst, (run (negativeInit L q src temp dst) m s).basis w = s.basis w
+  } as inputsRestored by (by
+    rw [heq]
+    intro w hw
+    by_cases hm : w∈temp
+    · exact ((regValue_zero _ _).mp post.1 w hm).trans ((regValue_zero _ _).mp hT w hm).symm
+    · exact post.2.2 w hm hw);
+  conclude {
+    (run (negativeInit L q src temp dst) m s).phase = s.phase ∧
+    (∀ w∉dst, (run (negativeInit L q src temp dst) m s).basis w = s.basis w) ∧
+    regValue dst (run (negativeInit L q src temp dst) m s).basis = (O ^^^ N)
+  } by ⟨by simpa only [heq] using phase, inputsRestored, by simpa only [heq] using post.2.1⟩;
 
 end ECDSAAdd.Arithmetic

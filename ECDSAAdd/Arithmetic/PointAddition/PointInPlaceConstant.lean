@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem constant_mask (M : ModInPlaceLayout) (c : Wire) (k A Z : Nat) (B : Bool)
     (hn : (c::M.wires).Nodup) (hk : k<2^M.a.length) :
@@ -50,7 +52,7 @@ private theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : N
     (hw : M.Widths 256) (hn : (c::M.wires).Nodup) (hk : k<p) (hZ : Z<p) :
     {{ c=B,M.a=0,M.z=Z,M.work=0 }}
       (maskedConstant c M.a k ++ modAddInPlace M p ++ maskedConstant c M.a k)
-    {{ c=B,M.a=0,M.z=(Z+(if B then k else 0))%p,M.work=0 }} := by
+    {{ c=B,M.a=0,M.z=(Z+(if B then k else 0))%p,M.work=0 }} := Proof
   have hkp : k<2^M.a.length := by
     simp only [hw.core.a,Nat.reduceAdd]
     have hp : p<2^256 := by norm_num [p]
@@ -58,11 +60,23 @@ private theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : N
     have hm := hmono 256
     simp only [Nat.reduceAdd] at hm
     exact hk.trans (hp.trans_le hm)
-  have ha := constant_mask M c k 0 Z B hn hkp
-  simp only [Nat.zero_xor] at ha
-  have hb := constant_add M c (if B then k else 0) Z B hw hn (by split <;> omega) hZ
-  have hc := constant_mask M c k (if B then k else 0) ((Z+(if B then k else 0))%p) B hn hkp
-  simpa only [Nat.xor_self] using (ha.seq hb).seq hc
+  let masked := if B then k else 0
+  { {{ c=B,M.a=0,M.z=Z,M.work=0 }} maskedConstant c M.a k
+      {{ c=B,M.a=masked,M.z=Z,M.work=0 }}
+  } as loaded by (by simpa only [Nat.zero_xor] using constant_mask M c k 0 Z B hn hkp);
+  { {{ c=B,M.a=masked,M.z=Z,M.work=0 }} modAddInPlace M p
+      {{ c=B,M.a=masked,M.z=(Z+masked)%p,M.work=0 }}
+  } as added by constant_add M c masked Z B hw hn (by dsimp [masked]; split <;> omega) hZ;
+  { {{ c=B,M.a=masked,M.z=(Z+masked)%p,M.work=0 }} maskedConstant c M.a k
+      {{ c=B,M.a=0,M.z=(Z+masked)%p,M.work=0 }}
+  } as unloaded by (by
+    simpa only [masked,Nat.xor_self] using
+      constant_mask M c k masked ((Z+masked)%p) B hn hkp);
+  conclude {
+    {{ c=B,M.a=0,M.z=Z,M.work=0 }}
+      (maskedConstant c M.a k ++ modAddInPlace M p ++ maskedConstant c M.a k)
+    {{ c=B,M.a=0,M.z=(Z+masked)%p,M.work=0 }}
+  } by (loaded.seq added).seq unloaded;
 
 private theorem constant_program_frame (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
     (hw : M.Widths 256) (hn : (c::M.wires).Nodup) (hk : k<p) (hZ : Z<p)
@@ -103,7 +117,7 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
     (hc : regValue L.inPlaceBorrow s.basis=0) :
     (run (pointInPlaceConstantAddKernel L r k) m s).phase=s.phase ∧
       regValue r (run (pointInPlaceConstantAddKernel L r k) m s).basis=(Z+(if B then k.val else 0))%p ∧
-      ∀ q∉r,(run (pointInPlaceConstantAddKernel L r k) m s).basis q=s.basis q := by
+      ∀ q∉r,(run (pointInPlaceConstantAddKernel L r k) m s).basis q=s.basis q := Proof
   let M := L.inPlaceConstant r
   have hl : r.length=256 := by rcases hr with rfl | rfl; exact hw.inputX; exact hw.inputY
   have hM := L.inPlaceConstant_widths hw r hl
@@ -139,13 +153,19 @@ theorem pointInPlaceConstantAdd_correct (L : ControlledPointLayout) (hw : L.Widt
   have hlow := (regValue_low_iff r [L.inPlaceBit 257]
     (run (pointInPlaceConstantAddKernel L r k) m s).basis ((Z+(if B then k.val else 0))%p)
     (by rw [hl]; exact (Nat.mod_lt _ (by norm_num [p])).trans (by norm_num [p]))).mp hv.1.2
-  refine ⟨hp,hlow.1,?_⟩
-  intro q hq
-  by_cases he : q=L.inPlaceBit 257
-  · subst q
-    exact ((regValue_zero _ _).mp hlow.2 _ (by simp)).trans hhigh.symm
-  · apply keep q
-    simp only [M,inPlaceConstant,ModInPlaceLayout.z,ModUnaryLayout.core,inPlaceUnary,ModAddCoreLayout.z]
-    simp [hq,he]
+  { regValue r (run (pointInPlaceConstantAddKernel L r k) m s).basis=(Z+(if B then k.val else 0))%p } as outputValue by hlow.1;
+  { ∀ q∉r, (run (pointInPlaceConstantAddKernel L r k) m s).basis q=s.basis q } as otherWiresPreserved by (by
+    intro q hq
+    by_cases he : q=L.inPlaceBit 257
+    · subst q
+      exact ((regValue_zero _ _).mp hlow.2 _ (by simp)).trans hhigh.symm
+    · apply keep q
+      simp only [M,inPlaceConstant,ModInPlaceLayout.z,ModUnaryLayout.core,inPlaceUnary,ModAddCoreLayout.z]
+      simp [hq,he]);
+  conclude {
+    (run (pointInPlaceConstantAddKernel L r k) m s).phase=s.phase ∧
+    regValue r (run (pointInPlaceConstantAddKernel L r k) m s).basis=(Z+(if B then k.val else 0))%p ∧
+    ∀ q∉r, (run (pointInPlaceConstantAddKernel L r k) m s).basis q=s.basis q
+  } by ⟨hp, outputValue, otherWiresPreserved⟩;
 
 end ECDSAAdd.Arithmetic

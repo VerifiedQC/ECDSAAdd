@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem negate_swap (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (A T : Nat) (B : Bool) (hA : A<p) (hT : T<p) :
@@ -57,17 +59,19 @@ theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd
     {{ L.core.generic=B,L.inPlaceNegate.a=A,L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
       pointInPlaceNegateKernel L
     {{ L.core.generic=B,L.inPlaceNegate.a=(if B then (p-A)%p else A),
-      L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }} := by
+      L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }} := Proof
   have hp : 0<p := by norm_num [p]
   have hpn : p<2^256 := by norm_num [p]
   have hm := L.inPlaceNegate_widths hw
   have hn := L.inPlaceNegate_nodup hw hnd
-  have hs := controlledModSub_spec L.core.generic L.inPlaceNegate 256 p A 0 B hm hn hp hpn
+  { (A+(p-A)%p)%p=0 } as oppositeValuesCancel by (by
+    rw [Nat.add_mod_mod,Nat.add_sub_of_le (Nat.le_of_lt hA),Nat.mod_self]);
+  have negationComputed := controlledModSub_spec L.core.generic L.inPlaceNegate 256 p A 0 B hm hn hp hpn
     (Nat.le_of_lt hA) hp
-  simp only [Nat.zero_add] at hs
-  have ht := negate_swap L hw hnd A (if B then (p-A)%p else 0) B hA
+  simp only [Nat.zero_add] at negationComputed
+  have negationSwapped := negate_swap L hw hnd A (if B then (p-A)%p else 0) B hA
     (by split; exact Nat.mod_lt _ hp; exact hp)
-  have ha := controlledModAdd_spec L.core.generic L.inPlaceNegate 256 p
+  have oldValueCleared := controlledModAdd_spec L.core.generic L.inPlaceNegate 256 p
     (if B then (if B then (p-A)%p else 0) else A) (if B then A else (if B then (p-A)%p else 0)) B
     hm hn hp hpn (by cases B <;> simp; omega; exact Nat.le_of_lt (Nat.mod_lt _ hp))
     (by cases B <;> simp; exact hp; exact hA)
@@ -76,11 +80,16 @@ theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd
     cases B
     · rfl
     · simp only [if_true]
-      rw [Nat.add_mod_mod,Nat.add_sub_of_le (Nat.le_of_lt hA),Nat.mod_self]
-  have h := (hs.seq ht).seq ha
+      exact oppositeValuesCancel
+  have h := (negationComputed.seq negationSwapped).seq oldValueCleared
   have he : (if B then (if B then (p-A)%p else 0) else A)=(if B then (p-A)%p else A) := by cases B <;> rfl
   rw [hresult] at h
-  simpa only [pointInPlaceNegateKernel_program,he] using h
+  conclude {
+    {{ L.core.generic=B,L.inPlaceNegate.a=A,L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
+      pointInPlaceNegateKernel L
+    {{ L.core.generic=B,L.inPlaceNegate.a=(if B then (p-A)%p else A),
+      L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
+  } by (by simpa only [pointInPlaceNegateKernel_program,he] using h);
 
 /-- 取负后仅输入x的低位改变，临时差、高位与所有其它线路恢复。 -/
 theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
@@ -89,7 +98,7 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
     (hc : regValue L.inPlaceBorrow s.basis=0) :
     (run (pointInPlaceNegateKernel L) m s).phase=s.phase ∧
       regValue L.point.x (run (pointInPlaceNegateKernel L) m s).basis=(if B then (p-A)%p else A) ∧
-      ∀ q∉L.point.x,(run (pointInPlaceNegateKernel L) m s).basis q=s.basis q := by
+      ∀ q∉L.point.x,(run (pointInPlaceNegateKernel L) m s).basis q=s.basis q := Proof
   have hm := L.inPlaceNegate_widths hw
   have hp : 0<p := by norm_num [p]
   have hp2 : p<2^256 := by norm_num [p]
@@ -111,38 +120,44 @@ theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (
   have hlow := (regValue_low_iff L.point.x [L.inPlaceBit 0] (run (pointInPlaceNegateKernel L) m s).basis
     (if B then (p-A)%p else A) (by rw [show L.point.x.length=256 from hw.inputX]; exact hvbound.trans hp2)).mp
     (he ▸ hv.1.1.2)
-  refine ⟨hphase,hlow.1,?_⟩
-  intro q hq
-  by_cases hqb : q=L.core.generic
-  · subst q; exact hv.1.1.1.trans hb.symm
-  by_cases hq0 : q=L.inPlaceBit 0
-  · subst q; exact ((regValue_zero _ _).mp hlow.2 _ (by simp)).trans hhigh.symm
-  by_cases hqz : q∈L.inPlaceNegate.z
-  · exact (regValue_eq_iff _ _ _).mp (hv.1.2.trans hz.symm) q hqz
-  by_cases hqw : q∈L.inPlaceNegate.work
-  · exact (regValue_eq_iff _ _ _).mp (hv.2.trans hwork.symm) q hqw
-  have hqa : q∉L.inPlaceNegate.a := by rw [he]; simp [hq,hq0]
-  have subset (M : ModInPlaceLayout) : M.maskedCore.wires ⊆ M.z++M.work := by
-    intro w hh
-    simp only [ModInPlaceLayout.maskedCore,ModAddCoreLayout.wires,ModAddCoreLayout.z,
-      ModAddCoreLayout.work,ModInPlaceLayout.z,ModInPlaceLayout.work,List.mem_append,List.mem_cons] at hh ⊢
-    grind only
-  have hmask : q∉L.inPlaceNegate.maskedCore.wires := by
-    intro hh
-    have hh' := subset L.inPlaceNegate hh
-    simp only [List.mem_append] at hh'
-    exact hh'.elim hqz hqw
-  have hqlow : q∉L.inPlaceNegate.low := by
-    intro h; exact hqz (by simp [ModInPlaceLayout.z,ModAddCoreLayout.z,h])
-  have hswap : q∉wires (swapRegisters L.core.generic L.point.x L.inPlaceNegate.low) := by
-    intro h
-    have hh := swapRegisters_wires L.core.generic L.point.x L.inPlaceNegate.low (hw.inputX.trans hm.core.low.symm) h
-    simp [hqb,hq,hqlow] at hh
-  apply run_preserves_outside
-  simp only [pointInPlaceNegateKernel_program,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
-    controlledModAdd_wires _ _ 256 p hm (by omega),Finset.mem_union,List.mem_toFinset,List.mem_cons,
-    List.mem_append,not_or]
-  have htake : q∉L.inPlaceNegate.a.take 256 := fun h => hqa ((List.take_sublist _ _).subset h)
-  simp only [hqb,hqa,hmask,hswap,htake,not_false_eq_true,and_self]
+  { regValue L.point.x (run (pointInPlaceNegateKernel L) m s).basis=(if B then (p-A)%p else A) } as outputValue by hlow.1;
+  { ∀ q∉L.point.x, (run (pointInPlaceNegateKernel L) m s).basis q=s.basis q } as otherWiresPreserved by (by
+    intro q hq
+    by_cases hqb : q=L.core.generic
+    · subst q; exact hv.1.1.1.trans hb.symm
+    by_cases hq0 : q=L.inPlaceBit 0
+    · subst q; exact ((regValue_zero _ _).mp hlow.2 _ (by simp)).trans hhigh.symm
+    by_cases hqz : q∈L.inPlaceNegate.z
+    · exact (regValue_eq_iff _ _ _).mp (hv.1.2.trans hz.symm) q hqz
+    by_cases hqw : q∈L.inPlaceNegate.work
+    · exact (regValue_eq_iff _ _ _).mp (hv.2.trans hwork.symm) q hqw
+    have hqa : q∉L.inPlaceNegate.a := by rw [he]; simp [hq,hq0]
+    have subset (M : ModInPlaceLayout) : M.maskedCore.wires ⊆ M.z++M.work := by
+      intro w hh
+      simp only [ModInPlaceLayout.maskedCore,ModAddCoreLayout.wires,ModAddCoreLayout.z,
+        ModAddCoreLayout.work,ModInPlaceLayout.z,ModInPlaceLayout.work,List.mem_append,List.mem_cons] at hh ⊢
+      grind only
+    have hmask : q∉L.inPlaceNegate.maskedCore.wires := by
+      intro hh
+      have hh' := subset L.inPlaceNegate hh
+      simp only [List.mem_append] at hh'
+      exact hh'.elim hqz hqw
+    have hqlow : q∉L.inPlaceNegate.low := by
+      intro h; exact hqz (by simp [ModInPlaceLayout.z,ModAddCoreLayout.z,h])
+    have hswap : q∉wires (swapRegisters L.core.generic L.point.x L.inPlaceNegate.low) := by
+      intro h
+      have hh := swapRegisters_wires L.core.generic L.point.x L.inPlaceNegate.low (hw.inputX.trans hm.core.low.symm) h
+      simp [hqb,hq,hqlow] at hh
+    apply run_preserves_outside
+    simp only [pointInPlaceNegateKernel_program,wires_append,controlledModSub_wires _ _ 256 p hm (by omega),
+      controlledModAdd_wires _ _ 256 p hm (by omega),Finset.mem_union,List.mem_toFinset,List.mem_cons,
+      List.mem_append,not_or]
+    have htake : q∉L.inPlaceNegate.a.take 256 := fun h => hqa ((List.take_sublist _ _).subset h)
+    simp only [hqb,hqa,hmask,hswap,htake,not_false_eq_true,and_self]);
+  conclude {
+    (run (pointInPlaceNegateKernel L) m s).phase=s.phase ∧
+    regValue L.point.x (run (pointInPlaceNegateKernel L) m s).basis=(if B then (p-A)%p else A) ∧
+    ∀ q∉L.point.x, (run (pointInPlaceNegateKernel L) m s).basis q=s.basis q
+  } by ⟨hphase, outputValue, otherWiresPreserved⟩;
 
 end ECDSAAdd.Arithmetic

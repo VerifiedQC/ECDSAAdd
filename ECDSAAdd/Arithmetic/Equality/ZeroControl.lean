@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.RegisterXor.Registers
 import ECDSAAdd.Framework.BitTranslation
+import ECDSAAdd.Framework.ProofLanguage
 import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 open Instr
 
 /-- 每个被检测的输入位配一根可复用的零工作位。 -/
@@ -124,9 +126,10 @@ theorem zeroControlled_correct (c target : Wire) (bs : List ZeroBit)
       exact ⟨⟨htw.symm,hni.2.2.2.1⟩,hni.2.1.2.2,hni.2.2.2.2⟩
     let q := s.basis c && !s.basis b.input
     let t : State := ⟨s.phase, writeBit s.basis b.work q⟩
-    have hp : run (negAnd c b.input b.work) m s=t := by
+    -- Store the conjunction of the control and this input being zero.
+    { run (negAnd c b.input b.work) m s = t } as prepared by (by
       rw [negAnd_run c b.input b.work hca hai]
-      simp [t, q, hz b (by simp), writeBit]
+      simp [t, q, hz b (by simp), writeBit]);
     have htail (d : ZeroBit) (hd : d∈bs) : d.work≠b.work ∧ d.input≠b.work := by
       have hh := hni.2.2.2.1
       constructor <;> intro he <;> apply hh <;>
@@ -138,24 +141,37 @@ theorem zeroControlled_correct (c target : Wire) (bs : List ZeroBit)
       apply Bool.eq_iff_iff.mpr
       simp only [List.all_eq_true]
       constructor <;> intro h d hd <;> simpa [t, writeBit, (htail d hd).2] using h d hd
-    rw [zeroControlled_cons]
-    change run (negAnd c b.input b.work ++ zeroControlled b.work target bs ++ negAndErase c b.input b.work) m s = _
-    rw [run_append, run_take, run_append, run_take]
-    simp only [measurementCount_append, (zeroControlled_counts b.work target bs).2,
-      show measurementCount (negAnd c b.input b.work)=0 from rfl, Nat.zero_add, List.drop_zero]
-    rw [hp, ih b.work hchild t m hz']
-    rw [negAndErase_run c b.input b.work hca hai hcw _ _ (by
-      simp [t, writeBit, htw.symm, hcw, hai, hni.1.1, hta.symm, q])]
-    simp only [hall, t, List.all_cons]
-    apply congrArg (State.mk s.phase)
-    funext w
-    by_cases ht : w=target
-    · subst w
-      simp [writeBit, htw, q, Bool.and_assoc]
-    · by_cases hw : w=b.work
-      · subst w
-        simp [writeBit, ht, hz b (by simp)]
-      · simp [writeBit, ht, hw]
+    let toggled : State := ⟨t.phase, writeBit t.basis target
+      (t.basis target ^^ (t.basis b.work && bs.all (fun d => !t.basis d.input)))⟩
+    { run (zeroControlled b.work target bs) m t = toggled }
+      as remainingInputs by (ih b.work hchild t m hz');
+    -- Measurement erases only the temporary conjunction, including its phase.
+    { run (negAndErase c b.input b.work) (m.drop bs.length) toggled =
+        ⟨toggled.phase, writeBit toggled.basis b.work false⟩ }
+      as cleared by (negAndErase_run c b.input b.work hca hai hcw _ _ (by
+        simp [toggled, t, writeBit, htw.symm, hcw, hai, hni.1.1, hta.symm, q]));
+    { (⟨toggled.phase, writeBit toggled.basis b.work false⟩ : State) =
+        ⟨s.phase, writeBit s.basis target
+          (s.basis target ^^ (s.basis c && (b::bs).all (fun d => !s.basis d.input)))⟩ }
+      as restored by (by
+        simp only [toggled, hall, t, List.all_cons]
+        apply congrArg (State.mk s.phase)
+        funext w
+        by_cases ht : w=target
+        · subst w; simp [writeBit, htw, q, Bool.and_assoc]
+        · by_cases hw : w=b.work
+          · subst w; simp [writeBit, ht, hz b (by simp)]
+          · simp [writeBit, ht, hw]);
+    conclude { run (zeroControlled c target (b::bs)) m s =
+        ⟨s.phase, writeBit s.basis target
+          (s.basis target ^^ (s.basis c && (b::bs).all (fun d => !s.basis d.input)))⟩ }
+      by (by
+        rw [zeroControlled_cons]
+        rw [run_append, run_take, run_append, run_take]
+        simp only [measurementCount_append, (zeroControlled_counts b.work target bs).2,
+          show measurementCount (negAnd c b.input b.work)=0 from rfl, Nat.zero_add, List.drop_zero]
+        rw [prepared, remainingInputs, cleared]
+        exact restored);
 
 /-- 输入为零时才按 c 翻转 target，输入和全部工作位保持。 -/
 theorem zeroControlled_spec (c target : Wire) (bs : List ZeroBit)
@@ -163,16 +179,16 @@ theorem zeroControlled_spec (c target : Wire) (bs : List ZeroBit)
     {{ c=C, target=T, (bs.map ZeroBit.input)=X, (bs.map ZeroBit.work)=0 }}
       zeroControlled c target bs
     {{ c=C, target=(T ^^ (C && decide (X=0))),
-       (bs.map ZeroBit.input)=X, (bs.map ZeroBit.work)=0 }} := by
-  intro s m h
+       (bs.map ZeroBit.input)=X, (bs.map ZeroBit.work)=0 }} := Proof
+  For every s, m assuming h
   have hz : ∀ b∈bs, s.basis b.work=false := by
     intro b hb
     exact (regValue_zero _ _).mp h.2 b.work (List.mem_map.mpr ⟨b,hb,rfl⟩)
-  have hall : bs.all (fun b => !s.basis b.input) = decide (X=0) := by
+  { bs.all (fun b => !s.basis b.input) = decide (X=0) } as allZero by (by
     apply Bool.eq_iff_iff.mpr
     rw [decide_eq_true_eq, ← show regValue (bs.map ZeroBit.input) s.basis=X from h.1.2,
       regValue_zero]
-    simp [List.all_eq_true]
+    simp [List.all_eq_true]);
   have hn := List.nodup_cons.mp hnd
   have ht := (List.nodup_cons.mp hn.2).1
   have hct : c≠target := fun he => hn.1 (by simp [he])
@@ -182,19 +198,31 @@ theorem zeroControlled_spec (c target : Wire) (bs : List ZeroBit)
   have hw (b : ZeroBit) (hb : b∈bs) : b.work≠target := by
     intro he
     exact ht (List.mem_flatMap.mpr ⟨b,hb,by simp [ZeroBit.wires, he]⟩)
-  rw [zeroControlled_correct c target bs hnd s m hz]
-  refine ⟨rfl, ⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
-  · simpa [Holds.holds, writeBit, hct] using h.1.1.1
-  · simp [Holds.holds, writeBit, hall, show s.basis c=C from h.1.1.1,
-      show s.basis target=T from h.1.1.2]
-  · apply Eq.trans (regValue_congr _ _ _ ?_) h.1.2
+  let final : State := ⟨s.phase, writeBit s.basis target (T ^^ (C && decide (X=0)))⟩
+  { run (zeroControlled c target bs) m s = final } as execution by (by
+    rw [zeroControlled_correct c target bs hnd s m hz]
+    simp only [allZero, show s.basis c=C from h.1.1.1,
+      show s.basis target=T from h.1.1.2, final]);
+  { final.basis c = C } as controlPreserved
+    by (by simpa [final, writeBit, hct] using h.1.1.1);
+  { final.basis target = (T ^^ (C && decide (X=0))) } as output
+    by (by simp [final, writeBit]);
+  { regValue (bs.map ZeroBit.input) final.basis = X } as inputPreserved by (by
+    apply Eq.trans (regValue_congr _ _ _ ?_) h.1.2
     intro w hm
     obtain ⟨b,hb,rfl⟩ := List.mem_map.mp hm
-    simp [writeBit, hi b hb]
-  · apply Eq.trans (regValue_congr _ _ _ ?_) h.2
+    simp [final, writeBit, hi b hb]);
+  { regValue (bs.map ZeroBit.work) final.basis = 0 } as workCleared by (by
+    apply Eq.trans (regValue_congr _ _ _ ?_) h.2
     intro w hm
     obtain ⟨b,hb,rfl⟩ := List.mem_map.mp hm
-    simp [writeBit, hw b hb]
+    simp [final, writeBit, hw b hb]);
+  conclude { (run (zeroControlled c target bs) m s).phase = s.phase ∧
+      (((run (zeroControlled c target bs) m s).basis c = C ∧
+        (run (zeroControlled c target bs) m s).basis target = (T ^^ (C && decide (X=0)))) ∧
+        regValue (bs.map ZeroBit.input) (run (zeroControlled c target bs) m s).basis = X) ∧
+        regValue (bs.map ZeroBit.work) (run (zeroControlled c target bs) m s).basis = 0 }
+    by (by rw [execution]; exact ⟨rfl, ⟨⟨controlPreserved, output⟩, inputPreserved⟩, workCleared⟩);
 
 theorem zeroControlled_wires (c target : Wire) (bs : List ZeroBit) :
     wires (zeroControlled c target bs) = (c::target::bs.flatMap ZeroBit.wires).toFinset := by

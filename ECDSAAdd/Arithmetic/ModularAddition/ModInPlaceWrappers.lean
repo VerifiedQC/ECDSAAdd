@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlace
 import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceCopy
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 外层模算术布局：核工作区之外的 mask 用于受控源，flag 留给单目半倍。
 子视图只借用线路，不把 mask 重复加入核工作区。 -/
@@ -66,8 +67,8 @@ theorem modAddInPlace_spec (L : ModInPlaceLayout) (n p A Z : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ L.a=A, L.z=Z, L.work=0 }} modAddInPlace L p
-    {{ L.a=A, L.z=(Z+A)%p, L.work=0 }} := by
-  intro s m h
+    {{ L.a=A, L.z=(Z+A)%p, L.work=0 }} := Proof
+  For every s, m assuming h
   simp only [Holds.holds] at h ⊢
   have clean := (regValue_zero L.work s.basis).mp h.2
   have hc : regValue L.toModAddCoreLayout.work s.basis=0 := (regValue_zero _ _).mpr
@@ -76,17 +77,24 @@ theorem modAddInPlace_spec (L : ModInPlaceLayout) (n p A Z : Nat)
   obtain ⟨hf,hv⟩ := modAddCore_spec L.toModAddCoreLayout n p A Z hw.core hcnd hp hpn hA hZ
     s m ⟨h.1,hc⟩
   simp only [Holds.holds] at hv
-  refine ⟨hf, ⟨hv.1.1, by simpa only [Nat.add_comm] using hv.1.2⟩, (regValue_zero _ _).mpr ?_⟩
-  intro q hq
-  have hnot : q ∉ L.z := by
-    intro hz
-    have h1 := List.nodup_iff_count.mp hnd q
-    have h2 := List.count_pos_iff.mpr hq
-    have h3 := List.count_pos_iff.mpr hz
-    simp only [ModInPlaceLayout.wires, List.count_append] at h1
-    omega
-  exact (modAddCore_frame L.toModAddCoreLayout n p A Z hw.core hcnd hp hpn hA hZ
-    s m h.1.1 h.1.2 hc q hnot).trans (clean q hq)
+  let final := run (modAddInPlace L p) m s
+  { regValue L.a final.basis=A ∧ regValue L.z final.basis=(Z+A)%p }
+    as output by ⟨hv.1.1, (by simpa only [Nat.add_comm] using hv.1.2)⟩;
+  { regValue L.work final.basis=0 } as restored by (by
+    apply (regValue_zero _ _).mpr
+    intro q hq
+    have hnot : q ∉ L.z := by
+      intro hz
+      have h1 := List.nodup_iff_count.mp hnd q
+      have h2 := List.count_pos_iff.mpr hq
+      have h3 := List.count_pos_iff.mpr hz
+      simp only [ModInPlaceLayout.wires, List.count_append] at h1
+      omega
+    exact (modAddCore_frame L.toModAddCoreLayout n p A Z hw.core hcnd hp hpn hA hZ
+      s m h.1.1 h.1.2 hc q hnot).trans (clean q hq));
+  conclude { final.phase=s.phase ∧
+    (regValue L.a final.basis=A ∧ regValue L.z final.basis=(Z+A)%p) ∧
+    regValue L.work final.basis=0 } by ⟨hf,output,restored⟩;
 
 /-- 公共模加不改变目标之外的任何物理位。 -/
 theorem modAddInPlace_frame (L : ModInPlaceLayout) (n p A Z : Nat)
@@ -183,32 +191,47 @@ theorem controlledModAdd_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) 
     (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ c=B, L.a=A, L.z=Z, L.work=0 }} controlledModAdd c L p
-    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }} := by
+    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }} := Proof
   let V := if B then A else 0
-  have hV : V≤p := by dsimp [V]; split <;> omega
-  have h1 := outer_mask_copy c L n p A Z 0 B hw hnd hpn hA (by positivity)
-  have h2 := outer_mask_core c L n p A Z V B hw hnd hp hpn hV hZ
-  have h3 := outer_mask_copy c L n p A ((Z+V)%p) V B hw hnd hpn hA (by omega)
-  simp only [Nat.zero_xor] at h1
-  have hall := (h1.seq h2).seq h3
-  intro s m h
+  { V≤p } as hV by (by dsimp [V]; split <;> omega);
+  { {{ c=B,L.a=A,L.z=Z,L.mask=0,L.toModAddCoreLayout.work=0,L.flag=false }}
+      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
+      {{ c=B,L.a=A,L.z=Z,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} }
+    as loadMask by (by
+      simpa only [Nat.zero_xor] using outer_mask_copy c L n p A Z 0 B hw hnd hpn hA (by positivity));
+  { {{ c=B,L.a=A,L.z=Z,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} modAddCore L.maskedCore p
+      {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} }
+    as addMasked by (outer_mask_core c L n p A Z V B hw hnd hp hpn hV hZ);
+  { {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }}
+      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
+      {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=0,L.toModAddCoreLayout.work=0,L.flag=false }} }
+    as clearMask by (by
+      simpa only [V,Nat.xor_self] using outer_mask_copy c L n p A ((Z+V)%p) V B hw hnd hpn hA (by omega));
+  have composed := (loadMask.seq addMasked).seq clearMask
+  For every s, m assuming h
   simp only [Holds.holds] at h ⊢
   have clean := (regValue_zero L.work s.basis).mp h.2
   have hm : regValue L.mask s.basis=0 := (regValue_zero _ _).mpr
     (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
   have hk : regValue L.toModAddCoreLayout.work s.basis=0 := (regValue_zero _ _).mpr
     (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
-  obtain ⟨hf,hv⟩ := hall s m ⟨⟨⟨h.1,hm⟩,hk⟩,clean L.flag (by simp [ModInPlaceLayout.work])⟩
-  simp only [Holds.holds, V, Nat.xor_self] at hv
-  refine ⟨hf, ⟨hv.1.1.1.1,?_⟩,?_⟩
-  · cases B <;> simpa [controlledModAdd, V,Nat.mod_eq_of_lt hZ] using hv.1.1.1.2
-  · apply (regValue_zero _ _).mpr
+  obtain ⟨hf,hv⟩ := composed s m ⟨⟨⟨h.1,hm⟩,hk⟩,clean L.flag (by simp [ModInPlaceLayout.work])⟩
+  simp only [Holds.holds, V] at hv
+  let final := run (controlledModAdd c L p) m s
+  { regValue L.z final.basis=(if B then (Z+A)%p else Z) } as output by (by
+    cases B <;> simpa [final,controlledModAdd,V,Nat.mod_eq_of_lt hZ] using hv.1.1.1.2);
+  { regValue L.work final.basis=0 } as restored by (by
+    apply (regValue_zero _ _).mpr
     intro q hq
     simp only [ModInPlaceLayout.work,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hq
     rcases hq with (hq | hq) | hq
     · exact (regValue_zero _ _).mp hv.1.2 q hq
     · exact (regValue_zero _ _).mp hv.1.1.2 q hq
-    · subst q; exact hv.2
+    · subst q; exact hv.2);
+  conclude { final.phase=s.phase ∧
+    ((final.basis c=B ∧ regValue L.a final.basis=A) ∧
+      regValue L.z final.basis=(if B then (Z+A)%p else Z)) ∧ regValue L.work final.basis=0 }
+    by ⟨hf,⟨hv.1.1.1.1,output⟩,restored⟩;
 
 /-- 实际支持不含源高位与 flag；mask 高位由核接入。 -/
 theorem controlledModAdd_wires (c : Wire) (L : ModInPlaceLayout) (n p : Nat)

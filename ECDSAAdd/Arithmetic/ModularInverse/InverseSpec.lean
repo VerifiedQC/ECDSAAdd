@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularInverse.InverseLoad
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 规范值放在低段时，额外高段恰好为零。 -/
 theorem regValue_low_iff (lo hi : List Wire) (st : BasisState) (V : Nat) (hV : V<2^lo.length) :
@@ -58,13 +59,15 @@ theorem inverseZero_iff (L : InverseLayout) (X O : Nat) (st : BasisState) :
 theorem fieldInverse_xor_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (X O : Nat) (hX0 : 0<X) (hX : X<p) :
     {{ L.x=X,L.out=O,L.work=0 }} fieldInverse L
-    {{ L.x=X,L.out=(O ^^^ ((X : Fp)⁻¹).val),L.work=0 }} := by
+    {{ L.x=X,L.out=(O ^^^ ((X : Fp)⁻¹).val),L.work=0 }} := Proof
   letI : NeZero p := ⟨by norm_num [p]⟩
   have hp : p<2^256 := by norm_num [p]
-  have hcop : p.Coprime X := Secp256k1.p_prime.coprime_iff_not_dvd.mpr
-    (fun h => (Nat.not_le_of_lt hX) (Nat.le_of_dvd hX0 h))
+  { p.Coprime X } as inputCoprime by (Secp256k1.p_prime.coprime_iff_not_dvd.mpr
+    (fun h => (Nat.not_le_of_lt hX) (Nat.le_of_dvd hX0 h)));
+  { kaliskiInverse p X 256 = ((X : Fp)⁻¹).val } as inverseValue by
+    (kaliski_inverse_p X hX0 hX);
   have hc := inverseLoop_xor_spec L.inner (L.inner_nodup hnd) hw.records hw.counter hw.low
-    hw.arithmetic hw.a hw.temp hw.output p X O hp (by norm_num [p]) hX0 hX hcop
+    hw.arithmetic hw.a hw.temp hw.output p X O hp (by norm_num [p]) hX0 hX inputCoprime
   have hwire := inverseLoop_wires L.inner hw.records hw.counter
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low])
     (by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hw.low,hw.arithmetic])
@@ -75,33 +78,54 @@ theorem fieldInverse_xor_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.
     intro s t he hx
     exact (regValue_congr _ _ _ (fun w hw' => (he w (by
       rw [hwire]; exact fun hh => List.disjoint_left.mp hdis hw' (L.inner.usedWires_sublist.subset (List.mem_toFinset.mp hh)))).symm)).trans hx)
-  intro st m hpre
+  For every st, m assuming initial
   have hO : O<2^256 := by
     have h := regValue_lt L.out st.basis
-    rw [show regValue L.out st.basis=O from hpre.1.2] at h
+    rw [show regValue L.out st.basis=O from initial.1.2] at h
     simpa only [InverseLayout.out,List.length_take,hw.output,show min 256 257=256 from rfl] using h
-  have hR : (O ^^^ ((X : Fp)⁻¹).val)<2^256 :=
-    Nat.xor_lt_two_pow hO ((ZMod.val_lt _).trans hp)
-  have hc'' : Triple (InverseValues L (inverseValues X p X 1 O)) (inverseLoop L.inner p)
-      (InverseValues L (inverseValues X p X 1 (O ^^^ ((X : Fp)⁻¹).val))) := by
+  { (O ^^^ ((X : Fp)⁻¹).val) < 2^256 } as outputFits by
+    (Nat.xor_lt_two_pow hO ((ZMod.val_lt _).trans hp));
+
+  -- Load u=p, v=X, s=1; the external input and the initial XOR output are retained.
+  { Triple (InverseValues L (inverseValues X 0 0 0 O)) (inverseLoad L)
+      (InverseValues L (inverseValues X p X 1 O))
+  } as loadInputs by (inverseLoad_values L hnd hw X O).1;
+  -- The internal loop computes the inverse, XORs it into out, and restores its own history.
+  { Triple (InverseValues L (inverseValues X p X 1 O)) (inverseLoop L.inner p)
+      (InverseValues L (inverseValues X p X 1 (O ^^^ ((X : Fp)⁻¹).val)))
+  } as computeInverse by (by
     apply Triple.conseq ?_ hc' ?_
     · intro s h
       obtain ⟨⟨hi,ho⟩,hx⟩ := (inverseReady_iff L hw X O hX0 (hX.trans hp) hO s).mp h
       exact ⟨⟨(InverseInitial.iff L.inner p X hX0 s).mp hi,ho⟩,hx⟩
     · intro s h
-      apply (inverseReady_iff L hw X _ hX0 (hX.trans hp) hR s).mpr
+      apply (inverseReady_iff L hw X _ hX0 (hX.trans hp) outputFits s).mpr
       exact ⟨⟨(InverseInitial.iff L.inner p X hX0 s).mpr h.1.1,
-        by simpa only [kaliski_inverse_p X hX0 hX] using h.1.2⟩,h.2⟩
-  have hall := (((inverseLoad_values L hnd hw X O).1).seq hc'').seq
-    (inverseLoad_values L hnd hw X (O ^^^ ((X : Fp)⁻¹).val)).2
-  obtain ⟨hphase,hpost⟩ := hall st m ((inverseZero_iff L X O st.basis).mpr hpre)
-  exact ⟨hphase,(inverseZero_iff L X _ _).mp hpost⟩
+        by simpa only [inverseValue] using h.1.2⟩,h.2⟩);
+  -- Unload the initialized registers; all internal registers are now zero.
+  { Triple (InverseValues L (inverseValues X p X 1 (O ^^^ ((X : Fp)⁻¹).val)))
+      (inverseUnload L) (InverseValues L (inverseValues X 0 0 0 (O ^^^ ((X : Fp)⁻¹).val)))
+  } as clearInputs by (inverseLoad_values L hnd hw X (O ^^^ ((X : Fp)⁻¹).val)).2;
+
+  have complete := (loadInputs.seq computeInverse).seq clearInputs
+  obtain ⟨phase, post⟩ := complete st m ((inverseZero_iff L X O st.basis).mpr initial)
+  conclude {
+    (run (fieldInverse L) m st).phase = st.phase ∧
+      (regValue L.x (run (fieldInverse L) m st).basis = X ∧
+       regValue L.out (run (fieldInverse L) m st).basis = (O ^^^ ((X : Fp)⁻¹).val)) ∧
+      regValue L.work (run (fieldInverse L) m st).basis = 0
+  } by ⟨phase, (inverseZero_iff L X _ _).mp post⟩;
 
 /-- 常用零输出求逆规格。 -/
 theorem fieldInverse_spec (L : InverseLayout) (hnd : L.wires.Nodup) (hw : L.Widths)
     (X : Nat) (hX0 : 0<X) (hX : X<p) :
     {{ L.x=X,L.out=0,L.work=0 }} fieldInverse L
-    {{ L.x=X,L.out=((X : Fp)⁻¹).val,L.work=0 }} := by
-  simpa only [Nat.zero_xor] using fieldInverse_xor_spec L hnd hw X 0 hX0 hX
+    {{ L.x=X,L.out=((X : Fp)⁻¹).val,L.work=0 }} := Proof
+  -- Starting out at zero turns the XOR update into an ordinary inverse output.
+  { (0 ^^^ ((X : Fp)⁻¹).val) = ((X : Fp)⁻¹).val } as zeroOutput by (Nat.zero_xor _);
+  conclude {
+    {{ L.x=X,L.out=0,L.work=0 }} fieldInverse L
+    {{ L.x=X,L.out=((X : Fp)⁻¹).val,L.work=0 }}
+  } by (by simpa only [zeroOutput] using fieldInverse_xor_spec L hnd hw X 0 hX0 hX);
 
 end ECDSAAdd.Arithmetic

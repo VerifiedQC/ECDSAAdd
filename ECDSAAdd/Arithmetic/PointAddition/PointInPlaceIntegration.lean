@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceWires
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceCounts
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem boundary_frame_values (L : ControlledPointLayout) (P : Program)
     (hP : wires P⊆L.inPlaceUsedWires.toFinset) (R R' : Point) (b : Bool) (s : State) (m : List Bool)
@@ -57,8 +59,8 @@ private theorem work_not_point (L : ControlledPointLayout) (hn : L.wires.Nodup)
 theorem pointInPlaceFinite_full_spec (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     (R : Point) {cx cy : Fp} (hc : curve.toAffine.Nonsingular cx cy) (b : Bool) :
     {{ L.control=b,L.point=R,L.work=0 }} pointInPlaceFinite L (.some hc) cx cy
-    {{ L.control=b,L.point=(if b then R+.some hc else R),L.work=0 }} := by
-  intro s m hs
+    {{ L.control=b,L.point=(if b then R+.some hc else R),L.work=0 }} := Proof
+  For every s, m assuming hs
   have hz : regValue L.work s.basis=0 := hs.2
   have clean (q : Wire) (hq : q∈L.inPlaceSlope++L.inPlaceFlags++L.inPlaceInverse.wires) : s.basis q=false :=
     (regValue_zero _ _).mp hz q (boundary_work_subset L hw hq)
@@ -67,10 +69,22 @@ theorem pointInPlaceFinite_full_spec (L : ControlledPointLayout) (hw : L.Widths)
     · exact (regValue_zero _ _).mpr (fun q hq => clean q (by simp [hq]))
     · exact (regValue_zero _ _).mpr (fun q hq => clean q (by simp [hq]))
   obtain ⟨hp,ho⟩ := pointInPlaceFinite_spec L hw hn R hc b s m hi
-  refine ⟨hp,⟨ho.control,ho.point⟩,?_⟩
-  apply (regValue_zero _ _).mpr
-  intro q hq
-  rw [pointInPlaceFinite_frame L hw hn R hc b s m hi q (work_not_point L hn q hq)]
-  exact (regValue_zero _ _).mp hz q hq
+  generalize hrun : run (pointInPlaceFinite L (.some hc) cx cy) m s=finished at hp ho ⊢
+  { Holds.holds finished.basis L.point (if b then R+.some hc else R) } as pointAdded by ho.point;
+  { finished.basis L.control=b } as controlPreserved by ho.control;
+  -- The frame theorem restores even allocated workspace banks that this circuit never used.
+  { regValue L.work finished.basis=0 } as allWorkspaceClean by (by
+    apply (regValue_zero _ _).mpr
+    intro q hq
+    have preserved := pointInPlaceFinite_frame L hw hn R hc b s m hi q (work_not_point L hn q hq)
+    rw [hrun] at preserved
+    rw [preserved]
+    exact (regValue_zero _ _).mp hz q hq);
+  conclude {
+    finished.phase=s.phase ∧
+    ((Holds.holds finished.basis L.control b ∧
+      Holds.holds finished.basis L.point (if b then R+.some hc else R)) ∧
+      regValue L.work finished.basis=0)
+  } by ⟨hp, ⟨controlPreserved, pointAdded⟩, allWorkspaceClean⟩;
 
 end ECDSAAdd.Arithmetic

@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.Equality.ZeroControl
 import ECDSAAdd.Arithmetic.RegisterXor.Constant
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem zeroBit_count (bs : List ZeroBit) (w : Wire) :
     (bs.flatMap ZeroBit.wires).count w =
@@ -27,7 +28,7 @@ theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : N
     (s : State) (m : List Bool) (hz : ∀ b∈bs,s.basis b.work=false) :
     run (equalConstant control target bs k) m s =
       ⟨s.phase,writeBit s.basis target
-        (s.basis target ^^ (s.basis control && decide (regValue (bs.map ZeroBit.input) s.basis=k)))⟩ := by
+        (s.basis target ^^ (s.basis control && decide (regValue (bs.map ZeroBit.input) s.basis=k)))⟩ := Proof
   let src := bs.map ZeroBit.input
   have hsrc : src.Nodup := by
     apply List.nodup_iff_count.mpr
@@ -60,7 +61,8 @@ theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : N
   obtain ⟨hup,hue,huv⟩ := xorConstant_correct src hsrc k (by simpa [src] using hk) s m
   have huz : ∀ b∈bs,u.basis b.work=false := fun b hb => (hue _ (hwork b hb)).trans (hz b hb)
   have hh := zeroControlled_correct control target bs hnd u m huz
-  have hall : bs.all (fun b => !u.basis b.input) = decide (regValue src s.basis=k) := by
+  -- XOR with k changes equality to k into an all-zero test.
+  { bs.all (fun b => !u.basis b.input) = decide (regValue src s.basis=k) } as hall by (by
     apply Bool.eq_iff_iff.mpr
     rw [List.all_eq_true]
     simp only [Bool.not_eq_true']
@@ -70,38 +72,50 @@ theorem equalConstant_correct (control target : Wire) (bs : List ZeroBit) (k : N
     rw [heq]
     change (regValue src u.basis=0) ↔ decide (regValue src s.basis=k)=true
     rw [show regValue src u.basis=regValue src s.basis ^^^ k from huv]
-    simp
+    simp);
   let v : State := ⟨s.phase,writeBit u.basis target
     (s.basis target ^^ (s.basis control && decide (regValue src s.basis=k)))⟩
-  have hv : run (zeroControlled control target bs) m u=v := by
+  { run (zeroControlled control target bs) m u=v } as selected by (by
     rw [hh,hall]
     dsimp [v]
     rw [show u.phase=s.phase from hup,show u.basis target=s.basis target from hue _ ht,
-      show u.basis control=s.basis control from hue _ hc]
+      show u.basis control=s.basis control from hue _ hc]);
   obtain ⟨hvp,hve,hvv⟩ := xorConstant_correct src hsrc k (by simpa [src] using hk) v (m.drop bs.length)
   have hvs : regValue src v.basis=regValue src u.basis := by
     apply regValue_congr
     intro w hw
     simp [v,writeBit,show w≠target from fun h => ht (h ▸ hw)]
-  have hrestore : regValue src (run (xorConstant src k) (m.drop bs.length) v).basis=regValue src s.basis := by
-    rw [hvv,hvs,show regValue src u.basis=regValue src s.basis ^^^ k from huv,Nat.xor_assoc,Nat.xor_self,Nat.xor_zero]
-  rw [equalConstant,run_append,run_take,run_append,run_take]
-  simp only [measurementCount_append,(xorConstant_counts _ _).2,
-    (zeroControlled_counts _ _ _).2,Nat.zero_add,List.drop_zero]
-  change run (xorConstant src k) (m.drop bs.length) (run (zeroControlled control target bs) m u)=_
-  rw [hv]
-  apply (show ∀ a b : State, a.phase=b.phase → a.basis=b.basis → a=b from
-    fun ⟨ap,ab⟩ ⟨bp,bb⟩ hp hb => by cases hp; cases hb; rfl)
-  · exact hvp
-  · funext w
-    by_cases hw : w∈src
-    · rw [(regValue_eq_iff src _ _).mp hrestore w hw]
-      simp [writeBit,show w≠target from fun h => ht (h ▸ hw)]
-    · rw [hve w hw]
-      dsimp [v]
-      by_cases hwt : w=target
-      · subst w; simp [writeBit,src]
-      · simp [writeBit,hwt,show u.basis w=s.basis w from hue w hw]
+  -- XORing k a second time restores the original input exactly.
+  { regValue src (run (xorConstant src k) (m.drop bs.length) v).basis=regValue src s.basis }
+    as inputRestored by (by
+      rw [hvv,hvs,show regValue src u.basis=regValue src s.basis ^^^ k from huv,
+        Nat.xor_assoc,Nat.xor_self,Nat.xor_zero]);
+  { run (xorConstant src k) (m.drop bs.length) v =
+      ⟨s.phase,writeBit s.basis target
+        (s.basis target ^^ (s.basis control && decide (regValue src s.basis=k)))⟩ }
+    as restored by (by
+      apply (show ∀ a b : State, a.phase=b.phase → a.basis=b.basis → a=b from
+        fun ⟨ap,ab⟩ ⟨bp,bb⟩ hp hb => by cases hp; cases hb; rfl)
+      · exact hvp
+      · funext w
+        by_cases hw : w∈src
+        · rw [(regValue_eq_iff src _ _).mp inputRestored w hw]
+          simp [writeBit,show w≠target from fun h => ht (h ▸ hw)]
+        · rw [hve w hw]
+          dsimp [v]
+          by_cases hwt : w=target
+          · subst w; simp [writeBit,src]
+          · simp [writeBit,hwt,show u.basis w=s.basis w from hue w hw]);
+  conclude { run (equalConstant control target bs k) m s =
+      ⟨s.phase,writeBit s.basis target
+        (s.basis target ^^ (s.basis control && decide (regValue (bs.map ZeroBit.input) s.basis=k)))⟩ }
+    by (by
+      rw [equalConstant,run_append,run_take,run_append,run_take]
+      simp only [measurementCount_append,(xorConstant_counts _ _).2,
+        (zeroControlled_counts _ _ _).2,Nat.zero_add,List.drop_zero]
+      change run (xorConstant src k) (m.drop bs.length) (run (zeroControlled control target bs) m u)=_
+      rw [selected]
+      exact restored);
 
 theorem equalConstant_counts (control target : Wire) (bs : List ZeroBit) (k : Nat) :
     toffoliCount (equalConstant control target bs k)=bs.length ∧

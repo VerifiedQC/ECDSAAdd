@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceKernels
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
+open scoped ECDSAAdd.ProofLanguage
 
 private abbrev squareAdapter (L : ControlledPointLayout) : MontLayout := L.inPlaceSquare
 
@@ -63,16 +65,34 @@ private theorem square_program_spec (L : ControlledPointLayout) (hw : L.Widths) 
     {{ (squareAdapter L).x=A,(squareAdapter L).y=0,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
       squareProgram L
     {{ (squareAdapter L).x=A,(squareAdapter L).y=0,
-      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }} := by
-  have hc := square_copy L hw hnd A 0 X hA
-  simp only [Nat.zero_xor] at hc
+      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }} := Proof
   letI : Fact p.Prime := ⟨Secp256k1.p_prime⟩
   have hp : p<2^256 := by norm_num [p]
-  have hm := montMulSub_spec (squareAdapter L) p A A X (squareAdapter_widths L hw) (squareAdapter_nodup L hw hnd)
-    hp secp256k1_mod_sixteen hA (hA.trans hp) hX
-  have he := square_copy L hw hnd A A ((X+p-(A*A)%p)%p) hA
-  simp only [Nat.xor_self] at he
-  exact (hc.seq hm).seq he
+  { {{ (squareAdapter L).x=A,(squareAdapter L).y=0,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
+      copyRegister none L.inPlaceSlope L.inPlaceSquare.y
+    {{ (squareAdapter L).x=A,(squareAdapter L).y=A,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
+  } as copied by (by simpa only [Nat.zero_xor] using square_copy L hw hnd A 0 X hA);
+  { {{ (squareAdapter L).x=A,(squareAdapter L).y=A,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
+      montMulSub (squareAdapter L) p
+    {{ (squareAdapter L).x=A,(squareAdapter L).y=A,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }}
+  } as squareSubtracted by montMulSub_spec (squareAdapter L) p A A X
+      (squareAdapter_widths L hw) (squareAdapter_nodup L hw hnd)
+      hp secp256k1_mod_sixteen hA (hA.trans hp) hX;
+  { {{ (squareAdapter L).x=A,(squareAdapter L).y=A,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }}
+      copyRegister none L.inPlaceSlope L.inPlaceSquare.y
+    {{ (squareAdapter L).x=A,(squareAdapter L).y=0,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }}
+  } as copyCleared by (by
+    simpa only [Nat.xor_self] using
+      square_copy L hw hnd A A ((X+p-(A*A)%p)%p) hA);
+  conclude {
+    {{ (squareAdapter L).x=A,(squareAdapter L).y=0,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
+      squareProgram L
+    {{ (squareAdapter L).x=A,(squareAdapter L).y=0,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }}
+  } by (copied.seq squareSubtracted).seq copyCleared;
 
 private theorem square_program_frame (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (A X : Nat) (hA : A<p) (hX : X<p) (s : State) (m : List Bool)
@@ -114,7 +134,7 @@ theorem pointInPlaceSquare_correct (L : ControlledPointLayout) (hw : L.Widths) (
       montMulSub L.inPlaceSquare p ++
       copyRegister none L.inPlaceSlope L.inPlaceSquare.y
     (run P m s).phase=s.phase ∧ regValue L.point.x (run P m s).basis=(X+p-(A*A)%p)%p ∧
-      ∀ q∉L.point.x,(run P m s).basis q=s.basis q := by
+      ∀ q∉L.point.x,(run P m s).basis q=s.basis q := Proof
   have hprogram : squareProgram L=copyRegister none L.inPlaceSlope L.inPlaceSquare.y ++
       montMulSub L.inPlaceSquare p ++
       copyRegister none L.inPlaceSlope L.inPlaceSquare.y := by
@@ -143,12 +163,18 @@ theorem pointInPlaceSquare_correct (L : ControlledPointLayout) (hw : L.Widths) (
   have hl := (regValue_low_iff L.point.x [L.inPlaceBit 257] (run (squareProgram L) m s).basis
     ((X+p-(A*A)%p)%p)
     (by rw [show L.point.x.length=256 from hw.inputX]; exact (Nat.mod_lt _ (by norm_num [p])).trans (by norm_num [p]))).mp hv.1.2
-  refine ⟨hp,hl.1,?_⟩
-  intro q hq
-  by_cases he : q=L.inPlaceBit 257
-  · subst q; exact ((regValue_zero _ _).mp hl.2 _ (by simp)).trans high1.symm
-  · apply keep q
-    change q∉L.point.x++[L.inPlaceBit 257]
-    simp [hq,he]
+  { regValue L.point.x (run (squareProgram L) m s).basis=(X+p-(A*A)%p)%p } as outputValue by hl.1;
+  { ∀ q∉L.point.x, (run (squareProgram L) m s).basis q=s.basis q } as otherWiresPreserved by (by
+    intro q hq
+    by_cases he : q=L.inPlaceBit 257
+    · subst q; exact ((regValue_zero _ _).mp hl.2 _ (by simp)).trans high1.symm
+    · apply keep q
+      change q∉L.point.x++[L.inPlaceBit 257]
+      simp [hq,he]);
+  conclude {
+    (run (squareProgram L) m s).phase=s.phase ∧
+    regValue L.point.x (run (squareProgram L) m s).basis=(X+p-(A*A)%p)%p ∧
+    ∀ q∉L.point.x, (run (squareProgram L) m s).basis q=s.basis q
+  } by ⟨hp, outputValue, otherWiresPreserved⟩;
 
 end ECDSAAdd.Arithmetic

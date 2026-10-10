@@ -1,7 +1,9 @@
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceLayoutProof
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 外部乘加/乘减只改当前y；两个扩展高位和全部借用位在边界归零。 -/
 theorem pointInPlaceProduct_correct (L : ControlledPointLayout) (hw : L.Widths)
@@ -14,7 +16,7 @@ theorem pointInPlaceProduct_correct (L : ControlledPointLayout) (hw : L.Widths)
       ∀ q∉L.point.y,(run (montMulAdd L.inPlaceMultiply p) m s).basis q=s.basis q) ∧
     ((run (montMulSub L.inPlaceMultiply p) m s).phase=s.phase ∧
       regValue L.point.y (run (montMulSub L.inPlaceMultiply p) m s).basis=(Y+p-(A*X)%p)%p ∧
-      ∀ q∉L.point.y,(run (montMulSub L.inPlaceMultiply p) m s).basis q=s.basis q) := by
+      ∀ q∉L.point.y,(run (montMulSub L.inPlaceMultiply p) m s).basis q=s.basis q) := Proof
   letI : Fact p.Prime := ⟨Secp256k1.p_prime⟩
   have hp : p<2^256 := by norm_num [p]
   have hp0 : 0<p := by norm_num [p]
@@ -61,7 +63,16 @@ theorem pointInPlaceProduct_correct (L : ControlledPointLayout) (hw : L.Widths)
     s m ⟨⟨⟨hin,hx⟩,hout⟩,hwork⟩
   obtain ⟨hps,hvs⟩ := montMulSub_spec L.inPlaceMultiply p A X Y hwf hnf hp secp256k1_mod_sixteen hA (hX.trans hp) hY
     s m ⟨⟨⟨hin,hx⟩,hout⟩,hwork⟩
-  exact ⟨finish _ _ (Nat.mod_lt _ hp0) hpa hva.1.2 (fun q hq => (keep q hq).1),
-    finish _ _ (Nat.mod_lt _ hp0) hps hvs.1.2 (fun q hq => (keep q hq).2)⟩
+  constructor
+  · conclude {
+      (run (montMulAdd L.inPlaceMultiply p) m s).phase=s.phase ∧
+      regValue L.point.y (run (montMulAdd L.inPlaceMultiply p) m s).basis=(Y+(A*X)%p)%p ∧
+      ∀ q∉L.point.y,(run (montMulAdd L.inPlaceMultiply p) m s).basis q=s.basis q
+    } by finish _ _ (Nat.mod_lt _ hp0) hpa hva.1.2 (fun q hq => (keep q hq).1);
+  · conclude {
+      (run (montMulSub L.inPlaceMultiply p) m s).phase=s.phase ∧
+      regValue L.point.y (run (montMulSub L.inPlaceMultiply p) m s).basis=(Y+p-(A*X)%p)%p ∧
+      ∀ q∉L.point.y,(run (montMulSub L.inPlaceMultiply p) m s).basis q=s.basis q
+    } by finish _ _ (Nat.mod_lt _ hp0) hps hvs.1.2 (fun q hq => (keep q hq).2);
 
 end ECDSAAdd.Arithmetic

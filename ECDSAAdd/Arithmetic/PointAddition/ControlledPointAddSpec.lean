@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.PointAddition.ControlledPointOutSpec
 import ECDSAAdd.Arithmetic.PointAddition.PointInPlaceIntegration
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open Secp256k1
+open scoped ECDSAAdd.ProofLanguage
 
 theorem controlledPointAddOut_ready (L : ControlledPointLayout) (h : L.Widths)
     (hn : L.wires.Nodup) (b : Bool) (R C : Point) (hc : C≠0) (OF : Bool) (OX OY : Nat) :
@@ -18,14 +20,27 @@ theorem controlledPointAddOut_ready (L : ControlledPointLayout) (h : L.Widths)
 theorem controlledPointAdd_spec (L : ControlledPointLayout) (h : L.Widths) (hn : L.wires.Nodup)
     (b : Bool) (R C : Point) :
     {{ L.control=b,L.point=R,L.work=0 }} controlledPointAdd L C
-    {{ L.control=b,L.point=(if b then R+C else R),L.work=0 }} := by
+    {{ L.control=b,L.point=(if b then R+C else R),L.work=0 }} := Proof
   cases C with
   | zero =>
-    intro s m hs
-    change s.phase=s.phase ∧ _
-    refine ⟨rfl,?_⟩
-    change ((Holds.holds s.basis L.control b ∧ Holds.holds s.basis L.point (if b then R+0 else R)) ∧ _)
-    simpa only [add_zero,ite_self] using hs
-  | some hp => exact pointInPlaceFinite_full_spec L h hn R hp b
+    have unchangedPoint : (if b then R+0 else R)=R := by simp
+    -- Adding the identity is an empty circuit, for either control value.
+    conclude {
+      {{ L.control=b,L.point=R,L.work=0 }} controlledPointAdd L 0
+      {{ L.control=b,L.point=(if b then R+0 else R),L.work=0 }}
+    } by (by
+      intro s m initial
+      change s.phase=s.phase ∧ _
+      refine ⟨rfl,?_⟩
+      change ((Holds.holds s.basis L.control b ∧
+        Holds.holds s.basis L.point (if b then R+0 else R)) ∧ _)
+      simpa only [unchangedPoint] using initial);
+  | some hp =>
+    have finiteAddition := pointInPlaceFinite_full_spec L h hn R hp b
+    -- The finite-point proof includes the identity, doubling, inverse, and generic input cases.
+    conclude {
+      {{ L.control=b,L.point=R,L.work=0 }} controlledPointAdd L (.some hp)
+      {{ L.control=b,L.point=(if b then R+.some hp else R),L.work=0 }}
+    } by finiteAddition;
 
 end ECDSAAdd.Arithmetic

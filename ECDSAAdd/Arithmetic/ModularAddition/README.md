@@ -34,7 +34,7 @@
 ## 算法与证明示范目录
 
 - [Modular.lean](#modularlean)：保留可读算法，将分支证明与实际电路连接成最终模加减规格。
-- [ModularAlgorithm.lean](#modularalgorithmlean)：模加在 `if/else` 中直接列等式，并显式写出各分支结论；模减保留英文分情况证明，证明选出的数分别是模和、模差。
+- [ModularAlgorithm.lean](#modularalgorithmlean)：模加、模减均在 `if/else` 中直接列等式，并显式写出各分支结论，证明选出的数分别是模和、模差。
 - [ModularBackend.lean](#modularbackendlean)：证明实际电路实现这些分支，并恢复输入、相位与工作区；只读算法时可跳过。
 - [ModularTranslation.lean](#modulartranslationlean)：定义两个阶段必须遵守的状态接口，检查源码及实现/证明的对应关系。
 - [ModularFrame.lean](#modularframelean)：证明任意测量记录下的最终结果，以及输出之外每根 wire 都保持。
@@ -258,13 +258,7 @@ modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
 
 模加最终证明的主体只有三步：
 
-```lean
-have hSum : X + Y < 2*q := by omega
-have branches := modAddOn_refines L hnd q hq0 hq X Y O hSum
-simpa only [ModReductionAlgorithm.addResult_correct X Y q hSum] using branches
-```
-
-第一步检查只减一次 q 的条件；第二步取得实际电路的分支效果；第三步用下面的算法定理把结果改写为模和。模减采用同样结构。进位和反计算只在后端证明一次。
+证明正文依次列出 `sumBound`（只减一次 q 的范围）、`circuitBranches`（实际电路的分支 Hoare triple）、`bothBranches`（算法结果等于模和），最后显式 conclude 完整规格。模减采用同样结构。进位和反计算只在后端证明一次。
 
 ## [ModularAlgorithm.lean](ModularAlgorithm.lean)
 
@@ -272,7 +266,7 @@ X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测�
 
 模加的 `addResult_correct` 直接在 `if/else` 中列出两条等式：先写余数是多少，再按定义写实际 `addResult` 返回什么，最后用 `conclude { addResult X Y q = sum % q };` 显式结束每个分支。每条大括号里的结论都由 Lean 证明，不能当作新增假设。没有另写一份算法，也不再引入 result、requires 或 ensures。
 
-模减仍使用 `We split on`、`From [...] ... we get` 等英文句式，本轮未改。两种写法都是由 Lean 检查的证明代码，不是注释；语法及取模规则见 [ProofLanguage](../../Framework/README.md#prooflanguagelean)。辅助范围引理与电路后端仍保留原 tactic 写法。
+模减使用相同的大括号等式与显式分支结论，分别引用 hX/hY 的范围证据。两者都是由 Lean 检查的证明代码，不是注释；语法及取模规则见 [ProofLanguage](../../Framework/README.md#prooflanguagelean)。完整电路证明则列出具名阶段和最终状态结论；辅助范围引理及局部接线化简保留必要 tactic。
 
 `addResult_correct` 证明：令 `sum=X+Y`，要求 `sum<2*q`。`sum<q` 时，余数和算法结果都等于 sum；否则，引用 hSum 和当前分支的 `sum≥q`，证明余数是 sum−q，算法结果也按定义等于 sum−q。两分支分别明确得出算法结果等于余数。一次减法的范围推导保存在规则实现中；漏写 hSum 或分支方向不对时，规则不会通过。
 
@@ -284,7 +278,7 @@ X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测�
 
 `modAddPrepare_correct/modSubPrepare_correct` 证明从零工作区得到相应候选和正确的借位位；输出原值允许任意 O。
 
-`modAddSelectAndClear_correct/modSubSelectAndClear_correct` 以同一 `Ready` 为前提，证明 XOR 分支结果并恢复全部工作区。`reductionProgram_correct` 以 Hoare 顺序组合连接两段，相位恢复对所有测量记录成立。
+`modAddSelectAndClear_correct/modSubSelectAndClear_correct` 以同一 `Ready` 为前提，证明 XOR 分支结果并恢复全部工作区。`reductionProgram_correct` 现在显式列出 `prepared`、`selectedAndCleared` 两个 Hoare triple，再以顺序组合得出完整结论；相位恢复对所有测量记录成立。
 
 资源没有增加：两段连接后的完整门列与旧配方相等，仍为 T=5n+4、M=4(n+1)、Q=8n+9。
 

@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularAddition.ModularResources
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 按寄存器分组与按位分组包含同一组线路。 -/
 theorem ModLayout.interface_perm (L : ModLayout) :
@@ -68,12 +69,27 @@ theorem modAdd_bounded_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (∀ w, w ∉ L.out → (run (modAdd L q) m s).basis w = s.basis w) ∧
     regValue L.out (run (modAdd L q) m s).basis = regValue L.out s.basis ^^^
       ((regValue L.x s.basis + regValue L.y s.basis)%q) := by
-  obtain ⟨hp, h⟩ := modAdd_bounded_spec L hnd q hq0 hq _ _ _ hXY s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
-  refine ⟨hp, L.preserve_nonoutput s.basis _ h.1.1.1 h.1.1.2 (h.2.trans hwork.symm) ?_, h.1.2⟩
-  intro w hw
-  apply run_preserves_outside
-  rw [modAdd_wires]
-  exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
+  let final := run (modAdd L q) m s
+  obtain ⟨phase, values⟩ := modAdd_bounded_spec L hnd q hq0 hq _ _ _ hXY
+    s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
+  { regValue L.out final.basis =
+      regValue L.out s.basis ^^^ ((regValue L.x s.basis + regValue L.y s.basis)%q) }
+    as output by values.1.2;
+  { ∀ w, w ∉ L.wires → final.basis w = s.basis w }
+    as externalWires by (by
+      intro w hw
+      apply run_preserves_outside
+      rw [modAdd_wires]
+      exact fun h => hw (L.active_subset (List.mem_toFinset.mp h)));
+  -- Input values and the restored zero workspace determine every non-output wire.
+  { ∀ w, w ∉ L.out → final.basis w = s.basis w }
+    as preserved by (L.preserve_nonoutput s.basis _ values.1.1.1 values.1.1.2
+      (values.2.trans hwork.symm) externalWires);
+  conclude { final.phase = s.phase ∧
+      (∀ w, w ∉ L.out → final.basis w = s.basis w) ∧
+      regValue L.out final.basis =
+        regValue L.out s.basis ^^^ ((regValue L.x s.basis + regValue L.y s.basis)%q) }
+    by ⟨phase, preserved, output⟩;
 
 theorem modAdd_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
@@ -83,12 +99,27 @@ theorem modAdd_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (∀ w, w ∉ L.out → (run (modAdd L q) m s).basis w = s.basis w) ∧
     regValue L.out (run (modAdd L q) m s).basis = regValue L.out s.basis ^^^
       ((regValue L.x s.basis + regValue L.y s.basis)%q) := by
-  obtain ⟨hp, h⟩ := modAdd_spec L hnd q hq0 hq _ _ _ hX hY s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
-  refine ⟨hp, L.preserve_nonoutput s.basis _ h.1.1.1 h.1.1.2 (h.2.trans hwork.symm) ?_, h.1.2⟩
-  intro w hw
-  apply run_preserves_outside
-  rw [modAdd_wires]
-  exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
+  let final := run (modAdd L q) m s
+  obtain ⟨phase, values⟩ := modAdd_spec L hnd q hq0 hq _ _ _ hX hY
+    s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
+  { regValue L.out final.basis =
+      regValue L.out s.basis ^^^ ((regValue L.x s.basis + regValue L.y s.basis)%q) }
+    as output by values.1.2;
+  { ∀ w, w ∉ L.wires → final.basis w = s.basis w }
+    as externalWires by (by
+      intro w hw
+      apply run_preserves_outside
+      rw [modAdd_wires]
+      exact fun h => hw (L.active_subset (List.mem_toFinset.mp h)));
+  -- Input values and the restored zero workspace determine every non-output wire.
+  { ∀ w, w ∉ L.out → final.basis w = s.basis w }
+    as preserved by (L.preserve_nonoutput s.basis _ values.1.1.1 values.1.1.2
+      (values.2.trans hwork.symm) externalWires);
+  conclude { final.phase = s.phase ∧
+      (∀ w, w ∉ L.out → final.basis w = s.basis w) ∧
+      regValue L.out final.basis =
+        regValue L.out s.basis ^^^ ((regValue L.x s.basis + regValue L.y s.basis)%q) }
+    by ⟨phase, preserved, output⟩;
 
 theorem modSub_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (s : State) (m : List Bool)
@@ -98,12 +129,27 @@ theorem modSub_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (∀ w, w ∉ L.out → (run (modSub L q) m s).basis w = s.basis w) ∧
     regValue L.out (run (modSub L q) m s).basis = regValue L.out s.basis ^^^
       ((regValue L.x s.basis + q - regValue L.y s.basis)%q) := by
-  obtain ⟨hp, h⟩ := modSub_spec L hnd q hq0 hq _ _ _ hX hY s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
-  refine ⟨hp, L.preserve_nonoutput s.basis _ h.1.1.1 h.1.1.2 (h.2.trans hwork.symm) ?_, h.1.2⟩
-  intro w hw
-  apply run_preserves_outside
-  rw [modSub_wires]
-  exact fun h => hw (L.active_subset (List.mem_toFinset.mp h))
+  let final := run (modSub L q) m s
+  obtain ⟨phase, values⟩ := modSub_spec L hnd q hq0 hq _ _ _ hX hY
+    s m ⟨⟨⟨rfl, rfl⟩, rfl⟩, hwork⟩
+  { regValue L.out final.basis =
+      regValue L.out s.basis ^^^ ((regValue L.x s.basis + q - regValue L.y s.basis)%q) }
+    as output by values.1.2;
+  { ∀ w, w ∉ L.wires → final.basis w = s.basis w }
+    as externalWires by (by
+      intro w hw
+      apply run_preserves_outside
+      rw [modSub_wires]
+      exact fun h => hw (L.active_subset (List.mem_toFinset.mp h)));
+  -- Input values and the restored zero workspace determine every non-output wire.
+  { ∀ w, w ∉ L.out → final.basis w = s.basis w }
+    as preserved by (L.preserve_nonoutput s.basis _ values.1.1.1 values.1.1.2
+      (values.2.trans hwork.symm) externalWires);
+  conclude { final.phase = s.phase ∧
+      (∀ w, w ∉ L.out → final.basis w = s.basis w) ∧
+      regValue L.out final.basis =
+        regValue L.out s.basis ^^^ ((regValue L.x s.basis + q - regValue L.y s.basis)%q) }
+    by ⟨phase, preserved, output⟩;
 
 /-- 新逻辑入口的完整运行结论：任意相位/测量记录，输出公式成立且其他 wire 保持。 -/
 theorem modAddOn_correct (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)

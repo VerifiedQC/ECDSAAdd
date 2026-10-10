@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 import ECDSAAdd.Arithmetic.RegisterXor.Constant
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped ECDSAAdd.ProofLanguage
 
 attribute [local simp] carryBit
 
@@ -107,7 +109,7 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
     (∀ w, w ≠ target → (run (compareChain control x y carry cin target) m s).basis w = s.basis w) ∧
     (run (compareChain control x y carry cin target) m s).basis target =
       (s.basis target ^^ (controlValue control s.basis &&
-        !decide (2^y.length ≤ regValue x s.basis + regValue y s.basis + (s.basis cin).toNat))) := by
+        !decide (2^y.length ≤ regValue x s.basis + regValue y s.basis + (s.basis cin).toNat))) := Proof
   induction y generalizing x carry cin s m with
   | nil =>
     have hx0 : x = [] := List.eq_nil_of_length_eq_zero hx
@@ -174,8 +176,9 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
     let C := s.basis cin
     have hzero : s.basis c = false := hclean c (by simp)
     let s1 : State := ⟨s.phase, writeBit s.basis c (carryBit A B C)⟩
-    have hfirst (record : List Bool) : run (majority a b cin c) record s = s1 := by
-      rw [majority_correct _ _ _ _ h4]; simp [s1, hzero, A, B, C]
+    { ∀ record, run (majority a b cin c) record s = s1 } as hfirst by (by
+      intro record
+      rw [majority_correct _ _ _ _ h4]; simp [s1, hzero, A, B, C]);
     have hs1 (w : Wire) (hw : w ≠ c) : s1.basis w = s.basis w := by simp [s1, writeBit, hw]
     have hclean' : ∀ d ∈ cs, s1.basis d = false := by
       intro d hd; rw [hs1 d (fun h => hccs (h ▸ hd))]; exact hclean d (by simp [hd])
@@ -185,19 +188,31 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
     have htB : t.basis b = B := by rw [hsame b htb.symm, hs1 b hbc]
     have htC : t.basis cin = C := by rw [hsame cin htcin.symm, hs1 cin hcc]
     have htK : t.basis c = carryBit A B C := by rw [hsame c htc.symm]; simp [s1, writeBit]
-    have herase (record : List Bool) : run (eraseCarry a b cin c) record t =
-        ⟨t.phase, writeBit t.basis c false⟩ :=
-      eraseCarry_correct _ _ _ _ hac hbc hcc t (by rw [htA, htB, htC, htK]) record
+    { ∀ record, run (eraseCarry a b cin c) record t =
+        ⟨t.phase, writeBit t.basis c false⟩ } as herase by
+      (fun record => eraseCarry_correct _ _ _ _ hac hbc hcc t (by rw [htA, htB, htC, htK]) record);
     have hm0 : measurementCount (majority a b cin c) = 0 := rfl
-    simp only [compareChain_cons, List.append_assoc, run_append, run_take, hm0, List.take_zero, List.drop_zero]
-    rw [hfirst, ← ht, herase]
-    refine ⟨hp, ?_, ?_⟩
-    · intro w hw
+    let restored : State := ⟨t.phase, writeBit t.basis c false⟩
+    -- Compute this carry, recurse through the higher bits, then erase this carry.
+    { run (compareChain control (a::as) (b::bs) (c::cs) cin target) m s = restored }
+      as execution by (by
+        simp only [compareChain_cons, List.append_assoc, run_append, run_take, hm0,
+          List.take_zero, List.drop_zero]
+        rw [hfirst, ← ht, herase]);
+    { ∀ w, w ≠ target → restored.basis w = s.basis w } as preserved by (by
+      intro w hw
+      dsimp [restored]
       by_cases hwc : w = c
       · subst hwc; simp [writeBit, hzero]
       · simp only [writeBit, Function.update_of_ne hwc]
-        rw [hsame w hw, hs1 w hwc]
-    · simp only [writeBit, Function.update_of_ne htc]
+        rw [hsame w hw, hs1 w hwc]);
+    { restored.basis target =
+        (s.basis target ^^ (controlValue control s.basis &&
+          !decide (2^(b::bs).length ≤ regValue (a::as) s.basis +
+            regValue (b::bs) s.basis + (s.basis cin).toNat))) }
+      as comparison by (by
+      dsimp only [restored]
+      simp only [writeBit, Function.update_of_ne htc]
       rw [hval]
       have hctlv : controlValue control s1.basis = controlValue control s.basis := by
         cases control with
@@ -218,7 +233,16 @@ theorem compareChain_correct (control : Option Wire) (x y carry : List Wire) (ci
       rw [hctlv, hxs, hys, hts, hc1]
       have hthr := carry_threshold A B C (regValue as s.basis) (regValue bs s.basis) bs.length
       simp only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, List.length_cons, A, B, C] at hthr ⊢
-      simp only [hthr]
+      simp only [hthr]);
+    conclude {
+      (run (compareChain control (a::as) (b::bs) (c::cs) cin target) m s).phase = s.phase ∧
+      (∀ w, w ≠ target →
+        (run (compareChain control (a::as) (b::bs) (c::cs) cin target) m s).basis w = s.basis w) ∧
+      (run (compareChain control (a::as) (b::bs) (c::cs) cin target) m s).basis target =
+        (s.basis target ^^ (controlValue control s.basis &&
+          !decide (2^(b::bs).length ≤ regValue (a::as) s.basis +
+            regValue (b::bs) s.basis + (s.basis cin).toNat)))
+    } by (by rw [execution]; exact ⟨hp, preserved, comparison⟩);
 
 
 /-- 比较器整体：只改 target，x、y、cin、进位链与控制位保持，相位对所有测量记录恢复。 -/
@@ -231,7 +255,7 @@ theorem compareLt_correct (control : Option Wire) (x y carry : List Wire) (cin t
     (∀ w, w ≠ target → (run (compareLt control x y carry cin target) m s).basis w = s.basis w) ∧
     (run (compareLt control x y carry cin target) m s).basis target =
       (s.basis target ^^ (controlValue control s.basis &&
-        decide (regValue x s.basis < regValue y s.basis))) := by
+        decide (regValue x s.basis < regValue y s.basis))) := Proof
   have hcnt := List.nodup_iff_count.mp hnd
   have hny : (cin :: y).Nodup := by
     apply List.nodup_iff_count.mpr; intro w; have := hcnt w
@@ -257,10 +281,12 @@ theorem compareLt_correct (control : Option Wire) (x y carry : List Wire) (cin t
   have hX : regValue x s.basis < 2^y.length := by
     have := regValue_lt x s.basis; rwa [hx] at this
   have hY : regValue y s.basis < 2^y.length := regValue_lt y s.basis
-  have hx1 : regValue x s1.basis = regValue x s.basis :=
-    regValue_congr _ _ _ (fun w hw => by simp [s1, hxcy w hw])
-  have hy1 : regValue y s1.basis = 2^y.length - 1 - regValue y s.basis := by
-    rw [regValue_congr y _ (fun w => !s.basis w) (by intro w hw; simp [s1, hw]), regValue_complement]
+  -- Complement y and set the carry-in: the carry chain now tests the borrow of x-y.
+  { regValue x s1.basis = regValue x s.basis } as hx1
+    by (regValue_congr _ _ _ (fun w hw => by simp [s1, hxcy w hw]));
+  { regValue y s1.basis = 2^y.length - 1 - regValue y s.basis } as hy1
+    by (by rw [regValue_congr y _ (fun w => !s.basis w)
+      (by intro w hw; simp [s1, hw]), regValue_complement]);
   have hcin1 : s1.basis cin = true := by simp [s1, hcin]
   have htgt1 : s1.basis target = s.basis target := by simp [s1, htcy]
   have hctl1 : controlValue control s1.basis = controlValue control s.basis := by
@@ -268,26 +294,40 @@ theorem compareLt_correct (control : Option Wire) (x y carry : List Wire) (cin t
     | none => rfl
     | some c => simp [controlValue, s1, hctlcy c (by simp)]
   have hm0 : measurementCount (notRegister (cin :: y)) = 0 := (notRegister_counts _).2
-  simp only [compareLt, List.append_assoc, run_append, run_take, hm0, List.take_zero, List.drop_zero]
-  rw [hfirst, ← ht, notRegister_correct _ hny]
-  refine ⟨hp, ?_, ?_⟩
-  · intro w hw
-    by_cases hm : w ∈ cin :: y
-    · simp only [hm, if_true]
+  { (2^y.length ≤ regValue x s.basis +
+        (2^y.length - 1 - regValue y s.basis) + true.toNat) ↔
+      regValue y s.basis ≤ regValue x s.basis } as carryMeaning
+    by (by simp only [Bool.toNat_true]; omega);
+  { (!decide (regValue y s.basis ≤ regValue x s.basis)) =
+      decide (regValue x s.basis < regValue y s.basis) } as borrowMeaning
+    by (by rw [← decide_not]; exact decide_eq_decide.mpr Nat.not_le);
+  let restored : State :=
+    ⟨t.phase, fun w => if w ∈ cin :: y then !t.basis w else t.basis w⟩
+  { run (compareLt control x y carry cin target) m s = restored } as execution
+    by (by
+      simp only [compareLt, List.append_assoc, run_append, run_take, hm0,
+        List.take_zero, List.drop_zero]
+      rw [hfirst, ← ht, notRegister_correct _ hny]);
+  -- Undoing the complement restores all inputs and clean carries.
+  { ∀ w, w ≠ target → restored.basis w = s.basis w } as preserved
+    by (by
+      intro w hw
+      dsimp [restored]
       rw [hsame w hw]
-      simp [s1, hm]
-    · simp only [hm, if_false]
-      rw [hsame w hw]
-      simp [s1, hm]
-  · simp only [htcy, if_false]
-    rw [hval, hx1, hy1, hcin1, htgt1, hctl1]
-    have hiff : (2^y.length ≤ regValue x s.basis + (2^y.length - 1 - regValue y s.basis) + true.toNat) ↔
-        regValue y s.basis ≤ regValue x s.basis := by
-      simp only [Bool.toNat_true]; omega
-    have hd : (!decide (regValue y s.basis ≤ regValue x s.basis)) =
-        decide (regValue x s.basis < regValue y s.basis) := by
-      rw [← decide_not]; exact decide_eq_decide.mpr Nat.not_le
-    simp only [hiff, hd]
+      by_cases hm : w ∈ cin :: y <;> simp [s1, hm]);
+  { restored.basis target = (s.basis target ^^
+      (controlValue control s.basis && decide (regValue x s.basis < regValue y s.basis))) }
+    as output by (by
+      dsimp [restored]
+      simp only [htcy, if_false]
+      rw [hval, hx1, hy1, hcin1, htgt1, hctl1]
+      simp only [carryMeaning, borrowMeaning]);
+  conclude { (run (compareLt control x y carry cin target) m s).phase = s.phase ∧
+      (∀ w, w ≠ target → (run (compareLt control x y carry cin target) m s).basis w = s.basis w) ∧
+      (run (compareLt control x y carry cin target) m s).basis target =
+        (s.basis target ^^ (controlValue control s.basis &&
+          decide (regValue x s.basis < regValue y s.basis))) }
+    by (by rw [execution]; exact ⟨hp, preserved, output⟩);
 
 /-- target ^= [x < y]；x、y 保持，进位链回零。 -/
 theorem compareLt_spec (x y carry : List Wire) (cin target : Wire)
@@ -296,6 +336,7 @@ theorem compareLt_spec (x y carry : List Wire) (cin target : Wire)
     {{ x = X, y = Y, carry = 0, cin = false, target = T }} compareLt none x y carry cin target
     {{ x = X, y = Y, carry = 0, cin = false, target = (T ^^ decide (X < Y)) }} := by
   intro s m h
+  let final := run (compareLt (none) x y carry cin target) m s
   simp only [Holds.holds] at h ⊢
   obtain ⟨⟨⟨⟨hxv, hyv⟩, hkv⟩, hcv⟩, htv⟩ := h
   obtain ⟨hp, hsame, hval⟩ := compareLt_correct none x y carry cin target hnd (by simp) hx hc s m hcv
@@ -307,12 +348,22 @@ theorem compareLt_spec (x y carry : List Wire) (cin target : Wire)
   have hcint : cin ≠ target := fun h => by
     have h1 := hcnt target; subst h
     simp only [List.count_cons, List.count_append, beq_self_eq_true, if_true] at h1; omega
-  refine ⟨hp, ⟨⟨⟨?_, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hxv
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hyv
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hkv
-  · exact (hsame cin hcint).trans hcv
-  · rw [hval, hxv, hyv, htv]; simp [controlValue]
+  { regValue x final.basis = X } as inputX
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hxv);
+  { regValue y final.basis = Y } as inputY
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hyv);
+  { regValue carry final.basis = 0 } as cleanCarry
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hkv);
+  { final.basis cin = false } as cleanInputCarry by ((hsame cin hcint).trans hcv);
+  { final.basis target = (T ^^ decide (X < Y)) } as comparison
+    by (by rw [hval, hxv, hyv, htv]; simp [controlValue]);
+  conclude { final.phase = s.phase ∧
+      (((regValue x final.basis = X ∧
+       regValue y final.basis = Y) ∧
+      regValue carry final.basis = 0) ∧
+      final.basis cin = false) ∧
+      final.basis target = (T ^^ decide (X < Y)) }
+    by ⟨hp, ⟨⟨⟨inputX, inputY⟩, cleanCarry⟩, cleanInputCarry⟩, comparison⟩;
 
 /-- 受控版：target ^= c ∧ [x < y]，控制位保持。 -/
 theorem maskedCompareLt_spec (c : Wire) (x y carry : List Wire) (cin target : Wire)
@@ -321,6 +372,7 @@ theorem maskedCompareLt_spec (c : Wire) (x y carry : List Wire) (cin target : Wi
     {{ c = C, x = X, y = Y, carry = 0, cin = false, target = T }} compareLt (some c) x y carry cin target
     {{ c = C, x = X, y = Y, carry = 0, cin = false, target = (T ^^ (C && decide (X < Y))) }} := by
   intro s m h
+  let final := run (compareLt (some c) x y carry cin target) m s
   simp only [Holds.holds] at h ⊢
   obtain ⟨⟨⟨⟨⟨hcv', hxv⟩, hyv⟩, hkv⟩, hcv⟩, htv⟩ := h
   have hn := List.nodup_cons.mp hnd
@@ -336,12 +388,22 @@ theorem maskedCompareLt_spec (c : Wire) (x y carry : List Wire) (cin target : Wi
     have h1 := hcnt target; subst h
     simp only [List.count_cons, List.count_append, beq_self_eq_true, if_true] at h1; omega
   have hct : c ≠ target := fun h => hn.1 (by simp [h])
-  refine ⟨hp, ⟨⟨⟨⟨(hsame c hct).trans hcv', ?_⟩, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hxv
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hyv
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hkv
-  · exact (hsame cin hcint).trans hcv
-  · rw [hval, hxv, hyv, htv]; simp [controlValue, hcv']
+  { regValue x final.basis = X } as inputX
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hxv);
+  { regValue y final.basis = Y } as inputY
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hyv);
+  { regValue carry final.basis = 0 } as cleanCarry
+    by ((regValue_congr _ _ _ (fun w hw => hsame w (hnt w (by simp [hw])))).trans hkv);
+  { final.basis cin = false } as cleanInputCarry by ((hsame cin hcint).trans hcv);
+  { final.basis target = (T ^^ (C && decide (X < Y))) } as comparison
+    by (by rw [hval, hxv, hyv, htv]; simp [controlValue, hcv']);
+  conclude { final.phase = s.phase ∧
+      ((((final.basis c = C ∧ regValue x final.basis = X) ∧
+       regValue y final.basis = Y) ∧
+      regValue carry final.basis = 0) ∧
+      final.basis cin = false) ∧
+      final.basis target = (T ^^ (C && decide (X < Y))) }
+    by ⟨hp, ⟨⟨⟨⟨(hsame c hct).trans hcv', inputX⟩, inputY⟩, cleanCarry⟩, cleanInputCarry⟩, comparison⟩;
 
 /-- 与经典常量比较：T 从零装入 K，比较后卸载回零。 -/
 theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
@@ -366,11 +428,20 @@ theorem compareLtConst_spec (x T carry : List Wire) (cin target : Wire)
       by rw [hv, h.1.1.1.2]⟩,
       (regValue_congr _ _ _ (fun w hw => he w (hout w (by simp [hw])))).trans h.1.1.2⟩,
       (he cin (hout cin (by simp))).trans h.1.2⟩, (he target (hout target (by simp))).trans h.2⟩
-  have h1 := load 0 B
-  have h2 := compareLt_spec x T carry cin target hnd hx hc X K B
-  have h3 := load K (B ^^ decide (X < K))
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [compareLtConst, List.append_assoc] using h1.seq (h2.seq h3)
+  { {{ x = X, T = 0, carry = 0, cin = false, target = B }} xorConstant T K
+    {{ x = X, T = K, carry = 0, cin = false, target = B }} }
+    as loaded by (by simpa only [Nat.zero_xor] using load 0 B);
+  { {{ x = X, T = K, carry = 0, cin = false, target = B }}
+      compareLt (none) x T carry cin target
+    {{ x = X, T = K, carry = 0, cin = false, target = (B ^^ decide (X < K)) }} }
+    as compared by (compareLt_spec x T carry cin target hnd hx hc X K B);
+  { {{ x = X, T = K, carry = 0, cin = false, target = (B ^^ decide (X < K)) }} xorConstant T K
+    {{ x = X, T = 0, carry = 0, cin = false, target = (B ^^ decide (X < K)) }} }
+    as cleared by (by simpa only [Nat.xor_self] using load K (B ^^ decide (X < K)));
+  conclude { {{ x = X, T = 0, carry = 0, cin = false, target = B }}
+      compareLtConst (none) x T carry cin target K
+    {{ x = X, T = 0, carry = 0, cin = false, target = (B ^^ decide (X < K)) }} }
+    by (by simpa only [compareLtConst, List.append_assoc] using loaded.seq (compared.seq cleared));
 
 /-- 受控常量比较：target ^= c ∧ [x < K]。 -/
 theorem maskedCompareLtConst_spec (c : Wire) (x T carry : List Wire) (cin target : Wire)
@@ -396,11 +467,20 @@ theorem maskedCompareLtConst_spec (c : Wire) (x T carry : List Wire) (cin target
       by rw [hv, h.1.1.1.2]⟩,
       (regValue_congr _ _ _ (fun w hw => he w (hout w (by simp [hw])))).trans h.1.1.2⟩,
       (he cin (hout cin (by simp))).trans h.1.2⟩, (he target (hout target (by simp))).trans h.2⟩
-  have h1 := load 0 B
-  have h2 := maskedCompareLt_spec c x T carry cin target hnd hx hc C X K B
-  have h3 := load K (B ^^ (C && decide (X < K)))
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [compareLtConst, List.append_assoc] using h1.seq (h2.seq h3)
+  { {{ c = C, x = X, T = 0, carry = 0, cin = false, target = B }} xorConstant T K
+    {{ c = C, x = X, T = K, carry = 0, cin = false, target = B }} }
+    as loaded by (by simpa only [Nat.zero_xor] using load 0 B);
+  { {{ c = C, x = X, T = K, carry = 0, cin = false, target = B }}
+      compareLt (some c) x T carry cin target
+    {{ c = C, x = X, T = K, carry = 0, cin = false, target = (B ^^ (C && decide (X < K))) }} }
+    as compared by (maskedCompareLt_spec c x T carry cin target hnd hx hc C X K B);
+  { {{ c = C, x = X, T = K, carry = 0, cin = false, target = (B ^^ (C && decide (X < K))) }} xorConstant T K
+    {{ c = C, x = X, T = 0, carry = 0, cin = false, target = (B ^^ (C && decide (X < K))) }} }
+    as cleared by (by simpa only [Nat.xor_self] using load K (B ^^ (C && decide (X < K))));
+  conclude { {{ c = C, x = X, T = 0, carry = 0, cin = false, target = B }}
+      compareLtConst (some c) x T carry cin target K
+    {{ c = C, x = X, T = 0, carry = 0, cin = false, target = (B ^^ (C && decide (X < K))) }} }
+    by (by simpa only [compareLtConst, List.append_assoc] using loaded.seq (compared.seq cleared));
 
 theorem flipBelow_counts (control : Option Wire) (top t : Wire) :
     toffoliCount (flipBelow control top t) = (if control.isSome then 1 else 0) ∧

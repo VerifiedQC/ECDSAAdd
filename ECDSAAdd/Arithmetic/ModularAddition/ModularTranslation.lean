@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularBackend
 
 namespace ECDSAAdd.Arithmetic
 open scoped CircuitDSL
+open scoped ECDSAAdd.ProofLanguage
 
 /-- 源程序的两种约减算法；不是实现名或门列。 -/
 inductive ReductionKind where
@@ -130,8 +131,19 @@ theorem reductionProgram_correct (k : ReductionKind)
     (q : Nat) (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hr : k.inputRange X Y q) :
     Triple (ModValues L (ModValues.clean X Y O))
       (reductionProgram k L.x L.y (L.lowReg .out) q prepare hp finish hf)
-      (ModValues L (ModValues.clean X Y (O ^^^ k.result X Y q))) :=
-  (hp L he hn q hq0 hq X Y O hr).seq (hf L he hn q hq0 hq X Y O hr)
+      (ModValues L (ModValues.clean X Y (O ^^^ k.result X Y q))) := Proof
+  -- Preparation computes the candidates and the actual comparison wire.
+  { Triple (ModValues L (ModValues.clean X Y O))
+      (prepare.circuit L.x L.y q) (k.Ready L X Y O q) }
+    as prepared by (hp L he hn q hq0 hq X Y O hr);
+  -- Selection XORs the chosen candidate into out, then restores every work bit.
+  { Triple (k.Ready L X Y O q) (finish.circuit L.x L.y (L.lowReg .out) q)
+      (ModValues L (ModValues.clean X Y (O ^^^ k.result X Y q))) }
+    as selectedAndCleared by (hf L he hn q hq0 hq X Y O hr);
+  conclude { Triple (ModValues L (ModValues.clean X Y O))
+      (reductionProgram k L.x L.y (L.lowReg .out) q prepare hp finish hf)
+      (ModValues L (ModValues.clean X Y (O ^^^ k.result X Y q))) }
+    by (prepared.seq selectedAndCleared);
 
 open Lean
 

@@ -1,6 +1,9 @@
 import ECDSAAdd.Arithmetic.ModularMultiplication.MontAdapterLayout
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
+
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem pow256_lt_pow257 : (2:Nat)^256<2^257 := by
   rw [show (257:Nat)=256+1 from rfl,Nat.pow_succ]
@@ -35,50 +38,75 @@ private theorem montSandwich_spec (M : MontLayout) (p X Y O V : Nat) [Fact p.Pri
       (∀w, w∉M.out → (run middle m s).basis w=s.basis w) ∧
       regValue M.out (run middle m s).basis=V) :
     {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montP M p ++ middle ++ montQ M p
-    {{ M.x=X,M.y=Y,M.out=V,M.work=0 }} := by
-  have hpSpec : Triple (fun s => ((regValue M.x s=X ∧ regValue M.y s=Y) ∧ regValue M.out s=O) ∧ regValue M.work s=0)
-      (montP M p) (fun s => MontPrepared M p X Y s ∧ regValue M.out s=O) := by
+    {{ M.x=X,M.y=Y,M.out=V,M.work=0 }} := Proof
+  -- Prepare the product and its reversible history without changing the output.
+  { Triple (fun s => ((regValue M.x s=X ∧ regValue M.y s=Y) ∧ regValue M.out s=O) ∧ regValue M.work s=0)
+      (montP M p) (fun s => MontPrepared M p X Y s ∧ regValue M.out s=O) } as prepared by (by
     intro s m h
     have hh := montP_correct M p X Y hw hnd hp hp16 hX hY s m h.1.1.1 h.1.1.2 h.2
     have hout : regValue M.out (run (montP M p) m s).basis=O := by
       apply Eq.trans (regValue_congr _ _ _ ?_) h.1.2
       intro w ho
       exact hh.2.1 w (fun hw' => List.disjoint_left.mp (M.out_disjoint hnd) (by simp [hw']) ho)
-    exact ⟨hh.1,hh.2.2,hout⟩
-  have hmSpec : Triple (fun s => MontPrepared M p X Y s ∧ regValue M.out s=O) middle
-      (fun s => MontPrepared M p X Y s ∧ regValue M.out s=V) := by
+    exact ⟨hh.1,hh.2.2,hout⟩);
+  -- The selected operation changes only the output; preparation remains available for cleanup.
+  { Triple (fun s => MontPrepared M p X Y s ∧ regValue M.out s=O) middle
+      (fun s => MontPrepared M p X Y s ∧ regValue M.out s=V) } as updated by (by
     intro s m h
     have hh := hmid s m h.1 h.2
-    exact ⟨hh.1,prepared_preserved M p X Y hnd s.basis _ h.1 hh.2.1,hh.2.2⟩
-  have hqSpec : Triple (fun s => MontPrepared M p X Y s ∧ regValue M.out s=V) (montQ M p)
-      (fun s => ((regValue M.x s=X ∧ regValue M.y s=Y) ∧ regValue M.out s=V) ∧ regValue M.work s=0) := by
+    exact ⟨hh.1,prepared_preserved M p X Y hnd s.basis _ h.1 hh.2.1,hh.2.2⟩);
+  -- Uncompute the product and all history, retaining the new output.
+  { Triple (fun s => MontPrepared M p X Y s ∧ regValue M.out s=V) (montQ M p)
+      (fun s => ((regValue M.x s=X ∧ regValue M.y s=Y) ∧ regValue M.out s=V) ∧ regValue M.work s=0) } as restored by (by
     intro s m h
     have hh := montQ_correct M p X Y hw hnd hp hp16 hX hY s m h.1
     have hout : regValue M.out (run (montQ M p) m s).basis=V := by
       apply Eq.trans (regValue_congr _ _ _ ?_) h.2
       intro w ho
       exact hh.2.1 w (fun hw' => List.disjoint_left.mp (M.out_disjoint hnd) (by simp [hw']) ho)
-    exact ⟨hh.1,⟨⟨hh.2.2.1,hh.2.2.2.1⟩,hout⟩,hh.2.2.2.2⟩
-  exact (hpSpec.seq hmSpec).seq hqSpec
+    exact ⟨hh.1,⟨⟨hh.2.2.1,hh.2.2.2.1⟩,hout⟩,hh.2.2.2.2⟩);
+  conclude {
+    {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montP M p ++ middle ++ montQ M p
+    {{ M.x=X,M.y=Y,M.out=V,M.work=0 }}
+  } by (prepared.seq updated).seq restored;
 
 /-- 任意257位输出的标准模积XOR，全部历史由Q清空。 -/
 theorem montMulXor_spec (M : MontLayout) (p X Y O : Nat) [Fact p.Prime]
     (hw : M.Widths) (hnd : M.wires.Nodup) (hp : p<2^256) (hp16 : p%16=15)
     (hX : X<p) (hY : Y<2^256) :
     {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulXor M p
-    {{ M.x=X,M.y=Y,M.out=(O ^^^ ((X*Y)%p)),M.work=0 }} := by
-  apply montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
-  intro s m h ho
-  have hn : (M.product++M.out).Nodup := by
-    apply List.nodup_iff_count.mpr; intro w
-    have hh := List.nodup_iff_count.mp hnd w
-    have ht := (List.take_sublist 257 M.z).count_le w
-    simp only [MontLayout.wires,MontLayout.work,MontLayout.activeZ,MontLayout.product,List.count_append] at hh ht ⊢
-    omega
-  have hh := copyRegister_correct none M.product M.out (by simp [MontLayout.product,hw.z,hw.out]) hn (by simp) s m
-  have hv := M.product_value hw s.basis ((X*Y)%p) h.z
-    (lt_trans (Nat.mod_lt _ (Fact.out : p.Prime).pos) (lt_trans hp pow256_lt_pow257))
-  exact ⟨hh.1,hh.2.1,by simpa only [copyValue,ho,hv] using hh.2.2⟩
+    {{ M.x=X,M.y=Y,M.out=(O ^^^ ((X*Y)%p)),M.work=0 }} := Proof
+  { (X*Y)%p < p } as productBound by Nat.mod_lt _ (Fact.out : p.Prime).pos;
+  { ∀ (s : State) (m : List Bool), MontPrepared M p X Y s.basis →
+      regValue M.out s.basis=O →
+      (run (copyRegister none M.product M.out) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (copyRegister none M.product M.out) m s).basis w=s.basis w) ∧
+      regValue M.out (run (copyRegister none M.product M.out) m s).basis=O ^^^ ((X*Y)%p)
+  } as copied by (by
+    intro s m prepared outputBefore
+    have distinct : (M.product++M.out).Nodup := by
+      apply List.nodup_iff_count.mpr; intro w
+      have hh := List.nodup_iff_count.mp hnd w
+      have ht := (List.take_sublist 257 M.z).count_le w
+      simp only [MontLayout.wires,MontLayout.work,MontLayout.activeZ,MontLayout.product,List.count_append] at hh ht ⊢
+      omega
+    { regValue M.product s.basis=(X*Y)%p } as productReady by
+      M.product_value hw s.basis _ prepared.z
+        (lt_trans productBound (lt_trans hp pow256_lt_pow257));
+    have copy := copyRegister_correct none M.product M.out
+      (by simp [MontLayout.product,hw.z,hw.out]) distinct (by simp) s m
+    { regValue M.out (run (copyRegister none M.product M.out) m s).basis=O ^^^ ((X*Y)%p) }
+      as outputAfter by (by simpa only [copyValue,outputBefore,productReady] using copy.2.2);
+    conclude {
+      (run (copyRegister none M.product M.out) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (copyRegister none M.product M.out) m s).basis w=s.basis w) ∧
+      regValue M.out (run (copyRegister none M.product M.out) m s).basis=O ^^^ ((X*Y)%p)
+    } by ⟨copy.1, copy.2.1, outputAfter⟩;);
+  conclude {
+    {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulXor M p
+    {{ M.x=X,M.y=Y,M.out=(O ^^^ ((X*Y)%p)),M.work=0 }}
+  } by montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
+      (copyRegister none M.product M.out) copied;
 
 
 
@@ -86,44 +114,96 @@ theorem montMulAdd_spec (M : MontLayout) (p X Y O : Nat) [Fact p.Prime]
     (hw : M.Widths) (hnd : M.wires.Nodup) (hp : p<2^256) (hp16 : p%16=15)
     (hX : X<p) (hY : Y<2^256) (hO : O<p) :
     {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulAdd M p
-    {{ M.x=X,M.y=Y,M.out=(O+(X*Y)%p)%p,M.work=0 }} := by
-  apply montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
-  intro s m h ho
-  have hp0 := (Fact.out : p.Prime).pos
-  have hv : regValue M.addView.a s.basis=(X*Y)%p := M.product_value hw s.basis _ h.z
-    (lt_trans (Nat.mod_lt _ hp0) (lt_trans hp pow256_lt_pow257))
-  have hz : regValue M.addView.z s.basis=O := by rw [(M.add_ports hw).2]; exact ho
-  have hc : regValue M.addView.work s.basis=0 := (regValue_zero _ _).mpr
-    (fun w hw' => (regValue_zero _ _).mp h.shared w (M.add_work_subset hw hw'))
-  have hh := modAddInPlace_spec M.addView 256 p ((X*Y)%p) O (M.add_widths hw) (M.add_nodup hw hnd)
-    hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m ⟨⟨hv,hz⟩,hc⟩
-  refine ⟨hh.1,?_,?_⟩
-  · intro w hn
-    exact modAddInPlace_frame M.addView 256 p ((X*Y)%p) O (M.add_widths hw) (M.add_nodup hw hnd)
-      hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m hv hz hc w (by rw [(M.add_ports hw).2]; exact hn)
-  · simpa only [(M.add_ports hw).2] using hh.2.1.2
+    {{ M.x=X,M.y=Y,M.out=(O+(X*Y)%p)%p,M.work=0 }} := Proof
+  -- The prepared product is the usual residue, not a Montgomery-encoded output.
+  { (X*Y)%p < p } as productBound by Nat.mod_lt _ (Fact.out : p.Prime).pos;
+  { ∀ (s : State) (m : List Bool), MontPrepared M p X Y s.basis →
+      regValue M.out s.basis=O →
+      (run (modAddInPlace M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (modAddInPlace M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (modAddInPlace M.addView p) m s).basis=(O+(X*Y)%p)%p
+  } as updated by (by
+    intro s m prepared outputBefore
+    have hp0 := (Fact.out : p.Prime).pos
+    { regValue M.addView.a s.basis=(X*Y)%p } as productReady by
+      M.product_value hw s.basis _ prepared.z
+        (lt_trans productBound (lt_trans hp pow256_lt_pow257));
+    { regValue M.addView.z s.basis=O } as outputReady by
+      (by rw [(M.add_ports hw).2]; exact outputBefore);
+    { regValue M.addView.work s.basis=0 } as workClean by
+      (regValue_zero _ _).mpr
+        (fun w hw' => (regValue_zero _ _).mp prepared.shared w (M.add_work_subset hw hw'));
+    have operation := modAddInPlace_spec M.addView 256 p ((X*Y)%p) O
+      (M.add_widths hw) (M.add_nodup hw hnd)
+      hp0 hp (Nat.le_of_lt productBound) hO s m ⟨⟨productReady,outputReady⟩,workClean⟩
+    { ∀ w, w∉M.out → (run (modAddInPlace M.addView p) m s).basis w=s.basis w } as unchanged by (by
+      intro w outside
+      exact modAddInPlace_frame M.addView 256 p ((X*Y)%p) O
+        (M.add_widths hw) (M.add_nodup hw hnd)
+        hp0 hp (Nat.le_of_lt productBound) hO s m productReady outputReady workClean w
+        (by rw [(M.add_ports hw).2]; exact outside));
+    { regValue M.out (run (modAddInPlace M.addView p) m s).basis=(O+(X*Y)%p)%p } as outputAfter by
+      (by simpa only [(M.add_ports hw).2] using operation.2.1.2);
+    conclude {
+      (run (modAddInPlace M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (modAddInPlace M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (modAddInPlace M.addView p) m s).basis=(O+(X*Y)%p)%p
+    } by ⟨operation.1, unchanged, outputAfter⟩;);
+  -- Prepare, update the output, then uncompute every product/history register.
+  conclude {
+    {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulAdd M p
+    {{ M.x=X,M.y=Y,M.out=(O+(X*Y)%p)%p,M.work=0 }}
+  } by montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
+      (modAddInPlace M.addView p) updated;
+
 
 
 theorem montMulSub_spec (M : MontLayout) (p X Y O : Nat) [Fact p.Prime]
     (hw : M.Widths) (hnd : M.wires.Nodup) (hp : p<2^256) (hp16 : p%16=15)
     (hX : X<p) (hY : Y<2^256) (hO : O<p) :
     {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulSub M p
-    {{ M.x=X,M.y=Y,M.out=(O+p-(X*Y)%p)%p,M.work=0 }} := by
-  apply montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
-  intro s m h ho
-  have hp0 := (Fact.out : p.Prime).pos
-  have hv : regValue M.addView.a s.basis=(X*Y)%p := M.product_value hw s.basis _ h.z
-    (lt_trans (Nat.mod_lt _ hp0) (lt_trans hp pow256_lt_pow257))
-  have hz : regValue M.addView.z s.basis=O := by rw [(M.add_ports hw).2]; exact ho
-  have hc : regValue M.addView.work s.basis=0 := (regValue_zero _ _).mpr
-    (fun w hw' => (regValue_zero _ _).mp h.shared w (M.add_work_subset hw hw'))
-  have hh := modSubInPlace_spec M.addView 256 p ((X*Y)%p) O (M.add_widths hw) (M.add_nodup hw hnd)
-    hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m ⟨⟨hv,hz⟩,hc⟩
-  refine ⟨hh.1,?_,?_⟩
-  · intro w hn
-    exact modSubInPlace_frame M.addView 256 p ((X*Y)%p) O (M.add_widths hw) (M.add_nodup hw hnd)
-      hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m hv hz hc w (by rw [(M.add_ports hw).2]; exact hn)
-  · simpa only [(M.add_ports hw).2] using hh.2.1.2
+    {{ M.x=X,M.y=Y,M.out=(O+p-(X*Y)%p)%p,M.work=0 }} := Proof
+  -- The prepared product is the usual residue, not a Montgomery-encoded output.
+  { (X*Y)%p < p } as productBound by Nat.mod_lt _ (Fact.out : p.Prime).pos;
+  { ∀ (s : State) (m : List Bool), MontPrepared M p X Y s.basis →
+      regValue M.out s.basis=O →
+      (run (modSubInPlace M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (modSubInPlace M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (modSubInPlace M.addView p) m s).basis=(O+p-(X*Y)%p)%p
+  } as updated by (by
+    intro s m prepared outputBefore
+    have hp0 := (Fact.out : p.Prime).pos
+    { regValue M.addView.a s.basis=(X*Y)%p } as productReady by
+      M.product_value hw s.basis _ prepared.z
+        (lt_trans productBound (lt_trans hp pow256_lt_pow257));
+    { regValue M.addView.z s.basis=O } as outputReady by
+      (by rw [(M.add_ports hw).2]; exact outputBefore);
+    { regValue M.addView.work s.basis=0 } as workClean by
+      (regValue_zero _ _).mpr
+        (fun w hw' => (regValue_zero _ _).mp prepared.shared w (M.add_work_subset hw hw'));
+    have operation := modSubInPlace_spec M.addView 256 p ((X*Y)%p) O
+      (M.add_widths hw) (M.add_nodup hw hnd)
+      hp0 hp (Nat.le_of_lt productBound) hO s m ⟨⟨productReady,outputReady⟩,workClean⟩
+    { ∀ w, w∉M.out → (run (modSubInPlace M.addView p) m s).basis w=s.basis w } as unchanged by (by
+      intro w outside
+      exact modSubInPlace_frame M.addView 256 p ((X*Y)%p) O
+        (M.add_widths hw) (M.add_nodup hw hnd)
+        hp0 hp (Nat.le_of_lt productBound) hO s m productReady outputReady workClean w
+        (by rw [(M.add_ports hw).2]; exact outside));
+    { regValue M.out (run (modSubInPlace M.addView p) m s).basis=(O+p-(X*Y)%p)%p } as outputAfter by
+      (by simpa only [(M.add_ports hw).2] using operation.2.1.2);
+    conclude {
+      (run (modSubInPlace M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (modSubInPlace M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (modSubInPlace M.addView p) m s).basis=(O+p-(X*Y)%p)%p
+    } by ⟨operation.1, unchanged, outputAfter⟩;);
+  -- Prepare, update the output, then uncompute every product/history register.
+  conclude {
+    {{ M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulSub M p
+    {{ M.x=X,M.y=Y,M.out=(O+p-(X*Y)%p)%p,M.work=0 }}
+  } by montSandwich_spec M p X Y O _ hw hnd hp hp16 hX hY
+      (modSubInPlace M.addView p) updated;
+
 
 
 
@@ -135,79 +215,137 @@ private theorem montControlledSandwich_spec (c : Wire) (B : Bool) (M : MontLayou
       (∀w, w∉M.out → (run middle m s).basis w=s.basis w) ∧
       regValue M.out (run middle m s).basis=V) :
     {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montP M p ++ middle ++ montQ M p
-    {{ c=B,M.x=X,M.y=Y,M.out=V,M.work=0 }} := by
+    {{ c=B,M.x=X,M.y=Y,M.out=V,M.work=0 }} := Proof
   have hn := hnd.tail
   have hcnot : c∉M.work := fun h => (List.nodup_cons.mp hnd).1 (by simp [MontLayout.wires,h])
   have hcout : c∉M.out := fun h => (List.nodup_cons.mp hnd).1 (by simp [MontLayout.wires,h])
-  have hpSpec : Triple (fun s => (((s c=B ∧ regValue M.x s=X) ∧ regValue M.y s=Y) ∧ regValue M.out s=O) ∧ regValue M.work s=0)
-      (montP M p) (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=O) := by
+  -- The control is retained while preparing the product.
+  { Triple (fun s => (((s c=B ∧ regValue M.x s=X) ∧ regValue M.y s=Y) ∧ regValue M.out s=O) ∧ regValue M.work s=0)
+      (montP M p) (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=O) } as prepared by (by
     intro s m h
     have hh := montP_correct M p X Y hw hn hp hp16 hX hY s m h.1.1.1.2 h.1.1.2 h.2
     have hout : regValue M.out (run (montP M p) m s).basis=O := by
       apply Eq.trans (regValue_congr _ _ _ ?_) h.1.2
       intro w ho
       exact hh.2.1 w (fun hw' => List.disjoint_left.mp (M.out_disjoint hn) (by simp [hw']) ho)
-    exact ⟨hh.1,(hh.2.1 c hcnot).trans h.1.1.1.1,hh.2.2,hout⟩
-  have hmSpec : Triple (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=O) middle
-      (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=V) := by
+    exact ⟨hh.1,(hh.2.1 c hcnot).trans h.1.1.1.1,hh.2.2,hout⟩);
+  -- Only the selected output changes; control and product history are framed.
+  { Triple (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=O) middle
+      (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=V) } as updated by (by
     intro s m h
     have hh := hmid s m h.1 h.2.1 h.2.2
-    exact ⟨hh.1,(hh.2.1 c hcout).trans h.1,prepared_preserved M p X Y hn s.basis _ h.2.1 hh.2.1,hh.2.2⟩
-  have hqSpec : Triple (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=V) (montQ M p)
-      (fun s => (((s c=B ∧ regValue M.x s=X) ∧ regValue M.y s=Y) ∧ regValue M.out s=V) ∧ regValue M.work s=0) := by
+    exact ⟨hh.1,(hh.2.1 c hcout).trans h.1,prepared_preserved M p X Y hn s.basis _ h.2.1 hh.2.1,hh.2.2⟩);
+  -- Cleanup restores every workspace register regardless of the control value.
+  { Triple (fun s => s c=B ∧ MontPrepared M p X Y s ∧ regValue M.out s=V) (montQ M p)
+      (fun s => (((s c=B ∧ regValue M.x s=X) ∧ regValue M.y s=Y) ∧ regValue M.out s=V) ∧ regValue M.work s=0) } as restored by (by
     intro s m h
     have hh := montQ_correct M p X Y hw hn hp hp16 hX hY s m h.2.1
     have hout : regValue M.out (run (montQ M p) m s).basis=V := by
       apply Eq.trans (regValue_congr _ _ _ ?_) h.2.2
       intro w ho
       exact hh.2.1 w (fun hw' => List.disjoint_left.mp (M.out_disjoint hn) (by simp [hw']) ho)
-    exact ⟨hh.1,⟨⟨⟨(hh.2.1 c hcnot).trans h.1,hh.2.2.1⟩,hh.2.2.2.1⟩,hout⟩,hh.2.2.2.2⟩
-  exact (hpSpec.seq hmSpec).seq hqSpec
+    exact ⟨hh.1,⟨⟨⟨(hh.2.1 c hcnot).trans h.1,hh.2.2.1⟩,hh.2.2.2.1⟩,hout⟩,hh.2.2.2.2⟩);
+  conclude {
+    {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montP M p ++ middle ++ montQ M p
+    {{ c=B,M.x=X,M.y=Y,M.out=V,M.work=0 }}
+  } by (prepared.seq updated).seq restored;
 
 
 theorem montMulControlledAdd_spec (c : Wire) (B : Bool) (M : MontLayout) (p X Y O : Nat) [Fact p.Prime]
     (hw : M.Widths) (hnd : (c::M.wires).Nodup) (hp : p<2^256) (hp16 : p%16=15)
     (hX : X<p) (hY : Y<2^256) (hO : O<p) :
     {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulControlledAdd c M p
-    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+(X*Y)%p)%p else O),M.work=0 }} := by
-  apply montControlledSandwich_spec c B M p X Y O _ hw hnd hp hp16 hX hY
-  intro s m hb h ho
-  have hp0 := (Fact.out : p.Prime).pos
-  have hn := MontLayout.controlled_add_nodup c M hw hnd
-  have hv : regValue M.addView.a s.basis=(X*Y)%p := M.product_value hw s.basis _ h.z
-    (lt_trans (Nat.mod_lt _ hp0) (lt_trans hp pow256_lt_pow257))
-  have hz : regValue M.addView.z s.basis=O := by rw [(M.add_ports hw).2]; exact ho
-  have hc : regValue M.addView.work s.basis=0 := (regValue_zero _ _).mpr
-    (fun w hw' => (regValue_zero _ _).mp h.shared w (M.add_work_subset hw hw'))
-  have hh := controlledModAdd_spec c M.addView 256 p ((X*Y)%p) O B (M.add_widths hw) hn
-    hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m ⟨⟨⟨hb,hv⟩,hz⟩,hc⟩
-  refine ⟨hh.1,?_,?_⟩
-  · intro w hn'
-    exact controlledModAdd_frame c M.addView 256 p ((X*Y)%p) O B (M.add_widths hw) hn
-      hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m hb hv hz hc w (by rw [(M.add_ports hw).2]; exact hn')
-  · simpa only [(M.add_ports hw).2] using hh.2.1.2
+    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+(X*Y)%p)%p else O),M.work=0 }} := Proof
+  -- The prepared product is the usual residue, not a Montgomery-encoded output.
+  { (X*Y)%p < p } as productBound by Nat.mod_lt _ (Fact.out : p.Prime).pos;
+  { ∀ (s : State) (m : List Bool), s.basis c=B → MontPrepared M p X Y s.basis →
+      regValue M.out s.basis=O →
+      (run (controlledModAdd c M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (controlledModAdd c M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (controlledModAdd c M.addView p) m s).basis=(if B then (O+(X*Y)%p)%p else O)
+  } as updated by (by
+    intro s m hb prepared outputBefore
+    have hp0 := (Fact.out : p.Prime).pos
+    have hn := MontLayout.controlled_add_nodup c M hw hnd
+    { regValue M.addView.a s.basis=(X*Y)%p } as productReady by
+      M.product_value hw s.basis _ prepared.z
+        (lt_trans productBound (lt_trans hp pow256_lt_pow257));
+    { regValue M.addView.z s.basis=O } as outputReady by
+      (by rw [(M.add_ports hw).2]; exact outputBefore);
+    { regValue M.addView.work s.basis=0 } as workClean by
+      (regValue_zero _ _).mpr
+        (fun w hw' => (regValue_zero _ _).mp prepared.shared w (M.add_work_subset hw hw'));
+    have operation := controlledModAdd_spec c M.addView 256 p ((X*Y)%p) O B
+      (M.add_widths hw) hn
+      hp0 hp (Nat.le_of_lt productBound) hO s m ⟨⟨⟨hb,productReady⟩,outputReady⟩,workClean⟩
+    { ∀ w, w∉M.out → (run (controlledModAdd c M.addView p) m s).basis w=s.basis w } as unchanged by (by
+      intro w outside
+      exact controlledModAdd_frame c M.addView 256 p ((X*Y)%p) O B
+        (M.add_widths hw) hn
+        hp0 hp (Nat.le_of_lt productBound) hO s m hb productReady outputReady workClean w
+        (by rw [(M.add_ports hw).2]; exact outside));
+    { regValue M.out (run (controlledModAdd c M.addView p) m s).basis=(if B then (O+(X*Y)%p)%p else O) } as outputAfter by
+      (by simpa only [(M.add_ports hw).2] using operation.2.1.2);
+    conclude {
+      (run (controlledModAdd c M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (controlledModAdd c M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (controlledModAdd c M.addView p) m s).basis=(if B then (O+(X*Y)%p)%p else O)
+    } by ⟨operation.1, unchanged, outputAfter⟩;);
+  -- Prepare, update the output, then uncompute every product/history register.
+  conclude {
+    {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulControlledAdd c M p
+    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+(X*Y)%p)%p else O),M.work=0 }}
+  } by montControlledSandwich_spec c B M p X Y O _ hw hnd hp hp16 hX hY
+      (controlledModAdd c M.addView p) updated;
+
 
 
 theorem montMulControlledSub_spec (c : Wire) (B : Bool) (M : MontLayout) (p X Y O : Nat) [Fact p.Prime]
     (hw : M.Widths) (hnd : (c::M.wires).Nodup) (hp : p<2^256) (hp16 : p%16=15)
     (hX : X<p) (hY : Y<2^256) (hO : O<p) :
     {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulControlledSub c M p
-    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+p-(X*Y)%p)%p else O),M.work=0 }} := by
-  apply montControlledSandwich_spec c B M p X Y O _ hw hnd hp hp16 hX hY
-  intro s m hb h ho
-  have hp0 := (Fact.out : p.Prime).pos
-  have hn := MontLayout.controlled_add_nodup c M hw hnd
-  have hv : regValue M.addView.a s.basis=(X*Y)%p := M.product_value hw s.basis _ h.z
-    (lt_trans (Nat.mod_lt _ hp0) (lt_trans hp pow256_lt_pow257))
-  have hz : regValue M.addView.z s.basis=O := by rw [(M.add_ports hw).2]; exact ho
-  have hc : regValue M.addView.work s.basis=0 := (regValue_zero _ _).mpr
-    (fun w hw' => (regValue_zero _ _).mp h.shared w (M.add_work_subset hw hw'))
-  have hh := controlledModSub_spec c M.addView 256 p ((X*Y)%p) O B (M.add_widths hw) hn
-    hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m ⟨⟨⟨hb,hv⟩,hz⟩,hc⟩
-  refine ⟨hh.1,?_,?_⟩
-  · intro w hn'
-    exact controlledModSub_frame c M.addView 256 p ((X*Y)%p) O B (M.add_widths hw) hn
-      hp0 hp (Nat.le_of_lt (Nat.mod_lt _ hp0)) hO s m hb hv hz hc w (by rw [(M.add_ports hw).2]; exact hn')
-  · simpa only [(M.add_ports hw).2] using hh.2.1.2
+    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+p-(X*Y)%p)%p else O),M.work=0 }} := Proof
+  -- The prepared product is the usual residue, not a Montgomery-encoded output.
+  { (X*Y)%p < p } as productBound by Nat.mod_lt _ (Fact.out : p.Prime).pos;
+  { ∀ (s : State) (m : List Bool), s.basis c=B → MontPrepared M p X Y s.basis →
+      regValue M.out s.basis=O →
+      (run (controlledModSub c M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (controlledModSub c M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (controlledModSub c M.addView p) m s).basis=(if B then (O+p-(X*Y)%p)%p else O)
+  } as updated by (by
+    intro s m hb prepared outputBefore
+    have hp0 := (Fact.out : p.Prime).pos
+    have hn := MontLayout.controlled_add_nodup c M hw hnd
+    { regValue M.addView.a s.basis=(X*Y)%p } as productReady by
+      M.product_value hw s.basis _ prepared.z
+        (lt_trans productBound (lt_trans hp pow256_lt_pow257));
+    { regValue M.addView.z s.basis=O } as outputReady by
+      (by rw [(M.add_ports hw).2]; exact outputBefore);
+    { regValue M.addView.work s.basis=0 } as workClean by
+      (regValue_zero _ _).mpr
+        (fun w hw' => (regValue_zero _ _).mp prepared.shared w (M.add_work_subset hw hw'));
+    have operation := controlledModSub_spec c M.addView 256 p ((X*Y)%p) O B
+      (M.add_widths hw) hn
+      hp0 hp (Nat.le_of_lt productBound) hO s m ⟨⟨⟨hb,productReady⟩,outputReady⟩,workClean⟩
+    { ∀ w, w∉M.out → (run (controlledModSub c M.addView p) m s).basis w=s.basis w } as unchanged by (by
+      intro w outside
+      exact controlledModSub_frame c M.addView 256 p ((X*Y)%p) O B
+        (M.add_widths hw) hn
+        hp0 hp (Nat.le_of_lt productBound) hO s m hb productReady outputReady workClean w
+        (by rw [(M.add_ports hw).2]; exact outside));
+    { regValue M.out (run (controlledModSub c M.addView p) m s).basis=(if B then (O+p-(X*Y)%p)%p else O) } as outputAfter by
+      (by simpa only [(M.add_ports hw).2] using operation.2.1.2);
+    conclude {
+      (run (controlledModSub c M.addView p) m s).phase=s.phase ∧
+      (∀ w, w∉M.out → (run (controlledModSub c M.addView p) m s).basis w=s.basis w) ∧
+      regValue M.out (run (controlledModSub c M.addView p) m s).basis=(if B then (O+p-(X*Y)%p)%p else O)
+    } by ⟨operation.1, unchanged, outputAfter⟩;);
+  -- Prepare, update the output, then uncompute every product/history register.
+  conclude {
+    {{ c=B,M.x=X,M.y=Y,M.out=O,M.work=0 }} montMulControlledSub c M p
+    {{ c=B,M.x=X,M.y=Y,M.out=(if B then (O+p-(X*Y)%p)%p else O),M.work=0 }}
+  } by montControlledSandwich_spec c B M p X Y O _ hw hnd hp hp16 hX hY
+      (controlledModSub c M.addView p) updated;
+
 
 end ECDSAAdd.Arithmetic

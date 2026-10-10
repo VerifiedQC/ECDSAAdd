@@ -1,7 +1,9 @@
 import ECDSAAdd.Framework.Hoare
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open Instr Correction
+open scoped ECDSAAdd.ProofLanguage
 
 def sumBit (a b c : Bool) : Bool := (a ^^ b) ^^ c
 
@@ -46,20 +48,31 @@ theorem fullAdder_correct (a b cin out carry : Wire)
       ⟨s.phase,
         writeBit (writeBit s.basis carry
           (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
-          out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-    not_or, not_false_eq_true, and_true] at hdisjoint
-  obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
-  have hcb := Ne.symm hbc
-  simp only [fullAdder, run]
-  apply congrArg (State.mk s.phase)
-  funext w
-  by_cases hwa : w = a <;> by_cases hwb : w = b <;>
-    by_cases hwc : w = cin <;> by_cases hwo : w = out <;>
-    by_cases hwk : w = carry <;>
-    simp_all [writeBit, Function.update, sumBit, carryBit]
-  cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;>
-    cases s.basis out <;> cases s.basis carry <;> simp_all
+          out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ := Proof
+  let final := run (fullAdder a b cin out carry) m s
+  -- The gates change no phase. The basis calculation has just two XOR outputs.
+  { final.phase = s.phase } as phase by rfl;
+  { final.basis =
+      writeBit (writeBit s.basis carry
+        (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
+        out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin)) } as outputs by (by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
+      not_or, not_false_eq_true, and_true] at hdisjoint
+    obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
+    have hcb := Ne.symm hbc
+    simp only [final, fullAdder, run]
+    funext w
+    by_cases hwa : w = a <;> by_cases hwb : w = b <;>
+      by_cases hwc : w = cin <;> by_cases hwo : w = out <;>
+      by_cases hwk : w = carry <;>
+      simp_all [writeBit, Function.update, sumBit, carryBit]
+    cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;>
+      cases s.basis out <;> cases s.basis carry <;> simp_all);
+  conclude { final = ⟨s.phase,
+    writeBit (writeBit s.basis carry
+      (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
+      out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ }
+    by (by cases hf : final; simp_all);
 
 /-- 只要 carry 保存正确的进位，就能对任意测量结果清零它，且恢复原相位。 -/
 theorem eraseCarry_correct (a b cin carry : Wire)
@@ -68,39 +81,75 @@ theorem eraseCarry_correct (a b cin carry : Wire)
     (hcarry : s.basis carry = carryBit (s.basis a) (s.basis b) (s.basis cin))
     (m : List Bool) :
     run (eraseCarry a b cin carry) m s =
-      ⟨s.phase, writeBit s.basis carry false⟩ := by
-  simp only [eraseCarry, run]
-  cases hm : m.headD false <;>
-    simp [measureAndCorrect, correct, writeBit, ha, hb, hc,
-      hcarry, carryBit]
-  cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;> simp
+      ⟨s.phase, writeBit s.basis carry false⟩ := Proof
+  -- Both outcomes erase the carry. For outcome 1, the three CZ corrections
+  -- contribute exactly the same parity as the measured carry, cancelling it.
+  let correctionParity := ((s.basis a && s.basis b) ^^ (s.basis a && s.basis cin)) ^^
+      (s.basis b && s.basis cin)
+  { correctionParity = s.basis carry } as cancelsMeasuredCarry by hcarry.symm;
+  cases outcome : m.headD false with
+  | false =>
+    conclude { run (eraseCarry a b cin carry) m s =
+        ⟨s.phase, writeBit s.basis carry false⟩ } by (by
+      simp only [eraseCarry, run, outcome]
+      simp [measureAndCorrect, correct]);
+  | true =>
+    conclude { run (eraseCarry a b cin carry) m s =
+        ⟨s.phase, writeBit s.basis carry false⟩ } by (by
+      simp only [eraseCarry, run, outcome]
+      simp [measureAndCorrect, correct, writeBit,
+        ha, hb, hc, ← cancelsMeasuredCarry, correctionParity]
+      cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;> simp);
 
 /-- 保持三个输入，在输出与进位线上异或写入和位与进位。 -/
 theorem fullAdder_spec (a b cin out carry : Wire)
     (hnd : [a, b, cin, out, carry].Nodup) (A B C O K : Bool) :
     {{ a = A, b = B, cin = C, out = O, carry = K }} fullAdder a b cin out carry
     {{ a = A, b = B, cin = C, out = (O ^^ sumBit A B C),
-       carry = (K ^^ carryBit A B C) }} := by
-  intro s m hP
-  rw [fullAdder_correct a b cin out carry hnd]
-  simp only [Holds.holds] at hP ⊢
+       carry = (K ^^ carryBit A B C) }} := Proof
+  For every s, m assuming initial
+  let final := run (fullAdder a b cin out carry) m s
+  { final = ⟨s.phase,
+      writeBit (writeBit s.basis carry (K ^^ carryBit A B C))
+        out (O ^^ sumBit A B C)⟩ } as execution by (by
+    dsimp only [final]
+    rw [fullAdder_correct a b cin out carry hnd]
+    simp_all only [Holds.holds]);
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
     not_or, not_false_eq_true, and_true] at hnd
   obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hnd
-  simp_all [writeBit, Function.update, Ne.symm hok]
+  { final.basis a = A ∧ final.basis b = B ∧ final.basis cin = C }
+    as inputs by (by rw [execution]; simp_all [Holds.holds, writeBit, Function.update]);
+  { final.basis out = (O ^^ sumBit A B C) ∧
+      final.basis carry = (K ^^ carryBit A B C) }
+    as outputs by (by rw [execution]; simp [writeBit, Ne.symm hok]);
+  conclude { final.phase = s.phase ∧
+      (((final.basis a = A ∧ final.basis b = B) ∧ final.basis cin = C) ∧
+        final.basis out = (O ^^ sumBit A B C)) ∧
+      final.basis carry = (K ^^ carryBit A B C) }
+    by ⟨(by rw [execution]), ⟨⟨⟨inputs.1, inputs.2.1⟩, inputs.2.2⟩,
+      outputs.1⟩, outputs.2⟩;
 
 /-- 进位已等于 majority 时，清零进位并保持输入与相位。 -/
 theorem eraseCarry_spec (a b cin carry : Wire)
     (hnd : [a, b, cin, carry].Nodup) (A B C : Bool) :
     {{ a = A, b = B, cin = C, carry = carryBit A B C }} eraseCarry a b cin carry
-    {{ a = A, b = B, cin = C, carry = false }} := by
-  intro s m hP
-  simp only [Holds.holds] at hP ⊢
+    {{ a = A, b = B, cin = C, carry = false }} := Proof
+  For every s, m assuming initial
+  let final := run (eraseCarry a b cin carry) m s
+  simp only [Holds.holds] at initial
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
     not_or, not_false_eq_true, and_true] at hnd
   obtain ⟨⟨_, _, ha⟩, ⟨_, hb⟩, hc⟩ := hnd
-  rw [eraseCarry_correct a b cin carry ha hb hc s (by simp_all) m]
-  simp_all [writeBit, Function.update]
+  { s.basis carry = carryBit (s.basis a) (s.basis b) (s.basis cin) }
+    as validCarry by (by simpa only [initial.1.1.1, initial.1.1.2, initial.1.2]
+                          using initial.2);
+  { final = ⟨s.phase, writeBit s.basis carry false⟩ }
+    as execution by (eraseCarry_correct a b cin carry ha hb hc s validCarry m);
+  conclude { final.phase = s.phase ∧
+      ((final.basis a = A ∧ final.basis b = B) ∧ final.basis cin = C) ∧
+      final.basis carry = false } by (by
+    rw [execution]; simp_all [writeBit, Function.update]);
 
 /-- 一位全加器只有一个 Toffoli。 -/
 theorem fullAdder_toffoliCount (a b cin out carry : Wire) :

@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.ModularDoubling.ModUnary
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem half_parity (U : ModUnaryLayout) (n Z : Nat)
     (hw : U.Widths n) (hnd : U.wires.Nodup) (hn : 0<n) :
@@ -183,7 +184,7 @@ private theorem half_finish (U : ModUnaryLayout) (n R K : Nat) (B : Bool)
 /-- 规范模减半，所有 scratch 清零；奇偶由结果大小恢复并擦除。 -/
 theorem halfInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
     (hw : U.Widths n) (hnd : U.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
-    {{ U.z=Z,U.work=0 }} halfInPlace U p {{ U.z=halveMod p Z,U.work=0 }} := by
+    {{ U.z=Z,U.work=0 }} halfInPlace U p {{ U.z=halveMod p Z,U.work=0 }} := Proof
   have hn : 0<n := by
     by_contra hh
     have hn0 : n=0 := by omega
@@ -192,27 +193,40 @@ theorem halfInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
     omega
   let B := decide (Z%2=1)
   let V := Z+(if B then p else 0)
-  have hv : V<2^(n+1) := by dsimp [V]; rw [Nat.pow_succ]; split <;> omega
-  have he : V%2=0 := by
+  { V<2^(n+1) } as fitsRegister by (by dsimp [V]; rw [Nat.pow_succ]; split <;> omega);
+  -- Adding the odd modulus precisely when Z is odd makes the value even.
+  { V%2=0 } as evenValue by (by
     simp only [V,B,decide_eq_true_eq]
-    split_ifs <;> omega
+    split_ifs <;> omega);
   have hr := halve_mod_bound p Z hp hZ
-  have hh : V/2=halveMod p Z := by simp only [V,B,decide_eq_true_eq,halveMod_eq]
-  have hb : B= !decide (halveMod p Z<(p+1)/2) := by
+  { V/2=halveMod p Z } as halfValue by (by simp only [V,B,decide_eq_true_eq,halveMod_eq]);
+  -- The reduced output determines the saved parity, allowing the flag to be cleared.
+  { B= !decide (halveMod p Z<(p+1)/2) } as recoverParity by (by
     have hpar := halve_parity p Z hp hZ
     dsimp [B]
     by_cases ho : Z%2=1
     · have := hpar.mp ho; simp [ho,Nat.not_lt.mpr this]
     · have ht : halveMod p Z<(p+1)/2 := by omega
-      simp [ho,ht]
-  have h1 := half_parity U n Z hw hnd hn
-  have h2 := half_add U n p Z B hw hnd (by rw [Nat.pow_succ]; omega)
-  have h3 := half_rotate U V B hnd he
-  have h4 := half_finish U n (halveMod p Z) ((p+1)/2) B hw hnd (by omega) (by omega) hb
-  change {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }} _
-    {{ U.z=(V%2^(n+1)),U.core.work=0,U.mask=0,U.flag=B }} at h2
-  rw [Nat.mod_eq_of_lt hv] at h2
-  rw [hh] at h3
-  simpa only [halfInPlace,List.append_assoc] using ((h1.seq h2).seq h3).seq h4
+      simp [ho,ht]);
+  { {{ U.z=Z,U.work=0 }} [.CX U.bit U.flag]
+      {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }} }
+    as saveParity by (half_parity U n Z hw hnd hn);
+  { {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }}
+      maskedAddConst U.flag U.constant U.z U.carry U.cin p
+      {{ U.z=V,U.core.work=0,U.mask=0,U.flag=B }} } as makeEven by (by
+    have stage := half_add U n p Z B hw hnd (by rw [Nat.pow_succ]; omega)
+    change {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }} _
+      {{ U.z=(V%2^(n+1)),U.core.work=0,U.mask=0,U.flag=B }} at stage
+    simpa only [Nat.mod_eq_of_lt fitsRegister] using stage);
+  { {{ U.z=V,U.core.work=0,U.mask=0,U.flag=B }} rotateRight U.z
+      {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=B }} } as halve by (by
+    simpa only [halfValue] using half_rotate U V B hnd evenValue);
+  { {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=B }}
+      (compareLtConst none U.low (U.constant.take U.low.length) U.carry U.cin U.flag ((p+1)/2) ++ [.X U.flag])
+      {{ U.z=halveMod p Z,U.work=0 }} } as clearParity by
+    (half_finish U n (halveMod p Z) ((p+1)/2) B hw hnd (by omega) (by omega) recoverParity);
+  conclude { {{ U.z=Z,U.work=0 }} halfInPlace U p
+    {{ U.z=halveMod p Z,U.work=0 }} } by (by
+    simpa only [halfInPlace,List.append_assoc] using ((saveParity.seq makeEven).seq halve).seq clearParity);
 
 end ECDSAAdd.Arithmetic

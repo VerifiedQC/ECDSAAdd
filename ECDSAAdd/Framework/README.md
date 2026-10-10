@@ -601,7 +601,28 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 
 使用 `open scoped ECDSAAdd.ProofLanguage` 开启记法，定理的证明体写成 `:= Proof`。完整示范见 [ModularAlgorithm.lean](../Arithmetic/ModularAddition/ModularAlgorithm.lean) 的 `addResult_correct/subResult_correct`。
 
-模加现在直接列等式：每个 `if/else` 分支先证明余数等于哪个数，再按定义证明实际算法返回同一个数，最后显式写出 `conclude { 算法结果 = 余数 };`。不再引入 result、requires 或 ensures。大括号里写的都是需要证明的结论，不是额外假设；完整示范在 `addResult_correct`。
+模加和模减现在直接列等式：每个 `if/else` 分支先证明余数等于哪个数，再按定义证明实际算法返回同一个数，最后显式写出 `conclude { 算法结果 = 余数 };`。不再引入 result、requires 或 ensures。大括号里写的都是需要证明的结论，不是额外假设。
+
+Arithmetic 的关键电路证明也使用同一原则：列出有名字的中间命题或 Hoare triple，再明确写出整段结论。完整改写清单见 [证明阅读地图](../../docs/PROOF_READABILITY.md)。
+
+```lean
+example (P Q R : BasisState → Prop) (c d : Program)
+    (hc : Triple P c Q) (hd : Triple Q d R) : Triple P (c ++ d) R := Proof
+  { Triple P c Q } as firstStage by hc;
+  { Triple Q d R } as secondStage by hd;
+  conclude { Triple P (c ++ d) R } by (firstStage.seq secondStage);
+```
+
+| 电路／状态证明句式 | 含义 |
+| --- | --- |
+| `{ P } as fact by evidence;` | evidence 必须证明 P；后续可以引用 fact。P 可为数值等式、状态性质或 Triple |
+| `conclude { Q } by evidence;` | Q 必须是当前目标，evidence 必须完成它 |
+| `conclude { Q } using [facts];` | 只使用列出的事实作直接推导或等式化简，并完成当前目标 |
+| `For every s, m assuming initial` | 引入任意初态、测量记录及前提；不会添加新的假设 |
+
+`Triple` 本身仍包含相位恢复及任意测量记录；只给出 basis 后置条件不能替代完整 Triple。阶段之间使用真正的 `Triple.seq`，必须核对中间断言。普通 `by evidence` 可引用当前上下文；需要局部化证据时使用 `using [facts]`。
+
+`Proof` 及 `We split on` 的分支采用缩进块，允许第一句就是 `{ P } as ...`。不要把整段证明再包成原生 tactic 大括号块。一般命题分支使用 `We split on / Case / Otherwise`，各分支写出明确的 conclude；下面的 `if/else` 是固定的数值等式模板，不接受任意状态更新。递归归纳、接线互异、列表下标等局部细节仍可以使用小段 Lean tactic，核心状态变化与阶段组合不隐藏进一个整体辅助定理。
 
 | 等式分支句式 | 含义 |
 | --- | --- |
@@ -609,11 +630,13 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 | `{ s % q = s } by the small remainder rule;` | 从当前分支条件检查 s<q，再应用小余数规则 |
 | `{ f args = value } by definition;` | 展开等式左侧函数的一层定义，结合当前分支条件检查等式；不调用 f 的正确性定理 |
 | `{ s % q = s-q } by one subtraction using h and the branch condition;` | 只引用 h、当前分支条件及必要依赖，检查 q≤s<2q 所需的减法范围和分解，再应用取模规则 |
+| `{ v % q = v } by the small remainder rule using [facts];` | 用列出的范围事实和当前分支证明 v<q；用于模减的借位分支 |
+| `{ v % q = r } by the shifted remainder rule using [facts] and the branch condition;` | 检查 v=r+q 且 r<q，再推出余数为 r |
 | `conclude { Q };` | Q 必须与当前目标一致，并且由本分支已经列出的等式化简完成；未完成的目标不能被略过 |
 
-`using` 后可放证明名字或括号内的证明表达式。三条固定规则会清除无关假设，不能漏写上界证明再暗中使用它。这里的 if 是数学分情况，不发出电路或测量；电路的输入保持、相位与工作区恢复仍由原有 Triple 和后端连接证明。
+`using` 后可放证明名字或括号内的证明表达式。固定等式规则会清除无关假设，不能漏写上界证明再暗中使用它。这里的 if 是数学分情况，不发出电路或测量；电路的输入保持、相位与工作区恢复由完整 Triple 和后端连接证明。
 
-旧的 `verify result := (实际表达式) unfolding [定义] { ... }` 形式继续兼容，以下是它的记法；当前模加示范不再使用它。模减仍保留后面的英文句式。
+旧的 `verify result := (实际表达式) unfolding [定义] { ... }` 形式继续兼容，以下是它的记法；当前模加和模减示范不再使用它。
 
 | 分支证明句式 | 含义 |
 | --- | --- |

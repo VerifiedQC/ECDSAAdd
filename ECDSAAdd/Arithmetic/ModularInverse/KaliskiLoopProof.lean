@@ -1,6 +1,8 @@
 import ECDSAAdd.Arithmetic.ModularInverse.KaliskiLoopState
+import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 private theorem partition_nodup (L : KaliskiRoundLayout) (r : RoundRecord) (rs : List RoundRecord)
     (hnd : (L.tapeWires (r::rs)).Nodup) : (r.wires++L.swapCounter.tapeWires rs).Nodup := by
@@ -36,7 +38,8 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
       (fun st => LoopState (loopEndLayout L rs.length) ((kaliskiStep^[rs.length]) z) st ∧ TapeValues rs (kaliskiCodes rs.length z) st) ∧
     Triple (fun st => LoopState (loopEndLayout L rs.length) ((kaliskiStep^[rs.length]) z) st ∧ TapeValues rs (kaliskiCodes rs.length z) st)
       (kaliskiUnloop L i rs)
-      (fun st => LoopState L z st ∧ TapeValues rs (List.replicate rs.length (false,false)) st) := by
+      (fun st => LoopState L z st ∧ TapeValues rs (List.replicate rs.length (false,false)) st) := Proof
+  -- Induct on the record list: run the first round before the tail; undo them in reverse order.
   induction rs generalizing L i z with
   | nil => constructor <;> intro s m h <;> exact ⟨rfl,h⟩
   | cons r rs ih =>
@@ -79,21 +82,31 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
     let PB := fun st => (LoopState L.swapCounter (kaliskiStep z) st ∧ st r.swap=(kaliskiCode z).1 ∧
       st r.subtract=(kaliskiCode z).2) ∧ TapeValues rs (List.replicate rs.length (false,false)) st
     constructor
-    · have h1 : Triple P0 (kaliskiRound (L.withRecord r) i) PM := hf1.conseq
+    · -- The first round writes r; the recursive loop preserves that saved record.
+      have firstRound : Triple P0 (kaliskiRound (L.withRecord r) i) PM := hf1.conseq
         (fun st h => ⟨⟨h.1,h.2.1,h.2.2.1⟩,h.2.2.2⟩)
         (fun st h => ⟨⟨h.1.1,h.2⟩,h.1.2⟩)
-      have h2 : Triple PM (kaliskiLoop L.swapCounter (i+1) rs) PF := hf2.conseq (fun _ h => h)
-        (fun st h => ⟨h.1.1,h.2.1,h.2.2,h.1.2⟩)
-      have h := h1.seq h2
-      simpa only [P0,PF,kaliskiLoop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
-        loopEndLayout,Function.iterate_succ_apply] using h
-    · have h1 : Triple PF (kaliskiUnloop L.swapCounter (i+1) rs) PB := hb1.conseq
+      { Triple PM (kaliskiLoop L.swapCounter (i+1) rs) PF } as remainingRounds by
+        (hf2.conseq (fun _ h => h) (fun st h => ⟨h.1.1,h.2.1,h.2.2,h.1.2⟩));
+      conclude {
+        Triple (fun st => LoopState L z st ∧ TapeValues (r::rs) (List.replicate (r::rs).length (false,false)) st)
+          (kaliskiLoop L i (r::rs))
+          (fun st => LoopState (loopEndLayout L (r::rs).length) (kaliskiStep^[(r::rs).length] z) st ∧
+            TapeValues (r::rs) (kaliskiCodes (r::rs).length z) st)
+      } by (by simpa only [P0,PF,kaliskiLoop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+        loopEndLayout,Function.iterate_succ_apply] using firstRound.seq remainingRounds);
+    · -- Undo the tail while keeping r; undoing the first round then clears r as well.
+      have undoRemaining : Triple PF (kaliskiUnloop L.swapCounter (i+1) rs) PB := hb1.conseq
         (fun st h => ⟨⟨h.1,h.2.2.2⟩,h.2.1,h.2.2.1⟩)
         (fun st h => ⟨⟨h.1.1,h.2⟩,h.1.2⟩)
-      have h2 : Triple PB (kaliskiUnround (L.withRecord r) i) P0 := hb2.conseq (fun _ h => h)
-        (fun st h => ⟨h.1.1,h.1.2.1,h.1.2.2,h.2⟩)
-      have h := h1.seq h2
-      simpa only [P0,PF,kaliskiUnloop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
-        loopEndLayout,Function.iterate_succ_apply] using h
+      { Triple PB (kaliskiUnround (L.withRecord r) i) P0 } as undoFirst by
+        (hb2.conseq (fun _ h => h) (fun st h => ⟨h.1.1,h.1.2.1,h.1.2.2,h.2⟩));
+      conclude {
+        Triple (fun st => LoopState (loopEndLayout L (r::rs).length) (kaliskiStep^[(r::rs).length] z) st ∧
+            TapeValues (r::rs) (kaliskiCodes (r::rs).length z) st)
+          (kaliskiUnloop L i (r::rs))
+          (fun st => LoopState L z st ∧ TapeValues (r::rs) (List.replicate (r::rs).length (false,false)) st)
+      } by (by simpa only [P0,PF,kaliskiUnloop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+        loopEndLayout,Function.iterate_succ_apply] using undoRemaining.seq undoFirst);
 
 end ECDSAAdd.Arithmetic

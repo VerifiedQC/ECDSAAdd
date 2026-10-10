@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularTranslation
 
 namespace ECDSAAdd.Arithmetic
 open scoped CircuitDSL
+open scoped ECDSAAdd.ProofLanguage
 
 /- 阅读顺序：本文件的 prog → ModularAlgorithm 的两个分支证明 → 下方最终规格。
 工作区及门列细节集中在 ModularBackend；最终规格不作为后端连接的前提。 -/
@@ -57,23 +58,39 @@ theorem modAddOn_refines (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X + Y < 2*q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} := by
-  exact Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
-    (reductionProgram_correct .add (ModAddPrepare L.reductionWorkspace) modAddPrepare_correct
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} := Proof
+  -- The two certified stages meet at the same prepared-state assertion.
+  { Triple (ModValues L (ModValues.clean X Y O))
+      (modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace)
+      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.addResult X Y q))) }
+    as stages by (reductionProgram_correct .add (ModAddPrepare L.reductionWorkspace) modAddPrepare_correct
       (ModAddSelectAndClear L.reductionWorkspace) modAddSelectAndClear_correct
-      L rfl hnd q hq0 hq X Y O hXY)
-    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.addResult X Y q) st).mp h)
+      L rfl hnd q hq0 hq X Y O hXY);
+  -- Only the representation of the assertions changes at this boundary.
+  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} }
+    by (stages.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
+      (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.addResult X Y q) st).mp h));
 
 theorem modSubOn_refines (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} := by
-  exact Triple.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
-    (reductionProgram_correct .sub (ModSubPrepare L.reductionWorkspace) modSubPrepare_correct
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} := Proof
+  -- The two certified stages meet at the same prepared-state assertion.
+  { Triple (ModValues L (ModValues.clean X Y O))
+      (modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace)
+      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.subResult X Y q))) }
+    as stages by (reductionProgram_correct .sub (ModSubPrepare L.reductionWorkspace) modSubPrepare_correct
       (ModSubSelectAndClear L.reductionWorkspace) modSubSelectAndClear_correct
-      L rfl hnd q hq0 hq X Y O ⟨hX, hY⟩)
-    (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.subResult X Y q) st).mp h)
+      L rfl hnd q hq0 hq X Y O ⟨hX, hY⟩);
+  -- Only the representation of the assertions changes at this boundary.
+  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} }
+    by (stages.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
+      (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.subResult X Y q) st).mp h));
 
 /-- 保留原分支规格：直接来自电路连接，不再引用旧 modAdd_spec。 -/
 theorem modAddOn_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
@@ -98,19 +115,35 @@ theorem modAddOn_mod_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} := by
-  have hSum : X + Y < 2*q := by omega
-  have branches := modAddOn_refines L hnd q hq0 hq X Y O hSum
-  simpa only [ModReductionAlgorithm.addResult_correct X Y q hSum] using branches
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} := Proof
+  { X + Y < 2*q } as sumBound by (by omega);
+  { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} }
+    as circuitBranches by (modAddOn_refines L hnd q hq0 hq X Y O sumBound);
+  { ModReductionAlgorithm.addResult X Y q = (X+Y)%q }
+    as bothBranches by (ModReductionAlgorithm.addResult_correct X Y q sumBound);
+  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+Y)%q)), L.work = 0 }} }
+    by (by simpa only [bothBranches] using circuitBranches);
 
 /-- 完整模减规格：有借位时加回 q，无借位时保留差。 -/
 theorem modSubOn_mod_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+q-Y)%q)), L.work = 0 }} := by
-  have branches := modSubOn_refines L hnd q hq0 hq X Y O hX hY
-  simpa only [ModReductionAlgorithm.subResult_correct X Y q hX hY] using branches
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+q-Y)%q)), L.work = 0 }} := Proof
+  { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} }
+    as circuitBranches by (modSubOn_refines L hnd q hq0 hq X Y O hX hY);
+  { ModReductionAlgorithm.subResult X Y q = (X+q-Y)%q }
+    as bothBranches by (ModReductionAlgorithm.subResult_correct X Y q hX hY);
+  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
+      modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ((X+q-Y)%q)), L.work = 0 }} }
+    by (by simpa only [bothBranches] using circuitBranches);
 
 /- 以下保留旧接口，供既有调用者和资源证明使用；它们现在由上面的分层证明推出。 -/
 

@@ -6,6 +6,12 @@
 
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 
+### 当前关键证明：命题、阶段与结论（2026-10-10）
+
+重要算法的完整证明已按“中间命题 → 引用证据 → 显式结论”整理，覆盖 Addition、比较／判零、模加减、模倍增／减半、模乘、求逆、除法和点加。数值分支列出各自结论；电路组合列出准备、使用、恢复的 Hoare triple。原定理接口与电路不变。
+
+精确到文件和定理的清单及建议阅读顺序见 [证明阅读地图](PROOF_READABILITY.md)。未机械改写全部内部引理；一行转发接口通常保留，主要变化在真正执行归纳或阶段组合的证明中。
+
 ### 当前关键入口：显式 using / by（2026-10-07）
 
 现在已把同一写法扩展到下表的原函数正文：数学语句后同一行写 `using 实现 by 证明`；临时值用带准备／恢复证明的 `with`。不是只给旧算法加一层 `Certified.lean` 外壳。
@@ -47,7 +53,7 @@ Addition 已直接改写 [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/Ripp
 
 模加减的首个分层证明示范：先读 `Modular.lean` 的算法和 `*_mod_spec`，再读 [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean) 的两个分支证明。[ModularBackend.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularBackend.lean) 保存接线、补码候选与工作区恢复的阶段证明，修改实现时才需深入。旧规格由新分层证明推出；原 `prog` 正文已改写，实际门列不变。
 
-`ModularAlgorithm.lean` 的 `addResult_correct` 现直接在 `if/else` 中列等式：余数等于哪个数、实际算法按定义返回哪个数，再在每个分支显式 `conclude` 两者相等。不再引入 result 或 requires/ensures；每条结论由 Lean 核查。`subResult_correct` 保留受控英文分情况写法。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)，不把底层 tactic 暴露在算法证明正文中；范围辅助引理暂不改写。这一层只证明数值结果，电路的相位和工作区恢复仍在后端规格中。
+`ModularAlgorithm.lean` 的 `addResult_correct/subResult_correct` 直接在 `if/else` 中列等式：余数等于哪个数、实际算法按定义返回哪个数，再在每个分支显式 `conclude` 两者相等。不再引入 result 或 requires/ensures；每条结论由 Lean 核查。句式实现集中在 [ProofLanguage.lean](../ECDSAAdd/Framework/ProofLanguage.lean)；范围辅助引理暂不改写。这一层只证明数值结果，电路的相位和工作区恢复则由后续的完整状态／Hoare 证明负责。
 
 Arithmetic 的 222 个 Lean 文件已归入以下 14 个功能目录，每目录恰有一份 README，不另设重复的 docs/modules 说明。加法与其逆操作、受控和 XOR 等接口变体放在同一功能模块，不使用 Primitives 或 Modular 作为杂项模块。
 

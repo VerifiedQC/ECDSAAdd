@@ -5,6 +5,7 @@ import Mathlib.Data.List.OfFn
 
 namespace ECDSAAdd.Arithmetic
 open Instr
+open scoped ECDSAAdd.ProofLanguage
 
 attribute [local simp] carryBit
 
@@ -38,19 +39,40 @@ theorem majority_correct (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
 theorem majority_spec (a b cin carry : Wire) (hnd : [a, b, cin, carry].Nodup)
     (A B C K : Bool) :
     {{ a = A, b = B, cin = C, carry = K }} majority a b cin carry
-    {{ a = A, b = B, cin = C, carry = (K ^^ carryBit A B C) }} := by
-  intro s m hP
-  rw [majority_correct a b cin carry hnd]
-  simp_all [Holds.holds, writeBit, Function.update, List.nodup_cons]
+    {{ a = A, b = B, cin = C, carry = (K ^^ carryBit A B C) }} := Proof
+  For every s, m assuming initial
+  let final := run (majority a b cin carry) m s
+  { final = ⟨s.phase, writeBit s.basis carry (K ^^ carryBit A B C)⟩ }
+    as execution by (by
+      dsimp only [final]
+      rw [majority_correct a b cin carry hnd]
+      simp_all only [Holds.holds]);
+  { final.basis a = A ∧ final.basis b = B ∧ final.basis cin = C }
+    as inputs by (by
+      rw [execution]
+      simp_all [Holds.holds, writeBit, Function.update, List.nodup_cons]);
+  { final.basis carry = (K ^^ carryBit A B C) }
+    as carryOutput by (by rw [execution]; simp [writeBit]);
+  conclude { final.phase = s.phase ∧
+    ((final.basis a = A ∧ final.basis b = B) ∧ final.basis cin = C) ∧
+      final.basis carry = (K ^^ carryBit A B C) }
+    by ⟨(by rw [execution]), ⟨⟨inputs.1, inputs.2.1⟩, inputs.2.2⟩, carryOutput⟩;
 
 /-- out ^= a XOR cin；a、cin 是两根输入线，out 是原地更新的目标线。 -/
 def sumInto (a cin out : Wire) : Program := prog { CX a out; CX cin out; }
 
 theorem sumInto_spec (a cin out : Wire) (hnd : [a, cin, out].Nodup) (A C O : Bool) :
     {{ a = A, cin = C, out = O }} sumInto a cin out
-    {{ a = A, cin = C, out = (O ^^ (A ^^ C)) }} := by
-  intro s m hP
-  simp_all [sumInto, run, Holds.holds, writeBit, Function.update, List.nodup_cons, Ne.symm]
+    {{ a = A, cin = C, out = (O ^^ (A ^^ C)) }} := Proof
+  For every s, m assuming initial
+  let final := run (sumInto a cin out) m s
+  { final.basis a = A ∧ final.basis cin = C } as inputs by (by
+    simp_all [final, sumInto, run, Holds.holds, writeBit, Function.update, List.nodup_cons, Ne.symm]);
+  { final.basis out = (O ^^ (A ^^ C)) } as sum by (by
+    simp_all [final, sumInto, run, Holds.holds, writeBit, Function.update, List.nodup_cons, Ne.symm]);
+  conclude { final.phase = s.phase ∧
+    (final.basis a = A ∧ final.basis cin = C) ∧ final.basis out = (O ^^ (A ^^ C)) }
+    by ⟨rfl, inputs, sum⟩;
 
 local macro_rules
   | `(tactic| get_elem_tactic) =>
@@ -126,7 +148,7 @@ private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
     (run (addInPlaceRecursive x y carry cin) m s).phase = s.phase ∧
     (∀ w, w ∉ y → (run (addInPlaceRecursive x y carry cin) m s).basis w = s.basis w) ∧
     regValue y (run (addInPlaceRecursive x y carry cin) m s).basis =
-      (regValue x s.basis + regValue y s.basis + (s.basis cin).toNat) % 2^y.length := by
+      (regValue x s.basis + regValue y s.basis + (s.basis cin).toNat) % 2^y.length := Proof
   induction y generalizing x carry cin s m with
   | nil => simp at hc
   | cons b bs ih =>
@@ -198,32 +220,40 @@ private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
                   (List.mem_cons_of_mem _ (List.mem_append_right _ (List.mem_cons_of_mem _ hw')))
               · exact List.disjoint_left.mp hdisB (List.mem_cons_of_mem _ hw) (List.mem_cons_of_mem _ hw'))
       have hzero : s.basis c = false := hclean c (by simp)
-      -- 第一步：进位写入 c
+      -- First compute the carry from the unchanged low input bits.
       let s1 : State := ⟨s.phase, writeBit s.basis c (carryBit A B C)⟩
-      have hfirst (record : List Bool) : run (majority a b cin c) record s = s1 := by
+      { ∀ record, run (majority a b cin c) record s = s1 } as hfirst by (by
+        intro record
         rw [majority_correct _ _ _ _ h4]
-        simp [s1, hzero, A, B, C]
+        simp [s1, hzero, A, B, C]);
       have hs1 (w : Wire) (hw : w ≠ c) : s1.basis w = s.basis w := by simp [s1, writeBit, hw]
       have hclean' : ∀ d ∈ cs, s1.basis d = false := by
         intro d hd
         rw [hs1 d (fun h => hccs (h ▸ hd))]
         exact hclean d (by simp [hd])
-      -- 第二步：高位递归
-      obtain ⟨hphase, hsame, hsum⟩ := ih (a' :: as') cs c hnd' hx' hc' s1 m hclean'
+      -- The induction hypothesis adds the higher bits, using the computed carry.
       set t := run (addInPlaceRecursive (a' :: as') (b' :: bs') cs c) m s1 with ht
+      { t.phase = s1.phase ∧ (∀ w, w ∉ b' :: bs' → t.basis w = s1.basis w) ∧
+        regValue (b' :: bs') t.basis =
+          (regValue (a' :: as') s1.basis + regValue (b' :: bs') s1.basis +
+            (s1.basis c).toNat) % 2^(b' :: bs').length }
+        as higherBits by (ih (a' :: as') cs c hnd' hx' hc' s1 m hclean');
+      obtain ⟨hphase, hsame, hsum⟩ := higherBits
       have heq (w : Wire) (hw : w ∉ b' :: bs') : t.basis w = s1.basis w := hsame w hw
       have htA : t.basis a = A := by rw [heq a habs, hs1 a hac]
       have htB : t.basis b = B := by rw [heq b hbbs, hs1 b hbc]
       have htC : t.basis cin = C := by rw [heq cin hcbs, hs1 cin hcc]
       have htK : t.basis c = carryBit A B C := by rw [heq c hcbs']; simp [s1, writeBit]
-      -- 第三步：擦除本位进位（x、y、cin 仍是原值）
-      have herase (record : List Bool) : run (eraseCarry a b cin c) record t =
-          ⟨t.phase, writeBit t.basis c false⟩ :=
-        eraseCarry_correct _ _ _ _ hac hbc hcc t (by rw [htA, htB, htC, htK]) record
-      -- 第四步：写和位
-      have hlast (record : List Bool) :
+      -- Erase the carry before overwriting the low target bit: its original inputs still exist.
+      { ∀ record, run (eraseCarry a b cin c) record t =
+          ⟨t.phase, writeBit t.basis c false⟩ } as herase by
+        (fun record => eraseCarry_correct _ _ _ _ hac hbc hcc t
+          (by rw [htA, htB, htC, htK]) record);
+      { ∀ record,
           run [CX a b, CX cin b] record ⟨t.phase, writeBit t.basis c false⟩ =
-            ⟨t.phase, writeBit (writeBit t.basis c false) b (sumBit A B C)⟩ := by
+            ⟨t.phase, writeBit (writeBit t.basis c false) b (sumBit A B C)⟩ }
+        as hlast by (by
+        intro record
         simp only [run]
         apply congrArg (State.mk t.phase)
         funext w
@@ -233,21 +263,29 @@ private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
             Function.update_of_ne hac, Function.update_of_ne hbc, Function.update_of_ne hcc,
             htA, htB, htC, sumBit]
           cases A <;> cases B <;> cases C <;> rfl
-        · simp [writeBit, Function.update, hwb]
-      -- 组合：按右结合展开，各段记录由 run_take 收回
+        · simp [writeBit, Function.update, hwb]);
+      -- Compose all four stages, respecting the original measurement-record order.
       have hm0 : measurementCount (majority a b cin c) = 0 := rfl
-      simp only [addInPlaceRecursive, List.append_assoc, run_append, run_take, hm0, List.take_zero,
-        List.drop_zero]
-      rw [hfirst, ← ht, herase, hlast]
-      refine ⟨hphase, ?_, ?_⟩
-      · intro w hw
+      { run (addInPlaceRecursive (a :: a' :: as') (b :: b' :: bs') (c :: cs) cin) m s =
+          ⟨t.phase, writeBit (writeBit t.basis c false) b (sumBit A B C)⟩ }
+        as execution by (by
+        simp only [addInPlaceRecursive, List.append_assoc, run_append, run_take, hm0,
+          List.take_zero, List.drop_zero]
+        rw [hfirst, ← ht, herase, hlast]);
+      { ∀ w, w ∉ b :: b' :: bs' →
+          (writeBit (writeBit t.basis c false) b (sumBit A B C)) w = s.basis w }
+        as restored by (by
+        intro w hw
         have hw' : w ≠ b ∧ w ∉ b' :: bs' := by simpa only [List.mem_cons, not_or] using hw
         change (writeBit (writeBit t.basis c false) b (sumBit A B C)) w = s.basis w
         rw [writeBit, Function.update_of_ne hw'.1]
         by_cases hwc : w = c
         · subst hwc; simp [writeBit, hzero]
-        · rw [writeBit, Function.update_of_ne hwc, heq w hw'.2, hs1 w hwc]
-      · have hbs_t : regValue (b' :: bs') (writeBit (writeBit t.basis c false) b (sumBit A B C)) =
+        · rw [writeBit, Function.update_of_ne hwc, heq w hw'.2, hs1 w hwc]);
+      { regValue (b :: b' :: bs') (writeBit (writeBit t.basis c false) b (sumBit A B C)) =
+          (regValue (a :: a' :: as') s.basis + regValue (b :: b' :: bs') s.basis +
+            (s.basis cin).toNat) % 2^(b :: b' :: bs').length } as sum by (by
+        have hbs_t : regValue (b' :: bs') (writeBit (writeBit t.basis c false) b (sumBit A B C)) =
             regValue (b' :: bs') t.basis := by
           apply regValue_congr
           intro w hw
@@ -266,7 +304,16 @@ private theorem addInPlaceRecursive_run (x y carry : List Wire) (cin : Wire)
         have hnum := sum_value_step A B C (regValue (a' :: as') s.basis)
           (regValue (b' :: bs') s.basis) (b' :: bs').length
         simp only [List.length_cons] at hnum
-        simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hnum
+        simpa only [regValue, List.foldr_cons, Bool.toNat, Bool.cond_eq_ite, A, B, C] using hnum);
+      conclude {
+        (run (addInPlaceRecursive (a :: a' :: as') (b :: b' :: bs') (c :: cs) cin) m s).phase = s.phase ∧
+        (∀ w, w ∉ b :: b' :: bs' →
+          (run (addInPlaceRecursive (a :: a' :: as') (b :: b' :: bs') (c :: cs) cin) m s).basis w = s.basis w) ∧
+        regValue (b :: b' :: bs')
+          (run (addInPlaceRecursive (a :: a' :: as') (b :: b' :: bs') (c :: cs) cin) m s).basis =
+          (regValue (a :: a' :: as') s.basis + regValue (b :: b' :: bs') s.basis +
+            (s.basis cin).toNat) % 2^(b :: b' :: bs').length }
+        by (by rw [execution]; exact ⟨hphase, restored, sum⟩);
 
 /-- 循环版正确性：借助指令列表等价性，保留输入、相位并恢复零进位链。 -/
 theorem addInPlace_correct (x y carry : List Wire) (cin : Wire)
@@ -285,11 +332,12 @@ theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
     (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
     (hc : carry.length + 1 = y.length) (X Y : Nat) (C : Bool) :
     {{ x = X, y = Y, cin = C, carry = 0 }} addInPlace x y carry cin
-    {{ x = X, y = ((X + Y + C.toNat) % 2^y.length), cin = C, carry = 0 }} := by
-  intro s m hP
+    {{ x = X, y = ((X + Y + C.toNat) % 2^y.length), cin = C, carry = 0 }} := Proof
+  For every s, m assuming hP
   simp only [Holds.holds] at hP ⊢
   obtain ⟨⟨⟨hxv, hyv⟩, hcv⟩, hkv⟩ := hP
-  have hclean : ∀ w ∈ carry, s.basis w = false := fun w hw => (regValue_zero _ _).mp hkv w hw
+  { ∀ w ∈ carry, s.basis w = false } as hclean by
+    (fun w hw => (regValue_zero _ _).mp hkv w hw);
   obtain ⟨hp, hsame, hsum⟩ := addInPlace_correct x y carry cin hnd hx hc s m hclean
   have hn := List.nodup_cons.mp hnd
   have hn2 := List.nodup_append'.mp (by simpa only [List.append_assoc] using hn.2 : (x ++ (y ++ carry)).Nodup)
@@ -297,11 +345,18 @@ theorem addInPlace_spec (x y carry : List Wire) (cin : Wire)
   have hxy : ∀ w ∈ x, w ∉ y := fun w hw hy => List.disjoint_left.mp hn2.2.2 hw (List.mem_append_left _ hy)
   have hky : ∀ w ∈ carry, w ∉ y := fun w hw hy => List.disjoint_left.mp hyc.2.2 hy hw
   have hciny : cin ∉ y := fun h => hn.1 (by simp [h])
-  refine ⟨hp, ⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hxy w hw))).trans hxv
-  · rw [hsum, hxv, hyv, hcv]
-  · exact (hsame cin hciny).trans hcv
-  · exact (regValue_congr _ _ _ (fun w hw => hsame w (hky w hw))).trans hkv
+  let final := run (addInPlace x y carry cin) m s
+  { regValue x final.basis = X ∧ final.basis cin = C } as inputs by
+    ⟨(regValue_congr _ _ _ (fun w hw => hsame w (hxy w hw))).trans hxv,
+      (hsame cin hciny).trans hcv⟩;
+  { regValue y final.basis = (X + Y + C.toNat) % 2^y.length }
+    as sum by (by simpa only [hxv, hyv, hcv] using hsum);
+  { regValue carry final.basis = 0 } as clean by
+    ((regValue_congr _ _ _ (fun w hw => hsame w (hky w hw))).trans hkv);
+  conclude { final.phase = s.phase ∧
+    ((regValue x final.basis = X ∧
+      regValue y final.basis = (X + Y + C.toNat) % 2^y.length) ∧ final.basis cin = C) ∧
+    regValue carry final.basis = 0 } by ⟨hp, ⟨⟨inputs.1, sum⟩, inputs.2⟩, clean⟩;
 
 /-- y ← (y−x) mod 2^n，n 是目标 y 的位数；要求 cin=0、x/y 等长、carry 有 n−1 位。 -/
 def subInPlace (x y carry : List Wire) (cin : Wire) : Program :=
@@ -342,23 +397,45 @@ theorem subInPlace_spec (x y carry : List Wire) (cin : Wire)
     (hnd : (cin :: (x ++ y ++ carry)).Nodup) (hx : x.length = y.length)
     (hc : carry.length + 1 = y.length) (X Y : Nat) :
     {{ x = X, y = Y, cin = false, carry = 0 }} subInPlace x y carry cin
-    {{ x = X, y = ((Y + 2^y.length - X) % 2^y.length), cin = false, carry = 0 }} := by
-  intro s m h
-  have hX : X < 2^y.length := by
+    {{ x = X, y = ((Y + 2^y.length - X) % 2^y.length), cin = false, carry = 0 }} := Proof
+  For every s, m assuming initial
+  { X < 2^y.length } as hX by (by
     have hh := regValue_lt x s.basis
-    rw [show regValue x s.basis = X from h.1.1.1, hx] at hh
-    exact hh
-  have hY : Y < 2^y.length := by
+    rw [show regValue x s.basis = X from initial.1.1.1, hx] at hh
+    exact hh);
+  { Y < 2^y.length } as hY by (by
     have hh := regValue_lt y s.basis
-    rwa [show regValue y s.basis = Y from h.1.1.2] at hh
-  have h1 := flip_y x y carry cin hnd X Y 0 false
-  have h2 := addInPlace_spec x y carry cin hnd hx hc X (2^y.length - 1 - Y) false
-  have h3 := flip_y x y carry cin hnd X ((X + (2^y.length - 1 - Y) + false.toNat) % 2^y.length) 0 false
-  simp only [Bool.toNat_false, Nat.add_zero] at h2 h3
-  rw [complement_sub X Y (2^y.length) (Nat.two_pow_pos _) hX hY] at h3
-  have hall := h1.seq (h2.seq h3)
-  rw [subInPlace, List.append_assoc]
-  exact hall s m h
+    rwa [show regValue y s.basis = Y from initial.1.1.2] at hh);
+  let N := 2^y.length
+  -- Complement, add X, then complement again: ~(X + ~Y) = Y - X modulo N.
+  { {{ x = X, y = Y, cin = false, carry = 0 }} notRegister y
+      {{ x = X, y = (N - 1 - Y), cin = false, carry = 0 }} }
+    as complementInput by (flip_y x y carry cin hnd X Y 0 false);
+  { {{ x = X, y = (N - 1 - Y), cin = false, carry = 0 }} addInPlace x y carry cin
+      {{ x = X, y = ((X + (N - 1 - Y)) % N), cin = false, carry = 0 }} }
+    as addToComplement by (by
+      simpa only [Bool.toNat_false, Nat.add_zero] using
+        addInPlace_spec x y carry cin hnd hx hc X (N - 1 - Y) false);
+  { N - 1 - ((X + (N - 1 - Y)) % N) = (Y + N - X) % N }
+    as subtractionIdentity by (complement_sub X Y N (Nat.two_pow_pos _) hX hY);
+  { {{ x = X, y = ((X + (N - 1 - Y)) % N), cin = false, carry = 0 }} notRegister y
+      {{ x = X, y = ((Y + N - X) % N), cin = false, carry = 0 }} }
+    as complementOutput by (by
+      have stage := flip_y x y carry cin hnd X ((X + (N - 1 - Y)) % N) 0 false
+      change {{ x = X, y = ((X + (N - 1 - Y)) % N), cin = false, carry = 0 }}
+        notRegister y {{ x = X, y = (N - 1 - ((X + (N - 1 - Y)) % N)), cin = false, carry = 0 }} at stage
+      simpa only [subtractionIdentity] using stage);
+  { {{ x = X, y = Y, cin = false, carry = 0 }} subInPlace x y carry cin
+      {{ x = X, y = ((Y + N - X) % N), cin = false, carry = 0 }} }
+    as composed by (by
+      simpa only [subInPlace, List.append_assoc] using
+        complementInput.seq (addToComplement.seq complementOutput));
+  conclude { (run (subInPlace x y carry cin) m s).phase = s.phase ∧
+    ((regValue x (run (subInPlace x y carry cin) m s).basis = X ∧
+      regValue y (run (subInPlace x y carry cin) m s).basis = (Y + N - X) % N) ∧
+      (run (subInPlace x y carry cin) m s).basis cin = false) ∧
+    regValue carry (run (subInPlace x y carry cin) m s).basis = 0 }
+    by (composed s m initial);
 
 private theorem addInPlaceRecursive_counts (x y carry : List Wire) (cin : Wire)
     (hx : x.length = y.length) (hc : carry.length + 1 = y.length) :
@@ -546,26 +623,44 @@ theorem maskedAddConst_spec (c cin : Wire) (T y carry : List Wire)
     (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
     (hc : carry.length + 1 = y.length) (K : Nat) (hK : K < 2^T.length) (C : Bool) (Y : Nat) :
     {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedAddConst c T y carry cin K
-    {{ c = C, T = 0, y = ((Y + (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := masked_load c cin T y carry hnd K hK C 0 Y
-  have h2 := masked_add c cin T y carry hnd hT hc C (if C then K else 0) Y
-  have h3 := masked_load c cin T y carry hnd K hK C (if C then K else 0)
-    ((Y + (if C then K else 0)) % 2^y.length)
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [maskedAddConst, List.append_assoc] using h1.seq (h2.seq h3)
+    {{ c = C, T = 0, y = ((Y + (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }} := Proof
+  let masked := if C then K else 0
+  let result := (Y + masked) % 2^y.length
+  { {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedConstant c T K
+      {{ c = C, T = masked, y = Y, cin = false, carry = 0 }} }
+    as load by (by simpa only [Nat.zero_xor] using masked_load c cin T y carry hnd K hK C 0 Y);
+  { {{ c = C, T = masked, y = Y, cin = false, carry = 0 }} addInPlace T y carry cin
+      {{ c = C, T = masked, y = result, cin = false, carry = 0 }} }
+    as add by (masked_add c cin T y carry hnd hT hc C masked Y);
+  { {{ c = C, T = masked, y = result, cin = false, carry = 0 }} maskedConstant c T K
+      {{ c = C, T = 0, y = result, cin = false, carry = 0 }} }
+    as clear by (by
+      simpa only [masked, Nat.xor_self] using masked_load c cin T y carry hnd K hK C masked result);
+  conclude { {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedAddConst c T y carry cin K
+    {{ c = C, T = 0, y = result, cin = false, carry = 0 }} } by (by
+    simpa only [maskedAddConst, List.append_assoc] using load.seq (add.seq clear));
 
 /-- 控制为真时 y 减去常数 K，为假时不变；T 与进位链回零。 -/
 theorem maskedSubConst_spec (c cin : Wire) (T y carry : List Wire)
     (hnd : (c :: cin :: (T ++ y ++ carry)).Nodup) (hT : T.length = y.length)
     (hc : carry.length + 1 = y.length) (K : Nat) (hK : K < 2^T.length) (C : Bool) (Y : Nat) :
     {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedSubConst c T y carry cin K
-    {{ c = C, T = 0, y = ((Y + 2^y.length - (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := masked_load c cin T y carry hnd K hK C 0 Y
-  have h2 := masked_sub c cin T y carry hnd hT hc C (if C then K else 0) Y
-  have h3 := masked_load c cin T y carry hnd K hK C (if C then K else 0)
-    ((Y + 2^y.length - (if C then K else 0)) % 2^y.length)
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [maskedSubConst, List.append_assoc] using h1.seq (h2.seq h3)
+    {{ c = C, T = 0, y = ((Y + 2^y.length - (if C then K else 0)) % 2^y.length), cin = false, carry = 0 }} := Proof
+  let masked := if C then K else 0
+  let result := (Y + 2^y.length - masked) % 2^y.length
+  { {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedConstant c T K
+      {{ c = C, T = masked, y = Y, cin = false, carry = 0 }} }
+    as load by (by simpa only [Nat.zero_xor] using masked_load c cin T y carry hnd K hK C 0 Y);
+  { {{ c = C, T = masked, y = Y, cin = false, carry = 0 }} subInPlace T y carry cin
+      {{ c = C, T = masked, y = result, cin = false, carry = 0 }} }
+    as subtract by (masked_sub c cin T y carry hnd hT hc C masked Y);
+  { {{ c = C, T = masked, y = result, cin = false, carry = 0 }} maskedConstant c T K
+      {{ c = C, T = 0, y = result, cin = false, carry = 0 }} }
+    as clear by (by
+      simpa only [masked, Nat.xor_self] using masked_load c cin T y carry hnd K hK C masked result);
+  conclude { {{ c = C, T = 0, y = Y, cin = false, carry = 0 }} maskedSubConst c T y carry cin K
+    {{ c = C, T = 0, y = result, cin = false, carry = 0 }} } by (by
+    simpa only [maskedSubConst, List.append_assoc] using load.seq (subtract.seq clear));
 
 theorem maskedCopyWithFrame_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
@@ -663,26 +758,46 @@ theorem maskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedAddInPlace c src t y carry cin
-    {{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
-  have h2 := addInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S (if C then S else 0)
-    ((Y + (if C then S else 0)) % 2^y.length)
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [maskedAddInPlace, List.append_assoc] using h1.seq (h2.seq h3)
+    {{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := Proof
+  let masked := if C then S else 0
+  let result := (Y + masked) % 2^y.length
+  { {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} copyRegister (some c) src t
+      {{ c = C, src = S, t = masked, y = Y, cin = false, carry = 0 }} }
+    as load by (by simpa only [Nat.zero_xor] using
+      maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y);
+  { {{ c = C, src = S, t = masked, y = Y, cin = false, carry = 0 }} addInPlace t y carry cin
+      {{ c = C, src = S, t = masked, y = result, cin = false, carry = 0 }} }
+    as add by (addInPlaceWithSource_spec c cin src t y carry hnd ht hc C S masked Y);
+  { {{ c = C, src = S, t = masked, y = result, cin = false, carry = 0 }} copyRegister (some c) src t
+      {{ c = C, src = S, t = 0, y = result, cin = false, carry = 0 }} }
+    as clear by (by simpa only [masked, Nat.xor_self] using
+      maskedCopyWithFrame_spec c cin src t y carry hnd hs C S masked result);
+  conclude { {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedAddInPlace c src t y carry cin
+    {{ c = C, src = S, t = 0, y = result, cin = false, carry = 0 }} } by (by
+    simpa only [maskedAddInPlace, List.append_assoc] using load.seq (add.seq clear));
 
 /-- 控制为真时 y 减去寄存器 src 的值，为假时不变。 -/
 theorem maskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedSubInPlace c src t y carry cin
-    {{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
-  have h2 := subInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S (if C then S else 0)
-    ((Y + 2^y.length - (if C then S else 0)) % 2^y.length)
-  simp only [Nat.zero_xor, Nat.xor_self] at h1 h3
-  simpa only [maskedSubInPlace, List.append_assoc] using h1.seq (h2.seq h3)
+    {{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := Proof
+  let masked := if C then S else 0
+  let result := (Y + 2^y.length - masked) % 2^y.length
+  { {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} copyRegister (some c) src t
+      {{ c = C, src = S, t = masked, y = Y, cin = false, carry = 0 }} }
+    as load by (by simpa only [Nat.zero_xor] using
+      maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y);
+  { {{ c = C, src = S, t = masked, y = Y, cin = false, carry = 0 }} subInPlace t y carry cin
+      {{ c = C, src = S, t = masked, y = result, cin = false, carry = 0 }} }
+    as subtract by (subInPlaceWithSource_spec c cin src t y carry hnd ht hc C S masked Y);
+  { {{ c = C, src = S, t = masked, y = result, cin = false, carry = 0 }} copyRegister (some c) src t
+      {{ c = C, src = S, t = 0, y = result, cin = false, carry = 0 }} }
+    as clear by (by simpa only [masked, Nat.xor_self] using
+      maskedCopyWithFrame_spec c cin src t y carry hnd hs C S masked result);
+  conclude { {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} maskedSubInPlace c src t y carry cin
+    {{ c = C, src = S, t = 0, y = result, cin = false, carry = 0 }} } by (by
+    simpa only [maskedSubInPlace, List.append_assoc] using load.seq (subtract.seq clear));
 
 
 /-- 两次受控复制与一次原地加减的字面门数。 -/

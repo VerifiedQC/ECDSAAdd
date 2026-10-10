@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.InverseLoopProof
 import ECDSAAdd.Math.ModularInverse.KaliskiInverse
 
 namespace ECDSAAdd.Arithmetic
+open scoped ECDSAAdd.ProofLanguage
 
 theorem LoopState.iff (L : KaliskiRoundLayout) (z : KState) (s : BasisState) :
     LoopState L z s ↔
@@ -67,12 +68,22 @@ theorem inversePrepare_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (q X : Nat) (hq : q<2^256) (ho : q%16=15) (hX0 : 0<X) (hX : X<q) (hcop : q.Coprime X) :
     {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
        L.first.k=0, L.first.done=false, L.work=0 }} inverseCompute L q
-    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }} := by
+    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }} := Proof
   have hc := (inverseCompute_values L hnd hn hw hlow harith ha ht q X hq ho hX hcop).1
-  have hh (s : BasisState) := inverseScaled_history_iff L q X s
-  simp only [kaliski_montgomery_scale q X ho hq hX0 hX hcop] at hh
-  exact Triple.conseq (fun s h => (InverseInitial.iff L q X hX0 s).mpr h) hc
-    (fun s h => (hh s).mp h)
+  let z := kaliskiStep^[512] (kaliskiInit q X)
+  { montgomeryValue q (inverseScaleFactor q z.k) (-(z.r : ZMod q)).val 64 % q =
+      ((X : ZMod q)⁻¹).val
+  } as scaledInverse by (kaliski_montgomery_scale q X ho hq hX0 hX hcop);
+  -- The value is the inverse; the retained history is still required for restoration.
+  have historyView (s : BasisState) := inverseScaled_history_iff L q X s
+  dsimp only [z] at scaledInverse
+  simp only [scaledInverse] at historyView
+  conclude {
+    {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
+       L.first.k=0, L.first.done=false, L.work=0 }} inverseCompute L q
+    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }}
+  } by (Triple.conseq (fun s h => (InverseInitial.iff L q X hX0 s).mpr h) hc
+    (fun s h => (historyView s).mp h));
 
 /-- 使用段保持完整历史后，恢复所有第一阶段初值并清空缩放历史。 -/
 theorem inverseRestore_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
@@ -83,12 +94,23 @@ theorem inverseRestore_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }}
       inverseUncompute L q
     {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
-       L.first.k=0, L.first.done=false, L.work=0 }} := by
+       L.first.k=0, L.first.done=false, L.work=0 }} := Proof
   have hc := (inverseCompute_values L hnd hn hw hlow harith ha ht q X hq ho hX hcop).2
-  have hh (s : BasisState) := inverseScaled_history_iff L q X s
-  simp only [kaliski_montgomery_scale q X ho hq hX0 hX hcop] at hh
-  exact Triple.conseq (fun s h => (hh s).mpr h) hc
-    (fun s h => (InverseInitial.iff L q X hX0 s).mp h)
+  let z := kaliskiStep^[512] (kaliskiInit q X)
+  { montgomeryValue q (inverseScaleFactor q z.k) (-(z.r : ZMod q)).val 64 % q =
+      ((X : ZMod q)⁻¹).val
+  } as scaledInverse by (kaliski_montgomery_scale q X ho hq hX0 hX hcop);
+  have historyView (s : BasisState) := inverseScaled_history_iff L q X s
+  dsimp only [z] at scaledInverse
+  simp only [scaledInverse] at historyView
+  -- Supply the same history to the reverse computation; all work registers return to zero.
+  conclude {
+    {{ L.a=((X : ZMod q)⁻¹).val, L.temp=0, L.arithmetic.wires=0, InverseHistory L q X st }}
+      inverseUncompute L q
+    {{ L.first.u=q, L.first.v=X, L.first.r=0, L.first.s=1,
+       L.first.k=0, L.first.done=false, L.work=0 }}
+  } by (Triple.conseq (fun s h => (historyView s).mpr h) hc
+    (fun s h => (InverseInitial.iff L q X hX0 s).mp h));
 
 /-- 任意输出的 XOR 形式；第一阶段已经载入 q、a、0、1，完整工作区初末均为零。 -/
 theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
@@ -99,12 +121,21 @@ theorem inverseLoop_xor_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0, L.out=O }}
       inverseLoop L q
     {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0,
-      L.out=(O ^^^ kaliskiInverse q a 256) }} := by
-  have h := inverseLoop_values L hnd hn hw hlow harith ha ht hout q a O hq ho hx0 hx hcop
-  apply Triple.conseq ?_ h ?_
-  · intro s h; exact ⟨(InverseInitial.iff L q a hx0 s).mpr h.1,h.2⟩
-  · intro s h
-    exact ⟨(InverseInitial.iff L q a hx0 s).mp h.1,by simpa only [kaliskiInverse] using h.2⟩
+      L.out=(O ^^^ kaliskiInverse q a 256) }} := Proof
+  -- inverseLoop_values composes prepare → XOR-copy → restore, preserving the phase.
+  { Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=O) (inverseLoop L q)
+      (fun st => InverseInitial L q a st ∧ regValue L.out st=(O ^^^ kaliskiInverse q a 256))
+  } as computeCopyRestore by
+    (inverseLoop_values L hnd hn hw hlow harith ha ht hout q a O hq ho hx0 hx hcop);
+  conclude {
+    {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0, L.out=O }}
+      inverseLoop L q
+    {{ L.first.u=q, L.first.v=a, L.first.r=0, L.first.s=1, L.first.k=0, L.first.done=false, L.work=0,
+      L.out=(O ^^^ kaliskiInverse q a 256) }}
+  } by (Triple.conseq
+    (fun s h => ⟨(InverseInitial.iff L q a hx0 s).mpr h.1, h.2⟩)
+    computeCopyRestore
+    (fun s h => ⟨(InverseInitial.iff L q a hx0 s).mp h.1, h.2⟩));
 
 /-- 常用零输出形式。fieldInverse 负责把外部输入装入这里要求的已初始化寄存器。 -/
 theorem inverseLoop_spec (L : InverseLoopLayout) (hnd : L.wires.Nodup)
