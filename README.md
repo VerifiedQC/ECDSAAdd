@@ -4,15 +4,36 @@
 
 在 Lean 中证明 Bitcoin/secp256k1 点加程序的 monomial 行为与资源计数。
 
-## Current status
+## 两个 submission，共享基础库
 
-The complete exact controlled point-addition circuit is verified at source commit `a782d13`. The native inverse now recovers its carry bits from a known output sum supplied by the existing forward copy. The reusable receiver replaces 252 Toffolis in each of Stages 2 and 5, preserving all measurement records, phase and workspace restoration. The unrestricted native inverse retains its original behavior. The exact 512-round Skywalk construction, streamed square, recovery and protected specifications remain in use. The proof covers every valid input point, classical addend, both controls, arbitrary incoming phase, independent measurement records and complete work restoration under the original monomial semantics. See [proof scope](docs/PROOF_SCOPE.md).
+两个入口同时可导入，均使用唯一的 `Framework.Syntax`、`Framework.Semantics` 和 `Framework.Cost`，以及共同的 secp256k1、布局和基础算术库。没有另一套成本模型或语义副本。
+
+| Submission 文件 | 有限经典加数：Toffoli | 测量指令 | 静态支持线路 |
+| --- | ---: | ---: | ---: |
+| [ValueWalk](ECDSAAdd/Submissions/ValueWalk.lean)（PR #80） | 6,286,806 | 3,779,274 | =3,134 |
+| [Skywalk](ECDSAAdd/Submissions/Skywalk.lean)（PR #81） | 2,217,386 | 1,557,928 | ≤1,899 |
+
+每个文件集中给出 `program`、成本常量、`correctness`、`gate_count`、`measurement_count`、`qubit_count` 和 `zero_resources`。`gateCount` 沿用本项目的 Toffoli 口径，不是所有 Clifford 指令的总数。Skywalk 使用 `qubitBound` 明确声明上界，ValueWalk 的 `qubitCount` 是精确基数。两者对 C=O 都发出空程序、三项资源均为零。
+
+```lean
+import ECDSAAdd.Submissions
+-- ECDSAAdd.Submissions.ValueWalk.correctness
+-- ECDSAAdd.Submissions.Skywalk.correctness
+```
+
+两项正确性定理覆盖所有合法输入点、两种控制值、任意初始相位及测量记录，恢复全部工作位；资源定理作用于对应的同一 `program`。原 `controlledPointAdd` 兼容入口仍指向 Skywalk。ValueWalk 保留已证位宽收窄和原回放/平方实现，不将 Skywalk 的局部改动叠加进其电路。共享输入分类、角落处理和布局；仅分开两条不同点加路径的组合证明。详见[整合设计](docs/REWORK_PLAN.md#dual-submissions)与[当前证明状态](docs/PROOF_STATUS.md)。
+
+验证入口为 `bash scripts/verify.sh`。脚本明确构建所有额外审计导入，包括 `TerminalMappedFieldPoolRestore`、`NearestLiftMath` 和 `FusedInversePackedProof`，不依赖它们偶然残留的编译产物。整合后的验证结果见 PROOF_STATUS；下方旧 checkpoint 的日志仅为该历史源码的证据。
+
+## Skywalk 历史 checkpoint 与阶段分解
+
+The pre-integration Skywalk checkpoint was verified at source commit `a782d13`. The native inverse now recovers its carry bits from a known output sum supplied by the existing forward copy. The reusable receiver replaces 252 Toffolis in each of Stages 2 and 5, preserving all measurement records, phase and workspace restoration. The unrestricted native inverse retains its original behavior. The exact 512-round Skywalk construction, streamed square, recovery and protected specifications remain in use. The proof covers every valid input point, classical addend, both controls, arbitrary incoming phase, independent measurement records and complete work restoration under the original monomial semantics. See [proof scope](docs/PROOF_SCOPE.md).
 
 For a finite addend, the full circuit uses **2,217,386 static Toffolis / 1,557,928 measurement instructions / ≤1,899 static logical sites**. The infinity addend emits an empty circuit. Against the original baseline of 7,207,866 static Toffolis / 4,305,594 measurement instructions / 3,134 static logical sites, the full circuit saves **4,990,480 Toffolis (69.24%)**, **2,747,666 measurement instructions (63.82%)**, and lowers the reported static-site bound by **1,235 sites (39.41%)**. The Q percentage compares static support bounds; it does not measure a reduction in peak-live or physical qubits. Relative to verified `092e87c`, the full circuit saves 504 Toffolis, with measurements and the Q ceiling unchanged. The support/allocation ceiling includes residents and is not a separately measured exact peak-live count. The Stage 2/5 targets ≤1,297 Q and <600,000 Toffolis remain open.
 
 The CPU-pod full build passed 3,988 jobs, and the separate audit passed 1,616 public transitive axiom queries (1,615 distinct declarations). All 891 selected committed Lean source hashes, plus four build/verifier metadata files, matched before and after verification. The successful cached incremental check took 17s build + 241s audit = 258s (4m18s). Earlier attempts remain separate: 601s failed on kernel memory, 397s stopped an obsolete transfer check after its replacement passed, and 94s failed on a stale resource subtotal. Queue and verifier setup were zero. Source preparation and transfer are excluded. The exact whitelist is `propext`, `Classical.choice` and `Quot.sound`. Correctness is formal, with no approximations. See [checkpoint evidence](docs/EXACT_KNOWN_OUTPUT_NATIVE_20261008.md) and the [source manifest](docs/verification/known-output-native-20261008/source-manifest.json), [build log](docs/verification/known-output-native-20261008/build.log), [axiom audit](docs/verification/known-output-native-20261008/axioms.log), and [timing receipt](docs/verification/known-output-native-20261008/timing.json).
 
-### Six-stage decomposition (verified exact checkpoint)
+### Six-stage decomposition (Skywalk checkpoint)
 
 Comparison reference: our previously instrumented 1,174-Q Q×T incumbent, source [`799153a`](https://github.com/ecdsafail/ecdsafail-challenge/tree/799153aac444491dcac273ad552ea8473d2a63dd), with 9,024 evaluator inputs. This intentionally retains the reference used in our earlier comparison. The incumbent columns below are from that same pinned source and are not labeled as the latest leaderboard result. See the [saved stage profile](docs/comparison/incumbent-799153a/profile.json).
 

@@ -1,50 +1,78 @@
-import ECDSAAdd.Arithmetic.TriangularSquare
+/- PR #81 的短源三角平方变体；与原三角平方共享基础加法器及状态断言。 -/
+import ECDSAAdd.Arithmetic.ShortTriangularSquare
 
-namespace ECDSAAdd.Arithmetic
+namespace ECDSAAdd.Arithmetic.ShortTriangular
 
 theorem squareRow_counts (sub : Bool) (c : Wire) (xs pad mask dst carry : List Wire)
     (cin : Wire) (hx : 0 < xs.length) (hd : dst.length=2*xs.length)
-    (hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
+    (_hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
     (hc : 2*xs.length-1≤carry.length) :
-    toffoliCount (squareRow sub c xs pad mask dst carry cin)=4*xs.length-1 ∧
-    measurementCount (squareRow sub c xs pad mask dst carry cin)=4*xs.length-1 := by
-  have hs : (xs++pad.take xs.length).length=(mask.take (2*xs.length)).length := by
-    simp [List.length_take, Nat.min_eq_left hp, Nat.min_eq_left hm]; omega
+    toffoliCount (squareRow sub c xs pad mask dst carry cin)=3*xs.length-1 ∧
+    measurementCount (squareRow sub c xs pad mask dst carry cin)=3*xs.length-1 := by
+  have hs : xs.length≤(mask.take (2*xs.length)).length := by
+    simp [List.length_take,Nat.min_eq_left hm]; omega
   have ht : (mask.take (2*xs.length)).length=dst.length := by simp [hd, Nat.min_eq_left hm]
   have hk : (carry.take (2*xs.length-1)).length+1=dst.length := by
     simp [List.length_take, Nat.min_eq_left hc]; omega
-  have h := measuredMaskedInPlace_counts c (xs++pad.take xs.length)
+  have h := measuredShortInPlace_counts c xs
     (mask.take (2*xs.length)) dst (carry.take (2*xs.length-1)) cin hs ht hk
   cases sub <;> simp only [squareRow, Bool.false_eq_true, if_false, if_true]
-  · simpa [hd, ← Nat.mul_assoc] using h.1
-  · simpa [hd, ← Nat.mul_assoc] using h.2
+  · simpa only [hd,show xs.length+2*xs.length=3*xs.length by omega] using h.1
+  · simpa only [hd,show xs.length+2*xs.length=3*xs.length by omega] using h.2
 
 theorem squareRow_wires (sub : Bool) (c : Wire) (xs pad mask dst carry : List Wire)
     (cin : Wire) (hx : 0 < xs.length) (hd : dst.length=2*xs.length)
-    (hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
+    (_hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
     (hc : 2*xs.length-1≤carry.length) :
     wires (squareRow sub c xs pad mask dst carry cin)=
-      (c::cin::((xs++pad.take xs.length)++mask.take (2*xs.length)++dst++
+      (c::cin::(xs++mask.take (2*xs.length)++dst++
         carry.take (2*xs.length-1))).toFinset := by
-  have hs : (xs++pad.take xs.length).length=(mask.take (2*xs.length)).length := by
-    simp [List.length_take, Nat.min_eq_left hp, Nat.min_eq_left hm]; omega
+  have hs : xs.length≤(mask.take (2*xs.length)).length := by
+    simp [List.length_take,Nat.min_eq_left hm]; omega
   have ht : (mask.take (2*xs.length)).length=dst.length := by simp [hd, Nat.min_eq_left hm]
   have hk : (carry.take (2*xs.length-1)).length+1=dst.length := by
     simp [List.length_take, Nat.min_eq_left hc]; omega
-  have h := measuredMaskedInPlace_wires c (xs++pad.take xs.length)
-    (mask.take (2*xs.length)) dst (carry.take (2*xs.length-1)) cin hs ht hk
+  have h := measuredShortInPlace_wires c xs
+    (mask.take (2*xs.length)) dst (carry.take (2*xs.length-1)) cin
+    (List.length_pos_iff.mp hx) hs ht hk
   cases sub <;> simp only [squareRow, Bool.false_eq_true, if_false, if_true]
   · exact h.1
   · exact h.2
 
-/-- 同一个平方与清理门列各使用 (m−1)(2m−1) 个 Toffoli 和测量。 -/
+/-- Exact recurrence: each nontrivial k-bit cross row costs 3k−1. -/
+def triangularSquareCount : Nat → Nat
+  | 0 => 0
+  | n+1 => triangularSquareCount n + (if n=0 then 0 else 3*n-1)
+
+theorem triangularSquareCount_twice (n : Nat) :
+    2*triangularSquareCount n=(n-1)*(3*n-2) := by
+  induction n with
+  | zero => simp [triangularSquareCount]
+  | succ n ih =>
+    by_cases hn : n=0
+    · subst n; simp [triangularSquareCount]
+    · have hp : 0<n := by omega
+      have h1 : n-1+1=n := by omega
+      have h2 : 3*n-2+2=3*n := by omega
+      have h3 : 3*n-1+1=3*n := by omega
+      have h4 : n+1-1=n := by omega
+      have h5 : 3*(n+1)-2=3*n+1 := by omega
+      simp only [triangularSquareCount,hn,if_false,h4,h5]
+      nlinarith
+
+theorem triangularSquareCount_closed (n : Nat) :
+    triangularSquareCount n=(n-1)*(3*n-2)/2 := by
+  rw [←triangularSquareCount_twice n]
+  omega
+
+/-- Each exact square and its independent cleanup cost (m−1)(3m−2)/2. -/
 theorem triangularSquare_counts (xs dst pad mask carry : List Wire) (cin : Wire)
     (hd : dst.length=2*xs.length) (hp : xs.length-1≤pad.length)
     (hm : 2*(xs.length-1)≤mask.length) (hc : 2*(xs.length-1)-1≤carry.length) :
-    (toffoliCount (triangularSquare xs dst pad mask carry cin)=(xs.length-1)*(2*xs.length-1) ∧
-      measurementCount (triangularSquare xs dst pad mask carry cin)=(xs.length-1)*(2*xs.length-1)) ∧
-    (toffoliCount (triangularSquareClear xs dst pad mask carry cin)=(xs.length-1)*(2*xs.length-1) ∧
-      measurementCount (triangularSquareClear xs dst pad mask carry cin)=(xs.length-1)*(2*xs.length-1)) := by
+    (toffoliCount (triangularSquare xs dst pad mask carry cin)=(xs.length-1)*(3*xs.length-2)/2 ∧
+      measurementCount (triangularSquare xs dst pad mask carry cin)=(xs.length-1)*(3*xs.length-2)/2) ∧
+    (toffoliCount (triangularSquareClear xs dst pad mask carry cin)=(xs.length-1)*(3*xs.length-2)/2 ∧
+      measurementCount (triangularSquareClear xs dst pad mask carry cin)=(xs.length-1)*(3*xs.length-2)/2) := by
   induction xs generalizing dst with
   | nil => simp [triangularSquare, triangularSquareClear, toffoliCount, measurementCount]
   | cons c xs ih =>
@@ -64,13 +92,12 @@ theorem triangularSquare_counts (xs dst pad mask carry : List Wire) (cin : Wire)
         · have hn : 0<xs.length := List.length_pos_iff.mpr hx
           have ha := squareRow_counts false c xs pad mask dst carry cin hn hd' hp' hm' hc'
           have hs := squareRow_counts true c xs pad mask dst carry cin hn hd' hp' hm' hc'
-          have he : (xs.length-1)*(2*xs.length-1)+(4*xs.length-1)=
-              xs.length*(2*(xs.length+1)-1) := by
-            have h1 : xs.length-1+1=xs.length := by omega
-            have h2 : 2*xs.length-1+1=2*xs.length := by omega
-            have h3 : 4*xs.length-1+1=4*xs.length := by omega
-            have h4 : 2*(xs.length+1)-1=2*xs.length+1 := by omega
-            rw [h4]; nlinarith
+          have he : (xs.length-1)*(3*xs.length-2)/2+(3*xs.length-1)=
+              xs.length*(3*(xs.length+1)-2)/2 := by
+            rw [←triangularSquareCount_closed xs.length]
+            have hnext := triangularSquareCount_closed (xs.length+1)
+            simp only [triangularSquareCount,Nat.ne_of_gt hn,if_false] at hnext
+            simpa using hnext
           simp only [triangularSquare, triangularSquareClear, hx, if_false,
             toffoliCount_append, measurementCount_append, hi.1.1, hi.1.2, hi.2.1, hi.2.2,
             ha.1, ha.2, hs.1, hs.2, List.length_cons]
@@ -83,7 +110,7 @@ def triangularSquareWires : List Wire → List Wire → List Wire → List Wire 
   | c::xs, a::_b::dst, pad, mask, carry, cin =>
     triangularSquareWires xs dst pad mask carry cin ++
       (if xs=[] then [] else
-        c::cin::((xs++pad.take xs.length)++mask.take (2*xs.length)++dst++
+        c::cin::(xs++mask.take (2*xs.length)++dst++
           carry.take (2*xs.length-1))) ++ [c,a]
   | _, _, _, _, _, _ => []
 
@@ -143,12 +170,10 @@ theorem triangularSquareWires_subset (xs dst pad mask carry : List Wire) (cin : 
         · split_ifs at hw with hx
           · simp at hw
           · simp only [List.mem_cons, List.mem_append] at hw
-            rcases hw with hw | hw | (((hw | hw) | hw) | hw) | hw
+            rcases hw with hw | hw | ((hw | hw) | hw) | hw
             · simp [hw]
             · simp [hw]
             · simp [hw]
-            · have h := List.mem_of_mem_take hw
-              simp [h]
             · have h := List.mem_of_mem_take hw
               simp [h]
             · simp [hw]
@@ -157,4 +182,4 @@ theorem triangularSquareWires_subset (xs dst pad mask carry : List Wire) (cin : 
         · simp only [List.mem_cons, List.not_mem_nil, or_false] at hw
           rcases hw with hw | hw <;> simp [hw]
 
-end ECDSAAdd.Arithmetic
+end ECDSAAdd.Arithmetic.ShortTriangular

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport
+lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
 set +e
@@ -686,6 +686,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.valueLoop_counts
 #print axioms ECDSAAdd.Arithmetic.valueLoop_wires
 #print axioms ECDSAAdd.Arithmetic.valueLoop_qubits
+#print axioms ECDSAAdd.valueStep_env
+#print axioms ECDSAAdd.valueEnv_width
+#print axioms ECDSAAdd.valueIter_width
+#print axioms ECDSAAdd.dialogWalk_width
+#print axioms ECDSAAdd.Arithmetic.KaliskiRoundLayout.narrow_wires_perm
+#print axioms ECDSAAdd.Arithmetic.valueNarrowRound_tape
+#print axioms ECDSAAdd.Arithmetic.valueNarrowUnround_tape
+#print axioms ECDSAAdd.Arithmetic.valueNarrowRound_wires
+#print axioms ECDSAAdd.Arithmetic.valueLoop_wires_subset
+#print axioms ECDSAAdd.Arithmetic.valueWidthSum_257
 #print axioms ECDSAAdd.Arithmetic.replayControls_trace
 #print axioms ECDSAAdd.Arithmetic.dialogReplay_division
 #print axioms ECDSAAdd.Arithmetic.dialogReplay_multiplication
@@ -738,8 +748,8 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.measuredShortAddInPlace_frame
 #print axioms ECDSAAdd.Arithmetic.measuredShortSubInPlace_frame
 #print axioms ECDSAAdd.Arithmetic.measuredShortInPlace_wires
-#print axioms ECDSAAdd.Arithmetic.triangularSquareCount_twice
-#print axioms ECDSAAdd.Arithmetic.triangularSquareCount_closed
+#print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquareCount_twice
+#print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquareCount_closed
 #print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_spec
 #print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_frame
 #print axioms ECDSAAdd.Arithmetic.skywalkArithmetic_counts
@@ -1757,6 +1767,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.program_shape_context_eq
 #print axioms ECDSAAdd.run_replicate_false
 #print axioms ECDSAAdd.run_pad_false
+#print axioms ECDSAAdd.Submissions.ValueWalk.correctness
+#print axioms ECDSAAdd.Submissions.ValueWalk.gate_count
+#print axioms ECDSAAdd.Submissions.ValueWalk.measurement_count
+#print axioms ECDSAAdd.Submissions.ValueWalk.qubit_count
+#print axioms ECDSAAdd.Submissions.ValueWalk.zero_resources
+#print axioms ECDSAAdd.Submissions.Skywalk.correctness
+#print axioms ECDSAAdd.Submissions.Skywalk.gate_count
+#print axioms ECDSAAdd.Submissions.Skywalk.measurement_count
+#print axioms ECDSAAdd.Submissions.Skywalk.qubit_count
+#print axioms ECDSAAdd.Submissions.Skywalk.zero_resources
+
+#print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_correct
+#print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_counts
+#print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_wires
+
 LEAN
 )
 task_axiom_lean_rc=$?

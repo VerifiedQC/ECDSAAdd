@@ -21,9 +21,9 @@ theorem dialog_qubits (L : DialogLayout) (p : Nat) (hw : L.Widths) (hn : L.wires
 
 /-- 两条同门列资源定理；相位/清理由各自spec给出。 -/
 theorem dialog_resources (L : DialogLayout) (p : Nat) (hw : L.Widths) (hn : L.wires.Nodup) :
-    (toffoliCount (dialogDivide L p)=3460096 ∧ measurementCount (dialogDivide L p)=2271744 ∧
+    (toffoliCount (dialogDivide L p)=3130638 ∧ measurementCount (dialogDivide L p)=1877512 ∧
       qubitCount (dialogDivide L p)=3126) ∧
-    (toffoliCount (dialogMultiply L p)=3196928 ∧ measurementCount (dialogMultiply L p)=2009088 ∧
+    (toffoliCount (dialogMultiply L p)=2867470 ∧ measurementCount (dialogMultiply L p)=1614856 ∧
       qubitCount (dialogMultiply L p)=3126) := by
   have h := dialog_counts L p hw hn
   have q := dialog_qubits L p hw hn

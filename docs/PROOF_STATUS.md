@@ -2,7 +2,9 @@
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](PROOF_SCOPE.md)。
 
-Latest complete verified checkpoint: **2,219,456 static Toffolis / 1,557,956 measurements / ≤1,899 static logical sites**, source **f83e51c**. Both Stages 2 and 5 use **1,055,040 T / 724,550 measurements / ≤1,899 sites**. Step 4 remains **99,902 T / 99,382 measurements / ≤1,297 sites**. Step 6 remains **2,301 T / 2,301 measurements / ≤1,036 sites**. The complete remote build and all 1,493 public transitive-axiom queries passed in 1,019s: 763s build + 256s audit. Setup and queue were 0s. All 855 source hashes matched. See [checkpoint evidence](EXACT_PENULTIMATE_SWAP_20261006.md). Exact peak-live Q is unmeasured. The certificates provide allocation ceilings, and the ≤1,297 Q / <600K T arithmetic-stage targets remain open. Earlier checkpoint records are historical.
+当前公开交付有两个独立 submission，分别保持 PR #80 与 #81 的具体程序和资源结果，使用同一套基础语义与成本定义。`Submissions/ValueWalk.lean` 与 `Submissions/Skywalk.lean` 各自集中给出完整正确性、Toffoli、测量和线路资源定理。原 `controlledPointAdd` 入口保留为 Skywalk 的兼容名。
+
+整合验证：2026-10-10 在固定 Lean v4.28.0 工具链执行 `bash scripts/verify.sh`，退出0；完整构建4,011项、1,639项公理查询（1,638个不同声明），名称与顺序均与脚本一致，只有三项允许公理。完整[构建日志](verification/dual-submissions-20261010/build.log)与[公理输出](verification/dual-submissions-20261010/axioms.log)保留在仓库；这是使用独立缓存副本的增量验证，未声称无缓存从零构建。旧 checkpoint 的3988/1616、f83e51c的1493项以及旧批次468项均为历史记录；当前脚本选择1639项公理查询，其中新增10项 submission 入口。白名单仍为 `propext`、`Classical.choice`、`Quot.sound`。
 
 **读法**：当前已证指基线源码中仍存在的同一程序定理；历史阶段指过去公共入口或交付时的结果；未实现预算不构成任何已证收益。下列资源均指带符号基态/测量记录模型中的程序计数，不是完整量子态、Shor 外层、物理量子位或运行时间结论。各定理的宽度、互异和输入范围前提仍须满足。CI、独立复审和合并状态以具体提交为准。
 
@@ -13,7 +15,9 @@ Latest complete verified checkpoint: **2,219,456 static Toffolis / 1,557,956 mea
 
 | 程序及条件 | 当前已证资源 | 定理出处 |
 | --- | --- | --- |
-| `controlledPointAdd`，有限 C | 2,219,456 / 1,557,956 / ≤1,899 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
+| `Submissions.ValueWalk.program`，有限 C | 6,286,806 / 3,779,274 / =3,134 | [ValueWalk submission](../ECDSAAdd/Submissions/ValueWalk.lean) |
+| `Submissions.Skywalk.program`，有限 C | 2,217,386 / 1,557,928 / ≤1,899 | [Skywalk submission](../ECDSAAdd/Submissions/Skywalk.lean) |
+| `controlledPointAdd`（Skywalk兼容入口），有限 C | 2,217,386 / 1,557,928 / ≤1,899 | [controlledPointAdd_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L29) |
 | 同入口，C=O | 0 / 0 / 0 | [controlledPointAdd_zero_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L38) |
 | 独立 `controlledPointAddOut`，有限 C | 9,295,112 / 6,126,846 / 6,731 | [controlledPointAddOut_finite_resources](../ECDSAAdd/Arithmetic/ControlledPointResources.lean#L14) |
 | 独立 `pointAddOut`，有限 C；C=O | 9,295,106 / 6,126,846 / 6,727；0 / 0 / 1,026 | [pointAddOut_finite_resources / zero_resources](../ECDSAAdd/Arithmetic/PointAddResources.lean#L8) |
@@ -23,9 +27,9 @@ Latest complete verified checkpoint: **2,219,456 static Toffolis / 1,557,956 mea
 | `fieldMul` | 379,424 / 379,424 / 2,596 | [fieldMul_resources](../ECDSAAdd/Arithmetic/FieldMultiply.lean#L28) |
 | `montP` / `montQ`，每段 | 189,712 / 189,712 / 2,339 | [montPQ_resources](../ECDSAAdd/Arithmetic/MontResources.lean) |
 | Montgomery 五适配器 | 逐接口计数，见下方 M2 表 | [montAdapter_counts / montControlledAdapter_counts / qubits](../ECDSAAdd/Arithmetic/MontAdapterResources.lean#L5) |
-| `dialogDivide`；`dialogMultiply` | 3,460,096 / 2,271,744 / 3,126；3,196,928 / 2,009,088 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
-| `squareSub`（当前中空间模块） | 209,593 / 209,593 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
-| 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,748,098 / 5,580,610 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
+| `dialogDivide`；`dialogMultiply` | 3,130,638 / 1,877,512 / 3,126；2,867,470 / 1,614,856 / 3,126 | [dialog_resources / dialog_qubits](../ECDSAAdd/Arithmetic/DialogResources.lean#L23) |
+| `squareSub`（当前中空间模块） | 275,129 / 275,129 / 支持包含于声明布局；工作区2,217位，非本行精确线数 | [squareSub_counts / squareSub_wires_subset](../ECDSAAdd/Arithmetic/SquareSubResources.lean#L5) |
+| 保留的旧内部 `pointInPlaceFinite`（非当前公共入口） | 8,813,634 / 5,646,146 / 3,939 | [pointInPlaceFinite_counts](../ECDSAAdd/Arithmetic/PointInPlaceCounts.lean#L75) · [pointInPlaceFinite_qubits](../ECDSAAdd/Arithmetic/PointInPlaceResources.lean#L15) |
 | 保留的 `divideAdd`；`divideSub`（非 dialog 入口） | 3,882,022 / 2,298,918 / —；3,882,534 / 2,299,430 / — | [divide_counts](../ECDSAAdd/Arithmetic/DivideResources.lean#L17) |
 | `measuredControlledModAdd`，n>0 | 5n−1 / 5n−1 / 5n+5 | [measuredControlledModAdd_resources](../ECDSAAdd/Arithmetic/ModInPlaceWrappers.lean) |
 | `measuredControlledModSub`，n>0 | 7n−1 / 7n−1 / 5n+6 | [measuredControlledModSub_resources](../ECDSAAdd/Arithmetic/ModInPlaceSubtract.lean) |
@@ -332,7 +336,7 @@ CX/X 包装没有增加 Toffoli 或测量，外部 x 增加 256 根线路。`Inv
 
 ## 公理披露
 
-**本批实际验证证据**：在合入 `9bd65f9` 的实现版本运行 `scripts/verify.sh`，退出0；`lake --wfail build` 完成2,244项构建，以下468个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
+**历史批次验证证据**：在合入 `9bd65f9` 的实现版本运行 `scripts/verify.sh`，退出0；`lake --wfail build` 完成2,244项构建，以下468个公开入口的传递公理全部满足白名单。没有运行测试，也没有全环境审计。
 
 ```text
 'ECDSAAdd.andComputeErase_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1565,3 +1569,20 @@ n=256 时为 1279/1279/1285、1791/1791/1286。工作区和完整支持均为 O(
 ## Exact Skywalk complete-point milestone
 
 The October 2, 2026 exact Skywalk point program is fully verified under the unchanged original all-valid-input `controlledPointAdd_spec`. It has 3,636,669 static Toffolis, 2,845,373 measurements and a proved static support upper bound of 2,994 distinct logical sites. This is not an independently proved peak-live/physical-qubit result. All 512 rounds and full carry propagation are retained. The complete remote build (3,475 jobs) and all 483 public entry-point axiom audits passed in 330 seconds (228 build, 102 audit). See [the exact Skywalk verification record](SKYWALK_EXACT_20261002.md); earlier numerical stages above remain historical. Matt Zweil and the challenge contributors are credited for the Skywalk construction. No sampled schedule, clipped carry window, new axiom, `sorry` or `native_decide` is used. The sub-1.5M target and unconnected fused-kernel budgets remain future work.
+
+## 双 submission 接口
+
+两份 `correctness` 使用同一份 `ControlledPointLayout`、`Point`、`Program` 和 Hoare 语法：
+
+```lean
+{{ L.control=b,L.point=R,L.work=0 }} program L C
+{{ L.control=b,L.point=(if b then R+C else R),L.work=0 }}
+```
+
+前提仅为布局位宽和全局线路互异。有限 C 的三个资源定理对应这个相同程序；无穷远 C 的三项资源均为零。Skywalk 的线路定理是 ≤1899，ValueWalk 是 =3134，未将上界伪装成等式。旧值走的回放与 Karatsuba 平方继续使用 PR #80 的版本，Skywalk 使用自己的压缩算术和 streamed square 路径。
+
+`ValueWalkPoint*` 模块从 PR #80 提取并改名，以便和 Skywalk 同时加载；分类标志、角落程序、状态断言与布局复用既有定义。其完整正逆算术、清理、逐线保持和同程序计数均通过原证明链组合。新增 submission 包装未新增公理、native_decide 或证明资源上限。
+
+ValueWalk 的位宽依据为 `Nat.Coprime u v` 与 `u*v*2^i < 2^512` 不变量；第i轮使用 `min 257 (max 2 (512-i))` 位，完整执行512轮，宽度和为98689。安全除数的取值界在调用处证明，不增加公开点加的几何或算术前提。被截去的高位位于门列支持之外，正逆轮证明均恢复完整状态；第一轮仍为全宽，因此完整静态支持精确为3134根。新增位宽定理与两份 submission 的公开资源/正确性入口都纳入同一公理审计。
+
+PR #81 的短源三角平方作为 `Arithmetic.ShortTriangular` 独立变体保留，原三角平方仍服务于 ValueWalk。两者共享基本加法器与 `SquareFrame` 状态断言；短源变体的完整平方/清理、计数和支持定理另外纳入公理审计。

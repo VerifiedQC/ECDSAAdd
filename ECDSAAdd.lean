@@ -63,3 +63,7 @@ import ECDSAAdd.Arithmetic.SkywalkControlledPort
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+
+import ECDSAAdd.Submissions
+import ECDSAAdd.Arithmetic.ShortTriangularSquareProof
+import ECDSAAdd.Arithmetic.ShortTriangularSquareResources

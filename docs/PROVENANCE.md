@@ -230,3 +230,11 @@ Source checkpoint `f83e51c` removes one equal-word S-selector/swap window from e
 `CertifiedProgram` supplies a kernel-checked opaque subtype with a proof that its value is the original program. Its aliases avoid expanding a large gate list during proof checking. They introduce no instruction, assumption or axiom. The raw emitted programs and protected point specifications remain unchanged except for the proved removed gate windows. Generic record padding preserves the original default-false behavior for short measurement lists.
 
 The full CPU build and all 1,493 public axiom queries passed. All 855 source hashes matched. Resource counts refer to the complete selected point circuit in the original signed-basis/measurement-record model. This work does not add a full quantum-channel semantics bridge. See [checkpoint evidence](EXACT_PENULTIMATE_SWAP_20261006.md).
+
+## 双 submission 整合（PR #80 / #81）
+
+ValueWalk 来源为 `d9ae6002dc99b0d38fdeeb9a4961820470a0abcb`，Skywalk 来源为 `eca407ae621ac22ff9c48ec00103d37ead3b57fb`，共同基线为 `9699678f71cab2bcd84e75fb8def64f01c482e6c`。整合历史保留两条父提交。`ValueWalkPoint*` 的程序与证明取自前者，改名后与后者共存；共用分类、布局、基础库与唯一成本模型。未复制另一套 Framework。
+
+原 #81 验证脚本的构建集合未覆盖三个审计导入模块，在缺失其 `.olean` 时会先构建成功、随后导入失败。本次将 `TerminalMappedFieldPoolRestore`、`NearestLiftMath`、`FusedInversePackedProof` 纳入显式构建。历史 source-manifest 证明当时源码哈希，不保证任何新检出的缓存已预先包含这些模块。当前复现以仓库脚本及本次 PROOF_STATUS 记录为准。
+
+短源三角平方的三个 `ShortTriangularSquare*` 模块同样取自 #81，在 `Arithmetic.ShortTriangular` 命名空间保留完整平方、独立清理、精确计数与支持证明；复用原有 `SquareFrame`，避免改变 ValueWalk 的原平方。

@@ -1,20 +1,17 @@
-import ECDSAAdd.Arithmetic.TriangularSquare
+/- PR #81 的短源三角平方变体；与原三角平方共享基础加法器及状态断言。 -/
+import ECDSAAdd.Arithmetic.TriangularSquareProof
+import ECDSAAdd.Arithmetic.ShortTriangularSquare
 import ECDSAAdd.Arithmetic.Reduction
 
-namespace ECDSAAdd.Arithmetic
-
-/-- 固定来源及工作区，只允许目标寄存器改变。 -/
-def SquareFrame (dst : List Wire) (base : BasisState) (V : Nat) (s : BasisState) : Prop :=
-  regValue dst s=V ∧ ∀ w,w∉dst → s w=base w
+namespace ECDSAAdd.Arithmetic.ShortTriangular
 
 private theorem sub_nd (r xs : List Wire) (h : r.Sublist xs) (hn : xs.Nodup) : r.Nodup := h.nodup hn
 
 private theorem row_nd (c cin : Wire) (xs dst pad mask carry : List Wire)
     (hn : (cin::(c::xs)++dst++pad++mask++carry).Nodup) :
-    (c::cin::((xs++pad.take xs.length)++mask.take (2*xs.length)++dst++carry.take (2*xs.length-1))).Nodup := by
+    (c::cin::(xs++mask.take (2*xs.length)++dst++carry.take (2*xs.length-1))).Nodup := by
   apply List.nodup_iff_count.mpr; intro w
   have h := List.nodup_iff_count.mp hn w
-  have hp := (List.take_sublist xs.length pad).count_le w
   have hm := (List.take_sublist (2*xs.length) mask).count_le w
   have hc := (List.take_sublist (2*xs.length-1) carry).count_le w
   simp only [List.count_cons,List.count_append] at h ⊢
@@ -24,7 +21,7 @@ private theorem row_nd (c cin : Wire) (xs dst pad mask carry : List Wire)
 theorem squareRow_frame (sub : Bool) (c cin : Wire) (xs dst pad mask carry : List Wire)
     (hn : (cin::(c::xs)++dst++pad++mask++carry).Nodup)
     (hd : dst.length=2*xs.length) (hx : 0<xs.length)
-    (hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
+    (_hp : xs.length≤pad.length) (hm : 2*xs.length≤mask.length)
     (hk : 2*xs.length-1≤carry.length)
     (base : BasisState) (hz : regValue (pad++mask++carry) base=0) (hi : base cin=false) (A : Nat) :
     Triple (SquareFrame dst base A) (squareRow sub c xs pad mask dst carry cin)
@@ -32,10 +29,10 @@ theorem squareRow_frame (sub : Bool) (c cin : Wire) (xs dst pad mask carry : Lis
         (if sub then (A+2^dst.length-(if base c then regValue xs base else 0))%2^dst.length
          else (A+(if base c then regValue xs base else 0))%2^dst.length)) := by
   have nd := row_nd c cin xs dst pad mask carry hn
-  let src := xs++pad.take xs.length
+  let src := xs
   let tmp := mask.take (2*xs.length)
   let cy := carry.take (2*xs.length-1)
-  have hs : src.length=tmp.length := by simp [src,tmp,hp,hm]; omega
+  have hs : src.length≤tmp.length := by simp [src,tmp,hm]; omega
   have ht : tmp.length=dst.length := by simp [tmp,hm,hd]
   have hc : cy.length+1=dst.length := by simp [cy,hk,hd]; omega
   have notdst (w : Wire) (hw : w∈cin::(c::xs)++pad++mask++carry) : w∉dst := by
@@ -54,17 +51,19 @@ theorem squareRow_frame (sub : Bool) (c cin : Wire) (xs dst pad mask carry : Lis
     rw [keep w (by have hh := hr hw; simp only [List.mem_cons,List.mem_append] at hh ⊢; tauto)]
     exact (regValue_zero _ _).mp hz w (hr hw)
   have srcval : regValue src s.basis=regValue xs base := by
-    rw [regValue_append,clean (pad.take xs.length) (by intro w hw; simp [List.mem_of_mem_take hw]),Nat.mul_zero,Nat.add_zero]
-    exact regValue_congr _ _ _ (fun w hw => keep w (by simp [hw]))
+    apply regValue_congr
+    intro w hw
+    change w∈xs at hw
+    exact keep w (by simp [hw])
   have tzero : regValue tmp s.basis=0 := clean tmp (by intro w hw; simp [List.mem_of_mem_take hw])
   have kzero : regValue cy s.basis=0 := clean cy (by intro w hw; simp [List.mem_of_mem_take hw])
   have pre : ((s.basis c=base c ∧ regValue src s.basis=regValue xs base) ∧ regValue tmp s.basis=0) ∧ regValue dst s.basis=A := ⟨⟨⟨ctl,srcval⟩,tzero⟩,h.1⟩
   cases sub
-  · have spec := measuredMaskedAddInPlace_spec c cin src tmp dst cy nd hs ht hc (base c) (regValue xs base) A s m ⟨⟨pre,cin0⟩,kzero⟩
-    have frame := measuredMaskedAddInPlace_frame c cin src tmp dst cy nd hs ht hc s m tzero cin0 kzero
+  · have spec := measuredShortAddInPlace_spec c cin src tmp dst cy nd hs ht hc (base c) (regValue xs base) A (regValue_lt xs base) s m ⟨⟨pre,cin0⟩,kzero⟩
+    have frame := measuredShortAddInPlace_frame c cin src tmp dst cy nd hs ht hc s m tzero cin0 kzero
     exact ⟨spec.1,spec.2.1.1.2,fun w hw => (frame w hw).trans (h.2 w hw)⟩
-  · have spec := measuredMaskedSubInPlace_spec c cin src tmp dst cy nd hs ht hc (base c) (regValue xs base) A s m ⟨⟨pre,cin0⟩,kzero⟩
-    have frame := measuredMaskedSubInPlace_frame c cin src tmp dst cy nd hs ht hc s m tzero cin0 kzero
+  · have spec := measuredShortSubInPlace_spec c cin src tmp dst cy nd hs ht hc (base c) (regValue xs base) A (regValue_lt xs base) s m ⟨⟨pre,cin0⟩,kzero⟩
+    have frame := measuredShortSubInPlace_frame c cin src tmp dst cy nd hs ht hc s m tzero cin0 kzero
     exact ⟨spec.1,spec.2.1.1.2,fun w hw => (frame w hw).trans (h.2 w hw)⟩
 
 private theorem zero_tail (a b : Wire) (dst : List Wire) (base : BasisState)
@@ -224,4 +223,4 @@ theorem triangularSquare_correct (xs dst pad mask carry : List Wire) (cin : Wire
           apply Triple.conseq (fun _ hs => hs) ?_ (fun s hs => (z s).mpr hs)
           simpa only [triangularSquareClear,List.append_assoc,heq] using h
 
-end ECDSAAdd.Arithmetic
+end ECDSAAdd.Arithmetic.ShortTriangular

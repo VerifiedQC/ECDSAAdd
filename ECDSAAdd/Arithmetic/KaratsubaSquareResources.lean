@@ -38,12 +38,12 @@ theorem combine_counts (L : KaratsubaSquareLayout) (h : L.Valid) :
   simp [combine,uncombine,ac.1,ac.2,sc.1,sc.2,aa.1,aa.2,sa.1,sa.2,ad.1,ad.2,sd.1,sd.2,h.z_length]
 
 theorem squares_counts (L : KaratsubaSquareLayout) (h : L.Valid) :
-    (toffoliCount L.squareLow=24257 ∧ measurementCount L.squareLow=24257) ∧
-    (toffoliCount L.clearLow=24257 ∧ measurementCount L.clearLow=24257) ∧
-    (toffoliCount L.squareHigh=24257 ∧ measurementCount L.squareHigh=24257) ∧
-    (toffoliCount L.clearHigh=24257 ∧ measurementCount L.clearHigh=24257) ∧
-    (toffoliCount L.squareSum=24640 ∧ measurementCount L.squareSum=24640) ∧
-    (toffoliCount L.clearSquareSum=24640 ∧ measurementCount L.clearSquareSum=24640) := by
+    (toffoliCount L.squareLow=32385 ∧ measurementCount L.squareLow=32385) ∧
+    (toffoliCount L.clearLow=32385 ∧ measurementCount L.clearLow=32385) ∧
+    (toffoliCount L.squareHigh=32385 ∧ measurementCount L.squareHigh=32385) ∧
+    (toffoliCount L.clearHigh=32385 ∧ measurementCount L.clearHigh=32385) ∧
+    (toffoliCount L.squareSum=32896 ∧ measurementCount L.squareSum=32896) ∧
+    (toffoliCount L.clearSquareSum=32896 ∧ measurementCount L.clearSquareSum=32896) := by
   have a := triangularSquare_counts L.low L.a L.pad L.mask L.carry L.cin
     (by simp [h.a_length,h.low_length]) (by simp [h.low_length,h.pad_length])
     (by simp [h.low_length,h.mask_length]) (by simp [h.low_length,h.carry_length])
@@ -177,8 +177,8 @@ end KaratsubaSquareLayout
 
 /-- Exact counts for each complete compute/cleanup, including both evaluations of C. -/
 theorem karatsubaSquare_counts (L : KaratsubaSquareLayout) (h : L.Valid) :
-    (toffoliCount (karatsubaSquare L)=99455 ∧ measurementCount (karatsubaSquare L)=99455) ∧
-    (toffoliCount (karatsubaSquareClear L)=99455 ∧ measurementCount (karatsubaSquareClear L)=99455) := by
+    (toffoliCount (karatsubaSquare L)=132223 ∧ measurementCount (karatsubaSquare L)=132223) ∧
+    (toffoliCount (karatsubaSquareClear L)=132223 ∧ measurementCount (karatsubaSquareClear L)=132223) := by
   obtain ⟨a,ac,d,dc,c,cc⟩ := L.squares_counts h
   obtain ⟨s,sc⟩ := L.sum_counts h
   obtain ⟨comb,uncomb⟩ := L.combine_counts h

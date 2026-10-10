@@ -2642,3 +2642,17 @@ PROVENANCE 同步状态，现有 `scripts/verify.sh` 新增八条公开入口
 `outer_mask_erase` 从完整寄存器值及范围推出低 n 位的掩码关系，再通过
 `eraseMask_eq_copy` 复用原清理证明；公开规格不新增掩码前提。
 加减法各有 `_spec`、`_frame`、`_wires`、`_resources` 四条公开定理。
+
+<a id="dual-submissions"></a>
+## 双 submission 整合
+
+目标是同时保留 PR #80 的值走位宽收窄电路与 PR #81 的压缩 Skywalk 电路，共享语义、成本模型、曲线定义及基础算术。两者不能通过直接叠加收益合成一个新数字。
+
+- `ECDSAAdd/Submissions/ValueWalk.lean`：完整512轮值走，6,286,806 T / 3,779,274 M / =3,134线路。
+- `ECDSAAdd/Submissions/Skywalk.lean`：原压缩点加，2,217,386 T / 1,557,928 M / ≤1,899线路。
+- 两者各自提供相同形式的完整 correctness 和三类同程序资源定理，C=O另列零成本。
+- `ECDSAAdd/Submissions.lean` 同时导入两者；根库也公开此聚合入口。
+- 旧回放和 Karatsuba 平方保留 ValueWalk 所需版本；Skywalk 的实际压缩路径保持独立。点加组合层用 `ValueWalkPoint*` 命名区分，共享输入分类、角落处理、状态断言及布局，避免复制整套基础库。
+- 验证脚本修复三个未构建的审计模块，并新增两份 submission 各5项公理检查。完整构建与公理白名单通过后再由独立复审者合并。
+
+PR #81 的短源三角平方作为 `Arithmetic.ShortTriangular` 独立变体保留，原三角平方仍服务于 ValueWalk。两者共享基本加法器与 `SquareFrame` 状态断言；短源变体的完整平方/清理、计数和支持定理另外纳入公理审计。
