@@ -21,21 +21,23 @@ def subResult (X Y q : Nat) : Nat :=
 theorem addResult_correct (X Y q : Nat) (hSum : X + Y < 2 * q) :
     addResult X Y q = (X + Y) % q := Proof
   let sum := X + Y
-  verify result := (addResult X Y q) unfolding [addResult] {
-    requires { sum < 2 * q } by hSum;
-    ensures { result = sum % q };
 
-    if (sum < q) {
-      result := sum;
-      assert { result < q };
-      conclude by small_remainder;
-    } else {
-      assert { q ≤ sum ∧ sum < 2 * q };
-      result := sum - q;
-      assert { result < q };
-      assert { sum = result + q };
-      conclude by shifted_remainder;
-    }
+  if (sum < q) {
+    { sum % q = sum }
+      by the small remainder rule;
+
+    { addResult X Y q = sum }
+      by definition;
+
+    conclude { addResult X Y q = sum % q };
+  } else {
+    { sum % q = sum - q }
+      by one subtraction using hSum and the branch condition;
+
+    { addResult X Y q = sum - q }
+      by definition;
+
+    conclude { addResult X Y q = sum % q };
   }
 
 /-- 模减的算法证明：有借位时加回 q，无借位时直接保留差。 -/

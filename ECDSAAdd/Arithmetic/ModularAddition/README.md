@@ -34,7 +34,7 @@
 ## 算法与证明示范目录
 
 - [Modular.lean](#modularlean)：保留可读算法，将分支证明与实际电路连接成最终模加减规格。
-- [ModularAlgorithm.lean](#modularalgorithmlean)：模加用带断言的 `if/else` 证明，模减保留英文分情况证明，证明选出的数分别是模和、模差。
+- [ModularAlgorithm.lean](#modularalgorithmlean)：模加在 `if/else` 中直接列等式，并显式写出各分支结论；模减保留英文分情况证明，证明选出的数分别是模和、模差。
 - [ModularBackend.lean](#modularbackendlean)：证明实际电路实现这些分支，并恢复输入、相位与工作区；只读算法时可跳过。
 - [ModularTranslation.lean](#modulartranslationlean)：定义两个阶段必须遵守的状态接口，检查源码及实现/证明的对应关系。
 - [ModularFrame.lean](#modularframelean)：证明任意测量记录下的最终结果，以及输出之外每根 wire 都保持。
@@ -270,11 +270,11 @@ simpa only [ModReductionAlgorithm.addResult_correct X Y q hSum] using branches
 
 X、Y 是寄存器中的数，q 是模数。这里不出现 wire、布局或测量。
 
-模加的 `addResult_correct` 使用带断言的 `if/else`：`requires` 给出共同前提，`ensures` 给出共同结论，各分支写出 `result := ...`、中间断言及所用取模规则。`result` 是该分支的数学结果，不是向量子寄存器赋值。每次赋值都检查与真实 `addResult` 定义相符，每条 `assert` 都要证明，不能当作新增假设；两分支都完成后才得到共同结论。完整可运行示范直接在本文件，无需先读语法实现。
+模加的 `addResult_correct` 直接在 `if/else` 中列出两条等式：先写余数是多少，再按定义写实际 `addResult` 返回什么，最后用 `conclude { addResult X Y q = sum % q };` 显式结束每个分支。每条大括号里的结论都由 Lean 证明，不能当作新增假设。没有另写一份算法，也不再引入 result、requires 或 ensures。
 
 模减仍使用 `We split on`、`From [...] ... we get` 等英文句式，本轮未改。两种写法都是由 Lean 检查的证明代码，不是注释；语法及取模规则见 [ProofLanguage](../../Framework/README.md#prooflanguagelean)。辅助范围引理与电路后端仍保留原 tactic 写法。
 
-`addResult_correct` 证明：令 `sum=X+Y`，要求 `sum<2*q`。`sum<q` 时保留 sum；否则明确得到 `q≤sum<2*q`，减去 q 后仍在 [0,q)，且 `sum=result+q`。两个分支都得到 `result=sum%q`。
+`addResult_correct` 证明：令 `sum=X+Y`，要求 `sum<2*q`。`sum<q` 时，余数和算法结果都等于 sum；否则，引用 hSum 和当前分支的 `sum≥q`，证明余数是 sum−q，算法结果也按定义等于 sum−q。两分支分别明确得出算法结果等于余数。一次减法的范围推导保存在规则实现中；漏写 hSum 或分支方向不对时，规则不会通过。
 
 `subResult_correct` 证明：要求 X,Y<q。X<Y 时，数学差加回 q 得到 X+q−Y；否则保留 X−Y。两个分支都得到 (X+q−Y) mod q。这里不能把借位分支写成自然数截断减法 `(X-Y)+q`。
 

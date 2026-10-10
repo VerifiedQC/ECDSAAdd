@@ -203,7 +203,7 @@ prog using (montOutputContext M) {
 
 [ProofLanguage.lean](#prooflanguagelean)
 
-这个文件提供受控英文和带断言的 `if/else` 证明句式，逐步检查分支结果、中间结论和取模性质。
+这个文件提供受控英文、直接列等式的 `if/else` 和旧版带断言的证明句式，检查每条数学结论及各分支的最终结论。
 
 [Cost.lean](#costlean)
 
@@ -601,7 +601,19 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 
 使用 `open scoped ECDSAAdd.ProofLanguage` 开启记法，定理的证明体写成 `:= Proof`。完整示范见 [ModularAlgorithm.lean](../Arithmetic/ModularAddition/ModularAlgorithm.lean) 的 `addResult_correct/subResult_correct`。
 
-模加现在采用带断言的分支写法；模减暂时保留下表中的英文句式。新写法的外层为 `verify result := (实际表达式) unfolding [定义] { ... }`，声明要验证的真实计算，而不是另外写一段不相关的伪代码。
+模加现在直接列等式：每个 `if/else` 分支先证明余数等于哪个数，再按定义证明实际算法返回同一个数，最后显式写出 `conclude { 算法结果 = 余数 };`。不再引入 result、requires 或 ensures。大括号里写的都是需要证明的结论，不是额外假设；完整示范在 `addResult_correct`。
+
+| 等式分支句式 | 含义 |
+| --- | --- |
+| `if (b) { ... } else { ... }` | 分别在 b 和 ¬b 下完成同一个原定理目标；每个分支都必须写 conclude |
+| `{ s % q = s } by the small remainder rule;` | 从当前分支条件检查 s<q，再应用小余数规则 |
+| `{ f args = value } by definition;` | 展开等式左侧函数的一层定义，结合当前分支条件检查等式；不调用 f 的正确性定理 |
+| `{ s % q = s-q } by one subtraction using h and the branch condition;` | 只引用 h、当前分支条件及必要依赖，检查 q≤s<2q 所需的减法范围和分解，再应用取模规则 |
+| `conclude { Q };` | Q 必须与当前目标一致，并且由本分支已经列出的等式化简完成；未完成的目标不能被略过 |
+
+`using` 后可放证明名字或括号内的证明表达式。三条固定规则会清除无关假设，不能漏写上界证明再暗中使用它。这里的 if 是数学分情况，不发出电路或测量；电路的输入保持、相位与工作区恢复仍由原有 Triple 和后端连接证明。
+
+旧的 `verify result := (实际表达式) unfolding [定义] { ... }` 形式继续兼容，以下是它的记法；当前模加示范不再使用它。模减仍保留后面的英文句式。
 
 | 分支证明句式 | 含义 |
 | --- | --- |
@@ -625,7 +637,7 @@ Request 包含 config 和高层 code；compile 使用这份配置编译代码。
 | `By the shifted remainder rule using hs, hr we get result : a % q = r` | hs 必须证明 a=r+q，hr 必须证明 r<q |
 | `From [h₁, h₂] we conclude P` | 用所列事实的直接应用或等式化简完成当前目标；P 必须与当前目标一致 |
 
-句式固定，公式仍是 Lean 表达式，不解释任意英文，也不调用语言模型。底层 tactic 保存在本文件，读算法证明时不必展开。旧写法的 `From [...] by arithmetic` 只使用所列前提及必要依赖；新写法在进入分支前清除未列入 `requires` 且非必要依赖的假设。两者都不是任意数学命题的自动证明器。
+句式固定，公式仍是 Lean 表达式，不解释任意英文，也不调用语言模型。底层 tactic 保存在本文件，读算法证明时不必展开。`From [...] by arithmetic` 只使用所列前提及必要依赖；旧 `verify` 写法在进入分支前清除未列入 requires 且非必要依赖的假设。这些规则都不是任意数学命题的自动证明器。
 
 ```lean
 theorem shiftedRemainder {value remainder modulus : Nat}

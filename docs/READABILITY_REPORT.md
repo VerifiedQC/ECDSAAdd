@@ -1,8 +1,16 @@
 # ECDSAAdd 可读性整理报告
 
-初稿日期：2026-09-14；更新：2026-10-07。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
+初稿日期：2026-09-14；更新：2026-10-10。原调研代码基线：`6bdfc69dde84cc089f94edde70c441fc0e309b60`。Arithmetic 迁移以 `07108ae28b8b8dfe4befab4478c7bf29264e8e26` 为比较基线；其余三层迁移以 `c227f72d4a92cc4e1d4a9d1aeba85c2a704a875d` 为基线，未混入同期 main 的其他开发改动。
 
-## 最新阶段：模加的带断言分支证明（2026-10-07）
+## 最新阶段：模加直接列等式与分支结论（2026-10-10）
+
+按用户选定的数学证明形式重写 `addResult_correct`：每个分支用大括号列出“余数等于哪个数”和“实际算法返回哪个数”，再显式 conclude 两者相等。正文不再保留 result、verify、requires 或 ensures；没有重新定义一份展示算法。模减、算法定义、公开定理类型与电路不改。
+
+`Framework/ProofLanguage.lean` 新增对应固定语法，只有三条理由：小余数规则、按定义展开、引用指定前提和分支条件的一次减法。每条等式必须证明，结束句必须用本分支列出的事实完成原定理目标。一次减法会检查范围与分解，不能只凭 hSum 而忽略分支条件；无关假设不会自动补齐遗漏的前提。旧英文和 verify 语法保留兼容，不在本轮迁移其他证明。
+
+新测试 `tests/EquationalProof.lean` 检查真实函数和独立小函数、局部别名、原生 if 共存、范围边界，以及错误等式、漏列前提、错误分支方向、错误或遗漏的结束结论。Framework、ModularAddition README 与项目地图同步，完整验证记录见 [PROOF_STATUS](PROOF_STATUS.md)。
+
+## 模加的带断言分支证明（2026-10-07）
 
 仅改写 `ModularAlgorithm.lean` 中 `addResult_correct` 的证明体，使用 `verify` 绑定真实数值计算、`requires/ensures` 声明共同前后条件，`if/else` 分别列出结果与中间断言，再用取模规则结束分支。证明中的自然语言关键字保持英文。模减、范围辅助引理、原有定理类型及电路不改。
 

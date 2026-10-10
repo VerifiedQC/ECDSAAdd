@@ -169,4 +169,78 @@ macro_rules
               $noFinish:tactic
             exact Eq.mpr (congrArg (fun $result => $postcondition) $selected) $established)
 
+/-- Facts in a mathematical case proof are proved equalities, not assumptions. -/
+declare_syntax_cat equationFact
+scoped syntax "{" term "}" " by " &"the " &"small " &"remainder " &"rule" ";" : equationFact
+scoped syntax "{" term "}" " by " &"definition" ";" : equationFact
+scoped syntax "{" term "}" " by " &"one " &"subtraction " "using " term:max
+  &"and " &"the " &"branch " &"condition" ";" : equationFact
+
+/-- Each case proves explicit facts, then closes the original goal with them. -/
+scoped syntax "if " "(" term ")" " {"
+  equationFact* &"conclude" " {" term "}" ";" "}"
+  "else " " {" equationFact* &"conclude" " {" term "}" ";" "}" : tactic
+
+open scoped ECDSAAdd.ProofLanguage
+
+-- Expose the actual function's left-hand side, without importing a circuit or
+-- using its correctness theorem. Changing the goal is checked for definitional equality.
+scoped elab "unfold_equation_left" : tactic =>
+  Lean.Elab.Tactic.liftMetaTactic1 fun goal => goal.withContext do
+    let target ← Lean.instantiateMVars (← goal.getType)
+    let some (_, lhs, rhs) := target.eq?
+      | throwError "The definition rule expects an equality."
+    let lhs := (← Lean.Meta.unfoldDefinition? lhs (ignoreTransparency := true)).getD lhs
+    goal.change (← Lean.Meta.mkEq lhs rhs)
+
+private def equationStep (step : TSyntax `equationFact) (branch : Ident) :
+    MacroM (Ident × TSyntax `tactic) := do
+  let name := mkIdent (← withFreshMacroScope (Macro.addMacroScope `fact))
+  let branchRule ← `(Lean.Parser.Tactic.simpLemma| $branch:term)
+  let proof ← match step with
+    | `(equationFact| { $claim:term } by the small remainder rule;) =>
+      `(tactic| have $name : $claim := by
+        clear * - $branch:ident
+        exact Nat.mod_eq_of_lt (by omega))
+    | `(equationFact| { $claim:term } by definition;) =>
+      `(tactic| have $name : $claim := by
+        clear * - $branch:ident
+        unfold_equation_left
+        solve |
+          simp +zetaDelta only [] at $branch:ident
+          all_goals simp +zetaDelta only [$branchRule, if_pos, if_neg, ite_true, ite_false])
+    | `(equationFact| { $claim:term }
+        by one subtraction using $evidence:term and the branch condition;) => do
+      let cited := mkIdent (← Macro.addMacroScope `cited)
+      `(tactic| have $name : $claim := by
+        have $cited := (fun {p : Prop} (proof : p) => proof) $evidence
+        clear * - $cited:ident $branch:ident
+        exact shiftedRemainder (by omega) (by omega))
+    | _ => Macro.throwErrorAt step "Expected a proved equation and its rule."
+  return (name, proof)
+
+private def equationCase (steps : Array (TSyntax `equationFact)) (branch : Ident)
+    (claim : Term) : MacroM (TSyntax `tactic) := do
+  let facts ← steps.mapM fun step => equationStep step branch
+  let proofs := facts.map Prod.snd
+  let rules ← facts.mapM fun (name, _) => `(Lean.Parser.Tactic.simpLemma| $name:term)
+  `(tactic| solve
+    | ($[$proofs:tactic];*)
+      change $claim
+      simp only [$rules,*])
+
+macro_rules
+  | `(tactic| if ($condition:term) {
+      $positive:equationFact* conclude { $positiveGoal:term };
+    } else {
+      $negative:equationFact* conclude { $negativeGoal:term };
+    }) => do
+      let branch := mkIdent (← Macro.addMacroScope `branch)
+      let yes ← equationCase positive branch positiveGoal
+      let no ← equationCase negative branch negativeGoal
+      `(tactic| solve
+        | by_cases $branch : $condition
+          · $yes:tactic
+          · $no:tactic)
+
 end ECDSAAdd.ProofLanguage
