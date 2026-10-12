@@ -4,6 +4,12 @@
 
 相对于 `439f481`，改写 **97 个原证明体**（81 个公开、16 个内部），涉及 41 个 Arithmetic 文件。原文件内 274 条定理声明及 106 个非证明声明经去注释文本核对均未变化。另新增一个小型内部引理 `divideProduct_returnBorrowedBit`，仅整理借用高位的恢复，不隐藏整个除法证明。
 
+## 后续示范：用 calc 展示 fullAdder 的数学推导
+
+[FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean) 的 `fullAdder_correct` 进一步改为等式链：先展开进位的布尔表达式、消去两个相同的输入位，再证明输入恢复与和位计算，最后合并相位和其余线路不变的结论。`A/B/C` 是输入初值，`O/K` 是任意输出初值，不额外要求清零。解释保持英文。
+
+主证明保留实际代数推导；`simp` 只用于门语义和等式步骤的检查。新增的内部引理 `state_eq_of_two_outputs` 仅将已证明的两处输出、相位和其余位拼成状态等式，不包含全加器算法。电路和定理声明不变；以下 97 项仍是上一轮改写清单。
+
 ## 建议先看
 
 1. [ModularAlgorithm.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularAlgorithm.lean)：模加／模减各分支的数值等式与共同结论。`addResult_correct` 是上一轮已完成示范，本轮新增同风格的 `subResult_correct`。

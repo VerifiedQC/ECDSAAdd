@@ -40,6 +40,22 @@ def fullAdder (a b cin out carry : Wire) : Program := prog {
 def eraseCarry (a b cin carry : Wire) : Program :=
   prog { if meas carry = 1 then [CZ a b, CZ a cin, CZ b cin] else skip }
 
+/-- Assemble a state equality from two outputs, an unchanged phase, and a frame. -/
+private theorem state_eq_of_two_outputs (s t : State) (out carry : Wire)
+    (hne : out ≠ carry) (O K : Bool)
+    (phase : t.phase = s.phase) (output : t.basis out = O) (savedCarry : t.basis carry = K)
+    (frame : ∀ w, w ≠ out → w ≠ carry → t.basis w = s.basis w) :
+    t = ⟨s.phase, writeBit (writeBit s.basis carry K) out O⟩ := by
+  have basis : t.basis = writeBit (writeBit s.basis carry K) out O := by
+    funext w
+    by_cases ho : w = out
+    · subst w; simp [writeBit, output]
+    by_cases hk : w = carry
+    · subst w; simp [writeBit, Ne.symm hne, savedCarry]
+    · simpa [writeBit, ho, hk] using frame w ho hk
+  cases t
+  simp_all
+
 /-- 任意输出和进位初值均可：在两处 XOR 写入和位与进位，其余状态保持。 -/
 theorem fullAdder_correct (a b cin out carry : Wire)
     (hdisjoint : [a, b, cin, out, carry].Nodup)
@@ -48,31 +64,72 @@ theorem fullAdder_correct (a b cin out carry : Wire)
       ⟨s.phase,
         writeBit (writeBit s.basis carry
           (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
-          out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ := Proof
+          out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ := by
+  -- A, B, C are the input bits; O and K are arbitrary initial output bits.
+  let A := s.basis a
+  let B := s.basis b
+  let C := s.basis cin
+  let O := s.basis out
+  let K := s.basis carry
   let final := run (fullAdder a b cin out carry) m s
-  -- The gates change no phase. The basis calculation has just two XOR outputs.
-  { final.phase = s.phase } as phase by rfl;
-  { final.basis =
-      writeBit (writeBit s.basis carry
-        (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
-        out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin)) } as outputs by (by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-      not_or, not_false_eq_true, and_true] at hdisjoint
-    obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
-    have hcb := Ne.symm hbc
-    simp only [final, fullAdder, run]
-    funext w
-    by_cases hwa : w = a <;> by_cases hwb : w = b <;>
-      by_cases hwc : w = cin <;> by_cases hwo : w = out <;>
-      by_cases hwk : w = carry <;>
-      simp_all [writeBit, Function.update, sumBit, carryBit]
-    cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;>
-      cases s.basis out <;> cases s.basis carry <;> simp_all);
-  conclude { final = ⟨s.phase,
-    writeBit (writeBit s.basis carry
-      (s.basis carry ^^ carryBit (s.basis a) (s.basis b) (s.basis cin)))
-      out (s.basis out ^^ sumBit (s.basis a) (s.basis b) (s.basis cin))⟩ }
-    by (by cases hf : final; simp_all);
+
+  -- Distinct wires let each gate update only its target.
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
+    not_or, not_false_eq_true, and_true] at hdisjoint
+  obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
+
+  -- 1. The first four gates compute the carry; later gates do not target it.
+  have carryOutput : final.basis carry = (K ^^ carryBit A B C) := calc
+    final.basis carry = ((K ^^ ((B ^^ A) && (C ^^ A))) ^^ A) := by
+      simp [final, fullAdder, run, writeBit, A, B, C, K,
+        hab, hac, hak, hbc, hbk, hck, hok, Ne.symm]
+    _ = ((K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) ^^ (A ^^ A)) := by
+      -- Distribute AND over XOR and use A AND A = A.
+      simp only [Bool.and_xor_distrib_left, Bool.and_xor_distrib_right, Bool.and_self,
+        Bool.and_comm, Bool.xor_assoc, Bool.xor_left_comm, Bool.xor_comm]
+    _ = (K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) := by
+      -- The two copies of A cancel.
+      rw [Bool.xor_self, Bool.xor_false]
+    _ = (K ^^ carryBit A B C) := by
+      -- The three pairwise products are exactly the carry bit.
+      simp only [carryBit, Bool.xor_assoc, Bool.xor_left_comm, Bool.xor_comm]
+
+  -- 2. The next two gates undo the temporary changes to b and cin.
+  have inputB : final.basis b = B := calc
+    final.basis b = ((B ^^ A) ^^ A) := by
+      simp [final, fullAdder, run, writeBit, A, B,
+        hab, hac, hak, hbc, hbo, hbk, hck, Ne.symm]
+    _ = (B ^^ (A ^^ A)) := Bool.xor_assoc B A A
+    _ = B := by rw [Bool.xor_self, Bool.xor_false]
+  have inputC : final.basis cin = C := calc
+    final.basis cin = ((C ^^ A) ^^ A) := by
+      simp [final, fullAdder, run, writeBit, A, C,
+        hab, hac, hak, hbc, hco, hck, Ne.symm]
+    _ = (C ^^ (A ^^ A)) := Bool.xor_assoc C A A
+    _ = C := by rw [Bool.xor_self, Bool.xor_false]
+
+  -- 3. The last three gates XOR the restored inputs into out.
+  have sumOutput : final.basis out = (O ^^ sumBit A B C) := calc
+    final.basis out = (((O ^^ A) ^^ B) ^^ C) := by
+      simp [final, fullAdder, run, writeBit, A, B, C, O,
+        hab, hac, hak, hbc, hbo, hbk, hco, hck, hok, Ne.symm]
+    _ = (O ^^ ((A ^^ B) ^^ C)) := by simp only [Bool.xor_assoc]
+    _ = (O ^^ sumBit A B C) := rfl
+
+  -- No gate changes phase. Apart from out/carry, only b/cin were targeted,
+  -- and both have just been proved restored.
+  have phase : final.phase = s.phase := rfl
+  have frame (w : Wire) (ho : w ≠ out) (hk : w ≠ carry) :
+      final.basis w = s.basis w := by
+    by_cases hb : w = b
+    · subst w; exact inputB
+    by_cases hc : w = cin
+    · subst w; exact inputC
+    simp [final, fullAdder, run, writeBit, ho, hk, hb, hc]
+
+  -- Combine the two calculated outputs with the unchanged rest of the state.
+  exact state_eq_of_two_outputs s final out carry hok
+    (O ^^ sumBit A B C) (K ^^ carryBit A B C) phase sumOutput carryOutput frame
 
 /-- 只要 carry 保存正确的进位，就能对任意测量结果清零它，且恢复原相位。 -/
 theorem eraseCarry_correct (a b cin carry : Wire)
