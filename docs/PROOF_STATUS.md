@@ -8,6 +8,14 @@ M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部
 
 验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
+## fullAdder_correct：逐步状态断言（2026-10-12）
+
+本次保持 `fullAdder` 原定义不变，仅将 `fullAdder_correct` 的证明改为九步 Hoare 推导：每条语句后列出 a、b、cin、out、carry 的值，第 4、5、6、9 步分别附上进位、输入恢复、和位的 `calc` 化简。全部 13 条原定理的陈述和其他证明均未改动，非零输出初值、相位、任意测量记录及其他 wire 保持性质全部保留。
+
+[GateProof.lean](../ECDSAAdd/Framework/GateProof.lean) 新增 `Plan.toTriple`、`hoare_steps` 和单步检查 `gate_step`。每条状态转移先由门的完整状态证书导出 Triple，再由已有 `Triple.seq` 连接；门列必须与原程序一致，断言不是额外假设。新增回归检查覆盖动态控制、单步链，并拒绝错误中间状态、错误门序／目标、非法接线、沿用旧控制值、错误的非目标位变化。只在刻意提供错误程序的拒绝测试中关闭不可达 tactic 提示：这些错误应在进入其局部证明前就被拒绝；不影响生产代码的检查。
+
+完整 `scripts/verify.sh` 本地退出 0：2,181 个构建任务、19 个测试文件共 505 个 example、486 项公理检查。新增 3 个 example，内含 6 项拒绝检查；原测试继续保留。`Plan.toTriple` 无公理依赖，`fullAdder_correct` 仍仅依赖白名单中的 `propext`、`Classical.choice`、`Quot.sound`；未引入 sorry、admit、新公理或改变电路资源。远端 CI 状态未据此推断。
+
 ## fullAdder：逐门认证、顺序组合与 calc（2026-10-12）
 
 `fullAdder` 的原九门改写为九条 `if … { target ^= 1; } using CX/CCX by cx_correct/ccx_correct;`，门序列和 `Program` 接口不变。新增 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)：独立的条件翻转模型、CX/CCX 完整状态证明，以及基于 `run_append` 的证书顺序组合。`verified def` 从同一份源代码生成模型、接线前提、保留证书和 `fullAdder.translation`；语法仅在打开 `ECDSAAdd.GateProof` 时启用，不影响其他模块的同名变量。

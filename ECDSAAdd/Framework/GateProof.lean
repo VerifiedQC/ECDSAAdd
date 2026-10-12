@@ -74,6 +74,15 @@ def Plan.seq (first second : Plan) : Plan where
       _ = ⟨s.phase, second.model (first.model s.basis)⟩ :=
         second.correct valid.2 _ _
 
+/-- A local assertion transition, together with valid wiring, gives a Hoare triple.
+The gate certificate supplies phase preservation for every measurement record. -/
+theorem Plan.toTriple (plan : Plan) {P Q : BasisState → Prop}
+    (step : plan.requires ∧ ∀ st, P st → Q (plan.model st)) :
+    Triple P plan.circuit Q := by
+  intro s m initial
+  rw [plan.correct step.1]
+  exact ⟨rfl, step.2 s.basis initial⟩
+
 open Lean
 
 /-- Extract only the executable gate list; the named Plan retains its model and proof.
@@ -108,6 +117,53 @@ macro_rules
       unless n.getNat == 1 do Macro.throwErrorAt n "A conditional flip must use the bit literal 1."
       `(Plan.seq (Plan.step (.both $a $b) $t [$impl $a $b $t] ($proof $a $b $t))
         (gatePlan% { $rest* }))
+
+-- A decorated Hoare derivation. Assertions are proved, not assumed, and the
+-- resulting gate list must match the program in the expected Triple type.
+declare_syntax_cat gateHoareLink
+syntax gateProofStmt "{" term,+ "}" "by" term ";" : gateHoareLink
+scoped syntax "hoare_steps" "{" "{" term,+ "}" ";" gateHoareLink+ "}" : term
+
+private def gateAssertion (claims : Array Term) : MacroM Term := do
+  let st := mkIdent (← withFreshMacroScope (Macro.addMacroScope `st))
+  let claims ← claims.mapM fun claim => do
+    match claim with
+    | `($wire = $value) => `(Holds.holds $st $wire $value)
+    | _ => Macro.throwErrorAt claim "Expected a wire = value assertion."
+  let body ← claims[1:].foldlM (fun acc claim => `($acc ∧ $claim)) claims[0]!
+  `(fun $st : BasisState => $body)
+
+private def gateHoareChain (pre : Term) (links : List (TSyntax `gateHoareLink)) :
+    MacroM Term := do
+  match links with
+  | [] => Macro.throwError "Expected at least one gate and its proved postcondition."
+  | link :: rest =>
+    match link with
+    | `(gateHoareLink| $statement:gateProofStmt { $claims,* } by $proof;) =>
+      let post ← gateAssertion claims.getElems
+      let step ← `((gatePlan% { $statement }).toTriple (P := $pre) (Q := $post) $proof)
+      if rest.isEmpty then return step
+      let tail ← gateHoareChain post rest
+      `(Triple.seq $step $tail)
+    | _ => Macro.throwErrorAt link "Expected a gate and a proved postcondition."
+
+macro_rules
+  | `(hoare_steps { { $claims,* }; $links:gateHoareLink* }) => do
+    gateHoareChain (← gateAssertion claims.getElems) links.toList
+
+/-- Discharge one local transition from the displayed input assertions only.
+Additional facts can supply wiring conditions and explicit Boolean calculations. -/
+scoped syntax "gate_step" "[" term,* "]" : tactic
+macro_rules
+  | `(tactic| gate_step [$facts,*]) => do
+    let facts ← facts.getElems.mapM fun fact => `(Lean.Parser.Tactic.simpLemma| $fact:term)
+    `(tactic|
+      (constructor
+       · simp_all [$facts,*, Plan.seq, Plan.step, Plan.empty, Control.Valid,
+           List.nodup_cons, List.mem_cons]
+       · intro st initial
+         simp_all [$facts,*, Plan.seq, Plan.step, Plan.empty, flipIf_eq_xor,
+           Control.read, Holds.holds, writeBit, Ne.symm]))
 
 /-- One source generates the ordinary Program and a retained, compositional certificate.
 This deliberately small entry point accepts one group of explicit parameters.

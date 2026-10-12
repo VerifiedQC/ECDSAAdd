@@ -80,65 +80,91 @@ theorem fullAdder_correct (a b cin out carry : Wire)
   let C := s.basis cin
   let O := s.basis out
   let K := s.basis carry
+
+  -- Every displayed postcondition is proved from the preceding one.
+  -- Hoare sequencing also checks that these are exactly fullAdder's nine gates.
+  have computation :
+      {{ a = A, b = B, cin = C, out = O, carry = K }} fullAdder a b cin out carry
+      {{ a = A, b = B, cin = C, out = (O ^^ sumBit A B C),
+         carry = (K ^^ carryBit A B C) }} := hoare_steps {
+    { a = A, b = B, cin = C, out = O, carry = K };
+
+    if a { b ^= 1; } using CX by cx_correct;
+    { a = A, b = (B ^^ A), cin = C, out = O, carry = K }
+      by (by gate_step [hdisjoint]);
+
+    if a { cin ^= 1; } using CX by cx_correct;
+    { a = A, b = (B ^^ A), cin = (C ^^ A), out = O, carry = K }
+      by (by gate_step [hdisjoint]);
+
+    if b AND cin { carry ^= 1; } using CCX by ccx_correct;
+    { a = A, b = (B ^^ A), cin = (C ^^ A), out = O,
+      carry = (K ^^ ((B ^^ A) && (C ^^ A))) }
+      by (by gate_step [hdisjoint]);
+
+    if a { carry ^= 1; } using CX by cx_correct;
+    { a = A, b = (B ^^ A), cin = (C ^^ A), out = O,
+      carry = (K ^^ carryBit A B C) } by (by
+        have carryUpdate : ((K ^^ ((B ^^ A) && (C ^^ A))) ^^ A) =
+            (K ^^ carryBit A B C) := calc
+          ((K ^^ ((B ^^ A) && (C ^^ A))) ^^ A)
+              = ((K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) ^^ (A ^^ A)) := by
+                  -- Distribute AND over XOR; A AND A = A.
+                  simp only [Bool.and_xor_distrib_left, Bool.and_xor_distrib_right,
+                    Bool.and_self, Bool.and_comm, Bool.xor_assoc,
+                    Bool.xor_left_comm, Bool.xor_comm]
+          _ = (K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) := by
+            rw [Bool.xor_self, Bool.xor_false]
+          _ = (K ^^ carryBit A B C) := by
+            simp only [carryBit, Bool.xor_assoc, Bool.xor_left_comm, Bool.xor_comm]
+        gate_step [hdisjoint, carryUpdate]);
+
+    if a { cin ^= 1; } using CX by cx_correct;
+    { a = A, b = (B ^^ A), cin = C, out = O, carry = (K ^^ carryBit A B C) }
+      by (by
+        have restoreC : ((C ^^ A) ^^ A) = C := calc
+          ((C ^^ A) ^^ A) = (C ^^ (A ^^ A)) := Bool.xor_assoc C A A
+          _ = C := by rw [Bool.xor_self, Bool.xor_false]
+        gate_step [hdisjoint, restoreC]);
+
+    if a { b ^= 1; } using CX by cx_correct;
+    { a = A, b = B, cin = C, out = O, carry = (K ^^ carryBit A B C) }
+      by (by
+        have restoreB : ((B ^^ A) ^^ A) = B := calc
+          ((B ^^ A) ^^ A) = (B ^^ (A ^^ A)) := Bool.xor_assoc B A A
+          _ = B := by rw [Bool.xor_self, Bool.xor_false]
+        gate_step [hdisjoint, restoreB]);
+
+    if a { out ^= 1; } using CX by cx_correct;
+    { a = A, b = B, cin = C, out = (O ^^ A), carry = (K ^^ carryBit A B C) }
+      by (by gate_step [hdisjoint]);
+
+    if b { out ^= 1; } using CX by cx_correct;
+    { a = A, b = B, cin = C, out = ((O ^^ A) ^^ B), carry = (K ^^ carryBit A B C) }
+      by (by gate_step [hdisjoint]);
+
+    if cin { out ^= 1; } using CX by cx_correct;
+    { a = A, b = B, cin = C, out = (O ^^ sumBit A B C), carry = (K ^^ carryBit A B C) }
+      by (by
+        have sumUpdate : (((O ^^ A) ^^ B) ^^ C) = (O ^^ sumBit A B C) := calc
+          (((O ^^ A) ^^ B) ^^ C) = (O ^^ ((A ^^ B) ^^ C)) := by
+            simp only [Bool.xor_assoc]
+          _ = (O ^^ sumBit A B C) := rfl
+        gate_step [hdisjoint, sumUpdate]);
+  }
+
+  -- Apply the composed Hoare proof to the actual initial state.
   let final : State := ⟨s.phase, fullAdder.model a b cin out carry s.basis⟩
-
-  -- Distinct wires let each gate update only its target.
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-    not_or, not_false_eq_true, and_true] at hdisjoint
-  obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
-
-  -- Compose the nine supplied gate proofs, discharging every wiring condition.
-  -- From here on, reason about the independent if-statement model, not `run`.
   have execution : run (fullAdder a b cin out carry) m s = final :=
     fullAdder.translation a b cin out carry (by
       simp_all [fullAdder.requires, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
         Control.Valid, List.nodup_cons, List.mem_cons]) s m
+  have result := computation s m (by exact ⟨⟨⟨⟨rfl, rfl⟩, rfl⟩, rfl⟩, rfl⟩)
+  rw [execution] at result
+  obtain ⟨phase, ⟨⟨⟨inputA, inputB⟩, inputC⟩, sumOutput⟩, carryOutput⟩ := result
 
-  -- 1. The first four gates compute the carry; later gates do not target it.
-  have carryOutput : final.basis carry = (K ^^ carryBit A B C) := calc
-    final.basis carry = ((K ^^ ((B ^^ A) && (C ^^ A))) ^^ A) := by
-      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
-        flipIf_eq_xor, Control.read, writeBit, A, B, C, K,
-        hab, hac, hak, hbc, hbk, hck, hok, Ne.symm]
-    _ = ((K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) ^^ (A ^^ A)) := by
-      -- Distribute AND over XOR and use A AND A = A.
-      simp only [Bool.and_xor_distrib_left, Bool.and_xor_distrib_right, Bool.and_self,
-        Bool.and_comm, Bool.xor_assoc, Bool.xor_left_comm, Bool.xor_comm]
-    _ = (K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) := by
-      -- The two copies of A cancel.
-      rw [Bool.xor_self, Bool.xor_false]
-    _ = (K ^^ carryBit A B C) := by
-      -- The three pairwise products are exactly the carry bit.
-      simp only [carryBit, Bool.xor_assoc, Bool.xor_left_comm, Bool.xor_comm]
-
-  -- 2. The next two gates undo the temporary changes to b and cin.
-  have inputB : final.basis b = B := calc
-    final.basis b = ((B ^^ A) ^^ A) := by
-      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
-        flipIf_eq_xor, Control.read, writeBit, A, B,
-        hab, hac, hak, hbc, hbo, hbk, hck, Ne.symm]
-    _ = (B ^^ (A ^^ A)) := Bool.xor_assoc B A A
-    _ = B := by rw [Bool.xor_self, Bool.xor_false]
-  have inputC : final.basis cin = C := calc
-    final.basis cin = ((C ^^ A) ^^ A) := by
-      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
-        flipIf_eq_xor, Control.read, writeBit, A, C,
-        hab, hac, hak, hbc, hco, hck, Ne.symm]
-    _ = (C ^^ (A ^^ A)) := Bool.xor_assoc C A A
-    _ = C := by rw [Bool.xor_self, Bool.xor_false]
-
-  -- 3. The last three gates XOR the restored inputs into out.
-  have sumOutput : final.basis out = (O ^^ sumBit A B C) := calc
-    final.basis out = (((O ^^ A) ^^ B) ^^ C) := by
-      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
-        flipIf_eq_xor, Control.read, writeBit, A, B, C, O,
-        hab, hac, hak, hbc, hbo, hbk, hco, hck, hok, Ne.symm]
-    _ = (O ^^ ((A ^^ B) ^^ C)) := by simp only [Bool.xor_assoc]
-    _ = (O ^^ sumBit A B C) := rfl
-
-  -- No gate changes phase. Apart from out/carry, only b/cin were targeted,
-  -- and both have just been proved restored.
-  have phase : final.phase = s.phase := rfl
+  -- The assertion chain supplies restored inputs and both outputs. The gate
+  -- model additionally preserves every other wire, not just the five displayed.
   have frame (w : Wire) (ho : w ≠ out) (hk : w ≠ carry) :
       final.basis w = s.basis w := by
     by_cases hb : w = b
@@ -148,7 +174,8 @@ theorem fullAdder_correct (a b cin out carry : Wire)
     simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
       flipIf_eq_xor, writeBit, ho, hk, hb, hc]
 
-  -- Combine the two calculated outputs with the unchanged rest of the state.
+  have hok : out ≠ carry := by
+    simp_all [List.nodup_cons, List.mem_cons]
   exact execution.trans (state_eq_of_two_outputs s final out carry hok
     (O ^^ sumBit A B C) (K ^^ carryBit A B C) phase sumOutput carryOutput frame)
 

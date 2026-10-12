@@ -30,6 +30,7 @@ import ECDSAAdd
 #print axioms ECDSAAdd.GateProof.cx_correct
 #print axioms ECDSAAdd.GateProof.ccx_correct
 #print axioms ECDSAAdd.GateProof.Plan.seq
+#print axioms ECDSAAdd.GateProof.Plan.toTriple
 #print axioms ECDSAAdd.Arithmetic.fullAdder.translation
 #print axioms ECDSAAdd.Arithmetic.eraseCarry_correct
 #print axioms ECDSAAdd.Arithmetic.compareChain_correct

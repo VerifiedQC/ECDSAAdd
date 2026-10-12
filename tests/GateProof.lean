@@ -137,11 +137,97 @@ example (c t : Wire)
     have _bad := Plan.step (.bit c) t [.CX c t] _onlyBits
   trivial
 
--- Lock the proof dependency chain, so annotations cannot become unused decorations.
+-- A Hoare chain proves each intermediate state, reading the current controls.
+example (a b c : Wire) (h : [a, b, c].Nodup) (A B C : Bool) :
+    {{ a = A, b = B, c = C }} dynamicControl a b c
+    {{ a = A, b = (B ^^ A), c = (C ^^ (B ^^ A)) }} := hoare_steps {
+  { a = A, b = B, c = C };
+  if a { b ^= 1; } using CX by cx_correct;
+  { a = A, b = (B ^^ A), c = C } by (by gate_step [h]);
+  if b { c ^= 1; } using CX by cx_correct;
+  { a = A, b = (B ^^ A), c = (C ^^ (B ^^ A)) } by (by gate_step [h]);
+}
+
+-- Reject nested `by` errors, including Lean's editor recovery with placeholders.
+elab "strictHoare% " proof:term : term <= expected =>
+  Lean.Elab.Term.withoutErrToSorry do
+    let result ← Lean.Elab.Term.elabTermEnsuringType proof expected
+    Lean.Elab.Term.synthesizeSyntheticMVarsNoPostponing
+    let result ← Lean.instantiateMVars result
+    if result.hasMVar || result.hasSorry then
+      throwError "Expected a complete Hoare derivation."
+    return result
+
+-- A single-link chain needs no extra final skip/assertion and preserves phase.
+-- This also checks that strictHoare% accepts complete nested proofs.
+example (a b : Wire) (h : a ≠ b) (A B : Bool) :
+    {{ a = A, b = B }} [CX a b] {{ a = A, b = (B ^^ A) }} := strictHoare% hoare_steps {
+  { a = A, b = B };
+  if a { b ^= 1; } using CX by cx_correct;
+  { a = A, b = (B ^^ A) } by (by gate_step [h]);
+}
+
+-- Wrong intermediate assertions cannot be excused by a correct final contract.
+-- The checked steps must also match the original program, in the original order.
+-- An expected-program mismatch deliberately rejects before its nested tactics run.
+set_option linter.unreachableTactic false in
+example (a b c : Wire) (_h : [a, b, c].Nodup) (_A _B _C : Bool) : True := by
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b, CX a b] {{ a = _A, b = _B }} :=
+      strictHoare% hoare_steps {
+        { a = _A, b = _B };
+        if a { b ^= 1; } using CX by cx_correct;
+        { a = _A, b = _B } by (by gate_step [_h]);
+        if a { b ^= 1; } using CX by cx_correct;
+        { a = _A, b = _B } by (by gate_step [_h]);
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B, c = _C }} [CX b c, CX a b]
+        {{ a = _A, b = (_B ^^ _A), c = (_C ^^ (_B ^^ _A)) }} := strictHoare% hoare_steps {
+      { a = _A, b = _B, c = _C };
+      if a { b ^= 1; } using CX by cx_correct;
+      { a = _A, b = (_B ^^ _A), c = _C } by (by gate_step [_h]);
+      if b { c ^= 1; } using CX by cx_correct;
+      { a = _A, b = (_B ^^ _A), c = (_C ^^ (_B ^^ _A)) } by (by gate_step [_h]);
+    }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX b a]
+        {{ a = _A, b = (_B ^^ _A) }} := strictHoare% hoare_steps {
+      { a = _A, b = _B };
+      if a { b ^= 1; } using CX by cx_correct;
+      { a = _A, b = (_B ^^ _A) } by (by gate_step [_h]);
+    }
+  fail_if_success
+    have _bad : {{ a = _A }} [CX a a] {{ a = false }} := strictHoare% hoare_steps {
+      { a = _A };
+      if a { a ^= 1; } using CX by cx_correct;
+      { a = false } by (by gate_step []);
+    }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B, c = _C }} dynamicControl a b c
+        {{ a = _A, b = (_B ^^ _A), c = (_C ^^ _B) }} := strictHoare% hoare_steps {
+      { a = _A, b = _B, c = _C };
+      if a { b ^= 1; } using CX by cx_correct;
+      { a = _A, b = (_B ^^ _A), c = _C } by (by gate_step [_h]);
+      if b { c ^= 1; } using CX by cx_correct;
+      { a = _A, b = (_B ^^ _A), c = (_C ^^ _B) } by (by gate_step [_h]);
+    }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b]
+        {{ a = (!_A), b = (_B ^^ _A) }} := strictHoare% hoare_steps {
+      { a = _A, b = _B };
+      if a { b ^= 1; } using CX by cx_correct;
+      { a = (!_A), b = (_B ^^ _A) } by (by gate_step [_h]);
+    }
+  trivial
+
+-- Lock both proof dependency chains: gate certification and Hoare sequencing.
 run_cmd do
   let env ← Lean.getEnv
   for (root, required) in [
       (``fullAdder_correct, ``fullAdder.translation),
+      (``fullAdder_correct, ``Triple.seq),
+      (``fullAdder_correct, ``Plan.toTriple),
       (``fullAdder_spec, ``fullAdder_correct),
       (``fullAdder.translation, ``fullAdder.checked),
       (``fullAdder.checked, ``cx_correct),

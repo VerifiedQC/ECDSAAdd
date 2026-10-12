@@ -4,13 +4,13 @@
 
 相对于 `439f481`，改写 **97 个原证明体**（81 个公开、16 个内部），涉及 41 个 Arithmetic 文件。原文件内 274 条定理声明及 106 个非证明声明经去注释文本核对均未变化。另新增一个小型内部引理 `divideProduct_returnBorrowedBit`，仅整理借用高位的恢复，不隐藏整个除法证明。
 
-## 后续示范：用 calc 展示 fullAdder 的数学推导
+## 后续示范：fullAdder 的逐步 Hoare 证明与 calc
 
-[FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean) 的 `fullAdder_correct` 进一步改为等式链：先展开进位的布尔表达式、消去两个相同的输入位，再证明输入恢复与和位计算，最后合并相位和其余线路不变的结论。`A/B/C` 是输入初值，`O/K` 是任意输出初值，不额外要求清零。解释保持英文。
+[FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean) 的 `fullAdder_correct` 按原程序九条语句排列：初始 `{ a=A, b=B, cin=C, out=O, carry=K }`，然后每条语句后都列出五根 wire 的新值。第 4 步用 `calc` 推导进位，第 5、6 步消去相同输入位，第 9 步合并和位。`A/B/C` 是输入初值，`O/K` 是任意输出初值，不额外要求清零。解释保持英文。
 
 主证明保留实际代数推导。内部引理 `state_eq_of_two_outputs` 仅将已证明的两处输出、相位和其余位拼成状态等式，不包含全加器算法。电路和定理声明不变；以下 97 项仍是上一轮改写清单。
 
-现在这个示范还包含门级认证：`fullAdder` 的九条 `if` 每条指定 `using CX/CCX by cx_correct/ccx_correct`。`verified def` 从同一份源代码保留组合证书，并生成 `fullAdder.model`、`fullAdder.requires` 和 `fullAdder.translation`。主证明先从五线互异推出每门的接线前提，再使用连接定理，之后只对独立模型做 `calc`；不再重新展开量子门的 `run`。基础规则位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)，测试锁定了主证明 → 连接定理 → 每行门证明／顺序组合的依赖方向。
+`fullAdder` 的定义保持不变，仍是九条 `if … using CX/CCX by cx_correct/ccx_correct`。证明中的 `hoare_steps` 将每个经检查的局部状态转移经 `Plan.toTriple` 变成 Hoare triple，再由 `Triple.seq` 顺序组合；首尾断言和门列必须匹配待证目标，不是在证明另一个程序。相位来自 Triple，其他 wire 的保持性质通过已有 `fullAdder.translation` 及完整状态模型补齐。基础规则位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)，测试同时锁定门级认证和 Hoare 顺序组合的依赖方向，并拒绝错误中间状态、错误门序和使用旧控制值等写法。
 
 ## 建议先看
 

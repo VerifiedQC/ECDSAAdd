@@ -6,7 +6,7 @@
 
 [FullAdder.lean](../Arithmetic/Addition/FullAdder.lean) 使用 `verified def … : Program := prog { … }`，将九个门写成九条 `if … { target ^= 1; } using CX/CCX by cx_correct/ccx_correct;`。`verified` 表示保留并顺序组合每行的完整状态证明；它不改变原 `Program` 类型，也不增加门或测量。
 
-同一份代码生成 `fullAdder.checked`（实现、模型、前提、组合证明）、`fullAdder.model`（纯位状态计算）、`fullAdder.requires`（每门的接线前提）和 `fullAdder.translation`（实际电路执行等于数学模型）。`fullAdder_correct` 显式证明调用前提后引用连接定理，再用 `calc` 证明全加器的数值公式。模型读取每一步的当前状态；不把后续条件固定成最初输入，也不将条件分支解释成测量。
+同一份代码生成 `fullAdder.checked`（实现、模型、前提、组合证明）、`fullAdder.model`（纯位状态计算）、`fullAdder.requires`（每门的接线前提）和 `fullAdder.translation`（实际电路执行等于数学模型）。`fullAdder_correct` 通过 `hoare_steps` 在九条语句之间逐一列出五根 wire 的值，每个新状态都必须证明；`calc` 就放在需要化简的那一步旁边。模型读取每一步的当前状态；不把后续条件固定成最初输入，也不将条件分支解释成测量。
 
 这条小型入口通过 `open ECDSAAdd.GateProof` 启用，目前只支持一组显式参数、单／双控制和 `^= 1`，不支持任意 Python、循环、重置或自动添加控制。`using` 接收相应元数的单门构造函数，`by` 必须证明指定门对整个状态的效果，包括相位与其他 wire；不是只核对目标位，也不丢弃证书后再独立证明一次电路。实现见 [GateProof.lean](GateProof.lean)。
 
@@ -280,6 +280,15 @@ def Plan.seq (first second : Plan) : Plan
 ```
 
 `empty` 是恒等操作。`step` 保存一条语句的实现和证明。`seq` 拼接门列，依次执行数学模型，保留两边的调用前提，并由 `run_append` 组合完整状态证明；第二步读取第一步的结果。
+
+```lean
+theorem Plan.toTriple (plan : Plan) {P Q : BasisState → Prop}
+    (step : plan.requires ∧ ∀ st, P st → Q (plan.model st))
+```
+
+证明了：满足接线条件，且该语句把前置条件 P 变成后置条件 Q 时，它的实际电路满足 `Triple P plan.circuit Q`，包括相位保持和任意测量记录。
+
+`hoare_steps` 仅用于证明，格式是初始 `{ wire=value, … };`，随后交替写原程序的门语句和 `{ wire=value, … } by 证明;`。它逐步调用 `Plan.toTriple`，再用 `Triple.seq` 连接；生成的门序列和首尾断言必须匹配待证 Triple。`gate_step [事实]` 检查一次门更新及接线条件，不能跳过错误的中间断言。当前只支持上述 CX/CCX 条件翻转句式；不是任意算术／循环的自动证明器。未列出的 wire 保持性质仍需另证，不能从断言缺省推得。
 
 ## [BitTranslation.lean](BitTranslation.lean)
 
