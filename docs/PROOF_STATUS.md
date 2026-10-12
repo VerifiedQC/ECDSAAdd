@@ -8,6 +8,16 @@ M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部
 
 验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
+## fullAdder：逐门认证、顺序组合与 calc（2026-10-12）
+
+`fullAdder` 的原九门改写为九条 `if … { target ^= 1; } using CX/CCX by cx_correct/ccx_correct;`，门序列和 `Program` 接口不变。新增 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)：独立的条件翻转模型、CX/CCX 完整状态证明，以及基于 `run_append` 的证书顺序组合。`verified def` 从同一份源代码生成模型、接线前提、保留证书和 `fullAdder.translation`；语法仅在打开 `ECDSAAdd.GateProof` 时启用，不影响其他模块的同名变量。
+
+`fullAdder_correct` 先证明每门的接线前提，再引用组合后的连接定理，之后只对数学模型作 `calc` 推导，不再展开门的 `run`。`FullAdder.lean` 原有 13 条定理的声明全部保持，仅该定理的证明体改变；相位、任意测量记录、非零输出初值和其余 wire 保持性质未削弱。门的局部前提不取代全加器规格的五线互异前提。
+
+完整 `scripts/verify.sh` 本地退出 0：2,181 个构建任务、19 个测试文件共 502 个 example、485 项公理检查。新增 21 个 example，包含 9 项拒绝检查和证明依赖检查，覆盖原门列相等、动态控制读取、位常量、相位与 frame、错误实现／接线／证明、非法调用条件，以及“各门合法但全加器布局不合法”的反例。原测试未削弱，未新增 sorry、admit、公理、依赖或放宽证明资源限制。
+
+全加器仍为八个 CX、一个 CCX、零次测量，互异布局使用五根 wire；下游资源证明全部通过。发布目标仅为 `new-temp`，不合并 `new`。本地验证通过不代表远端 CI 已通过。
+
 ## Arithmetic 关键证明：命题、阶段与显式结论（2026-10-10）
 
 相对于 `439f481`，改写 41 个 Arithmetic 文件中的 97 个原证明体（81 个公开、16 个内部），覆盖 Addition、比较／判零、模加减、倍增／折半、模乘、求逆、除法及点加。逐文件清单和保留的短导出接口见 [证明阅读地图](PROOF_READABILITY.md)。实际数值分支、递归归纳和准备—使用—恢复链留在主证明中，没有把整个旧证明藏入一个新辅助定理。

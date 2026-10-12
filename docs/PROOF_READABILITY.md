@@ -8,7 +8,9 @@
 
 [FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean) 的 `fullAdder_correct` 进一步改为等式链：先展开进位的布尔表达式、消去两个相同的输入位，再证明输入恢复与和位计算，最后合并相位和其余线路不变的结论。`A/B/C` 是输入初值，`O/K` 是任意输出初值，不额外要求清零。解释保持英文。
 
-主证明保留实际代数推导；`simp` 只用于门语义和等式步骤的检查。新增的内部引理 `state_eq_of_two_outputs` 仅将已证明的两处输出、相位和其余位拼成状态等式，不包含全加器算法。电路和定理声明不变；以下 97 项仍是上一轮改写清单。
+主证明保留实际代数推导。内部引理 `state_eq_of_two_outputs` 仅将已证明的两处输出、相位和其余位拼成状态等式，不包含全加器算法。电路和定理声明不变；以下 97 项仍是上一轮改写清单。
+
+现在这个示范还包含门级认证：`fullAdder` 的九条 `if` 每条指定 `using CX/CCX by cx_correct/ccx_correct`。`verified def` 从同一份源代码保留组合证书，并生成 `fullAdder.model`、`fullAdder.requires` 和 `fullAdder.translation`。主证明先从五线互异推出每门的接线前提，再使用连接定理，之后只对独立模型做 `calc`；不再重新展开量子门的 `run`。基础规则位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)，测试锁定了主证明 → 连接定理 → 每行门证明／顺序组合的依赖方向。
 
 ## 建议先看
 

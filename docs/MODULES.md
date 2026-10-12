@@ -4,6 +4,8 @@
 
 ## 阅读方式
 
+完整的门级认证示范先看 [FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean)：九条带 `using/by` 的受控翻转 → 自动组合的 `fullAdder.translation` → `fullAdder_correct` 中的 `calc` 数学推导。基础 CX/CCX 证明与顺序组合位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)；原九门序列、公开规格和资源不变。
+
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 
 ### 当前关键证明：命题、阶段与结论（2026-10-10）

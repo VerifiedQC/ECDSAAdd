@@ -10,6 +10,10 @@
 
 该文件实现量子 full adder。
 
+`fullAdder` 的九个门现在写成九条 `if … { target ^= 1; } using … by …`：八条使用 `CX/cx_correct`，一条使用 `CCX/ccx_correct`。`if` 表示相干量子控制，不测量；每一行读取执行到该行时的位值。`1` 是位常量，不是 wire 编号。
+
+开头的 `verified def` 从这一份代码生成原来的 `fullAdder : … → Program`、独立数学模型 `fullAdder.model`、接线条件 `fullAdder.requires`、保留每行证明的 `fullAdder.checked`，以及顺序组合后的完整状态定理 `fullAdder.translation`。`fullAdder_correct` 先证明接线条件并引用该连接定理，再用 `calc` 推导进位、输入恢复与和位；不再展开底层 `run`。通用门证明和组合规则见 [GateProof.lean](../../Framework/GateProof.lean)。
+
 输入 wire a、b、cin 的初值分别为 A、B、C；out 保存和位，carry 保存进位。当 out 和 carry 初始化为 0 时，电路计算：
 
 ```text

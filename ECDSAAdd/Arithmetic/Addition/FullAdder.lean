@@ -1,8 +1,9 @@
-import ECDSAAdd.Framework.Hoare
+import ECDSAAdd.Framework.GateProof
 import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open Instr Correction
+open GateProof
 open scoped ECDSAAdd.ProofLanguage
 
 def sumBit (a b c : Bool) : Bool := (a ^^ b) ^^ c
@@ -21,10 +22,18 @@ MAJ 表示三个输入中至少两个为 1；out、carry 初始为零时分别�
 - `out`：和位的 XOR 输出 wire；初始为 0 时得到本位和。
 - `carry`：进位的 XOR 输出 wire；初始为 0 时得到本位向高位的进位。
 -/
-def fullAdder (a b cin out carry : Wire) : Program := prog {
-  CX a b; CX a cin; CCX b cin carry;
-  CX a carry; CX a cin; CX a b;
-  CX a out; CX b out; CX cin out
+verified def fullAdder (a b cin out carry : Wire) : Program := prog {
+  if a         { b ^= 1; }     using CX  by cx_correct;
+  if a         { cin ^= 1; }   using CX  by cx_correct;
+  if b AND cin { carry ^= 1; } using CCX by ccx_correct;
+
+  if a         { carry ^= 1; } using CX  by cx_correct;
+  if a         { cin ^= 1; }   using CX  by cx_correct;
+  if a         { b ^= 1; }     using CX  by cx_correct;
+
+  if a         { out ^= 1; }   using CX  by cx_correct;
+  if b         { out ^= 1; }   using CX  by cx_correct;
+  if cin       { out ^= 1; }   using CX  by cx_correct;
 }
 
 /-- 当 carry = MAJ(a,b,cin) 时，将 carry 测量清零，保留 a/b/cin 并恢复相位。
@@ -71,17 +80,25 @@ theorem fullAdder_correct (a b cin out carry : Wire)
   let C := s.basis cin
   let O := s.basis out
   let K := s.basis carry
-  let final := run (fullAdder a b cin out carry) m s
+  let final : State := ⟨s.phase, fullAdder.model a b cin out carry s.basis⟩
 
   -- Distinct wires let each gate update only its target.
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
     not_or, not_false_eq_true, and_true] at hdisjoint
   obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hdisjoint
 
+  -- Compose the nine supplied gate proofs, discharging every wiring condition.
+  -- From here on, reason about the independent if-statement model, not `run`.
+  have execution : run (fullAdder a b cin out carry) m s = final :=
+    fullAdder.translation a b cin out carry (by
+      simp_all [fullAdder.requires, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+        Control.Valid, List.nodup_cons, List.mem_cons]) s m
+
   -- 1. The first four gates compute the carry; later gates do not target it.
   have carryOutput : final.basis carry = (K ^^ carryBit A B C) := calc
     final.basis carry = ((K ^^ ((B ^^ A) && (C ^^ A))) ^^ A) := by
-      simp [final, fullAdder, run, writeBit, A, B, C, K,
+      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+        flipIf_eq_xor, Control.read, writeBit, A, B, C, K,
         hab, hac, hak, hbc, hbk, hck, hok, Ne.symm]
     _ = ((K ^^ (((B && C) ^^ (A && B)) ^^ (A && C))) ^^ (A ^^ A)) := by
       -- Distribute AND over XOR and use A AND A = A.
@@ -97,13 +114,15 @@ theorem fullAdder_correct (a b cin out carry : Wire)
   -- 2. The next two gates undo the temporary changes to b and cin.
   have inputB : final.basis b = B := calc
     final.basis b = ((B ^^ A) ^^ A) := by
-      simp [final, fullAdder, run, writeBit, A, B,
+      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+        flipIf_eq_xor, Control.read, writeBit, A, B,
         hab, hac, hak, hbc, hbo, hbk, hck, Ne.symm]
     _ = (B ^^ (A ^^ A)) := Bool.xor_assoc B A A
     _ = B := by rw [Bool.xor_self, Bool.xor_false]
   have inputC : final.basis cin = C := calc
     final.basis cin = ((C ^^ A) ^^ A) := by
-      simp [final, fullAdder, run, writeBit, A, C,
+      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+        flipIf_eq_xor, Control.read, writeBit, A, C,
         hab, hac, hak, hbc, hco, hck, Ne.symm]
     _ = (C ^^ (A ^^ A)) := Bool.xor_assoc C A A
     _ = C := by rw [Bool.xor_self, Bool.xor_false]
@@ -111,7 +130,8 @@ theorem fullAdder_correct (a b cin out carry : Wire)
   -- 3. The last three gates XOR the restored inputs into out.
   have sumOutput : final.basis out = (O ^^ sumBit A B C) := calc
     final.basis out = (((O ^^ A) ^^ B) ^^ C) := by
-      simp [final, fullAdder, run, writeBit, A, B, C, O,
+      simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+        flipIf_eq_xor, Control.read, writeBit, A, B, C, O,
         hab, hac, hak, hbc, hbo, hbk, hco, hck, hok, Ne.symm]
     _ = (O ^^ ((A ^^ B) ^^ C)) := by simp only [Bool.xor_assoc]
     _ = (O ^^ sumBit A B C) := rfl
@@ -125,11 +145,12 @@ theorem fullAdder_correct (a b cin out carry : Wire)
     · subst w; exact inputB
     by_cases hc : w = cin
     · subst w; exact inputC
-    simp [final, fullAdder, run, writeBit, ho, hk, hb, hc]
+    simp [final, fullAdder.model, fullAdder.checked, Plan.seq, Plan.step, Plan.empty,
+      flipIf_eq_xor, writeBit, ho, hk, hb, hc]
 
   -- Combine the two calculated outputs with the unchanged rest of the state.
-  exact state_eq_of_two_outputs s final out carry hok
-    (O ^^ sumBit A B C) (K ^^ carryBit A B C) phase sumOutput carryOutput frame
+  exact execution.trans (state_eq_of_two_outputs s final out carry hok
+    (O ^^ sumBit A B C) (K ^^ carryBit A B C) phase sumOutput carryOutput frame)
 
 /-- 只要 carry 保存正确的进位，就能对任意测量结果清零它，且恢复原相位。 -/
 theorem eraseCarry_correct (a b cin carry : Wire)

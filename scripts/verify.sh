@@ -16,6 +16,7 @@ lake env lean -DwarningAsError=true tests/ProofLanguage.lean
 lake env lean -DwarningAsError=true tests/BranchProof.lean
 lake env lean -DwarningAsError=true tests/EquationalProof.lean
 lake env lean -DwarningAsError=true tests/StateProof.lean
+lake env lean -DwarningAsError=true tests/GateProof.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
 lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
@@ -25,6 +26,11 @@ lake env lean -DwarningAsError=true tests/ArithmeticAnnotations.lean
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
 #print axioms ECDSAAdd.Arithmetic.fullAdder_correct
+#print axioms ECDSAAdd.GateProof.flipIf_eq_xor
+#print axioms ECDSAAdd.GateProof.cx_correct
+#print axioms ECDSAAdd.GateProof.ccx_correct
+#print axioms ECDSAAdd.GateProof.Plan.seq
+#print axioms ECDSAAdd.Arithmetic.fullAdder.translation
 #print axioms ECDSAAdd.Arithmetic.eraseCarry_correct
 #print axioms ECDSAAdd.Arithmetic.compareChain_correct
 #print axioms ECDSAAdd.Arithmetic.compareLt_correct

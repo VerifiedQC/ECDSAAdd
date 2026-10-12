@@ -2,6 +2,14 @@
 
 本模块定义电路的状态表示、允许的操作、执行规则，以及正确性和资源计数的证明工具。
 
+## 完整门级示范：fullAdder
+
+[FullAdder.lean](../Arithmetic/Addition/FullAdder.lean) 使用 `verified def … : Program := prog { … }`，将九个门写成九条 `if … { target ^= 1; } using CX/CCX by cx_correct/ccx_correct;`。`verified` 表示保留并顺序组合每行的完整状态证明；它不改变原 `Program` 类型，也不增加门或测量。
+
+同一份代码生成 `fullAdder.checked`（实现、模型、前提、组合证明）、`fullAdder.model`（纯位状态计算）、`fullAdder.requires`（每门的接线前提）和 `fullAdder.translation`（实际电路执行等于数学模型）。`fullAdder_correct` 显式证明调用前提后引用连接定理，再用 `calc` 证明全加器的数值公式。模型读取每一步的当前状态；不把后续条件固定成最初输入，也不将条件分支解释成测量。
+
+这条小型入口通过 `open ECDSAAdd.GateProof` 启用，目前只支持一组显式参数、单／双控制和 `^= 1`，不支持任意 Python、循环、重置或自动添加控制。`using` 接收相应元数的单门构造函数，`by` 必须证明指定门对整个状态的效果，包括相位与其他 wire；不是只核对目标位，也不丢弃证书后再独立证明一次电路。实现见 [GateProof.lean](GateProof.lean)。
+
 ## 当前入口：显式实现与证明（2026-10-06）
 
 Arithmetic 的关键算法先读原函数正文，具体入口见 [项目地图](../../docs/MODULES.md#当前关键入口显式-using--by2026-10-07)；各模块的 `Certified.lean` 另保留整块认证接口。每个语句或共享代码块直接指定 Lean 实现及其规格证明，不经过默认实现注册表：
@@ -216,6 +224,62 @@ prog using (montOutputContext M) {
 [BitTranslation.lean](#bittranslationlean)
 
 这个文件提供 Addition 的位运算语义和行内实现／证明注解，可嵌入原有 `prog` 循环。
+
+[GateProof.lean](#gateprooflean)
+
+这个文件定义条件翻转的独立位语义，证明 CX/CCX 的完整状态效果，并将每行证书顺序组合成实际电路与数学模型的连接证明。
+
+## [GateProof.lean](GateProof.lean)
+
+```lean
+inductive Control
+```
+
+控制条件是单根 wire 或两根 wire 的 AND，不包含测量。
+
+```lean
+def Control.read : Control → BasisState → Bool
+def Control.Valid (control : Control) (target : Wire) : Prop
+```
+
+`read` 读取当前状态中的控制值。`Valid` 要求单控制与目标不同，或双控制的三根线互异；它是调用前提，不是对量子数据的运行时检查。
+
+```lean
+def flipIf (control : Control) (target : Wire) (st : BasisState) : BasisState
+```
+
+条件成立时翻转目标，否则保持整个状态；这是源语句的独立数学含义。
+
+```lean
+theorem flipIf_eq_xor (control : Control) (target : Wire) (st : BasisState)
+```
+
+证明了条件翻转等于向目标位 XOR 控制条件的值。
+
+```lean
+theorem cx_correct (c t : Wire) (_valid : (Control.bit c).Valid t)
+    (s : State) (m : List Bool)
+theorem ccx_correct (a b t : Wire) (_valid : (Control.both a b).Valid t)
+    (s : State) (m : List Bool)
+```
+
+证明了 CX/CCX 执行等于对应的条件翻转，并保持相位和所有非目标位。控制位不变由接线前提保证；结论覆盖任意初始状态和测量记录。
+
+```lean
+structure Plan
+```
+
+一个计划由 `circuit`（实际门列）、`model`（独立数学计算）、`requires`（接线前提）和 `correct`（满足前提时的完整状态等式证明）组成。
+
+```lean
+def Plan.empty : Plan
+def Plan.step (control : Control) (target : Wire) (circuit : Program)
+    (proof : control.Valid target → ∀ s m,
+      run circuit m s = ⟨s.phase, flipIf control target s.basis⟩) : Plan
+def Plan.seq (first second : Plan) : Plan
+```
+
+`empty` 是恒等操作。`step` 保存一条语句的实现和证明。`seq` 拼接门列，依次执行数学模型，保留两边的调用前提，并由 `run_append` 组合完整状态证明；第二步读取第一步的结果。
 
 ## [BitTranslation.lean](BitTranslation.lean)
 
