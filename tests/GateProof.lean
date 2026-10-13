@@ -221,11 +221,109 @@ example (a b c : Wire) (_h : [a, b, c].Nodup) (_A _B _C : Bool) : True := by
     }
   trivial
 
+-- The labelled presentation keeps one command/result pair on two lines.
+example (a b c : Wire) (h : [a, b, c].Nodup) (A B C : Bool) :
+    {{ a = A, b = B, c = C }} dynamicControl a b c
+    {{ a = A, b = (B ^^ A), c = (C ^^ (B ^^ A)) }} := strictHoare% hoare_steps {
+  Precondition { a=A, b=B, c=C };
+  after command { if a { b ^= 1; }; }
+  get { a=A, b=(B ^^ A), c=C } by cx_step;
+  after command { if b { c ^= 1; }; }
+  get { a=A, b=(B ^^ A), c=(C ^^ (B ^^ A)) } by cx_step;
+  Conclusion { a=A, b=(B ^^ A), c=(C ^^ (B ^^ A)) };
+}
+
+example (a b c : Wire) (h : [a, b, c].Nodup) (A B C : Bool) :
+    {{ a = A, b = B, c = C }} [CCX a b c]
+    {{ a = A, b = B, c = (C ^^ (A && B)) }} := strictHoare% hoare_steps {
+  Precondition { a=A, b=B, c=C };
+  after command { if a AND b { c ^= 1; }; }
+  get { a=A, b=B, c=(C ^^ (A && B)) } by ccx_step;
+  Conclusion { a=A, b=B, c=(C ^^ (A && B)) };
+}
+
+-- Presentation labels remain usable as ordinary Lean variable names.
+example (after command get Precondition Conclusion : Nat) :
+    after + command + get + Precondition + Conclusion =
+      after + command + get + Precondition + Conclusion := rfl
+
+-- All displayed claims are checked, including Precondition and Conclusion.
+set_option linter.unreachableTactic false in
+example (a b c : Wire) (_h : [a, b, c].Nodup) (_A _B _C : Bool) : True := by
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b] {{ a = _A, b = (_B ^^ _A) }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=(!_A), b=_B };
+        after command { if a { b ^= 1; }; }
+        get { a=(!_A), b=(_B ^^ (!_A)) } by cx_step;
+        Conclusion { a=(!_A), b=(_B ^^ (!_A)) };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b] {{ a = _A, b = _B }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        after command { if a { b ^= 1; }; }
+        get { a=_A, b=(_B ^^ _A) } by cx_step;
+        Conclusion { a=_A, b=_B };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b, CX a b] {{ a = _A, b = _B }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        after command { if a { b ^= 1; }; }
+        get { a=_A, b=_B } by cx_step;
+        after command { if a { b ^= 1; }; }
+        get { a=_A, b=_B } by cx_step;
+        Conclusion { a=_A, b=_B };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX b a] {{ a = _A, b = (_B ^^ _A) }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        after command { if a { b ^= 1; }; }
+        get { a=_A, b=(_B ^^ _A) } by cx_step;
+        Conclusion { a=_A, b=(_B ^^ _A) };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b] {{ a = _A, b = (_B ^^ _A) }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        after command { if a { b ^= 2; }; }
+        get { a=_A, b=(_B ^^ _A) } by cx_step;
+        Conclusion { a=_A, b=(_B ^^ _A) };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b] {{ a = _A, b = (_B ^^ _A) }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        before command { if a { b ^= 1; }; }
+        get { a=_A, b=(_B ^^ _A) } by cx_step;
+        Conclusion { a=_A, b=(_B ^^ _A) };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B }} [CX a b] {{ a = _A, b = (_B ^^ _A) }} :=
+      strictHoare% hoare_steps {
+        Precondition { a=_A, b=_B };
+        after command { if a { b ^= 1; }; }
+        get { a=_A, b=(_B ^^ _A) } by exact True.intro;
+        Conclusion { a=_A, b=(_B ^^ _A) };
+      }
+  fail_if_success
+    have _bad : {{ a = _A, b = _B, c = _C }} dynamicControl a b c
+        {{ a = _A, b = (_B ^^ _A), c = (_C ^^ _B) }} := strictHoare% hoare_steps {
+      Precondition { a=_A, b=_B, c=_C };
+      after command { if a { b ^= 1; }; }
+      get { a=_A, b=(_B ^^ _A), c=_C } by cx_step;
+      after command { if b { c ^= 1; }; }
+      get { a=_A, b=(_B ^^ _A), c=(_C ^^ _B) } by cx_step;
+      Conclusion { a=_A, b=(_B ^^ _A), c=(_C ^^ _B) };
+    }
+  trivial
+
 -- Lock both proof dependency chains: gate certification and Hoare sequencing.
 run_cmd do
   let env ← Lean.getEnv
   for (root, required) in [
-      (``fullAdder_correct, ``fullAdder.translation),
       (``fullAdder_correct, ``Triple.seq),
       (``fullAdder_correct, ``Plan.toTriple),
       (``fullAdder_spec, ``fullAdder_correct),
@@ -238,19 +336,23 @@ run_cmd do
     unless proof.getUsedConstants.contains required do
       throwError "{root} must use {required}"
 
-  -- Lean may store the seq proof in an auxiliary declaration; follow its dependencies.
-  let mut pending := [``Plan.seq]
-  let mut seen : Lean.NameSet := {}
-  while !pending.isEmpty do
-    let name := pending.head!
-    pending := pending.tail
-    if seen.contains name then continue
-    seen := seen.insert name
-    let some info := env.find? name | throwError "Missing dependency {name}"
-    let some proof := info.value? | continue
-    for dep in proof.getUsedConstants do
-      if dep.toString.startsWith "ECDSAAdd." then pending := dep :: pending
-  unless seen.contains ``run_append do
-    throwError "Sequential certification must depend on run_append"
+  -- Follow helper declarations too: moving frame/phase bookkeeping out of the
+  -- readable proof must not remove its link to the original certified program.
+  for (root, required) in [(``Plan.seq, ``run_append),
+      (``fullAdder_correct, ``fullAdder.translation)] do
+    let mut pending := [root]
+    let mut seen : Lean.NameSet := {}
+    while !pending.isEmpty do
+      let name := pending.head!
+      pending := pending.tail
+      if seen.contains name then continue
+      seen := seen.insert name
+      let some info := env.find? name | throwError "Missing dependency {name}"
+      let some proof := info.value? | continue
+      for dep in proof.getUsedConstants do
+        if ((Lean.privateToUserName? dep).getD dep).toString.startsWith "ECDSAAdd." then
+          pending := dep :: pending
+    unless seen.contains required do
+      throwError "{root} must transitively depend on {required}"
 
 end GateProofTests

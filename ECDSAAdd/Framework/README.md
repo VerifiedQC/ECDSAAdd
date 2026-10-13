@@ -6,7 +6,7 @@
 
 [FullAdder.lean](../Arithmetic/Addition/FullAdder.lean) 使用 `verified def … : Program := prog { … }`，将九个门写成九条 `if … { target ^= 1; } using CX/CCX by cx_correct/ccx_correct;`。`verified` 表示保留并顺序组合每行的完整状态证明；它不改变原 `Program` 类型，也不增加门或测量。
 
-同一份代码生成 `fullAdder.checked`（实现、模型、前提、组合证明）、`fullAdder.model`（纯位状态计算）、`fullAdder.requires`（每门的接线前提）和 `fullAdder.translation`（实际电路执行等于数学模型）。`fullAdder_correct` 通过 `hoare_steps` 在九条语句之间逐一列出五根 wire 的值，每个新状态都必须证明；`calc` 就放在需要化简的那一步旁边。模型读取每一步的当前状态；不把后续条件固定成最初输入，也不将条件分支解释成测量。
+同一份代码生成 `fullAdder.checked`（实现、模型、前提、组合证明）、`fullAdder.model`（纯位状态计算）、`fullAdder.requires`（每门的接线前提）和 `fullAdder.translation`（实际电路执行等于数学模型）。`fullAdder_correct` 使用 `Precondition`、两行一组的 `after command { … }` / `get { … } by 规则;`、`Conclusion` 来陈述九步状态变化。正文只引用规则名，数学化简和完整状态拼接放在辅助证明区。模型读取每一步的当前状态，不将条件分支解释成测量。
 
 这条小型入口通过 `open ECDSAAdd.GateProof` 启用，目前只支持一组显式参数、单／双控制和 `^= 1`，不支持任意 Python、循环、重置或自动添加控制。`using` 接收相应元数的单门构造函数，`by` 必须证明指定门对整个状态的效果，包括相位与其他 wire；不是只核对目标位，也不丢弃证书后再独立证明一次电路。实现见 [GateProof.lean](GateProof.lean)。
 
@@ -289,6 +289,19 @@ theorem Plan.toTriple (plan : Plan) {P Q : BasisState → Prop}
 证明了：满足接线条件，且该语句把前置条件 P 变成后置条件 Q 时，它的实际电路满足 `Triple P plan.circuit Q`，包括相位保持和任意测量记录。
 
 `hoare_steps` 仅用于证明，格式是初始 `{ wire=value, … };`，随后交替写原程序的门语句和 `{ wire=value, … } by 证明;`。它逐步调用 `Plan.toTriple`，再用 `Triple.seq` 连接；生成的门序列和首尾断言必须匹配待证 Triple。`gate_step [事实]` 检查一次门更新及接线条件，不能跳过错误的中间断言。当前只支持上述 CX/CCX 条件翻转句式；不是任意算术／循环的自动证明器。未列出的 wire 保持性质仍需另证，不能从断言缺省推得。
+
+现在推荐使用带标签的同等写法：
+
+```lean
+hoare_steps {
+  Precondition { a=A, b=B };
+  after command { if a { b ^= 1; }; }
+  get { a=A, b=(B ^^ A) } by cx_step;
+  Conclusion { a=A, b=(B ^^ A) };
+}
+```
+
+`Precondition` 必须匹配待证前提；`Conclusion` 必须同时匹配最后一个 `get` 与待证后置条件。`command` 中的单／双控制翻转明确对应 CX／CCX，复用原门证明，不搜索默认实现；完整门列仍须等于原程序。`cx_step`、`ccx_step` 是 `gate_step` 的简写，使用当前上下文的接线条件；算法特有的规则可以在辅助区定义。上述标签不占用普通变量名，旧格式继续可用。
 
 ## [BitTranslation.lean](BitTranslation.lean)
 

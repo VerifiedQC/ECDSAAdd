@@ -4,7 +4,7 @@
 
 ## 阅读方式
 
-完整的门级认证示范先看 [FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean)：`fullAdder_correct` 在原九条受控翻转之间逐一列出五根 wire 的状态，用 `hoare_steps` 组合经过检查的断言，在需要化简的步骤旁用 `calc` 推导。基础 CX/CCX 证明、Hoare 顺序组合及完整状态连接位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)；本次只改证明，原函数定义、九门序列、公开规格和资源不变。
+完整的门级认证示范先看 [FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean)：`fullAdder_correct` 用 `Precondition`、两行一组的 `after command` / `get … by …` 和 `Conclusion` 列出九步状态变化。代数细节位于同文件 `FullAdderProof` 辅助区，正文只引用规则名。基础 CX/CCX 证明、Hoare 顺序组合及完整状态连接位于 [GateProof.lean](../ECDSAAdd/Framework/GateProof.lean)；原函数定义、九门序列、公开规格和资源不变。
 
 先选功能，只读该目录的 README，理解输入输出、前提、算法和证明思路。调用模块时核对公开定理；修改实现时再展开相关 Lean 文件。README 是唯一的人类阅读入口，不是正确性的替代证据，也不意味着维护者永远不用读代码。
 

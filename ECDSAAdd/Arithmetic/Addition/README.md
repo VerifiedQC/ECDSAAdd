@@ -14,7 +14,14 @@
 
 开头的 `verified def` 从这一份代码生成原来的 `fullAdder : … → Program`、独立数学模型 `fullAdder.model`、接线条件 `fullAdder.requires`、保留每行证明的 `fullAdder.checked`，以及顺序组合后的完整状态定理 `fullAdder.translation`。
 
-`fullAdder_correct` 按「五根 wire 的初始状态 → 第 1 条语句 → 新状态 → 第 2 条语句 → …」排列。`hoare_steps` 中每个大括号都是要证明的状态断言，前一步的后置条件直接成为下一步的前置条件；第 4、5、6、9 步旁边用 `calc` 化简进位、恢复输入、合并和位。Lean 检查九条语句与原程序完全一致，并用 `Triple.seq` 组合，不修改 `fullAdder`，也不额外执行一次电路。最后利用完整状态连接定理补齐其他 wire 保持性质。通用门证明和组合规则见 [GateProof.lean](../../Framework/GateProof.lean)。
+`fullAdder_correct` 从 `Precondition` 开始，九个步骤均为两行一组，最后写 `Conclusion`：
+
+```lean
+after command { if a { b ^= 1; }; }
+get { a=A, b=(B ^^ A), cin=C, out=O, carry=K } by cx_step;
+```
+
+每个 `get` 都必须证明，自动成为下一步的前置条件。正文只引用 `cx_step`、`ccx_step`、`carry_step`、`restore_step`、`sum_step`；具体数学化简放在同文件的 `FullAdderProof` 辅助区。`FullAdderProof.finish` 将已证五线结果和相位、其他 wire 保持性质合为原定理，不包含进位或和位的算法证明。Lean 检查命令与原程序完全一致，并用 `Triple.seq` 组合；不修改 `fullAdder`，也不额外执行一次电路。通用规则见 [GateProof.lean](../../Framework/GateProof.lean)。
 
 输入 wire a、b、cin 的初值分别为 A、B、C；out 保存和位，carry 保存进位。当 out 和 carry 初始化为 0 时，电路计算：
 

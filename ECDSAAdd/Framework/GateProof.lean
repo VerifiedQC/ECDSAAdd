@@ -156,14 +156,64 @@ Additional facts can supply wiring conditions and explicit Boolean calculations.
 scoped syntax "gate_step" "[" term,* "]" : tactic
 macro_rules
   | `(tactic| gate_step [$facts,*]) => do
-    let facts ← facts.getElems.mapM fun fact => `(Lean.Parser.Tactic.simpLemma| $fact:term)
+    let wiring := facts.getElems ++ #[← `(Plan.seq), ← `(Plan.step), ← `(Plan.empty),
+      ← `(Control.Valid), ← `(List.nodup_cons), ← `(List.mem_cons)]
+    let transition := facts.getElems ++ #[← `(Plan.seq), ← `(Plan.step), ← `(Plan.empty),
+      ← `(flipIf_eq_xor), ← `(Control.read), ← `(Holds.holds), ← `(writeBit), ← `(Ne.symm)]
+    let wiring ← wiring.mapM fun fact => `(Lean.Parser.Tactic.simpLemma| $fact:term)
+    let transition ← transition.mapM fun fact => `(Lean.Parser.Tactic.simpLemma| $fact:term)
     `(tactic|
       (constructor
-       · simp_all [$facts,*, Plan.seq, Plan.step, Plan.empty, Control.Valid,
-           List.nodup_cons, List.mem_cons]
+       · simp_all [$wiring,*]
        · intro st initial
-         simp_all [$facts,*, Plan.seq, Plan.step, Plan.empty, flipIf_eq_xor,
-           Control.read, Holds.holds, writeBit, Ne.symm]))
+         simp_all [$transition,*]))
+
+-- In a proof, an unannotated primitive command denotes exactly CX or CCX.
+-- This is not an implementation search: the resulting gate list is checked
+-- against the original program, and the existing gate certificates are reused.
+declare_syntax_cat hoareCommand
+syntax "if " term:max " {" term:max " ^= " num ";" "}" ";" : hoareCommand
+syntax "if " term:max " AND " term:max " {" term:max " ^= " num ";" "}" ";" : hoareCommand
+declare_syntax_cat namedHoareLink
+syntax atomic(ident &"command" "{") hoareCommand "}"
+  &"get" "{" term,+ "}" "by" tactic ";" : namedHoareLink
+scoped syntax "hoare_steps" "{" &"Precondition" "{" term,+ "}" ";"
+  namedHoareLink+ &"Conclusion" "{" term,+ "}" ";" "}" : term
+
+private def certifiedCommand (command : TSyntax `hoareCommand) : MacroM (TSyntax `gateProofStmt) := do
+  match command with
+  | `(hoareCommand| if $c { $t ^= $n:num; };) =>
+    `(gateProofStmt| if $c { $t ^= $n; } using Instr.CX by cx_correct;)
+  | `(hoareCommand| if $a AND $b { $t ^= $n:num; };) =>
+    `(gateProofStmt| if $a AND $b { $t ^= $n; } using Instr.CCX by ccx_correct;)
+  | _ => Macro.throwErrorAt command "Expected a single- or double-controlled bit flip."
+
+macro_rules
+  | `(hoare_steps {
+      Precondition { $initial,* };
+      $links:namedHoareLink*
+      Conclusion { $final,* };
+    }) => do
+    let pre ← gateAssertion initial.getElems
+    let post ← gateAssertion final.getElems
+    let steps ← links.mapM fun link => do
+      match link with
+      | `(namedHoareLink| $keyword:ident command { $command:hoareCommand }
+          get { $claims,* } by $reason:tactic;) => do
+        unless keyword.getId == `after do
+          Macro.throwErrorAt keyword "Expected after command."
+        let command ← certifiedCommand command
+        `(gateHoareLink| $command:gateProofStmt { $claims,* } by (by $reason:tactic);)
+      | _ => Macro.throwErrorAt link "Expected after command ... get ... by ... ."
+    let chain ← gateHoareChain pre steps.toList
+    -- Conclusion must match both the final get and the theorem's requested postcondition.
+    `(show Triple $pre _ $post from $chain)
+
+scoped syntax "cx_step" : tactic
+scoped syntax "ccx_step" : tactic
+macro_rules
+  | `(tactic| cx_step) => `(tactic| gate_step [])
+  | `(tactic| ccx_step) => `(tactic| gate_step [])
 
 /-- One source generates the ordinary Program and a retained, compositional certificate.
 This deliberately small entry point accepts one group of explicit parameters.

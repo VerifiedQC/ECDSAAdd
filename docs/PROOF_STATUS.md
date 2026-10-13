@@ -8,6 +8,14 @@ M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部
 
 验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
+## fullAdder_correct：两行式命令与结果（2026-10-13）
+
+主证明现在从 `Precondition` 开始，每步固定写两行 `after command { … }` / `get { … } by 规则;`，最后是 `Conclusion`，不在正文展开 tactic 或长 `calc`。`fullAdder` 和全部 13 条原定理陈述保持不变；只有 `fullAdder_correct` 的原证明体改变。具体代数规则和完整状态拼接移到同文件的 `FullAdderProof` 辅助区，后者仍须接收主证明导出的五线 Hoare 结果，不能独立代替算法证明。
+
+新句式复用原 `Plan.toTriple` / `Triple.seq` 链，检查 `Precondition`、每个 `get`、最终 `Conclusion` 和实际门序列；命令中的 CX/CCX 使用既有门证书。旧句式继续可用。新增 4 个 example，包含 8 项拒绝检查，覆盖首尾断言、中间状态、命令目标、非法位常量、错写标签、无效证据和错误的旧控制值；另外检查标签不会占用普通变量名。完整状态连接依赖改为穿过私有辅助引理检查，仍要求实际依赖 `fullAdder.translation`。
+
+完整 `scripts/verify.sh` 本地退出 0：2,181 个构建任务、19 个测试文件共 509 个 example、486 项公理检查。原函数定义、原定理陈述及其他原证明均经源码对比确认未改动；没有新增 sorry、admit、公理或改变电路资源。仅发布至 `new-temp`；本地通过不代表远端 CI 已通过。
+
 ## fullAdder_correct：逐步状态断言（2026-10-12）
 
 本次保持 `fullAdder` 原定义不变，仅将 `fullAdder_correct` 的证明改为九步 Hoare 推导：每条语句后列出 a、b、cin、out、carry 的值，第 4、5、6、9 步分别附上进位、输入恢复、和位的 `calc` 化简。全部 13 条原定理的陈述和其他证明均未改动，非零输出初值、相位、任意测量记录及其他 wire 保持性质全部保留。
