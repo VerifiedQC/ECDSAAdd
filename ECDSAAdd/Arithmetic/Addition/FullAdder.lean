@@ -184,6 +184,43 @@ theorem fullAdder_correct (a b cin out carry : Wire)
     Conclusion { a=A, b=B, cin=C, out=(O ^^ sumBit A B C), carry=(K ^^ carryBit A B C) };
   }
 
+namespace FullAdderProof
+
+/-- The measurement and its immediate correction form one atomic command.
+For outcome 1, the three CZ corrections cancel the measured majority parity. -/
+private theorem measure_majority (a b cin carry : Wire)
+    (ha : a ≠ carry) (hb : b ≠ carry) (hc : cin ≠ carry)
+    (initial : BasisState)
+    (valid : initial carry = carryBit (initial a) (initial b) (initial cin)) :
+    Triple (fun st => st = initial)
+      [.measureX carry [] [.CZ a b, .CZ a cin, .CZ b cin]]
+      (fun st => st = writeBit initial carry false) := by
+  intro s m same
+  cases s with
+  | mk phase basis =>
+    dsimp at same
+    subst basis
+    cases outcome : m.headD false with
+    | false =>
+      simp only [run, outcome]
+      simp [measureAndCorrect, correct]
+    | true =>
+      simp only [run, outcome]
+      simp [measureAndCorrect, correct, writeBit, ha, hb, hc, valid, carryBit]
+      cases initial a <;> cases initial b <;> cases initial cin <;> simp
+
+-- These rules only expose the interface of a previously checked execution rule.
+-- The full-adder computation stays in fullAdder_correct's nine visible steps.
+scoped syntax "full_adder_contract " term : tactic
+macro_rules
+  | `(tactic| full_adder_contract $wiring) => `(tactic|
+      (intro state record initial
+       rw [fullAdder_correct _ _ _ _ _ $wiring]
+       simp_all [Holds.holds, writeBit, Function.update, List.nodup_cons,
+         List.mem_cons, Ne.symm]))
+
+end FullAdderProof
+
 /-- 只要 carry 保存正确的进位，就能对任意测量结果清零它，且恢复原相位。 -/
 theorem eraseCarry_correct (a b cin carry : Wire)
     (ha : a ≠ carry) (hb : b ≠ carry) (hc : cin ≠ carry)
@@ -191,75 +228,63 @@ theorem eraseCarry_correct (a b cin carry : Wire)
     (hcarry : s.basis carry = carryBit (s.basis a) (s.basis b) (s.basis cin))
     (m : List Bool) :
     run (eraseCarry a b cin carry) m s =
-      ⟨s.phase, writeBit s.basis carry false⟩ := Proof
-  -- Both outcomes erase the carry. For outcome 1, the three CZ corrections
-  -- contribute exactly the same parity as the measured carry, cancelling it.
-  let correctionParity := ((s.basis a && s.basis b) ^^ (s.basis a && s.basis cin)) ^^
-      (s.basis b && s.basis cin)
-  { correctionParity = s.basis carry } as cancelsMeasuredCarry by hcarry.symm;
-  cases outcome : m.headD false with
-  | false =>
-    conclude { run (eraseCarry a b cin carry) m s =
-        ⟨s.phase, writeBit s.basis carry false⟩ } by (by
-      simp only [eraseCarry, run, outcome]
-      simp [measureAndCorrect, correct]);
-  | true =>
-    conclude { run (eraseCarry a b cin carry) m s =
-        ⟨s.phase, writeBit s.basis carry false⟩ } by (by
-      simp only [eraseCarry, run, outcome]
-      simp [measureAndCorrect, correct, writeBit,
-        ha, hb, hc, ← cancelsMeasuredCarry, correctionParity]
-      cases s.basis a <;> cases s.basis b <;> cases s.basis cin <;> simp);
+      ⟨s.phase, writeBit s.basis carry false⟩ := by
+  apply Triple.run_eq (s := s) (m := m) (initial := rfl)
+  exact hoare_steps {
+    Precondition { satisfies (fun st => st = s.basis) };
+
+    after command { call (prog { if meas carry = 1 then [CZ a b, CZ a cin, CZ b cin] else skip }); }
+    get { satisfies (fun st => st = writeBit s.basis carry false) } by exact FullAdderProof.measure_majority a b cin carry ha hb hc s.basis hcarry;
+
+    Conclusion { satisfies (fun st => st = writeBit s.basis carry false) };
+  }
 
 /-- 保持三个输入，在输出与进位线上异或写入和位与进位。 -/
 theorem fullAdder_spec (a b cin out carry : Wire)
     (hnd : [a, b, cin, out, carry].Nodup) (A B C O K : Bool) :
     {{ a = A, b = B, cin = C, out = O, carry = K }} fullAdder a b cin out carry
     {{ a = A, b = B, cin = C, out = (O ^^ sumBit A B C),
-       carry = (K ^^ carryBit A B C) }} := Proof
-  For every s, m assuming initial
-  let final := run (fullAdder a b cin out carry) m s
-  { final = ⟨s.phase,
-      writeBit (writeBit s.basis carry (K ^^ carryBit A B C))
-        out (O ^^ sumBit A B C)⟩ } as execution by (by
-    dsimp only [final]
-    rw [fullAdder_correct a b cin out carry hnd]
-    simp_all only [Holds.holds]);
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-    not_or, not_false_eq_true, and_true] at hnd
-  obtain ⟨⟨hab, hac, hao, hak⟩, ⟨hbc, hbo, hbk⟩, ⟨hco, hck⟩, hok⟩ := hnd
-  { final.basis a = A ∧ final.basis b = B ∧ final.basis cin = C }
-    as inputs by (by rw [execution]; simp_all [Holds.holds, writeBit, Function.update]);
-  { final.basis out = (O ^^ sumBit A B C) ∧
-      final.basis carry = (K ^^ carryBit A B C) }
-    as outputs by (by rw [execution]; simp [writeBit, Ne.symm hok]);
-  conclude { final.phase = s.phase ∧
-      (((final.basis a = A ∧ final.basis b = B) ∧ final.basis cin = C) ∧
-        final.basis out = (O ^^ sumBit A B C)) ∧
-      final.basis carry = (K ^^ carryBit A B C) }
-    by ⟨(by rw [execution]), ⟨⟨⟨inputs.1, inputs.2.1⟩, inputs.2.2⟩,
-      outputs.1⟩, outputs.2⟩;
+       carry = (K ^^ carryBit A B C) }} := by
+  open FullAdderProof in
+  exact hoare_steps {
+    Precondition { a=A, b=B, cin=C, out=O, carry=K };
+
+    after command { call (fullAdder a b cin out carry); }
+    get { a=A, b=B, cin=C, out=(O ^^ sumBit A B C), carry=(K ^^ carryBit A B C) } by full_adder_contract hnd;
+
+    Conclusion { a=A, b=B, cin=C, out=(O ^^ sumBit A B C), carry=(K ^^ carryBit A B C) };
+  }
+
+namespace FullAdderProof
+
+scoped syntax "erase_carry_contract " term : tactic
+macro_rules
+  | `(tactic| erase_carry_contract $wiring) => `(tactic|
+      (intro state record initial
+       have distinct := $wiring
+       simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil,
+         List.nodup_nil, not_or, not_false_eq_true, and_true] at distinct
+       obtain ⟨⟨_, _, ha⟩, ⟨_, hb⟩, hc⟩ := distinct
+       rw [eraseCarry_correct _ _ _ _ ha hb hc state
+         (by simp_all only [Holds.holds]) record]
+       simp_all [Holds.holds, writeBit, Function.update]))
+
+end FullAdderProof
 
 /-- 进位已等于 majority 时，清零进位并保持输入与相位。 -/
 theorem eraseCarry_spec (a b cin carry : Wire)
     (hnd : [a, b, cin, carry].Nodup) (A B C : Bool) :
     {{ a = A, b = B, cin = C, carry = carryBit A B C }} eraseCarry a b cin carry
-    {{ a = A, b = B, cin = C, carry = false }} := Proof
-  For every s, m assuming initial
-  let final := run (eraseCarry a b cin carry) m s
-  simp only [Holds.holds] at initial
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, List.nodup_nil,
-    not_or, not_false_eq_true, and_true] at hnd
-  obtain ⟨⟨_, _, ha⟩, ⟨_, hb⟩, hc⟩ := hnd
-  { s.basis carry = carryBit (s.basis a) (s.basis b) (s.basis cin) }
-    as validCarry by (by simpa only [initial.1.1.1, initial.1.1.2, initial.1.2]
-                          using initial.2);
-  { final = ⟨s.phase, writeBit s.basis carry false⟩ }
-    as execution by (eraseCarry_correct a b cin carry ha hb hc s validCarry m);
-  conclude { final.phase = s.phase ∧
-      ((final.basis a = A ∧ final.basis b = B) ∧ final.basis cin = C) ∧
-      final.basis carry = false } by (by
-    rw [execution]; simp_all [writeBit, Function.update]);
+    {{ a = A, b = B, cin = C, carry = false }} := by
+  open FullAdderProof in
+  exact hoare_steps {
+    Precondition { a=A, b=B, cin=C, carry=carryBit A B C };
+
+    after command { call (eraseCarry a b cin carry); }
+    get { a=A, b=B, cin=C, carry=false } by erase_carry_contract hnd;
+
+    Conclusion { a=A, b=B, cin=C, carry=false };
+  }
 
 /-- 一位全加器只有一个 Toffoli。 -/
 theorem fullAdder_toffoliCount (a b cin out carry : Wire) :

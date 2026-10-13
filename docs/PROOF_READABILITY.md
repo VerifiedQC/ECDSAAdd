@@ -1,8 +1,30 @@
 # Arithmetic 关键证明阅读地图
 
-本轮只整理证明，不改变电路：中间命题／Hoare triple 写在大括号中，后面给出证据，最后显式写出结论。数值条件用分支证明；顺序电路用准备、使用、恢复的阶段组合；循环保留实际归纳。证明中的解释使用英文。
+本页记录证明阅读方式及各轮改写清单，不改变电路：中间命题／Hoare triple 写在大括号中，后面给出证据，最后显式写出结论。数值条件用分支证明；顺序电路用准备、使用、恢复的阶段组合；循环保留实际归纳。证明中的解释使用英文。
 
-相对于 `439f481`，改写 **97 个原证明体**（81 个公开、16 个内部），涉及 41 个 Arithmetic 文件。原文件内 274 条定理声明及 106 个非证明声明经去注释文本核对均未变化。另新增一个小型内部引理 `divideProduct_returnBorrowedBit`，仅整理借用高位的恢复，不隐藏整个除法证明。
+此前相对于 `439f481`，改写 **97 个原证明体**（81 个公开、16 个内部），涉及 41 个 Arithmetic 文件。原文件内 274 条定理声明及 106 个非证明声明经去注释文本核对均未变化。另新增一个小型内部引理 `divideProduct_returnBorrowedBit`，仅整理借用高位的恢复，不隐藏整个除法证明。
+
+## Addition：两行式命令与结果（2026-10-13）
+
+在已完成的 `fullAdder_correct` 示范之外，继续整理以下证明。格式为 `Precondition`、两行一组的 `after command { … }` / `get { … } by 规则;`、`Conclusion`。步骤明确显示数值结果和清理情况；接线、代数化简、完整状态拼接放在阶段辅助规则中。
+
+相对于 `92457ed`，本次实际改变 7 个文件中的 27 个原证明体（26 个公开、1 个内部）。这些文件的 104 条原定理声明及 38 个原非证明声明经去注释文本核对保持不变；已完成的 `fullAdder_correct` 不计入本次清单。
+
+| 文件 | 本次改写的原证明体 |
+| --- | --- |
+| [FullAdder.lean](../ECDSAAdd/Arithmetic/Addition/FullAdder.lean) | `eraseCarry_correct`、`fullAdder_spec`、`eraseCarry_spec` |
+| [RippleAdder.lean](../ECDSAAdd/Arithmetic/Addition/RippleAdder.lean) | `rippleAdder_xor_correct`、`rippleAdder_correct`、`rippleAdder_xor_spec`、`rippleAdder_spec`、`rippleAdder_wide_spec` |
+| [Subtractor.lean](../ECDSAAdd/Arithmetic/Addition/Subtractor.lean) | `rippleSubtractor_xor_correct`、`rippleSubtractor_xor_spec`、`rippleSubtractor_spec` |
+| [InPlaceAdder.lean](../ECDSAAdd/Arithmetic/Addition/InPlaceAdder.lean) | `majority_correct`、`majority_spec`、`sumInto_spec`、`addInPlaceRecursive_run`（内部）、`addInPlace_spec`、`subInPlace_spec`、`maskedAddConst_spec`、`maskedSubConst_spec`、`maskedAddInPlace_spec`、`maskedSubInPlace_spec` |
+| [MeasuredMaskedAdder.lean](../ECDSAAdd/Arithmetic/Addition/MeasuredMaskedAdder.lean) | `measuredMaskedAddInPlace_spec`、`measuredMaskedSubInPlace_spec` |
+| [Counter.lean](../ECDSAAdd/Arithmetic/Addition/Counter.lean) | `counterDecXor_spec`、`counterInc_spec`、`counterDec_spec` |
+| [Layout.lean](../ECDSAAdd/Arithmetic/Addition/Layout.lean) | `add_twice_spec` |
+
+建议先读 `maskedAddConst_spec`：装载受控常量、原地相加、清除临时值三步最短；再读 `rippleAdder_xor_correct` 的低位计算／高位归纳／清进位。`addInPlaceRecursive_run` 保留实际结构归纳；公开 `addInPlace_correct` 仍通过原有的逐指令等价定理，把递归参考电路连接到循环版程序。
+
+`fullAdder_spec` 等接口证明直接引用已证的 `_correct`，不重复展开算法。`eraseCarry_correct` 的单步是原语义中的“一次测量及其即时修正”；辅助规则必须处理两种结果并证明相位抵消。其余底层位操作、frame、资源证明，以及 `StatementSpecs.lean` 和一行导出接口保持原样，没有机械包成新格式。
+
+`call (程序)` 只指定这一步实际证明的子程序，不增加门；`satisfies (fun st => …)` 表示当前 basis 必须满足的完整状态或 frame 条件。每步证据必须证明真正的 Triple，首尾断言与实际门列也必须匹配。框架仍使用原有 `Triple.seq` 分配测量记录，而不是各步重复读取同一记录；不新增自动编译器或自动循环证明器。
 
 ## 后续示范：fullAdder 的两行式 Hoare 证明
 

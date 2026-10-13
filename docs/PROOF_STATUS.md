@@ -8,6 +8,16 @@ M1、加减法、模 p 加减、模乘、完整 EEA 求逆 I1–I5 及 M3 三部
 
 验证包含 `lake --wfail build`、电路语法与展开回归检查，以及选定公开定理的传递公理白名单。CI、独立复审和合并状态以远端实际状态为准。
 
+## Addition：两行式阶段证明（2026-10-13）
+
+相对于 `92457ed`，改写 Addition 的 7 个文件、27 个原证明体（26 个公开、1 个内部），使用 `Precondition`、两行式 `after command` / `get`、`Conclusion`。完整清单见 [证明阅读地图](PROOF_READABILITY.md#addition两行式命令与结果2026-10-13)。保留既有 `fullAdder_correct` 示范；`addInPlace_correct` 的短等价转换不变，真正的递归推导位于 `addInPlaceRecursive_run`。
+
+多位加法保留实际归纳；原地加法显示多数进位、高位递归、清进位、写和四步。固定测量记录只用于选择参考 basis，独立辅助定理对任意记录重新应用归纳假设，以完整 frame 和寄存器值证明 basis 唯一；实际执行仍通过 `Triple.seq` 分段消费记录。受控加减、测量清理和计数器展示真实的准备／计算／恢复阶段，没有把整段旧算法改名后包装为单步。接口特例可直接引用已经证明的正确性。
+
+共享语法新增 `call (程序)` 与 `satisfies (fun st => …)`。每步必须提供准确匹配实际程序和前后条件的 Triple；完整状态转换辅助定理保留相位。新增 `tests/HoareTrace.lean` 的 11 个 example（含 6 项拒绝检查），并检查 24 条直接／传递证明依赖，确保正文实际使用顺序组合及原门、算术、测量证明。旧测试全部保留。
+
+完整 `scripts/verify.sh` 本地退出 0：2,181 个构建任务、20 个测试文件共 520 个 example、488 项公理检查。7 个文件的 104 条原定理声明、36 个原 def 和 2 个原 structure 经去注释文本核对保持不变；未改资源证明，未新增 sorry、admit、公理、依赖或放宽证明资源限制。仅发布至 `new-temp`，本地通过不代表远端 CI 已通过。
+
 ## fullAdder_correct：两行式命令与结果（2026-10-13）
 
 主证明现在从 `Precondition` 开始，每步固定写两行 `after command { … }` / `get { … } by 规则;`，最后是 `Conclusion`，不在正文展开 tactic 或长 `calc`。`fullAdder` 和全部 13 条原定理陈述保持不变；只有 `fullAdder_correct` 的原证明体改变。具体代数规则和完整状态拼接移到同文件的 `FullAdderProof` 辅助区，后者仍须接收主证明导出的五线 Hoare 结果，不能独立代替算法证明。

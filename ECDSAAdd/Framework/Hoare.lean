@@ -49,6 +49,24 @@ macro_rules
 namespace Triple
 variable {P P' Q Q' R : BasisState → Prop} {c d : Program}
 
+/-- A full-state execution rule supplies both the postcondition and phase guarantee. -/
+theorem of_run_eq {before after : BasisState}
+    (execution : ∀ (s : State) (m : List Bool), s.basis = before →
+      run c m s = ⟨s.phase, after⟩) :
+    Triple (fun st => st = before) c (fun st => st = after) := by
+  intro s m initial
+  rw [execution s m initial]
+  exact ⟨rfl, rfl⟩
+
+/-- Recover an exact state from a Hoare derivation without discarding its phase. -/
+theorem run_eq {before after : BasisState}
+    (derivation : Triple (fun st => st = before) c (fun st => st = after))
+    (s : State) (m : List Bool) (initial : s.basis = before) :
+    run c m s = ⟨s.phase, after⟩ := by
+  obtain ⟨phase, basis⟩ := derivation s m initial
+  cases result : run c m s
+  simp_all
+
 /-- 顺序组合：前一段的后置条件是后一段的前置条件。 -/
 theorem seq (hc : Triple P c Q) (hd : Triple Q d R) : Triple P (c ++ d) R := by
   intro s m hP

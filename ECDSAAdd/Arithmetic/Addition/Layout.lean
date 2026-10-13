@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Addition.Subtractor
 
 namespace ECDSAAdd.Arithmetic
+open GateProof
 
 /-- 每位的四根线路只存一份，寄存器访问由此派生，长度天然一致。 -/
 structure AdderLayout where
@@ -95,13 +96,30 @@ theorem sub_erase_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y : Nat) :
     {{ L.x = X, L.y = Y, L.cin = false, L.out = 0, L.carry = 0 }} := by
   simpa only [Nat.xor_self] using sub_spec L hnd X Y ((X + 2^L.width - Y) % 2^L.width)
 
+-- XORing the same sum restores an arbitrary initial output, not only zero.
+private theorem add_xor_restore (L : AdderLayout) (hnd : L.wires.Nodup)
+    (X Y O : Nat) (C : Bool) :
+    {{ L.x=X, L.y=Y, L.cin=C, L.out=(O ^^^ ((X+Y+C.toNat)%2^L.width)), L.carry=0 }} add L
+    {{ L.x=X, L.y=Y, L.cin=C, L.out=O, L.carry=0 }} := by
+  simpa only [Nat.xor_xor_cancel_right] using
+    add_spec L hnd X Y (O ^^^ ((X+Y+C.toNat)%2^L.width)) C
+
 /-- 同一加法程序调用两次，对任意输出初值均恢复所有寄存器及相位。 -/
 theorem add_twice_spec (L : AdderLayout) (hnd : L.wires.Nodup) (X Y O : Nat) (C : Bool) :
     {{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }} (add L ++ add L)
     {{ L.x = X, L.y = Y, L.cin = C, L.out = O, L.carry = 0 }} := by
-  have h := Triple.seq (add_spec L hnd X Y O C)
-    (add_spec L hnd X Y (O ^^^ ((X + Y + C.toNat) % 2^L.width)) C)
-  simpa only [Nat.xor_xor_cancel_right] using h
+  let sum := (X+Y+C.toNat)%2^L.width
+  exact hoare_steps {
+    Precondition { L.x=X, L.y=Y, L.cin=C, L.out=O, L.carry=0 };
+
+    after command { call (add L); }
+    get { L.x=X, L.y=Y, L.cin=C, L.out=(O ^^^ sum), L.carry=0 } by exact add_spec L hnd X Y O C;
+
+    after command { call (add L); }
+    get { L.x=X, L.y=Y, L.cin=C, L.out=O, L.carry=0 } by exact add_xor_restore L hnd X Y O C;
+
+    Conclusion { L.x=X, L.y=Y, L.cin=C, L.out=O, L.carry=0 };
+  }
 
 /-- 加法资源公式沿用同一个底层进位程序。 -/
 theorem add_resources (L : AdderLayout) (hnd : L.wires.Nodup) :

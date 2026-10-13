@@ -124,12 +124,16 @@ declare_syntax_cat gateHoareLink
 syntax gateProofStmt "{" term,+ "}" "by" term ";" : gateHoareLink
 scoped syntax "hoare_steps" "{" "{" term,+ "}" ";" gateHoareLink+ "}" : term
 
+-- Explicit predicates carry invariants and frames that are not register equalities.
+scoped syntax &"satisfies" term:max : term
+
 private def gateAssertion (claims : Array Term) : MacroM Term := do
   let st := mkIdent (← withFreshMacroScope (Macro.addMacroScope `st))
   let claims ← claims.mapM fun claim => do
     match claim with
+    | `(satisfies $predicate) => `($predicate $st)
     | `($wire = $value) => `(Holds.holds $st $wire $value)
-    | _ => Macro.throwErrorAt claim "Expected a wire = value assertion."
+    | _ => Macro.throwErrorAt claim "Expected register = value or satisfies (predicate)."
   let body ← claims[1:].foldlM (fun acc claim => `($acc ∧ $claim)) claims[0]!
   `(fun $st : BasisState => $body)
 
@@ -174,6 +178,7 @@ macro_rules
 declare_syntax_cat hoareCommand
 syntax "if " term:max " {" term:max " ^= " num ";" "}" ";" : hoareCommand
 syntax "if " term:max " AND " term:max " {" term:max " ^= " num ";" "}" ";" : hoareCommand
+syntax ident term ";" : hoareCommand
 declare_syntax_cat namedHoareLink
 syntax atomic(ident &"command" "{") hoareCommand "}"
   &"get" "{" term,+ "}" "by" tactic ";" : namedHoareLink
@@ -188,6 +193,28 @@ private def certifiedCommand (command : TSyntax `hoareCommand) : MacroM (TSyntax
     `(gateProofStmt| if $a AND $b { $t ^= $n; } using Instr.CCX by ccx_correct;)
   | _ => Macro.throwErrorAt command "Expected a single- or double-controlled bit flip."
 
+private def namedHoareChain (pre : Term) (links : List (TSyntax `namedHoareLink)) :
+    MacroM Term := do
+  match links with
+  | [] => Macro.throwError "Expected at least one command and its proved postcondition."
+  | link :: rest =>
+    match link with
+    | `(namedHoareLink| $keyword:ident command { $command:hoareCommand }
+        get { $claims,* } by $reason:tactic;) => do
+      unless keyword.getId == `after do Macro.throwErrorAt keyword "Expected after command."
+      let post ← gateAssertion claims.getElems
+      let step ← match command with
+        | `(hoareCommand| $keyword:ident $program;) => do
+          unless keyword.getId == `call do Macro.throwErrorAt keyword "Expected call."
+          `(show Triple $pre $program $post from by $reason:tactic)
+        | _ => do
+          let gate ← certifiedCommand command
+          `((gatePlan% { $gate }).toTriple (P := $pre) (Q := $post) (by $reason:tactic))
+      if rest.isEmpty then return step
+      let tail ← namedHoareChain post rest
+      `(Triple.seq $step $tail)
+    | _ => Macro.throwErrorAt link "Expected after command ... get ... by ... ."
+
 macro_rules
   | `(hoare_steps {
       Precondition { $initial,* };
@@ -196,16 +223,7 @@ macro_rules
     }) => do
     let pre ← gateAssertion initial.getElems
     let post ← gateAssertion final.getElems
-    let steps ← links.mapM fun link => do
-      match link with
-      | `(namedHoareLink| $keyword:ident command { $command:hoareCommand }
-          get { $claims,* } by $reason:tactic;) => do
-        unless keyword.getId == `after do
-          Macro.throwErrorAt keyword "Expected after command."
-        let command ← certifiedCommand command
-        `(gateHoareLink| $command:gateProofStmt { $claims,* } by (by $reason:tactic);)
-      | _ => Macro.throwErrorAt link "Expected after command ... get ... by ... ."
-    let chain ← gateHoareChain pre steps.toList
+    let chain ← namedHoareChain pre links.toList
     -- Conclusion must match both the final get and the theorem's requested postcondition.
     `(show Triple $pre _ $post from $chain)
 

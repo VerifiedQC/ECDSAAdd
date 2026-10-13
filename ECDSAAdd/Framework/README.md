@@ -288,7 +288,7 @@ theorem Plan.toTriple (plan : Plan) {P Q : BasisState → Prop}
 
 证明了：满足接线条件，且该语句把前置条件 P 变成后置条件 Q 时，它的实际电路满足 `Triple P plan.circuit Q`，包括相位保持和任意测量记录。
 
-`hoare_steps` 仅用于证明，格式是初始 `{ wire=value, … };`，随后交替写原程序的门语句和 `{ wire=value, … } by 证明;`。它逐步调用 `Plan.toTriple`，再用 `Triple.seq` 连接；生成的门序列和首尾断言必须匹配待证 Triple。`gate_step [事实]` 检查一次门更新及接线条件，不能跳过错误的中间断言。当前只支持上述 CX/CCX 条件翻转句式；不是任意算术／循环的自动证明器。未列出的 wire 保持性质仍需另证，不能从断言缺省推得。
+`hoare_steps` 仅用于证明。旧格式是初始 `{ wire=value, … };`，随后交替写门语句和 `{ wire=value, … } by 证明;`。门语句经 `Plan.toTriple`，再由 `Triple.seq` 连接；生成的门序列和首尾断言必须匹配待证 Triple。`gate_step [事实]` 检查一次门更新及接线条件，不能跳过错误的中间断言。未列出的 wire 保持性质仍需另证，不能从断言缺省推得。
 
 现在推荐使用带标签的同等写法：
 
@@ -302,6 +302,10 @@ hoare_steps {
 ```
 
 `Precondition` 必须匹配待证前提；`Conclusion` 必须同时匹配最后一个 `get` 与待证后置条件。`command` 中的单／双控制翻转明确对应 CX／CCX，复用原门证明，不搜索默认实现；完整门列仍须等于原程序。`cx_step`、`ccx_step` 是 `gate_step` 的简写，使用当前上下文的接线条件；算法特有的规则可以在辅助区定义。上述标签不占用普通变量名，旧格式继续可用。
+
+整段子程序使用 `after command { call (程序表达式); }`，下一行 `get { 寄存器=值, … } by exact 阶段定理;`。这里的 `call` 不增加电路：Lean 检查所引用定理恰好证明“上一步断言 → 这段实际程序 → 新断言”，再按原顺序组合。它既不自动寻找实现，也不自动证明循环；归纳假设仍须显式建立和应用。
+
+断言也可写 `satisfies (fun st => P st)`，用于完整 basis、工作区条件或其他 wire 的保持性质。`st` 是该步执行后的当前 basis，不是初始状态。`Triple.of_run_eq` 把完整状态执行等式转为这种 Hoare 步骤；`Triple.run_eq` 从已证的完整 basis 断言和 Triple 的相位保证恢复状态等式。测量记录的分段沿用 `Triple.seq` / `run_append`，不把同一测量结果重复用于不同步骤。
 
 ## [BitTranslation.lean](BitTranslation.lean)
 

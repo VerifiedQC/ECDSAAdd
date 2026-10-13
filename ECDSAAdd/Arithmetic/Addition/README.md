@@ -6,6 +6,8 @@
 
 下文 ⊕ 表示 XOR，位值写作 0/1；`r=X` 表示寄存器 r 保存 X。资源 T、M、Q 分别为 Toffoli 门数、测量次数、不同物理线路数，未列出的项不代表零。
 
+关键证明采用 `Precondition → after command / get → Conclusion`。单门直接显示位变化；子程序写 `call (程序)`，每一步引用自己的已证规格。多位加法保留归纳，受控加减按“准备 → 运算 → 清理”阅读；底层接线、frame 和代数化简放在辅助规则中。完整状态断言使用 `satisfies (fun st => …)`，不省略相位或其他 wire 的保持要求。逐定理清单见 [证明阅读地图](../../../docs/PROOF_READABILITY.md#addition两行式命令与结果2026-10-13)。
+
 ## [FullAdder.lean](FullAdder.lean)
 
 该文件实现量子 full adder。

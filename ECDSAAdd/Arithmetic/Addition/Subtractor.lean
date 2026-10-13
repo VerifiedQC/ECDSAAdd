@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Addition.RippleAdder
 
 namespace ECDSAAdd.Arithmetic
+open GateProof
 
 /-- n 位减法的 XOR 输出，n 是逐位布局列表 bs 的长度：out ^= (x−y) mod 2^n。
 x/y/out/carry 分别由 bs 中对应字段组成；要求线路互异，cin、carry 初始为零并在结束后恢复。
@@ -40,6 +41,120 @@ private theorem not_y (bs : List AddBit) (hnd : (addWires bs).Nodup) :
       have hky' : b.carry ≠ a.y := by intro h; apply hyr; simpa [h] using hk'
       simp [hx, ho, hk, hxy', hoy', hky']
 
+/-! Auxiliary rules for complement, addition, and restoration. -/
+namespace SubtractorProof
+
+private def flipped (bs : List AddBit) (cin : Wire) (initial : BasisState) : BasisState :=
+  fun w => if w ∈ bs.map AddBit.y ++ [cin] then !initial w else initial w
+
+private def frame (bs : List AddBit) (initial final : BasisState) : Prop :=
+  ∀ w, w ∉ bs.map AddBit.out → final w = initial w
+
+private theorem flipped_wiring (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) :
+    (bs.map AddBit.y ++ [cin]).Nodup ∧
+      (∀ b ∈ bs, b.x ∉ bs.map AddBit.y ++ [cin] ∧
+        b.out ∉ bs.map AddBit.y ++ [cin] ∧ b.carry ∉ bs.map AddBit.y ++ [cin]) ∧
+      (∀ w ∈ bs.map AddBit.y ++ [cin], w ∉ bs.map AddBit.out) := by
+  obtain ⟨hcw, hn⟩ := List.nodup_cons.mp hnd
+  have hcy : cin ∉ bs.map AddBit.y := fun h => hcw ((y_sublist bs).subset h)
+  have hr : (bs.map AddBit.y ++ [cin]).Nodup := by
+    have hd : ∀ b ∈ bs, b.y ≠ cin := by
+      intro b hb he
+      exact hcy (he ▸ List.mem_map.mpr ⟨b, hb, rfl⟩)
+    simpa [List.nodup_append] using And.intro ((y_sublist bs).nodup hn) hd
+  refine ⟨hr, ?_, ?_⟩
+  · intro b hb
+    obtain ⟨hx', ho', hk'⟩ := not_y bs hn b hb
+    obtain ⟨hxw, _, how, hkw⟩ := mem_addWires hb
+    have hxc : b.x ≠ cin := fun h => hcw (h ▸ hxw)
+    have hoc : b.out ≠ cin := fun h => hcw (h ▸ how)
+    have hkc : b.carry ≠ cin := fun h => hcw (h ▸ hkw)
+    simp [hx', ho', hk', hxc, hoc, hkc]
+  · intro w hw
+    rcases List.mem_append.mp hw with hw | hw
+    · obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
+      exact (inputs_not_output bs hn b hb).2.1
+    · have he : w = cin := by simpa using hw
+      subst w
+      intro hw
+      obtain ⟨b, hb, he⟩ := List.mem_map.mp hw
+      exact hcw (he ▸ (mem_addWires hb).2.2.1)
+
+private theorem complement_value (bs : List AddBit) (cin : Wire) (initial : BasisState) :
+    regValue (bs.map AddBit.y) (flipped bs cin initial) =
+      2^bs.length - 1 - regValue (bs.map AddBit.y) initial := by
+  rw [regValue_congr _ _ (fun w => !initial w) (by
+    intro w hw
+    simp [flipped, hw]), regValue_complement, List.length_map]
+
+private theorem complement_step (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (initial : BasisState) (hc : initial cin = false) :
+    Triple (fun st => st = initial) (notRegister (bs.map AddBit.y ++ [cin]))
+      (fun st => (regValue (bs.map AddBit.y) st =
+          2^bs.length - 1 - regValue (bs.map AddBit.y) initial ∧ st cin = true) ∧
+        st = flipped bs cin initial) := by
+  intro s m hs
+  rw [notRegister_correct _ (flipped_wiring bs cin hnd).1, hs]
+  exact ⟨rfl, ⟨complement_value bs cin initial, by simp [hc]⟩, rfl⟩
+
+private theorem add_complement_step (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (initial : BasisState)
+    (hclean : ∀ b ∈ bs, initial b.carry = false) :
+    Triple
+      (fun st => (regValue (bs.map AddBit.y) st =
+          2^bs.length - 1 - regValue (bs.map AddBit.y) initial ∧ st cin = true) ∧
+        st = flipped bs cin initial)
+      (rippleAdder bs cin)
+      (fun st => frame bs (flipped bs cin initial) st ∧
+        regValue (bs.map AddBit.out) st = regValue (bs.map AddBit.out) initial ^^^
+          ((regValue (bs.map AddBit.x) initial + 2^bs.length -
+              regValue (bs.map AddBit.y) initial) % 2^bs.length)) := by
+  intro s m hs
+  have hnot := (flipped_wiring bs cin hnd).2.1
+  have hread (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ bs.map AddBit.y ++ [cin]) :
+      regValue (bs.map f) s.basis = regValue (bs.map f) initial :=
+    regValue_congr _ _ _ (by
+      intro w hw
+      obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
+      simp [hs.2, flipped, h b hb])
+  have hx := hread AddBit.x (fun b hb => (hnot b hb).1)
+  have ho := hread AddBit.out (fun b hb => (hnot b hb).2.1)
+  have clean : ∀ b ∈ bs, s.basis b.carry = false := by
+    intro b hb
+    simpa [hs.2, flipped, (hnot b hb).2.2] using hclean b hb
+  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_xor_correct bs cin hnd s m clean
+  refine ⟨hp, ?_, ?_⟩
+  · simpa only [frame, hs.2] using hsame
+  · have bound : regValue (bs.map AddBit.y) initial < 2^bs.length := by
+      simpa using regValue_lt (bs.map AddBit.y) initial
+    have arithmetic : regValue (bs.map AddBit.x) initial +
+          (2^bs.length - 1 - regValue (bs.map AddBit.y) initial) + 1 =
+        regValue (bs.map AddBit.x) initial + 2^bs.length - regValue (bs.map AddBit.y) initial := by
+      omega
+    simpa only [hx, ho, hs.1.1, hs.1.2, Bool.toNat_true, arithmetic] using hsum
+
+private theorem restore_step (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (initial : BasisState) (D : Nat) :
+    Triple (fun st => frame bs (flipped bs cin initial) st ∧ regValue (bs.map AddBit.out) st = D)
+      (notRegister (bs.map AddBit.y ++ [cin]))
+      (fun st => frame bs initial st ∧ regValue (bs.map AddBit.out) st = D) := by
+  intro s m hs
+  obtain ⟨hr, _, hrout⟩ := flipped_wiring bs cin hnd
+  rw [notRegister_correct _ hr]
+  refine ⟨rfl, ?_, ?_⟩
+  · intro w hw
+    change (if w ∈ bs.map AddBit.y ++ [cin] then !s.basis w else s.basis w) = initial w
+    rw [hs.1 w hw]
+    by_cases hwr : w ∈ bs.map AddBit.y ++ [cin] <;> simp [flipped, hwr]
+  · rw [regValue_congr _ _ s.basis (by
+      intro w hw
+      have hwr : w ∉ bs.map AddBit.y ++ [cin] := fun h => hrout w h hw
+      simp [hwr])]
+    exact hs.2
+
+end SubtractorProof
+
 /-- 任意输出初值的 XOR 减法，所有非输出线路均恢复。 -/
 theorem rippleSubtractor_xor_correct (bs : List AddBit) (cin : Wire)
     (hnd : (cin :: addWires bs).Nodup) (s : State) (m : List Bool)
@@ -53,84 +168,31 @@ theorem rippleSubtractor_xor_correct (bs : List AddBit) (cin : Wire)
   let X := regValue (bs.map AddBit.x) s.basis
   let Y := regValue (bs.map AddBit.y) s.basis
   let O := regValue (bs.map AddBit.out) s.basis
-  have hx : regValue (bs.map AddBit.x) s.basis = X := rfl
-  have hy : regValue (bs.map AddBit.y) s.basis = Y := rfl
-  have ho : regValue (bs.map AddBit.out) s.basis = O := rfl
-  have hk : regValue (bs.map AddBit.carry) s.basis = 0 := (regValue_zero _ _).mpr (by
-    intro w hw
-    obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
-    exact hclean0 b hb)
-  obtain ⟨hcw, hn⟩ := List.nodup_cons.mp hnd
-  let r := bs.map AddBit.y ++ [cin]
-  have hcy : cin ∉ bs.map AddBit.y := fun h => hcw ((y_sublist bs).subset h)
-  have hr : r.Nodup := by
-    have hd : ∀ b ∈ bs, b.y ≠ cin := by
-      intro b hb he
-      exact hcy (he ▸ List.mem_map.mpr ⟨b, hb, rfl⟩)
-    simpa [r, List.nodup_append] using And.intro ((y_sublist bs).nodup hn) hd
-  have hnc (b : AddBit) (hb : b ∈ bs) :
-      b.x ≠ cin ∧ b.out ≠ cin ∧ b.carry ≠ cin := by
-    obtain ⟨hx', _, ho', hk'⟩ := mem_addWires hb
-    exact ⟨fun h => hcw (h ▸ hx'), fun h => hcw (h ▸ ho'), fun h => hcw (h ▸ hk')⟩
-  have hnot (b : AddBit) (hb : b ∈ bs) : b.x ∉ r ∧ b.out ∉ r ∧ b.carry ∉ r := by
-    obtain ⟨hx', ho', hk'⟩ := not_y bs hn b hb
-    obtain ⟨hxc, hoc, hkc⟩ := hnc b hb
-    simp [r, hx', ho', hk', hxc, hoc, hkc]
-  let s1 : State := ⟨s.phase, fun w => if w ∈ r then !s.basis w else s.basis w⟩
-  have hfirst (record : List Bool) : run (notRegister r) record s = s1 :=
-    notRegister_correct r hr s record
-  have hc1 : s1.basis cin = true := by simp [s1, r, hc]
-  have hread (f : AddBit → Wire) (h : ∀ b ∈ bs, f b ∉ r) :
-      regValue (bs.map f) s1.basis = regValue (bs.map f) s.basis :=
-    regValue_congr _ _ _ (by
-      intro w hw
-      obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
-      simp [s1, h b hb])
-  have hx1 := (hread AddBit.x (fun b hb => (hnot b hb).1)).trans hx
-  have ho1 := (hread AddBit.out (fun b hb => (hnot b hb).2.1)).trans ho
-  have hk1 := (hread AddBit.carry (fun b hb => (hnot b hb).2.2)).trans hk
-  have hy1 : regValue (bs.map AddBit.y) s1.basis = 2^bs.length - 1 - Y := by
-    rw [regValue_congr _ _ (fun w => !s.basis w) (by
-      intro w hw
-      simp [s1, r, hw]), regValue_complement, List.length_map, hy]
-  have hclean : ∀ b ∈ bs, s1.basis b.carry = false := by
-    intro b hb
-    exact (regValue_zero _ _).mp hk1 _ (List.mem_map.mpr ⟨b, hb, rfl⟩)
-  let t := run (rippleAdder bs cin) m s1
-  obtain ⟨hp, hsame, hsum⟩ := rippleAdder_xor_correct bs cin hnd s1 m hclean
-  have hrout : ∀ w ∈ r, w ∉ bs.map AddBit.out := by
-    intro w hw
-    rcases List.mem_append.mp hw with hw | hw
-    · obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hw
-      exact (inputs_not_output bs hn b hb).2.1
-    · have he : w = cin := by simpa using hw
-      subst w
-      intro hw
-      obtain ⟨b, hb, he⟩ := List.mem_map.mp hw
-      exact hcw (he ▸ (mem_addWires hb).2.2.1)
-  have hfinal : ∀ w, w ∉ bs.map AddBit.out →
-      (if w ∈ r then !t.basis w else t.basis w) = s.basis w := by
-    intro w hw
-    have ht : t.basis w = s1.basis w := hsame w hw
-    rw [ht]
-    by_cases hwr : w ∈ r <;> simp [s1, hwr]
-  simp only [rippleSubtractor, run_append, run_take]
-  rw [hfirst]
-  simp only [(notRegister_counts (bs.map AddBit.y ++ [cin])).2, zero_add, measurementCount_append, List.drop_zero]
-  change (run (notRegister r) _ t).phase = _ ∧ _
-  rw [notRegister_correct r hr]
-  refine ⟨hp, hfinal, ?_⟩
-  have hout := regValue_congr (bs.map AddBit.out)
-    (fun w => if w ∈ r then !t.basis w else t.basis w) t.basis (by
-      intro w hw
-      have hwr : w ∉ r := fun h => hrout w h hw
-      simp [hwr])
-  have hbound : Y < 2^bs.length := by simpa [hy] using regValue_lt (bs.map AddBit.y) s.basis
-  have he : X + (2^bs.length - 1 - Y) + 1 = X + 2^bs.length - Y := by omega
-  rw [hout, hsum, ho1, hx1, hy1, hc1, Bool.toNat_true, he]
+  let D := O ^^^ ((X + 2^bs.length - Y) % 2^bs.length)
+  let complemented := SubtractorProof.flipped bs cin s.basis
+  have prepare := SubtractorProof.complement_step bs cin hnd s.basis hc
+  have add_complement := SubtractorProof.add_complement_step bs cin hnd s.basis hclean0
+  have restore := SubtractorProof.restore_step bs cin hnd s.basis D
+  have derivation := hoare_steps {
+    Precondition { satisfies (fun st => st = s.basis) };
 
-/-- 任意初值输出的减法规格，输入和工作位保持。 -/
-theorem rippleSubtractor_xor_spec (bs : List AddBit) (cin : Wire)
+    after command { call (notRegister (bs.map AddBit.y ++ [cin])); }
+    get { bs.map AddBit.y=(2^bs.length - 1 - Y), cin=true, satisfies (fun st => st = complemented) } by exact prepare;
+
+    after command { call (rippleAdder bs cin); }
+    get { satisfies (SubtractorProof.frame bs complemented), bs.map AddBit.out=D } by exact add_complement;
+
+    after command { call (notRegister (bs.map AddBit.y ++ [cin])); }
+    get { satisfies (SubtractorProof.frame bs s.basis), bs.map AddBit.out=D } by exact restore;
+
+    Conclusion { satisfies (SubtractorProof.frame bs s.basis), bs.map AddBit.out=D };
+  }
+  simpa only [rippleSubtractor, List.append_assoc] using derivation s m rfl
+
+namespace SubtractorProof
+
+/-- Read the preserved inputs and zero workspace from the proved wire frame. -/
+private theorem xor_register_step (bs : List AddBit) (cin : Wire)
     (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat) :
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
        bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
@@ -159,6 +221,24 @@ theorem rippleSubtractor_xor_spec (bs : List AddBit) (cin : Wire)
       (hreg _ (fun b hb => (hn b hb).2.1)).trans hy⟩, hc'.trans hc⟩,
       by simpa only [hx, hy, ho] using hv⟩, (hreg _ (fun b hb => (hn b hb).2.2)).trans hk⟩
 
+end SubtractorProof
+
+/-- 任意初值输出的减法规格，输入和工作位保持。 -/
+theorem rippleSubtractor_xor_spec (bs : List AddBit) (cin : Wire)
+    (hnd : (cin :: addWires bs).Nodup) (X Y O : Nat) :
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = O, bs.map AddBit.carry = (0 : Nat) }} rippleSubtractor bs cin
+    {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
+       bs.map AddBit.out = (O ^^^ ((X + 2^bs.length - Y) % 2^bs.length)),
+       bs.map AddBit.carry = (0 : Nat) }} := by
+  have register_step := SubtractorProof.xor_register_step bs cin hnd X Y O
+  exact hoare_steps {
+    Precondition { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=O, bs.map AddBit.carry=(0 : Nat) };
+    after command { call (rippleSubtractor bs cin); }
+    get { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=(O ^^^ ((X + 2^bs.length - Y) % 2^bs.length)), bs.map AddBit.carry=(0 : Nat) } by exact register_step;
+    Conclusion { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=(O ^^^ ((X + 2^bs.length - Y) % 2^bs.length)), bs.map AddBit.carry=(0 : Nat) };
+  }
+
 /-- 零输出时，XOR 写入得到模 2^n 的差。 -/
 theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
     (hnd : (cin :: addWires bs).Nodup) (X Y : Nat) :
@@ -167,7 +247,14 @@ theorem rippleSubtractor_spec (bs : List AddBit) (cin : Wire)
     {{ bs.map AddBit.x = X, bs.map AddBit.y = Y, cin = false,
        bs.map AddBit.out = ((X + 2^bs.length - Y) % 2^bs.length),
        bs.map AddBit.carry = (0 : Nat) }} := by
-  simpa only [Nat.zero_xor] using rippleSubtractor_xor_spec bs cin hnd X Y 0
+  have zero_output := rippleSubtractor_xor_spec bs cin hnd X Y 0
+  simp only [Nat.zero_xor] at zero_output
+  exact hoare_steps {
+    Precondition { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=(0 : Nat), bs.map AddBit.carry=(0 : Nat) };
+    after command { call (rippleSubtractor bs cin); }
+    get { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=((X + 2^bs.length - Y) % 2^bs.length), bs.map AddBit.carry=(0 : Nat) } by exact zero_output;
+    Conclusion { bs.map AddBit.x=X, bs.map AddBit.y=Y, cin=false, bs.map AddBit.out=((X + 2^bs.length - Y) % 2^bs.length), bs.map AddBit.carry=(0 : Nat) };
+  }
 
 /-- 减法的两层 X 不增加 Toffoli 或测量。 -/
 theorem rippleSubtractor_counts (bs : List AddBit) (cin : Wire) :

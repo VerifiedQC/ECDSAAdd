@@ -8,6 +8,7 @@ import ECDSAAdd.Arithmetic.Addition.Layout
 -/
 
 namespace ECDSAAdd.Arithmetic
+open GateProof
 
 private theorem counter_perm (L : AdderLayout) :
     ((L.cin::L.y) ++ (L.x ++ L.out ++ L.carry)).Perm L.wires := by
@@ -76,21 +77,46 @@ theorem counterIncXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width
     {{ L.x=K, L.y=0, L.cin=C, L.out=(O ^^^ ((K+C.toNat)%1024)), L.carry=0 }} := by
   simpa only [counterIncXor, hw, Nat.add_zero] using add_spec L hnd K 0 O C
 
+-- Complement inputs, add, then restore the complemented workspace.
+private theorem counter_prepare (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K O : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 }} counterFlip L
+    {{ L.x=K, L.y=1023, L.cin=(!C), L.out=O, L.carry=0 }} := by
+  simpa only [hw, Nat.sub_zero] using counterFlip_spec L hnd K 0 O C
+
+private theorem counter_subtract (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K O : Nat) (C : Bool) :
+    {{ L.x=K, L.y=1023, L.cin=(!C), L.out=O, L.carry=0 }} add L
+    {{ L.x=K, L.y=1023, L.cin=(!C), L.out=(O ^^^ ((K+1024-C.toNat)%1024)), L.carry=0 }} := by
+  have he : K+1023+(!C).toNat = K+1024-C.toNat := by
+    cases C <;> simp [Bool.toNat]
+  simpa only [hw, he] using add_spec L hnd K 1023 O (!C)
+
+private theorem counter_restore (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K O : Nat) (C : Bool) :
+    {{ L.x=K, L.y=1023, L.cin=(!C), L.out=O, L.carry=0 }} counterFlip L
+    {{ L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 }} := by
+  simpa only [hw, Bool.not_not] using counterFlip_spec L hnd K 1023 O (!C)
+
 theorem counterDecXor_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
     (K O : Nat) (C : Bool) :
     {{ L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 }} counterDecXor L
     {{ L.x=K, L.y=0, L.cin=C, L.out=(O ^^^ ((K+1024-C.toNat)%1024)), L.carry=0 }} := by
-  have h1 := counterFlip_spec L hnd K 0 O C
-  have h2 := add_spec L hnd K (2^L.width-1) O (!C)
-  have h3 := counterFlip_spec L hnd K (2^L.width-1)
-    (O ^^^ ((K+(2^L.width-1)+(!C).toNat)%2^L.width)) (!C)
-  simp only [Nat.sub_zero] at h1
-  simp only [Nat.sub_self, Bool.not_not] at h3
-  have h := h1.seq (h2.seq h3)
-  have he : K+(2^L.width-1)+(!C).toNat = K+1024-C.toNat := by
-    rw [hw]; cases C <;> simp [Bool.toNat]
-  rw [he] at h
-  simpa only [counterDecXor, List.append_assoc, hw] using h
+  let result := O ^^^ ((K+1024-C.toNat)%1024)
+  simpa only [counterDecXor, List.append_assoc] using (hoare_steps {
+    Precondition { L.x=K, L.y=0, L.cin=C, L.out=O, L.carry=0 };
+
+    after command { call (counterFlip L); }
+    get { L.x=K, L.y=1023, L.cin=(!C), L.out=O, L.carry=0 } by exact counter_prepare L hnd hw K O C;
+
+    after command { call (add L); }
+    get { L.x=K, L.y=1023, L.cin=(!C), L.out=result, L.carry=0 } by exact counter_subtract L hnd hw K O C;
+
+    after command { call (counterFlip L); }
+    get { L.x=K, L.y=0, L.cin=C, L.out=result, L.carry=0 } by exact counter_restore L hnd hw K result C;
+
+    Conclusion { L.x=K, L.y=0, L.cin=C, L.out=result, L.carry=0 };
+  })
 
 private theorem counter_wires (L : AdderLayout) (hw : L.width=10) :
     wires (counterIncXor L) = L.wires.toFinset ∧ wires (counterDecXor L) = L.wires.toFinset := by
@@ -163,9 +189,17 @@ L.cin 保持，L.y/L.carry 初始为零并恢复；与 counterInc 配合恢复�
 -/
 def counterDec (L : AdderLayout) : Program := counterDecXor L ++ counterIncXor L.swapCounter
 
-theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K : Nat) (C : Bool) :
-    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterInc L
+-- Stage rules for moving the counter into the empty output bank.
+private theorem counter_write_inc (L : AdderLayout) (hnd : L.wires.Nodup)
+    (hw : L.width=10) (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterIncXor L
+    {{ L.x=K, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }} := by
+  simpa only [Nat.zero_xor] using counterIncXor_spec L hnd hw K 0 C
+
+private theorem counter_clear_after_inc (L : AdderLayout) (hnd : L.wires.Nodup)
+    (hw : L.width=10) (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }}
+    counterDecXor L.swapCounter
     {{ L.x=0, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }} := by
   intro s m h
   have hx : regValue L.x s.basis = K := h.1.1.1.1
@@ -176,22 +210,23 @@ theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
   have hc : (((K+C.toNat)%1024)+1024-C.toNat)%1024=K := by
     cases C <;> simp [Bool.toNat] <;> omega
   obtain ⟨sx, so, sy, sc, si, sw⟩ := AdderLayout.swapCounter_fields L
-  have h1 := counterIncXor_spec L hnd hw K 0 C
-  have h2 := counterDecXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
+  have clear := counterDecXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
     (sw.trans hw) ((K+C.toNat)%1024) K C
-  simp only [Nat.zero_xor] at h1
-  simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at h2
-  have h2' :
-      {{ L.x=K, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }}
-      counterDecXor L.swapCounter
-      {{ L.x=0, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }} := Triple.conseq
-    (fun st h => ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩) h2
-    (fun st h => ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩)
-  exact h1.seq h2' s m h
+  simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at clear
+  obtain ⟨phase, post⟩ := clear s m
+    ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩
+  exact ⟨phase, ⟨⟨⟨⟨post.1.2, post.1.1.1.2⟩, post.1.1.2⟩, post.1.1.1.1⟩, post.2⟩⟩
 
-theorem counterDec_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
-    (K : Nat) (C : Bool) :
-    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterDec L
+private theorem counter_write_dec (L : AdderLayout) (hnd : L.wires.Nodup)
+    (hw : L.width=10) (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterDecXor L
+    {{ L.x=K, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }} := by
+  simpa only [Nat.zero_xor] using counterDecXor_spec L hnd hw K 0 C
+
+private theorem counter_clear_after_dec (L : AdderLayout) (hnd : L.wires.Nodup)
+    (hw : L.width=10) (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }}
+    counterIncXor L.swapCounter
     {{ L.x=0, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }} := by
   intro s m h
   have hx : regValue L.x s.basis = K := h.1.1.1.1
@@ -202,18 +237,46 @@ theorem counterDec_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10
   have hc : (((K+1024-C.toNat)%1024)+C.toNat)%1024=K := by
     cases C <;> simp [Bool.toNat] <;> omega
   obtain ⟨sx, so, sy, sc, si, sw⟩ := AdderLayout.swapCounter_fields L
-  have h1 := counterDecXor_spec L hnd hw K 0 C
-  have h2 := counterIncXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
+  have clear := counterIncXor_spec L.swapCounter ((AdderLayout.swapCounter_perm L).nodup_iff.mpr hnd)
     (sw.trans hw) ((K+1024-C.toNat)%1024) K C
-  simp only [Nat.zero_xor] at h1
-  simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at h2
-  have h2' :
-      {{ L.x=K, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }}
-      counterIncXor L.swapCounter
-      {{ L.x=0, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }} := Triple.conseq
-    (fun st h => ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩) h2
-    (fun st h => ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩)
-  exact h1.seq h2' s m h
+  simp only [sx, so, sy, sc, si, hc, Nat.xor_self] at clear
+  obtain ⟨phase, post⟩ := clear s m
+    ⟨⟨⟨⟨h.1.2, h.1.1.1.2⟩, h.1.1.2⟩, h.1.1.1.1⟩, h.2⟩
+  exact ⟨phase, ⟨⟨⟨⟨post.1.2, post.1.1.1.2⟩, post.1.1.2⟩, post.1.1.1.1⟩, post.2⟩⟩
+
+theorem counterInc_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterInc L
+    {{ L.x=0, L.y=0, L.cin=C, L.out=((K+C.toNat)%1024), L.carry=0 }} := by
+  let result := (K+C.toNat)%1024
+  exact hoare_steps {
+    Precondition { L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 };
+
+    after command { call (counterIncXor L); }
+    get { L.x=K, L.y=0, L.cin=C, L.out=result, L.carry=0 } by exact counter_write_inc L hnd hw K C;
+
+    after command { call (counterDecXor L.swapCounter); }
+    get { L.x=0, L.y=0, L.cin=C, L.out=result, L.carry=0 } by exact counter_clear_after_inc L hnd hw K C;
+
+    Conclusion { L.x=0, L.y=0, L.cin=C, L.out=result, L.carry=0 };
+  }
+
+theorem counterDec_spec (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10)
+    (K : Nat) (C : Bool) :
+    {{ L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 }} counterDec L
+    {{ L.x=0, L.y=0, L.cin=C, L.out=((K+1024-C.toNat)%1024), L.carry=0 }} := by
+  let result := (K+1024-C.toNat)%1024
+  exact hoare_steps {
+    Precondition { L.x=K, L.y=0, L.cin=C, L.out=0, L.carry=0 };
+
+    after command { call (counterDecXor L); }
+    get { L.x=K, L.y=0, L.cin=C, L.out=result, L.carry=0 } by exact counter_write_dec L hnd hw K C;
+
+    after command { call (counterIncXor L.swapCounter); }
+    get { L.x=0, L.y=0, L.cin=C, L.out=result, L.carry=0 } by exact counter_clear_after_dec L hnd hw K C;
+
+    Conclusion { L.x=0, L.y=0, L.cin=C, L.out=result, L.carry=0 };
+  }
 
 theorem counter_resources (L : AdderLayout) (hnd : L.wires.Nodup) (hw : L.width=10) :
     toffoliCount (counterInc L) = 20 ∧ measurementCount (counterInc L) = 20 ∧

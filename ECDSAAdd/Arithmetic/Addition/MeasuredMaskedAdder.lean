@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Addition.InPlaceAdder
 
 namespace ECDSAAdd.Arithmetic
+open GateProof
 
 /-- 将已知满足 dst[i] = c AND src[i] 的掩码寄存器 dst 清零，保留 c、src 并恢复相位。
 要求 src/dst 等长且所有参与线路互异；不能用于清除任意未知的 dst。
@@ -149,30 +150,58 @@ private theorem eraseMask_frame_spec (c cin : Wire) (src t y carry : List Wire)
   have h := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S (if C then S else 0) Y s m hv
   simpa only [Nat.xor_self] using h
 
+private theorem maskedCopy_load {c cin : Wire} {src t y carry : List Wire}
+    (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
+    (C : Bool) (S Y : Nat) :
+    {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} copyRegister (some c) src t
+    {{ c = C, src = S, t = (if C then S else 0), y = Y, cin = false, carry = 0 }} := by
+  simpa only [Nat.zero_xor] using maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
+
+
 /-- 任意W位输入的受控原地加法，掩码、进位和相位全部恢复。 -/
 theorem measuredMaskedAddInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} measuredMaskedAddInPlace c src t y carry cin
     {{ c = C, src = S, t = 0, y = ((Y + (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
-  have h2 := addInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := eraseMask_frame_spec c cin src t y carry hnd hs C S
-    ((Y + (if C then S else 0)) % 2^y.length)
-  simp only [Nat.zero_xor] at h1
-  simpa only [measuredMaskedAddInPlace, List.append_assoc] using h1.seq (h2.seq h3)
+  let masked := if C then S else 0
+  let result := (Y + masked) % 2^y.length
+  simpa only [measuredMaskedAddInPlace, List.append_assoc] using (hoare_steps {
+    Precondition { c=C, src=S, t=0, y=Y, cin=false, carry=0 };
+
+    after command { call (copyRegister (some c) src t); }
+    get { c=C, src=S, t=masked, y=Y, cin=false, carry=0 } by exact maskedCopy_load hnd hs C S Y;
+
+    after command { call (addInPlace t y carry cin); }
+    get { c=C, src=S, t=masked, y=result, cin=false, carry=0 } by exact addInPlaceWithSource_spec c cin src t y carry hnd ht hc C S masked Y;
+
+    after command { call (eraseMask c src t); }
+    get { c=C, src=S, t=0, y=result, cin=false, carry=0 } by exact eraseMask_frame_spec c cin src t y carry hnd hs C S result;
+
+    Conclusion { c=C, src=S, t=0, y=result, cin=false, carry=0 };
+  })
 
 theorem measuredMaskedSubInPlace_spec (c cin : Wire) (src t y carry : List Wire)
     (hnd : (c :: cin :: (src ++ t ++ y ++ carry)).Nodup) (hs : src.length = t.length)
     (ht : t.length = y.length) (hc : carry.length + 1 = y.length) (C : Bool) (S Y : Nat) :
     {{ c = C, src = S, t = 0, y = Y, cin = false, carry = 0 }} measuredMaskedSubInPlace c src t y carry cin
     {{ c = C, src = S, t = 0, y = ((Y + 2^y.length - (if C then S else 0)) % 2^y.length), cin = false, carry = 0 }} := by
-  have h1 := maskedCopyWithFrame_spec c cin src t y carry hnd hs C S 0 Y
-  have h2 := subInPlaceWithSource_spec c cin src t y carry hnd ht hc C S (if C then S else 0) Y
-  have h3 := eraseMask_frame_spec c cin src t y carry hnd hs C S
-    ((Y + 2^y.length - (if C then S else 0)) % 2^y.length)
-  simp only [Nat.zero_xor] at h1
-  simpa only [measuredMaskedSubInPlace, List.append_assoc] using h1.seq (h2.seq h3)
+  let masked := if C then S else 0
+  let result := (Y + 2^y.length - masked) % 2^y.length
+  simpa only [measuredMaskedSubInPlace, List.append_assoc] using (hoare_steps {
+    Precondition { c=C, src=S, t=0, y=Y, cin=false, carry=0 };
+
+    after command { call (copyRegister (some c) src t); }
+    get { c=C, src=S, t=masked, y=Y, cin=false, carry=0 } by exact maskedCopy_load hnd hs C S Y;
+
+    after command { call (subInPlace t y carry cin); }
+    get { c=C, src=S, t=masked, y=result, cin=false, carry=0 } by exact subInPlaceWithSource_spec c cin src t y carry hnd ht hc C S masked Y;
+
+    after command { call (eraseMask c src t); }
+    get { c=C, src=S, t=0, y=result, cin=false, carry=0 } by exact eraseMask_frame_spec c cin src t y carry hnd hs C S result;
+
+    Conclusion { c=C, src=S, t=0, y=result, cin=false, carry=0 };
+  })
 
 
 theorem eraseMask_counts (c : Wire) (src dst : List Wire) (hlen : src.length=dst.length) :

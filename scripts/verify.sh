@@ -17,6 +17,7 @@ lake env lean -DwarningAsError=true tests/BranchProof.lean
 lake env lean -DwarningAsError=true tests/EquationalProof.lean
 lake env lean -DwarningAsError=true tests/StateProof.lean
 lake env lean -DwarningAsError=true tests/GateProof.lean
+lake env lean -DwarningAsError=true tests/HoareTrace.lean
 lake env lean -DwarningAsError=true tests/CertifiedTranslation.lean
 lake env lean -DwarningAsError=true tests/AnnotatedPrograms.lean
 lake env lean -DwarningAsError=true tests/AdditionAnnotations.lean
@@ -31,6 +32,8 @@ import ECDSAAdd
 #print axioms ECDSAAdd.GateProof.ccx_correct
 #print axioms ECDSAAdd.GateProof.Plan.seq
 #print axioms ECDSAAdd.GateProof.Plan.toTriple
+#print axioms ECDSAAdd.Triple.of_run_eq
+#print axioms ECDSAAdd.Triple.run_eq
 #print axioms ECDSAAdd.Arithmetic.fullAdder.translation
 #print axioms ECDSAAdd.Arithmetic.eraseCarry_correct
 #print axioms ECDSAAdd.Arithmetic.compareChain_correct
