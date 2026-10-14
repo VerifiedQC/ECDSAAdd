@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Addition.FullAdder
 import ECDSAAdd.Arithmetic.Addition.Counter
 import ECDSAAdd.Arithmetic.Addition.MeasuredMaskedAdder
+import ECDSAAdd
 
 open ECDSAAdd ECDSAAdd.Arithmetic ECDSAAdd.GateProof Instr
 
@@ -184,6 +185,90 @@ run_cmd do
       (``rippleSubtractor_xor_correct, ``rippleAdder_xor_correct),
       (``measuredMaskedAddInPlace_spec, ``eraseMask_correct),
       (``measuredMaskedSubInPlace_spec, ``eraseMask_correct)] do
+    let mut pending := [root]
+    let mut seen : Lean.NameSet := {}
+    while !pending.isEmpty do
+      let name := pending.head!
+      pending := pending.tail
+      if seen.contains name then continue
+      seen := seen.insert name
+      let some info := env.find? name | throwError "Missing dependency {name}"
+      let some proof := info.value? | continue
+      for dep in proof.getUsedConstants do
+        if ((Lean.privateToUserName? dep).getD dep).toString.startsWith "ECDSAAdd." then
+          pending := dep :: pending
+    unless seen.contains required do
+      throwError "{root} must transitively depend on {required}"
+
+-- The extended-source endpoint A=p is part of the original modular-add contract.
+example (L : ModAddCoreLayout) (n p Z : Nat) (hw : L.Widths n) (hnd : L.wires.Nodup)
+    (hp : 0<p) (hpn : p<2^n) (hZ : Z<p) :
+    {{ L.a=p,L.z=Z,L.work=0 }} modAddCore L p {{ L.a=p,L.z=Z,L.work=0 }} := by
+  simpa only [Nat.add_mod_left,Nat.mod_eq_of_lt hZ] using
+    modAddCore_spec L n p p Z hw hnd hp hpn (Nat.le_refl p) hZ
+
+-- A disabled division permits denominator zero and must preserve the accumulator.
+example (L : DivideLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
+    (E Z : Nat) (hE : E<p) (hZ : Z<p) :
+    {{ L.control=false,L.denominator=0,L.numerator=E,L.acc=Z,L.work=0 }} divideSub L
+    {{ L.control=false,L.denominator=0,L.numerator=E,L.acc=Z,L.work=0 }} := by
+  simpa only [Bool.false_eq_true,if_false] using
+    divideSub_spec L hw hnd 0 E Z false (by norm_num [p]) hE hZ (by simp)
+
+-- Clearing the slope with generic=false preserves even a nonzero slope at X=0.
+example (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
+    (Y A k : Fp) :
+    Triple (PointInPlaceValues L 0 Y A false false false) (pointInPlaceClearSlopeKernel L k)
+      (PointInPlaceValues L 0 Y A false false false) :=
+  pointInPlaceClearSlopeKernel_disabled L hw hnd 0 Y A k
+
+-- These public proofs compose the displayed stages, rather than attaching
+-- an unused trace to a separate opaque proof of the whole circuit.
+run_cmd do
+  let env ← Lean.getEnv
+  for root in [``modAddOn_refines, ``modSubOn_refines, ``reductionProgram_correct,
+      ``modAddCore_spec, ``controlledModAdd_spec, ``modSubInPlace_spec, ``controlledModSub_spec,
+      ``halfInPlace_spec, ``montMulXor_spec, ``montMulAdd_spec, ``montMulSub_spec,
+      ``montMulControlledAdd_spec, ``montMulControlledSub_spec, ``inverseLoop_values,
+      ``fieldInverse_xor_spec, ``pointInPlaceClearSlopeKernel_spec,
+      ``pointInPlaceClearSlopeKernel_disabled, ``pointInPlaceGeneric_true,
+      ``pointInPlaceGeneric_false, ``pointInPlaceFinite_spec,
+      ``inverseCompute_values, ``kaliskiRound_state, ``kaliskiUnround_state,
+      ``kaliskiLoop_correct, ``negativeInit_correct, ``montP_correct, ``montQ_correct,
+      ``CandidateValues.subConstant, ``CandidateValues.square,
+      ``pointCandidate_compute_spec, ``pointInPlaceNegate_spec] do
+    let some info := env.find? root | throwError "Missing declaration {root}"
+    let some proof := info.value? | throwError "Missing proof {root}"
+    unless proof.getUsedConstants.contains ``Triple.seq do
+      throwError "{root} must compose its displayed stages with Triple.seq"
+  for (root, required) in [
+      (``modAddCore_spec, ``modAddCore_sum),
+      (``modAddCore_spec, ``modAddCore_reduce),
+      (``modAddCore_spec, ``modAddCore_addback),
+      (``modAddCore_spec, ``modAddCore_finish),
+      (``modAddOn_refines, ``modAddPrepare_correct),
+      (``modAddOn_refines, ``modAddSelectAndClear_correct),
+      (``modSubOn_refines, ``modSubPrepare_correct),
+      (``modSubOn_refines, ``modSubSelectAndClear_correct),
+      (``dblInPlace_spec, ``Triple.seq),
+      (``montMulXor_spec, ``montP_correct),
+      (``montMulXor_spec, ``copyRegister_correct),
+      (``montMulXor_spec, ``montQ_correct),
+      (``fieldInverse_xor_spec, ``inverseCompute_values),
+      (``fieldInverse_xor_spec, ``inverseCopy_values),
+      (``divideAdd_spec, ``Triple.seq),
+      (``divideSub_spec, ``Triple.seq),
+      (``pointInPlaceClearSlopeKernel_spec, ``pointStep_zero),
+      (``pointInPlaceClearSlopeKernel_spec, ``pointStep_divideSub),
+      (``pointInPlaceFinite_spec, ``pointBoundary_corners),
+      (``controlledPointAdd_spec, ``pointInPlaceGeneric_true),
+      (``montPrepare_spec, ``Triple.seq),
+      (``montRestore_spec, ``Triple.seq),
+      (``constPrepare_spec, ``Triple.seq),
+      (``constRestore_spec, ``Triple.seq),
+      (``pointInPlaceConstantAdd_correct, ``Triple.seq),
+      (``pointInPlaceSquare_correct, ``Triple.seq),
+      (``pointCandidate_cleanup_spec, ``Triple.seq)] do
     let mut pending := [root]
     let mut seen : Lean.NameSet := {}
     while !pending.isEmpty do

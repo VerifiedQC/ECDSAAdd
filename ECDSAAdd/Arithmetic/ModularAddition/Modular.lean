@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModularTranslation
 namespace ECDSAAdd.Arithmetic
 open scoped CircuitDSL
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 /- 阅读顺序：本文件的 prog → ModularAlgorithm 的两个分支证明 → 下方最终规格。
 工作区及门列细节集中在 ModularBackend；最终规格不作为后端连接的前提。 -/
@@ -53,44 +54,60 @@ theorem modSubOn_backend (x y out : List Wire) (q : Nat) (W : ModReductionWorksp
     ModReductionBackend.subPrepare, ModReductionBackend.subFinish, modReductionContext,
     List.append_assoc]
 
+-- These adapters only change the representation of the boundary assertions.
+private theorem prepare_registers (k : ReductionKind) (prepare : ReductionPrepare)
+    (hp : prepare.Correct k) (L : ModLayout) (he : L.reductionWorkspace = prepare.workspace)
+    (hn : L.wires.Nodup) (q : Nat) (hq0 : 0<q) (hq : q<2^L.width)
+    (X Y O : Nat) (hr : k.inputRange X Y q) :
+    Triple (fun st => ((regValue L.x st=X ∧ regValue L.y st=Y) ∧ regValue L.out st=O) ∧ regValue L.work st=0)
+      (prepare.circuit L.x L.y q) (k.Ready L X Y O q) :=
+  (hp L he hn q hq0 hq X Y O hr).conseq
+    (fun st h => (ModValues.clean_iff L X Y O st).mpr h) (fun _ h => h)
+
+private theorem finish_registers (k : ReductionKind) {W : ModReductionWorkspace}
+    (finish : ReductionFinish W) (hf : finish.Correct k)
+    (L : ModLayout) (he : L.reductionWorkspace = W) (hn : L.wires.Nodup)
+    (q : Nat) (hq0 : 0<q) (hq : q<2^L.width) (X Y O : Nat) (hr : k.inputRange X Y q) :
+    Triple (k.Ready L X Y O q) (finish.circuit L.x L.y (L.lowReg .out) q)
+      (fun st => ((regValue L.x st=X ∧ regValue L.y st=Y) ∧
+        regValue L.out st=(O ^^^ k.result X Y q)) ∧ regValue L.work st=0) :=
+  (hf L he hn q hq0 hq X Y O hr).conseq (fun _ h => h)
+    (fun st h => (ModValues.clean_iff L X Y (O ^^^ k.result X Y q) st).mp h)
+
 /-- 实际 prog 实现数学层的 if 分支，并恢复输入、工作区与相位。 -/
 theorem modAddOn_refines (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hXY : X + Y < 2*q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} := Proof
-  -- The two certified stages meet at the same prepared-state assertion.
-  { Triple (ModValues L (ModValues.clean X Y O))
-      (modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace)
-      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.addResult X Y q))) }
-    as stages by (reductionProgram_correct .add (ModAddPrepare L.reductionWorkspace) modAddPrepare_correct
-      (ModAddSelectAndClear L.reductionWorkspace) modAddSelectAndClear_correct
-      L rfl hnd q hq0 hq X Y O hXY);
-  -- Only the representation of the assertions changes at this boundary.
-  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
-      modAddOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} }
-    by (stages.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
-      (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.addResult X Y q) st).mp h));
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.addResult X Y q), L.work = 0 }} := by
+  exact hoare_steps {
+    Precondition { L.x=X, L.y=Y, L.out=O, L.work=0 };
+
+    after command { call ((ModAddPrepare L.reductionWorkspace).circuit L.x L.y q); }
+    get { satisfies (ModValues L (ModReductionBackend.addPrepared L.width X Y O q)), L.high.diff=decide (X+Y<q) } by exact prepare_registers .add _ modAddPrepare_correct L rfl hnd q hq0 hq X Y O hXY;
+
+    after command { call ((ModAddSelectAndClear L.reductionWorkspace).circuit L.x L.y (L.lowReg .out) q); }
+    get { L.x=X, L.y=Y, L.out=(O ^^^ ModReductionAlgorithm.addResult X Y q), L.work=0 } by exact finish_registers .add _ modAddSelectAndClear_correct L rfl hnd q hq0 hq X Y O hXY;
+
+    Conclusion { L.x=X, L.y=Y, L.out=(O ^^^ ModReductionAlgorithm.addResult X Y q), L.work=0 };
+  }
 
 theorem modSubOn_refines (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)
     (hq0 : 0 < q) (hq : q < 2^L.width) (X Y O : Nat) (hX : X < q) (hY : Y < q) :
     {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
       modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} := Proof
-  -- The two certified stages meet at the same prepared-state assertion.
-  { Triple (ModValues L (ModValues.clean X Y O))
-      (modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace)
-      (ModValues L (ModValues.clean X Y (O ^^^ ModReductionAlgorithm.subResult X Y q))) }
-    as stages by (reductionProgram_correct .sub (ModSubPrepare L.reductionWorkspace) modSubPrepare_correct
-      (ModSubSelectAndClear L.reductionWorkspace) modSubSelectAndClear_correct
-      L rfl hnd q hq0 hq X Y O ⟨hX, hY⟩);
-  -- Only the representation of the assertions changes at this boundary.
-  conclude { {{ L.x = X, L.y = Y, L.out = O, L.work = 0 }}
-      modSubOn L.x L.y (L.lowReg .out) q L.reductionWorkspace
-    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} }
-    by (stages.conseq (fun st h => (ModValues.clean_iff L X Y O st).mpr h)
-      (fun st h => (ModValues.clean_iff L X Y (O ^^^ ModReductionAlgorithm.subResult X Y q) st).mp h));
+    {{ L.x = X, L.y = Y, L.out = (O ^^^ ModReductionAlgorithm.subResult X Y q), L.work = 0 }} := by
+  exact hoare_steps {
+    Precondition { L.x=X, L.y=Y, L.out=O, L.work=0 };
+
+    after command { call ((ModSubPrepare L.reductionWorkspace).circuit L.x L.y q); }
+    get { satisfies (ModValues L (ModReductionBackend.subPrepared L.width X Y O q)), L.high.diff=decide (X<Y) } by exact prepare_registers .sub _ modSubPrepare_correct L rfl hnd q hq0 hq X Y O ⟨hX, hY⟩;
+
+    after command { call ((ModSubSelectAndClear L.reductionWorkspace).circuit L.x L.y (L.lowReg .out) q); }
+    get { L.x=X, L.y=Y, L.out=(O ^^^ ModReductionAlgorithm.subResult X Y q), L.work=0 } by exact finish_registers .sub _ modSubSelectAndClear_correct L rfl hnd q hq0 hq X Y O ⟨hX, hY⟩;
+
+    Conclusion { L.x=X, L.y=Y, L.out=(O ^^^ ModReductionAlgorithm.subResult X Y q), L.work=0 };
+  }
 
 /-- 保留原分支规格：直接来自电路连接，不再引用旧 modAdd_spec。 -/
 theorem modAddOn_spec (L : ModLayout) (hnd : L.wires.Nodup) (q : Nat)

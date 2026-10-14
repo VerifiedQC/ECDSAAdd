@@ -4,6 +4,7 @@ namespace ECDSAAdd.Arithmetic
 open Instr
 open scoped CircuitDSL
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 /-- L.z ← (L.z+L.a) mod p，要求 0<p<2^n、L.a≤p、L.z<p。
 n 是目标低位寄存器 L.low 的长度，L.z=L.low++[L.high]。 -/
@@ -57,80 +58,95 @@ theorem modAddCore_counts (L : ModAddCoreLayout) (n p : Nat)
   simp
   omega
 
-/-- 扩展源 A≤p 的完整模加：保留源、规范化目标、全部核工作位归零，并恢复相位。 -/
-theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
-    (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
-    (hA : A≤p) (hZ : Z<p) :
-    {{ L.a=A, L.z=Z, L.work=0 }} modAddCore L p
-    {{ L.a=A, L.z=(A+Z)%p, L.work=0 }} := Proof
+-- Split the trial difference into its low bits and the actual borrow wire.
+theorem modAddCore_reduce_split (L : ModAddCoreLayout) (n A S p : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup)
+    (hp : 0<p) (hpn : p<2^n) (hS : S<2*p) :
+    {{ L.a=A, L.z=S, L.work=0 }}
+      (xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++ xorConstant L.constant p)
+    {{ L.a=A, L.low=((S+2^(n+1)-p)%2^(n+1))%2^n, L.high=decide (S<p), L.work=0 }} := by
+  apply (modAddCore_reduce L n A S p hw hnd (by rw [Nat.pow_succ]; omega)).conseq
+    (fun _ h => h) ?_
+  intro st h
+  simp only [Holds.holds] at h ⊢
+  have hl : regValue L.low st=((S+2^(n+1)-p)%2^(n+1))%2^n := by
+    rw [regValue_low L.low L.high, ← ModAddCoreLayout.z, h.1.2, hw.low]
+  have hb : st L.high=decide (S<p) := by
+    have hh := regValue_highBit L.low L.high st
+    rw [← ModAddCoreLayout.z, h.1.2, hw.low] at hh
+    exact Bool.eq_iff_iff.mpr (by simpa using hh.trans (addReduction S p n hp hpn hS).1)
+  exact ⟨⟨⟨h.1.1, hl⟩, hb⟩, h.2⟩
+
+-- The conditional add-back leaves exactly the reduced value in the low register.
+theorem modAddCore_addback_mod (L : ModAddCoreLayout) (n A S p : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup)
+    (hp : 0<p) (hpn : p<2^n) (hS : S<2*p) :
+    {{ L.a=A, L.low=((S+2^(n+1)-p)%2^(n+1))%2^n, L.high=decide (S<p), L.work=0 }}
+      maskedAddConst L.high (L.constant.take L.low.length) L.low
+        (L.carry.take (L.low.length-1)) L.cin p
+    {{ L.a=A, L.low=S%p, L.high=decide (S<p), L.work=0 }} := by
   have hn : 0<n := by
     by_contra h
     have he : n=0 := by omega
     rw [he] at hpn
     simp at hpn
     omega
-  { A+Z<2^(n+1) } as hsum by (by rw [Nat.pow_succ]; omega);
-  have hwide : p<2^(n+1) := by rw [Nat.pow_succ]; omega
-  let D := (A+Z+2^(n+1)-p)%2^(n+1)
-  let R := (A+Z)%p
-  let B := decide (A+Z<p)
-  { {{ L.a=A, L.z=Z, L.work=0 }} addInPlace L.a L.z L.carry L.cin
-      {{ L.a=A, L.z=A+Z, L.work=0 }} } as sum by (by
-    simpa only [Nat.mod_eq_of_lt hsum] using modAddCore_sum L n A Z hw hnd);
-  { {{ L.a=A, L.z=A+Z, L.work=0 }}
-      (xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++
-        xorConstant L.constant p)
-      {{ L.a=A, L.z=D, L.work=0 }} }
-    as subtractModulus by (modAddCore_reduce L n A (A+Z) p hw hnd hwide);
-  { (D%2^n+(if B then p else 0))%2^n=R } as reducedValue by (by
-    simpa only [D,B,R,decide_eq_true_eq] using modAddCore_low (A+Z) p n hp hpn (by omega));
-  { 2^n≤D ↔ A+Z<p } as hborrow by (addReduction (A+Z) p n hp hpn (by omega)).1;
-  -- The final result and unchanged source determine the old borrow, so it is erasable.
-  { B = !decide (R<A) } as hlast by (by
-    have hh := modAddCore_cleanup A Z p hA hZ
-    dsimp [B, R]
-    by_cases h : A+Z<p
-    · have hh' := hh.mp h
-      simp [h, Nat.not_lt.mpr hh']
-    · have hh' : ¬ A≤(A+Z)%p := fun he => h (hh.mpr he)
-      simp [h, Nat.lt_of_not_ge hh']);
-  have hadd := modAddCore_addback L n A (D%2^n) p B hw hnd hn hpn
-  { {{ L.a=A, L.low=R, L.high=B, L.work=0 }}
+  have reducedValue :
+      (((S+2^(n+1)-p)%2^(n+1))%2^n+(if decide (S<p) then p else 0))%2^n=S%p := by
+    simpa only [decide_eq_true_eq] using modAddCore_low S p n hp hpn hS
+  simpa only [reducedValue] using
+    modAddCore_addback L n A (((S+2^(n+1)-p)%2^(n+1))%2^n) p (decide (S<p)) hw hnd hn hpn
+
+private theorem modAddCore_sum_exact (L : ModAddCoreLayout) (n p A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) (hpn : p<2^n) (hA : A≤p) (hZ : Z<p) :
+    {{ L.a=A, L.z=Z, L.work=0 }} addInPlace L.a L.z L.carry L.cin
+    {{ L.a=A, L.z=A+Z, L.work=0 }} := by
+  have fits : A+Z<2^(n+1) := by rw [Nat.pow_succ]; omega
+  simpa only [Nat.mod_eq_of_lt fits] using modAddCore_sum L n A Z hw hnd
+
+-- The result and unchanged source determine the borrow, cleared by comparison and X.
+private theorem modAddCore_clearBorrow (L : ModAddCoreLayout) (n p A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ L.a=A, L.low=(A+Z)%p, L.high=decide (A+Z<p), L.work=0 }}
       (compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high])
-      {{ L.a=A, L.z=R, L.work=0 }} }
-    as hfinish by (modAddCore_finish L n A R B hw hnd (by omega) hlast);
-  have hrest :
-      {{ L.a=A, L.z=D, L.work=0 }}
-        (maskedAddConst L.high (L.constant.take L.low.length) L.low
-          (L.carry.take (L.low.length-1)) L.cin p ++
-          (compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high]))
-      {{ L.a=A, L.z=R, L.work=0 }} := by
-    have hmiddle :
-        {{ L.a=A, L.low=D%2^n, L.high=B, L.work=0 }}
-          maskedAddConst L.high (L.constant.take L.low.length) L.low
-            (L.carry.take (L.low.length-1)) L.cin p
-        {{ L.a=A, L.low=R, L.high=B, L.work=0 }} := hadd.conseq (fun _ h => h) (fun st h => by
-      simp only [Holds.holds] at h ⊢
-      exact ⟨⟨⟨h.1.1.1, reducedValue ▸ h.1.1.2⟩, h.1.2⟩, h.2⟩)
-    apply (hmiddle.seq hfinish).conseq ?_ (fun _ h => h)
-    intro st h
-    simp only [Holds.holds] at h ⊢
-    have hl : regValue L.low st=D%2^n := by
-      rw [regValue_low L.low L.high, ← ModAddCoreLayout.z, h.1.2, hw.low]
-    have hb : st L.high=B := by
-      have hh := regValue_highBit L.low L.high st
-      rw [← ModAddCoreLayout.z, h.1.2, hw.low] at hh
-      have he : st L.high=true ↔ A+Z<p := hh.trans hborrow
-      cases hv : st L.high
-      · have hn : ¬ A+Z<p := fun ht => by simpa only [hv, Bool.false_eq_true] using he.mpr ht
-        simp only [B, decide_eq_false hn]
-      · have hy : A+Z<p := he.mp hv
-        simp only [B, decide_eq_true hy]
-    exact ⟨⟨⟨h.1.1, hl⟩, hb⟩, h.2⟩
-  conclude { {{ L.a=A, L.z=Z, L.work=0 }} modAddCore L p
-    {{ L.a=A, L.z=R, L.work=0 }} } by (by
-    simpa only [modAddCore_program, List.append_assoc, D, R] using
-      (sum.seq subtractModulus).seq hrest);
+    {{ L.a=A, L.z=(A+Z)%p, L.work=0 }} := by
+  have hlast : decide (A+Z<p) = !decide ((A+Z)%p<A) := by
+    have hh := modAddCore_cleanup A Z p hA hZ
+    by_cases h : A+Z<p
+    · simp [h, Nat.not_lt.mpr (hh.mp h)]
+    · have hn : ¬ A≤(A+Z)%p := fun he => h (hh.mpr he)
+      simp [h, Nat.lt_of_not_ge hn]
+  exact modAddCore_finish L n A ((A+Z)%p) (decide (A+Z<p)) hw hnd
+    (by omega) hlast
+
+/-- 扩展源 A≤p 的完整模加：保留源、规范化目标、全部核工作位归零，并恢复相位。 -/
+theorem modAddCore_spec (L : ModAddCoreLayout) (n p A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ L.a=A, L.z=Z, L.work=0 }} modAddCore L p
+    {{ L.a=A, L.z=(A+Z)%p, L.work=0 }} := by
+  let D := (A+Z+2^(n+1)-p)%2^(n+1) -- The trial difference in n+1 bits.
+  let B := decide (A+Z<p) -- The borrow produced by subtracting p.
+  let R := (A+Z)%p
+  have sumBound : A+Z<2*p := by omega
+  simpa only [modAddCore_program, List.append_assoc] using (hoare_steps {
+    Precondition { L.a=A, L.z=Z, L.work=0 };
+
+    after command { call (addInPlace L.a L.z L.carry L.cin); }
+    get { L.a=A, L.z=A+Z, L.work=0 } by exact modAddCore_sum_exact L n p A Z hw hnd hpn hA hZ;
+
+    after command { call (xorConstant L.constant p ++ subInPlace L.constant L.z L.carry L.cin ++ xorConstant L.constant p); }
+    get { L.a=A, L.low=D%2^n, L.high=B, L.work=0 } by exact modAddCore_reduce_split L n A (A+Z) p hw hnd hp hpn sumBound;
+
+    after command { call (maskedAddConst L.high (L.constant.take L.low.length) L.low (L.carry.take (L.low.length-1)) L.cin p); }
+    get { L.a=A, L.low=R, L.high=B, L.work=0 } by exact modAddCore_addback_mod L n A (A+Z) p hw hnd hp hpn sumBound;
+
+    after command { call (compareLt none L.low (L.a.take L.low.length) L.carry L.cin L.high ++ [.X L.high]); }
+    get { L.a=A, L.z=R, L.work=0 } by exact modAddCore_clearBorrow L n p A Z hw hnd hpn hA hZ;
+
+    Conclusion { L.a=A, L.z=R, L.work=0 };
+  })
 
 /-- 核的实际支持恰为源、目标、常数字及进位工作线；没有隐含的 mask/flag。 -/
 theorem modAddCore_wires (L : ModAddCoreLayout) (n p : Nat)

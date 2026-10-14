@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularInverse.InverseLoopSupport
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 theorem InversePhase.congr (L : InverseLoopLayout) (K A : Nat)
     (s t : BasisState) (h : InversePhase L K A s) (he : ∀ w∈L.phaseWires,t w=s w) :
@@ -59,21 +60,20 @@ theorem inverseCopy_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
   · intro w hw; exact he w (List.disjoint_left.mp hdis hw)
   · simpa only [copyValue,h.2,show regValue L.a s.basis=montgomeryValue q (inverseScaleFactor q z.k) N 64%q from h.1.2.1.1] using hz
 
-/-- 保留初始化数据，XOR写入规范逆元，再清除全部第一阶段与缩放历史。 -/
-theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
+private theorem inverseCompute_output (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     (hn : L.records.length=512) (hw : L.first.counter.width=10)
     (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
-    (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
-    (q a O : Nat) (hq : q<2^256) (ho : q%16=15) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
-    Triple (fun s => InverseInitial L q a s ∧ regValue L.out s=O) (inverseLoop L q)
-      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ kaliskiInverse q a 256)) := Proof
-  let z := kaliskiStep^[512] (kaliskiInit q a)
-  let cs := kaliskiCodes 512 (kaliskiInit q a)
-  let N := (-(z.r : ZMod q)).val
-  let R := montgomeryValue q (inverseScaleFactor q z.k) N 64%q
-  { R = kaliskiInverse q a 256 } as inverseValue by
-    (kaliski_montgomery_scale q a ho hq hx0 hx hcop).trans
-      (kaliski_correct q a 256 (by omega) hq hx0 (hx.trans hq) hcop).symm;
+    (ha : L.a.length=257) (ht : L.temp.length=257)
+    (q a : Nat) (hq : q<2^256) (ho : q%16=15) (hx : a<q) (hcop : q.Coprime a) :
+    let z := kaliskiStep^[512] (kaliskiInit q a)
+    let cs := kaliskiCodes 512 (kaliskiInit q a)
+    let N := (-(z.r : ZMod q)).val
+    ∀ V, Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=V)
+      (inverseCompute L q) (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=V) ∧
+      Triple (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=V)
+        (inverseUncompute L q) (fun st => InverseInitial L q a st ∧ regValue L.out st=V) := by
+  dsimp only
+  intro V
   have hcompute := inverseCompute_values L hnd hn hw hl hm ha ht q a hq ho hx hcop
   have hd : L.first.data.width=257 := by simp [KaliskiRoundLayout.data,RoundDataLayout.width,hl]
   have hwires := inverseCompute_wires L hn hw (by omega) (by omega) (by omega) (by omega) hl hm q
@@ -86,23 +86,37 @@ theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
     apply (he w ?_).symm
     rw [hc]
     exact fun hh => List.disjoint_left.mp hdis (L.usedCoreWires_sublist.subset (List.mem_toFinset.mp hh)) hw
-  -- Prepare the inverse without touching out; copying retains the full inverse history.
-  { Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=O)
-      (inverseCompute L q)
-      (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=O)
-  } as prepare by (hcompute.1.frame (frame _ hwires.1 O));
-  { Triple (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=O)
-      (copyRegister none L.a L.out)
-      (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=(O ^^^ R))
-  } as copyInverse by (inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O);
-  -- The matching history restores the initialized registers while preserving the copied result.
-  { Triple (fun st => InverseScaledMiddle L q z cs N st ∧ regValue L.out st=(O ^^^ R))
-      (inverseUncompute L q)
-      (fun st => InverseInitial L q a st ∧ regValue L.out st=(O ^^^ R))
-  } as restore by (hcompute.2.frame (frame _ hwires.2 (O ^^^ R)));
-  conclude {
-    Triple (fun st => InverseInitial L q a st ∧ regValue L.out st=O) (inverseLoop L q)
-      (fun st => InverseInitial L q a st ∧ regValue L.out st=(O ^^^ kaliskiInverse q a 256))
-  } by (by simpa only [inverseValue] using (prepare.seq copyInverse).seq restore);
+  exact ⟨hcompute.1.frame (frame _ hwires.1 V), hcompute.2.frame (frame _ hwires.2 V)⟩
+
+/-- 保留初始化数据，XOR写入规范逆元，再清除全部第一阶段与缩放历史。 -/
+theorem inverseLoop_values (L : InverseLoopLayout) (hnd : L.wires.Nodup)
+    (hn : L.records.length=512) (hw : L.first.counter.width=10)
+    (hl : L.first.low.length=256) (hm : L.arithmetic.width=256)
+    (ha : L.a.length=257) (ht : L.temp.length=257) (hout : L.out.length=257)
+    (q a O : Nat) (hq : q<2^256) (ho : q%16=15) (hx0 : 0<a) (hx : a<q) (hcop : q.Coprime a) :
+    Triple (fun s => InverseInitial L q a s ∧ regValue L.out s=O) (inverseLoop L q)
+      (fun s => InverseInitial L q a s ∧ regValue L.out s=(O ^^^ kaliskiInverse q a 256)) := by
+  let z := kaliskiStep^[512] (kaliskiInit q a)
+  let cs := kaliskiCodes 512 (kaliskiInit q a)
+  let N := (-(z.r : ZMod q)).val
+  let R := montgomeryValue q (inverseScaleFactor q z.k) N 64%q
+  have inverseValue : R = kaliskiInverse q a 256 :=
+    (kaliski_montgomery_scale q a ho hq hx0 hx hcop).trans
+      (kaliski_correct q a 256 (by omega) hq hx0 (hx.trans hq) hcop).symm
+  have framed := inverseCompute_output L hnd hn hw hl hm ha ht q a hq ho hx hcop
+  simpa only [inverseLoop, List.append_assoc, inverseValue] using (hoare_steps {
+    Precondition { satisfies (InverseInitial L q a), L.out=O };
+
+    after command { call (inverseCompute L q); }
+    get { satisfies (InverseScaledMiddle L q z cs N), L.out=O } by exact (framed O).1;
+
+    after command { call (copyRegister none L.a L.out); }
+    get { satisfies (InverseScaledMiddle L q z cs N), L.out=(O ^^^ R) } by exact inverseCopy_values L hnd (ha.trans hout.symm) q z cs N O;
+
+    after command { call (inverseUncompute L q); }
+    get { satisfies (InverseInitial L q a), L.out=(O ^^^ R) } by exact (framed (O ^^^ R)).2;
+
+    Conclusion { satisfies (InverseInitial L q a), L.out=(O ^^^ R) };
+  })
 
 end ECDSAAdd.Arithmetic

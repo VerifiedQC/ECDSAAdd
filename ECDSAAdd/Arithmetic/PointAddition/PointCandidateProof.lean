@@ -5,6 +5,7 @@ import ECDSAAdd.Framework.ProofLanguage
 namespace ECDSAAdd.Arithmetic
 
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 def candidateInitial (X Y : Nat) : CandidateField → Nat
   | .inputX => X | .inputY => Y | _ => 0
@@ -129,10 +130,45 @@ theorem pointCandidate_compute_spec (L : PointAddLayout) (h : L.Widths) (hnd : L
     funext f
     cases f <;> simp [v11,v10,v9,v8,v7,v6,v5,v4,v3,v2,v1,v0,candidateInitial,candidateResult]
   rw [← hf]
-  conclude {
-    Triple (CandidateValues L v0 G) (pointCandidateCompute L cx cy) (CandidateValues L v11 G)
-  } by (by simpa only [pointCandidateCompute_program] using
-      (((((((((differenceX.seq differenceY).seq safeDenominator).seq inverseDenominator).seq slope).seq squaredSlope).seq subtractInputX).seq candidateX).seq deltaX).seq slopeProduct).seq candidateY);
+  -- Each update changes only the named register; the other values, flag and clean pool remain.
+  simpa only [pointCandidateCompute_program,List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (CandidateValues L v0 G) };
+
+    after command { call (pointSubConstant L L.extendedX L.dx cx.val); }
+    get { satisfies (CandidateValues L (Function.update v0 .dx ((X+p-cx.val)%p)) G) } by exact differenceX;
+
+    after command { call (pointSubConstant L L.extendedY L.dy cy.val); }
+    get { satisfies (CandidateValues L (Function.update v1 .dy ((Y+p-cy.val)%p)) G) } by exact differenceY;
+
+    after command { call (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail); }
+    get { satisfies (CandidateValues L (Function.update v2 .divisor (if G then v2 .dx else 1)) G) } by exact safeDenominator;
+
+    after command { call (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)); }
+    get { satisfies (CandidateValues L (Function.update v3 .inverse ((v3 .divisor : Fp)⁻¹).val) G) } by exact inverseDenominator;
+
+    after command { call (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)); }
+    get { satisfies (CandidateValues L (Function.update v4 .slope ((v4 .dy*v4 .inverse)%p)) G) } by exact slope;
+
+    after command { call (pointSquare L); }
+    get { satisfies (CandidateValues L (Function.update v5 .square ((v5 .slope*v5 .slope)%p)) G) } by exact squaredSlope;
+
+    after command { call (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)); }
+    get { satisfies (CandidateValues L (Function.update v6 .offset ((v6 .square+p-X)%p)) G) } by exact subtractInputX;
+
+    after command { call (pointSubConstant L L.offset L.candidateX cx.val); }
+    get { satisfies (CandidateValues L (Function.update v7 .x ((v7 .offset+p-cx.val)%p)) G) } by exact candidateX;
+
+    after command { call (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)); }
+    get { satisfies (CandidateValues L (Function.update v8 .delta ((X+p-v8 .x)%p)) G) } by exact deltaX;
+
+    after command { call (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)); }
+    get { satisfies (CandidateValues L (Function.update v9 .product ((v9 .delta*v9 .slope)%p)) G) } by exact slopeProduct;
+
+    after command { call (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)); }
+    get { satisfies (CandidateValues L (Function.update v10 .y ((v10 .product+p-Y)%p)) G) } by exact candidateY;
+
+    Conclusion { satisfies (CandidateValues L v11 G) };
+  })
 
 /-- 候选寄存器按依赖逆序清零，输入、普通分支标志和共享池保持。 -/
 private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
@@ -309,10 +345,46 @@ private theorem candidateClear_of_values (L : PointAddLayout) (h : L.Widths) (hn
     funext f
     cases f <;> simp [v11,v10,v9,v8,v7,v6,v5,v4,v3,v2,v1,v0,candidateInitial]
   rw [← hf]
-  conclude {
-    Triple (CandidateValues L v11 G) (pointCandidateClear L cx cy) (CandidateValues L v0 G)
-  } by (by simpa only [pointCandidateClear_program] using
-      (((((((((clearCandidateY.seq clearProduct).seq clearDelta).seq clearCandidateX).seq clearOffset).seq clearSquare).seq clearSlope).seq clearInverse).seq clearDenominator).seq clearDifferenceY).seq clearDifferenceX);
+  -- v_i contains exactly the first i intermediate values; all later registers are zero.
+  -- Thus each backward step removes one value while retaining every prerequisite for the next.
+  simpa only [pointCandidateClear_program,List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (CandidateValues L v11 G) };
+
+    after command { call (fieldSub (poolSub L.poolWire L.product L.extendedY L.candidateY)); }
+    get { satisfies (CandidateValues L v10 G) } by exact clearCandidateY;
+
+    after command { call (fieldMul (poolMul L.poolWire L.delta (L.slope.take 256) L.product)); }
+    get { satisfies (CandidateValues L v9 G) } by exact clearProduct;
+
+    after command { call (fieldSub (poolSub L.poolWire L.extendedX L.candidateX L.delta)); }
+    get { satisfies (CandidateValues L v8 G) } by exact clearDelta;
+
+    after command { call (pointSubConstant L L.offset L.candidateX cx.val); }
+    get { satisfies (CandidateValues L v7 G) } by exact clearCandidateX;
+
+    after command { call (fieldSub (poolSub L.poolWire L.square L.extendedX L.offset)); }
+    get { satisfies (CandidateValues L v6 G) } by exact clearOffset;
+
+    after command { call (pointSquare L); }
+    get { satisfies (CandidateValues L v5 G) } by exact clearSquare;
+
+    after command { call (fieldMul (poolMul L.poolWire L.dy L.inverse L.slope)); }
+    get { satisfies (CandidateValues L v4 G) } by exact clearSlope;
+
+    after command { call (fieldInverse (poolInverse L.poolWire L.divisor L.inverse)); }
+    get { satisfies (CandidateValues L v3 G) } by exact clearInverse;
+
+    after command { call (safeDivisor L.generic (L.dx.take 256) L.divisor.head! L.divisor.tail); }
+    get { satisfies (CandidateValues L v2 G) } by exact clearDenominator;
+
+    after command { call (pointSubConstant L L.extendedY L.dy cy.val); }
+    get { satisfies (CandidateValues L v1 G) } by exact clearDifferenceY;
+
+    after command { call (pointSubConstant L L.extendedX L.dx cx.val); }
+    get { satisfies (CandidateValues L v0 G) } by exact clearDifferenceX;
+
+    Conclusion { satisfies (CandidateValues L (candidateInitial X Y) G) };
+  })
 
 /-- 同一组前向 XOR 模块按依赖逆序清零所有候选寄存器。 -/
 theorem pointCandidate_clear_spec (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)

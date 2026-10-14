@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularDoubling.ModUnary
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 private theorem double_rotate (U : ModUnaryLayout) (n Z : Nat)
     (hw : U.Widths n) (hnd : U.core.wires.Nodup) (hfit : 2*Z<2^(n+1)) :
@@ -66,71 +67,58 @@ private theorem double_finish (U : ModUnaryLayout) (n R : Nat) (B : Bool)
   rw [hl]
   simp [regValue,hh]
 
-private theorem double_core (U : ModUnaryLayout) (n p Z : Nat)
+private theorem double_shift (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.core.wires.Nodup) (hpn : p<2^n) (hZ : Z<p) :
+    {{ U.mask=0,U.z=Z,U.core.work=0 }} rotateLeft U.z
+    {{ U.mask=0,U.z=2*Z,U.core.work=0 }} :=
+  double_rotate U n Z hw hnd (by rw [Nat.pow_succ]; omega)
+
+private theorem double_clearBorrow (U : ModUnaryLayout) (n p Z : Nat)
     (hw : U.Widths n) (hnd : U.core.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
-    {{ U.mask=0,U.z=Z,U.core.work=0 }} dblInPlace U p
-    {{ U.mask=0,U.z=(2*Z)%p,U.core.work=0 }} := Proof
-  have hpos : 0<p := by omega
+    {{ U.mask=0,U.low=(2*Z)%p,U.high=decide (2*Z<p),U.core.work=0 }}
+      [.X U.high,.CX U.bit U.high]
+    {{ U.mask=0,U.z=(2*Z)%p,U.core.work=0 }} := by
   have hn : 0<n := by
     by_contra hh
     have hn0 : n=0 := by omega
     rw [hn0] at hpn
     simp at hpn
     omega
-  let D := (2*Z+2^(n+1)-p)%2^(n+1)
-  let R := (2*Z)%p
-  let B := decide (2*Z<p)
-  have hk := U.core_widths n hw
-  { {{ U.mask=0,U.z=Z,U.core.work=0 }} rotateLeft U.z
-      {{ U.mask=0,U.z=2*Z,U.core.work=0 }} } as double by
-    (double_rotate U n Z hw hnd (by rw [Nat.pow_succ]; omega));
-  { {{ U.mask=0,U.z=2*Z,U.core.work=0 }}
-      (xorConstant U.constant p ++ subInPlace U.constant U.z U.carry U.cin ++ xorConstant U.constant p)
-      {{ U.mask=0,U.z=D,U.core.work=0 }} } as subtractModulus by
-    (modAddCore_reduce U.core n 0 (2*Z) p hk hnd (by rw [Nat.pow_succ]; omega));
-  { (D%2^n+(if B then p else 0))%2^n=R } as reducedValue by (by
-    simpa only [D,B,R,decide_eq_true_eq] using modAddCore_low (2*Z) p n hpos hpn (by omega));
-  { 2^n≤D ↔ 2*Z<p } as hborrow by (addReduction (2*Z) p n hpos hpn (by omega)).1;
-  -- Since p is odd and 2*Z is even, result parity records whether p was subtracted.
-  { B= !decide (R%2=1) } as hB by (by
+  have parity : decide (2*Z<p)= !decide ((2*Z)%p%2=1) := by
     have hh := (double_flag p Z hp hZ).2.2
-    dsimp [B,R]
     by_cases ht : 2*Z<p
     · have ho : ¬(2*Z)%p%2=1 := by omega
       simp [ht,ho]
     · have ho : (2*Z)%p%2=1 := hh.mpr (by omega)
-      simp [ht,ho]);
-  have hadd := modAddCore_addback U.core n 0 (D%2^n) p B hk hnd hn hpn
-  { {{ U.mask=0,U.low=R,U.high=B,U.core.work=0 }} [.X U.high,.CX U.bit U.high]
-      {{ U.mask=0,U.z=R,U.core.work=0 }} }
-    as hfinish by (double_finish U n R B hw hnd hn hB);
-  have hmiddle :
-      {{ U.mask=0,U.low=D%2^n,U.high=B,U.core.work=0 }}
-        maskedAddConst U.high (U.constant.take U.low.length) U.low
-          (U.carry.take (U.low.length-1)) U.cin p
-      {{ U.mask=0,U.low=R,U.high=B,U.core.work=0 }} :=
-    hadd.conseq (fun _ h => h) (fun st h => by
-      simp only [Holds.holds] at h ⊢
-      exact ⟨⟨⟨h.1.1.1,reducedValue ▸ h.1.1.2⟩,h.1.2⟩,h.2⟩)
-  have hrest := (hmiddle.seq hfinish).conseq (P' := fun st =>
-      (regValue U.mask st=0 ∧ regValue U.z st=D) ∧ regValue U.core.work st=0) (by
-    intro st h
-    have hl : regValue U.low st=D%2^n := by
-      rw [regValue_low U.low U.high,← ModUnaryLayout.z,h.1.2,hw.low]
-    have hb : st U.high=B := by
-      have hh := regValue_highBit U.low U.high st
-      rw [← ModUnaryLayout.z,h.1.2,hw.low] at hh
-      have he := hh.trans hborrow
-      cases hv : st U.high
-      · have hn : ¬2*Z<p := fun ht => by simpa only [hv,Bool.false_eq_true] using he.mpr ht
-        simp only [B,decide_eq_false hn]
-      · have hy : 2*Z<p := he.mp hv
-        simp only [B,decide_eq_true hy]
-    exact ⟨⟨⟨h.1.1,hl⟩,hb⟩,h.2⟩) (fun _ h => h)
-  conclude { {{ U.mask=0,U.z=Z,U.core.work=0 }} dblInPlace U p
-    {{ U.mask=0,U.z=R,U.core.work=0 }} } by (by
-    simpa only [dblInPlace_program,ModUnaryLayout.core,ModAddCoreLayout.z,R,List.append_assoc] using
-      (double.seq subtractModulus).seq hrest);
+      simp [ht,ho]
+  exact double_finish U n ((2*Z)%p) (decide (2*Z<p)) hw hnd hn parity
+
+private theorem double_core (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.core.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
+    {{ U.mask=0,U.z=Z,U.core.work=0 }} dblInPlace U p
+    {{ U.mask=0,U.z=(2*Z)%p,U.core.work=0 }} := by
+  let D := (2*Z+2^(n+1)-p)%2^(n+1)
+  let B := decide (2*Z<p)
+  let R := (2*Z)%p
+  have hpos : 0<p := by omega
+  have doubledBound : 2*Z<2*p := by omega
+  simpa only [dblInPlace_program, List.append_assoc] using (hoare_steps {
+    Precondition { U.mask=0, U.z=Z, U.core.work=0 };
+
+    after command { call (rotateLeft U.z); }
+    get { U.mask=0, U.z=2*Z, U.core.work=0 } by exact double_shift U n p Z hw hnd hpn hZ;
+
+    after command { call (xorConstant U.constant p ++ subInPlace U.constant U.z U.carry U.cin ++ xorConstant U.constant p); }
+    get { U.mask=0, U.low=D%2^n, U.high=B, U.core.work=0 } by exact modAddCore_reduce_split U.core n 0 (2*Z) p (U.core_widths n hw) hnd hpos hpn doubledBound;
+
+    after command { call (maskedAddConst U.high (U.constant.take U.low.length) U.low (U.carry.take (U.low.length-1)) U.cin p); }
+    get { U.mask=0, U.low=R, U.high=B, U.core.work=0 } by exact modAddCore_addback_mod U.core n 0 (2*Z) p (U.core_widths n hw) hnd hpos hpn doubledBound;
+
+    after command { call ([.X U.high,.CX U.bit U.high]); }
+    get { U.mask=0, U.z=R, U.core.work=0 } by exact double_clearBorrow U n p Z hw hnd hp hpn hZ;
+
+    Conclusion { U.mask=0, U.z=R, U.core.work=0 };
+  })
 
 /-- 规范模加倍；借位从结果奇偶清除，外层 mask/flag 均归零。 -/
 theorem dblInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)

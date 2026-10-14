@@ -9,6 +9,7 @@ import ECDSAAdd.Framework.ProofLanguage
 namespace ECDSAAdd.Arithmetic
 open Instr
 open CertifiedTranslation
+open GateProof
 open scoped ECDSAAdd.ProofLanguage
 
 /-- 一个 Montgomery 段；另一段复用 table/mask/carry/pad/scratch，保留各自 acc/history/flag。 -/
@@ -87,41 +88,44 @@ abbrev montLookupValue (L : MontStageLayout) (addr : List Wire) (K : Nat) :
     CircuitDSL.Computed (List Wire) :=
   ⟨L.table, montLookup L addr K, montLookup L addr K⟩
 
-theorem montLookupPrepare_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
+private theorem montLookup_xor_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
     (hnd : (addr++L.scratch++L.table).Nodup) (ha : addr.length=4)
-    (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D : Nat) :
-    {{ addr=D,L.table=0,L.scratch=0 }} montLookup L addr K
-    {{ addr=D,L.table=D*K,L.scratch=0 }} := Proof
+    (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D V : Nat) :
+    {{ addr=D,L.table=V,L.scratch=0 }} montLookup L addr K
+    {{ addr=D,L.table=(V ^^^ (D*K)),L.scratch=0 }} := by
   cases addr with
   | nil => simp at ha
   | cons a bs =>
     have remainingAddressBits : bs.length=3 := by simpa using ha
-    { 0 ^^^ (D*K)=D*K } as loadedValue by Nat.zero_xor _;
-    -- XOR the addressed multiple into the initially zero table.
-    have lookupResult := lookup_spec a bs L.scratch L.table (fun d => d*K)
-      hnd remainingAddressBits hs hK D 0
-    conclude {
-      {{ (a::bs)=D,L.table=0,L.scratch=0 }} montLookup L (a::bs) K
-      {{ (a::bs)=D,L.table=D*K,L.scratch=0 }}
-    } by (by simpa only [montLookup,List.headD_cons,List.tail_cons,loadedValue] using lookupResult);
+    simpa only [montLookup,List.headD_cons,List.tail_cons] using
+      lookup_spec a bs L.scratch L.table (fun d => d*K)
+        hnd remainingAddressBits hs hK D V
+
+theorem montLookupPrepare_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
+    (hnd : (addr++L.scratch++L.table).Nodup) (ha : addr.length=4)
+    (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D : Nat) :
+    {{ addr=D,L.table=0,L.scratch=0 }} montLookup L addr K
+    {{ addr=D,L.table=D*K,L.scratch=0 }} := by
+  exact hoare_steps {
+    Precondition { addr=D,L.table=0,L.scratch=0 };
+    after command { call (montLookup L addr K); }
+    get { addr=D,L.table=D*K,L.scratch=0 } by
+      simpa only [Nat.zero_xor] using montLookup_xor_spec L addr K hnd ha hs hK D 0;
+    Conclusion { addr=D,L.table=D*K,L.scratch=0 };
+  }
 
 theorem montLookupRestore_spec (L : MontStageLayout) (addr : List Wire) (K : Nat)
     (hnd : (addr++L.scratch++L.table).Nodup) (ha : addr.length=4)
     (hs : L.scratch.length=3) (hK : ∀ d<16, d*K<2^L.table.length) (D : Nat) :
     {{ addr=D,L.table=D*K,L.scratch=0 }} montLookup L addr K
-    {{ addr=D,L.table=0,L.scratch=0 }} := Proof
-  cases addr with
-  | nil => simp at ha
-  | cons a bs =>
-    have remainingAddressBits : bs.length=3 := by simpa using ha
-    { (D*K) ^^^ (D*K)=0 } as clearedValue by Nat.xor_self _;
-    -- The unchanged address selects the same multiple, so the second XOR clears it.
-    have lookupResult := lookup_spec a bs L.scratch L.table (fun d => d*K)
-      hnd remainingAddressBits hs hK D (D*K)
-    conclude {
-      {{ (a::bs)=D,L.table=D*K,L.scratch=0 }} montLookup L (a::bs) K
-      {{ (a::bs)=D,L.table=0,L.scratch=0 }}
-    } by (by simpa only [montLookup,List.headD_cons,List.tail_cons,clearedValue] using lookupResult);
+    {{ addr=D,L.table=0,L.scratch=0 }} := by
+  exact hoare_steps {
+    Precondition { addr=D,L.table=D*K,L.scratch=0 };
+    after command { call (montLookup L addr K); }
+    get { addr=D,L.table=0,L.scratch=0 } by
+      simpa only [Nat.xor_self] using montLookup_xor_spec L addr K hnd ha hs hK D (D*K);
+    Conclusion { addr=D,L.table=0,L.scratch=0 };
+  }
 
 /-- L.acc ← (L.acc+d*K) mod 2^261，d 是四位地址寄存器 addr 的值。 -/
 def montLookupAdd (L : MontStageLayout) (addr : List Wire) (K : Nat) : Program := prog {

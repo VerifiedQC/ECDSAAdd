@@ -4,6 +4,7 @@ import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
+open GateProof
 open scoped ECDSAAdd.ProofLanguage
 
 private theorem negate_swap (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
@@ -75,21 +76,34 @@ theorem pointInPlaceNegate_spec (L : ControlledPointLayout) (hw : L.Widths) (hnd
     (if B then (if B then (p-A)%p else 0) else A) (if B then A else (if B then (p-A)%p else 0)) B
     hm hn hp hpn (by cases B <;> simp; omega; exact Nat.le_of_lt (Nat.mod_lt _ hp))
     (by cases B <;> simp; exact hp; exact hA)
-  have hresult : (if B then ((if B then A else (if B then (p-A)%p else 0))+
-      (if B then (if B then (p-A)%p else 0) else A))%p else (if B then A else (if B then (p-A)%p else 0)))=0 := by
-    cases B
-    · rfl
-    · simp only [if_true]
-      exact oppositeValuesCancel
-  have h := (negationComputed.seq negationSwapped).seq oldValueCleared
-  have he : (if B then (if B then (p-A)%p else 0) else A)=(if B then (p-A)%p else A) := by cases B <;> rfl
-  rw [hresult] at h
-  conclude {
-    {{ L.core.generic=B,L.inPlaceNegate.a=A,L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
-      pointInPlaceNegateKernel L
-    {{ L.core.generic=B,L.inPlaceNegate.a=(if B then (p-A)%p else A),
-      L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }}
-  } by (by simpa only [pointInPlaceNegateKernel_program,he] using h);
+  let negative := if B then (p-A)%p else 0
+  let result := if B then (p-A)%p else A
+  let oldValue := if B then A else 0
+  have swapStep :
+      {{ L.core.generic=B,L.inPlaceNegate.a=A,L.inPlaceNegate.z=negative,L.inPlaceNegate.work=0 }}
+        swapRegisters L.core.generic L.point.x L.inPlaceNegate.low
+      {{ L.core.generic=B,L.inPlaceNegate.a=result,L.inPlaceNegate.z=oldValue,L.inPlaceNegate.work=0 }} := by
+    cases B <;> simpa only [negative,result,oldValue,Bool.false_eq_true,if_false,if_true] using negationSwapped
+  have clearStep :
+      {{ L.core.generic=B,L.inPlaceNegate.a=result,L.inPlaceNegate.z=oldValue,L.inPlaceNegate.work=0 }}
+        controlledModAdd L.core.generic L.inPlaceNegate p
+      {{ L.core.generic=B,L.inPlaceNegate.a=result,L.inPlaceNegate.z=0,L.inPlaceNegate.work=0 }} := by
+    cases B <;> simpa only [negative,result,oldValue,Bool.false_eq_true,if_false,if_true,
+      oppositeValuesCancel] using oldValueCleared
+  simpa only [pointInPlaceNegateKernel_program,List.append_assoc] using (hoare_steps {
+    Precondition { L.core.generic=B, L.inPlaceNegate.a=A, L.inPlaceNegate.z=0, L.inPlaceNegate.work=0 };
+
+    after command { call (controlledModSub L.core.generic L.inPlaceNegate p); }
+    get { L.core.generic=B, L.inPlaceNegate.a=A, L.inPlaceNegate.z=negative, L.inPlaceNegate.work=0 } by exact negationComputed;
+
+    after command { call (swapRegisters L.core.generic L.point.x L.inPlaceNegate.low); }
+    get { L.core.generic=B, L.inPlaceNegate.a=result, L.inPlaceNegate.z=oldValue, L.inPlaceNegate.work=0 } by exact swapStep;
+
+    after command { call (controlledModAdd L.core.generic L.inPlaceNegate p); }
+    get { L.core.generic=B, L.inPlaceNegate.a=result, L.inPlaceNegate.z=0, L.inPlaceNegate.work=0 } by exact clearStep;
+
+    Conclusion { L.core.generic=B, L.inPlaceNegate.a=result, L.inPlaceNegate.z=0, L.inPlaceNegate.work=0 };
+  })
 
 /-- 取负后仅输入x的低位改变，临时差、高位与所有其它线路恢复。 -/
 theorem pointInPlaceNegate_correct (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)

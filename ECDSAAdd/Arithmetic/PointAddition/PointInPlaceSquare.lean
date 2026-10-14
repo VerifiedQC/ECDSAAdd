@@ -4,6 +4,7 @@ import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout
+open GateProof
 open scoped ECDSAAdd.ProofLanguage
 
 private abbrev squareAdapter (L : ControlledPointLayout) : MontLayout := L.inPlaceSquare
@@ -87,12 +88,25 @@ private theorem square_program_spec (L : ControlledPointLayout) (hw : L.Widths) 
   } as copyCleared by (by
     simpa only [Nat.xor_self] using
       square_copy L hw hnd A A ((X+p-(A*A)%p)%p) hA);
-  conclude {
-    {{ (squareAdapter L).x=A,(squareAdapter L).y=0,(squareAdapter L).out=X,(squareAdapter L).work=0 }}
-      squareProgram L
-    {{ (squareAdapter L).x=A,(squareAdapter L).y=0,
-      (squareAdapter L).out=(X+p-(A*A)%p)%p,(squareAdapter L).work=0 }}
-  } by (copied.seq squareSubtracted).seq copyCleared;
+  simpa only [squareProgram,List.append_assoc] using (hoare_steps {
+    Precondition { (squareAdapter L).x=A, (squareAdapter L).y=0,
+      (squareAdapter L).out=X, (squareAdapter L).work=0 };
+
+    after command { call (copyRegister none L.inPlaceSlope L.inPlaceSquare.y); }
+    get { (squareAdapter L).x=A, (squareAdapter L).y=A,
+      (squareAdapter L).out=X, (squareAdapter L).work=0 } by exact copied;
+
+    after command { call (montMulSub (squareAdapter L) p); }
+    get { (squareAdapter L).x=A, (squareAdapter L).y=A,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p, (squareAdapter L).work=0 } by exact squareSubtracted;
+
+    after command { call (copyRegister none L.inPlaceSlope L.inPlaceSquare.y); }
+    get { (squareAdapter L).x=A, (squareAdapter L).y=0,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p, (squareAdapter L).work=0 } by exact copyCleared;
+
+    Conclusion { (squareAdapter L).x=A, (squareAdapter L).y=0,
+      (squareAdapter L).out=(X+p-(A*A)%p)%p, (squareAdapter L).work=0 };
+  })
 
 private theorem square_program_frame (L : ControlledPointLayout) (hw : L.Widths) (hnd : L.wires.Nodup)
     (A X : Nat) (hA : A<p) (hX : X<p) (s : State) (m : List Bool)

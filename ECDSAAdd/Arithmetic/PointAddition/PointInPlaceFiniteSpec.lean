@@ -4,12 +4,30 @@ import ECDSAAdd.Framework.ProofLanguage
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
-/-- 有限常量的完整原地点加：包括输入分类、普通分支、角落写回和输出清标志。 -/
-theorem pointInPlaceFinite_spec (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
+-- Derive the individual flag transitions from the input and output predicates.
+private theorem pointInPlaceFinite_steps (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
     (R : Point) {cx cy : Fp} (hc : curve.toAffine.Nonsingular cx cy) (b : Bool) :
-    Triple (PointInPlaceBoundary L R b (fun _ => false)) (pointInPlaceFinite L (.some hc) cx cy)
-      (PointInPlaceBoundary L (if b then R+.some hc else R) b (fun _ => false)) := Proof
+    let C : Point := .some hc
+    let O := inPlaceInfinity b R
+    let D := inPlaceDouble b R C
+    let I := inPlaceInversePoint b R C
+    let G := inPlaceOrdinary b R C
+    let H := b && decide (cy≠-cy)
+    let S := if b then R+C else R
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L false false false false false)) (pointInPlaceDoubleEnable L cy) (PointInPlaceBoundary L R b (inPlaceFlagState L false false false false H)) ∧
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L false false false false H)) (equalConstant L.control L.infinitySelect L.inPlacePointZero (pointCode 0)) (PointInPlaceBoundary L R b (inPlaceFlagState L O false false false H)) ∧
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L O false false false H)) (equalConstant L.core.double L.doubleSelect L.inPlacePointZero (pointCode C)) (PointInPlaceBoundary L R b (inPlaceFlagState L O D false false H)) ∧
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L O D false false H)) (equalConstant L.control L.genericSelect L.inPlacePointZero (pointCode (-C))) (PointInPlaceBoundary L R b (inPlaceFlagState L O D I false H)) ∧
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L O D I false H)) (pointInPlaceGenericFlag L) (PointInPlaceBoundary L R b (inPlaceFlagState L O D I G H)) ∧
+    Triple (PointInPlaceBoundary L R b (inPlaceFlagState L O D I G H)) (pointInPlaceGeneric L cx cy (exceptionalSlope C)) (PointInPlaceBoundary L (if G then R+C else R) b (inPlaceFlagState L O D I G H)) ∧
+    Triple (PointInPlaceBoundary L (if G then R+C else R) b (inPlaceFlagState L O D I G H)) (pointInPlaceCorners L C) (PointInPlaceBoundary L S b (inPlaceFlagState L O D I G H)) ∧
+    Triple (PointInPlaceBoundary L S b (inPlaceFlagState L O D I G H)) (pointInPlaceGenericFlag L) (PointInPlaceBoundary L S b (inPlaceFlagState L O D I false H)) ∧
+    Triple (PointInPlaceBoundary L S b (inPlaceFlagState L O D I false H)) (equalConstant L.control L.infinitySelect L.inPlacePointZero (pointCode C)) (PointInPlaceBoundary L S b (inPlaceFlagState L false D I false H)) ∧
+    Triple (PointInPlaceBoundary L S b (inPlaceFlagState L false D I false H)) (equalConstant L.core.double L.doubleSelect L.inPlacePointZero (pointCode (C+C))) (PointInPlaceBoundary L S b (inPlaceFlagState L false false I false H)) ∧
+    Triple (PointInPlaceBoundary L S b (inPlaceFlagState L false false I false H)) (equalConstant L.control L.genericSelect L.inPlacePointZero (pointCode 0)) (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false H)) ∧
+    Triple (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false H)) (pointInPlaceDoubleEnable L cy) (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false false)) := Proof
   let C : Point := .some hc
   let O := inPlaceInfinity b R
   let D := inPlaceDouble b R C
@@ -65,11 +83,64 @@ theorem pointInPlaceFinite_spec (L : ControlledPointLayout) (hw : L.Widths) (hn 
   rw [inverseRecognizedAtOutput,Bool.xor_self] at clearInverse
   have clearEnable := pointFlag_doubleEnable L hw hn S b false false false false H cy
   simp only [show (H ^^ (b && decide (cy≠-cy)))=false from Bool.xor_self H] at clearEnable
-  conclude {
+  exact ⟨enableDoubling, identifyInfinity, identifyDouble, identifyInverse, identifyOrdinary, ordinaryAddition, exceptionalAddition, clearOrdinary, clearInfinity, clearDouble, clearInverse, clearEnable⟩
+
+/-- 有限常量的完整原地点加：包括输入分类、普通分支、角落写回和输出清标志。 -/
+theorem pointInPlaceFinite_spec (L : ControlledPointLayout) (hw : L.Widths) (hn : L.wires.Nodup)
+    (R : Point) {cx cy : Fp} (hc : curve.toAffine.Nonsingular cx cy) (b : Bool) :
     Triple (PointInPlaceBoundary L R b (fun _ => false)) (pointInPlaceFinite L (.some hc) cx cy)
-      (PointInPlaceBoundary L (if b then R+.some hc else R) b (fun _ => false))
-  } by (by simpa only [pointInPlaceFinite,List.append_assoc,inPlaceFlagState_zero] using
-      (((((((((((enableDoubling.seq identifyInfinity).seq identifyDouble).seq identifyInverse).seq identifyOrdinary).seq ordinaryAddition).seq exceptionalAddition).seq clearOrdinary).seq clearInfinity).seq clearDouble).seq clearInverse).seq clearEnable));
+      (PointInPlaceBoundary L (if b then R+.some hc else R) b (fun _ => false)) := by
+  let C : Point := .some hc
+  let O := inPlaceInfinity b R
+  let D := inPlaceDouble b R C
+  let I := inPlaceInversePoint b R C
+  let G := inPlaceOrdinary b R C
+  let H := b && decide (cy≠-cy)
+  let S := if b then R+C else R
+  obtain ⟨enableDoubling, identifyInfinity, identifyDouble, identifyInverse, identifyOrdinary, ordinaryAddition, exceptionalAddition, clearOrdinary, clearInfinity, clearDouble, clearInverse, clearEnable⟩ :=
+    pointInPlaceFinite_steps L hw hn R hc b
+  -- O/D/I classify the three exceptional inputs; G selects ordinary addition; H enables doubling.
+  simpa only [pointInPlaceFinite,List.append_assoc,inPlaceFlagState_zero] using (hoare_steps {
+    Precondition { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L false false false false false)) };
+
+    after command { call (pointInPlaceDoubleEnable L cy); }
+    get { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L false false false false H)) } by exact enableDoubling;
+
+    after command { call (equalConstant L.control L.infinitySelect L.inPlacePointZero (pointCode 0)); }
+    get { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L O false false false H)) } by exact identifyInfinity;
+
+    after command { call (equalConstant L.core.double L.doubleSelect L.inPlacePointZero (pointCode C)); }
+    get { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L O D false false H)) } by exact identifyDouble;
+
+    after command { call (equalConstant L.control L.genericSelect L.inPlacePointZero (pointCode (-C))); }
+    get { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L O D I false H)) } by exact identifyInverse;
+
+    after command { call (pointInPlaceGenericFlag L); }
+    get { satisfies (PointInPlaceBoundary L R b (inPlaceFlagState L O D I G H)) } by exact identifyOrdinary;
+
+    after command { call (pointInPlaceGeneric L cx cy (exceptionalSlope C)); }
+    get { satisfies (PointInPlaceBoundary L (if G then R+C else R) b (inPlaceFlagState L O D I G H)) } by exact ordinaryAddition;
+
+    after command { call (pointInPlaceCorners L C); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L O D I G H)) } by exact exceptionalAddition;
+
+    after command { call (pointInPlaceGenericFlag L); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L O D I false H)) } by exact clearOrdinary;
+
+    after command { call (equalConstant L.control L.infinitySelect L.inPlacePointZero (pointCode C)); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L false D I false H)) } by exact clearInfinity;
+
+    after command { call (equalConstant L.core.double L.doubleSelect L.inPlacePointZero (pointCode (C+C))); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L false false I false H)) } by exact clearDouble;
+
+    after command { call (equalConstant L.control L.genericSelect L.inPlacePointZero (pointCode 0)); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false H)) } by exact clearInverse;
+
+    after command { call (pointInPlaceDoubleEnable L cy); }
+    get { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false false)) } by exact clearEnable;
+
+    Conclusion { satisfies (PointInPlaceBoundary L S b (inPlaceFlagState L false false false false false)) };
+  })
 
 
 end ECDSAAdd.Arithmetic

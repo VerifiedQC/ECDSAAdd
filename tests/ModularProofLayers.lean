@@ -77,6 +77,8 @@ example (L : ModLayout) (hn : L.wires.Nodup) (q : Nat) :
   modSub_resources L hn q
 
 -- 锁定证明的连接方向：旧规格必须经过新分层证明，不能退回“新规格引用旧规格”。
+-- Refinement now composes the displayed stages directly, retaining both
+-- independent stage certificates and the checked Triple.seq connection.
 run_cmd do
   let env ← Lean.getEnv
   for (root, required) in [
@@ -86,12 +88,13 @@ run_cmd do
       (``modAddOn_mod_spec, ``ModReductionAlgorithm.addResult_correct),
       (``modSubOn_mod_spec, ``modSubOn_refines),
       (``modSubOn_mod_spec, ``ModReductionAlgorithm.subResult_correct),
-      (``modAddOn_refines, ``reductionProgram_correct),
+      (``modAddOn_refines, ``Triple.seq),
       (``modAddOn_refines, ``modAddPrepare_correct),
       (``modAddOn_refines, ``modAddSelectAndClear_correct),
-      (``modSubOn_refines, ``reductionProgram_correct),
+      (``modSubOn_refines, ``Triple.seq),
       (``modSubOn_refines, ``modSubPrepare_correct),
-      (``modSubOn_refines, ``modSubSelectAndClear_correct)] do
+      (``modSubOn_refines, ``modSubSelectAndClear_correct),
+      (``reductionProgram_correct, ``Triple.seq)] do
     let some info := env.find? root | throwError "找不到证明 {root}"
     let some proof := info.value? | throwError "{root} 没有证明体"
     unless proof.getUsedConstants.contains required do

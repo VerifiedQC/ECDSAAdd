@@ -4,6 +4,7 @@ import ECDSAAdd.Framework.ProofLanguage
 namespace ECDSAAdd.Arithmetic
 
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 theorem CandidateValues.subConstant (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
     (v : CandidateField → Nat) (G : Bool) (a o : CandidateField)
@@ -34,17 +35,27 @@ theorem CandidateValues.subConstant (L : PointAddLayout) (h : L.Widths) (hnd : L
     · by_cases hfK : f=.constant
       · subst f; simp [v2,v1,hK,haK,hoK,Ne.symm hoK]
       · simp [v2,v1,hK,haK,hoK,hfo,hfK]
-  have stages := (loadConstant.seq subtractConstant).seq clearConstant
-  conclude {
-    Triple (CandidateValues L v G) (pointSubConstantKernel L (L.reg a) (L.reg o) k)
-      (CandidateValues L (Function.update v o (v o ^^^ ((v a+p-k)%p))) G)
-  } by (by
-    change Triple (CandidateValues L v G)
-      (xorConstant (L.reg .constant) k++
-        fieldSub (poolSub L.poolWire (L.reg a) (L.reg .constant) (L.reg o))++
-        xorConstant (L.reg .constant) k) _
-    rw [← hf]
-    exact stages);
+  change Triple (CandidateValues L v G)
+    (xorConstant (L.reg .constant) k++
+      fieldSub (poolSub L.poolWire (L.reg a) (L.reg .constant) (L.reg o))++
+      xorConstant (L.reg .constant) k) _
+  have unloaded : Triple (CandidateValues L v2 G) (xorConstant (L.reg .constant) k)
+      (CandidateValues L (Function.update v o (v o ^^^ ((v a+p-k)%p))) G) := by
+    simpa only [hf] using clearConstant
+  simpa only [List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (CandidateValues L v G) };
+
+    after command { call (xorConstant (L.reg .constant) k); }
+    get { satisfies (CandidateValues L (Function.update v .constant (v .constant ^^^ k)) G) } by exact loadConstant;
+
+    after command { call (fieldSub (poolSub L.poolWire (L.reg a) (L.reg .constant) (L.reg o))); }
+    get { satisfies (CandidateValues L (Function.update v1 o (v1 o ^^^ ((v1 a+p-v1 .constant)%p))) G) } by exact subtractConstant;
+
+    after command { call (xorConstant (L.reg .constant) k); }
+    get { satisfies (CandidateValues L (Function.update v o (v o ^^^ ((v a+p-k)%p))) G) } by exact unloaded;
+
+    Conclusion { satisfies (CandidateValues L (Function.update v o (v o ^^^ ((v a+p-k)%p))) G) };
+  })
 
 theorem CandidateValues.square (L : PointAddLayout) (h : L.Widths) (hnd : L.wires.Nodup)
     (v : CandidateField → Nat) (G : Bool)
@@ -73,16 +84,27 @@ theorem CandidateValues.square (L : PointAddLayout) (h : L.Widths) (hnd : L.wire
       Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p)) := by
     funext f
     cases f <;> simp [v2,v1,hK]
-  have stages := (copySlope.seq multiplyCopies).seq clearCopy
-  conclude {
-    Triple (CandidateValues L v G) (pointSquareKernel L)
-      (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G)
-  } by (by
-    change Triple (CandidateValues L v G)
-      (copyRegister none (L.reg .slope) (L.reg .constant)++
-        fieldMul (poolMul L.poolWire (L.reg .slope) ((L.reg .constant).take 256) (L.reg .square))++
-        copyRegister none (L.reg .slope) (L.reg .constant)) _
-    rw [← hf]
-    exact stages);
+  change Triple (CandidateValues L v G)
+    (copyRegister none (L.reg .slope) (L.reg .constant)++
+      fieldMul (poolMul L.poolWire (L.reg .slope) ((L.reg .constant).take 256) (L.reg .square))++
+      copyRegister none (L.reg .slope) (L.reg .constant)) _
+  have copyCleared : Triple (CandidateValues L v2 G)
+      (copyRegister none (L.reg .slope) (L.reg .constant))
+      (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G) := by
+    simpa only [hf] using clearCopy
+  simpa only [List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (CandidateValues L v G) };
+
+    after command { call (copyRegister none (L.reg .slope) (L.reg .constant)); }
+    get { satisfies (CandidateValues L (Function.update v .constant (v .constant ^^^ v .slope)) G) } by exact copySlope;
+
+    after command { call (fieldMul (poolMul L.poolWire (L.reg .slope) ((L.reg .constant).take 256) (L.reg .square))); }
+    get { satisfies (CandidateValues L (Function.update v1 .square (v1 .square ^^^ ((v1 .slope*v1 .constant)%p))) G) } by exact multiplyCopies;
+
+    after command { call (copyRegister none (L.reg .slope) (L.reg .constant)); }
+    get { satisfies (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G) } by exact copyCleared;
+
+    Conclusion { satisfies (CandidateValues L (Function.update v .square (v .square ^^^ ((v .slope*v .slope)%p))) G) };
+  })
 
 end ECDSAAdd.Arithmetic

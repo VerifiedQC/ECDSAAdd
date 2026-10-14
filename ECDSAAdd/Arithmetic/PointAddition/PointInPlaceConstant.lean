@@ -4,6 +4,7 @@ import ECDSAAdd.Framework.ProofLanguage
 
 namespace ECDSAAdd.Arithmetic
 open ControlledPointLayout Secp256k1
+open GateProof
 open scoped ECDSAAdd.ProofLanguage
 
 private theorem constant_mask (M : ModInPlaceLayout) (c : Wire) (k A Z : Nat) (B : Bool)
@@ -72,11 +73,20 @@ private theorem constant_program_spec (M : ModInPlaceLayout) (c : Wire) (k Z : N
   } as unloaded by (by
     simpa only [masked,Nat.xor_self] using
       constant_mask M c k masked ((Z+masked)%p) B hn hkp);
-  conclude {
-    {{ c=B,M.a=0,M.z=Z,M.work=0 }}
-      (maskedConstant c M.a k ++ modAddInPlace M p ++ maskedConstant c M.a k)
-    {{ c=B,M.a=0,M.z=(Z+masked)%p,M.work=0 }}
-  } by (loaded.seq added).seq unloaded;
+  simpa only [List.append_assoc] using (hoare_steps {
+    Precondition { c=B, M.a=0, M.z=Z, M.work=0 };
+
+    after command { call (maskedConstant c M.a k); }
+    get { c=B, M.a=masked, M.z=Z, M.work=0 } by exact loaded;
+
+    after command { call (modAddInPlace M p); }
+    get { c=B, M.a=masked, M.z=(Z+masked)%p, M.work=0 } by exact added;
+
+    after command { call (maskedConstant c M.a k); }
+    get { c=B, M.a=0, M.z=(Z+masked)%p, M.work=0 } by exact unloaded;
+
+    Conclusion { c=B, M.a=0, M.z=(Z+masked)%p, M.work=0 };
+  })
 
 private theorem constant_program_frame (M : ModInPlaceLayout) (c : Wire) (k Z : Nat) (B : Bool)
     (hw : M.Widths 256) (hn : (c::M.wires).Nodup) (hk : k<p) (hZ : Z<p)

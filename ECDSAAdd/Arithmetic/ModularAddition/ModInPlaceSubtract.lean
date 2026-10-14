@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceNegate
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 /-- 原地模减：L.z ← (L.z−L.a) mod p，L.a 保持，L.work 初始为零并恢复。
 沿用 modSubInPlace_spec 的布局/范围条件；临时将源变为 p−L.a，模加后还原源。
@@ -53,26 +54,41 @@ def modAssignContext (L : ModInPlaceLayout) : CircuitDSL.Context ModAssignOps :=
   }
 }
 
+-- Only the arithmetic normalization of an individual stage is hidden here.
+private theorem addNegative_spec (L : ModInPlaceLayout) (n p A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ L.a=p-A,L.z=Z,L.work=0 }} modAddInPlace L p
+    {{ L.a=p-A,L.z=(Z+p-A)%p,L.work=0 }} := by
+  simpa only [modSubCore_value A Z p hA] using
+    modAddInPlace_spec L n p (p-A) Z hw hnd hp hpn (by omega) hZ
+
+private theorem restoreSource_spec (L : ModInPlaceLayout) (n p A Z : Nat)
+    (hw : L.Widths n) (hnd : L.wires.Nodup) (hpn : p<2^n) (hA : A≤p) :
+    {{ L.a=p-A,L.z=Z,L.work=0 }} negRaw L p
+    {{ L.a=A,L.z=Z,L.work=0 }} := by
+  simpa only [(negRaw_range_restore A p hA).2] using
+    negRaw_spec L n p (p-A) Z hw hnd hpn (by omega)
+
 theorem modSubInPlace_spec (L : ModInPlaceLayout) (n p A Z : Nat)
     (hw : L.Widths n) (hnd : L.wires.Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ L.a=A,L.z=Z,L.work=0 }} modSubInPlace L p
-    {{ L.a=A,L.z=((Z+p-A)%p),L.work=0 }} := Proof
-  { p-(p-A)=A } as restoreSource by (negRaw_range_restore A p hA).2;
-  { (Z+(p-A))%p=(Z+p-A)%p } as subtractionValue by (modSubCore_value A Z p hA);
-  { {{ L.a=A,L.z=Z,L.work=0 }} negRaw L p
-      {{ L.a=p-A,L.z=Z,L.work=0 }} }
-    as negateSource by (negRaw_spec L n p A Z hw hnd hpn hA);
-  { {{ L.a=p-A,L.z=Z,L.work=0 }} modAddInPlace L p
-      {{ L.a=p-A,L.z=(Z+(p-A))%p,L.work=0 }} }
-    as addNegative by (modAddInPlace_spec L n p (p-A) Z hw hnd hp hpn (by omega) hZ);
-  { {{ L.a=p-A,L.z=(Z+(p-A))%p,L.work=0 }} negRaw L p
-      {{ L.a=A,L.z=(Z+p-A)%p,L.work=0 }} } as restore by (by
-    simpa only [restoreSource, subtractionValue] using
-      negRaw_spec L n p (p-A) ((Z+(p-A))%p) hw hnd hpn (by omega));
-  conclude { {{ L.a=A,L.z=Z,L.work=0 }} modSubInPlace L p
-    {{ L.a=A,L.z=(Z+p-A)%p,L.work=0 }} } by (by
-    simpa only [modSubInPlace] using (negateSource.seq addNegative).seq restore);
+    {{ L.a=A,L.z=((Z+p-A)%p),L.work=0 }} := by
+  simpa only [modSubInPlace, List.append_assoc] using (hoare_steps {
+    Precondition { L.a=A, L.z=Z, L.work=0 };
+
+    after command { call (negRaw L p); }
+    get { L.a=p-A, L.z=Z, L.work=0 } by exact negRaw_spec L n p A Z hw hnd hpn hA;
+
+    after command { call (modAddInPlace L p); }
+    get { L.a=p-A, L.z=(Z+p-A)%p, L.work=0 } by exact addNegative_spec L n p A Z hw hnd hp hpn hA hZ;
+
+    after command { call (negRaw L p); }
+    get { L.a=A, L.z=(Z+p-A)%p, L.work=0 } by exact restoreSource_spec L n p A ((Z+p-A)%p) hw hnd hpn hA;
+
+    Conclusion { L.a=A, L.z=(Z+p-A)%p, L.work=0 };
+  })
 
 private theorem negRaw_control_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
     (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hpn : p<2^n) (hA : A≤p) :
@@ -87,28 +103,42 @@ private theorem negRaw_control_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z :
       (by simp [ModInPlaceLayout.wires,hh]))
   exact ⟨hf,⟨⟨he.trans h.1.1.1,hv.1.1⟩,hv.1.2⟩,hv.2⟩
 
+private theorem controlled_addNegative_spec (c : Wire) (L : ModInPlaceLayout)
+    (n p A Z : Nat) (B : Bool) (hw : L.Widths n) (hnd : (c::L.wires).Nodup)
+    (hp : 0<p) (hpn : p<2^n) (hA : A≤p) (hZ : Z<p) :
+    {{ c=B,L.a=p-A,L.z=Z,L.work=0 }} controlledModAdd c L p
+    {{ c=B,L.a=p-A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }} := by
+  simpa only [modSubCore_value A Z p hA] using
+    controlledModAdd_spec c L n p (p-A) Z B hw hnd hp hpn (by omega) hZ
+
+private theorem controlled_restoreSource_spec (c : Wire) (L : ModInPlaceLayout)
+    (n p A Z : Nat) (B : Bool) (hw : L.Widths n) (hnd : (c::L.wires).Nodup)
+    (hpn : p<2^n) (hA : A≤p) :
+    {{ c=B,L.a=p-A,L.z=Z,L.work=0 }} negRaw L p
+    {{ c=B,L.a=A,L.z=Z,L.work=0 }} := by
+  simpa only [(negRaw_range_restore A p hA).2] using
+    negRaw_control_spec c L n p (p-A) Z B hw hnd hpn (by omega)
+
 theorem controlledModSub_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
     (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ c=B,L.a=A,L.z=Z,L.work=0 }} controlledModSub c L p
-    {{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }} := Proof
+    {{ c=B,L.a=A,L.z=(if B then (Z+p-A)%p else Z),L.work=0 }} := by
   let result := if B then (Z+p-A)%p else Z
-  { p-(p-A)=A } as restoreSource by (negRaw_range_restore A p hA).2;
-  { (Z+(p-A))%p=(Z+p-A)%p } as subtractionValue by (modSubCore_value A Z p hA);
-  { {{ c=B,L.a=A,L.z=Z,L.work=0 }} negRaw L p
-      {{ c=B,L.a=p-A,L.z=Z,L.work=0 }} }
-    as negateSource by (negRaw_control_spec c L n p A Z B hw hnd hpn hA);
-  { {{ c=B,L.a=p-A,L.z=Z,L.work=0 }} controlledModAdd c L p
-      {{ c=B,L.a=p-A,L.z=result,L.work=0 }} } as addNegative by (by
-    simpa only [result, subtractionValue] using
-      controlledModAdd_spec c L n p (p-A) Z B hw hnd hp hpn (by omega) hZ);
-  { {{ c=B,L.a=p-A,L.z=result,L.work=0 }} negRaw L p
-      {{ c=B,L.a=A,L.z=result,L.work=0 }} } as restore by (by
-    simpa only [restoreSource] using
-      negRaw_control_spec c L n p (p-A) result B hw hnd hpn (by omega));
-  conclude { {{ c=B,L.a=A,L.z=Z,L.work=0 }} controlledModSub c L p
-    {{ c=B,L.a=A,L.z=result,L.work=0 }} } by (by
-    simpa only [controlledModSub] using (negateSource.seq addNegative).seq restore);
+  simpa only [controlledModSub, List.append_assoc] using (hoare_steps {
+    Precondition { c=B, L.a=A, L.z=Z, L.work=0 };
+
+    after command { call (negRaw L p); }
+    get { c=B, L.a=p-A, L.z=Z, L.work=0 } by exact negRaw_control_spec c L n p A Z B hw hnd hpn hA;
+
+    after command { call (controlledModAdd c L p); }
+    get { c=B, L.a=p-A, L.z=result, L.work=0 } by exact controlled_addNegative_spec c L n p A Z B hw hnd hp hpn hA hZ;
+
+    after command { call (negRaw L p); }
+    get { c=B, L.a=A, L.z=result, L.work=0 } by exact controlled_restoreSource_spec c L n p A result B hw hnd hpn hA;
+
+    Conclusion { c=B, L.a=A, L.z=result, L.work=0 };
+  })
 
 theorem modSubInPlace_wires (L : ModInPlaceLayout) (n p : Nat)
     (hw : L.Widths n) (hn : 0<n) :

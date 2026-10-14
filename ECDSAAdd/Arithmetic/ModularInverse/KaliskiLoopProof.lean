@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.ModularInverse.KaliskiLoopState
 import ECDSAAdd.Framework.ProofLanguage
+import ECDSAAdd.Framework.GateProof
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 private theorem partition_nodup (L : KaliskiRoundLayout) (r : RoundRecord) (rs : List RoundRecord)
     (hnd : (L.tapeWires (r::rs)).Nodup) : (r.wires++L.swapCounter.tapeWires rs).Nodup := by
@@ -75,38 +77,47 @@ theorem kaliskiLoop_correct (L : KaliskiRoundLayout) (rs : List RoundRecord) (i 
     have hb1 := ht.2.frame (headFrame _ htw.2 (kaliskiCode z).1 (kaliskiCode z).2)
     have hb2 := hunround.frame (restFrame _ hrw.2 (List.replicate rs.length (false,false)))
     let P0 := fun st => LoopState L z st ∧ TapeValues (r::rs) ((false,false)::List.replicate rs.length (false,false)) st
-    let PM := fun st => (LoopState L.swapCounter (kaliskiStep z) st ∧ TapeValues rs (List.replicate rs.length (false,false)) st) ∧
-      st r.swap=(kaliskiCode z).1 ∧ st r.subtract=(kaliskiCode z).2
+    let PM := fun st => ((LoopState L.swapCounter (kaliskiStep z) st ∧ TapeValues rs (List.replicate rs.length (false,false)) st) ∧
+      st r.swap=(kaliskiCode z).1) ∧ st r.subtract=(kaliskiCode z).2
     let PF := fun st => LoopState (loopEndLayout L.swapCounter rs.length) ((kaliskiStep^[rs.length]) (kaliskiStep z)) st ∧
       TapeValues (r::rs) (kaliskiCode z::kaliskiCodes rs.length (kaliskiStep z)) st
-    let PB := fun st => (LoopState L.swapCounter (kaliskiStep z) st ∧ st r.swap=(kaliskiCode z).1 ∧
-      st r.subtract=(kaliskiCode z).2) ∧ TapeValues rs (List.replicate rs.length (false,false)) st
     constructor
     · -- The first round writes r; the recursive loop preserves that saved record.
       have firstRound : Triple P0 (kaliskiRound (L.withRecord r) i) PM := hf1.conseq
         (fun st h => ⟨⟨h.1,h.2.1,h.2.2.1⟩,h.2.2.2⟩)
-        (fun st h => ⟨⟨h.1.1,h.2⟩,h.1.2⟩)
-      { Triple PM (kaliskiLoop L.swapCounter (i+1) rs) PF } as remainingRounds by
-        (hf2.conseq (fun _ h => h) (fun st h => ⟨h.1.1,h.2.1,h.2.2,h.1.2⟩));
-      conclude {
-        Triple (fun st => LoopState L z st ∧ TapeValues (r::rs) (List.replicate (r::rs).length (false,false)) st)
-          (kaliskiLoop L i (r::rs))
-          (fun st => LoopState (loopEndLayout L (r::rs).length) (kaliskiStep^[(r::rs).length] z) st ∧
-            TapeValues (r::rs) (kaliskiCodes (r::rs).length z) st)
-      } by (by simpa only [P0,PF,kaliskiLoop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
-        loopEndLayout,Function.iterate_succ_apply] using firstRound.seq remainingRounds);
+        (fun st h => ⟨⟨⟨h.1.1,h.2⟩,h.1.2.1⟩,h.1.2.2⟩)
+      have remainingRounds : Triple PM (kaliskiLoop L.swapCounter (i+1) rs) PF :=
+        hf2.conseq (fun _ h => ⟨h.1.1,h.1.2,h.2⟩) (fun st h => ⟨h.1.1,h.2.1,h.2.2,h.1.2⟩)
+      simpa only [kaliskiLoop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+        loopEndLayout,Function.iterate_succ_apply] using (hoare_steps {
+        Precondition { satisfies (LoopState L z), satisfies (TapeValues (r::rs) ((false,false)::List.replicate rs.length (false,false))) };
+
+        after command { call (kaliskiRound (L.withRecord r) i); }
+        get { satisfies (LoopState L.swapCounter (kaliskiStep z)), satisfies (TapeValues rs (List.replicate rs.length (false,false))), r.swap=(kaliskiCode z).1, r.subtract=(kaliskiCode z).2 } by exact firstRound;
+
+        after command { call (kaliskiLoop L.swapCounter (i+1) rs); }
+        get { satisfies (LoopState (loopEndLayout L.swapCounter rs.length) (kaliskiStep^[rs.length] (kaliskiStep z))), satisfies (TapeValues (r::rs) (kaliskiCode z::kaliskiCodes rs.length (kaliskiStep z))) } by exact remainingRounds;
+
+        Conclusion { satisfies (LoopState (loopEndLayout L.swapCounter rs.length) (kaliskiStep^[rs.length] (kaliskiStep z))), satisfies (TapeValues (r::rs) (kaliskiCode z::kaliskiCodes rs.length (kaliskiStep z))) };
+      })
     · -- Undo the tail while keeping r; undoing the first round then clears r as well.
-      have undoRemaining : Triple PF (kaliskiUnloop L.swapCounter (i+1) rs) PB := hb1.conseq
+      have undoRemaining : Triple PF (kaliskiUnloop L.swapCounter (i+1) rs) PM := hb1.conseq
         (fun st h => ⟨⟨h.1,h.2.2.2⟩,h.2.1,h.2.2.1⟩)
-        (fun st h => ⟨⟨h.1.1,h.2⟩,h.1.2⟩)
-      { Triple PB (kaliskiUnround (L.withRecord r) i) P0 } as undoFirst by
-        (hb2.conseq (fun _ h => h) (fun st h => ⟨h.1.1,h.1.2.1,h.1.2.2,h.2⟩));
-      conclude {
-        Triple (fun st => LoopState (loopEndLayout L (r::rs).length) (kaliskiStep^[(r::rs).length] z) st ∧
-            TapeValues (r::rs) (kaliskiCodes (r::rs).length z) st)
-          (kaliskiUnloop L i (r::rs))
-          (fun st => LoopState L z st ∧ TapeValues (r::rs) (List.replicate (r::rs).length (false,false)) st)
-      } by (by simpa only [P0,PF,kaliskiUnloop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
-        loopEndLayout,Function.iterate_succ_apply] using undoRemaining.seq undoFirst);
+        (fun st h => ⟨⟨h.1,h.2.1⟩,h.2.2⟩)
+      have undoFirst : Triple PM (kaliskiUnround (L.withRecord r) i) P0 :=
+        hb2.conseq (fun _ h => ⟨⟨h.1.1.1,h.1.2,h.2⟩,h.1.1.2⟩)
+          (fun st h => ⟨h.1.1,h.1.2.1,h.1.2.2,h.2⟩)
+      simpa only [kaliskiUnloop_cons,List.length_cons,List.replicate_succ,kaliskiCodes,TapeValues,
+        loopEndLayout,Function.iterate_succ_apply] using (hoare_steps {
+        Precondition { satisfies (LoopState (loopEndLayout L.swapCounter rs.length) (kaliskiStep^[rs.length] (kaliskiStep z))), satisfies (TapeValues (r::rs) (kaliskiCode z::kaliskiCodes rs.length (kaliskiStep z))) };
+
+        after command { call (kaliskiUnloop L.swapCounter (i+1) rs); }
+        get { satisfies (LoopState L.swapCounter (kaliskiStep z)), satisfies (TapeValues rs (List.replicate rs.length (false,false))), r.swap=(kaliskiCode z).1, r.subtract=(kaliskiCode z).2 } by exact undoRemaining;
+
+        after command { call (kaliskiUnround (L.withRecord r) i); }
+        get { satisfies (LoopState L z), satisfies (TapeValues (r::rs) ((false,false)::List.replicate rs.length (false,false))) } by exact undoFirst;
+
+        Conclusion { satisfies (LoopState L z), satisfies (TapeValues (r::rs) ((false,false)::List.replicate rs.length (false,false))) };
+      })
 
 end ECDSAAdd.Arithmetic

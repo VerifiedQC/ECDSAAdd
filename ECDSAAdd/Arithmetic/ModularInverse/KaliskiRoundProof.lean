@@ -1,8 +1,10 @@
 import ECDSAAdd.Arithmetic.ModularInverse.RoundControls
 import ECDSAAdd.Framework.ProofLanguage
+import ECDSAAdd.Framework.GateProof
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 theorem round_body_bounds (L : KaliskiRoundLayout) (p a : Nat) (z : KState)
     (hi : KInvariant p a z) (hp : p<2^L.low.length)
@@ -79,10 +81,30 @@ theorem kaliskiRound_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   have clearActivity := roundActiveXor_state L hnd hw (kaliskiStep z) (kaliskiStep z).k i hi A
     (decide ((kaliskiStep z).v=0)) code.1 code.2
   rw [recoverActive,Bool.xor_self] at clearActivity
-  conclude {
-    Triple (RoundState L z z.k 0 false (decide (z.v=0)) false false) (kaliskiRound L i)
-      (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0)) code.1 code.2)
-  } by (((((loadActivity.seq recordBranches).seq updateData).seq countRound).seq updateDone).seq clearActivity);
+  -- RoundState lists data, old/new count, active, done, swap and subtract; scratch stays zero.
+  simpa only [kaliskiRound, List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (RoundState L z z.k 0 false (decide (z.v=0)) false false) };
+
+    after command { call (loadActive L); }
+    get { satisfies (RoundState L z z.k 0 A (decide (z.v=0)) false false) } by exact loadActivity;
+
+    after command { call (recordRound L); }
+    get { satisfies (RoundState L z z.k 0 A (decide (z.v=0)) code.1 code.2) } by exact recordBranches;
+
+    after command { call (kaliskiBodyProgram L.data L.active L.swap L.subtract); }
+    get { satisfies (RoundState L (kaliskiStep z) z.k 0 A (decide (z.v=0)) code.1 code.2) } by exact updateData;
+
+    after command { call (counterInc L.counter); }
+    get { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2) } by exact countRound;
+
+    after command { call (zeroControlled L.active L.done (L.data.zeroBits .v)); }
+    get { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k A (decide ((kaliskiStep z).v=0)) code.1 code.2) } by exact updateDone;
+
+    after command { call (roundActiveXor L i); }
+    get { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0)) code.1 code.2) } by exact clearActivity;
+
+    Conclusion { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0)) code.1 code.2) };
+  })
 
 /-- 一轮完整逆向规格：由更新后 k 恢复活动性，清除保存的两位记录并恢复旧状态。 -/
 theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
@@ -133,10 +155,28 @@ theorem kaliskiUnround_state (L : KaliskiRoundLayout) (hnd : L.wires.Nodup)
   have clearActivity := loadActive_state L hnd z z.k 0 A (decide (z.v=0)) false false
   have hA : (!decide (z.v=0))=A := by simp [A]
   rw [hA,Bool.xor_self] at clearActivity
-  conclude {
-    Triple (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0))
-        code.1 code.2) (kaliskiUnround L i)
-      (RoundState L z z.k 0 false (decide (z.v=0)) false false)
-  } by (((((loadActivity.seq restoreDone).seq restoreData).seq restoreCount).seq clearBranches).seq clearActivity);
+  simpa only [kaliskiUnround, List.append_assoc] using (hoare_steps {
+    Precondition { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k false (decide ((kaliskiStep z).v=0)) code.1 code.2) };
+
+    after command { call (roundActiveXor L i); }
+    get { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k A (decide ((kaliskiStep z).v=0)) code.1 code.2) } by exact loadActivity;
+
+    after command { call (zeroControlled L.active L.done (L.data.zeroBits .v)); }
+    get { satisfies (RoundState L (kaliskiStep z) 0 (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2) } by exact restoreDone;
+
+    after command { call (kaliskiUnbodyProgram L.data L.active L.swap L.subtract); }
+    get { satisfies (RoundState L z 0 (kaliskiStep z).k A (decide (z.v=0)) code.1 code.2) } by exact restoreData;
+
+    after command { call (counterDec L.counter.swapCounter); }
+    get { satisfies (RoundState L z z.k 0 A (decide (z.v=0)) code.1 code.2) } by exact restoreCount;
+
+    after command { call (recordRound L); }
+    get { satisfies (RoundState L z z.k 0 A (decide (z.v=0)) false false) } by exact clearBranches;
+
+    after command { call (loadActive L); }
+    get { satisfies (RoundState L z z.k 0 false (decide (z.v=0)) false false) } by exact clearActivity;
+
+    Conclusion { satisfies (RoundState L z z.k 0 false (decide (z.v=0)) false false) };
+  })
 
 end ECDSAAdd.Arithmetic

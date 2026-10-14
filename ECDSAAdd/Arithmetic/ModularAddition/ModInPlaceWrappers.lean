@@ -3,6 +3,7 @@ import ECDSAAdd.Arithmetic.ModularAddition.ModInPlaceCopy
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 /-- 外层模算术布局：核工作区之外的 mask 用于受控源，flag 留给单目半倍。
 子视图只借用线路，不把 mask 重复加入核工作区。 -/
@@ -186,52 +187,79 @@ private theorem outer_mask_core (c : Wire) (L : ModInPlaceLayout) (n p A Z V : N
   · simpa only [Nat.add_comm] using hv.1.2
   · exact (keep L.flag (by simp)).trans h.2
 
+private theorem outer_work_zero (L : ModInPlaceLayout) (st : BasisState) :
+    regValue L.work st=0 ↔
+      (regValue L.mask st=0 ∧ regValue L.toModAddCoreLayout.work st=0) ∧ st L.flag=false := by
+  constructor
+  · intro h
+    have clean := (regValue_zero _ _).mp h
+    exact ⟨⟨(regValue_zero _ _).mpr (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq])),
+      (regValue_zero _ _).mpr (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))⟩,
+      clean L.flag (by simp [ModInPlaceLayout.work])⟩
+  · rintro ⟨⟨hm,hk⟩,hf⟩
+    apply (regValue_zero _ _).mpr
+    intro q hq
+    simp only [ModInPlaceLayout.work,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hq
+    rcases hq with (hq | hq) | hq
+    · exact (regValue_zero _ _).mp hk q hq
+    · exact (regValue_zero _ _).mp hm q hq
+    · subst q; exact hf
+
+private theorem controlledModAdd_load (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hpn : p<2^n) (hA : A≤p) :
+    {{ c=B,L.a=A,L.z=Z,L.work=0 }}
+      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
+    {{ c=B,L.a=A,L.z=Z,L.mask=(if B then A else 0),L.toModAddCoreLayout.work=0,L.flag=false }} := by
+  have stage := outer_mask_copy c L n p A Z 0 B hw hnd hpn hA (by positivity)
+  simp only [Nat.zero_xor] at stage
+  apply stage.conseq ?_ (fun _ h => h)
+  intro st h
+  obtain ⟨⟨hm,hk⟩,hf⟩ := (outer_work_zero L st).mp h.2
+  exact ⟨⟨⟨h.1,hm⟩,hk⟩,hf⟩
+
+private theorem controlledModAdd_apply (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
+    (hA : A≤p) (hZ : Z<p) :
+    {{ c=B,L.a=A,L.z=Z,L.mask=(if B then A else 0),L.toModAddCoreLayout.work=0,L.flag=false }}
+      modAddCore L.maskedCore p
+    {{ c=B,L.a=A,L.z=(if B then (Z+A)%p else Z),L.mask=(if B then A else 0),L.toModAddCoreLayout.work=0,L.flag=false }} := by
+  have hV : (if B then A else 0)≤p := by split <;> omega
+  have stage := outer_mask_core c L n p A Z (if B then A else 0) B hw hnd hp hpn hV hZ
+  cases B <;> simpa only [Bool.false_eq_true,if_false,Nat.add_zero,Nat.mod_eq_of_lt hZ,if_true] using stage
+
+private theorem controlledModAdd_clear (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
+    (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hpn : p<2^n) (hA : A≤p) :
+    {{ c=B,L.a=A,L.z=Z,L.mask=(if B then A else 0),L.toModAddCoreLayout.work=0,L.flag=false }}
+      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
+    {{ c=B,L.a=A,L.z=Z,L.work=0 }} := by
+  have hV : (if B then A else 0)<2^n := by split <;> omega
+  have stage := outer_mask_copy c L n p A Z (if B then A else 0) B hw hnd hpn hA hV
+  simp only [Nat.xor_self] at stage
+  exact stage.conseq (fun _ h => h)
+    (fun st h => ⟨h.1.1.1,(outer_work_zero L st).mpr ⟨⟨h.1.1.2,h.1.2⟩,h.2⟩⟩)
+
 /-- 控制保持，源保持；掩码只在两个复制阶段之间存活，最终所有外层工作线归零。 -/
 theorem controlledModAdd_spec (c : Wire) (L : ModInPlaceLayout) (n p A Z : Nat) (B : Bool)
     (hw : L.Widths n) (hnd : (c::L.wires).Nodup) (hp : 0<p) (hpn : p<2^n)
     (hA : A≤p) (hZ : Z<p) :
     {{ c=B, L.a=A, L.z=Z, L.work=0 }} controlledModAdd c L p
-    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }} := Proof
-  let V := if B then A else 0
-  { V≤p } as hV by (by dsimp [V]; split <;> omega);
-  { {{ c=B,L.a=A,L.z=Z,L.mask=0,L.toModAddCoreLayout.work=0,L.flag=false }}
-      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
-      {{ c=B,L.a=A,L.z=Z,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} }
-    as loadMask by (by
-      simpa only [Nat.zero_xor] using outer_mask_copy c L n p A Z 0 B hw hnd hpn hA (by positivity));
-  { {{ c=B,L.a=A,L.z=Z,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} modAddCore L.maskedCore p
-      {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }} }
-    as addMasked by (outer_mask_core c L n p A Z V B hw hnd hp hpn hV hZ);
-  { {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=V,L.toModAddCoreLayout.work=0,L.flag=false }}
-      copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)
-      {{ c=B,L.a=A,L.z=(Z+V)%p,L.mask=0,L.toModAddCoreLayout.work=0,L.flag=false }} }
-    as clearMask by (by
-      simpa only [V,Nat.xor_self] using outer_mask_copy c L n p A ((Z+V)%p) V B hw hnd hpn hA (by omega));
-  have composed := (loadMask.seq addMasked).seq clearMask
-  For every s, m assuming h
-  simp only [Holds.holds] at h ⊢
-  have clean := (regValue_zero L.work s.basis).mp h.2
-  have hm : regValue L.mask s.basis=0 := (regValue_zero _ _).mpr
-    (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
-  have hk : regValue L.toModAddCoreLayout.work s.basis=0 := (regValue_zero _ _).mpr
-    (fun q hq => clean q (by simp [ModInPlaceLayout.work,hq]))
-  obtain ⟨hf,hv⟩ := composed s m ⟨⟨⟨h.1,hm⟩,hk⟩,clean L.flag (by simp [ModInPlaceLayout.work])⟩
-  simp only [Holds.holds, V] at hv
-  let final := run (controlledModAdd c L p) m s
-  { regValue L.z final.basis=(if B then (Z+A)%p else Z) } as output by (by
-    cases B <;> simpa [final,controlledModAdd,V,Nat.mod_eq_of_lt hZ] using hv.1.1.1.2);
-  { regValue L.work final.basis=0 } as restored by (by
-    apply (regValue_zero _ _).mpr
-    intro q hq
-    simp only [ModInPlaceLayout.work,List.mem_append,List.mem_cons,List.not_mem_nil,or_false] at hq
-    rcases hq with (hq | hq) | hq
-    · exact (regValue_zero _ _).mp hv.1.2 q hq
-    · exact (regValue_zero _ _).mp hv.1.1.2 q hq
-    · subst q; exact hv.2);
-  conclude { final.phase=s.phase ∧
-    ((final.basis c=B ∧ regValue L.a final.basis=A) ∧
-      regValue L.z final.basis=(if B then (Z+A)%p else Z)) ∧ regValue L.work final.basis=0 }
-    by ⟨hf,⟨hv.1.1.1.1,output⟩,restored⟩;
+    {{ c=B, L.a=A, L.z=(if B then (Z+A)%p else Z), L.work=0 }} := by
+  let V := if B then A else 0 -- The masked source.
+  let R := if B then (Z+A)%p else Z
+  simpa only [controlledModAdd, List.append_assoc] using (hoare_steps {
+    Precondition { c=B, L.a=A, L.z=Z, L.work=0 };
+
+    after command { call (copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)); }
+    get { c=B, L.a=A, L.z=Z, L.mask=V, L.toModAddCoreLayout.work=0, L.flag=false } by exact controlledModAdd_load c L n p A Z B hw hnd hpn hA;
+
+    after command { call (modAddCore L.maskedCore p); }
+    get { c=B, L.a=A, L.z=R, L.mask=V, L.toModAddCoreLayout.work=0, L.flag=false } by exact controlledModAdd_apply c L n p A Z B hw hnd hp hpn hA hZ;
+
+    after command { call (copyRegister (some c) (L.a.take L.low.length) (L.mask.take L.low.length)); }
+    get { c=B, L.a=A, L.z=R, L.work=0 } by exact controlledModAdd_clear c L n p A R B hw hnd hpn hA;
+
+    Conclusion { c=B, L.a=A, L.z=R, L.work=0 };
+  })
 
 /-- 实际支持不含源高位与 flag；mask 高位由核接入。 -/
 theorem controlledModAdd_wires (c : Wire) (L : ModInPlaceLayout) (n p : Nat)

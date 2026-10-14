@@ -4,6 +4,58 @@
 
 此前相对于 `439f481`，改写 **97 个原证明体**（81 个公开、16 个内部），涉及 41 个 Arithmetic 文件。原文件内 274 条定理声明及 106 个非证明声明经去注释文本核对均未变化。另新增一个小型内部引理 `divideProduct_returnBorrowedBit`，仅整理借用高位的恢复，不隐藏整个除法证明。
 
+## 其余关键算术：两行式阶段证明（2026-10-14）
+
+延续 Addition 的格式，将模加减、倍增／折半、模乘、求逆、除法和点加的实际计算阶段写为 `Precondition` → 两行式 `after command` / `get` → `Conclusion`。每步必须证明对应子程序的真实 Triple，不能只给出数值结论而漏掉相位恢复。
+
+相对于 `a9cc34c`，实际修改 **27 个文件中的 48 个原证明体**（33 个公开、15 个内部）。其中 42 个是多阶段／归纳组合，2 个是单步查表 XOR 的规格，4 个 Prefix `_spec` 缩为已有正确性结果的接口投影。原有 147 条定理声明、75 个非证明声明经去注释、规范化空白的文本核对保持不变；未修改电路或资源。
+
+### 建议阅读顺序
+
+1. [ModInPlace.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlace.lean) 的 `modAddCore_spec`：相加 → 试减模数 → 按借位加回 → 清借位。
+2. [MontAdapterSpec.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterSpec.lean) 的 `montMulAdd_spec`：准备乘积 → 加入输出 → 恢复工作区。
+3. [InverseSpec.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseSpec.lean) 的 `fieldInverse_xor_spec`：装载初值 → 求逆并 XOR 输出 → 卸载。
+4. [DivideSpec.lean](../ECDSAAdd/Arithmetic/Division/DivideSpec.lean) 的 `divide_spec`：装载 → 求逆 → 受控乘积加减 → 反向求逆 → 卸载。
+5. [PointInPlaceClearSlopeKernel.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceClearSlopeKernel.lean) 的 `pointInPlaceClearSlopeKernel_spec`：判零、非零分支除法、零分支常量清理及标志恢复，共八步。
+
+复杂状态使用 `satisfies` 保留已有的完整状态谓词，例如 Montgomery 历史或求逆记录；这不是省略后置条件。除法新增的 `divideClean/divideReady/dividePrepared` 及 Montgomery 的两个 `Frame` 仅是证明断言，不生成电路。阶段辅助规则负责单个阶段的接线、算术和状态转换；点加的 `*_steps` 返回各阶段独立的 Triple，由主证明逐步组合，不能独立替代整段算法证明。
+
+### 本轮精确清单
+
+| 文件 | 实际修改的原证明体 |
+| --- | --- |
+| ModularAddition/[ModInPlace.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlace.lean) | `modAddCore_spec` |
+| ModularAddition/[ModInPlaceSubtract.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlaceSubtract.lean) | `modSubInPlace_spec`、`controlledModSub_spec` |
+| ModularAddition/[ModInPlaceWrappers.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModInPlaceWrappers.lean) | `controlledModAdd_spec` |
+| ModularAddition/[Modular.lean](../ECDSAAdd/Arithmetic/ModularAddition/Modular.lean) | `modAddOn_refines`、`modSubOn_refines` |
+| ModularAddition/[ModularTranslation.lean](../ECDSAAdd/Arithmetic/ModularAddition/ModularTranslation.lean) | `reductionProgram_correct` |
+| ModularDoubling/[ModDouble.lean](../ECDSAAdd/Arithmetic/ModularDoubling/ModDouble.lean) | `double_core`（内部） |
+| ModularDoubling/[ModHalf.lean](../ECDSAAdd/Arithmetic/ModularDoubling/ModHalf.lean) | `halfInPlace_spec` |
+| ModularMultiplication/[ConstStageSpec.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/ConstStageSpec.lean) | `constPreparePrefix_correct`（内部）、`constPreparePrefix_spec`（内部）、`constRestorePrefix_correct`（内部）、`constRestorePrefix_spec`（内部） |
+| ModularMultiplication/[MontAdapterSpec.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontAdapterSpec.lean) | `montSandwich_spec`（内部）、`montMulXor_spec`、`montMulAdd_spec`、`montMulSub_spec`、`montControlledSandwich_spec`（内部）、`montMulControlledAdd_spec`、`montMulControlledSub_spec` |
+| ModularMultiplication/[MontPQ.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPQ.lean) | `montP_correct`、`montQ_correct` |
+| ModularMultiplication/[MontPrepare.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontPrepare.lean) | `montLookupPrepare_spec`、`montLookupRestore_spec` |
+| ModularMultiplication/[MontStageSpec.lean](../ECDSAAdd/Arithmetic/ModularMultiplication/MontStageSpec.lean) | `montPreparePrefix_correct`（内部）、`montPreparePrefix_spec`（内部）、`montRestorePrefix_correct`（内部）、`montRestorePrefix_spec`（内部） |
+| ModularInverse/[InverseCompute.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseCompute.lean) | `inverseCompute_values` |
+| ModularInverse/[InverseLoopProof.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseLoopProof.lean) | `inverseLoop_values` |
+| ModularInverse/[InverseSpec.lean](../ECDSAAdd/Arithmetic/ModularInverse/InverseSpec.lean) | `fieldInverse_xor_spec` |
+| ModularInverse/[KaliskiLoopProof.lean](../ECDSAAdd/Arithmetic/ModularInverse/KaliskiLoopProof.lean) | `kaliskiLoop_correct` |
+| ModularInverse/[KaliskiRoundProof.lean](../ECDSAAdd/Arithmetic/ModularInverse/KaliskiRoundProof.lean) | `kaliskiRound_state`、`kaliskiUnround_state` |
+| ModularInverse/[NegativeInit.lean](../ECDSAAdd/Arithmetic/ModularInverse/NegativeInit.lean) | `negativeInit_correct` |
+| Division/[DivideSpec.lean](../ECDSAAdd/Arithmetic/Division/DivideSpec.lean) | `divide_spec`（内部） |
+| PointAddition/[PointCandidateBlocks.lean](../ECDSAAdd/Arithmetic/PointAddition/PointCandidateBlocks.lean) | `CandidateValues.subConstant`、`CandidateValues.square` |
+| PointAddition/[PointCandidateProof.lean](../ECDSAAdd/Arithmetic/PointAddition/PointCandidateProof.lean) | `pointCandidate_compute_spec`、`candidateClear_of_values`（内部） |
+| PointAddition/[PointInPlaceClearSlopeKernel.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceClearSlopeKernel.lean) | `pointInPlaceClearSlopeKernel_spec`、`pointInPlaceClearSlopeKernel_disabled` |
+| PointAddition/[PointInPlaceConstant.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceConstant.lean) | `constant_program_spec`（内部） |
+| PointAddition/[PointInPlaceFiniteSpec.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceFiniteSpec.lean) | `pointInPlaceFinite_spec` |
+| PointAddition/[PointInPlaceGeneric.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceGeneric.lean) | `pointInPlaceGeneric_true`、`pointInPlaceGeneric_false` |
+| PointAddition/[PointInPlaceNegate.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceNegate.lean) | `pointInPlaceNegate_spec` |
+| PointAddition/[PointInPlaceSquare.lean](../ECDSAAdd/Arithmetic/PointAddition/PointInPlaceSquare.lean) | `square_program_spec`（内部） |
+
+四个 Prefix `_spec` 只作接口投影，其对应 `_correct` 才是实际阶段链。Kaliski 循环保留真实归纳；Montgomery 轮循环的既有归纳不变。纯数学分支证明 `ModularAlgorithm.lean` 保持原来的 if／等式风格。
+
+未机械改写已清楚的一行接口及外层 frame 适配，例如 `modAddInPlace_spec`、`dblInPlace_spec`、`fieldInverse_spec`、`divideAdd_spec/divideSub_spec`、`divideProduct_correct`、点加的低位导出与最终分情况接口。这些入口通过原有依赖使用本轮实际阶段证明；Addition、Comparison、Equality 不计入本轮清单。历史清单保留如下。
+
 ## Addition：两行式命令与结果（2026-10-13）
 
 在已完成的 `fullAdder_correct` 示范之外，继续整理以下证明。格式为 `Precondition`、两行一组的 `after command { … }` / `get { … } by 规则;`、`Conclusion`。步骤明确显示数值结果和清理情况；接线、代数化简、完整状态拼接放在阶段辅助规则中。

@@ -2,6 +2,7 @@ import ECDSAAdd.Arithmetic.ModularDoubling.ModUnary
 
 namespace ECDSAAdd.Arithmetic
 open scoped ECDSAAdd.ProofLanguage
+open GateProof
 
 private theorem half_parity (U : ModUnaryLayout) (n Z : Nat)
     (hw : U.Widths n) (hnd : U.wires.Nodup) (hn : 0<n) :
@@ -181,52 +182,76 @@ private theorem half_finish (U : ModUnaryLayout) (n R K : Nat) (B : Bool)
     change (!(run (compareLtConst none U.low T U.carry U.cin U.flag K) m s).basis U.flag)=false
     rw [hb]; rfl
 
-/-- 规范模减半，所有 scratch 清零；奇偶由结果大小恢复并擦除。 -/
-theorem halfInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
-    (hw : U.Widths n) (hnd : U.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
-    {{ U.z=Z,U.work=0 }} halfInPlace U p {{ U.z=halveMod p Z,U.work=0 }} := Proof
+private theorem half_saveParity (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) :
+    {{ U.z=Z,U.work=0 }} [.CX U.bit U.flag]
+    {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }} := by
   have hn : 0<n := by
     by_contra hh
     have hn0 : n=0 := by omega
     rw [hn0] at hpn
     simp at hpn
     omega
-  let B := decide (Z%2=1)
-  let V := Z+(if B then p else 0)
-  { V<2^(n+1) } as fitsRegister by (by dsimp [V]; rw [Nat.pow_succ]; split <;> omega);
-  -- Adding the odd modulus precisely when Z is odd makes the value even.
-  { V%2=0 } as evenValue by (by
-    simp only [V,B,decide_eq_true_eq]
-    split_ifs <;> omega);
-  have hr := halve_mod_bound p Z hp hZ
-  { V/2=halveMod p Z } as halfValue by (by simp only [V,B,decide_eq_true_eq,halveMod_eq]);
-  -- The reduced output determines the saved parity, allowing the flag to be cleared.
-  { B= !decide (halveMod p Z<(p+1)/2) } as recoverParity by (by
-    have hpar := halve_parity p Z hp hZ
-    dsimp [B]
-    by_cases ho : Z%2=1
-    · have := hpar.mp ho; simp [ho,Nat.not_lt.mpr this]
-    · have ht : halveMod p Z<(p+1)/2 := by omega
-      simp [ho,ht]);
-  { {{ U.z=Z,U.work=0 }} [.CX U.bit U.flag]
-      {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }} }
-    as saveParity by (half_parity U n Z hw hnd hn);
-  { {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }}
+  exact half_parity U n Z hw hnd hn
+
+private theorem half_makeEven (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.wires.Nodup) (hpn : p<2^n) (hZ : Z<p) :
+    {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }}
       maskedAddConst U.flag U.constant U.z U.carry U.cin p
-      {{ U.z=V,U.core.work=0,U.mask=0,U.flag=B }} } as makeEven by (by
-    have stage := half_add U n p Z B hw hnd (by rw [Nat.pow_succ]; omega)
-    change {{ U.z=Z,U.core.work=0,U.mask=0,U.flag=B }} _
-      {{ U.z=(V%2^(n+1)),U.core.work=0,U.mask=0,U.flag=B }} at stage
-    simpa only [Nat.mod_eq_of_lt fitsRegister] using stage);
-  { {{ U.z=V,U.core.work=0,U.mask=0,U.flag=B }} rotateRight U.z
-      {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=B }} } as halve by (by
-    simpa only [halfValue] using half_rotate U V B hnd evenValue);
-  { {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=B }}
+    {{ U.z=(Z+(if decide (Z%2=1) then p else 0)),U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }} := by
+  have fits : Z+(if decide (Z%2=1) then p else 0)<2^(n+1) := by
+    rw [Nat.pow_succ]; split <;> omega
+  simpa only [Nat.mod_eq_of_lt fits] using
+    half_add U n p Z (decide (Z%2=1)) hw hnd (by rw [Nat.pow_succ]; omega)
+
+private theorem half_divideEven (U : ModUnaryLayout) (p Z : Nat)
+    (hnd : U.wires.Nodup) (hp : p%2=1) :
+    {{ U.z=(Z+(if decide (Z%2=1) then p else 0)),U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }}
+      rotateRight U.z
+    {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }} := by
+  have evenValue : (Z+(if decide (Z%2=1) then p else 0))%2=0 := by
+    simp only [decide_eq_true_eq]; split_ifs <;> omega
+  simpa only [decide_eq_true_eq,halveMod_eq] using
+    half_rotate U (Z+(if decide (Z%2=1) then p else 0)) (decide (Z%2=1)) hnd evenValue
+
+private theorem half_clearParity (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
+    {{ U.z=halveMod p Z,U.core.work=0,U.mask=0,U.flag=decide (Z%2=1) }}
       (compareLtConst none U.low (U.constant.take U.low.length) U.carry U.cin U.flag ((p+1)/2) ++ [.X U.flag])
-      {{ U.z=halveMod p Z,U.work=0 }} } as clearParity by
-    (half_finish U n (halveMod p Z) ((p+1)/2) B hw hnd (by omega) (by omega) recoverParity);
-  conclude { {{ U.z=Z,U.work=0 }} halfInPlace U p
-    {{ U.z=halveMod p Z,U.work=0 }} } by (by
-    simpa only [halfInPlace,List.append_assoc] using ((saveParity.seq makeEven).seq halve).seq clearParity);
+    {{ U.z=halveMod p Z,U.work=0 }} := by
+  have resultBound := halve_mod_bound p Z hp hZ
+  have parity : decide (Z%2=1)= !decide (halveMod p Z<(p+1)/2) := by
+    have hpar := halve_parity p Z hp hZ
+    by_cases ho : Z%2=1
+    · simp [ho,Nat.not_lt.mpr (hpar.mp ho)]
+    · have ht : halveMod p Z<(p+1)/2 := by omega
+      simp [ho,ht]
+  exact half_finish U n (halveMod p Z) ((p+1)/2) (decide (Z%2=1)) hw hnd
+    (by omega) (by omega) parity
+
+/-- 规范模减半，所有 scratch 清零；奇偶由结果大小恢复并擦除。 -/
+theorem halfInPlace_spec (U : ModUnaryLayout) (n p Z : Nat)
+    (hw : U.Widths n) (hnd : U.wires.Nodup) (hp : p%2=1) (hpn : p<2^n) (hZ : Z<p) :
+    {{ U.z=Z,U.work=0 }} halfInPlace U p {{ U.z=halveMod p Z,U.work=0 }} := by
+  let B := decide (Z%2=1) -- The original parity.
+  let V := Z+(if B then p else 0) -- Adding odd p to an odd input makes V even.
+  let R := halveMod p Z
+  simpa only [halfInPlace,List.append_assoc] using (hoare_steps {
+    Precondition { U.z=Z, U.work=0 };
+
+    after command { call ([.CX U.bit U.flag]); }
+    get { U.z=Z, U.core.work=0, U.mask=0, U.flag=B } by exact half_saveParity U n p Z hw hnd hp hpn;
+
+    after command { call (maskedAddConst U.flag U.constant U.z U.carry U.cin p); }
+    get { U.z=V, U.core.work=0, U.mask=0, U.flag=B } by exact half_makeEven U n p Z hw hnd hpn hZ;
+
+    after command { call (rotateRight U.z); }
+    get { U.z=R, U.core.work=0, U.mask=0, U.flag=B } by exact half_divideEven U p Z hnd hp;
+
+    after command { call (compareLtConst none U.low (U.constant.take U.low.length) U.carry U.cin U.flag ((p+1)/2) ++ [.X U.flag]); }
+    get { U.z=R, U.work=0 } by exact half_clearParity U n p Z hw hnd hp hpn hZ;
+
+    Conclusion { U.z=R, U.work=0 };
+  })
 
 end ECDSAAdd.Arithmetic
