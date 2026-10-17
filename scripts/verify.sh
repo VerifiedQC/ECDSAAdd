@@ -140,6 +140,22 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Divsteps.small_certificate
+#print axioms ECDSAAdd.Divsteps.bounded_inverse
+#print axioms ECDSAAdd.Divsteps.zWalk_of_certificate
+#print axioms ECDSAAdd.Divsteps.processDivstep_stages
+#print axioms ECDSAAdd.Divsteps.g_reaches_zero
+#print axioms ECDSAAdd.Divsteps.inverse_zWalk_unscaled
+#print axioms ECDSAAdd.Divsteps.zWalk_bounds
+#print axioms ECDSAAdd.Divsteps.zUnslot_zSlot
+#print axioms ECDSAAdd.Divsteps.j2_law
+#print axioms ECDSAAdd.Divsteps.SmallDecoders.depth2
+#print axioms ECDSAAdd.Divsteps.SmallDecoders.depth3
+#print axioms ECDSAAdd.Divsteps.SmallDecoders.depth4
+#print axioms ECDSAAdd.Arithmetic.Divsteps.decode2_erase
+#print axioms ECDSAAdd.Arithmetic.Divsteps.decode2_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.decode2_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.decode2_wires
 #print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.incoming_from_sum
 #print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.completed_sum_carry
 #print axioms ECDSAAdd.Arithmetic.KnownOutputCarry.erasePost_counts
