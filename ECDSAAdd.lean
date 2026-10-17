@@ -67,3 +67,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 import ECDSAAdd.Submissions
 import ECDSAAdd.Arithmetic.ShortTriangularSquareProof
 import ECDSAAdd.Arithmetic.ShortTriangularSquareResources
+
+import ECDSAAdd.Math.Divsteps
+import ECDSAAdd.Arithmetic.Divsteps.Decoder
