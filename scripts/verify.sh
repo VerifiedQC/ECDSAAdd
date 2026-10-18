@@ -2217,6 +2217,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_unique
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_carry_clean
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowGrow_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_bit_of_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_cost
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowGrow_reserved
 LEAN
 )
 task_axiom_lean_rc=$?
