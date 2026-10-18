@@ -140,6 +140,14 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.PointArithmeticBackend.skywalk
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.skywalk_program
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.add_spec
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.finite_frame
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.generic_counts
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.qubits_le
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.program_wires
+#print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.finite_counts
 #print axioms ECDSAAdd.Divsteps.small_certificate
 #print axioms ECDSAAdd.Divsteps.bounded_inverse
 #print axioms ECDSAAdd.Divsteps.zWalk_of_certificate

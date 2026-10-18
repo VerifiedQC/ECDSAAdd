@@ -70,3 +70,5 @@ import ECDSAAdd.Arithmetic.ShortTriangularSquareResources
 
 import ECDSAAdd.Math.Divsteps
 import ECDSAAdd.Arithmetic.Divsteps.Decoder
+
+import ECDSAAdd.Arithmetic.ParametricPointDialogResources
