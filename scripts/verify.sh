@@ -397,6 +397,17 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkAndScale_remove_scale
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkAndScale_frame
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkAndScale_qubits
+#print axioms ECDSAAdd.correct_phase_locality
+#print axioms ECDSAAdd.run_measured_locality
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.unwalk_after_scale
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk_support
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk_qubits
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk_remove_scale
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk590_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.reverseScale_controls_nodup
+#print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk590_run
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.deferredSwaps_correct
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.deferredSwaps_counts
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.deferredSwaps_qubits

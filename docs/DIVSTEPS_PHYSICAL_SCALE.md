@@ -34,7 +34,9 @@ is the initial phase, and the accumulator workspace is zero.
 
 `walkAndScale_frame` additionally proves preservation of all walk wires when
 the accumulator target is disjoint from the walk allocation. This provides a
-frame for later uncompute; this program does not yet execute that uncompute.
+frame for later uncompute; this program does not itself execute that uncompute.
+The follow-on [scale/unwalk composition](DIVSTEPS_SCALE_UNWALK.md) supplies
+that complete measured program and its restoration proof.
 
 For walk widths n/v/k and modular-halving width parameter a, exact counts are:
 

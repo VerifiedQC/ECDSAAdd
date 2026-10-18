@@ -102,3 +102,5 @@ import ECDSAAdd.Arithmetic.Divsteps.SharedSwapWalk
 import ECDSAAdd.Arithmetic.Divsteps.LinearLayout
 
 import ECDSAAdd.Arithmetic.Divsteps.PhysicalScale
+
+import ECDSAAdd.Arithmetic.Divsteps.ScaleUnwalk
