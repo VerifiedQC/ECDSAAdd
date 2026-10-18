@@ -67,3 +67,13 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 import ECDSAAdd.Submissions
 import ECDSAAdd.Arithmetic.ShortTriangularSquareProof
 import ECDSAAdd.Arithmetic.ShortTriangularSquareResources
+
+import ECDSAAdd.Math.Divsteps
+import ECDSAAdd.Arithmetic.Divsteps.Decoder
+import ECDSAAdd.Arithmetic.Divsteps.ShallowDecoder
+import ECDSAAdd.Arithmetic.Divsteps.DepthSelector
+import ECDSAAdd.Arithmetic.Divsteps.DeferredDecoder
+import ECDSAAdd.Arithmetic.Divsteps.SwapDecoder
+import ECDSAAdd.Arithmetic.Divsteps.ScaleRemoval
+
+import ECDSAAdd.Arithmetic.Divsteps.Routing
