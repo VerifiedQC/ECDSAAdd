@@ -72,3 +72,5 @@ import ECDSAAdd.Math.Divsteps
 import ECDSAAdd.Arithmetic.Divsteps.Decoder
 
 import ECDSAAdd.Arithmetic.ParametricPointDialogResources
+
+import ECDSAAdd.Arithmetic.RecordedPointDialogResources
