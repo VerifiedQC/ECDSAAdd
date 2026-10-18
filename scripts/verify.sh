@@ -2322,6 +2322,18 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pin_zero_counterexample
 #print axioms ECDSAAdd.Arithmetic.Paper935.author_stop_offset_fits
 #print axioms ECDSAAdd.Arithmetic.Paper935.pin_exit_failure_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.recordToggle_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.recordToggle_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.mintFire_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.mintFire_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.recordToggle_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_model
+#print axioms ECDSAAdd.Arithmetic.Paper935.recordToggle_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_in_arena
 LEAN
 )
 task_axiom_lean_rc=$?
