@@ -98,3 +98,5 @@ import ECDSAAdd.Arithmetic.Divsteps.PhysicalWalk
 import ECDSAAdd.Arithmetic.Divsteps.DeferredSwapWalk
 
 import ECDSAAdd.Arithmetic.Divsteps.SharedSwapWalk
+
+import ECDSAAdd.Arithmetic.Divsteps.LinearLayout

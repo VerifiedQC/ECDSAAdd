@@ -54,7 +54,9 @@ touched-wire cardinalities differ by that amount. With no past histories,
 590 future slots, mask capacity 592 and carry capacity 591, the new bound is
 4,337 wires, versus 4,927 for the old allocation. `sharedSwaps590_qubits`
 proves this conditional bound for any valid layout satisfying these capacities;
-it does not construct a numerical allocator at these widths.
+the theorem itself does not construct a numerical allocator at these widths.
+The subsequent [numeric allocator](DIVSTEPS_LINEAR_LAYOUT.md) supplies one
+and specializes the same program without an abstract layout parameter.
 
 The concrete small `sharedSwapExample` supplies two fresh transitions, uses
 swap address 23 throughout, and proves a 28-wire bound versus the original
