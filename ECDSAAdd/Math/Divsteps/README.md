@@ -52,3 +52,19 @@ an arbitrary initial target bit. The depth-four construction directly
 implements (56c); it does not claim the paper's residue-selected optimal cost.
 Depth selection and whole-walk register encoding remain to be implemented;
 these local counts do not establish a net qubit saving for the submission.
+
+`DepthSelector.lean` reads five encoded low bits, toggles the exact depth
+2/3/4 tags and cleans three scratch bits (nine Toffolis, eleven static
+wires). `DepthBits.lean` proves that selected tags imply the corresponding
+integer valuation, including negative integers. Active/negative-counter
+classification and a whole-walk layout remain separate obligations.
+
+`DeferredDecoder.lean` uses the existing RecordedProgram interpreter:
+a forward bare measurement releases a branch wire, and a later shallow
+decoder reconstructs it before correction using the original measurement
+ordinal. Contracts prove phase cancellation for arbitrary tapes, recording
+legality and resources. A forward/gap/recovery composition theorem explicitly
+requires the intervening program's phase and decoder contracts; it does not
+claim an arbitrary gap is harmless. The pair must be relocated as a unit.
+The complete divsteps forward/reverse walk still must discharge these
+contracts. Classical record identifiers are counted separately from wires.
