@@ -2187,6 +2187,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_counts
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_wires
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_toffolis
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_qubits
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_carry_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.peak_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.arena_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.arena_program_qubits
+#print axioms ECDSAAdd.Arithmetic.Paper935.hosts_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.hosts_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.StageContract.ready_after
+#print axioms ECDSAAdd.Arithmetic.Paper935.StageContract.peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.schedule_peak
 LEAN
 )
 task_axiom_lean_rc=$?
