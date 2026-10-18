@@ -1,4 +1,4 @@
-import ECDSAAdd.Arithmetic.Paper935.Arena
+import ECDSAAdd.Arithmetic.Paper935.Borrow
 import ECDSAAdd.Arithmetic.Rotate
 
 namespace ECDSAAdd.Arithmetic.Paper935
@@ -96,6 +96,17 @@ theorem rehome_allocated (A during : Arena) (old fresh : Wire) (s : State) (m : 
   intro q hq
   simp only [Finset.mem_insert,Finset.mem_singleton] at hq
   rcases hq with rfl | rfl <;> assumption
+
+/-- Connect the executable band-priority chooser to the physical move. -/
+theorem rehome_selected (A during : Arena) (pools : List (Finset Wire))
+    (old fresh : Wire) (s : State) (m : List Bool)
+    (ho : old∈A.live) (hr : A.Ready s.basis)
+    (hsel : A.borrowFirst pools=some (during,fresh)) :
+    ∃ B, during.release {old} (run (rehome old fresh) m s).basis=some B ∧
+      B.Ready (run (rehome old fresh) m s).basis ∧
+      wires (rehome old fresh)⊆during.live ∧ during.live.card≤935 := by
+  exact rehome_allocated A during old fresh s m ho hr
+    (A.borrowFirst_ready during pools fresh s.basis hr hsel).2.2
 
 /-- Replay a fixed, public relocation journal; choices do not branch on
 quantum data. Allocation/cleanliness must be certified separately. -/

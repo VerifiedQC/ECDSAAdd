@@ -2240,6 +2240,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.repack_toffolis
 #print axioms ECDSAAdd.Arithmetic.Paper935.repackView_distinct
 #print axioms ECDSAAdd.Arithmetic.Paper935.repack_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_none
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrow_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_fallback
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_selected
 LEAN
 )
 task_axiom_lean_rc=$?
