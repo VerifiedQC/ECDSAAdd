@@ -87,6 +87,27 @@ uses the existing controlled register swap to exchange both aligned row pairs,
 with exact unsigned and signed value, phase, outside-frame, and resource proofs.
 For integer width n and coefficient width v it costs n+v Toffoli gates, no
 measurements, and 2(n+v)+1 static wires (zero for empty rows).
-The shared signed arithmetic kernel and its finite-width overflow/cleanup
-proofs are still required; this component alone does not complete checklist item 5
+Composition with the shared arithmetic kernel and discharge of its finite-width
+bounds are still required; routing alone does not complete checklist item 5
 or establish a net resource saving.
+
+## Shared signed row arithmetic
+
+`Arithmetic/Divsteps/RowKernel.lean` now implements conditional target negation
+followed by parity-masked source addition. Its temporary mask is also reused as
+the clean source for the negation adder. Signed correctness requires explicit
+fit bounds for both the negated intermediate and final sum; every non-target
+wire and phase is restored for arbitrary measurement outcomes. For an n-bit
+row, the actual kernel uses 3n-2 Toffolis, 3n-2 measurements, and 4n+2 static
+wires. These are conservative local costs, not a whole-walk savings result.
+
+`SignedNegate.lean` and `MaskedSignedAdd.lean` provide the supporting signed
+contracts. The former excludes most-negative-word overflow when negating;
+the latter lifts the existing measured mask adder without changing its gates.
+`HalfRow.lean` composes the kernel with exact signed halving in a rotated
+register view without adding Toffolis or measurements. `StepRows.lean` binds
+both integer and coefficient outputs to `zStep`; `RowBounds.lean` supplies
+evenness and intermediate fit proofs from the state bounds and a strict
+twice-magnitude capacity condition. Physical control/routed-input encoding,
+actual width selection, routing composition, coefficient doubling, and
+frozen-state behavior remain whole-step obligations.
