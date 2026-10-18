@@ -2334,6 +2334,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.recordToggle_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.eraseAnd_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.latch_fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.fireCleanup_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.fireCleanup_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_cleanup_offset
+#print axioms ECDSAAdd.Arithmetic.Paper935.fireCleanup_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.fireCleanup_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.fireCleanup_six_counts
 LEAN
 )
 task_axiom_lean_rc=$?
