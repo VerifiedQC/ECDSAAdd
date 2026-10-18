@@ -94,3 +94,5 @@ import ECDSAAdd.Arithmetic.Divsteps.ForwardStep
 import ECDSAAdd.Arithmetic.Divsteps.InverseForwardStep
 
 import ECDSAAdd.Arithmetic.Divsteps.PhysicalWalk
+
+import ECDSAAdd.Arithmetic.Divsteps.DeferredSwapWalk
