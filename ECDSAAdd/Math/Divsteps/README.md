@@ -146,3 +146,18 @@ control, and workspace wires, permitting workspace reuse. These counts include
 frozen states. No concrete packed layout, inverse walk, control-history recycling,
 all-input termination certificate, complete point provider, or net-qubit
 improvement follows from this local forward-step theorem.
+
+### Constructive inverse step and control cleanup
+
+`InverseForwardStep.lean` constructs the inverse of the complete physical forward
+step. It restores the counter, reverses routed row arithmetic, restores routing,
+and then clears the three retained controls from the restored input. The complete
+state, including phase and workspace, is restored for independent arbitrary
+forward and inverse measurement records. Arithmetic with measurements is inverted
+using separately proved subtractors, negation, and activity XOR semantics; only
+the measurement-free branch tagger is gate-reversed.
+
+The inverse has the same Toffoli/measurement totals and the same explicit support
+upper bound as the forward step. This is a one-step full-state round trip with
+retained history, not yet a complete multi-step walk or a proof that deferred
+branch measurement and phase recovery have been connected to that walk.
