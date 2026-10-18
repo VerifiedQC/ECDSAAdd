@@ -82,3 +82,5 @@ import ECDSAAdd.Arithmetic.Divsteps.ScaleRemoval
 
 import ECDSAAdd.Arithmetic.Divsteps.Routing
 import ECDSAAdd.Arithmetic.Divsteps.StepRows
+
+import ECDSAAdd.Arithmetic.Divsteps.CounterUpdate
