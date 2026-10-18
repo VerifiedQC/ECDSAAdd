@@ -2217,6 +2217,38 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_unique
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_carry_clean
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowGrow_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_bit_of_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.resize_cost
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowGrow_reserved
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_row
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_cost
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_allocated
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.unpack_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_toffolis
+#print axioms ECDSAAdd.Arithmetic.Paper935.repackView_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFrom_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_none
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrow_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_fallback
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_selected
 LEAN
 )
 task_axiom_lean_rc=$?
