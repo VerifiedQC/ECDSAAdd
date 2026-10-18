@@ -140,6 +140,19 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.recordedThen_embed
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.program_embed
+#print axioms ECDSAAdd.Triple.recorded
+#print axioms ECDSAAdd.RecordedTriple.seq
+#print axioms ECDSAAdd.RecordedTriple.at_cursor
+#print axioms ECDSAAdd.recordedThen_counts
+#print axioms ECDSAAdd.recordedThen_wires
+#print axioms ECDSAAdd.Arithmetic.RecordedPointArithmeticBackend.embed
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.add_spec
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.program_wellFormed
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.program_wires
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.finite_counts
+#print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.qubits_le
 #print axioms ECDSAAdd.Arithmetic.PointArithmeticBackend.skywalk
 #print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.skywalk_program
 #print axioms ECDSAAdd.Arithmetic.ParametricPointDialog.add_spec
