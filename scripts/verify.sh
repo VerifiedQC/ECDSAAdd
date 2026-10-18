@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 scripts/paper935/generate_schedule.py --check
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -2293,6 +2294,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_qubits
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_live_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.pairPad_covers
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.addPad_covers
+#print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.add
+#print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.sub
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.Fits.mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.padded_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.no_exit_failure_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.windowBefore_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_dials
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_exit_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_add_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_span_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_lookup
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyRequest_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_before_add_bound
 LEAN
 )
 task_axiom_lean_rc=$?
