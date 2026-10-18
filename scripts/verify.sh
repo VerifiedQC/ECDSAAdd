@@ -2187,6 +2187,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_counts
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_wires
 
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpoint_complement_value
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign_remainder
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign_support
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign_qubits
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointSign592_counts
+
 LEAN
 )
 task_axiom_lean_rc=$?
