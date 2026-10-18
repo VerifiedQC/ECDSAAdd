@@ -192,6 +192,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Divsteps.depth2_of_bits
 #print axioms ECDSAAdd.Divsteps.depth3_of_bits
 #print axioms ECDSAAdd.Divsteps.depth4_of_bits
+#print axioms ECDSAAdd.Divsteps.routedStep_eq
+#print axioms ECDSAAdd.Arithmetic.Divsteps.routeRows_correct
+#print axioms ECDSAAdd.Arithmetic.Divsteps.routeRows_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.routeRows_signed
+#print axioms ECDSAAdd.Arithmetic.Divsteps.routeRows_qubits
 #print axioms ECDSAAdd.Divsteps.swap_bit_law
 #print axioms ECDSAAdd.Arithmetic.Divsteps.decodeSwap_run
 #print axioms ECDSAAdd.Arithmetic.Divsteps.decodeSwap_erase

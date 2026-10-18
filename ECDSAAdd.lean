@@ -75,3 +75,5 @@ import ECDSAAdd.Arithmetic.Divsteps.DepthSelector
 import ECDSAAdd.Arithmetic.Divsteps.DeferredDecoder
 import ECDSAAdd.Arithmetic.Divsteps.SwapDecoder
 import ECDSAAdd.Arithmetic.Divsteps.ScaleRemoval
+
+import ECDSAAdd.Arithmetic.Divsteps.Routing

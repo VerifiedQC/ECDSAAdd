@@ -78,3 +78,15 @@ of active steps, and that these halvings cancel the endpoint's power-of-two
 scale. The schedule is mathematical bookkeeping, not an allocated counter.
 Interleaving the halving circuit with a complete finite-register reverse
 walk and establishing the scaled accumulator endpoint remain open.
+
+## Controlled row routing
+
+`Arithmetic/Divsteps/Routing.lean` factors the integer divstep into row routing,
+conditional negation, and a shared add/halve operation. Its physical `routeRows`
+uses the existing controlled register swap to exchange both aligned row pairs,
+with exact unsigned and signed value, phase, outside-frame, and resource proofs.
+For integer width n and coefficient width v it costs n+v Toffoli gates, no
+measurements, and 2(n+v)+1 static wires (zero for empty rows).
+The shared signed arithmetic kernel and its finite-width overflow/cleanup
+proofs are still required; this component alone does not complete checklist item 5
+or establish a net resource saving.
