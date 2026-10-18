@@ -2249,6 +2249,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrow_capacity
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowFirst_fallback
 #print axioms ECDSAAdd.Arithmetic.Paper935.rehome_selected
+#print axioms ECDSAAdd.Arithmetic.Paper935.planMove_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.planJournal_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.AllocatedJournal.valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.AllocatedJournal.ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.planJournal_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.planMove_fallback
+#print axioms ECDSAAdd.Arithmetic.Paper935.planMove_missing
+#print axioms ECDSAAdd.Arithmetic.Paper935.AllocatedJournal.split
+#print axioms ECDSAAdd.Arithmetic.Paper935.planJournal_prefix_ready
 LEAN
 )
 task_axiom_lean_rc=$?
