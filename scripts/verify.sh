@@ -2207,6 +2207,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.StageContract.ready_after
 #print axioms ECDSAAdd.Arithmetic.Paper935.StageContract.peak
 #print axioms ECDSAAdd.Arithmetic.Paper935.schedule_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_toffolis
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_unique
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_carry_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowSub_in_arena
 LEAN
 )
 task_axiom_lean_rc=$?

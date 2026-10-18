@@ -112,3 +112,4 @@ import ECDSAAdd.Arithmetic.Divsteps.EndpointConstant
 import ECDSAAdd.Arithmetic.Divsteps.SignedEndpoint
 
 import ECDSAAdd.Arithmetic.Paper935.Arena
+import ECDSAAdd.Arithmetic.Paper935.RowInverse
