@@ -54,7 +54,9 @@ with the reusable signed bit, phase-recovery and past-history freshness lemmas.
 All swap histories are measured; activity and parity histories remain
 coherent. The layout still assigns distinct physical swap addresses, so this
 change does not establish a smaller static allocation or any net resource
-improvement. Reusing released addresses needs a separate layout proof.
+improvement. The follow-on [shared-swap schedule](DIVSTEPS_SHARED_SWAP.md) supplies that
+separate layout and actual reuse proof; this file describes the original
+distinct-address schedule.
 
 This is a round-trip contract, not a complete modular division provider. It
 does not supply deferred parity recovery, compressed activity history,
