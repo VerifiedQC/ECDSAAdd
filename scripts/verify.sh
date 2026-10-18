@@ -2225,6 +2225,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.resize_cost
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowShrink_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowGrow_reserved
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_row
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_cost
+#print axioms ECDSAAdd.Arithmetic.Paper935.rehome_allocated
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.unpack_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_toffolis
+#print axioms ECDSAAdd.Arithmetic.Paper935.repackView_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_in_arena
 LEAN
 )
 task_axiom_lean_rc=$?
