@@ -17,7 +17,7 @@ private theorem signed_congr (xs : List Wire) (s t : BasisState)
   unfold signedRegValue
   rw [regValue_congr xs s t h]
 
-theorem forwardStep_zSlot (q parity cin active glow gsign vlow vsign one zsign : Wire)
+theorem forwardStep_zSlot_controls (q parity cin active glow gsign vlow vsign one zsign : Wire)
     (f gmid gmask gcarry vmid vmask gv vcarry cz z cc zlo : List Wire) (bs : List ZeroBit)
     (hact : (one::active::bs.flatMap ZeroBit.wires).Nodup)
     (htags : [active,zsign,glow,parity,q].Nodup)
@@ -69,7 +69,10 @@ theorem forwardStep_zSlot (q parity cin active glow gsign vlow vsign one zsign :
     signedRegValue gv (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).gv ∧
     signedRegValue z (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).z ∧
     (∀ w, w∉active::parity::q::(f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv++z) →
-      (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis w=s.basis w) := by
+      (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis w=s.basis w) ∧
+    (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis active=activeControl st ∧
+    (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis parity=parityControl st ∧
+    (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis q=swapControl st := by
   let a := prepareControls one active zsign glow parity q bs
   let t := run a m s
   let rest := m.drop (measurementCount a)
@@ -123,13 +126,83 @@ theorem forwardStep_zSlot (q parity cin active glow gsign vlow vsign one zsign :
     (kgm.trans hgm) (kgk.trans hgk) (kcz.trans hcz) (kz.trans hzz) (kcc.trans hcc)
     (kvm.trans hvm) (kvk.trans hvk)
   rw [forwardStep,run_append,run_take]
-  refine ⟨hbp.trans hap,hbf,hbg,hbfv,hbgv,hbz,?_⟩
+  have hn (c : Wire) (hc : c∈[active,parity,q]) :
+      c∉f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv++z := by
+    intro hh
+    apply List.disjoint_left.mp htagaway hc
+    simp only [List.mem_append] at hh ⊢
+    tauto
+  refine ⟨hbp.trans hap,hbf,hbg,hbfv,hbgv,hbz,?_,
+    (hframe active (hn active (by simp))).trans ka,
+    (hframe parity (hn parity (by simp))).trans kp,
+    (hframe q (hn q (by simp))).trans kq⟩
   intro w hw
   have hrout : w∉f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv++z := by
     intro hh; apply hw; simp only [List.mem_cons]; tauto
   have htout : w∉[active,parity,q] := by
     intro hh; apply hw; simp only [List.mem_cons,List.not_mem_nil,or_false] at hh ⊢; tauto
   exact (hframe w hrout).trans (keepTag w htout)
+
+theorem forwardStep_zSlot (q parity cin active glow gsign vlow vsign one zsign : Wire)
+    (f gmid gmask gcarry vmid vmask gv vcarry cz z cc zlo : List Wire) (bs : List ZeroBit)
+    (hact : (one::active::bs.flatMap ZeroBit.wires).Nodup)
+    (htags : [active,zsign,glow,parity,q].Nodup)
+    (hinputs : bs.map ZeroBit.input=glow::(gmid++[gsign]))
+    (hzlayout : zlo++[zsign]=z)
+    (htagaway : List.Disjoint [active,parity,q]
+      (f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv++
+        gmask++gcarry++vmask++vcarry++cz++z++cc++[cin]))
+    (hctnd : (active::q::(cz++z++cc)).Nodup)
+    (hctz : cz.length=z.length) (hctc : cc.length+1=z.length) (hctw : 2≤z.length)
+    (hctaway : List.Disjoint (active::q::(cz++z++cc))
+      (f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv))
+    (hrnd : (q::((f++(vlow::(vmid++[vsign])))++((glow::(gmid++[gsign]))++gv))).Nodup)
+    (hrfg : f.length=(glow::(gmid++[gsign])).length)
+    (hrvv : (vlow::(vmid++[vsign])).length=gv.length)
+    (hrwork : List.Disjoint (parity::cin::active::(gmask++gcarry++vmask++vcarry))
+      ((f++(vlow::(vmid++[vsign])))++((glow::(gmid++[gsign]))++gv)))
+    (hgnd : (q::parity::cin::(f++gmask++(glow::(gmid++[gsign]))++gcarry)).Nodup)
+    (hvnd : (q::parity::cin::((vlow::(vmid++[vsign]))++vmask++gv++vcarry)).Nodup)
+    (hdnd : (active::vlow::(vmid++[vsign])).Nodup)
+    (hvd : List.Disjoint (vlow::(vmid++[vsign])) gv) (hav : active∉gv)
+    (hsep : List.Disjoint (glow::(gmid++[gsign]))
+      (q::parity::cin::active::((vlow::(vmid++[vsign]))++vmask++gv++vcarry)))
+    (hfsep : List.Disjoint f ((vlow::(vmid++[vsign]))++gv))
+    (hgs : f.length=gmask.length) (hgt : gmask.length=gmid.length+2)
+    (hgc : gcarry.length+1=gmid.length+2)
+    (hvs : (vlow::(vmid++[vsign])).length=vmask.length)
+    (hvt : vmask.length=gv.length) (hvc : vcarry.length+1=gv.length)
+    (st : ZState) (pB zB cB : Int) (hbnd : Bounds pB zB cB st) (hodd : st.f%2=1)
+    (hgfit : 2*pB<((2^(gmid.length+1):Nat):Int))
+    (hvfit : 2*cB<((2^(gv.length-1):Nat):Int))
+    (hzfit : zB+1<((2^(z.length-1):Nat):Int))
+    (s : State) (m : List Bool)
+    (hone : s.basis one=false) (hwork : ∀ b∈bs,s.basis b.work=false)
+    (hq : s.basis q=false) (hp : s.basis parity=false)
+    (ha : s.basis active=false) (hi : s.basis cin=false)
+    (hf : signedRegValue f s.basis=st.f)
+    (hg : signedRegValue (glow::(gmid++[gsign])) s.basis=st.g)
+    (hvf : signedRegValue (vlow::(vmid++[vsign])) s.basis=st.fv)
+    (hvg : signedRegValue gv s.basis=st.gv)
+    (hgm : regValue gmask s.basis=0) (hgk : regValue gcarry s.basis=0)
+    (hcz : regValue cz s.basis=0) (hzz : signedRegValue z s.basis=st.z)
+    (hcc : regValue cc s.basis=0)
+    (hvm : regValue vmask s.basis=0) (hvk : regValue vcarry s.basis=0) :
+    (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).phase=s.phase ∧
+    signedRegValue f (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).f ∧
+    signedRegValue (skywalkHalfView glow (gmid++[gsign])) (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).g ∧
+    signedRegValue (vlow::(vmid++[vsign])) (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).fv ∧
+    signedRegValue gv (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).gv ∧
+    signedRegValue z (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis=(zSlot st).z ∧
+    (∀ w, w∉active::parity::q::(f++(glow::(gmid++[gsign]))++(vlow::(vmid++[vsign]))++gv++z) →
+      (run (forwardStep q parity cin active glow gsign vlow vsign one zsign f gmid gmask gcarry vmid vmask gv vcarry cz z cc bs) m s).basis w=s.basis w) := by
+  obtain ⟨phase,f',g',fv',gv',z',frame,_,_,_⟩ := forwardStep_zSlot_controls q parity cin active glow gsign vlow vsign one zsign
+    f gmid gmask gcarry vmid vmask gv vcarry cz z cc zlo bs
+    hact htags hinputs hzlayout htagaway hctnd hctz hctc hctw hctaway
+    hrnd hrfg hrvv hrwork hgnd hvnd hdnd hvd hav hsep hfsep hgs hgt hgc hvs hvt hvc
+    st pB zB cB hbnd hodd hgfit hvfit hzfit s m hone hwork hq hp ha hi
+    hf hg hvf hvg hgm hgk hcz hzz hcc hvm hvk
+  exact ⟨phase,f',g',fv',gv',z',frame⟩
 
 /-- Exact static gate and measurement totals for this same composed program.
 They include full-word activity detection and counter update, even when frozen. -/

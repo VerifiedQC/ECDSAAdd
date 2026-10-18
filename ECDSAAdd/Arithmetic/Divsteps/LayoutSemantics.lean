@@ -153,18 +153,21 @@ theorem StepLayout.next_clean (L : StepLayout) (s : BasisState) :
   unfold next nextHistory
   split <;> exact hh
 
-theorem StepLayout.program_zSlot (L : StepLayout) (h : L.Valid) (st : ZState)
+theorem StepLayout.program_zSlot_controls (L : StepLayout) (h : L.Valid) (st : ZState)
     (hfit : L.Fits st) (s : State) (m : List Bool)
     (he : L.Encodes st s.basis) (hc : L.Clean s.basis) (hf : L.Fresh s.basis) :
     (run L.program m s).phase=s.phase ∧
     L.next.Encodes (zSlot st) (run L.program m s).basis ∧
-    L.next.Clean (run L.program m s).basis := by
+    L.next.Clean (run L.program m s).basis ∧
+    (run L.program m s).basis L.history.active=activeControl st ∧
+    (run L.program m s).basis L.history.parity=parityControl st ∧
+    (run L.program m s).basis L.history.swap=swapControl st := by
   obtain ⟨pB,zB,cB,hb,ho,hgf,hvf,hzf⟩ := hfit
   obtain ⟨hgm,hvm,hcz,hgk,hvk,hcc⟩ := L.prefix_lengths h
   obtain ⟨gm,vm,cz,gk,vk,cc⟩ := L.clean_prefixes s.basis hc
   obtain ⟨one,cin,work⟩ := clean_controls L s.basis hc
   obtain ⟨q,parity,active⟩ := fresh_controls L s.basis hf
-  obtain ⟨phase,f,g,fv,gv,z,frame⟩ := forwardStep_zSlot L.history.swap L.history.parity L.cin L.history.active
+  obtain ⟨phase,f,g,fv,gv,z,frame,ha,hp,hq⟩ := forwardStep_zSlot_controls L.history.swap L.history.parity L.cin L.history.active
     L.g.low L.g.sign L.fv.low L.fv.sign L.one L.z.sign
     L.f L.g.middle L.gmask L.gcarry L.fv.middle L.vmask L.gv L.vcarry
     L.cz L.z.wires L.cc (L.z.low::L.z.middle) L.bits
@@ -178,7 +181,7 @@ theorem StepLayout.program_zSlot (L : StepLayout) (h : L.Valid) (st : ZState)
     st pB zB cB hb ho hgf hvf hzf
     s m one work q parity active cin he.1 he.2.1 he.2.2.1 he.2.2.2.1
     gm gk cz he.2.2.2.2 cc vm vk
-  refine ⟨phase,?_,?_⟩
+  refine ⟨phase,?_,?_,ha,hp,hq⟩
   · simp only [Encodes,L.next_static.1,L.next_static.2.1,L.next_static.2.2.1,
       L.next_static.2.2.2,L.next_g]
     exact ⟨f,g,fv,gv,z⟩
@@ -194,6 +197,15 @@ theorem StepLayout.program_zSlot (L : StepLayout) (h : L.Valid) (st : ZState)
       · exact List.disjoint_left.mp sep.2.2.2.2.2 hw (by simp [histories,StepHistory.wires,hq])
       · exact List.disjoint_left.mp sep.2.2.2.1 hd hw
     exact (frame w hout).trans (hc w hw)
+
+theorem StepLayout.program_zSlot (L : StepLayout) (h : L.Valid) (st : ZState)
+    (hfit : L.Fits st) (s : State) (m : List Bool)
+    (he : L.Encodes st s.basis) (hc : L.Clean s.basis) (hf : L.Fresh s.basis) :
+    (run L.program m s).phase=s.phase ∧
+    L.next.Encodes (zSlot st) (run L.program m s).basis ∧
+    L.next.Clean (run L.program m s).basis := by
+  obtain ⟨hp,he,hc,_,_,_⟩ := L.program_zSlot_controls h st hfit s m he hc hf
+  exact ⟨hp,he,hc⟩
 
 theorem StepLayout.undo_after (L : StepLayout) (h : L.Valid) (st : ZState)
     (hfit : L.Fits st) (s : State) (mf mi : List Bool)
