@@ -68,3 +68,13 @@ requires the intervening program's phase and decoder contracts; it does not
 claim an arbitrary gap is harmless. The pair must be relocated as a unit.
 The complete divsteps forward/reverse walk still must discharge these
 contracts. Classical record identifiers are counted separately from wires.
+
+`SwapDecoder.lean` reconstructs the swap choice from updated coefficient
+bit 1 with one controlled Toffoli, without a shallow-depth restriction.
+`ScaleRemoval.lean` uses the existing exact controlled modular halving gate
+sequence, with its actual counts/support. It proves that the frozen walk's
+reversed activity schedule contains exactly the true stopping-time number
+of active steps, and that these halvings cancel the endpoint's power-of-two
+scale. The schedule is mathematical bookkeeping, not an allocated counter.
+Interleaving the halving circuit with a complete finite-register reverse
+walk and establishing the scaled accumulator endpoint remain open.
