@@ -38,3 +38,17 @@ are independent of this work.
 is scaled by `2^t` for its active step count, not automatically by `2^N` for
 the scheduled slot count. `CheckerStages.lean` factors the exact checker
 into independently certifiable branch-image and hull computations.
+
+`ShallowRecovery.lean` connects the reachable negative-counter depth-three
+and depth-four laws to the finite odd-residue formulas. The caller supplies
+explicit residues for the updated integer and divided coefficient rows.
+`Arithmetic/Divsteps/ShallowDecoder.lean` implements those formulas and
+proves branch erasure under the physical encoding hypotheses. Depth three
+uses two Toffolis and no scratch; depth four uses nine Toffolis and one
+clean scratch, restored along with temporarily modified inputs. The latter
+has exactly nine static wires including flag, six inputs, target and scratch.
+Both circuits preserve phase for arbitrary measurement records and support
+an arbitrary initial target bit. The depth-four construction directly
+implements (56c); it does not claim the paper's residue-selected optimal cost.
+Depth selection and whole-walk register encoding remain to be implemented;
+these local counts do not establish a net qubit saving for the submission.
