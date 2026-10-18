@@ -141,6 +141,27 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_nonneg
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_mono
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_univ
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_le_one
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_empty
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_union_le
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_events_le
+#print axioms ECDSAAdd.FailureBudget.CertifiedEvent.not_univ
+#print axioms ECDSAAdd.FailureBudget.RecordedAgreement.seq
+#print axioms ECDSAAdd.FailureBudget.recordedAgreement_empty_iff
+#print axioms ECDSAAdd.FailureBudget.mem_traceEvent
+#print axioms ECDSAAdd.FailureBudget.coversFailure_union
+#print axioms ECDSAAdd.FailureBudget.InputLaw.mass_product
+#print axioms ECDSAAdd.FailureBudget.badPart_norm_sq
+#print axioms ECDSAAdd.FailureBudget.badPart_norm
+#print axioms ECDSAAdd.FailureBudget.CoherentAgreement.error_le
+#print axioms ECDSAAdd.FailureBudget.CoherentAgreement.error_le_of_mass
+#print axioms ECDSAAdd.FailureBudget.CoherentAgreement.error_le_of_law
+#print axioms ECDSAAdd.FailureBudget.composed_error_le
+#print axioms ECDSAAdd.FailureBudget.QuantumBudget.error_le
+#print axioms ECDSAAdd.FailureBudget.quantumBudget_exact
 #print axioms ECDSAAdd.recordedThen_embed
 #print axioms ECDSAAdd.Arithmetic.RecordedPointDialog.program_embed
 #print axioms ECDSAAdd.Triple.recorded
