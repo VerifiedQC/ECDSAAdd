@@ -2258,6 +2258,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.planMove_missing
 #print axioms ECDSAAdd.Arithmetic.Paper935.AllocatedJournal.split
 #print axioms ECDSAAdd.Arithmetic.Paper935.planJournal_prefix_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.packedHost_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.left_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.right_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.live_in_host
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.host_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.gap_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.live_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.gap_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.left_growth_slot
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.right_growth_slot
+#print axioms ECDSAAdd.Arithmetic.Paper935.pairedHosts_success
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.separated
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.grow_payload
 LEAN
 )
 task_axiom_lean_rc=$?

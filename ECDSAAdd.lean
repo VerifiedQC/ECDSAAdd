@@ -116,3 +116,4 @@ import ECDSAAdd.Arithmetic.Paper935.RowInverse
 import ECDSAAdd.Arithmetic.Paper935.RowResize
 import ECDSAAdd.Arithmetic.Paper935.Repack
 import ECDSAAdd.Arithmetic.Paper935.AllocationJournal
+import ECDSAAdd.Arithmetic.Paper935.PackedHost
