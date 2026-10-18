@@ -87,4 +87,4 @@ import ECDSAAdd.Arithmetic.Divsteps.CounterUpdate
 import ECDSAAdd.Arithmetic.Divsteps.Activity
 import ECDSAAdd.Arithmetic.Divsteps.ControlBits
 
-import ECDSAAdd.Arithmetic.Divsteps.RowBody
+import ECDSAAdd.Arithmetic.Divsteps.ForwardStep

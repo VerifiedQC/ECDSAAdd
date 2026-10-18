@@ -129,3 +129,20 @@ integer low bit and signed-counter high bit, using one Toffoli and no
 measurements. Their bridges cover negative values and zero without a
 truncated-bit test. Whole-step composition, counter update, width/layout
 selection, branch history and inverse/provider integration remain open.
+
+### Physical forward step composition
+
+`Arithmetic/Divsteps/ForwardStep.lean` composes full-word activity and branch
+preparation, paired row routing, integer-row halving, second-coefficient update,
+first-coefficient doubling, and counter update. `forwardStep_zSlot` proves all
+five signed output fields equal one mathematical `zSlot`, with exact phase and
+frame behavior for every measurement list. The integer target uses its rotated
+halving view. The three fresh control bits are retained as history, not erased.
+
+For integer width n, coefficient width v, and counter width k, this same program
+uses exactly `5*n + 5*v + k - 4` Toffoli gates and `4*n + 3*v + k - 5`
+measurements. Static support is bounded by the explicit union of all register,
+control, and workspace wires, permitting workspace reuse. These counts include
+frozen states. No concrete packed layout, inverse walk, control-history recycling,
+all-input termination certificate, complete point provider, or net-qubit
+improvement follows from this local forward-step theorem.
