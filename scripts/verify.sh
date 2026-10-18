@@ -2273,6 +2273,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pairedHosts_success
 #print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.separated
 #print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.grow_payload
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growLeft_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growRight_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growLeft_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growRight_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growLeft_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.PackedHost.growRight_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.resizeBit_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.reserve_resize_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.shrink_reserved_run
 LEAN
 )
 task_axiom_lean_rc=$?
