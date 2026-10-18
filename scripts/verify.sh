@@ -408,6 +408,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk590_counts
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.reverseScale_controls_nodup
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.walkScaleUnwalk590_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointConstant_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointConstant_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointConstant_support
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointWeighted_run
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointWeighted_counts
+#print axioms ECDSAAdd.Arithmetic.Divsteps.endpointWeighted_support
 #print axioms ECDSAAdd.Arithmetic.Divsteps.deferredSwap_frame_gap
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.swapAround_run
 #print axioms ECDSAAdd.Arithmetic.Divsteps.StepLayout.swapAround_wellFormed
