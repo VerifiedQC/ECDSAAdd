@@ -2282,6 +2282,17 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.resizeBit_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.reserve_resize_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.shrink_reserved_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWord_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_uninit
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_qubits
+#print axioms ECDSAAdd.Arithmetic.Paper935.seed_live_count
 LEAN
 )
 task_axiom_lean_rc=$?
