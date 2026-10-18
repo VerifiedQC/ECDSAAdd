@@ -38,3 +38,55 @@ are independent of this work.
 is scaled by `2^t` for its active step count, not automatically by `2^N` for
 the scheduled slot count. `CheckerStages.lean` factors the exact checker
 into independently certifiable branch-image and hull computations.
+
+`ShallowRecovery.lean` connects the reachable negative-counter depth-three
+and depth-four laws to the finite odd-residue formulas. The caller supplies
+explicit residues for the updated integer and divided coefficient rows.
+`Arithmetic/Divsteps/ShallowDecoder.lean` implements those formulas and
+proves branch erasure under the physical encoding hypotheses. Depth three
+uses two Toffolis and no scratch; depth four uses nine Toffolis and one
+clean scratch, restored along with temporarily modified inputs. The latter
+has exactly nine static wires including flag, six inputs, target and scratch.
+Both circuits preserve phase for arbitrary measurement records and support
+an arbitrary initial target bit. The depth-four construction directly
+implements (56c); it does not claim the paper's residue-selected optimal cost.
+Depth selection and whole-walk register encoding remain to be implemented;
+these local counts do not establish a net qubit saving for the submission.
+
+`DepthSelector.lean` reads five encoded low bits, toggles the exact depth
+2/3/4 tags and cleans three scratch bits (nine Toffolis, eleven static
+wires). `DepthBits.lean` proves that selected tags imply the corresponding
+integer valuation, including negative integers. Active/negative-counter
+classification and a whole-walk layout remain separate obligations.
+
+`DeferredDecoder.lean` uses the existing RecordedProgram interpreter:
+a forward bare measurement releases a branch wire, and a later shallow
+decoder reconstructs it before correction using the original measurement
+ordinal. Contracts prove phase cancellation for arbitrary tapes, recording
+legality and resources. A forward/gap/recovery composition theorem explicitly
+requires the intervening program's phase and decoder contracts; it does not
+claim an arbitrary gap is harmless. The pair must be relocated as a unit.
+The complete divsteps forward/reverse walk still must discharge these
+contracts. Classical record identifiers are counted separately from wires.
+
+`SwapDecoder.lean` reconstructs the swap choice from updated coefficient
+bit 1 with one controlled Toffoli, without a shallow-depth restriction.
+`ScaleRemoval.lean` uses the existing exact controlled modular halving gate
+sequence, with its actual counts/support. It proves that the frozen walk's
+reversed activity schedule contains exactly the true stopping-time number
+of active steps, and that these halvings cancel the endpoint's power-of-two
+scale. The schedule is mathematical bookkeeping, not an allocated counter.
+Interleaving the halving circuit with a complete finite-register reverse
+walk and establishing the scaled accumulator endpoint remain open.
+
+## Controlled row routing
+
+`Arithmetic/Divsteps/Routing.lean` factors the integer divstep into row routing,
+conditional negation, and a shared add/halve operation. Its physical `routeRows`
+uses the existing controlled register swap to exchange both aligned row pairs,
+with exact unsigned and signed value, phase, outside-frame, and resource proofs.
+For integer width n and coefficient width v it costs n+v Toffoli gates, no
+measurements, and 2(n+v)+1 static wires (zero for empty rows).
+The shared signed arithmetic kernel and its finite-width overflow/cleanup
+proofs are still required; this component alone does not complete checklist item 5
+or establish a net resource saving.
