@@ -111,3 +111,21 @@ evenness and intermediate fit proofs from the state bounds and a strict
 twice-magnitude capacity condition. Physical control/routed-input encoding,
 actual width selection, routing composition, coefficient doubling, and
 frozen-state behavior remain whole-step obligations.
+
+## Signed doubling and physical input controls
+
+`SignedDouble.lean` implements a conditional signed double in place by rotating
+left and clearing the rotated sign from the low wire. Under the explicit
+signed-fit bound it uses n Toffolis, no measurements, and n+1 static wires
+including the control, with no scratch row. Its inverse is proved for all
+basis states, independent of the fit condition. `DoubleRow.lean` connects this
+operation to the first coefficient of `zSlot`, including frozen input states.
+
+`Activity.lean` tests the entire integer word for nonzero using existing
+measured AND cleanup. For n input bits it uses n Toffolis, n measurements,
+and 2n+2 static wires; every non-target bit and phase is restored.
+`ControlBits.lean` derives parity and the swap predicate from the physical
+integer low bit and signed-counter high bit, using one Toffoli and no
+measurements. Their bridges cover negative values and zero without a
+truncated-bit test. Whole-step composition, counter update, width/layout
+selection, branch history and inverse/provider integration remain open.
