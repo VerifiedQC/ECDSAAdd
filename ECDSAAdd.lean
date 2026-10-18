@@ -108,3 +108,5 @@ import ECDSAAdd.Arithmetic.Divsteps.ScaleUnwalk
 import ECDSAAdd.Arithmetic.Divsteps.SharedScaleWalk
 
 import ECDSAAdd.Arithmetic.Divsteps.EndpointConstant
+
+import ECDSAAdd.Arithmetic.Divsteps.SignedEndpoint
