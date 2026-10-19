@@ -2525,6 +2525,29 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.RecordedQuantum.error_of_recorded
 #print axioms ECDSAAdd.RecordedQuantum.recordMass_nonneg
 #print axioms ECDSAAdd.RecordedQuantum.recordMass_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.mintActivity_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.retireActivity_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.freezeLatch_activity
+#print axioms ECDSAAdd.Arithmetic.Paper935.latchRetireActivity_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.activityLatch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.activity_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.activity_wires
+#print axioms ECDSAAdd.Arithmetic.Paper935.activityLatch_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.activityLatch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.signedRegValue_zero_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroFreeze_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroFreeze_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroFreeze_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroFreeze_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_flag_record
 LEAN
 )
 task_axiom_lean_rc=$?
