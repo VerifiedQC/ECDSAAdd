@@ -1,6 +1,6 @@
-# Proposed budgeted specification: design for review, not adopted
+# Budgeted specification: approved Framework design
 
-This is the proposed Framework contract for a complete controlled point-add implementation with a failure budget. It does not change `controlledPointAdd_spec`, certify the 935-wire circuit, or establish a numerical failure probability. Adoption requires the owner's explicit approval after technical review. Independent arithmetic development can continue meanwhile.
+This is the approved Framework contract for a complete controlled point-add implementation with a failure budget. It does not change `controlledPointAdd_spec`, certify the 935-wire circuit, or establish a numerical failure probability. The owner explicitly approved adoption on 2026-10-19 after technical review. This approval accepts the contract and its proof obligations; it does not certify any concrete circuit or numerical error bound.
 
 ## The promise to a caller
 
