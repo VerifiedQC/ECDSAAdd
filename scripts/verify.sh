@@ -2378,6 +2378,24 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.eraseFire_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.unfreeze_in_arena
 #print axioms ECDSAAdd.Arithmetic.Paper935.unfreeze_six_counts
+#print axioms ECDSAAdd.FiniteUnitary.restrict_extend
+#print axioms ECDSAAdd.FiniteUnitary.run_phase
+#print axioms ECDSAAdd.FiniteUnitary.run_basis_phase
+#print axioms ECDSAAdd.FiniteUnitary.extend_eval
+#print axioms ECDSAAdd.FiniteUnitary.reverse_eval
+#print axioms ECDSAAdd.FiniteUnitary.unitary_basis
+#print axioms ECDSAAdd.FiniteUnitary.run_eq
+#print axioms ECDSAAdd.FiniteUnitary.eval_append
+#print axioms ECDSAAdd.FiniteUnitary.unitary_apply
+#print axioms ECDSAAdd.FiniteUnitary.unitary_norm
+#print axioms ECDSAAdd.FiniteUnitary.unitary_append
+#print axioms ECDSAAdd.FiniteUnitary.unitary_reverse
+#print axioms ECDSAAdd.FiniteUnitary.eval_X
+#print axioms ECDSAAdd.FiniteUnitary.eval_CX
+#print axioms ECDSAAdd.FiniteUnitary.eval_CCX
+#print axioms ECDSAAdd.FiniteUnitary.good_subspace_of_basis
+#print axioms ECDSAAdd.FiniteUnitary.budget_of_basis
+#print axioms ECDSAAdd.FiniteUnitary.budget_of_recorded
 LEAN
 )
 task_axiom_lean_rc=$?
