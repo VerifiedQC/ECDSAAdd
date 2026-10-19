@@ -129,3 +129,5 @@ import ECDSAAdd.Framework.CoherentFailure
 
 import ECDSAAdd.Framework.FiniteUnitary
 import ECDSAAdd.Arithmetic.Paper935.BranchRow
+
+import ECDSAAdd.Framework.RecordedMeasurement
