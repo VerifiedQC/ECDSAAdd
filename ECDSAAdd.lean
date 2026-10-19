@@ -132,3 +132,6 @@ import ECDSAAdd.Arithmetic.Paper935.BranchRow
 
 import ECDSAAdd.Framework.RecordedMeasurement
 import ECDSAAdd.Arithmetic.Paper935.RowStage
+
+import ECDSAAdd.Arithmetic.Paper935.RoutedStage
+import ECDSAAdd.Arithmetic.Paper935.ActiveStep

@@ -2439,6 +2439,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_in_arena
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_half_view_set
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedStage_divstep
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedStage_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedStage_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStep_divstep
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStep_in_arena
 LEAN
 )
 task_axiom_lean_rc=$?
