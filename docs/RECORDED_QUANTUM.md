@@ -36,11 +36,10 @@ amplitude. `apply_kernel` extends the result to arbitrary input amplitudes.
 Multiplication and summation happen before taking absolute squares; no
 uniform-outcome assumption is imposed on superpositions.
 
-This compositional kernel is not yet a closed formula directly in terms of
-one final `runWithTape` call. A theorem collapsing intermediate sums to final
-tapes remains follow-up work. In particular this file does not assert that
-`RecordedAgreement` alone has already been lifted to a measured quantum
-budget.
+This module supplies the compositional kernel. The subsequent
+`Framework/RecordedPaths.lean` collapses it to one final-tape `runWithTape`
+formula and derives a measured quantum budget from `RecordedAgreement`;
+see `RECORDED_PATHS.md` for that bridge and its explicit ideal environment.
 
 ## Approved error contract
 
@@ -52,8 +51,7 @@ existing `QuantumBudget.error_le` then supplies the vector-error bound.
 Kernel equality is still a concrete proof obligation; it is not replaced
 by an arbitrary claimed physical realization.
 
-A concrete point-add instance, the final-record form of interpreter
-agreement, numerical failure probabilities, and the full peak-live bound
+A concrete point-add instance, numerical failure probabilities, and the full peak-live bound
 of 935 are not established here. The retained record space also is not a
 proof of physical quantum-memory allocation: classical record accounting
 and data-wire liveness belong to the resource model.

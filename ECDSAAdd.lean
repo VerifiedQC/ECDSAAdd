@@ -138,3 +138,5 @@ import ECDSAAdd.Arithmetic.Paper935.ActiveStep
 import ECDSAAdd.Arithmetic.Paper935.TaggedStep
 import ECDSAAdd.Framework.RecordedQuantum
 import ECDSAAdd.Arithmetic.Paper935.IdleRows
+
+import ECDSAAdd.Framework.RecordedPaths
