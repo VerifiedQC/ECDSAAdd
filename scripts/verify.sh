@@ -2408,6 +2408,32 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.branchInt_divstep_g
 #print axioms ECDSAAdd.Arithmetic.Paper935.branchInt_divstep_gv
 #print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_divstep
+#print axioms ECDSAAdd.RecordedMeasurement.hadamard_norm
+#print axioms ECDSAAdd.RecordedMeasurement.sign_norm
+#print axioms ECDSAAdd.RecordedMeasurement.sign_xor
+#print axioms ECDSAAdd.RecordedMeasurement.phase_norm
+#print axioms ECDSAAdd.RecordedMeasurement.measure_norm
+#print axioms ECDSAAdd.RecordedMeasurement.extend_clear
+#print axioms ECDSAAdd.RecordedMeasurement.correct_phase
+#print axioms ECDSAAdd.RecordedMeasurement.measurement_basis
+#print axioms ECDSAAdd.RecordedMeasurement.measurement_phase
+#print axioms ECDSAAdd.RecordedMeasurement.hadamard_single
+#print axioms ECDSAAdd.RecordedMeasurement.measure_single
+#print axioms ECDSAAdd.RecordedMeasurement.outcomeMass_nonneg
+#print axioms ECDSAAdd.RecordedMeasurement.outcomeMass_total
+#print axioms ECDSAAdd.RecordedMeasurement.measure_apply
+#print axioms ECDSAAdd.RecordedMeasurement.hadamard_twice
+#print axioms ECDSAAdd.RecordedMeasurement.measure_correction_comp
+#print axioms ECDSAAdd.RecordedMeasurement.followed_by_norm
+#print axioms ECDSAAdd.RecordedMeasurement.measure_bare
+#print axioms ECDSAAdd.RecordedMeasurement.plus_input_output
+#print axioms ECDSAAdd.RecordedMeasurement.plus_input_norm
+#print axioms ECDSAAdd.RecordedMeasurement.plus_input_probability
+#print axioms ECDSAAdd.RecordedMeasurement.measurement_phase_general
+#print axioms ECDSAAdd.RecordedMeasurement.measure_signed_single
+#print axioms ECDSAAdd.RecordedMeasurement.savedCorrection_norm
+#print axioms ECDSAAdd.RecordedMeasurement.savedPhase_run
+#print axioms ECDSAAdd.RecordedMeasurement.savedCorrection_single
 LEAN
 )
 task_axiom_lean_rc=$?
