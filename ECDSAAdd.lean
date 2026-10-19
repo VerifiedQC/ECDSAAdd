@@ -142,3 +142,7 @@ import ECDSAAdd.Arithmetic.Paper935.IdleRows
 import ECDSAAdd.Framework.RecordedPaths
 
 import ECDSAAdd.Arithmetic.Paper935.FailureAssembly
+import ECDSAAdd.Arithmetic.Paper935.Activity
+import ECDSAAdd.Arithmetic.Paper935.ZeroLatch
+import ECDSAAdd.Arithmetic.Paper935.ZeroFreeze
+import ECDSAAdd.Arithmetic.Paper935.PublicPost
