@@ -2434,6 +2434,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.RecordedMeasurement.savedCorrection_norm
 #print axioms ECDSAAdd.RecordedMeasurement.savedPhase_run
 #print axioms ECDSAAdd.RecordedMeasurement.savedCorrection_single
+#print axioms ECDSAAdd.Arithmetic.Paper935.finishRows_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_divstep
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_half_view_set
 LEAN
 )
 task_axiom_lean_rc=$?

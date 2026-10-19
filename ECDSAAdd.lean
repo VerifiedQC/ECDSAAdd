@@ -131,3 +131,4 @@ import ECDSAAdd.Framework.FiniteUnitary
 import ECDSAAdd.Arithmetic.Paper935.BranchRow
 
 import ECDSAAdd.Framework.RecordedMeasurement
+import ECDSAAdd.Arithmetic.Paper935.RowStage
