@@ -2469,6 +2469,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.RecordedQuantum.Circuit.budget_of_kernel
 #print axioms ECDSAAdd.RecordedQuantum.realize_instr
 #print axioms ECDSAAdd.RecordedQuantum.realize
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.doubleSigned_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.routeRows_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.finishRows_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStep_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.taggedStep_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.halfView_zero
 LEAN
 )
 task_axiom_lean_rc=$?
