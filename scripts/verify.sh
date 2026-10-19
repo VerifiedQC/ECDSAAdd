@@ -2448,6 +2448,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.taggedStep_divstep
 #print axioms ECDSAAdd.Arithmetic.Paper935.taggedStep_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.taggedStep_in_arena
+#print axioms ECDSAAdd.RecordedQuantum.subtype_norm
+#print axioms ECDSAAdd.RecordedQuantum.lift_norm
+#print axioms ECDSAAdd.RecordedQuantum.linear_apply_sum
+#print axioms ECDSAAdd.RecordedQuantum.appendRecord_old
+#print axioms ECDSAAdd.RecordedQuantum.appendRecord_new
+#print axioms ECDSAAdd.RecordedQuantum.measurement_norm
+#print axioms ECDSAAdd.RecordedQuantum.measurement_reset
+#print axioms ECDSAAdd.RecordedQuantum.measurement_apply
+#print axioms ECDSAAdd.RecordedQuantum.slice_single
+#print axioms ECDSAAdd.RecordedQuantum.lift_single
+#print axioms ECDSAAdd.RecordedQuantum.measurement_single
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.norm
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.semantics_seq
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.kernel_eq
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.apply_kernel
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.count
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.wellFormed
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.support
+#print axioms ECDSAAdd.RecordedQuantum.Circuit.budget_of_kernel
+#print axioms ECDSAAdd.RecordedQuantum.realize_instr
+#print axioms ECDSAAdd.RecordedQuantum.realize
 LEAN
 )
 task_axiom_lean_rc=$?
