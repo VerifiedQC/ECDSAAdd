@@ -124,3 +124,5 @@ import ECDSAAdd.Arithmetic.Paper935.FreezePin
 import ECDSAAdd.Arithmetic.Paper935.FreezeLatch
 import ECDSAAdd.Arithmetic.Paper935.FireCleanup
 import ECDSAAdd.Arithmetic.Paper935.Unfreeze
+
+import ECDSAAdd.Framework.CoherentFailure
