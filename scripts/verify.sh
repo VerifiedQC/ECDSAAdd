@@ -2548,6 +2548,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_flag_record
+#print axioms ECDSAAdd.Arithmetic.Paper935.slotBody_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.slotBody_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.slotBody_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.slot_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.slot_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.slot_support
 LEAN
 )
 task_axiom_lean_rc=$?

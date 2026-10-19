@@ -146,3 +146,6 @@ import ECDSAAdd.Arithmetic.Paper935.Activity
 import ECDSAAdd.Arithmetic.Paper935.ZeroLatch
 import ECDSAAdd.Arithmetic.Paper935.ZeroFreeze
 import ECDSAAdd.Arithmetic.Paper935.PublicPost
+
+import ECDSAAdd.Arithmetic.Paper935.SlotBody
+import ECDSAAdd.Arithmetic.Paper935.Slot
