@@ -126,3 +126,5 @@ import ECDSAAdd.Arithmetic.Paper935.FireCleanup
 import ECDSAAdd.Arithmetic.Paper935.Unfreeze
 
 import ECDSAAdd.Framework.CoherentFailure
+
+import ECDSAAdd.Framework.FiniteUnitary
