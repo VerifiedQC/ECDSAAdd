@@ -141,6 +141,26 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.FailureBudget.InputLaw.push_mass
+#print axioms ECDSAAdd.FailureBudget.InputLaw.push_weight_image
+#print axioms ECDSAAdd.FailureBudget.InputLaw.push_weight_outside
+#print axioms ECDSAAdd.FailureBudget.mem_encodedBad_image
+#print axioms ECDSAAdd.FailureBudget.InputLaw.push_mass_encodedBad
+#print axioms ECDSAAdd.FailureBudget.encodedPerm_image
+#print axioms ECDSAAdd.FailureBudget.recordedAgreement_encoded
+#print axioms ECDSAAdd.FailureBudget.budget_of_encoded
+#print axioms ECDSAAdd.FailureBudget.error_of_encoded
+#print axioms ECDSAAdd.Arithmetic.Paper935.FailureEvents.mem_bad
+#print axioms ECDSAAdd.Arithmetic.Paper935.FailureBounds.mass_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.FailureBounds.total_nonneg
+#print axioms ECDSAAdd.Arithmetic.Paper935.budget_of_failureBounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.error_of_failureBounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.inversePerm_apply
+#print axioms ECDSAAdd.Arithmetic.Paper935.divisionPerm_active
+#print axioms ECDSAAdd.Arithmetic.Paper935.divisionPerm_disabled
+#print axioms ECDSAAdd.Arithmetic.Paper935.divisionPerm_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.inverse_budget
+#print axioms ECDSAAdd.Arithmetic.Paper935.division_budget
 #print axioms ECDSAAdd.FailureBudget.InputLaw.mass_nonneg
 #print axioms ECDSAAdd.FailureBudget.InputLaw.mass_mono
 #print axioms ECDSAAdd.FailureBudget.InputLaw.mass_univ

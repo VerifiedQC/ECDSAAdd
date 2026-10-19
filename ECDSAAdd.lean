@@ -140,3 +140,5 @@ import ECDSAAdd.Framework.RecordedQuantum
 import ECDSAAdd.Arithmetic.Paper935.IdleRows
 
 import ECDSAAdd.Framework.RecordedPaths
+
+import ECDSAAdd.Arithmetic.Paper935.FailureAssembly
