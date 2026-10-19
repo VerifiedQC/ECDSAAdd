@@ -6,7 +6,9 @@
 
 ## Preconditions and remaining work
 
-This is an active-lane circuit theorem: active is true; swap and post-routing parity controls are supplied as physical bits with explicit mathematical equalities. The theorem assumes odd f, non-overlapping registers, clean branch and counter scratch, and local signed-fit bounds for the g numerator, fv, gv and z outputs. It does not generate/erase controls or cover frozen lanes, nor compose a resizing walk, inverse, or endpoint provider.
+`taggedStep` additionally computes swap and parity from the original physical z sign and g low bit using the existing four-wire `branchTags` circuit. `taggedStep_divstep` proves the same five-field result from initially clean tag bits, eliminating the supplied swap/parity equalities. Odd f makes the original g parity equal the post-routing branch parity. It retains these two tags as outputs; their later cleanup and history allocation are not yet implemented here. Tag generation adds one Toffoli and no measurements or additional scratch.
+
+These are active-lane circuit theorems. For `activeStep`, active is true; swap and post-routing parity controls are supplied as physical bits with explicit mathematical equalities. The theorem assumes odd f, non-overlapping registers, clean branch and counter scratch, and local signed-fit bounds for the g numerator, fv, gv and z outputs. `taggedStep` generates the tags but does not erase them; neither theorem covers frozen lanes or composes a resizing walk, inverse, or endpoint provider.
 
 Counter width remains a parameter. For n counter bits the reused counter implementation reserves n zero-source bits and n-1 ripple-carry bits; the theorem does not claim that this is the paper's optimized counter circuit. Six bits are valid only when the explicit signed-fit assumptions hold; a failure-probability theorem is still required.
 
