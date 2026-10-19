@@ -2396,6 +2396,18 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.FiniteUnitary.good_subspace_of_basis
 #print axioms ECDSAAdd.FiniteUnitary.budget_of_basis
 #print axioms ECDSAAdd.FiniteUnitary.budget_of_recorded
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowAddCin_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchWord_lift
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchInt_divstep_g
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchInt_divstep_gv
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_divstep
 LEAN
 )
 task_axiom_lean_rc=$?
