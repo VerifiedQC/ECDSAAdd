@@ -3097,6 +3097,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotRegisters.output_from_post
 #print axioms ECDSAAdd.Arithmetic.Paper935.unarmedPost_pinStep
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyInstructionCheck_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_depth_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_selector
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotRegisters.values_after_history
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_history_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_identity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_work
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_selector
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_fit
+
 LEAN
 )
 task_axiom_lean_rc=$?

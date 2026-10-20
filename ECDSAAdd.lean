@@ -270,3 +270,10 @@ import ECDSAAdd.Arithmetic.Paper935.SlotFrontMath
 import ECDSAAdd.Arithmetic.Paper935.SlotInputValues
 import ECDSAAdd.Arithmetic.Paper935.SlotOutputValues
 import ECDSAAdd.Arithmetic.Paper935.UnarmedPostMath
+import ECDSAAdd.Arithmetic.Paper935.CheckedHistoricalSlot
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotCompiler
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotRun
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompiler
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerReady
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRelease
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRun
