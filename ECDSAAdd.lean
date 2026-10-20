@@ -188,3 +188,14 @@ import ECDSAAdd.Arithmetic.Paper935.ActiveInverse
 import ECDSAAdd.Arithmetic.Paper935.TaggedInverse
 import ECDSAAdd.Arithmetic.Paper935.SlotInverse
 import ECDSAAdd.Arithmetic.Paper935.RetiredInverse
+import ECDSAAdd.Arithmetic.Paper935.PostInverse
+import ECDSAAdd.Arithmetic.Paper935.RetiredSlotInverse
+import ECDSAAdd.Arithmetic.Paper935.BranchAssembly
+import ECDSAAdd.Arithmetic.Paper935.FrozenDepth
+import ECDSAAdd.Arithmetic.Paper935.BranchRecoveryMath
+import ECDSAAdd.Arithmetic.Paper935.BranchRecovery
+import ECDSAAdd.Arithmetic.Paper935.HistoryRecovery
+import ECDSAAdd.Arithmetic.Paper935.HistoryControls
+import ECDSAAdd.Arithmetic.Paper935.HistoryControlValues
+import ECDSAAdd.Arithmetic.Paper935.CleanBranch
+import ECDSAAdd.Arithmetic.Paper935.CleanHistory
