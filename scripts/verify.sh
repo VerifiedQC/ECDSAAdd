@@ -3124,6 +3124,28 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_total
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_good
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_trajectory_fit
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.capacity_at
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_capacity_at
+#print axioms ECDSAAdd.Arithmetic.Paper935.grownCapacities_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoryCapacityAt_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoricalRequests_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.stage
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoricalRequests_at
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_stage
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.Encodes.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_realize
+#print axioms ECDSAAdd.Arithmetic.Paper935.planHistoryGrow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.author_history_window_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyWindow_covers
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyWindow_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWalkMetadata_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkSeedBank_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_run
 
 LEAN
 )
