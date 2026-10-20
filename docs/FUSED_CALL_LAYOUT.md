@@ -1,7 +1,8 @@
 # Fused calls: entry, exit and placement
 
 Source: `andigu/uncompute@64b5a13aa249f1360846657392e6c66817b26d0f`,
-`tasks/modinv-point-add/circuits/divsteps/engine.py`. This is the source contract
+`tasks/modinv-point-add/circuits/divsteps/circuit.py` (HMR, qcap=935, wide=False).
+Shared component references below are in the adjacent `engine.py`. This is the source contract
 for the three `FusedCallSites` labels; caller invariants below still need Lean
 binding. Addresses are logical wire lists, not an asserted fixed 935-wire map.
 
@@ -13,9 +14,9 @@ with a contiguous portion of `x1` without proving that placement.
 
 | Call / source | Entry to row_mul | Exit from row_mul |
 |---|---|---|
-| s2 quotientApply, 3882 | `R` encodes `C` in two's complement, sign `s`; multiplicand `y1 = Y−Q.y`; output `A=0`, freed by closer. `mm.on(24,seam=True)` supplies clean `P` and one flag (3880–3881). | `A` contains the unsigned fixed-scale product, before sign_fix; `R[:256]` is the folded scan word, `R[256:]` remains the high magnitude, sign retained. `y1` unchanged; pool clean. **Row remains parked**, not restored. |
-| s6 productRecompute, 3936 | Signed `R` for the second denominator; multiplicand `A` is the product after walk-C's rider halvings, **not raw slope**. Output `y1=0` after its HMR, host use and closer; clean plateau pool (3925–3935). | Same parked folded row; `y1` contains unsigned fixed-scale product before sign_fix; `A` unchanged; pool clean. |
-| s6 productErase, 3945 | **Parked magnitude/folded `R`, not a new signed-lift input.** `y1` has been sign-fixed, phase-corrected, then inverse-sign-fixed (3937–3940); `A` is the same scaled operand. | Inverse fixed halves and inverse scan return `y1=0`; inverse fold borrows it, then inverse lift restores signed `R`, sign retained and pool clean (3286–3294). Any phase from the intervening correction belongs to the lifecycle proof. |
+| s2 quotientApply, 128 | `R` encodes `C` in two's complement, sign `s`; multiplicand `y1 = Y−Q.y`; output `A=0`, freed by closer. `mm.on(24,seam=True)` supplies clean `P` and one flag (126–127). | `A` contains the unsigned fixed-scale product, before sign_fix; `R[:256]` is the folded scan word, `R[256:]` remains the high magnitude, sign retained. `y1` unchanged; pool clean. **Row remains parked**, not restored. |
+| s6 productRecompute, 181 | Signed `R` for the second denominator; multiplicand `A` is the product after walk-C's rider halvings, **not raw slope**. Output `y1=0` after its HMR, host use and closer; clean plateau pool (172–180). | Same parked folded row; `y1` contains unsigned fixed-scale product before sign_fix; `A` unchanged; pool clean. |
+| s6 productErase, 190 | **Parked magnitude/folded `R`, not a new signed-lift input.** `y1` has been sign-fixed, phase-corrected, then inverse-sign-fixed (182–185); `A` is the same scaled operand. | Inverse fixed halves and inverse scan return `y1=0`; inverse fold borrows it, then inverse lift restores signed `R`, sign retained and pool clean (3286–3294). Any phase from the intervening correction belongs to the lifecycle proof. |
 
 The two s6 model labels share one `FusedCall` (`fusedPointCall_erase`); this
 identifies mathematical data, not identical physical entry states.
@@ -38,8 +39,8 @@ sequential reuse of `P[0]` does not require an extra live wire.
 
 Forward fold borrows `out` only before Horner starts. PR200 restores it to
 zero before the first copy round. At s2, after sign_fix, HMR demolishes
-`y1` (3884); **that** zero word supplies deferred inverse fold in
-`row_unpark(y1,ma)` (3885,3326–3333), then inverse lift restores `R` before
+`y1` (130); **that** zero word supplies deferred inverse fold in
+`row_unpark(y1,ma)` (131; engine.py:3326–3333), then inverse lift restores `R` before
 pool release and closer_inv. At s6 erase, inverse Horner first returns
 `out=y1` to zero, and inverse fold reuses it. No forward call emits an
 immediate unlift.
@@ -81,3 +82,39 @@ swaps; final ownership is exactly the initial live set under `repackEquiv`.
 Owned row/host views therefore remain owned after the same moves. This
 removes the need to assume the ownership transaction for a checked journal;
 it does not supply the author's concrete journal selection.
+
+## Pinned source journal
+
+The selected entry is `circuit.py`, with `HmrDivstepInv`, 533 steps and
+60 history bits. Its calls use `HMR_POOL_PLATEAU = 24` (engine.py:3492);
+`HMR_POOL_PLATEAU_SEAM = 24` (3490) documents the alternative wide seam
+where a host word remains live. The staged entry has the same arithmetic
+flow at engine.py:3882/3936/3945, but a different allocation schedule.
+Its addresses must not be used for this instance.
+
+Run `python3.13 scripts/extract_fused_repack.py --source /path/to/uncompute
+--output data/fused-hmr935-repack.json` on the pinned checkout. The script
+executes the selected entry and observes the original closer/repack methods
+without replacing their semantics; it stops after the second closer.
+The JSON records ordered free lists, owners, row views, and actual swaps.
+Builder allocation includes reserved but currently free home-band slots;
+it is not the logical live ownership set used by `Arena.checkRepack`.
+The export is evidence of source selection, not a Lean proof that the
+compiled walk reaches those views or that its destinations are clean.
+
+## Compiled walk parameter mismatch
+
+The current `compileAuthorWalk` is not a gate-by-gate certificate for the
+selected HMR entry. `HistoricalWalkCompiler.historyWindow` retains at least
+seven fv bits, `walkRegisters` has a seven-bit counter, and
+`AuthorDecoderUndo` uses threshold seven with decoder depths two through
+six. The selected source HMR configuration instead has Wz=6, stores history
+at j5p and decodes depths two through four. Its schedule tables were used
+by the existing Lean instance, but those matching tables alone do not
+establish matching compiler parameters.
+
+The existing 907/28 and 620/315 bounds apply to that Lean instance only.
+Before binding these concrete HMR journals to a complete caller, the walk
+parameters and corresponding compilation certificates must be reconciled.
+The source export, generic placement/zero lemmas and shared row arithmetic
+remain usable independently; none discharges this missing correspondence.
