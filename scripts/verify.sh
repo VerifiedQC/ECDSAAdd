@@ -3880,6 +3880,18 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_free
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagCell_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagCell_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagSweep_measurementCount
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagSweep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagUnsweep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagSweep_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_j5p
+
 LEAN
 )
 task_axiom_lean_rc=$?

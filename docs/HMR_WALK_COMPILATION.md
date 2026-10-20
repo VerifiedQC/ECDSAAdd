@@ -48,3 +48,19 @@ the generic closer's successful-input conditions (g=0, |f|=1, gv=f*p) and
 entry readiness. These conditions have not been derived here from the new
 whole-walk semantics. No full Hmr source-gate equivalence or whole-point-add
 935-wire theorem follows from these cardinalities.
+
+## Shared source anchor flags
+
+`HmrFlagCell`, `HmrFlagChain`, and `HmrFlags` implement the actual shared
+anchor split in `engine.py:1466–1499`: three AND anchors interleaved with
+six CX gates, followed by the source release order and measurement-conditioned
+CZ corrections. The six temporary wires hold j2/a1/j3/a2/j4/j5p; they share
+the intermediate prefixes a1 and a2. The public forward theorem gives all
+six values, and the complete release theorem restores the entire input
+state, including its phase, for every measurement tape. Initial distinctness
+and six clean scratch wires imply the staged readiness conditions.
+
+This block uses three Toffoli gates and consumes three measurements on
+release. It has not yet been installed into `compileHmrWalk`. The source's
+cached decoder cube chains, physical allocation, and the complete walk
+correspondence remain open; these standalone flag proofs do not close them.
