@@ -399,3 +399,5 @@ import ECDSAAdd.Arithmetic.Paper935.FoldCompareBlock
 import ECDSAAdd.Arithmetic.Paper935.FoldKeeperErase
 import ECDSAAdd.Arithmetic.Paper935.FoldPoolPlan
 import ECDSAAdd.Arithmetic.Paper935.ScalingNoBorrow
+import ECDSAAdd.Arithmetic.Paper935.ScalingSeed
+import ECDSAAdd.Arithmetic.Paper935.ScalingCallSites

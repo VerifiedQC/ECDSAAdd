@@ -3392,6 +3392,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_pairwise
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_mass
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_seed_read
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_seed_relation
+#print axioms ECDSAAdd.Arithmetic.Paper935.quotientCallArgs_input
+#print axioms ECDSAAdd.Arithmetic.Paper935.productCallArgs_input
+#print axioms ECDSAAdd.Arithmetic.Paper935.inverseCallArgs_input
+#print axioms ECDSAAdd.Arithmetic.Paper935.inverseCallSeed_of_args
+#print axioms ECDSAAdd.Arithmetic.Paper935.inverseCallArgs_nonzero
+#print axioms ECDSAAdd.Arithmetic.Paper935.inverseCallArgs_infinity
+#print axioms ECDSAAdd.Arithmetic.Paper935.mem_inverseCallScalingFailure
+#print axioms ECDSAAdd.Arithmetic.Paper935.mem_pointScalingFailure
+#print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingFailure_adapters
+#print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingExclusive_disjoint
+
 LEAN
 )
 task_axiom_lean_rc=$?
