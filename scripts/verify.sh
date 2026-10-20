@@ -2981,6 +2981,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_rows
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinnedCounter_value
 #print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowSlot_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.value_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.planDecoderRow_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planDecoderRow_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.planDecoderRow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.f_decoder_view
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.fv_decoder_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.planHistoryGrow_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planHistoryGrow_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyGrowth_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.decoder_unpad
+#print axioms ECDSAAdd.Arithmetic.Paper935.paddedCleanBranch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.paddedCleanBranch_cancel
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_padded_recover_pop
 LEAN
 )
 task_axiom_lean_rc=$?

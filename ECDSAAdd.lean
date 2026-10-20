@@ -224,3 +224,9 @@ import ECDSAAdd.Arithmetic.Paper935.WindowSlotSpec
 import ECDSAAdd.Arithmetic.Paper935.WindowRoutedPhysical
 import ECDSAAdd.Arithmetic.Paper935.WindowStepPhysical
 import ECDSAAdd.Arithmetic.Paper935.WindowSlotPhysical
+import ECDSAAdd.Arithmetic.Paper935.DecoderWindow
+import ECDSAAdd.Arithmetic.Paper935.DecoderViews
+import ECDSAAdd.Arithmetic.Paper935.HistoryAllocation
+import ECDSAAdd.Arithmetic.Paper935.DecoderUnpad
+import ECDSAAdd.Arithmetic.Paper935.PaddedBranch
+import ECDSAAdd.Arithmetic.Paper935.PaddedHistory
