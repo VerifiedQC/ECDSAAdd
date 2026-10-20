@@ -25,8 +25,12 @@ complement of the entire 280-bit payload. Its injective placement leaves the
 low window at 1–58 and moves the pool to 281–304. The full source-order
 lift/unlift pair has an ambient-state round-trip theorem on a clean pool,
 95 Toffoli and 92 measurements in each direction, and support below 305.
-The forward absolute-value theorem under the candidate lift success check
-is still required; round-trip equality is not that theorem.
+`FusedMagnitudeValue.lean` additionally proves the forward magnitude formula
+and derives the absolute coefficient value from the existing `LiftGood`
+condition and an explicit two's-complement input encoding. It also proves
+pool cleanup, retained sign and phase for this forward run. The window's
+high-payload frame is proved from the physical support, so the value proof
+does not assume that the other 222 payload bits stay unchanged.
 
 ## Row-fold stream
 
@@ -59,6 +63,6 @@ or full point-add resource bound follows from these reference supports.
 | Component | Proven | Remaining |
 |---|---|---|
 | 58-bit ±1, actual 24-wire pool | Numeric word, clean pool, control, phase, all-state clean-pool round trip, physical gates, support and counts | Enclosing point-program placement |
-| Full 280-bit magnitude lift | Actual complement/window order, clean-pool ambient round trip, 305-address support and counts | Forward absolute value under LiftGood; enclosing lifecycle |
+| Full 280-bit magnitude lift | Actual complement/window order, forward absolute value under LiftGood and explicit encoding, pool/sign/phase, ambient round trip, 305-address support and counts | Enclosing lifecycle and caller encoding binding |
 | Actual row-fold source order | Full-state round trip, source/normalized execution equality, 537-address support and counts | Forward folded word, high preservation and borrowed word/carry cleanup |
 | Full fused endpoint | No completed claim in this change | Arithmetic composition, lifecycle, point-add binding, numerical failure mass and whole-program peak |
