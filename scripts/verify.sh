@@ -3446,6 +3446,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingFailure_adapters
 #print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingExclusive_disjoint
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.signedDecode_complement
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_bank
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_layout_size
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_normalize
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_low_word
+
 LEAN
 )
 task_axiom_lean_rc=$?
