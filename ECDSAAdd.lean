@@ -499,3 +499,4 @@ import ECDSAAdd.Arithmetic.Paper935.FusedMagnitudeProgram
 import ECDSAAdd.Arithmetic.Paper935.FusedMagnitudeValue
 import ECDSAAdd.Arithmetic.Paper935.FusedRowFoldValue
 import ECDSAAdd.Arithmetic.Paper935.FusedMagnitudePhysical
+import ECDSAAdd.Arithmetic.Paper935.FusedBoundaryZero

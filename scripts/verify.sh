@@ -3785,6 +3785,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_forward
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_cleanup
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.repackView_eq_map
+#print axioms ECDSAAdd.Arithmetic.Paper935.repackView_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedEndpointRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedEndpointRow_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacement_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedPool_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedClosedPool_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacement_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacement_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedClosed_aHost_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedClosed_pool_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_recorded_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_repack_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_physical
 
