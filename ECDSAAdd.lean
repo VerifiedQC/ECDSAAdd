@@ -181,3 +181,10 @@ import ECDSAAdd.Arithmetic.Paper935.ClassLookup
 import ECDSAAdd.Arithmetic.Paper935.DepthLookup
 import ECDSAAdd.Arithmetic.Paper935.FiniteDepth
 import ECDSAAdd.Arithmetic.BlockedZeroChunks
+import ECDSAAdd.Arithmetic.Paper935.BranchInverse
+import ECDSAAdd.Arithmetic.Paper935.RowStageInverse
+import ECDSAAdd.Arithmetic.Paper935.RoutedInverse
+import ECDSAAdd.Arithmetic.Paper935.ActiveInverse
+import ECDSAAdd.Arithmetic.Paper935.TaggedInverse
+import ECDSAAdd.Arithmetic.Paper935.SlotInverse
+import ECDSAAdd.Arithmetic.Paper935.RetiredInverse
