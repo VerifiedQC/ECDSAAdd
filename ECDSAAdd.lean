@@ -409,3 +409,4 @@ import ECDSAAdd.Arithmetic.Paper935.ScalingNoBorrow
 import ECDSAAdd.Arithmetic.Paper935.ScalingSeed
 import ECDSAAdd.Arithmetic.Paper935.ScalingCallSites
 import ECDSAAdd.Arithmetic.Paper935.SeedNormalize
+import ECDSAAdd.Arithmetic.Paper935.ExitCapacity

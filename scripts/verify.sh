@@ -3453,6 +3453,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_normalize
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_low_word
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_exit_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorExitLiveCount
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_free_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_no_fresh_output
 
 LEAN
 )
