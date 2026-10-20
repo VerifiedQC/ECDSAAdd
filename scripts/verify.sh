@@ -3154,6 +3154,24 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorTrajectory_mass_le_requests
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_fit
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterPositive_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryLayout.Valid.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_instruction_check
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroViews_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroViews_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroViews_prefixed_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCandidate_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryLayout.support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalViews
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_exists
+
 LEAN
 )
 task_axiom_lean_rc=$?
