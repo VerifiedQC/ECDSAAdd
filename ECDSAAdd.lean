@@ -188,3 +188,6 @@ import ECDSAAdd.Arithmetic.Paper935.ActiveInverse
 import ECDSAAdd.Arithmetic.Paper935.TaggedInverse
 import ECDSAAdd.Arithmetic.Paper935.SlotInverse
 import ECDSAAdd.Arithmetic.Paper935.RetiredInverse
+import ECDSAAdd.Arithmetic.Paper935.PostInverse
+import ECDSAAdd.Arithmetic.Paper935.RetiredSlotInverse
+import ECDSAAdd.Arithmetic.Paper935.BranchAssembly
