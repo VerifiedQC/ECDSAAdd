@@ -14,6 +14,11 @@ Read-only coordinates may be in program support as controls, but their restorati
 
 ## Intended stage permissions (not yet instantiated)
 
+See [the concrete seed inventory](PAPER935_HOST_ACCOUNTING.md) for the 794 owned
+addresses and the outstanding host-role binding. In particular, the table
+below retains y during the first walk, whereas the concrete seed retains A;
+no stage renaming or data-moving proof currently identifies these layouts.
+
 | Stage | Host ownership and permitted reuse | Required release evidence |
 |---|---|---|
 | Input differences | x,y hold coordinate differences; A starts clean | Only proven zero temporary wires return to pool |
