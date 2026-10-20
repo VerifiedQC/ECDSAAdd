@@ -2843,6 +2843,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retireAnd_restore
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredBody_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredBodyInverse_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.equalConstant_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.equalConstant_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.latchRetire_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.latchRetire_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroLatch_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.zeroFreeze_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.publicPost_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchDepth_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchAssembly_value
 LEAN
 )
 task_axiom_lean_rc=$?
