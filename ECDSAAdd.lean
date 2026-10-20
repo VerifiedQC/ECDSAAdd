@@ -200,3 +200,13 @@ import ECDSAAdd.Arithmetic.Paper935.HistoryControlValues
 import ECDSAAdd.Arithmetic.Paper935.CleanBranch
 import ECDSAAdd.Arithmetic.Paper935.CleanHistory
 import ECDSAAdd.Arithmetic.Paper935.BlockedPostShared
+import ECDSAAdd.Arithmetic.Paper935.RowWindowResize
+import ECDSAAdd.Arithmetic.Paper935.RowAllocation
+import ECDSAAdd.Arithmetic.Paper935.WindowAllocator
+import ECDSAAdd.Arithmetic.Paper935.WindowRows
+import ECDSAAdd.Arithmetic.Paper935.WindowBank
+import ECDSAAdd.Arithmetic.Paper935.CounterBorrow
+import ECDSAAdd.Arithmetic.Paper935.WindowCounter
+import ECDSAAdd.Arithmetic.Paper935.WindowRouted
+import ECDSAAdd.Arithmetic.Paper935.WindowStep
+import ECDSAAdd.Arithmetic.Paper935.WindowHeadroom
