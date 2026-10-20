@@ -161,6 +161,7 @@ import ECDSAAdd.Arithmetic.Paper935.CounterPositive
 import ECDSAAdd.Arithmetic.Paper935.StoreFlag
 import ECDSAAdd.Arithmetic.Paper935.StorePush
 
+import ECDSAAdd.Arithmetic.InversePointRealization
 import ECDSAAdd.Arithmetic.InverseBothFailure
 import ECDSAAdd.Arithmetic.InverseBothPhysical
 import ECDSAAdd.Arithmetic.InverseQuotientPhysical
