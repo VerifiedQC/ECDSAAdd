@@ -3117,13 +3117,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_selector
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_fit
 
-#print axioms ECDSAAdd.Arithmetic.Paper935.historyLength_eq
-#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryFailure.capacity_mono
-#print axioms ECDSAAdd.Arithmetic.Paper935.historyCapacity_failure_subset
-#print axioms ECDSAAdd.Arithmetic.Paper935.trajectory_mass_capacity_mono
-#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_total
-#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_good
-#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_trajectory_fit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.capacity_at
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_capacity_at
 #print axioms ECDSAAdd.Arithmetic.Paper935.grownCapacities_bound
@@ -3146,6 +3139,20 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWalkMetadata_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.walkSeedBank_sites
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyLength_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryFailure.capacity_mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCapacity_failure_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.trajectory_mass_capacity_mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_trajectory_fit
+
+#print axioms ECDSAAdd.Arithmetic.Paper935.grownCapacities_historyCapacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoryCapacityAt_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoryFailure_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorTrajectoryBudget_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorTrajectory_mass_le_requests
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_fit
 
 LEAN
 )
