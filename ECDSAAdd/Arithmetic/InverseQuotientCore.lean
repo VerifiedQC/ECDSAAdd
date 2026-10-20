@@ -59,12 +59,12 @@ private theorem work_away (c : Wire) (M : MontLayout) (den : List Wire)
 attribute [local irreducible] run montMulControlledAdd montMulControlledSub swapRegisters
 
 /-- Concrete three-stage quotient core, with the inverse already available. -/
-theorem states (c : Wire) (M : MontLayout) (den : List Wire)
+theorem states_factor (c : Wire) (M : MontLayout) (den : List Wire)
     (hn : (c :: den ++ M.wires).Nodup) (hw : M.Widths) (hd : den.length = 257)
-    (B : Bool) (X Y : Fp) (hX : B = true → X ≠ 0)
+    (B : Bool) (X Y I : Fp) (hI : B = true → I = X⁻¹) (hX : B = true → X ≠ 0)
     (s s₁ s₂ s₃ : State) (m₁ m₂ m₃ : List Bool)
     (hb : s.basis c = B) (hx : regValue den s.basis = X.val)
-    (hi : regValue M.x s.basis = (if B then X⁻¹ else 0).val)
+    (hi : regValue M.x s.basis = I.val)
     (hy : regValue M.y s.basis = Y.val) (ht : regValue M.out s.basis = 0)
     (hz : regValue M.work s.basis = 0)
     (h₁ : run (montMulControlledAdd c M p) m₁ s = s₁)
@@ -77,11 +77,12 @@ theorem states (c : Wire) (M : MontLayout) (den : List Wire)
   letI : NeZero p := ⟨p_prime.ne_zero⟩
   have hp : p < 2^256 := by norm_num [p]
   obtain ⟨hn₁,hn₃,hw₃,hn₂⟩ := views c M den hn hw hd
-  let I : Fp := if B then X⁻¹ else 0
   let Q : Fp := if B then Y/X else Y
   let T : Nat := if B then (Y/X).val else 0
   have hprod : (if B then (0 + (I.val * Y.val) % p) % p else 0) = T := by
-    cases B <;> simp [I,T,div_eq_mul_inv,mul_comm,ZMod.val_mul]
+    cases B with
+    | false => simp [T]
+    | true => simp [T,hI rfl,div_eq_mul_inv,mul_comm,ZMod.val_mul]
   have tlt : T < 2^256 := by
     dsimp [T]; split <;> first | exact (Y/X).isLt.trans hp | positivity
   have a := montMulControlledAdd_spec c B M p I.val Y.val 0 hw hn₁ hp
@@ -146,6 +147,23 @@ theorem states (c : Wire) (M : MontLayout) (den : List Wire)
       (fun h => hqy ((List.take_sublist 256 M.y).subset h))
       (fun h => hqt ((List.take_sublist 256 M.out).subset h))).trans (f₁ q hqt))
 
+theorem states (c : Wire) (M : MontLayout) (den : List Wire)
+    (hn : (c :: den ++ M.wires).Nodup) (hw : M.Widths) (hd : den.length = 257)
+    (B : Bool) (X Y : Fp) (hX : B = true → X ≠ 0)
+    (s s₁ s₂ s₃ : State) (m₁ m₂ m₃ : List Bool)
+    (hb : s.basis c = B) (hx : regValue den s.basis = X.val)
+    (hi : regValue M.x s.basis = (if B then X⁻¹ else 0).val)
+    (hy : regValue M.y s.basis = Y.val) (ht : regValue M.out s.basis = 0)
+    (hz : regValue M.work s.basis = 0)
+    (h₁ : run (montMulControlledAdd c M p) m₁ s = s₁)
+    (h₂ : run (swapRegisters c (M.y.take 256) (M.out.take 256)) m₂ s₁ = s₂)
+    (h₃ : run (montMulControlledSub c (denView M den) p) m₃ s₂ = s₃) :
+    s₃.phase = s.phase ∧
+    regValue M.y s₃.basis = (if B then Y/X else Y).val ∧
+    ∀ q, q ∉ M.y → s₃.basis q = s.basis q := by
+  exact states_factor c M den hn hw hd B X Y (if B then X⁻¹ else 0)
+    (by intro h; simp [h]) hX s s₁ s₂ s₃ m₁ m₂ m₃ hb hx hi hy ht hz h₁ h₂ h₃
+
 /-- All-tape correctness of the emitted gate list, including every non-numerator
 wire and the incoming phase. The temporary quotient is actually cleared. -/
 theorem correct (c : Wire) (M : MontLayout) (den : List Wire)
@@ -160,6 +178,22 @@ theorem correct (c : Wire) (M : MontLayout) (den : List Wire)
     ∀ q, q ∉ M.y → (run (program c M den) m s).basis q = s.basis q := by
   simp only [program,run_append,run_take]
   exact states c M den hn hw hd B X Y hX s _ _ _ m
+    (m.drop (measurementCount (montMulControlledAdd c M p)))
+    (m.drop (measurementCount (montMulControlledAdd c M p ++
+      swapRegisters c (M.y.take 256) (M.out.take 256)))) hb hx hi hy ht hz rfl rfl rfl
+
+theorem correct_factor (c : Wire) (M : MontLayout) (den : List Wire)
+    (hn : (c :: den ++ M.wires).Nodup) (hw : M.Widths) (hd : den.length = 257)
+    (B : Bool) (X Y I : Fp) (hI : B = true → I = X⁻¹) (hX : B = true → X ≠ 0) (s : State) (m : List Bool)
+    (hb : s.basis c = B) (hx : regValue den s.basis = X.val)
+    (hi : regValue M.x s.basis = I.val)
+    (hy : regValue M.y s.basis = Y.val) (ht : regValue M.out s.basis = 0)
+    (hz : regValue M.work s.basis = 0) :
+    (run (program c M den) m s).phase = s.phase ∧
+    regValue M.y (run (program c M den) m s).basis = (if B then Y/X else Y).val ∧
+    ∀ q, q ∉ M.y → (run (program c M den) m s).basis q = s.basis q := by
+  simp only [program,run_append,run_take]
+  exact states_factor c M den hn hw hd B X Y I hI hX s _ _ _ m
     (m.drop (measurementCount (montMulControlledAdd c M p)))
     (m.drop (measurementCount (montMulControlledAdd c M p ++
       swapRegisters c (M.y.take 256) (M.out.take 256)))) hb hx hi hy ht hz rfl rfl rfl
