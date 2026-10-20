@@ -3770,6 +3770,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_value
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_cleanup
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.cuccaro_slice_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldTap_split
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldTap_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldTap_pad_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldTap_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldTap_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldTaps_plan
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldTap_chain
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldCopy_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldBuild_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFold_steps
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFold_forward
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_forward
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedRowFoldSource_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_physical
 
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_zero

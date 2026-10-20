@@ -52,17 +52,31 @@ state and every tape, support in 537 addresses, and 1086 Toffoli with zero
 measurements in either direction. The separate sign is not in the support.
 The round trip also covers dirty scratch and arithmetic wrap lanes.
 
-Still required: the forward numerical result, preservation of the high
-payload and sign, and restoration of the borrowed word/carry from their
-specified clean entry. Round-trip equality alone does not establish any
-of these forward postconditions. No actual enclosing 935-address placement
-or full point-add resource bound follows from these reference supports.
+`FusedFoldArithmetic.lean`, `FusedFoldTap.lean`, `FusedFoldBuild.lean` and
+`FusedRowFoldValue.lean` prove the forward numerical contract. Starting with
+a zero borrowed word and zero carry, the builder computes high*(2^32+977).
+The running coefficient bound derives zero padding and nonoverflowing
+25-bit additions at every tap; callers do not supply intermediate-state
+assumptions. The central addition updates the low word modulo 2^256.
+Commuting that low-word change through the inverse builder proves a full
+ambient-state frame outside the low word, including phase, high payload,
+borrowed-word cleanup, and carry cleanup. This holds on wrap lanes too.
+
+`fusedRowFoldSource_of_good` proves that RowGood and an explicit magnitude
+input encoding identify this actual low output with `wideMagnitudeFold`.
+This is the gate-level counterpart of PR196's `FusedCall.scanWord_eq`:
+under the same `RowGood`, that mathematical theorem identifies `call.scanWord`
+with the same full fold. Thus the actual low output equals `call.scanWord`
+by transitivity with `scanWord_eq.symm`; no new success condition is added.
+`FusedMagnitudePhysical.lean` supplies ordinary-gate legality for the full
+lift independently of its numeric success conditions. Enclosing caller
+placement, lifecycle and a whole point-add peak remain separate obligations.
 
 ## Proven and remaining boundaries
 
 | Component | Proven | Remaining |
 |---|---|---|
 | 58-bit ±1, actual 24-wire pool | Numeric word, clean pool, control, phase, all-state clean-pool round trip, physical gates, support and counts | Enclosing point-program placement |
-| Full 280-bit magnitude lift | Actual complement/window order, forward absolute value under LiftGood and explicit encoding, pool/sign/phase, ambient round trip, 305-address support and counts | Enclosing lifecycle and caller encoding binding |
-| Actual row-fold source order | Full-state round trip, source/normalized execution equality, 537-address support and counts | Forward folded word, high preservation and borrowed word/carry cleanup |
+| Full 280-bit magnitude lift | Actual complement/window order, forward absolute value under LiftGood and explicit encoding, pool/sign/phase, ambient round trip, gate legality, 305-address support and counts | Enclosing lifecycle and caller encoding binding |
+| Actual row-fold source order | Forward folded word under RowGood, unconditional wrapped arithmetic and full non-low-word frame, high/word/carry cleanup, round trip, source equality, 537-address support and counts | Enclosing placement and caller encoding binding |
 | Full fused endpoint | No completed claim in this change | Arithmetic composition, lifecycle, point-add binding, numerical failure mass and whole-program peak |
