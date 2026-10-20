@@ -3290,6 +3290,20 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_inputs
 #print axioms ECDSAAdd.Arithmetic.Paper935.walkForwardInputs_prefix
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorRiderActivities_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorSeamRider_halves
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorSeamRider_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.windowSubtract_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldedHalf_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldedHalf_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryCell_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryForward_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryForward_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryBackward_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarry_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarry_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryBackward_run
+
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -358,3 +358,9 @@ import ECDSAAdd.Arithmetic.Paper935.SeededAuthorWalkUndo
 import ECDSAAdd.Arithmetic.Paper935.WalkForwardInputs
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkInputs
 import ECDSAAdd.Arithmetic.Paper935.WalkPrefixInputs
+import ECDSAAdd.Arithmetic.Paper935.AuthorRiderSchedule
+import ECDSAAdd.Arithmetic.Paper935.FoldHalfMath
+import ECDSAAdd.Arithmetic.Paper935.FoldCarryCell
+import ECDSAAdd.Arithmetic.Paper935.FoldCarryForward
+import ECDSAAdd.Arithmetic.Paper935.FoldCarryResources
+import ECDSAAdd.Arithmetic.Paper935.FoldCarryBackward
