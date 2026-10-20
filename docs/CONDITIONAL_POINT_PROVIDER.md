@@ -148,3 +148,32 @@ they are not inferred from good-input arithmetic correctness.
 gate validity. Measurements remain explicit typed constructors, with their saved
 records relocated normally. Full point-program physical validity (including the
 legacy multiplication arm and other point stages) is still a separate obligation.
+
+
+## Both arithmetic calls from the inverse endpoint
+
+`PointInverseEndpoint.bothBackend` replaces both division and multiplication.
+The product adapter runs the same XOR inverse endpoint twice, clearing the
+inverse register after an actual Montgomery core. It swaps the core's factor
+and denominator views: division by the computed inverse implements multiplication.
+The generalized core theorem permits an arbitrary canonical factor when disabled;
+its original quotient interface is preserved. All other wires and the phase are
+restored for every measurement tape. Physical validity and a typed `Circuit` for
+the product adapter follow from the supplied endpoint's physical/record/support
+obligations, as for the quotient adapter.
+
+Use `twoCalls_budget` or `twoCalls_budget_of_events` with `backend := ep.bothBackend`
+and the defining equality of its safety predicate. The first inverse input is
+`callInput C`, the second is `productCallInput C`: on the ordinary branch these
+are respectively `X-cx` and `cx-genericX X Y cx cy`. Each is proved nonzero when
+enabled. Disabled calls retain their actual X input and must satisfy the
+endpoint's disabled safety predicate. Both input laws are pushforwards of the
+same original point law. The resulting budget is the sum of their bounds;
+independence and uniformity are not assumed. Repeating the XOR endpoint to clear
+its output does not require another input failure event, since its contract is
+valid for every target state and every tape on the same good input.
+
+The older `ep.backend` and its one-call budget remain available for the mixed
+reference implementation. Do not apply that one-call budget to `ep.bothBackend`.
+Neither backend supplies the compact inverse or a 935-qubit theorem. The full
+point program still requires physical validity of its fixed non-backend stages.
