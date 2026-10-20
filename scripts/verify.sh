@@ -2621,6 +2621,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_support
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.states
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.correct
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.counts
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.states
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.correct
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.wellFormed
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.support
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.counts
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -160,3 +160,5 @@ import ECDSAAdd.Arithmetic.Paper935.PositiveFlag
 import ECDSAAdd.Arithmetic.Paper935.CounterPositive
 import ECDSAAdd.Arithmetic.Paper935.StoreFlag
 import ECDSAAdd.Arithmetic.Paper935.StorePush
+
+import ECDSAAdd.Arithmetic.InverseQuotientRecorded
