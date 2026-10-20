@@ -141,6 +141,24 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointArithmeticBackend.ofExact
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.step_arithmetic
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.generic_true
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.generic_false
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.boundary_generic
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.generic_wellFormed
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.program_wellFormed
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.finite_spec
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.program_wires
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.finite_frame
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.full_spec
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.add_spec
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.add_boundary
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.add_frame
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.program_ofExact
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.pointAddPerm_apply
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.recorded_agreement
+#print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.pointAdd_budget
 #print axioms ECDSAAdd.FailureBudget.InputLaw.push_mass
 #print axioms ECDSAAdd.FailureBudget.InputLaw.push_weight_image
 #print axioms ECDSAAdd.FailureBudget.InputLaw.push_weight_outside
