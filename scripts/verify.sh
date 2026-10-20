@@ -2941,6 +2941,32 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.double
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.twice_half
 #print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.addPad_step_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.mintControls_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.mintControls_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.encodes_congr
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.rows_membership
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_phase_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.taggedWindow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.taggedWindow_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.second_bit
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.second_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.swap_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.retire_swap
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.retiredWindow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.retiredWindow_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.block_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.run_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.ready_of_free
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.arena_ready_after
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.retiredWindow_post_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowSlot_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinnedCounter_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowSlot_spec
 LEAN
 )
 task_axiom_lean_rc=$?

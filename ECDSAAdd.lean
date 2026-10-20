@@ -210,3 +210,14 @@ import ECDSAAdd.Arithmetic.Paper935.WindowCounter
 import ECDSAAdd.Arithmetic.Paper935.WindowRouted
 import ECDSAAdd.Arithmetic.Paper935.WindowStep
 import ECDSAAdd.Arithmetic.Paper935.WindowHeadroom
+import ECDSAAdd.Arithmetic.Paper935.WindowControls
+import ECDSAAdd.Arithmetic.Paper935.WindowResizePhase
+import ECDSAAdd.Arithmetic.Paper935.WindowStepFrame
+import ECDSAAdd.Arithmetic.Paper935.WindowTagged
+import ECDSAAdd.Arithmetic.Paper935.WindowSwap
+import ECDSAAdd.Arithmetic.Paper935.WindowRetired
+import ECDSAAdd.Arithmetic.Paper935.WindowPostLayout
+import ECDSAAdd.Arithmetic.Paper935.WindowPostReady
+import ECDSAAdd.Arithmetic.Paper935.WindowSlot
+import ECDSAAdd.Arithmetic.Paper935.WindowSlotMath
+import ECDSAAdd.Arithmetic.Paper935.WindowSlotSpec
