@@ -509,3 +509,15 @@ import ECDSAAdd.Arithmetic.Paper935.HornerCarryValid
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryMath
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryValue
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryHigh
+
+import ECDSAAdd.Arithmetic.Paper935.CheckedHistoricalSlotWidth
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotWidth
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotWidthStaticTotal
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotWidthTotal
+import ECDSAAdd.Arithmetic.Paper935.HistoricalWalkWidth
+import ECDSAAdd.Arithmetic.Paper935.HistoryWidthGrowth
+import ECDSAAdd.Arithmetic.Paper935.HistoryWidthLengths
+import ECDSAAdd.Arithmetic.Paper935.HmrWalkCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrWalkStaticTotal
+import ECDSAAdd.Arithmetic.Paper935.SlotViewsWidthGeometry
+import ECDSAAdd.Arithmetic.Paper935.WalkWidthStaticBudget
