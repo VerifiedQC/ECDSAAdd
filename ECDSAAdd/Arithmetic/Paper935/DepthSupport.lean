@@ -109,4 +109,9 @@ theorem compileDepth_sites (one frozen output : Wire) (z f v work : List Wire)
   · have hv := inQ q hq; tauto
   · have hw := clean q (by simp [DepthLayout.cleanWires,hq]); tauto
 
+theorem compileDepth_program_support (one frozen output : Wire) (z f v work : List Wire)
+    (depth : Nat) (L : DepthLayout) (h : compileDepth one frozen output z f v work depth=some L) (p : Int) :
+    wires (L.program p)⊆(one::frozen::output::(z++f++v++work)).toFinset :=
+  (L.program_support p).trans (compileDepth_sites one frozen output z f v work depth L h)
+
 end ECDSAAdd.Arithmetic.Paper935
