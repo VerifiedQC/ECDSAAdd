@@ -177,3 +177,34 @@ The older `ep.backend` and its one-call budget remain available for the mixed
 reference implementation. Do not apply that one-call budget to `ep.bothBackend`.
 Neither backend supplies the compact inverse or a 935-qubit theorem. The full
 point program still requires physical validity of its fixed non-backend stages.
+
+
+## Constructing the whole point-add circuit
+
+`ConditionalPointDialog.program_physical` proves physical validity for every
+fixed stage of the actual point program: measured streamed square (including its
+pool permutation), canonical constant addition, reflection/recovery, zero tests,
+classification flags, and exceptional-point writes. Its only remaining gate
+validity input concerns the two replaceable arithmetic calls. The proof follows
+actual gate lists and layouts; it does not infer local gate validity from a
+high-level functional specification. Source registers in mapped arithmetic may
+repeat read-only wires; they must stay disjoint from mutable data and carries.
+
+`PointInverseEndpoint.point_realize` instantiates both calls with the inverse
+adapters and constructs a typed `Circuit` for the complete recorded point-add
+program. The supplied endpoint must itself be physically valid. Its recorded
+reference validity, support, and success-conditional full-state contract are
+already fields of `PointInverseEndpoint`.
+
+`PointInverseEndpoint.point_budget` combines that construction with the two
+induced-input bounds and the clean point encoding. It returns the actual circuit,
+its equality to the implemented point program, and a `QuantumBudget` with total
+failure bound `ε₁ + ε₂` (hence the framework's `2√(ε₁ + ε₂)` vector error bound).
+A separate assumption that the full point program has a circuit realization is
+no longer needed. The ideal operation remains the independent mathematical
+controlled point-add permutation.
+
+This closes the caller's physical-realization obligation for the reference
+layout. It does not construct the compact inverse endpoint, supply numerical
+failure estimates, replace the large reference arithmetic pool, or establish the
+935-qubit bound. Those inputs and resource obligations remain explicit.
