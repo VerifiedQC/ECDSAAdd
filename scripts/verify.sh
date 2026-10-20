@@ -3172,6 +3172,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_exists
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.chunkPorts_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.chunks_valid_of_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.probeChunks_flatten
+#print axioms ECDSAAdd.Arithmetic.Paper935.probeChunks_lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedProbe_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_identity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_ports
+#print axioms ECDSAAdd.Arithmetic.Paper935.postCandidate_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_ports
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_unarmed_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_armed_exists
+
 LEAN
 )
 task_axiom_lean_rc=$?

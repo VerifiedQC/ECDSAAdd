@@ -297,3 +297,9 @@ import ECDSAAdd.Arithmetic.Paper935.BorrowGeometry
 import ECDSAAdd.Arithmetic.Paper935.BorrowedHistoryTotal
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerSupport
 import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotTotal
+import ECDSAAdd.Arithmetic.Paper935.ProbeGeometry
+import ECDSAAdd.Arithmetic.Paper935.ProbeChunks
+import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerTotal
+import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerPorts
+import ECDSAAdd.Arithmetic.Paper935.PostCompilerTotal
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotTotal
