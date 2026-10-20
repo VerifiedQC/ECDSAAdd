@@ -3044,6 +3044,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedStaticCheck_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileRoutedBank_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedProbe_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_work
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedProbe_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedProbe_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileProbe_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedProbe_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.postStaticCheck_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_shared_example
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_scratch
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_identity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.ports_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_ports
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_physical
 LEAN
 )
 task_axiom_lean_rc=$?
