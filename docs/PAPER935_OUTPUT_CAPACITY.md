@@ -10,7 +10,7 @@ For a successfully compiled author walk, define the return program as the physic
 retained space = 28 − |return support \ exit live|
 ```
 
-The numeral 28 is an upper bound, not an evaluated exact capacity. The concrete support overlap is not yet evaluated by a kernel theorem.
+The numeral 28 is the original upper bound. The subsequent kernel-checked theorem `retainedOutputSpace_card_zero` proves the exact capacity is **0**, using a full counter allocation and reverse-support coverage. See [the exact-capacity proof](PAPER935_ZERO_OUTPUT_SPACE.md).
 
 This applies to the proposed **syntactic isolation contract**: output wires must be outside both the exit live set and every wire the return program touches. Under that contract, neither a 256-bit inverse nor a 256-bit copy can remain during the return program. Moving or copying it requires an actual permitted layout; it cannot create 256 additional isolated wires in this arena.
 

@@ -3637,6 +3637,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointOutputBorrow_capacity
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_output_certified
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_output_bits
+#print axioms ECDSAAdd.Arithmetic.Paper935.planCounterScratch_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_counter_cards
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorCounterFull
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_counter_full
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_live_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_live_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_live_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.inverse_support_lower
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.live_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_live_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.reverse_coverage
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_reverse_covers
+#print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_empty
+#print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_card_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSet_empty
 
 LEAN
 )

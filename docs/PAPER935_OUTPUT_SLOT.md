@@ -32,6 +32,6 @@ These are actual E-boundary reserve/release transactions plus interpreter and su
 
 ## Capacity and route limits
 
-The certificate proves `|O| ≤ 28` using the separate capacity theorem. No 256-bit output can instantiate this syntactic-isolation interface, including a copy of such an output. The exact number of isolated sites may be smaller and is not claimed here.
+The certificate proves `|O| ≤ 28` using the separate capacity theorem. No 256-bit output can instantiate this syntactic-isolation interface, including a copy of such an output. The subsequent theorem `retainedOutputSet_empty` proves that, for this successfully compiled walk, this fresh isolated output set must in fact be empty. The interface remains a conditional frame theorem, but supplies no nonempty fresh output for this walk. See [the exact-capacity proof](PAPER935_ZERO_OUTPUT_SPACE.md).
 
 Both the author's fused endpoint route and an inverse-plus-Montgomery route must supply their own E, layout, mathematical output specification, and consumer. If either route needs the return program to touch output wires and nevertheless preserve their values, this interface does not cover it: a stronger semantic frame theorem and compatible ownership argument are required. Consuming an inverse within E alone does not prove that the resulting point-addition coordinates survive the return program.
