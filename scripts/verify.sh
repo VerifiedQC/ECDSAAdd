@@ -3448,6 +3448,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Unreduce_frame
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_append_unreduce
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32PlacedReduce_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32PlacedUnreduce_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_roundtrip_pull
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_support_image
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Footprint_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_in_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Placed_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256Place_injective
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_low_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_frame

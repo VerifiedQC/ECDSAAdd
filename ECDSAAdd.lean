@@ -437,6 +437,8 @@ import ECDSAAdd.Arithmetic.Paper935.Fold32Invariant
 import ECDSAAdd.Arithmetic.Paper935.Fold32Cleanup
 import ECDSAAdd.Arithmetic.Paper935.Fold32Value
 import ECDSAAdd.Arithmetic.Paper935.Fold32Word
+import ECDSAAdd.Arithmetic.Paper935.Fold32Placement
+import ECDSAAdd.Arithmetic.Paper935.Fold32PlacementResources
 import ECDSAAdd.Arithmetic.Paper935.Fold32Unreduce
 import ECDSAAdd.Arithmetic.Paper935.Fold32Roundtrip
 import ECDSAAdd.Arithmetic.Paper935.Fold32Constants
