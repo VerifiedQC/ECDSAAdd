@@ -3117,6 +3117,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_selector
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_fit
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyLength_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryFailure.capacity_mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCapacity_failure_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.trajectory_mass_capacity_mono
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_trajectory_fit
+
 LEAN
 )
 task_axiom_lean_rc=$?
