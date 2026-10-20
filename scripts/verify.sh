@@ -3282,6 +3282,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_stopping_time
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_scaled_inverse
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWalkMetadata_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_reverse_of_history
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkForwardInputs_prefix
+
 LEAN
 )
 task_axiom_lean_rc=$?

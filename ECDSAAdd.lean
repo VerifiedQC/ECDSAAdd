@@ -353,3 +353,8 @@ import ECDSAAdd.Arithmetic.Paper935.WalkUndoAssembly
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkArithmeticUndo
 import ECDSAAdd.Arithmetic.Paper935.PinStoppingTime
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkEndpoint
+import ECDSAAdd.Arithmetic.Paper935.WalkSeedInverse
+import ECDSAAdd.Arithmetic.Paper935.SeededAuthorWalkUndo
+import ECDSAAdd.Arithmetic.Paper935.WalkForwardInputs
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkInputs
+import ECDSAAdd.Arithmetic.Paper935.WalkPrefixInputs
