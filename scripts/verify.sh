@@ -3459,6 +3459,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_free_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_no_fresh_output
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_exit_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorExitWindow
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_widths
+
 LEAN
 )
 task_axiom_lean_rc=$?

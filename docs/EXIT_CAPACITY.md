@@ -46,3 +46,11 @@ compiler must prove its actual exit live set and the peak after adding output
 and scaling scratch. Deutsch owns the normalization using that eventual
 interface. Thus the obstruction proved here identifies a missing reversible
 release stage; it does not prohibit a later closer-based design.
+
+`ExitWidths.lean` exports `compileAuthorWalk_exit_widths`: for the same actual
+compiled slot list the final bank has payload widths `(3,4,280,280)`.
+`compileHistoricalWalk_exit_widths` derives this by following actual slots;
+`authorExitWindow` kernel-checks the last public window. These are payload
+lengths, so each signed row also has its separate sign wire. The closer can
+reuse this interface without recomputing the compiler or treating the last
+requested window as an unproved actual-layout fact.
