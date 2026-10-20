@@ -3905,6 +3905,48 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCompute_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderRelease_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrDecoderGeometry.of_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderOps_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderOps_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCompute_run_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderRelease_run_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_run_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrForm3_branch
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrForm4_branch
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderComputed_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCopy_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCopy_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderErase_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_compute_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_full_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrForm2_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrForm3_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrForm4_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCoefficient_congruence
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderValue_grouped
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrDecodeOp.count
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrDecodeOp.run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecodeOps_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderOps_program
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderValue_depth3
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderValue_depth4
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_depth3_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_depth4_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_depth2_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_ready_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_release_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_run_aliased
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralAnd_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralAnd_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralRelease_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPredictionDeath_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderComputed_prediction
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPredictionDeath_counts
+
 LEAN
 )
 task_axiom_lean_rc=$?
