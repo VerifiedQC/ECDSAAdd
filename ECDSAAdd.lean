@@ -305,3 +305,11 @@ import ECDSAAdd.Arithmetic.Paper935.PostCompilerTotal
 import ECDSAAdd.Arithmetic.Paper935.PublicSlotTotal
 
 import ECDSAAdd.Arithmetic.Paper935.CounterBoundaries
+import ECDSAAdd.Arithmetic.Paper935.RowResizeTotal
+import ECDSAAdd.Arithmetic.Paper935.WindowRowsTotal
+import ECDSAAdd.Arithmetic.Paper935.BankCompilerTotal
+import ECDSAAdd.Arithmetic.Paper935.RowResizeCard
+import ECDSAAdd.Arithmetic.Paper935.RoutedGeometry
+import ECDSAAdd.Arithmetic.Paper935.SlotFrontTotal
+import ECDSAAdd.Arithmetic.Paper935.SlotFrontGeometry
+import ECDSAAdd.Arithmetic.Paper935.SlotFrontCheckedTotal

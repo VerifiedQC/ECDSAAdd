@@ -3197,6 +3197,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_unarmed_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_armed_exists
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_frame_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_static_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.after_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.after_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.after_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowGrowth_of_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.checks_of_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_checked_exists
+
 LEAN
 )
 task_axiom_lean_rc=$?
