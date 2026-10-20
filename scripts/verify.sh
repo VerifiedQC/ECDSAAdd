@@ -3024,6 +3024,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_frame_arena
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_decoder_available
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_ready_recover_pop
+#print axioms ECDSAAdd.Arithmetic.Paper935.depthStaticCheck_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.depthLayoutCandidate_clean_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_clean_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_work_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_identity
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.program_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_program_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepth_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepth_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepth_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepth_available
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepthList_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_member
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepthList_example
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_release
 LEAN
 )
 task_axiom_lean_rc=$?
