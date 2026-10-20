@@ -3304,6 +3304,45 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldCarry_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryBackward_run
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_undo
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_actual_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.clearHistoryControls_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_control_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_five
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.asStep_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.decoderViews_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_port
+#print axioms ECDSAAdd.Arithmetic.Paper935.decoder_rowGrowth
+#print axioms ECDSAAdd.Arithmetic.Paper935.decoderPin_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.decoder_zeroViews_work
+#print axioms ECDSAAdd.Arithmetic.Paper935.mintHistoryControls_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_after_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.paddedCleanBranch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepth_separated
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileDepthList_separated
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_decoder_available_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyUndoAt_of_branch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_retained_recover_pop
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_actual_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.actualHistoryDecoder_of_compiled
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_pool
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_core_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_after_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_program_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_history_undo
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_static_history_undo
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_decoder_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_decoder_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorDecoderBudgets
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_decoders
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_decoders
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_history_undo
+
 LEAN
 )
 task_axiom_lean_rc=$?
