@@ -437,3 +437,7 @@ import ECDSAAdd.Arithmetic.Paper935.Fold32Invariant
 import ECDSAAdd.Arithmetic.Paper935.Fold32Cleanup
 import ECDSAAdd.Arithmetic.Paper935.Fold32Value
 import ECDSAAdd.Arithmetic.Paper935.Fold32Word
+import ECDSAAdd.Arithmetic.Paper935.Fold32Constants
+import ECDSAAdd.Arithmetic.Paper935.Fold32Control
+import ECDSAAdd.Arithmetic.Paper935.Fold32Reduce
+import ECDSAAdd.Arithmetic.Paper935.Fold32ReducePhysical
