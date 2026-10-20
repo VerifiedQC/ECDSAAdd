@@ -448,3 +448,8 @@ import ECDSAAdd.Arithmetic.Paper935.Fold32Control
 import ECDSAAdd.Arithmetic.Paper935.Fold32Reduce
 import ECDSAAdd.Arithmetic.Paper935.Fold32ReducePhysical
 import ECDSAAdd.Arithmetic.Paper935.UncloserContract
+import ECDSAAdd.Arithmetic.Paper935.WalkReverseArena
+import ECDSAAdd.Arithmetic.Paper935.SeededWalkResources
+import ECDSAAdd.Arithmetic.Paper935.EndpointSlot
+import ECDSAAdd.Arithmetic.Paper935.EndpointSlotResources
+import ECDSAAdd.Arithmetic.Paper935.EndpointSlotAssembly
