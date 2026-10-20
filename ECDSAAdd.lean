@@ -221,3 +221,5 @@ import ECDSAAdd.Arithmetic.Paper935.WindowPostReady
 import ECDSAAdd.Arithmetic.Paper935.WindowSlot
 import ECDSAAdd.Arithmetic.Paper935.WindowSlotMath
 import ECDSAAdd.Arithmetic.Paper935.WindowSlotSpec
+import ECDSAAdd.Arithmetic.Paper935.WindowRoutedPhysical
+import ECDSAAdd.Arithmetic.Paper935.WindowStepPhysical
