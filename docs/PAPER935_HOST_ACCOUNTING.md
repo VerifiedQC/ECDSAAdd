@@ -34,6 +34,14 @@ including all of yHost. `seed_reserve` borrows yHost and six sign/coefficient
 wires, obtaining 774 owned addresses. Metadata initialization supplies the
 remaining 20 owned addresses for the walk.
 
+`SeedEntryConditions.lean` makes this caller obligation directly reusable:
+`seedBefore_ready_iff` is the equivalence with zero on yHost and on addresses
+768–934. `seedBefore_ready_iff_word` replaces the yHost clause with
+`regValue seedF s = 0`, keeping the auxiliary clause separate.
+`seedBefore_ready_of_agree` proves that changing only x/A data preserves
+these entry conditions. These theorems characterize the required input;
+they do not supply a preceding point-add program that establishes it.
+
 Thus the seed cannot directly accept arbitrary point coordinates in both xHost
 and yHost. The caller must establish the required intermediate state: an input
 word in xHost, its declared data in aHost, and a clean yHost. The seven walk
