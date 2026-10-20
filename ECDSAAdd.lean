@@ -175,3 +175,4 @@ import ECDSAAdd.Arithmetic.Paper935.DepthResidue
 import ECDSAAdd.Arithmetic.Paper935.HistoryClassFlag
 import ECDSAAdd.Arithmetic.Paper935.ClassLookup
 import ECDSAAdd.Arithmetic.Paper935.DepthLookup
+import ECDSAAdd.Arithmetic.Paper935.FiniteDepth

@@ -2685,6 +2685,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.classLookup_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.depthLookup_selected_branch
 #print axioms ECDSAAdd.Arithmetic.Paper935.depthLookup_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.run
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.Ready.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.frozen_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepthProgram_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepthMask_five
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepth_cancel
 LEAN
 )
 task_axiom_lean_rc=$?
