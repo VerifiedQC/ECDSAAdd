@@ -3867,6 +3867,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyViewsWidth_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_static_exists
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_exit_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrExitLiveCount
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exit_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_free_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_no_fresh_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_exit_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exit_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_exit_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrExitWindow
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exit_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_free
+
 LEAN
 )
 task_axiom_lean_rc=$?

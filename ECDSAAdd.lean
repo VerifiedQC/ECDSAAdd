@@ -521,3 +521,8 @@ import ECDSAAdd.Arithmetic.Paper935.HmrWalkCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrWalkStaticTotal
 import ECDSAAdd.Arithmetic.Paper935.SlotViewsWidthGeometry
 import ECDSAAdd.Arithmetic.Paper935.WalkWidthStaticBudget
+import ECDSAAdd.Arithmetic.Paper935.ExitCapacityWidth
+import ECDSAAdd.Arithmetic.Paper935.HmrExitCapacity
+import ECDSAAdd.Arithmetic.Paper935.HmrExitOwned
+import ECDSAAdd.Arithmetic.Paper935.HmrExitWidths
+import ECDSAAdd.Arithmetic.Paper935.HmrCloserCapacity
