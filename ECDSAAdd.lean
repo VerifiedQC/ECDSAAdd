@@ -313,3 +313,7 @@ import ECDSAAdd.Arithmetic.Paper935.RoutedGeometry
 import ECDSAAdd.Arithmetic.Paper935.SlotFrontTotal
 import ECDSAAdd.Arithmetic.Paper935.SlotFrontGeometry
 import ECDSAAdd.Arithmetic.Paper935.SlotFrontCheckedTotal
+
+import ECDSAAdd.Arithmetic.Paper935.WalkRecovery
+import ECDSAAdd.Arithmetic.Paper935.WalkRecoveryReady
+import ECDSAAdd.Arithmetic.Paper935.WalkRecoveryRecords
