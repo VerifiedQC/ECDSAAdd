@@ -2822,6 +2822,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_support
 #print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_physical
 #print axioms ECDSAAdd.Arithmetic.BlockedZero.six_bit_qubits_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.measuredAnd_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchCore_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchCore_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRowInverse_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchPair_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.shiftLeft_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.finishRows_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowStage_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.copyRegister_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.routeRows_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedStage_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStep_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.activeStepInverse_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchTags_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.taggedStep_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.taggedStepInverse_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.slotBody_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.retireAnd_restore
+#print axioms ECDSAAdd.Arithmetic.Paper935.retiredBody_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.retiredBodyInverse_counts
 LEAN
 )
 task_axiom_lean_rc=$?
