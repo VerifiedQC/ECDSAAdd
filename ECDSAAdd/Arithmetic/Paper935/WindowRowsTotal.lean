@@ -84,4 +84,28 @@ theorem planWindowRows_exists (requests : List (WindowRow × Nat)) (A : Arena) (
     · simp only [rowGrowth]
       omega
 
+/-- Actual returned payload widths are determined by the public requests,
+independently of the represented input state. -/
+theorem planWindowRows_widths (requests : List (WindowRow × Nat)) (A C : Arena)
+    (outs : List WindowRow) (p : Program)
+    (h : planWindowRows A requests=some (C,outs,p)) :
+    outs.map (fun r => r.payload.length)=requests.map Prod.snd := by
+  induction requests generalizing A C outs p with
+  | nil => cases h; rfl
+  | cons request rest ih =>
+    rcases request with ⟨row,width⟩
+    rw [planWindowRows] at h
+    split at h
+    next inputCheck =>
+      obtain ⟨⟨B,out,pf⟩,first,h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨⟨D,tail,q⟩,remaining,h⟩ := Option.bind_eq_some_iff.mp h
+      dsimp only at h
+      split at h
+      next outputCheck =>
+        cases h
+        simp only [List.map_cons]
+        rw [(planRowResize_layout A B row out width pf first).1,ih B C tail q remaining]
+      next invalid => simp at h
+    next invalid => simp at h
+
 end ECDSAAdd.Arithmetic.Paper935
