@@ -2353,6 +2353,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.reserve_resize_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.shrink_reserved_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedBefore_ready_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedF_zero_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedBefore_ready_iff_word
+#print axioms ECDSAAdd.Arithmetic.Paper935.seedBefore_ready_of_agree
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWord_distinct
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.seed_run

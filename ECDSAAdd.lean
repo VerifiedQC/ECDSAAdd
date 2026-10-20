@@ -119,6 +119,7 @@ import ECDSAAdd.Arithmetic.Paper935.AllocationJournal
 import ECDSAAdd.Arithmetic.Paper935.PackedHost
 import ECDSAAdd.Arithmetic.Paper935.PackedResize
 import ECDSAAdd.Arithmetic.Paper935.Seed
+import ECDSAAdd.Arithmetic.Paper935.SeedEntryConditions
 import ECDSAAdd.Arithmetic.Paper935.AuthorSchedule
 import ECDSAAdd.Arithmetic.Paper935.FreezePin
 import ECDSAAdd.Arithmetic.Paper935.FreezeLatch
