@@ -474,3 +474,11 @@ import ECDSAAdd.Arithmetic.Paper935.OwnedHostSupport
 import ECDSAAdd.Arithmetic.Paper935.OwnedOutputSlot
 import ECDSAAdd.Arithmetic.Paper935.OwnedOutputOwnership
 import ECDSAAdd.Arithmetic.Paper935.OwnedOutputAssembly
+import ECDSAAdd.Framework.FiniteWirePermutation
+import ECDSAAdd.Framework.RecordedPermutation
+import ECDSAAdd.Arithmetic.Paper935.ArenaPermutation
+import ECDSAAdd.Arithmetic.Paper935.EndpointRenaming
+import ECDSAAdd.Arithmetic.Paper935.RenamedFullCertificate
+import ECDSAAdd.Arithmetic.Paper935.RenamedOwnedCertificate
+import ECDSAAdd.Arithmetic.Paper935.RenamedFreshCertificate
+import ECDSAAdd.Arithmetic.Paper935.HostSwap
