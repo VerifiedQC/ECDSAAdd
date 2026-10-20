@@ -398,6 +398,13 @@ import ECDSAAdd.Arithmetic.Paper935.FoldCompareCell
 import ECDSAAdd.Arithmetic.Paper935.FoldCompareBlock
 import ECDSAAdd.Arithmetic.Paper935.FoldKeeperErase
 import ECDSAAdd.Arithmetic.Paper935.FoldPoolPlan
+import ECDSAAdd.Arithmetic.Paper935.FoldBlockSave
+import ECDSAAdd.Arithmetic.Paper935.Fold16Program
+import ECDSAAdd.Arithmetic.Paper935.Fold16Ready
+import ECDSAAdd.Arithmetic.Paper935.Fold16Invariant
+import ECDSAAdd.Arithmetic.Paper935.Fold16Cleanup
+import ECDSAAdd.Arithmetic.Paper935.Fold16Value
+import ECDSAAdd.Arithmetic.Paper935.Fold16Word
 import ECDSAAdd.Arithmetic.Paper935.ScalingNoBorrow
 import ECDSAAdd.Arithmetic.Paper935.ScalingSeed
 import ECDSAAdd.Arithmetic.Paper935.ScalingCallSites
