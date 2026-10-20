@@ -240,3 +240,9 @@ import ECDSAAdd.Arithmetic.Paper935.ReadyHistory
 import ECDSAAdd.Arithmetic.Paper935.TrajectoryFailures
 import ECDSAAdd.Arithmetic.Paper935.TrajectoryMass
 import ECDSAAdd.Arithmetic.Paper935.BlockedZeroFailure
+import ECDSAAdd.Arithmetic.Paper935.DepthCompiler
+import ECDSAAdd.Arithmetic.Paper935.DepthSupport
+import ECDSAAdd.Arithmetic.Paper935.BorrowedDepth
+import ECDSAAdd.Arithmetic.Paper935.BorrowedDepthReady
+import ECDSAAdd.Arithmetic.Paper935.DepthListCompiler
+import ECDSAAdd.Arithmetic.Paper935.BorrowedDepthsRun

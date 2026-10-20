@@ -28,7 +28,7 @@ theorem DepthLayout.program_support (L : DepthLayout) (p : Int) :
   rw [program,classLookup_support,historyClassFlag_support,counterPositive_support] at hq
   rcases Finset.mem_union.mp hq with hq|hq
   · simp only [Finset.mem_union,List.mem_toFinset,Finset.mem_insert,Finset.mem_singleton,
-      List.mem_cons,List.not_mem_nil,or_false] at hq
+      List.mem_cons] at hq
     rcases hq with ((rfl|rfl|h)|rfl|rfl|rfl)|(rfl|rfl|h)
     · exact root _ (by simp)
     · exact root _ (by simp)
@@ -41,7 +41,7 @@ theorem DepthLayout.program_support (L : DepthLayout) (p : Int) :
     · exact fw _ h
   · have hl := lookupBranch_support L.flag L.address L.tmp L.output (L.fdata++L.qbits) L.scratch
       (residueBranchTable p L.low.length) hq
-    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,List.mem_singleton,List.not_mem_nil,or_false] at hl
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append,List.not_mem_nil,or_false] at hl
     rcases hl with rfl|rfl|rfl|h|rfl
     · exact root _ (by simp)
     · exact root _ (by simp)
@@ -79,7 +79,7 @@ theorem compileDepth_sites (one frozen output : Wire) (z f v work : List Wire)
     clean q (by simp only [DepthLayout.cleanWires,List.mem_append]; exact Or.inl (Or.inl (Or.inl hq)))
   intro q hq
   simp only [DepthLayout.sites,List.mem_toFinset,List.mem_append] at hq
-  simp only [List.mem_toFinset,List.mem_cons,List.mem_append,List.not_mem_nil,or_false]
+  simp only [List.mem_toFinset,List.mem_cons,List.mem_append]
   rcases hq with ((((hq|hq)|hq)|hq)|hq)|hq
   · simp only [List.mem_cons,List.not_mem_nil,or_false] at hq
     rcases hq with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl
@@ -92,12 +92,12 @@ theorem compileDepth_sites (one frozen output : Wire) (z f v work : List Wire)
     · have hw := root L.tmp (by simp); tauto
     · simp [ids.2.2]
   · obtain ⟨bit,hb,hq⟩ := List.mem_flatMap.mp hq
-    simp only [ZeroBit.wires,List.mem_cons,List.mem_singleton,List.not_mem_nil,or_false] at hq
+    simp only [ZeroBit.wires,List.mem_cons,List.not_mem_nil,or_false] at hq
     rcases hq with rfl|rfl
     · have hz := inZ bit.input (List.mem_map.mpr ⟨bit,hb,rfl⟩); tauto
     · have hw := zwork bit hb; tauto
   · obtain ⟨bit,hb,hq⟩ := List.mem_flatMap.mp hq
-    simp only [ZeroBit.wires,List.mem_cons,List.mem_singleton,List.not_mem_nil,or_false] at hq
+    simp only [ZeroBit.wires,List.mem_cons,List.not_mem_nil,or_false] at hq
     rcases hq with rfl|rfl
     · simp only [List.mem_cons] at hb
       rcases hb with rfl|rfl|hb
