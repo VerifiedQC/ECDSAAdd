@@ -3630,6 +3630,13 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_card_le
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_no_word
+#print axioms ECDSAAdd.runWithTape_withOutput
+#print axioms ECDSAAdd.Arithmetic.Paper935.OutputUncloserReady.eq_withOutput
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_withOutput
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOutputBorrow_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOutputBorrow_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_output_certified
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_output_bits
 
 LEAN
 )

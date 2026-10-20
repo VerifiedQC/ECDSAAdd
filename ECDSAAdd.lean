@@ -455,3 +455,8 @@ import ECDSAAdd.Arithmetic.Paper935.EndpointSlot
 import ECDSAAdd.Arithmetic.Paper935.EndpointSlotResources
 import ECDSAAdd.Arithmetic.Paper935.EndpointSlotAssembly
 import ECDSAAdd.Arithmetic.Paper935.OutputCapacity
+import ECDSAAdd.Framework.OutputFrame
+import ECDSAAdd.Arithmetic.Paper935.OutputUncloser
+import ECDSAAdd.Arithmetic.Paper935.OutputSlot
+import ECDSAAdd.Arithmetic.Paper935.OutputSlotOwnership
+import ECDSAAdd.Arithmetic.Paper935.OutputSlotAssembly
