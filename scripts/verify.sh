@@ -2591,6 +2591,36 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushHistory_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.history_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.history_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushForget_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushForget_pop_stored
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushForget_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.history_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushForget_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.pushForget_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.positiveFlag_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.erasePositiveFlag_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.positiveFlag_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.positiveFlag_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.positivePredicate_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.positiveFlag_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterPositive_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterPositive_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterPositive_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.storeFlag_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.storeFlag_predicate_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.storeFlag_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.storeFlag_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePush_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePush_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePush_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePush_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_support
 LEAN
 )
 task_axiom_lean_rc=$?
