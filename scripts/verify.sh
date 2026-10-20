@@ -2853,6 +2853,25 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.branchDepth_partition
 #print axioms ECDSAAdd.Arithmetic.Paper935.branchAssembly_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.FrozenReady.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.FrozenReady.run
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.Available.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.Available.run
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepthProgram_available
+#print axioms ECDSAAdd.Arithmetic.Paper935.branchRecovery_measured
+#print axioms ECDSAAdd.Arithmetic.Paper935.finishBranch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteBranchProgram_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.finiteBranch_cancel
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_recover_pop
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyControlCore_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyControlCore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.mintHistoryControls_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyControls_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyControls_clear_after_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyControls_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.cleanBranchProgram_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.cleanBranch_cancel
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_clean_recover_pop
 LEAN
 )
 task_axiom_lean_rc=$?
