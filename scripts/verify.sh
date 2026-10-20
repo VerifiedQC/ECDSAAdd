@@ -3653,6 +3653,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_card_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSet_empty
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedDepths_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotDecoder_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.actualHistoryDecoder_external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.external_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.aHost_seed_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_aHost_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_aHost_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorReturn_aHost_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorClosedArena_aHost
+#print axioms ECDSAAdd.Arithmetic.Paper935.aHost_output_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_withOwnedOutput
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOwnedOutputBorrow_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOwnedOutputBorrow_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_certified
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_bits
+
 LEAN
 )
 task_axiom_lean_rc=$?

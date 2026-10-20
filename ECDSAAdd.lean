@@ -464,3 +464,12 @@ import ECDSAAdd.Arithmetic.Paper935.OutputSlotAssembly
 import ECDSAAdd.Arithmetic.Paper935.CounterFullArena
 import ECDSAAdd.Arithmetic.Paper935.AllocationSupport
 import ECDSAAdd.Arithmetic.Paper935.ReverseCoverage
+import ECDSAAdd.Arithmetic.Paper935.SlotFrontExternalSupport
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotExternalSupport
+import ECDSAAdd.Arithmetic.Paper935.HistoryExternalSupport
+import ECDSAAdd.Arithmetic.Paper935.DecoderExternalSupport
+import ECDSAAdd.Arithmetic.Paper935.WalkExternalSupport
+import ECDSAAdd.Arithmetic.Paper935.OwnedHostSupport
+import ECDSAAdd.Arithmetic.Paper935.OwnedOutputSlot
+import ECDSAAdd.Arithmetic.Paper935.OwnedOutputOwnership
+import ECDSAAdd.Arithmetic.Paper935.OwnedOutputAssembly
