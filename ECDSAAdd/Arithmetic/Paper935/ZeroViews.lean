@@ -60,4 +60,12 @@ theorem zeroViews_distinct (xs ws : List Wire) (h : (xs++ws).Nodup) :
             · exact List.mem_cons_of_mem _ (List.mem_append_left _ hx)
             · exact List.mem_cons_of_mem _ (List.mem_append_right _ (List.mem_cons_of_mem _ hw))
 
+
+theorem zeroViews_prefixed_distinct (fixed xs ws : List Wire) (h : (fixed++(xs++ws)).Nodup) :
+    (fixed++(List.zipWith ZeroBit.mk xs ws).flatMap ZeroBit.wires).Nodup := by
+  have parts := List.nodup_append'.mp h
+  have views := zeroViews_distinct xs ws parts.2.1
+  exact List.nodup_append'.mpr ⟨parts.1,views.1,List.disjoint_left.mpr
+    (fun q hq hv => List.disjoint_left.mp parts.2.2 hq (views.2 q hv))⟩
+
 end ECDSAAdd.Arithmetic.Paper935
