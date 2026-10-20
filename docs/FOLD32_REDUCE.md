@@ -56,3 +56,31 @@ programs must first restore their required values; the theorem does not
 clear a comparison bit after arbitrary intervening computation. No endpoint
 placement, wide signed-coefficient normalization, or full 935-wire bound is
 added by this restoration component.
+
+## Injective host placement
+
+`fold32PlacedReduce f` and `fold32PlacedUnreduce f` rename the actual programs
+with an injective map f on wire addresses. Their contracts refer directly
+to the physical mapped data word, control, flag, and 32 pool hosts; they
+preserve the numeric result, clean-pool guarantee, flag behavior and phase.
+`fold32Placed_roundtrip` restores the complete ambient State, including
+addresses outside the image of f. The proof does not require f to be
+surjective.
+
+No endpoint route is selected and no hosts are allocated.
+`fold32Placed_support_image` identifies each program's support exactly as
+the image of the original support.
+
+`fold32Footprint f` declares all 291 reference hosts. Its cardinality is 291
+for an injective f, both programs are supported within it, ordinary gate
+legality is preserved, and Toffoli/measurement counts are unchanged.
+`fold32Placed_in_arena` requires the caller to prove that all these hosts
+belong to its arena. It does not reserve wires or establish allocation
+success, nor does footprint cardinality assert a live-ancilla peak.
+
+This is a placement interface, not a chosen endpoint layout. The caller
+must supply an injective map, ownership/separation evidence, mapped clean
+pool and comparison flag, true control, the actual input value/range, and
+any restoration required by surrounding code. In particular, no embedding
+into the closer's 315 free wires or the author fv register is assumed or
+claimed here. The interface is not connected to an endpoint route.
