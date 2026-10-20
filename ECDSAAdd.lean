@@ -161,6 +161,8 @@ import ECDSAAdd.Arithmetic.Paper935.CounterPositive
 import ECDSAAdd.Arithmetic.Paper935.StoreFlag
 import ECDSAAdd.Arithmetic.Paper935.StorePush
 
+import ECDSAAdd.Arithmetic.InversePointBackend
+import ECDSAAdd.Arithmetic.InversePointFailure
 import ECDSAAdd.Arithmetic.InverseQuotientRecorded
 import ECDSAAdd.Arithmetic.Paper935.HistorySlot
 import ECDSAAdd.Arithmetic.Paper935.StorePop

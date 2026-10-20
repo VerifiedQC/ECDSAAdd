@@ -2621,6 +2621,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_support
+#print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.support
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.quotient_widths
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.quotient_nodup
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.quotient_subset
+#print axioms ECDSAAdd.Arithmetic.ControlledPointLayout.quotient_clean
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.quotient_correct
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.quotient_support
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.backend
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.callInput_nonzero
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.safe_iff
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.safe_outside
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.bad_mass
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.enabled_zero_mass
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.budget
+#print axioms ECDSAAdd.Arithmetic.PointInverseEndpoint.budget_of_events
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.states
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.correct
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientCore.counts
@@ -2642,6 +2657,7 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_class
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_unstored
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_recovery_range
+
 LEAN
 )
 task_axiom_lean_rc=$?
