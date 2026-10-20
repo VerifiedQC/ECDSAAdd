@@ -151,3 +151,5 @@ import ECDSAAdd.Arithmetic.Paper935.SlotBody
 import ECDSAAdd.Arithmetic.Paper935.Slot
 
 import ECDSAAdd.Arithmetic.ConditionalPointAgreement
+import ECDSAAdd.Arithmetic.Paper935.RetiredBody
+import ECDSAAdd.Arithmetic.Paper935.RetiredSlot
