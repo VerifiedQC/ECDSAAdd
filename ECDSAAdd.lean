@@ -492,3 +492,7 @@ import ECDSAAdd.Arithmetic.Paper935.HornerCarryCell
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryBlock
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryForward
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryErase
+import ECDSAAdd.Arithmetic.Paper935.Lift24Resources
+import ECDSAAdd.Arithmetic.Paper935.FusedRowFold
+import ECDSAAdd.Arithmetic.Paper935.FusedRowFoldSource
+import ECDSAAdd.Arithmetic.Paper935.FusedMagnitudeProgram
