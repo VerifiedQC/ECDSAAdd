@@ -3764,6 +3764,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_high_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_increment
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_of_good
 
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_zero
