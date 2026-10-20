@@ -486,3 +486,9 @@ import ECDSAAdd.Arithmetic.Paper935.HostSwap
 import ECDSAAdd.Arithmetic.Paper935.FusedEndpointModel
 import ECDSAAdd.Arithmetic.Paper935.FusedFailureEvents
 import ECDSAAdd.Arithmetic.Paper935.FusedCallSites
+
+import ECDSAAdd.Arithmetic.Paper935.HornerCopy
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryCell
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryBlock
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryForward
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryErase

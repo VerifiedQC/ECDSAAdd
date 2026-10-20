@@ -3736,6 +3736,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedPointCall_infinity
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedProductOperand_iterate
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryForward_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryCell_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryCell_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarrySweep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryUnsweep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarrySweep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryEraseReady_forward
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryUnsweep_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarrySweep_erase
+
 LEAN
 )
 task_axiom_lean_rc=$?
