@@ -2938,6 +2938,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_rows
 #print axioms ECDSAAdd.Arithmetic.Paper935.counterWord_pinned
 #print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.inverse_wires
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.support
+#print axioms ECDSAAdd.Arithmetic.Paper935.counter_both_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.double
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.twice_half
 #print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.addPad_step_fits
