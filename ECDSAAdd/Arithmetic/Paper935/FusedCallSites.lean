@@ -7,7 +7,7 @@ open Secp256k1 PointInverseEndpoint
 noncomputable section
 local instance fusedPointDecidable : DecidableEq Point := Classical.decEq _
 
-/-- engine.py:3882, :3936, :3945. These are row_mul sites, not the four
+/-- circuit.py:128, :181, :190. These are row_mul sites, not the four
 closed-XOR inverse adapter calls. The last site reverses the preceding scan. -/
 inductive FusedCallSite
   | quotientApply | productRecompute | productErase
@@ -19,13 +19,13 @@ def fusedCallFromWalk (d : Fp) (operand : Nat) : FusedCall :=
   let rows := (pinWalk 498 p (d.val : Int) 533).rows
   ⟨true,rows.fv,operand,xor (decide (rows.f<0)) (decide (rows.fv<0))⟩
 
-/-- engine.py:3925–3936. Walk-C scales its product operand before row_mul.
+/-- circuit.py:172–181. Walk-C scales its product operand before row_mul.
 Reverse the existing reverse-order rider list to obtain forward stage order. -/
 def fusedProductOperand (d a : Fp) : Nat :=
   ECDSAAdd.Arithmetic.Divsteps.halveActive p
     (authorRiderActivities p (d.val : Int)).reverse (d*a).val
 
-/-- engine.py:3857–3945. Original point labels determine both denominator
+/-- circuit.py:111–190. Original point labels determine both denominator
 and the current mathematical operand. Disabled/nonordinary labels have no
 modeled fused call; implementing that guard remains a physical obligation. -/
 def fusedPointCall (C : Point) (site : FusedCallSite) (x : Bool × Point) : Option FusedCall :=
@@ -42,7 +42,7 @@ def fusedPointCall (C : Point) (site : FusedCallSite) (x : Bool × Point) : Opti
         some (fusedCallFromWalk d (fusedProductOperand d (genericSlope X Y cx cy)))
     else none
 
-/-- engine.py:3882, :3936, :3945, in source order. The repeated s6 value
+/-- circuit.py:128, :181, :190, in source order. The repeated s6 value
 checks the same mathematical trajectory and does not create independence. -/
 def fusedPointCalls (C : Point) (x : Bool × Point) : List FusedCall :=
   [FusedCallSite.quotientApply,.productRecompute,.productErase].filterMap
