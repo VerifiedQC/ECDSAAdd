@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/paper935/generate_schedule.py --check
+python3 scripts/paper935/check_fused_repack.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -3892,6 +3893,18 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_j5p
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceLive_bounded
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceLive_bounded
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
 LEAN
 )
 task_axiom_lean_rc=$?

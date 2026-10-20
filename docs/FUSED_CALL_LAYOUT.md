@@ -118,3 +118,14 @@ Before binding these concrete HMR journals to a complete caller, the walk
 parameters and corresponding compilation certificates must be reconciled.
 The source export, generic placement/zero lemmas and shared row arithmetic
 remain usable independently; none discharges this missing correspondence.
+
+## Checked source snapshots
+
+`FusedSourceRepack` transcribes the source logical live sets (638 slots) and
+the s2/s6 four-move journals. `check_fused_repack.py`, run by verification,
+checks those constants against the pinned JSON export. The Lean proofs
+establish successful `checkRepack`, distinct bounded swap endpoints, final
+ownership under the swap permutation, and readiness after every tape.
+Readiness is conditional on the initial source snapshot being ready. These
+are concrete source-snapshot results; reaching these snapshots from the
+compiled walk remains an independent obligation.
