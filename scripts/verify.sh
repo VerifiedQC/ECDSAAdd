@@ -2944,6 +2944,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.counter_both_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowPostLayout.support
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.mintControls_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.mintControls_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.retiredWindow_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowSlot_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.retiredWindow_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowSlot_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.double
 #print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.twice_half
 #print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.addPad_step_fits
