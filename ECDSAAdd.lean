@@ -393,3 +393,8 @@ import ECDSAAdd.Arithmetic.Paper935.FoldBlock
 import ECDSAAdd.Arithmetic.Paper935.FoldBlockModel
 import ECDSAAdd.Arithmetic.Paper935.FoldBlockRun
 import ECDSAAdd.Arithmetic.Paper935.FoldKeeperMath
+import ECDSAAdd.Arithmetic.Paper935.FoldBlockOverflow
+import ECDSAAdd.Arithmetic.Paper935.FoldCompareCell
+import ECDSAAdd.Arithmetic.Paper935.FoldCompareBlock
+import ECDSAAdd.Arithmetic.Paper935.FoldKeeperErase
+import ECDSAAdd.Arithmetic.Paper935.FoldPoolPlan
