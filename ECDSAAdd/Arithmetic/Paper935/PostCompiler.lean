@@ -36,4 +36,57 @@ instance (P : WindowPostLayout) : Decidable P.Valid :=
   have : Decidable (postStaticCheck P) := by unfold postStaticCheck; infer_instance
   decidable_of_iff (postStaticCheck P) (postStaticCheck_iff P)
 
+def postPoolSize (inputs record : List Wire) (width : Nat) : Nat :=
+  max (width+(inputs.toChunks width).length) (record.length+1)
+
+/-- Probe and offset-comparison work share the pool sequentially. All
+record bits and probe inputs are checked against their physical registers. -/
+def postCandidate (armed : Bool) (one zf frozen fire active : Wire)
+    (inputs record work : List Wire) (width offset : Nat) : WindowPostLayout :=
+  let (xs,scratch) := probeCandidate inputs work width
+  { armed := armed, one := one, zf := zf, frozen := frozen, fire := fire,
+    active := active, witness := work.getD 0 0,
+    blocks := BlockedZero.chunks xs scratch,
+    record := List.zipWith ZeroBit.mk record (work.drop 1), offset := offset }
+
+def compilePost (armed : Bool) (one zf frozen fire active : Wire)
+    (inputs record work : List Wire) (width offset : Nat) : Option WindowPostLayout :=
+  let P := postCandidate armed one zf frozen fire active inputs record work width offset
+  if P.Valid ∧ BlockedZero.inputs P.blocks=inputs ∧ P.recordWires=record ∧ work≠[] then some P else none
+
+theorem compilePost_contract (armed : Bool) (one zf frozen fire active : Wire)
+    (inputs record work : List Wire) (width offset : Nat) (P : WindowPostLayout)
+    (h : compilePost armed one zf frozen fire active inputs record work width offset=some P) :
+    P.Valid ∧ BlockedZero.inputs P.blocks=inputs ∧ P.recordWires=record ∧ work≠[] := by
+  unfold compilePost at h
+  dsimp only at h
+  split at h
+  next valid => cases h; exact valid
+  next invalid => simp at h
+
+def compileBorrowedPost (A : Arena) (armed : Bool) (one zf frozen fire active : Wire)
+    (inputs record : List Wire) (width offset : Nat) : Option (Arena × List Wire × WindowPostLayout) := do
+  let (D,work) ← A.borrowMany (postPoolSize inputs record width)
+  let P ← compilePost armed one zf frozen fire active inputs record work width offset
+  pure (D,work,P)
+
+theorem compileBorrowedPost_contract (A D : Arena) (armed : Bool) (one zf frozen fire active : Wire)
+    (inputs record work : List Wire) (width offset : Nat) (P : WindowPostLayout)
+    (h : compileBorrowedPost A armed one zf frozen fire active inputs record width offset=some (D,work,P)) :
+    A.borrowMany (postPoolSize inputs record width)=some (D,work) ∧
+    compilePost armed one zf frozen fire active inputs record work width offset=some P := by
+  unfold compileBorrowedPost at h
+  cases hb : A.borrowMany (postPoolSize inputs record width) with
+  | none => simp [hb] at h
+  | some result =>
+    rcases result with ⟨B,ws⟩
+    simp only [hb] at h
+    dsimp only [Bind.bind,Option.bind,Prod.fst,Prod.snd] at h
+    cases hc : compilePost armed one zf frozen fire active inputs record ws width offset with
+    | none => simp [hc] at h
+    | some Q =>
+      simp only [hc] at h
+      rcases h with ⟨rfl,rfl,rfl⟩
+      exact ⟨rfl,hc⟩
+
 end ECDSAAdd.Arithmetic.Paper935
