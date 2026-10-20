@@ -199,3 +199,4 @@ import ECDSAAdd.Arithmetic.Paper935.HistoryControls
 import ECDSAAdd.Arithmetic.Paper935.HistoryControlValues
 import ECDSAAdd.Arithmetic.Paper935.CleanBranch
 import ECDSAAdd.Arithmetic.Paper935.CleanHistory
+import ECDSAAdd.Arithmetic.Paper935.BlockedPostShared
