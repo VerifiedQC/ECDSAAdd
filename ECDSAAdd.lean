@@ -338,3 +338,12 @@ import ECDSAAdd.Arithmetic.Paper935.RoutedLayoutSupport
 import ECDSAAdd.Arithmetic.Paper935.SlotFrontLocality
 import ECDSAAdd.Arithmetic.Paper935.PublicSlotLocality
 import ECDSAAdd.Arithmetic.Paper935.PinInvariants
+import ECDSAAdd.Arithmetic.Paper935.HistoryValueGeometry
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotValueStep
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotStaticRun
+import ECDSAAdd.Arithmetic.Paper935.WalkNumericalInputs
+import ECDSAAdd.Arithmetic.Paper935.HistoricalWalkRun
+import ECDSAAdd.Arithmetic.Paper935.WalkNumericalBounds
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkNumericalInputs
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkRun
+import ECDSAAdd.Arithmetic.Paper935.SeededAuthorWalkRun
