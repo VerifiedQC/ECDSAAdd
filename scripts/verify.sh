@@ -3213,6 +3213,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.checks_of_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_checked_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalSlot.undo_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalk_reverse_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalk_forward_reverse_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_reverse_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyUndoAt_of_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.slotUndoConditions_of_compiled
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryLayout.recovery_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalSlot.undo_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalkReverse_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.forward_reverse_wellFormed
 
 LEAN
 )
