@@ -81,3 +81,27 @@ with this encoding, removing those two assumptions from the consumer interface.
 `pointFintype` derives finiteness from the injective 513-bit point code; it does
 not assume a curve group-order theorem. The actual circuit, conditional provider
 and failure-budget obligations described above remain unchanged.
+
+## XOR inverse to in-place quotient
+
+`InverseQuotientCore.program` emits a concrete controlled Montgomery product-add,
+low-256-bit swap, and product-subtract. Given a separately computed inverse, it
+replaces the numerator Y by Y/X and restores every other basis bit and the phase.
+The temporary holding the old numerator is cleared using X*(Y/X)=Y. Disabled
+control preserves Y, including when X=0; enabled control requires X≠0.
+
+`InverseQuotientRecorded.program` surrounds that core with two calls to the same
+closed recorded inverse program. Its `InverseContract` requires arbitrary-target
+XOR with the controlled inverse, a clean declared workspace, and preservation of
+all other wires and the phase for every tape. The second call clears the inverse;
+no reversal of measurement gates is assumed. Record references are relocated by
+`recordedThen`. The workspace must avoid the numerator and inverse output but
+may overlap the core's restored temporary workspace. The success predicate is
+on X and the control, so it is unchanged when Y becomes Y/X.
+
+The wrapper proves full phase/state correctness, valid record references from
+those of the inverse endpoint, exact support union, and resource counts of two
+inverse calls plus the explicit core. This is a large Montgomery reference
+adapter, not a 935-qubit implementation. The actual compact inverse endpoint,
+physical placement in the point backend, compact multiplication, numerical
+failure bounds, and the complete 935-space schedule remain separate obligations.
