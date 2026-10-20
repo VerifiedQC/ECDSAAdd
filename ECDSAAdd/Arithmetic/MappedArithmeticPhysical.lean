@@ -13,7 +13,7 @@ theorem borrowMajority_physical (x y cin target : Wire) (hn : [x,y,cin,target].N
 
 theorem eraseBorrow_physical (x y cin target : Wire) :
     GatePhysical (eraseBorrow x y cin target) := by
-  simp [eraseBorrow,gatePhysical_append,GatePhysical,eraseCarry,PhysicalInstr,ProperGate]
+  simp [eraseBorrow,GatePhysical,eraseCarry,PhysicalInstr,ProperGate]
 
 theorem mappedMajority_physical (b : MappedBit) (y cin target : Wire)
     (hn : [y,cin,target].Nodup) (ha : ∀ q ∈ b.wire, q ∉ [y,cin,target]) :
@@ -196,7 +196,7 @@ theorem eraseLtChain_physical (xs ys carry : List Wire) (cin target : Wire)
             have ht : (c :: (x'::xs) ++ (y'::ys) ++ cs).Nodup := by
               apply List.nodup_iff_count.mpr; intro q
               have h := List.nodup_iff_count.mp hn q
-              simp only [List.count_cons,List.count_append,List.count_nil] at h ⊢; omega
+              simp only [List.count_cons,List.count_append] at h ⊢; omega
             rw [eraseLtChain]
             simp only [gatePhysical_append]
             exact ⟨⟨borrowMajority_physical _ _ _ _ hs,ih _ _ _ ht⟩,
