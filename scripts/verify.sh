@@ -3171,6 +3171,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historicalViews
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_counter_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.no_counter_failure_eleven
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_canonical
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_at64
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_failure
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_at25_f
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_window_failure
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_mass_lower
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_exclusive
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_constant_mass
 
 #print axioms ECDSAAdd.Arithmetic.Paper935.chunkPorts_subset
 #print axioms ECDSAAdd.Arithmetic.Paper935.chunks_valid_of_distinct
