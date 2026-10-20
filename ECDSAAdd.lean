@@ -303,3 +303,5 @@ import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerTotal
 import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerPorts
 import ECDSAAdd.Arithmetic.Paper935.PostCompilerTotal
 import ECDSAAdd.Arithmetic.Paper935.PublicSlotTotal
+
+import ECDSAAdd.Arithmetic.Paper935.CounterBoundaries
