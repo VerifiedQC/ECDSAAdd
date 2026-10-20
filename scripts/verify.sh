@@ -2899,6 +2899,28 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.shrinkRow_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.shrinkRow_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.shrinkRow_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowWindow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowWindow_cost
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.shrinkRow_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_planned
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_old_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_roundtrip
 LEAN
 )
 task_axiom_lean_rc=$?
