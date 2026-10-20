@@ -453,3 +453,4 @@ import ECDSAAdd.Arithmetic.Paper935.SeededWalkResources
 import ECDSAAdd.Arithmetic.Paper935.EndpointSlot
 import ECDSAAdd.Arithmetic.Paper935.EndpointSlotResources
 import ECDSAAdd.Arithmetic.Paper935.EndpointSlotAssembly
+import ECDSAAdd.Arithmetic.Paper935.OutputCapacity
