@@ -3802,6 +3802,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_recorded_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedDemolish_repack_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_owned
 #print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_physical
 

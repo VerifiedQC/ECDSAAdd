@@ -70,7 +70,14 @@ No HMR phase-restoration theorem is asserted here.
 
 Still uninstantiated: the concrete journal chosen by the source closer's
 `_repack()` (the existing Lean closer releases payloads but does not compile
-that source selection), its post-repack ownership transaction, and the
+that source selection), and the
 three full caller programs. The maps are finite injective reference maps,
 not yet complete renamed lift/fold executions. The s6 inverse-scan zero
 boundary remains the Horner contract, not an assumption discharged here.
+
+`FusedRepackAllocation` checks every journal move against actual ownership
+and reservation. Accepted journals preserve readiness under their emitted
+swaps; final ownership is exactly the initial live set under `repackEquiv`.
+Owned row/host views therefore remain owned after the same moves. This
+removes the need to assume the ownership transaction for a checked journal;
+it does not supply the author's concrete journal selection.
