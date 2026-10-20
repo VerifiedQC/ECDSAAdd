@@ -3442,6 +3442,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_control
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_reconstruct
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_high_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Unreduce_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Unreduce_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Unreduce_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Unreduce_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32Reduce_append_unreduce
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256Place_injective
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_low_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_frame
