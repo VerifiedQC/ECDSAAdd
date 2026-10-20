@@ -411,3 +411,13 @@ import ECDSAAdd.Arithmetic.Paper935.ScalingCallSites
 import ECDSAAdd.Arithmetic.Paper935.SeedNormalize
 import ECDSAAdd.Arithmetic.Paper935.ExitCapacity
 import ECDSAAdd.Arithmetic.Paper935.ExitWidths
+import ECDSAAdd.Arithmetic.Paper935.CloserEndpoint
+import ECDSAAdd.Arithmetic.Paper935.CloserFan
+import ECDSAAdd.Arithmetic.Paper935.CloserEncoding
+import ECDSAAdd.Arithmetic.Paper935.CloserPair
+import ECDSAAdd.Arithmetic.Paper935.CloserBank
+import ECDSAAdd.Arithmetic.Paper935.CloserRelease
+import ECDSAAdd.Arithmetic.Paper935.ExitOwned
+import ECDSAAdd.Arithmetic.Paper935.CloserCapacity
+import ECDSAAdd.Arithmetic.Paper935.CloserWalk
+import ECDSAAdd.Arithmetic.Paper935.CloserResources

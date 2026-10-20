@@ -3462,6 +3462,31 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_exit_widths
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorExitWindow
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_closer_endpoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerFan_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerFan_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerFan_clear
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerFan_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.closer_row_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.closer_row_magnitude
+#print axioms ECDSAAdd.Arithmetic.Paper935.closer_signs
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerPair_clear
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerPair_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerPair_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_clear
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerPayloads_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.closer_retired_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_exit_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_closed_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_closed_free
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_closer_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_arena
 
 LEAN
 )
