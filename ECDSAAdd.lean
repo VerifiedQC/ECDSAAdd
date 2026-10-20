@@ -439,6 +439,7 @@ import ECDSAAdd.Arithmetic.Paper935.Fold32Value
 import ECDSAAdd.Arithmetic.Paper935.Fold32Word
 import ECDSAAdd.Arithmetic.Paper935.WideCoefficientFold
 import ECDSAAdd.Arithmetic.Paper935.WideCoefficientInput
+import ECDSAAdd.Arithmetic.Paper935.WideCoefficientInclusive
 import ECDSAAdd.Arithmetic.Paper935.Fold32Placement
 import ECDSAAdd.Arithmetic.Paper935.Fold32PlacementResources
 import ECDSAAdd.Arithmetic.Paper935.Fold32Unreduce
