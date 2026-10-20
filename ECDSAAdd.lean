@@ -347,3 +347,9 @@ import ECDSAAdd.Arithmetic.Paper935.WalkNumericalBounds
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkNumericalInputs
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkRun
 import ECDSAAdd.Arithmetic.Paper935.SeededAuthorWalkRun
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotStaticInverse
+import ECDSAAdd.Arithmetic.Paper935.WalkArithmeticUndo
+import ECDSAAdd.Arithmetic.Paper935.WalkUndoAssembly
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkArithmeticUndo
+import ECDSAAdd.Arithmetic.Paper935.PinStoppingTime
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkEndpoint
