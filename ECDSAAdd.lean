@@ -237,3 +237,6 @@ import ECDSAAdd.Arithmetic.Paper935.DepthControlReady
 import ECDSAAdd.Arithmetic.Paper935.HistoryArenaReady
 import ECDSAAdd.Arithmetic.Paper935.HistoryDecoderReady
 import ECDSAAdd.Arithmetic.Paper935.ReadyHistory
+import ECDSAAdd.Arithmetic.Paper935.TrajectoryFailures
+import ECDSAAdd.Arithmetic.Paper935.TrajectoryMass
+import ECDSAAdd.Arithmetic.Paper935.BlockedZeroFailure
