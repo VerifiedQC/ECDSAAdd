@@ -1,6 +1,6 @@
 # Seed ownership and the whole-point-add resource boundary
 
-This inventory describes the concrete seed layout on main at `e5db4971`.
+This inventory describes the concrete seed layout on main at `3dbb46b6`.
 The 935-address pool includes three proposed point-add hosts. The current
 walk theorems do not yet bind those hosts to a complete point-add program.
 A bound for this walk and its owned storage therefore does not establish the
@@ -63,11 +63,22 @@ caller-owned host after proving the necessary support and state contracts.
 They also do not exclude implementations that touch output wires and later
 preserve their values semantically.
 
-`seed_run` proves that seeding preserves the third word. That seed-only frame
-result is not a proof that the entire measured walk, closer and reverse walk
-avoid A. An owned-host output interface must establish this full-program
-support separation (or a suitable semantic preservation theorem), and must
-retain the host's ownership rather than count it as a fresh loan.
+`seed_run` proves that seeding preserves the third word. The stronger
+`authorWalk_aHost_support` theorem now proves support separation for the
+actual seeded walk, closer, uncloser and actual reverse walk, conditional on
+successful compilation. `authorClosedArena_aHost` proves the host remains
+owned after closing. These are compiler-derived support and ownership facts,
+not inferences from final-state restoration.
+
+The merged [owned-output interface](PAPER935_OWNED_OUTPUT.md) supplies
+`endpointSlot_ownedOutput_certified`: under the stated walk premises and an
+explicit `EndpointOwnedOutputContract` for E, the full program preserves the
+phase and all bits outside O, while O receives its declared output. Here
+O is a subset of A, with at most 256 sites. It is already included in the
+620 owned sites; only temporary wires are reserved and released, with at most
+315 such wires and `during.live.card = 620 + temporary.card ≤ 935`.
+The supplied E must still establish its arithmetic output and cleanup
+obligations. The theorem does not construct E or bind A to point coordinates.
 
 Even with that interface, the following point-add obligations remain separate:
 
