@@ -2629,6 +2629,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.wellFormed
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.support
 #print axioms ECDSAAdd.Arithmetic.InverseQuotientRecorded.counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.retiredBody_parity
+#print axioms ECDSAAdd.Arithmetic.Paper935.retiredSlot_parity
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePop_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.storeHistory_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_pop_stored
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePop_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePop_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyPrefix_zero_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyPredicate_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_valuation
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_class
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_unstored
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_recovery_range
 LEAN
 )
 task_axiom_lean_rc=$?
