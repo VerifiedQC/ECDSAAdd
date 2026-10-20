@@ -317,3 +317,12 @@ import ECDSAAdd.Arithmetic.Paper935.SlotFrontCheckedTotal
 import ECDSAAdd.Arithmetic.Paper935.WalkRecovery
 import ECDSAAdd.Arithmetic.Paper935.WalkRecoveryReady
 import ECDSAAdd.Arithmetic.Paper935.WalkRecoveryRecords
+import ECDSAAdd.Arithmetic.Paper935.ProbeChunkCount
+import ECDSAAdd.Arithmetic.Paper935.SlotViewsGeometry
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotStaticTotal
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotStaticTotal
+import ECDSAAdd.Arithmetic.Paper935.HistoryGrowthGeometry
+import ECDSAAdd.Arithmetic.Paper935.WalkStaticBudget
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkBudgets
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkStaticTotal
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkRealized
