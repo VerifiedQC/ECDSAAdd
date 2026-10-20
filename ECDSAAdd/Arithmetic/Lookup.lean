@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.MeasuredArithmeticPhysical
 import ECDSAAdd.Arithmetic.MaskedConstant
 import ECDSAAdd.Arithmetic.Constant
 
@@ -403,5 +404,44 @@ theorem lookup10_frame (a : Wire) (controls scratch target : List Wire) (table :
     (s : State) (m : List Bool) (hz : regValue scratch s.basis=0) (w : Wire) (hw : w∉target) :
     (run (lookup a controls scratch target table) m s).basis w=s.basis w :=
   (lookup10_correct a controls scratch target table hnd hc hs ht s m ((regValue_zero _ _).mp hz)).2.1 w hw
+
+private theorem lookupWalk_physical (a : Wire) (controls scratch target : List Wire)
+    (table : Nat → Nat) (hn : (a :: controls ++ scratch ++ target).Nodup) :
+    GatePhysical (lookupWalk a controls scratch target table) := by
+  induction controls generalizing a scratch table with
+  | nil =>
+    apply maskedConstant_physical
+    intro h
+    exact (List.nodup_cons.mp hn).1 (by simp [h])
+  | cons b bs ih =>
+    cases scratch with
+    | nil => simp [lookupWalk,GatePhysical]
+    | cons q qs =>
+      have ht : (q :: bs ++ qs ++ target).Nodup := by
+        apply List.nodup_iff_count.mpr; intro w
+        have h := List.nodup_iff_count.mp hn w
+        simp only [List.count_cons,List.count_append] at h ⊢; omega
+      have haq : a ≠ q := by
+        intro e; subst q
+        have h := List.nodup_iff_count.mp hn a
+        simp only [List.count_cons,List.count_append,beq_self_eq_true,if_true] at h; omega
+      have hbq : b ≠ q := by
+        intro e; subst q
+        have h := List.nodup_iff_count.mp hn b
+        simp only [List.count_cons,List.count_append,beq_self_eq_true,if_true] at h; omega
+      have left := ih q qs (fun d => table (1+2*d)) ht
+      have right := ih q qs (fun d => table (2*d)) ht
+      simp only [lookupWalk,gatePhysical_append]
+      refine ⟨⟨⟨⟨?_,left⟩,?_⟩,right⟩,?_⟩
+      all_goals simp [GatePhysical,RecordedQuantum.PhysicalInstr,ProperGate,haq,hbq]
+
+/-- Every ordinary lookup gate has distinct target and controls; this is
+independent of the lookup values and of the clean-state correctness contract. -/
+theorem lookup_physical (a : Wire) (controls scratch target : List Wire)
+    (table : Nat → Nat) (hn : (a :: controls ++ scratch ++ target).Nodup) :
+    GatePhysical (lookup a controls scratch target table) := by
+  simp only [lookup,gatePhysical_append]
+  refine ⟨⟨⟨lookupWalk_physical _ _ _ _ _ hn,?_⟩,lookupWalk_physical _ _ _ _ _ hn⟩,?_⟩
+  all_goals simp [GatePhysical,RecordedQuantum.PhysicalInstr,ProperGate]
 
 end ECDSAAdd.Arithmetic
