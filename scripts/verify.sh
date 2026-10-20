@@ -141,6 +141,16 @@ import ECDSAAdd.Arithmetic.DirectSkywalkSupport
 import ECDSAAdd.Arithmetic.FusedInversePackedProof
 import ECDSAAdd.Arithmetic.BalancedIntegratedAudit
 import ECDSAAdd.Arithmetic.CompactIntegratedAudit
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.control
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.point
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.outside
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.boundary
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.basis_injective
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.extend_restrict
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.encoding_boundary
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.encoding_frame
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.budget
+#print axioms ECDSAAdd.Arithmetic.PointInputEncoding.pointFintype
 #print axioms ECDSAAdd.Arithmetic.ConditionalPointArithmeticBackend.ofExact
 #print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.step_arithmetic
 #print axioms ECDSAAdd.Arithmetic.ConditionalPointDialog.generic_true

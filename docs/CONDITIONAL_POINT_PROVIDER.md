@@ -63,3 +63,21 @@ proof that the compact inverse can fit that entire pipeline into 935 live wires.
 The compact arena, schedule, inverse/walk implementation, numerical event bounds
 and resource proofs remain separate implementation obligations. Existing exact
 specifications and programs are unchanged.
+
+
+## Concrete clean encoding
+
+`PointInputEncoding.basis` constructs the actual point bits and control value,
+with every other wire zero. Constant XOR from a temporary true control defines
+this mathematical bit string; those initialization gates are not added to the
+point-add execution. The point is read back correctly, and the encoding is
+injective. A proved finite-wire restriction yields `encoding : (Bool × Point) ↪
+Bits n` whenever the point and control wires lie below `n`.
+
+`encoding_boundary` discharges the clean-input hypothesis, and `encoding_frame`
+proves that the independent controlled translation leaves every non-point wire
+unchanged. `PointInputEncoding.budget` instantiates the earlier quantum theorem
+with this encoding, removing those two assumptions from the consumer interface.
+`pointFintype` derives finiteness from the injective 513-bit point code; it does
+not assume a curve group-order theorem. The actual circuit, conditional provider
+and failure-budget obligations described above remain unchanged.
