@@ -3262,6 +3262,17 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_frozen_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_offset_inputs
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyValue_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_history_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_value_step
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_static_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalNumericalInputs_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorNumericalInputs_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_good_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_run
+
 LEAN
 )
 task_axiom_lean_rc=$?
