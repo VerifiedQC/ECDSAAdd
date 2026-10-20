@@ -405,6 +405,16 @@ import ECDSAAdd.Arithmetic.Paper935.Fold16Invariant
 import ECDSAAdd.Arithmetic.Paper935.Fold16Cleanup
 import ECDSAAdd.Arithmetic.Paper935.Fold16Value
 import ECDSAAdd.Arithmetic.Paper935.Fold16Word
+import ECDSAAdd.Arithmetic.Paper935.Fold256
+import ECDSAAdd.Arithmetic.Paper935.FoldRotate
+import ECDSAAdd.Arithmetic.Paper935.FoldParity
+import ECDSAAdd.Arithmetic.Paper935.FoldHalve
+import ECDSAAdd.Arithmetic.Paper935.FoldSeam
+import ECDSAAdd.Arithmetic.Paper935.FoldHalvePhysical
+import ECDSAAdd.Arithmetic.Paper935.FoldRiderParity
+import ECDSAAdd.Arithmetic.Paper935.FoldRider
+import ECDSAAdd.Arithmetic.Paper935.FoldRiderPhysical
+import ECDSAAdd.Arithmetic.Paper935.FoldRiderState
 import ECDSAAdd.Arithmetic.Paper935.ScalingNoBorrow
 import ECDSAAdd.Arithmetic.Paper935.ScalingSeed
 import ECDSAAdd.Arithmetic.Paper935.ScalingCallSites
