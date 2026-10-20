@@ -160,6 +160,36 @@ theorem foldBlockModel_top (control : Wire) (cells : List FoldCell) (cin : Optio
         obtain ⟨hd,hc⟩ := topAway q ht
         simp [foldBlockModel,prepared,outCarry,input,writeBit,hd,hc]
 
+/-- Every nonretained carry is cleared, including an omitted final carry. -/
+theorem foldBlockModel_carry_clean (control : Wire) (cells : List FoldCell) (cin : Option Wire)
+    (sums keep : Bool) (hn : (control::cin.toList++cells.flatMap FoldCell.wires).Nodup)
+    (s : BasisState) (cell : FoldCell) (hc : cell∈cells)
+    (notKept : keep=false ∨ foldBlockTop cells cin≠some cell.carry) :
+    foldBlockModel control cells cin sums keep s cell.carry=false := by
+  induction cells generalizing cin s with
+  | nil => simp at hc
+  | cons b rest ih =>
+    obtain ⟨localNd,tailNd,apart⟩ := block_geometry control b rest cin hn
+    have nd : [control,b.data,b.carry].Nodup := (List.nodup_append.mp localNd).1
+    have hdt : b.data≠b.carry := by
+      simpa using (List.nodup_cons.mp (List.nodup_cons.mp nd).2).1
+    rcases List.mem_cons.mp hc with rfl | hc
+    · cases rest with
+      | nil =>
+        cases hi : cin <;> cases hb : cell.literal <;> cases keep <;>
+          simp_all [foldBlockModel,foldBlockTop,FoldCell.next,writeBit,Ne.symm hdt,carryBit]
+      | cons c cs => simp [foldBlockModel,writeBit,Ne.symm hdt]
+    · have mem : cell.carry∈rest.flatMap FoldCell.wires := List.mem_flatMap.mpr ⟨cell,hc,by simp [FoldCell.wires]⟩
+      have hd : cell.carry≠b.data := by
+        intro e
+        exact List.disjoint_left.mp apart (show b.data∈[control,b.data,b.carry]++cin.toList by simp) (e ▸ mem)
+      have ht : cell.carry≠b.carry := by
+        intro e
+        exact List.disjoint_left.mp apart (show b.carry∈[control,b.data,b.carry]++cin.toList by simp) (e ▸ mem)
+      simp only [foldBlockModel,writeBit,Function.update_of_ne hd,Function.update_of_ne ht]
+      apply ih (b.next cin) tailNd _ hc
+      simpa only [foldBlockTop] using notKept
+
 theorem foldBlockLiteral_disabled (cells : List FoldCell) : foldBlockLiteral cells false=0 := by
   induction cells with
   | nil => rfl
