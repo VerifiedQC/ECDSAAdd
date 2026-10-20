@@ -230,3 +230,10 @@ import ECDSAAdd.Arithmetic.Paper935.HistoryAllocation
 import ECDSAAdd.Arithmetic.Paper935.DecoderUnpad
 import ECDSAAdd.Arithmetic.Paper935.PaddedBranch
 import ECDSAAdd.Arithmetic.Paper935.PaddedHistory
+import ECDSAAdd.Arithmetic.Paper935.DepthArenaReady
+import ECDSAAdd.Arithmetic.Paper935.WindowPaddingSupport
+import ECDSAAdd.Arithmetic.Paper935.DecoderBankReady
+import ECDSAAdd.Arithmetic.Paper935.DepthControlReady
+import ECDSAAdd.Arithmetic.Paper935.HistoryArenaReady
+import ECDSAAdd.Arithmetic.Paper935.HistoryDecoderReady
+import ECDSAAdd.Arithmetic.Paper935.ReadyHistory

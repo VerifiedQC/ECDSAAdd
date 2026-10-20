@@ -2994,6 +2994,22 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.paddedCleanBranch_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.paddedCleanBranch_cancel
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_padded_recover_pop
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.available_of_bank
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_unfrozen_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.available_of_pin
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_support_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_support_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.padding_support_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.decoderWidth_fits
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.available_after_padding
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.Ready.frame_read
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.FrozenReady.frame_read
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.Available.frame_read
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.available_after_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.DepthLayout.available_after_padding_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_frame_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_decoder_available
+#print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_ready_recover_pop
 LEAN
 )
 task_axiom_lean_rc=$?
