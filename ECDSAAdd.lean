@@ -277,3 +277,5 @@ import ECDSAAdd.Arithmetic.Paper935.HistoryCompiler
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerReady
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRelease
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRun
+
+import ECDSAAdd.Arithmetic.Paper935.HistoryBudget
