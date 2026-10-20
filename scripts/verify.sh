@@ -3604,6 +3604,20 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_unclose
 #print axioms ECDSAAdd.Arithmetic.Paper935.closer_reclaim
 #print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_reclaim_unclose
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoryLayout.recovery_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.reverse_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_reverse_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalkReverse_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalkReverse_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_address_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointBorrow_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_certified
 
 LEAN
 )
