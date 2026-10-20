@@ -3722,6 +3722,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_full_certificate
 #print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_fresh_certificate
 #print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_owned_certificate
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedCall.scanWord_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedHornerState_first
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedHornerState_step
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedFailures.partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedFailures.exclusive_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedFailures.exclusive_pairwise
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_nine_pairwise
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedFailures.mass_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_nine_mass
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFailures_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedPointCall_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedPointCall_infinity
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedProductOperand_iterate
 
 LEAN
 )

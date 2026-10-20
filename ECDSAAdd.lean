@@ -482,3 +482,7 @@ import ECDSAAdd.Arithmetic.Paper935.RenamedFullCertificate
 import ECDSAAdd.Arithmetic.Paper935.RenamedOwnedCertificate
 import ECDSAAdd.Arithmetic.Paper935.RenamedFreshCertificate
 import ECDSAAdd.Arithmetic.Paper935.HostSwap
+
+import ECDSAAdd.Arithmetic.Paper935.FusedEndpointModel
+import ECDSAAdd.Arithmetic.Paper935.FusedFailureEvents
+import ECDSAAdd.Arithmetic.Paper935.FusedCallSites
