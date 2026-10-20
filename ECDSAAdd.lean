@@ -389,3 +389,7 @@ import ECDSAAdd.Arithmetic.Paper935.SlotStaticHistoryUndo
 import ECDSAAdd.Arithmetic.Paper935.WalkDecoderResources
 import ECDSAAdd.Arithmetic.Paper935.WalkDecoderTotal
 import ECDSAAdd.Arithmetic.Paper935.WalkDecoderUndo
+import ECDSAAdd.Arithmetic.Paper935.FoldBlock
+import ECDSAAdd.Arithmetic.Paper935.FoldBlockModel
+import ECDSAAdd.Arithmetic.Paper935.FoldBlockRun
+import ECDSAAdd.Arithmetic.Paper935.FoldKeeperMath
