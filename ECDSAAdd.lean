@@ -167,3 +167,11 @@ import ECDSAAdd.Arithmetic.InverseQuotientRecorded
 import ECDSAAdd.Arithmetic.Paper935.HistorySlot
 import ECDSAAdd.Arithmetic.Paper935.StorePop
 import ECDSAAdd.Arithmetic.Paper935.HistoryPredicate
+import ECDSAAdd.Arithmetic.Paper935.LookupBranch
+import ECDSAAdd.Arithmetic.Paper935.ResidueBranch
+import ECDSAAdd.Arithmetic.Paper935.ResidueWires
+import ECDSAAdd.Arithmetic.Paper935.RecoveryLookup
+import ECDSAAdd.Arithmetic.Paper935.DepthResidue
+import ECDSAAdd.Arithmetic.Paper935.HistoryClassFlag
+import ECDSAAdd.Arithmetic.Paper935.ClassLookup
+import ECDSAAdd.Arithmetic.Paper935.DepthLookup

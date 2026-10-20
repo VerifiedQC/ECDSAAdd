@@ -2658,6 +2658,33 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_unstored
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_recovery_range
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_wireBound
+#print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_recover
+#print axioms ECDSAAdd.Arithmetic.Paper935.residueBranchTable_branch
+#print axioms ECDSAAdd.Arithmetic.Paper935.signedSuffix_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.oddResidue5_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryQuotient_odd
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryResidues_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryLookup_table
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryLookup_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryLookup_cancel
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryLookup_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.recoveryLookup_wireBound
+#print axioms ECDSAAdd.Arithmetic.Paper935.depthResidue_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyDepth_test
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyClassFlag_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyClassFlag_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyClassFlag_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyDepthFlag_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyDepth_predicate_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.classLookup_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.classLookup_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.classLookup_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.depthLookup_selected_branch
+#print axioms ECDSAAdd.Arithmetic.Paper935.depthLookup_run
 LEAN
 )
 task_axiom_lean_rc=$?
