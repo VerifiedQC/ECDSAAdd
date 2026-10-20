@@ -46,3 +46,33 @@ Dependencies supplied by other components: `compileAuthorWalk_exit_widths`
 (PR179), `compileAuthorWalk_exit_card` (PR178), and `seededAuthorWalk_run`.
 The closer adds no probabilistic numerical bound and does not extend the
 existing fifth failure event to the author's fused endpoint arithmetic.
+
+## Caller-facing uncloser precondition
+
+`UncloserReady bank before reused` makes the restoration obligation explicit:
+
+- Every released f/g/gv payload bit is zero again, and the still-owned gv sign
+  also has its cleared value zero.
+- Every other physical bit equals its value in `before`, the state immediately
+  before the closer. This includes fv, f's sign, metadata, history, and wires
+  outside the bank.
+- The phase equals `before.phase`; cleaning bits alone is insufficient.
+
+The condition does not assume an equality to an interpreter output.
+`UncloserReady.eq_closer` derives that equality using the established endpoint
+facts, and `closerProgram_unclose` then proves full-state recovery for any
+uncloser tape. This is an exact full-state interface: a client wishing to keep
+changes outside the bank needs a separate frame-preserving interface rather
+than claiming this theorem restores a modified outside state.
+
+Ownership is a separate obligation. At this boundary the caller must return
+to the retired arena, after finishing any extra reservations it made.
+`closer_reclaim` proves that reserving exactly the released payloads in that
+arena succeeds and recovers the original arena. It reserves no still-live
+sign, coefficient or history wire. `closerProgram_reclaim_unclose` combines
+restored-bit readiness, successful reservation, full-state recovery, and the
+original arena's Ready invariant. It assumes the original arena was Ready
+and the bank was owned, and retains the same explicit endpoint hypotheses.
+It does not prove that an arbitrary intervening caller program fulfills
+`UncloserReady` or returns its allocations; those remain caller obligations.
+No host relocation or endpoint route is selected by this interface.

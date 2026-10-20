@@ -3574,6 +3574,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.UncloserReady.eq_closer
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_unclose
+#print axioms ECDSAAdd.Arithmetic.Paper935.closer_reclaim
+#print axioms ECDSAAdd.Arithmetic.Paper935.closerProgram_reclaim_unclose
 
 LEAN
 )
