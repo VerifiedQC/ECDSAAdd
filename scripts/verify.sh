@@ -3303,6 +3303,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldCarry_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldCarry_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldCarryBackward_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlock_forward_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlock_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlock_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlockModel_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlock_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlockModel_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldBlock_run_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldKeeper_borrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldKeeper_controlled
 
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_undo
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_actual_reverse
