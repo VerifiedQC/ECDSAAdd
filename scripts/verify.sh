@@ -2872,6 +2872,33 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.cleanBranchProgram_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.cleanBranch_cancel
 #print axioms ECDSAAdd.Arithmetic.Paper935.storePushForget_clean_recover_pop
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroFreeze_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroFreeze_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroFreeze_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroFreeze_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.valid_target_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.inputs_subset_ports
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.clean_transfer
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.probe_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.probe_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.latchRetire_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.latchRetire_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroLatch_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.zeroFreeze_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.post_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.inverse_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.inverse_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.shared_post_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.shared_post_qubits
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.BlockedPost.publicPost_support
 LEAN
 )
 task_axiom_lean_rc=$?
