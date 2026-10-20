@@ -3241,6 +3241,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_realized
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.mathChecks_of_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_mathChecks
+#print axioms ECDSAAdd.Arithmetic.Paper935.postMath_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_mathChecks
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_mathChecks
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_staticMath
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.intermediates_fit
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_static_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.program_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.external_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_inv
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_inv
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_frozen_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_frozen_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_offset_inputs
+
 LEAN
 )
 task_axiom_lean_rc=$?
