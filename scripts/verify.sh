@@ -3224,6 +3224,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalkReverse_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.forward_reverse_wellFormed
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.probeChunks_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.postPoolSize_public
+#print axioms ECDSAAdd.Arithmetic.Paper935.postViews_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyViews_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_static_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_static_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planHistoryGrow_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_exit_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_static_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoricalBudgets
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkSeed_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkSeed_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkSeed_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkSeed_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_realized
+
 LEAN
 )
 task_axiom_lean_rc=$?

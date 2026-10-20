@@ -24,7 +24,11 @@ inequalities rather than assumptions about execution success.
 requests in the Lean kernel. Seed geometry instantiates the general theorem in
 `compileAuthorWalk_exists`. `authorWalk_realized` then gives the actual compiled
 533-slot recorded program a `Circuit 935` representation for any initial record
-ordinal. Neither statement assumes the compiler succeeds.
+ordinal. Neither statement assumes the compiler succeeds. Here “unconditional” means
+there are no hypotheses: `compileAuthorWalk_exists` takes no parameters, and
+`authorWalk_realized` takes only the arbitrary starting record ordinal. The
+proof uses symbolic derivations and kernel `decide`, with no `native_decide` or
+verification-limit changes.
 
 The 935 bound here covers addresses of the emitted forward walk, including its
 measurement instructions. It does not assert the arithmetic/history-value
