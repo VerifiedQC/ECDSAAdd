@@ -17,7 +17,9 @@ Read-only coordinates may be in program support as controls, but their restorati
 See [the concrete seed inventory](PAPER935_HOST_ACCOUNTING.md) for the 794 owned
 addresses and the outstanding host-role binding. In particular, the table
 below retains y during the first walk, whereas the concrete seed retains A;
-no stage renaming or data-moving proof currently identifies these layouts.
+the [explicit y/A placement permutation](PAPER935_HOST_RENAMING.md) now transports
+the complete endpoint certificates between these layouts, including entry conditions
+and retained output ownership. This is relabeling, not a data-moving caller stage.
 
 | Stage | Host ownership and permitted reuse | Required release evidence |
 |---|---|---|

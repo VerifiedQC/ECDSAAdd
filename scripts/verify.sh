@@ -3678,6 +3678,51 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_certified
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_bits
 
+#print axioms ECDSAAdd.extendWireMap_on
+#print axioms ECDSAAdd.extendWireMap_bijective
+#print axioms ECDSAAdd.finiteWirePermutation_on
+#print axioms ECDSAAdd.finiteWirePermutation_preserves
+#print axioms ECDSAAdd.renameRecorded_congr_support
+#print axioms ECDSAAdd.finiteWirePermutation_program
+#print axioms ECDSAAdd.pullState_equiv_injective
+#print axioms ECDSAAdd.pullState_withOutput_image
+#print axioms ECDSAAdd.renameRecorded_wellFormed
+#print axioms ECDSAAdd.renameRecorded_append
+#print axioms ECDSAAdd.renameRecorded_embed
+#print axioms ECDSAAdd.runRecorded_rename_cursor
+#print axioms ECDSAAdd.runWithTape_permutation_restore
+#print axioms ECDSAAdd.runWithTape_permutation_output
+#print axioms ECDSAAdd.runWithTape_permutation_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.renamed_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.renamed_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaPermutation.disjoint_image
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaPermutation.image_subset
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaPermutation.image_arena
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.renamed_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.renamed_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.renamedEndpointClosed_pull
+#print axioms ECDSAAdd.Arithmetic.Paper935.renamedEndpointAfter_pull
+#print axioms ECDSAAdd.Arithmetic.Paper935.renamedEndpoint_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.renamedEndpoint_aHost_isolated
+#print axioms ECDSAAdd.Arithmetic.Paper935.renamedEndpoint_ofFinite
+#print axioms ECDSAAdd.Arithmetic.Paper935.EndpointBorrow.renamed
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlotCertificate_renamed
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOwnedOutputCertificate_renamed
+#print axioms ECDSAAdd.Arithmetic.Paper935.endpointOutputCertificate_renamed
+#print axioms ECDSAAdd.Arithmetic.Paper935.swapYA_involutive
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_apply
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_x
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_y
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_a
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_aux
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_seedBefore
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_entry
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_seed_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_output_isolated
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_full_certificate
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_fresh_certificate
+#print axioms ECDSAAdd.Arithmetic.Paper935.hostSwap_owned_certificate
+
 LEAN
 )
 task_axiom_lean_rc=$?
