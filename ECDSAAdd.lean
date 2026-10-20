@@ -460,3 +460,7 @@ import ECDSAAdd.Arithmetic.Paper935.OutputUncloser
 import ECDSAAdd.Arithmetic.Paper935.OutputSlot
 import ECDSAAdd.Arithmetic.Paper935.OutputSlotOwnership
 import ECDSAAdd.Arithmetic.Paper935.OutputSlotAssembly
+
+import ECDSAAdd.Arithmetic.Paper935.CounterFullArena
+import ECDSAAdd.Arithmetic.Paper935.AllocationSupport
+import ECDSAAdd.Arithmetic.Paper935.ReverseCoverage
