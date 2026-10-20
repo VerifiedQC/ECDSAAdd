@@ -22,13 +22,37 @@ a clean 32-wire pool, flag [x < p], and unchanged phase. Separate theorems
 establish unchanged original control, a zero high data bit, ordinary gate
 legality, support in range 291, and preservation of all outside addresses.
 `fold32Reduce_reconstruct` proves x = output + (if flag then 0 else p).
-This is an information-preservation statement, not an inverse gate program.
+This reconstruction statement also underlies the actual restoration program
+described below.
 
 The comparison flag remains live and is not part of the cleared pool.
 A caller must retain it or prove a valid uncomputation strategy; it cannot
 simply be erased. Inputs outside [0,2p) and initially dirty auxiliary bits
 are not covered. Wider signed coefficient normalization, repeated reduction,
 physical relocation, input range derivation from the actual endpoint,
-comparison cleanup, inverse implementation, and complete resource accounting
+comparison cleanup after an intervening computation, and complete resource accounting
 remain separate obligations. No new failure events or numerical failure
 bounds are asserted here.
+
+## Actual restoration and whole-state round trip
+
+`fold32Unreduce` uses the retained flag to subtract p from the canonical
+remainder, clears the flag by XOR with the resulting actual high bit, then
+adds p unconditionally (using the original true control). Its preconditions
+are a canonical remainder y < p, a clean pool, and control 0 true. Either
+value of the incoming flag is permitted. It returns y if the flag was true,
+and y+p otherwise, with the pool and flag zero and phase/control unchanged.
+It has the same range-291 address bound and ordinary gate legality.
+
+`fold32Reduce_roundtrip` proves equality of the entire State, including all
+outside wires and phase, after reduction followed by restoration. The two
+programs may use arbitrary independent measurement tapes.
+`fold32Reduce_append_unreduce` gives the corresponding concatenated-program
+statement. The forward hypotheses remain x < 2p, true control, and initially
+zero flag and pool. This is not an inverse claim for arbitrary dirty states.
+
+A caller that modifies the remainder, flag, or borrowed pool between these
+programs must first restore their required values; the theorem does not
+clear a comparison bit after arbitrary intervening computation. No endpoint
+placement, wide signed-coefficient normalization, or full 935-wire bound is
+added by this restoration component.
