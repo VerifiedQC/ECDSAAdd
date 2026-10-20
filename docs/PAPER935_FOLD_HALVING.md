@@ -51,3 +51,9 @@ program must establish those predicates (after a justified physical wire
 placement) and its seed-value postcondition on that same state. No
 normalization-program theorem is assumed or supplied by this PR; the
 existing `seededAuthorWalk_seed_read` is a mathematical readout theorem.
+The normalization workstream's named interfaces are `seedNormalize_bank`,
+`seededAuthorWalk_normalize`, and `seedNormalize_low_word`. The last is
+expected to supply the zero high bit and the low 256-bit value. These are
+handoff names for future composition, not dependencies used to discharge
+this PR's explicit preconditions. The current normalization reference uses
+1029 wires and cannot be inserted into a 935-address layout.
