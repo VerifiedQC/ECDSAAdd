@@ -2921,6 +2921,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_correct
 #print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_resources
 #print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_live_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.planCounterScratch_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.planCounterScratch_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.planCounterScratch_nodup
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterUpdate_borrowed_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterUpdate_borrowed
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_then_counter
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.resize_counter_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.run_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.widths_after
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.run_idle
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.run_pinned
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.counterWord_pinned
+#print axioms ECDSAAdd.Arithmetic.Paper935.RoutedBankLayout.windowStep_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.double
+#print axioms ECDSAAdd.Arithmetic.Paper935.PayloadFits.twice_half
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowWindow.addPad_step_fits
 LEAN
 )
 task_axiom_lean_rc=$?

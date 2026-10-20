@@ -29,6 +29,53 @@ theorem planCounterScratch_contract (A B : Arena) (width : Nat)
     · simpa only [List.take_append_drop] using hc.2.1
     · simpa only [List.take_append_drop] using hc.2.2
 
+theorem planCounterScratch_capacity (A : Arena) (width : Nat) :
+    (∃ B zero carry,planCounterScratch A width=some (B,zero,carry)) ↔
+      A.live.card+(2*width-1)≤935 := by
+  constructor
+  · rintro ⟨B,zero,carry,h⟩
+    apply (A.borrowMany_capacity (2*width-1)).mp
+    unfold planCounterScratch at h
+    cases hb : A.borrowMany (2*width-1) with
+    | none => simp [hb] at h
+    | some pair => exact ⟨pair.1,pair.2,rfl⟩
+  · intro h
+    obtain ⟨B,qs,hb⟩ := (A.borrowMany_capacity (2*width-1)).mpr h
+    exact ⟨B,qs.take width,qs.drop width,by simp [planCounterScratch,hb]⟩
+
+theorem planCounterScratch_nodup (A B : Arena) (active swap : Wire)
+    (z zero carry : List Wire) (hz : 1≤z.length)
+    (hn : (active::swap::z).Nodup) (hown : (active::swap::z).toFinset⊆A.live)
+    (hplan : planCounterScratch A z.length=some (B,zero,carry)) :
+    (active::swap::(zero++z++carry)).Nodup := by
+  have hc := planCounterScratch_contract A B z.length zero carry hz hplan
+  have hv := (A.reserve_success (zero++carry).toFinset).mp ⟨B,hc.2.2.2⟩
+  have full : ((active::swap::z)++(zero++carry)).Nodup := by
+    apply List.nodup_append.mpr
+    refine ⟨hn,hc.2.2.1,?_⟩
+    intro a ha b hb he
+    subst b
+    exact Finset.disjoint_left.mp hv.2 (hown (List.mem_toFinset.mpr ha))
+      (List.mem_toFinset.mpr hb)
+  apply List.nodup_iff_count.mpr
+  intro a
+  have hh := List.nodup_iff_count.mp full a
+  simp only [List.count_append,List.count_cons] at hh ⊢
+  omega
+
+theorem counterUpdate_borrowed_support (A B : Arena) (active swap : Wire)
+    (z zero carry : List Wire) (hz : zero.length=z.length) (hc : carry.length+1=z.length)
+    (hown : (active::swap::z).toFinset⊆A.live)
+    (hborrow : A.reserve (zero++carry).toFinset=some B) :
+    wires (counterUpdate active swap zero z carry)⊆arenaWires := by
+  have hv := (A.reserve_success (zero++carry).toFinset).mp ⟨B,hborrow⟩
+  refine (counterUpdate_wires_subset active swap zero z carry hz hc).trans ?_
+  intro q hq
+  have cases : q∈(active::swap::z).toFinset ∨ q∈(zero++carry).toFinset := by
+    simp only [List.mem_toFinset,List.mem_cons,List.mem_append] at hq ⊢
+    tauto
+  exact cases.elim (fun h => A.bounded (hown h)) (fun h => hv.1 h)
+
 /-- Counter scratch is borrowed after row shrinkage and returned after the
 actual measured ripple update. Its addresses need not be disjoint from the
 previous, larger row views. -/

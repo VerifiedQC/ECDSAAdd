@@ -206,4 +206,46 @@ theorem planRowResize_old_sites (A B : Arena) (r out : WindowRow) (width : Nat) 
       exact hw.elim (fun h => Or.inl (List.mem_of_mem_take h)) Or.inr
   next invalid => simp at h
 
+/-- Public compilation cannot fail when the row is owned and the requested
+new payload bits fit the remaining physical arena. -/
+theorem planRowResize_exists (A : Arena) (r : WindowRow) (width : Nat)
+    (hn : (r.sign::r.payload).Nodup) (hown : (r.sign::r.payload).toFinset⊆A.live)
+    (hcap : A.live.card+(width-r.payload.length)≤935) :
+    ∃ B out p,planRowResize A r width=some (B,out,p) := by
+  unfold planRowResize
+  rw [if_pos ⟨hn,hown⟩]
+  split
+  next hg =>
+    obtain ⟨B,qs,hb⟩ := (A.borrowMany_capacity (width-r.payload.length)).mpr hcap
+    refine ⟨B,⟨r.payload++qs,r.sign⟩,growRow r.sign qs,?_⟩
+    simp [hb]
+  next hg => exact ⟨_,_,_,rfl⟩
+
+theorem planRowResize_live_bound (A B : Arena) (r out : WindowRow) (width : Nat) (p : Program)
+    (h : planRowResize A r width=some (B,out,p)) :
+    B.live.card≤A.live.card+(width-r.payload.length) := by
+  unfold planRowResize at h
+  split at h
+  next valid =>
+    split at h
+    next grow =>
+      cases hb : A.borrowMany (width-r.payload.length) with
+      | none => simp [hb] at h
+      | some result =>
+        rcases result with ⟨C,qs⟩
+        simp only [hb] at h
+        cases h
+        have hc := A.borrowMany_contract C _ qs hb
+        have hv := (A.reserve_success qs.toFinset).mp ⟨C,hc.2.2⟩
+        have live : C.live=A.live∪qs.toFinset := by
+          have hh := hc.2.2
+          simp only [Arena.reserve,dif_pos hv,Option.some.injEq] at hh
+          cases hh
+          rfl
+        rw [live,Finset.card_union_of_disjoint hv.2,List.toFinset_card_of_nodup hc.2.1,hc.1]
+    next shrink =>
+      cases h
+      exact le_trans (Finset.card_le_card Finset.sdiff_subset) (Nat.le_add_right _ _)
+  next invalid => simp at h
+
 end ECDSAAdd.Arithmetic.Paper935

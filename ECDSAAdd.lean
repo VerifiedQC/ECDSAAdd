@@ -205,3 +205,8 @@ import ECDSAAdd.Arithmetic.Paper935.RowAllocation
 import ECDSAAdd.Arithmetic.Paper935.WindowAllocator
 import ECDSAAdd.Arithmetic.Paper935.WindowRows
 import ECDSAAdd.Arithmetic.Paper935.WindowBank
+import ECDSAAdd.Arithmetic.Paper935.CounterBorrow
+import ECDSAAdd.Arithmetic.Paper935.WindowCounter
+import ECDSAAdd.Arithmetic.Paper935.WindowRouted
+import ECDSAAdd.Arithmetic.Paper935.WindowStep
+import ECDSAAdd.Arithmetic.Paper935.WindowHeadroom
