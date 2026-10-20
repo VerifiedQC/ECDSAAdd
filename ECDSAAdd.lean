@@ -277,8 +277,6 @@ import ECDSAAdd.Arithmetic.Paper935.HistoryCompiler
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerReady
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRelease
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerRun
-
-import ECDSAAdd.Arithmetic.Paper935.HistoryBudget
 import ECDSAAdd.Arithmetic.Paper935.AuthorHistoryCapacity
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkCompiler
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkStages
@@ -288,3 +286,7 @@ import ECDSAAdd.Arithmetic.Paper935.HistoricalWalkResources
 import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerLengths
 import ECDSAAdd.Arithmetic.Paper935.HistoryWindowBounds
 import ECDSAAdd.Arithmetic.Paper935.WalkSeed
+
+import ECDSAAdd.Arithmetic.Paper935.HistoryBudget
+
+import ECDSAAdd.Arithmetic.Paper935.AuthorHistoryBudget
