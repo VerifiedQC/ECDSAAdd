@@ -105,3 +105,31 @@ inverse calls plus the explicit core. This is a large Montgomery reference
 adapter, not a 935-qubit implementation. The actual compact inverse endpoint,
 physical placement in the point backend, compact multiplication, numerical
 failure bounds, and the complete 935-space schedule remain separate obligations.
+
+### Concrete reference point placement
+
+`PointInverseEndpoint.backend` binds the inverse endpoint to the existing point
+caller. The denominator is the caller's 256-bit X register plus a clean padding
+bit at pool offset 2341. Product work occupies offsets 0–1826, the inverse
+occupies 1827–2083, and the temporary occupies 2084–2340. Width, nonaliasing,
+clean initial values and support within the declared point pool are proved from
+the existing point layout. This is an actual placement, not a capacity estimate.
+
+The resulting `ConditionalPointArithmeticBackend` uses the recorded quotient
+adapter for division and the existing exact Skywalk reference for multiplication.
+It can be passed directly to `ConditionalPointDialog` and `PointInputEncoding.budget`.
+Only the division call inherits the inverse success predicate. An endpoint still
+must supply its actual recorded program, arbitrary-target XOR correctness, valid
+record references, support, and a clean workspace avoiding the numerator and
+inverse output. No endpoint existence, numerical success probability, or 935-space
+bound follows from this constructor.
+
+`PointInverseEndpoint.callInput` identifies the actual denominator/control pair
+for each original controlled point input (and `none` for addition of infinity).
+The enabled denominator is proved nonzero. `bad_mass` pushes the original point
+law through this map exactly; it never substitutes a uniform inverse-input law.
+`budget` and `budget_of_events` feed that bound into the full encoded point-add
+quantum theorem, with the four event bounds and their coverage still explicit.
+`enabled_zero_mass` proves that enabled zero-denominator calls have zero mass.
+Numerical bounds for counter/history overflow, freeze deadline and width-window
+failures are not supplied here.
