@@ -51,3 +51,26 @@ repack, signed input encoding, zero hosts/pool at each boundary, Horner's
 output/cleanup, HMR phase correction, and complete lifecycle/935 support.
 The row-fold output equals the model scan word via PR200's
 `fusedRowFoldSource_of_good` and PR196's `FusedCall.scanWord_eq`.
+
+## Lean boundary bindings
+
+`FusedBoundaryLayout` reads the actual compiled endpoint row length (280)
+and proves that an explicit relocation journal preserves this length and
+distinctness. Finite lift and fold placements use list lookup; their
+injectivity follows from row/host ownership and a successful 24-wire pool
+reservation. Fold order is `R.drop 256 ++ R.take 256 ++ Z ++ P.take 1`.
+The allocator has capacity for this pool after the compiled closer.
+
+`FusedBoundaryZero` transports an explicitly zero initial A host through the
+actual seeded walk and closer using their proven support exclusion. Actual
+successful closer readiness and pool reservation imply every pool bit is
+zero. HMR demolition clears every word bit for every tape, including an
+absolute recorded cursor; an explicit repack transports those zero bits.
+No HMR phase-restoration theorem is asserted here.
+
+Still uninstantiated: the concrete journal chosen by the source closer's
+`_repack()` (the existing Lean closer releases payloads but does not compile
+that source selection), its post-repack ownership transaction, and the
+three full caller programs. The maps are finite injective reference maps,
+not yet complete renamed lift/fold executions. The s6 inverse-scan zero
+boundary remains the Horner contract, not an assumption discharged here.
