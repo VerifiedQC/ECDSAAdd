@@ -3382,6 +3382,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_decoders
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_history_undo
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.scalingNoBorrow_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.authorScalingNoBorrow_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.foldedActive_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.mem_authorScalingFailure
+#print axioms ECDSAAdd.Arithmetic.Paper935.not_mem_authorScalingFailure
+#print axioms ECDSAAdd.Arithmetic.Paper935.scalingExclusive_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_pairwise
+#print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_mass
+
 LEAN
 )
 task_axiom_lean_rc=$?
