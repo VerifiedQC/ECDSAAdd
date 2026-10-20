@@ -133,3 +133,18 @@ quantum theorem, with the four event bounds and their coverage still explicit.
 `enabled_zero_mass` proves that enabled zero-denominator calls have zero mass.
 Numerical bounds for counter/history overflow, freeze deadline and width-window
 failures are not supplied here.
+
+### Physical validity of the quotient adapter
+
+`InverseQuotientRecorded.realize` now constructs a coherent circuit typing for
+the actual recorded quotient program from the inverse endpoint's physical
+validity, record validity and finite support. The quotient core's ordinary gate
+target/control conditions are proved from the register layout, including all
+Montgomery lookup, measured addition/subtraction, normalization, rotation and
+cleanup stages. These conditions hold on every input, including failed inputs;
+they are not inferred from good-input arithmetic correctness.
+
+`RecordedPhysical` supplies relocation/composition lemmas that preserve ordinary
+gate validity. Measurements remain explicit typed constructors, with their saved
+records relocated normally. Full point-program physical validity (including the
+legacy multiplication arm and other point stages) is still a separate obligation.
