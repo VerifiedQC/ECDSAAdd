@@ -2806,6 +2806,22 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepthProgram_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepthMask_five
 #print axioms ECDSAAdd.Arithmetic.Paper935.finiteDepth_cancel
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.run_eq
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.test_eq_zero
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.counts
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.support
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.physical
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.shared_support
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.qubits_le
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_inputs
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_work
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_clean
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_run
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_counts
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_qubits_le
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_support
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.chunks_physical
+#print axioms ECDSAAdd.Arithmetic.BlockedZero.six_bit_qubits_le
 LEAN
 )
 task_axiom_lean_rc=$?
