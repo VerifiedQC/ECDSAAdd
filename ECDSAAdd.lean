@@ -290,3 +290,10 @@ import ECDSAAdd.Arithmetic.Paper935.WalkSeed
 import ECDSAAdd.Arithmetic.Paper935.HistoryBudget
 
 import ECDSAAdd.Arithmetic.Paper935.AuthorHistoryBudget
+import ECDSAAdd.Arithmetic.Paper935.HistoryPhysical
+import ECDSAAdd.Arithmetic.Paper935.ZeroViews
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerTotal
+import ECDSAAdd.Arithmetic.Paper935.BorrowGeometry
+import ECDSAAdd.Arithmetic.Paper935.BorrowedHistoryTotal
+import ECDSAAdd.Arithmetic.Paper935.HistoryCompilerSupport
+import ECDSAAdd.Arithmetic.Paper935.HistoricalSlotTotal
