@@ -91,7 +91,7 @@ theorem chunks_support (c target : Wire) (xs : List (Wire × List Wire)) (scratc
 
 theorem chunks_physical (c target : Wire) (xs : List (Wire × List Wire)) (scratch : List Wire)
     (hv : Valid c target (chunks xs scratch)) :
-    RecordedQuantum.GatePhysical (program c target (chunks xs scratch)) :=
+    GatePhysical (program c target (chunks xs scratch)) :=
   physical c target _ hv
 
 /-- With at most 43 blocks of at most six bits, a 256-bit row uses no more
