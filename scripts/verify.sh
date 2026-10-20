@@ -3273,6 +3273,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_good_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_run
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_static_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_arithmetic_undo
+#print axioms ECDSAAdd.Arithmetic.Paper935.walkUndoConditions_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalk_reverse_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_arithmetic_undo
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_reverse_of_history
+#print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_stopping_time
+#print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_scaled_inverse
+
 LEAN
 )
 task_axiom_lean_rc=$?
