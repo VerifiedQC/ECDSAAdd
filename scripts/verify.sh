@@ -3065,6 +3065,38 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_ports
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.compilePost_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.bankOfRows_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.bankOfRows_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBankResize_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_post_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_qubits
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_pinStep
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_front
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_unarmed
+#print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_armed
+#print axioms ECDSAAdd.Arithmetic.Paper935.unarmedPost_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_post_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_post_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.routedCandidate_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileRoutedBank_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.layouts
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.run_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotRegisters.Values.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.padding_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotRegisters.output_from_post
+#print axioms ECDSAAdd.Arithmetic.Paper935.unarmedPost_pinStep
+
 LEAN
 )
 task_axiom_lean_rc=$?
