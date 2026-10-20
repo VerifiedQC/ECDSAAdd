@@ -3823,6 +3823,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryEraseReady_forward
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryUnsweep_erase
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarrySweep_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryGeometry_of_nodup
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryAdvance_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryEraseReady_of_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarrySweep_erase_of_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBackward_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryUnsweep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryFinish_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryFinishSweep_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryAdvance_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryAdvance_block_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryFinishReady_of_advance
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBlock_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerWordSum_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerWordSum_carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryResult_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBlock_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryAdvance_top
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryFinishSweep_top
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryResult_top
+#print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBlock_fullValue
 
 LEAN
 )

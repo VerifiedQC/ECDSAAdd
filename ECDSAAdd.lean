@@ -501,3 +501,11 @@ import ECDSAAdd.Arithmetic.Paper935.FusedRowFoldValue
 import ECDSAAdd.Arithmetic.Paper935.FusedMagnitudePhysical
 import ECDSAAdd.Arithmetic.Paper935.FusedBoundaryZero
 import ECDSAAdd.Arithmetic.Paper935.FusedRepackAllocation
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryGeometry
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryBackward
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryFinishSweep
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryFinishFrame
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryValid
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryMath
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryValue
+import ECDSAAdd.Arithmetic.Paper935.HornerCarryHigh
