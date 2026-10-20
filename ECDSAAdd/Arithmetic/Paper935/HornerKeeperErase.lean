@@ -1,5 +1,5 @@
 import ECDSAAdd.Arithmetic.Paper935.HornerCarryOracle
-import ECDSAAdd.Arithmetic.Paper935.HornerDress
+import ECDSAAdd.Arithmetic.Paper935.HornerDressValues
 import ECDSAAdd.Arithmetic.Paper935.HornerKeeperMath
 
 namespace ECDSAAdd.Arithmetic.Paper935
@@ -76,5 +76,31 @@ theorem hornerKeeperErase_of_values (ctrl keeper : Wire) (dress : List Wire) (pr
   apply hornerKeeperErase_run ctrl keeper dress prev bs cin s m distinct dressND separate keeperAway carryAway clean
   rw [input,saved]
   exact hornerWordCarry_after_sum bs _ a e c (s.basis ctrl) ha he low addend
+
+/-- Raw register invariants suffice: the accumulator is the controlled low
+sum, the quantum addend is restored, and the keeper stores the original carry.
+The incoming-carry equation distinguishes first and later source blocks. -/
+theorem hornerKeeperErase_from_sum (ctrl keeper : Wire) (dress : List Wire) (prev : Option Wire)
+    (bs : List HornerCarryCell) (cin : Option Wire) (s : State) (m : List Bool)
+    (a e : Nat) (c : Bool)
+    (distinct : (keeper::(cin.toList++hornerCarryPorts bs)).Nodup)
+    (dressND : (ctrl::(dress++prev.toList)).Nodup) (separate : ctrl≠keeper)
+    (keeperAway : keeper∉dress++prev.toList) (carryAway : ∀b∈bs,b.carry∉dress++prev.toList)
+    (clean : ∀b∈bs,s.basis b.carry=false)
+    (ha : a<2^bs.length) (he : e<2^bs.length)
+    (saved : s.basis keeper=decide (2^bs.length≤a+e+c.toNat))
+    (low : regValue (bs.map HornerCarryCell.target) s.basis=
+      if s.basis ctrl then (a+e+c.toNat)%2^bs.length else a)
+    (addend : regValue (bs.map HornerCarryCell.addend) s.basis=e)
+    (targetOutside : ∀q∈bs.map HornerCarryCell.target,q∉dress++prev.toList)
+    (addendInside : ∀q∈bs.map HornerCarryCell.addend,q∈dress++prev.toList)
+    (input : (cin.map (fun q => if q∈dress++prev.toList then s.basis q ^^ s.basis ctrl else s.basis q)).getD false=
+      (c ^^ s.basis ctrl)) :
+    run (hornerKeeperErase ctrl keeper dress prev bs cin) m s=⟨s.phase,writeBit s.basis keeper false⟩ := by
+  apply hornerKeeperErase_of_values ctrl keeper dress prev bs cin s m a e c distinct dressND separate
+    keeperAway carryAway clean ha he saved
+  · exact (hornerDress_word_frame _ _ _ _ targetOutside).trans low
+  · rw [hornerDress_word _ _ _ _ addendInside,addend,List.length_map]
+  · exact input
 
 end ECDSAAdd.Arithmetic.Paper935
