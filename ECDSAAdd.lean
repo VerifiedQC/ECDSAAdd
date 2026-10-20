@@ -326,3 +326,15 @@ import ECDSAAdd.Arithmetic.Paper935.WalkStaticBudget
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkBudgets
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkStaticTotal
 import ECDSAAdd.Arithmetic.Paper935.AuthorWalkRealized
+import ECDSAAdd.Arithmetic.Paper935.SlotMathGeometry
+import ECDSAAdd.Arithmetic.Paper935.SlotStaticMathChecks
+import ECDSAAdd.Arithmetic.Paper935.PostMathGeometry
+import ECDSAAdd.Arithmetic.Paper935.WalkMathGeometry
+import ECDSAAdd.Arithmetic.Paper935.AuthorWalkMathGeometry
+import ECDSAAdd.Arithmetic.Paper935.SlotIntermediateBounds
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotStaticRun
+import ECDSAAdd.Arithmetic.Paper935.WindowRowsLocality
+import ECDSAAdd.Arithmetic.Paper935.RoutedLayoutSupport
+import ECDSAAdd.Arithmetic.Paper935.SlotFrontLocality
+import ECDSAAdd.Arithmetic.Paper935.PublicSlotLocality
+import ECDSAAdd.Arithmetic.Paper935.PinInvariants
