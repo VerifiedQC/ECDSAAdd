@@ -431,3 +431,9 @@ import ECDSAAdd.Arithmetic.Paper935.ExitOwned
 import ECDSAAdd.Arithmetic.Paper935.CloserCapacity
 import ECDSAAdd.Arithmetic.Paper935.CloserWalk
 import ECDSAAdd.Arithmetic.Paper935.CloserResources
+import ECDSAAdd.Arithmetic.Paper935.Fold32Program
+import ECDSAAdd.Arithmetic.Paper935.Fold32Ready
+import ECDSAAdd.Arithmetic.Paper935.Fold32Invariant
+import ECDSAAdd.Arithmetic.Paper935.Fold32Cleanup
+import ECDSAAdd.Arithmetic.Paper935.Fold32Value
+import ECDSAAdd.Arithmetic.Paper935.Fold32Word
