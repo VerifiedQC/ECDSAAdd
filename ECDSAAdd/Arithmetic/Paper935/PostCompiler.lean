@@ -32,7 +32,7 @@ theorem postStaticCheck_iff (P : WindowPostLayout) : postStaticCheck P ↔ P.Val
   · intro h
     exact ⟨h.probe,h.record,h.zfFrozen,h.fireFrozen,h.fireRecord,h.frozenRecord,h.offsetFits,h.activeFire,h.activeFrozen,h.activeRecord,h.activeZf,h.zfFire,h.zfRecord,h.stable,h.compare,h.witnessFire,h.frozenWitness,h.fireWork,h.workFrame,h.remint⟩
 
-instance (P : WindowPostLayout) : Decidable P.Valid :=
+instance postValidDecidable (P : WindowPostLayout) : Decidable P.Valid :=
   have : Decidable (postStaticCheck P) := by unfold postStaticCheck; infer_instance
   decidable_of_iff (postStaticCheck P) (postStaticCheck_iff P)
 
@@ -88,5 +88,11 @@ theorem compileBorrowedPost_contract (A D : Arena) (armed : Bool) (one zf frozen
       simp only [hc] at h
       rcases h with ⟨rfl,rfl,rfl⟩
       exact ⟨rfl,hc⟩
+
+/-- The actual armed post-stage can share eleven work wires between a
+26-bit probe and six-bit freeze-offset comparison. -/
+theorem compilePost_shared_example :
+    (compilePost true 0 1 2 3 4 (List.range' 5 26)
+      (List.range' 31 6) (List.range' 37 11) 6 1).isSome=true := by decide
 
 end ECDSAAdd.Arithmetic.Paper935

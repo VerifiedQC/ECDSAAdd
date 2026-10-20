@@ -24,7 +24,7 @@ theorem routedStaticCheck_iff (L : RoutedBankLayout) : routedStaticCheck L ↔ L
   · intro h
     exact ⟨h.addFG,h.addV,h.half,h.double,h.gSep,h.vSep,h.activeSep,h.fgLength,h.vLength,h.route,h.controls,h.fSep⟩
 
-instance (L : RoutedBankLayout) : Decidable L.Valid :=
+instance routedValidDecidable (L : RoutedBankLayout) : Decidable L.Valid :=
   have : Decidable (routedStaticCheck L) := by unfold routedStaticCheck List.Disjoint; infer_instance
   decidable_of_iff (routedStaticCheck L) (routedStaticCheck_iff L)
 

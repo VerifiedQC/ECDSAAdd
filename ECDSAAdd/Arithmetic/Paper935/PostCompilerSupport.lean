@@ -39,7 +39,7 @@ theorem WindowPostLayout.ports_partition (P : WindowPostLayout) :
     · exact record (List.mem_map.mpr ⟨x,hx,rfl⟩)
     · exact scratch (by simp [WindowPostLayout.scratch,List.mem_map_of_mem hx])
 
- theorem compilePost_ports (armed : Bool) (one zf frozen fire active : Wire)
+theorem compilePost_ports (armed : Bool) (one zf frozen fire active : Wire)
     (inputs record work : List Wire) (width offset : Nat) (P : WindowPostLayout)
     (h : compilePost armed one zf frozen fire active inputs record work width offset=some P) :
     P.ports.toFinset⊆(one::zf::frozen::fire::active::(inputs++record++work)).toFinset := by

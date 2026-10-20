@@ -246,3 +246,11 @@ import ECDSAAdd.Arithmetic.Paper935.BorrowedDepth
 import ECDSAAdd.Arithmetic.Paper935.BorrowedDepthReady
 import ECDSAAdd.Arithmetic.Paper935.DepthListCompiler
 import ECDSAAdd.Arithmetic.Paper935.BorrowedDepthsRun
+import ECDSAAdd.Arithmetic.Paper935.RoutedCompiler
+import ECDSAAdd.Arithmetic.Paper935.ProbeCompiler
+import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerReady
+import ECDSAAdd.Arithmetic.Paper935.ProbeCompilerSupport
+import ECDSAAdd.Arithmetic.Paper935.PostCompiler
+import ECDSAAdd.Arithmetic.Paper935.PostCompilerReady
+import ECDSAAdd.Arithmetic.Paper935.BorrowedPostRun
+import ECDSAAdd.Arithmetic.Paper935.PostCompilerSupport
