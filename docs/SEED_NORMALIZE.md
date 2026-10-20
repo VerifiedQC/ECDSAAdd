@@ -59,8 +59,21 @@ The shared arithmetic premise is `AuthorScalingNoBorrow` (and its decomposition
 `authorScalingNoBorrow_parts`): first 498 seam halvings, then rider activity,
 with the rider starting at the seam output. No new seed reset or different
 input distribution is permitted. Lamport owns the actual fold/seam/rider
-interfaces and overall placement; their exact interface names will be recorded
-when the handoff is available.
+interfaces and overall placement. The handoff names are `foldSeam_contract` /
+`foldSeam498_correct`, `foldHalve_contract` / `foldHalve_correct`, and
+`foldRider_contract` / `foldRider_correct`. These interfaces are under development
+in his branch; this PR does not claim their composition. They require 17 actual
+zero auxiliary wires, with the high zero bit preserved separately.
+
+The compact allocation must start from `walkExitBank walkSeedBank slots`,
+`walkExitArena walkSeedArena slots`, and `walkExitRecord [] slots`.
+`seededAuthorWalk_run` supplies exit `Arena.Ready`. Only
+`arenaWires \ exitArena.live` is available to borrow: zero-valued live rows,
+records and controls still needed for reverse execution cannot be retired merely
+because their values are zero. The planned scaling placement preserves the
+entire exit live set plus the 256 output wires; the 17 scaling auxiliaries must
+be reserved outside that set. Their availability still needs a proof. The rider
+alive control is planned to use `walkRegisters.active`.
 
 ## Remaining physical obligations
 
