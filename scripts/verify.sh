@@ -3844,6 +3844,29 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryResult_top
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBlock_fullValue
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlotWidth_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlotWidth_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_depth_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_selector
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_six
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_static_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.historicalViewsWidth
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlotWidth_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_exit_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_lengths
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrWalk_dials
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistoricalBudgets
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrWalkSeed_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrWalkSeed_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrWalkSeed_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrWalkSeed_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.historyViewsWidth_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_static_exists
+
 LEAN
 )
 task_axiom_lean_rc=$?
