@@ -3468,6 +3468,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.wideSignedFold_mod
 #print axioms ECDSAAdd.Arithmetic.Paper935.wideSignedFold_signed
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold32PlacedReduce_wide_input
+#print axioms ECDSAAdd.Arithmetic.Paper935.wideMagnitudeFold_parts_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.wideMagnitudeFold_bound_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.wideSignedFold_bound_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.wideSignedFold_mod_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.wideSignedFold_signed_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.fold32PlacedReduce_wide_input_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.value_natAbs_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_fv_natAbs_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_fv_fold
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256Place_injective
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_low_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.fold256_frame
