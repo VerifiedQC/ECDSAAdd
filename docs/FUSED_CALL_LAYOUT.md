@@ -101,3 +101,20 @@ Builder allocation includes reserved but currently free home-band slots;
 it is not the logical live ownership set used by `Arena.checkRepack`.
 The export is evidence of source selection, not a Lean proof that the
 compiled walk reaches those views or that its destinations are clean.
+
+## Compiled walk parameter mismatch
+
+The current `compileAuthorWalk` is not a gate-by-gate certificate for the
+selected HMR entry. `HistoricalWalkCompiler.historyWindow` retains at least
+seven fv bits, `walkRegisters` has a seven-bit counter, and
+`AuthorDecoderUndo` uses threshold seven with decoder depths two through
+six. The selected source HMR configuration instead has Wz=6, stores history
+at j5p and decodes depths two through four. Its schedule tables were used
+by the existing Lean instance, but those matching tables alone do not
+establish matching compiler parameters.
+
+The existing 907/28 and 620/315 bounds apply to that Lean instance only.
+Before binding these concrete HMR journals to a complete caller, the walk
+parameters and corresponding compilation certificates must be reconciled.
+The source export, generic placement/zero lemmas and shared row arithmetic
+remain usable independently; none discharges this missing correspondence.
