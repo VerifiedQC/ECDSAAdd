@@ -140,3 +140,19 @@ The generic free program is proved, but its fresh-prefix compiler and the
 reverse multi-block deallocation are still being connected. Whole-walk
 compilation success, global phase-debt cancellation and the final peak
 certificate remain separate unfinished obligations.
+
+The fresh-prefix free compiler is now connected. compileHmrBlockFree borrows
+only length(literals)-2 sites, validates their roles, and executes the actual
+prefix recomputation and measured retirement. compileHmrBlockDrop checks
+return of that prefix and the old keeper. compileHmrBlockedDrop emits these
+block releases in reverse block order (it never reverses a measured gate
+list). compileHmrBlocked_roundtrip proves full state/phase and original arena
+restoration for separately compiled keep/drop plans and arbitrary two tapes.
+
+Actual program counts are proved at chain and block level, along with
+ordinary-gate legality. These roundtrips alone do not yet cover intervening
+F7/F16/R13 operations; their frame/value bindings must be composed with the
+zero-test lifetimes. The existing retained-sigma arithmetic front also keeps
+the old arithmetic/counter schedule: its counterUpdate follows resize,
+whereas source F5 precedes F6. It is a proved arithmetic component, not an
+assertion of literal source gate order.

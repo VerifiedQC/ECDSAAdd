@@ -4080,6 +4080,29 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_value
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockFreePlan.run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockFree_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockFree_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockFree_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockDrop_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockDrop_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralAll_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlock_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndSweep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainKeep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainFree_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralCopy_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockPlan.counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockFreePlan.counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPolar_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndSweep_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderOutput_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralCopy_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockPlan.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockFreePlan.physical
+
 LEAN
 )
 task_axiom_lean_rc=$?

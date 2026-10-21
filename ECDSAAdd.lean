@@ -587,3 +587,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrBlockedCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrBlockKeepFrame
 import ECDSAAdd.Arithmetic.Paper935.HmrBlockedValue
 import ECDSAAdd.Arithmetic.Paper935.HmrZeroCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrBlockFreeCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrBlockFreeRelease
+import ECDSAAdd.Arithmetic.Paper935.HmrBlockDropCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrBlockRoundtrip
+import ECDSAAdd.Arithmetic.Paper935.HmrBlockedDrop
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperCounts
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperPhysical
