@@ -3928,6 +3928,30 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.repackedMagnitude_encoding
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2RepackedMagnitude_encoding
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6RepackedMagnitude_encoding
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.data
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.scratch
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.support
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.lift
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.fold
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulLayout.parked
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulInputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulPre
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulSpec
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowMulInvSpec
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrRowUnparkSpec
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowMul_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.repacked_hmrRowMul_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrRowMul_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrRowMul_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrUnpark_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrErase_consumer
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArenaLease
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArenaLease.release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_s2_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_s6_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArenaTransfer
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_schedule
 LEAN
 )
 task_axiom_lean_rc=$?

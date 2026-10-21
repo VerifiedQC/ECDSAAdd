@@ -541,3 +541,7 @@ import ECDSAAdd.Arithmetic.Paper935.FusedPlacedBorrow
 import ECDSAAdd.Arithmetic.Paper935.FusedSignedPlacement
 
 import ECDSAAdd.Arithmetic.Paper935.FusedRepackedInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSpec
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulConsumer
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaSchedule
