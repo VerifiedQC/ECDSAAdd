@@ -552,3 +552,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrZero6Keeper
 import ECDSAAdd.Arithmetic.Paper935.HmrZero6Free
 import ECDSAAdd.Arithmetic.Paper935.HmrZero6Cycle
 import ECDSAAdd.Arithmetic.Paper935.HmrClassFlags
+import ECDSAAdd.Arithmetic.Paper935.HmrBranchAssembly
+import ECDSAAdd.Arithmetic.Paper935.HmrRecordFixup
+import ECDSAAdd.Arithmetic.Paper935.HmrClassValues

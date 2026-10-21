@@ -30,3 +30,18 @@ These are source component programs, not an update to `compileHmrWalk`.
 Actual allocation and lifetime binding, branch assembly, deferred record
 phase correction, full walk semantics, and B5 events remain unfinished.
 The counts above do not establish the full walk or point-addition peak.
+
+`hmrClass_signed_value` relates the flag formula to a signed nonpositive
+counter using the existing proved positive-counter predicate, with an
+explicit binding of the zero-test port. `HmrBranchAssembly` implements R7:
+prediction and parity are copied, and the armed path additionally copies
+`fire && !parity` through a measured temporary AND. Only the branch output
+changes; the armed part costs one Toffoli and one measurement.
+
+`HmrRecordFixup` implements the literal R11 X/CZ/X dressing, reading the
+old forward outcome by absolute ordinal. It changes phase by that outcome
+AND branch AND not-j5p, leaves every basis bit unchanged, consumes no new
+measurement, and is well formed when the ordinal precedes the current
+cursor. This local phase formula does not establish cancellation of the
+complete walk's forward measurement debt; the actual earlier value still
+has to be related to the reconstructed branch.

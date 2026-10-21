@@ -3945,6 +3945,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrClass_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrClass_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrClass_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchAssembly_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchAssembly_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRecordFixup_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRecordFixup_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRecordFixup_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClass_signed_value
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderErase_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_compute_erase
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_full_counts
