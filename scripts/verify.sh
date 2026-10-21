@@ -4137,6 +4137,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFreezeEnd_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.fire_away
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.cycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainAndKeep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClearKeepers_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClearKeepers_restore
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClearKeepers_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrReverseFire_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreeze_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreeze_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreeze_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreezeKeep_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreezeKeep_mint
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreezeKeep_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreeze_fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrUnfreeze_cycle
 
 LEAN
 )

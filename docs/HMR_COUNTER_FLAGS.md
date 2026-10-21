@@ -190,3 +190,19 @@ and an unfrozen lane has zero record). The body still owes explicit
 support/ownership conditions; this theorem does not assume or establish
 that an entire source walk has already been compiled. R1/R13, global R11
 phase cancellation, and the full source arithmetic schedule remain open.
+
+R1 and R13 now have separate source-order allocation and execution proofs.
+R1 compiles the live equality ladder, borrows fireR, computes eqt AND frz,
+then releases the ladder before toggling frozen and the record. Its keep
+compiler returns the comparison work while retaining all old live ports
+and fireR; the subsequent record fan preserves the returned arena's Ready.
+R13 compiles a size-8 zero test, retires fireR against zero AND NOT frozen,
+then frees the zero-test keepers with fresh prefixes. Its actual execution
+restores every bit except the cleared fireR and preserves phase.
+
+`hmrUnfreeze_cycle` connects R1 and R13 around a body with explicit support
+conditions. The R13 witness follows from R1 execution and the successful
+lane invariant that entry g=0 agrees with frozen; it is not supplied as an
+assumed fireR output equation. The invariant and the body's frame must
+still be instantiated from the entire physical walk. These components do
+not yet prove global R11 cancellation or source arithmetic correspondence.

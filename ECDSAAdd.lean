@@ -611,3 +611,11 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFireRelease
 import ECDSAAdd.Arithmetic.Paper935.HmrFireDrop
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeEnd
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCycle
+import ECDSAAdd.Arithmetic.Paper935.HmrChainAndKeep
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperRestore
+import ECDSAAdd.Arithmetic.Paper935.HmrReverseFire
+import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeRun
+import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeRelease
+import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeWitness
+import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeCycle
