@@ -4166,6 +4166,29 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPop_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_transfer
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrOddResidue8
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrOddResidue16
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBit8_residue
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBit16_residue
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBit_shift3
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBit_shift4
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrDecoderBits.bindings
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCast8_residue
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDepth3Binding_of_bits
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCast16_residue
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDepth4Binding_of_bits
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagDepthBits
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_depths
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowPos_bit
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowDecoder_bits
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRowDecoder_run
+
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClassValue_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRecoverClass_conditions
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRowFlags_depths
+
 LEAN
 )
 task_axiom_lean_rc=$?

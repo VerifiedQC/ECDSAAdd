@@ -50,8 +50,23 @@ then connect the actual cached gates to the old branch. They require explicit
 selector, bit/residue, invariant, and negative-counter hypotheses; they do
 not assume that the decoder already computes that branch.
 
-The concrete walk compiler has not yet been changed to allocate and execute
-these source blocks. Physical row/selector bindings, source branch assembly
-and record-phase correction, whole-walk semantics, and updated B5 events
-remain open. No full source-walk equivalence or whole-point-add 935-wire
-bound is claimed by these component theorems.
+The physical-read bridge now constructs the finite residue witnesses from the
+integer coefficients. `hmrRowPos_bit` proves source WRow.pos reads through bit
+seven, including arbitrary short rows and repeated sign-wire reads.
+`compileHmrRowDecoder_run` connects actual decoder allocation and signed row
+values to the mathematical prediction; it does not assume individual bit
+bindings, finite residue witnesses, or the decoder output. Selector values
+and the enabled negative-counter condition remain explicit inputs.
+`compileHmrFlags_depths` derives selectors and j5p from actual shared-flag
+gates, coefficient bits, and the conditional divisibility-by-four invariant.
+
+The history transfer and local F13/F17/R5/R6/R7/R11/R12 composition now derive
+the old-record phase cancellation from the actual forward measurement and
+restore the decoder scratch while retaining the recovered branch. This is a
+local composition, not the nested whole-walk pending-phase invariant.
+
+The concrete whole-walk compiler has not yet been changed to allocate and
+execute all these source blocks. Class/selector composition, source arithmetic
+scheduling, the global record-phase invariant, whole-walk semantics, and
+updated B5 events remain open. No full source-walk equivalence or whole-point-add
+935-wire bound is claimed by these component theorems.

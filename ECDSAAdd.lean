@@ -631,3 +631,14 @@ import ECDSAAdd.Arithmetic.Paper935.HmrHistoryDecodeRecover
 import ECDSAAdd.Arithmetic.Paper935.HmrHistoryFixup
 import ECDSAAdd.Arithmetic.Paper935.HmrHistoryPop
 import ECDSAAdd.Arithmetic.Paper935.HmrHistoryTransfer
+import ECDSAAdd.Arithmetic.Paper935.HmrCanonicalResidues
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderBitBindings
+import ECDSAAdd.Arithmetic.Paper935.HmrDepth3Bits
+import ECDSAAdd.Arithmetic.Paper935.HmrDepth4Bits
+import ECDSAAdd.Arithmetic.Paper935.HmrFlagDepthBits
+import ECDSAAdd.Arithmetic.Paper935.HmrFlagsMath
+import ECDSAAdd.Arithmetic.Paper935.HmrRowBits
+import ECDSAAdd.Arithmetic.Paper935.HmrRowDecoder
+import ECDSAAdd.Arithmetic.Paper935.HmrClassMath
+import ECDSAAdd.Arithmetic.Paper935.HmrFlagsState
+import ECDSAAdd.Arithmetic.Paper935.HmrRowFlags
