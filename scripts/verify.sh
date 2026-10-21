@@ -3911,6 +3911,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_of_good
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_outside
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedRowFold_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedRowFold_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacement_payload
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacement_payload
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacement_pool_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedLift_fold_encoding
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -142,3 +142,14 @@ and restores every wire outside the placed low row, including the borrowed
 word and carry. Signed encoding, initial clean inputs, and numerical good
 conditions remain explicit physical preconditions. These results do not yet
 derive them at the three complete point-add call sites.
+
+`FusedPlacementViews` proves that the physical lift payload and fold
+low-then-high payload are the same row in the same order. Its
+`placedLift_fold_encoding` derives the fold's coefficient encoding from
+actual lift execution; the lift pool's zero precondition follows from
+arena readiness and successful reservation via `fusedPool_zero`.
+`FusedPlacedInverse` proves full physical forward/inverse restoration for
+both components and independent tapes. The inverse starts at the actual
+forward output; this does not yet discharge the lifecycle invariant after
+intervening Horner/sign/measurement operations. The borrowed zero word,
+sequential pool release and complete call-site invariants remain to connect.

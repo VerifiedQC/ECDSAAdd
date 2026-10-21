@@ -532,3 +532,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlags
 import ECDSAAdd.Arithmetic.Paper935.FusedSourceRepack
 
 import ECDSAAdd.Arithmetic.Paper935.FusedPlacedExecution
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedInverse
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacementViews
