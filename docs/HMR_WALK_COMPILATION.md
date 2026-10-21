@@ -147,3 +147,13 @@ shared carry live. The actual first/second borrowed arenas stay within 935.
 Generic and compiled hybrid add/sub ordinary-gate legality is also proved.
 Reverse R14 F4 composition, front window transitions, and the full walk
 remain open; this local census does not establish the whole-point-add peak.
+
+`HmrHybridF4Inverse` now emits the R14 shared-u sequence explicitly:
+second/first subtraction, then second/first complement, followed by the
+single flag retirement. The complete F4/R14 round trip is proved for
+independent tapes and the same physical layout. The measured-envelope
+lemma reconstructs the already-retired flag from preserved input controls;
+it does not retain a measurement result as a quantum bit. Actual compiled
+carry-in addition/subtraction round trips and hybrid wire-support bounds
+are also available. Transport to separately allocated reverse flags and
+the full walk's history correspondence remain integration obligations.

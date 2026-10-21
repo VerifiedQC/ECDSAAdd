@@ -725,3 +725,11 @@ import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Compiler
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Exists
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridPhysical
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Resources
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubCinCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridCinRoundtrip
+import ECDSAAdd.Arithmetic.Paper935.HmrPairComplementInverse
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridPairInverse
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridPairCoreInverse
+import ECDSAAdd.Arithmetic.Paper935.HmrMeasuredEnvelope
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Inverse
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSupport

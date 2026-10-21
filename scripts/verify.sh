@@ -4359,6 +4359,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.census
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_sub_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_sub_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_add_after_sub
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_sub_after_add
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSignComplement_twice
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPairComplement_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPair_sub_after_add
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPair_add_after_sub
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairCore_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrMeasuredEnvelope_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrMeasuredEnvelope_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridF4_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridCells_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_support
 LEAN
 )
 task_axiom_lean_rc=$?
