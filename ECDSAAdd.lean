@@ -555,3 +555,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrClassFlags
 import ECDSAAdd.Arithmetic.Paper935.HmrBranchAssembly
 import ECDSAAdd.Arithmetic.Paper935.HmrRecordFixup
 import ECDSAAdd.Arithmetic.Paper935.HmrClassValues
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterLifetime

@@ -45,3 +45,15 @@ measurement, and is well formed when the ordinal precedes the current
 cursor. This local phase formula does not establish cancellation of the
 complete walk's forward measurement debt; the actual earlier value still
 has to be related to the reconstructed branch.
+
+`compileHmrCounter` now binds the test to an actual six-wire owned counter
+and six sites borrowed from the arena. Existence follows from distinct
+owned counter wires and `A.live.card + 6 ≤ 935`. The resulting geometry and
+clean input are derived from the allocator contract. Its execution theorem
+sets the keeper to the zero test of the original counter list, rather than
+an unrelated abstract register. After that actual execution,
+`compileHmrCounter_release_chain` proves the five chain sites can be
+released: the remaining live set is precisely the original live set plus
+the keeper, and the resulting arena is ready. This certifies this local
+retention transition; it does not yet allocate the reverse recomputation
+prefix or bind all class/decoder lifetimes in the walk compiler.
