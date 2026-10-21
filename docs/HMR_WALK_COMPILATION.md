@@ -89,3 +89,27 @@ This component has not yet replaced the old counter module in the whole
 walk. Source F2 complements z during row routing, F5 increments it before
 F6 shifts/resizes; the existing mixed front still has a different order.
 The new local results do not establish whole-source arithmetic correspondence.
+
+The counter component now also has ordinary-gate legality, decrement
+modular values, and an F2/complement–body–F5 signed-value theorem. The latter
+requires the intervening body's actual counter/frozen value preservation
+and readiness, and preserves that body's phase; it is not a whole-front
+source-equality theorem.
+
+## Adaptive low-carry row addition
+
+`HmrHybridRow` implements `engine.py:520–555`: low positions compute clean
+AND carries, the remaining high positions use the shared MAJ/controlled-UMA
+path, then the low carries are released in reverse position order before
+the controlled sum writes. Its proof covers every legal number of low
+positions, arbitrary incoming carry, and arbitrary measurement tape.
+`compileHmrHybridRow` selects that number from the actual arena:
+`min (935 - A.live.card) (width - 1)`. Successful compilation follows from
+input ownership and geometry; no extra capacity hypothesis is needed.
+The original arena is ready after execution, and all borrowed carries can
+actually be released. The local counts are `3*width-2-k` Toffolis and `k`
+measurements. The arena passed here must include the shared carry and all
+other currently live temporaries, as it does in the source census.
+
+The carry-in wrapper, explicit measured subtraction, F4 two-call assembly,
+and integration into the full source walk remain separate obligations.

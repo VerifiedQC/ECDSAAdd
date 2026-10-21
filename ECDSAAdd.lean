@@ -702,3 +702,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrCarryDecrement
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterDecrement
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterStep
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterStepResources
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterStepValue
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterStepPhysical
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterArithmetic
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridCell
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridRow
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridResources
