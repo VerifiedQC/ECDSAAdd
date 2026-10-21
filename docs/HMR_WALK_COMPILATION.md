@@ -129,3 +129,21 @@ carry lists may overlap because they are separate lifetimes. Both target
 values and the full outside frame are proved. This is the inner two-call
 sequence; the shared-u mint, both pre-add complements, and single u
 retirement still need to be connected to the full source front.
+
+`HmrHybridF4` now connects the shared-u sequence: one AND mint, both target
+complements before either addition, two actual adaptive carry-in calls,
+and one u measurement retirement. Both target values, phase, and every
+other basis bit are proved. `compileHmrHybridF4` actually borrows u and the
+shared carry, checks geometry and compiles both calls; compilation exists
+from the input geometry and two free arena sites. The low-carry allocations
+need no further capacity assumption. Its execution proves readiness of
+the original arena and actual carry/u returns. This is a static allocation
+plan; placing allocation events at the exact source front stages remains
+part of whole-front integration.
+
+The local F4 counts are `1 + (3*w1-2-k1) + (3*w2-2-k2)` Toffolis and
+`k1+k2+1` measurements. Each k is computed at the arena with u and the
+shared carry live. The actual first/second borrowed arenas stay within 935.
+Generic and compiled hybrid add/sub ordinary-gate legality is also proved.
+Reverse R14 F4 composition, front window transitions, and the full walk
+remain open; this local census does not establish the whole-point-add peak.

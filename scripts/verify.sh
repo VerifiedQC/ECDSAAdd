@@ -4346,6 +4346,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_return
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridBranch_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairAdd_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPairComplement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPairComplement_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPairComplement_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairCore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridF4_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridF4_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.run_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridF4_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridCells_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.census
 LEAN
 )
 task_axiom_lean_rc=$?

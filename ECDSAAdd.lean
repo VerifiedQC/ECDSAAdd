@@ -718,3 +718,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubResources
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridCinCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridPair
+import ECDSAAdd.Arithmetic.Paper935.HmrPairComplement
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridPairCore
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Compiler
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Exists
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridPhysical
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Resources
