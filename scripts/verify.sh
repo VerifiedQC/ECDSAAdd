@@ -3905,6 +3905,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.mass_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total_nonneg
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_budget_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_exact
 LEAN
 )
 task_axiom_lean_rc=$?
