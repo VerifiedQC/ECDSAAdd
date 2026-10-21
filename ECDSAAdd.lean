@@ -733,3 +733,13 @@ import ECDSAAdd.Arithmetic.Paper935.HmrHybridPairCoreInverse
 import ECDSAAdd.Arithmetic.Paper935.HmrMeasuredEnvelope
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Inverse
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridSupport
+import ECDSAAdd.Arithmetic.Paper935.HmrPlainRotate
+import ECDSAAdd.Arithmetic.Paper935.HmrPlainRotateValue
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftDown
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftUp
+import ECDSAAdd.Arithmetic.Paper935.HmrControlledRotate
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftArmed
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftFrame
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftInverse
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftArmedValue
+import ECDSAAdd.Arithmetic.Paper935.HmrShiftPhysical

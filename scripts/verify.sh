@@ -4374,6 +4374,33 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridCells_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwap_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwap_twice
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotate_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotate_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotateRight_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotateRight_left_cancel
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotateLeft_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftDown_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpFree_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrControlledRotate_left
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_select
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_free_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotate_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRotate_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_free_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_free_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrControlledRotate_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUp_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_physical
 LEAN
 )
 task_axiom_lean_rc=$?

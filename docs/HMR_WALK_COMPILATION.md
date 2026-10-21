@@ -157,3 +157,18 @@ it does not retain a measurement result as a quantum bit. Actual compiled
 carry-in addition/subtraction round trips and hybrid wire-support bounds
 are also available. Transport to separately allocated reverse flags and
 the full walk's history correspondence remain integration obligations.
+
+### Source F6 payload shifts
+
+`HmrPlainRotate` through `HmrShiftPhysical` implement source
+`_shift_down_g`, `_shift_up_free`, `_shift_up`, and their explicit inverse
+orders (engine.py 1051–1100). Only payload wires participate in adjacent
+SWAP/CSWAP chains; the separate sign is copied after the right rotation and
+cleared before the left rotation. Signed evenness proves division by two,
+and the signed window bound proves doubling, including the armed frozen-bit
+wrapper. Both inverse directions restore the complete state for independent
+tapes. All gates are physical, phase is preserved, and non-payload wires
+(including the restored frozen bit) are unchanged. Free shifts cost no
+Toffoli; controlled left shifts cost exactly the payload width, with no
+measurements. This is a local component result: the four-row exit resizing,
+repack, full walk trace, and resulting whole-walk resource bound remain open.
