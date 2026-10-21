@@ -162,3 +162,15 @@ P[0]. A reservation/release theorem returns the lift's clean pool with the
 original live set and readiness. It is an ownership contract, not an early
 pool release inserted into the source program: release after the complete
 Horner/unpark lifecycle and the exact call-site schedule remain open.
+
+## Signed physical input bridge
+
+`FusedSignedPlacement.placedMagnitude_encoding` derives the reference lift's
+sign and two's-complement payload from `WindowRow.value` on the physical row.
+`placedSignedLift_fold_encoding` composes this with the actual renamed lift,
+using allocator readiness to obtain its clean pool, and establishes the fold's
+magnitude input. The only arithmetic input equality is the physical signed row
+value equaling the modeled call coefficient; `MagnitudeEncodes` is no longer an
+independent premise at this boundary. Width, ownership, separation and
+`LiftGood` remain explicit. Establishing that the source walk reaches this row,
+and the Horner/unpark/s6 lifecycle, remain separate obligations.

@@ -3921,6 +3921,8 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_pool_restored
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_release_pool
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_fold_carry_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_encoding
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignedLift_fold_encoding
 LEAN
 )
 task_axiom_lean_rc=$?
