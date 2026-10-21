@@ -153,3 +153,12 @@ both components and independent tapes. The inverse starts at the actual
 forward output; this does not yet discharge the lifecycle invariant after
 intervening Horner/sign/measurement operations. The borrowed zero word,
 sequential pool release and complete call-site invariants remain to connect.
+
+`FusedPlacedBorrow` derives the borrowed word's zero state from actual
+measurement and proves that a disjoint renamed lift preserves it. This
+does not erase measurement phase debt. The physical pool sites are restored
+by the lift and the subsequent fold's carry is proved to be the cleaned
+P[0]. A reservation/release theorem returns the lift's clean pool with the
+original live set and readiness. It is an ownership contract, not an early
+pool release inserted into the source program: release after the complete
+Horner/unpark lifecycle and the exact call-site schedule remain open.

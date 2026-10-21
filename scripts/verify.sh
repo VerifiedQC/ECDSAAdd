@@ -3917,6 +3917,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacement_payload
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacement_pool_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.placedLift_fold_encoding
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_demolished_word
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_pool_restored
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_release_pool
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_fold_carry_zero
 LEAN
 )
 task_axiom_lean_rc=$?

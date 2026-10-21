@@ -535,3 +535,5 @@ import ECDSAAdd.Arithmetic.Paper935.FusedPlacedExecution
 
 import ECDSAAdd.Arithmetic.Paper935.FusedPlacedInverse
 import ECDSAAdd.Arithmetic.Paper935.FusedPlacementViews
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedBorrow
