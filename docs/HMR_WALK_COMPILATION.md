@@ -172,3 +172,20 @@ tapes. All gates are physical, phase is preserved, and non-payload wires
 Toffoli; controlled left shifts cost exactly the payload width, with no
 measurements. This is a local component result: the four-row exit resizing,
 repack, full walk trace, and resulting whole-walk resource bound remain open.
+
+### Pairwise routing and ordered row resizing
+
+`HmrSwapRows` emits one complete CSWAP per pair. `HmrRouteStage` follows F2
+with f/g pairs, then fv/gv pairs, then counter CXs; its explicit R16 inverse
+performs counter CXs, fv/gv pairs, then f/g pairs. Each pair's wire order
+remains ascending. Full-state inverse and signed row semantics are proved.
+`hmrSwapRows_eq_batched` proves only semantic equivalence with the old batched
+register-copy network, not literal gate equality.
+
+`HmrBankOrder` feeds the actual allocator six distinct row orders: entry
+f,g,fv,gv; headroom g,f,gv,fv; forward exit g,f,fv,gv; reverse regrow
+gv,fv,f,g; reverse headroom removal fv,gv,f,g; reverse exit gv,fv,g,f.
+Compilation existence follows from concrete ownership, disjointness and
+positive-growth capacity conditions. Signed values, widths, readiness and
+external owned sites are preserved. These blocks still require whole-walk
+assembly and the public schedule's actual capacity proof.

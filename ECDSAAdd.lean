@@ -743,3 +743,9 @@ import ECDSAAdd.Arithmetic.Paper935.HmrShiftFrame
 import ECDSAAdd.Arithmetic.Paper935.HmrShiftInverse
 import ECDSAAdd.Arithmetic.Paper935.HmrShiftArmedValue
 import ECDSAAdd.Arithmetic.Paper935.HmrShiftPhysical
+import ECDSAAdd.Arithmetic.Paper935.HmrBankOrder
+import ECDSAAdd.Arithmetic.Paper935.HmrBankOrderTotal
+import ECDSAAdd.Arithmetic.Paper935.HmrSwapRows
+import ECDSAAdd.Arithmetic.Paper935.HmrSwapRowsInverse
+import ECDSAAdd.Arithmetic.Paper935.HmrRouteRows
+import ECDSAAdd.Arithmetic.Paper935.HmrRouteStage

@@ -4401,6 +4401,25 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_value
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrShift_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBankOrder.pack_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBankOrder.pack_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_twice
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSwapRows_eq_batched
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteRows_refines
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteRows_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_roundtrip
 LEAN
 )
 task_axiom_lean_rc=$?
