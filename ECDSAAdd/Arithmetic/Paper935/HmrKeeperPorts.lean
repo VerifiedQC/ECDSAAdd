@@ -1,0 +1,77 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperValues
+
+namespace ECDSAAdd.Arithmetic.Paper935
+
+theorem compileHmrBlocked_owned (A B : Arena) (previous : Option Wire)
+    (blocks : List (List Wire)) (ps : List HmrBlockPlan)
+    (h : compileHmrBlocked A previous blocks=some (B,ps)) :
+    A.live⊆B.live ∧ ∀P∈ps,(P.keeper::P.literals.map HmrLiteral.wire).toFinset⊆B.live := by
+  induction blocks generalizing A previous ps with
+  | nil =>
+    simp only [compileHmrBlocked,Option.some.injEq,Prod.mk.injEq] at h
+    obtain ⟨rfl,rfl⟩ := h
+    exact ⟨Finset.Subset.refl _,by intro P hp; simp at hp⟩
+  | cons bits blocks ih =>
+    simp only [compileHmrBlocked] at h
+    obtain ⟨⟨C,P⟩,head,h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨D,qs⟩,tail,h⟩ := Option.bind_eq_some_iff.mp h
+    cases h
+    have rest := ih C (some P.keeper) qs tail
+    have live := (compileHmrBlockKeep_run A C (hmrBlockLiterals previous bits) P head
+      ⟨false,fun _ => false⟩ [] (by intro q hq hn; rfl)).2.1
+    have monotone : A.live⊆C.live := by rw [live]; exact Finset.subset_insert _ _
+    obtain ⟨E,work,he,_⟩ := compileHmrBlockKeep_contract A C (hmrBlockLiterals previous bits) P head
+    have contract := compileHmrBlock_contract A E (hmrBlockLiterals previous bits) work P he
+    refine ⟨monotone.trans rest.1,?_⟩
+    intro Q hq q mem
+    rcases List.mem_cons.mp hq with eq | memQ
+    · subst Q
+      apply rest.1
+      rw [live]
+      rcases List.mem_cons.mp (List.mem_toFinset.mp mem) with eq | input
+      · exact Finset.mem_insert.mpr (Or.inl eq)
+      · apply Finset.mem_insert_of_mem
+        apply contract.1
+        apply List.mem_toFinset.mpr
+        simpa only [HmrBlockPlan.literals,contract.2.2.1] using input
+    · exact rest.2 Q memQ mem
+
+theorem compileHmrBlocked_away (A B : Arena) (previous : Option Wire)
+    (blocks : List (List Wire)) (ps : List HmrBlockPlan)
+    (h : compileHmrBlocked A previous blocks=some (B,ps))
+    (q : Wire) (owned : q∈A.live) (bitsAway : q∉blocks.flatten) (previousAway : q∉previous.toList) :
+    ∀P∈ps,q∉P.keeper::P.literals.map HmrLiteral.wire := by
+  induction blocks generalizing A previous ps with
+  | nil =>
+    simp only [compileHmrBlocked,Option.some.injEq,Prod.mk.injEq] at h
+    obtain ⟨rfl,rfl⟩ := h
+    intro P hp
+    simp at hp
+  | cons bits blocks ih =>
+    simp only [compileHmrBlocked] at h
+    obtain ⟨⟨C,P⟩,head,h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨D,qs⟩,tail,h⟩ := Option.bind_eq_some_iff.mp h
+    cases h
+    have live := (compileHmrBlockKeep_run A C (hmrBlockLiterals previous bits) P head
+      ⟨false,fun _ => false⟩ [] (by intro r hr hn; rfl)).2.1
+    have nextOwned : q∈C.live := by rw [live]; exact Finset.mem_insert_of_mem owned
+    have ne : q≠P.keeper := fun eq => compileHmrBlockKeep_fresh A C _ P head (eq ▸ owned)
+    have bitAway : q∉bits := fun mem => bitsAway (by simp only [List.flatten_cons,List.mem_append]; exact Or.inl mem)
+    have tailAway : q∉blocks.flatten := fun mem => bitsAway (by simp only [List.flatten_cons,List.mem_append]; exact Or.inr mem)
+    have rest := ih C (some P.keeper) qs tail nextOwned tailAway (by simpa using ne)
+    obtain ⟨E,work,he,_⟩ := compileHmrBlockKeep_contract A C (hmrBlockLiterals previous bits) P head
+    have literals := (compileHmrBlock_contract A E (hmrBlockLiterals previous bits) work P he).2.2.1
+    have inputAway : q∉P.literals.map HmrLiteral.wire := by
+      change q∉(P.head::P.cells.map HmrLadderCell.literal).map HmrLiteral.wire
+      rw [literals]
+      simpa [hmrBlockLiterals,Function.comp_def] using
+        (show q∉previous.toList++bits from by simpa only [List.mem_append,not_or] using And.intro previousAway bitAway)
+    intro Q hq mem
+    rcases List.mem_cons.mp hq with eq | memQ
+    · subst Q
+      rcases List.mem_cons.mp mem with eq | input
+      · exact ne eq
+      · exact inputAway input
+    · exact rest Q memQ mem
+
+end ECDSAAdd.Arithmetic.Paper935

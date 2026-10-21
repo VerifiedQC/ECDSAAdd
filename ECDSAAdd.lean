@@ -594,3 +594,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrBlockRoundtrip
 import ECDSAAdd.Arithmetic.Paper935.HmrBlockedDrop
 import ECDSAAdd.Arithmetic.Paper935.HmrKeeperCounts
 import ECDSAAdd.Arithmetic.Paper935.HmrKeeperPhysical
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperOrder
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperClear
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperValues
+import ECDSAAdd.Arithmetic.Paper935.HmrKeeperPorts
+import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrFreezeRun
+import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCleanup

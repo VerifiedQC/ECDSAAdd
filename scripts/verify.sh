@@ -4102,6 +4102,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralCopy_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockPlan.physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockFreePlan.physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_order
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrClearKeepers_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralAll_congr
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrKeeperValues_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockedDrop_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBlockedAdvance_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockKeep_equation
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBlockedFlag_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_keeper_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFreeze_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.run_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.run_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.cleanup_after
 
 LEAN
 )

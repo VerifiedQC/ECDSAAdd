@@ -156,3 +156,19 @@ zero-test lifetimes. The existing retained-sigma arithmetic front also keeps
 the old arithmetic/counter schedule: its counterUpdate follows resize,
 whereas source F5 precedes F6. It is a proved arithmetic component, not an
 assertion of literal source gate order.
+
+The F7 entry now has its own checked allocator (`compileHmrFreeze`): it
+compiles the size-16 zero-test blocks, then borrows fire from their returned
+arena and checks separation of the record, frozen flag, and controls.
+`HmrFreezePlan.Compiled.run_spec` proves the actual program's phase,
+fire/frozen values, record update, arena readiness, and every retained
+keeper equation. Those equations follow from the emitted zero-test program
+and survive the latch; they are not caller-supplied output assumptions.
+
+`compileHmrBlockedDrop_run` permits delayed cleanup from the current keeper
+equations and the compiled keeper order. `cleanup_after` composes F7, an
+intervening program whose support avoids the keeper/input ports, and the
+separately compiled cleanup, preserving its phase and proving final arena
+readiness. This is a conditional composition interface: the whole source
+body still needs to discharge that support condition. Fire's equality-test
+retirement and the complete F16/R13 placement remain separate obligations.
