@@ -113,3 +113,19 @@ other currently live temporaries, as it does in the source census.
 
 The carry-in wrapper, explicit measured subtraction, F4 two-call assembly,
 and integration into the full source walk remain separate obligations.
+
+The carry-in wrapper is now proved for the actual measured hybrid adder.
+`HmrHybridSub` explicitly emits the source low unwrite/mint and release
+cells around the unmeasured high subtraction. Its inverse equation and
+both full-state round trips hold for independent tapes; the measured
+program is never reversed. The same actual compiler justifies its clean
+scratch and return. Addition and subtraction have the same local counts.
+`hmrHybridBranch_zero` gives the one-row k=0 compatibility with the old
+branchRow; this does not identify the old two-branch pair with source F4.
+
+`HmrHybridPairAdd` composes the two actual carry-in calls on one arena,
+using the first call's proved readiness before the second call. The two
+carry lists may overlap because they are separate lifetimes. Both target
+values and the full outside frame are proved. This is the inner two-call
+sequence; the shared-u mint, both pre-add complements, and single u
+retirement still need to be connected to the full source front.

@@ -4326,6 +4326,26 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridRow_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_census
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridRowCin_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridRowCin_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrOldLow_sum
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridUnwrite_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridUnlift_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridSub_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_frame_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_add_after_sub
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybrid_sub_after_add
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridSubCin_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_sub_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_sub_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridSub_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRow_sub_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCin_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridBranch_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairAdd_run
 LEAN
 )
 task_axiom_lean_rc=$?

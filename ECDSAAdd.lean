@@ -709,3 +709,12 @@ import ECDSAAdd.Arithmetic.Paper935.HmrHybridCell
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridRow
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridResources
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridCin
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridInverseCell
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSub
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridRoundtrip
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubCin
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridSubResources
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridCinCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridPair
