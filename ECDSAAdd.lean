@@ -570,3 +570,7 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlagsAllocation
 import ECDSAAdd.Arithmetic.Paper935.HmrFlagsArena
 import ECDSAAdd.Arithmetic.Paper935.HmrDecoderAllocation
 import ECDSAAdd.Arithmetic.Paper935.HmrDecoderAllocatedRun
+import ECDSAAdd.Arithmetic.Paper935.HmrTaggedFront
+import ECDSAAdd.Arithmetic.Paper935.HmrSigmaDeath
+import ECDSAAdd.Arithmetic.Paper935.HmrSigmaWitness
+import ECDSAAdd.Arithmetic.Paper935.HmrSigmaLatch

@@ -104,3 +104,15 @@ In particular, the old SlotFront.program uses retiredWindow, which erases
 sigma before history processing. The source retains sigma until F15; a front
 with that lifetime is needed before the new components can replace the old
 walk implementation. The retained branch bit and sigma are different ports.
+
+The retained-sigma front is now available as SlotFront.taggedProgram with
+SlotFront.Compiled.run_tagged_math. It proves the actual arithmetic/padding
+execution's rows, counter, phase and retained sigma value; it does not claim
+that this existing arithmetic implementation is the entire literal source.
+HmrSigmaDeath implements source F15 (early CX, armed one guard AND followed by
+two measured retirements). Its witness follows from the independent row
+invariant and the actual F7 freezeLatch execution: newFrozen AND NOT fire
+equals oldFrozen. This prevents incorrectly using newFrozen alone to clear
+sigma on the step that just froze. Full intervening history/flag composition,
+the blocked g-zero keeper lifetime through F16, and global record phase
+cancellation remain open.

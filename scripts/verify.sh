@@ -4037,6 +4037,16 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_copy
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_return
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.program_eq_tagged_retire
+#print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.run_tagged_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigmaDeath_early
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigmaDeath_armed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigmaDeath_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFreezeGuard
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_early_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_afterLatch
+
 LEAN
 )
 task_axiom_lean_rc=$?
