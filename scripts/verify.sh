@@ -4003,6 +4003,40 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderComputed_prediction
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPredictionDeath_counts
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrGetD_eq_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowClean
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowOwned
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowPorts_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowPorts_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrow_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_size
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_targets
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_arena_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagAdvance_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_arena_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_copy
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_return
+
 LEAN
 )
 task_axiom_lean_rc=$?

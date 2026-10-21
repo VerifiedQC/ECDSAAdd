@@ -562,3 +562,11 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterAllocation
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterKeeperBinding
 import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterCycle
 import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterRelease
+import ECDSAAdd.Arithmetic.Paper935.HmrPortGeometry
+import ECDSAAdd.Arithmetic.Paper935.HmrBorrowPorts
+import ECDSAAdd.Arithmetic.Paper935.HmrClassAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrClassArena
+import ECDSAAdd.Arithmetic.Paper935.HmrFlagsAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrFlagsArena
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderAllocatedRun

@@ -80,3 +80,27 @@ counter/sign view and the remaining class/decoder allocation still need
 binding inside the walk compiler. These component results address the
 fresh-prefix and keeper-value review requirements; they do not close the
 global walk or its record-phase proof.
+
+## Actual class, shared flags and decoder allocation
+
+The class allocator borrows two, three or four wires according to the source
+mode. Its final port is mapped to the last borrowed wire; unused intermediate
+ports are not charged. The allocation contract derives stage legality,
+clean inputs, the class value, arena readiness and measured release from the
+actual borrow result.
+
+The shared-flag allocator borrows six wires. Coefficient reads may alias
+one another through sign extension; they must remain separate from the class
+flag. Its computed state preserves arena readiness and its measured release
+returns exactly the original arena. The decoder allocator checks the three
+selector ports against the ten row reads, permits aliases among row reads,
+and borrows six wires for prediction and five cached leaves. Copying to an
+owned external output followed by prediction/cache retirement restores all
+borrowed wires and returns the original arena, with only the output XOR changed.
+
+These are physical allocation and execution contracts for the components.
+They do not establish whole-walk source correspondence or a new global peak.
+In particular, the old SlotFront.program uses retiredWindow, which erases
+sigma before history processing. The source retains sigma until F15; a front
+with that lifetime is needed before the new components can replace the old
+walk implementation. The retained branch bit and sigma are different ports.
