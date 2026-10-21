@@ -65,6 +65,15 @@ the old-record phase cancellation from the actual forward measurement and
 restore the decoder scratch while retaining the recovered branch. This is a
 local composition, not the nested whole-walk pending-phase invariant.
 
+`compileHmrRead` now composes R4--R6 in source allocation order: jflags,
+a fresh branch port and history pop, then prediction/cache allocation.
+Its run theorem derives the mathematical prediction from conditional signed
+row values. Its final-state theorem establishes arena readiness, unchanged
+owned rows outside history, retained flags, and the actual stored branch bit.
+Delayed jflag retirement is proved from current flag equations and preserves
+arbitrary incoming phase and unrelated data changes; returning its borrowed
+sites is justified by the actual measured cleanup.
+
 The concrete whole-walk compiler has not yet been changed to allocate and
 execute all these source blocks. Class/selector composition, source arithmetic
 scheduling, the global record-phase invariant, whole-walk semantics, and

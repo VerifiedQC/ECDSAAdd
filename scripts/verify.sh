@@ -4189,6 +4189,22 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRowFlags_depths
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowPorts_surjective
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrow_return_current
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_erase_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFlagValues.frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrPop_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrPop_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.final_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowPos_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowDecoder_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRead_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.run_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.read_state
+
 LEAN
 )
 task_axiom_lean_rc=$?
