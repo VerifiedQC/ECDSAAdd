@@ -10,6 +10,17 @@ theorem HmrFlagValues.frame (c3 b2 b3 b4 : Wire) (w : Fin 6 → Wire) (s t : Bas
   rw [inputs c3 (by simp),inputs b2 (by simp),inputs b3 (by simp),inputs b4 (by simp)]
   simpa only [flags] using values
 
+theorem HmrFlagValues.write (c3 b2 b3 b4 : Wire) (w : Fin 6 → Wire) (s : BasisState)
+    (values : HmrFlagValues c3 b2 b3 b4 w s) (output : Wire) (value : Bool)
+    (away : output∉[c3,b2,b3,b4]) (flags : ∀i,output≠w i) :
+    HmrFlagValues c3 b2 b3 b4 w (writeBit s output value) := by
+  apply values.frame c3 b2 b3 b4 w s
+  · intro q hq
+    have ne : q≠output := by intro eq; exact away (eq ▸ hq)
+    exact Function.update_of_ne ne _ _
+  · intro i
+    exact Function.update_of_ne (Ne.symm (flags i)) _ _
+
 theorem compileHmrFlags_values (A B : Arena) (c3 b2 b3 b4 : Wire) (work : List Wire)
     (h : compileHmrFlags A c3 b2 b3 b4=some (B,work))
     (s : State) (m : List Bool) (ready : A.Ready s.basis) :

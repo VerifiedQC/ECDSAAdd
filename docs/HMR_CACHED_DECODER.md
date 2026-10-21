@@ -74,6 +74,19 @@ Delayed jflag retirement is proved from current flag equations and preserves
 arbitrary incoming phase and unrelated data changes; returning its borrowed
 sites is justified by the actual measured cleanup.
 
+`HmrReadPlan.recover_release` now composes the actual R4--R7/R11/R12
+program, with R7 borrowing no site in early steps and one in armed steps.
+The old-record phase is expressed using the absolute tape ordinal; global
+forward-trace cancellation remains separate. Cache and flag sites are returned
+while the recovered branch remains owned. Mathematical premises include the
+independent saved-history-top invariant and conditional row/class invariants.
+
+The local recorded program uses `record.length + 20 + (early ? 0 : 1)`
+Toffolis and `9 + (early ? 0 : 1)` measurements. Relative to its entry arena,
+the live counts are +6 after flags, +7 after history pop, +13 after decoder
+allocation, and +13/+14 during early/armed assembly. After cache and flag
+return, the increment is +1. These are local counts, not a whole-walk peak.
+
 The concrete whole-walk compiler has not yet been changed to allocate and
 execute all these source blocks. Class/selector composition, source arithmetic
 scheduling, the global record-phase invariant, whole-walk semantics, and

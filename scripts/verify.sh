@@ -4205,6 +4205,35 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.run_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.read_state
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchAssembly_early
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAssemblyValue_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecodeRecover_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_erase_in
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.assemble_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.assembly_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.bindings
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.cache_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.compute_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.output_ne_flag
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.flag_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.read_flag_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.release_flags
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.recover_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.recover_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrReadRecoverRelease_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.live_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.assembly_live_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.released_live_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFlagValues.write
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.output_outside
+
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recover_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recoverRelease_wellFormed
+
 LEAN
 )
 task_axiom_lean_rc=$?
