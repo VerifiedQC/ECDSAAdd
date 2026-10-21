@@ -545,3 +545,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrDecoderSelectedRun
 import ECDSAAdd.Arithmetic.Paper935.HmrFlagsAliased
 import ECDSAAdd.Arithmetic.Paper935.HmrLiteralAnd
 import ECDSAAdd.Arithmetic.Paper935.HmrPredictionDeath
+import ECDSAAdd.Arithmetic.Paper935.HmrPolarAnd
+import ECDSAAdd.Arithmetic.Paper935.HmrAndChain
+import ECDSAAdd.Arithmetic.Paper935.HmrZero6
+import ECDSAAdd.Arithmetic.Paper935.HmrZero6Keeper
+import ECDSAAdd.Arithmetic.Paper935.HmrZero6Free
+import ECDSAAdd.Arithmetic.Paper935.HmrZero6Cycle
+import ECDSAAdd.Arithmetic.Paper935.HmrClassFlags
