@@ -74,7 +74,7 @@ Delayed jflag retirement is proved from current flag equations and preserves
 arbitrary incoming phase and unrelated data changes; returning its borrowed
 sites is justified by the actual measured cleanup.
 
-`HmrReadPlan.recover_release` now composes the actual R4--R7/R11/R12
+`HmrReadPlan.Compiled.recover_release` now composes the actual R4--R7/R11/R12
 program, with R7 borrowing no site in early steps and one in armed steps.
 The old-record phase is expressed using the absolute tape ordinal; global
 forward-trace cancellation remains separate. Cache and flag sites are returned
@@ -86,6 +86,19 @@ Toffolis and `9 + (early ? 0 : 1)` measurements. Relative to its entry arena,
 the live counts are +6 after flags, +7 after history pop, +13 after decoder
 allocation, and +13/+14 during early/armed assembly. After cache and flag
 return, the increment is +1. These are local counts, not a whole-walk peak.
+
+`compileHmrRead_exists` proves that the actual R4--R6 compiler succeeds
+from entry ownership, a separate class flag, a distinct history register,
+and thirteen free sites. Decoder selectors are fresh; coefficient reads may
+alias through short-row sign extension. Assembly existence is also derived
+from the allocated ports and the early/armed capacity bound.
+`compileHmrClassRead_exists` composes class allocation with this read compiler.
+
+Delayed class-chain cleanup preserves the incoming phase and unrelated data.
+The concrete recovered basis proves its footprint-value condition, allowing
+history and the recovered branch to change during R4--R12. These local
+composition theorems still need the counter-zero keeper, sigma witness,
+arithmetic scheduling, and full walk invariant to be connected.
 
 The concrete whole-walk compiler has not yet been changed to allocate and
 execute all these source blocks. Class/selector composition, source arithmetic

@@ -4234,6 +4234,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recover_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recoverRelease_wellFormed
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndPatch_advance
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_patch
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndReady_patch
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndUnsweep_delayed
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_delayed
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClassRead_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_target_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_work_targets
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.assembly_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRead_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.released_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowDecoder_geometry
+
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_read_retire
+
 LEAN
 )
 task_axiom_lean_rc=$?
