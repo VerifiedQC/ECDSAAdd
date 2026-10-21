@@ -4267,6 +4267,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_state
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarly_class_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyCounter_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyRead_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyRead_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyReadPlan.Compiled.run_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_delayed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_targets
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderOutput_target
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_top_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedReadPlan.Compiled.decoder_live_count
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyReadPlan.Compiled.decoder_live_count
+
 LEAN
 )
 task_axiom_lean_rc=$?

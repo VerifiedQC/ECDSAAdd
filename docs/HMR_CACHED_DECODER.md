@@ -110,6 +110,13 @@ R2 sigma recovery also has an actual fresh-site program and a mathematical
 witness derived from the post-state coefficient. The early unkeeperized
 counter test and complete reverse-step composition remain separate work.
 
+Early R3--R6 now uses the actual six-bit equality-to-zero compiler with
+five retained AND leaves and no copied keeper. Its combined state theorem
+and class predicate are proved, and delayed equality-chain retirement
+preserves unrelated changes. Actual decoder-arena increments are twenty
+for early steps and eighteen for armed steps, above their respective entry
+arenas. These do not establish a global 935-wire bound.
+
 The concrete whole-walk compiler has not yet been changed to allocate and
 execute all these source blocks. Class/selector composition, source arithmetic
 scheduling, the global record-phase invariant, whole-walk semantics, and
