@@ -601,3 +601,13 @@ import ECDSAAdd.Arithmetic.Paper935.HmrKeeperPorts
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeRun
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCleanup
+import ECDSAAdd.Arithmetic.Paper935.HmrFireDeath
+import ECDSAAdd.Arithmetic.Paper935.HmrFireWitness
+import ECDSAAdd.Arithmetic.Paper935.HmrChainFire
+import ECDSAAdd.Arithmetic.Paper935.HmrEqualityLiterals
+import ECDSAAdd.Arithmetic.Paper935.HmrEqualityCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrFireCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrFireRelease
+import ECDSAAdd.Arithmetic.Paper935.HmrFireDrop
+import ECDSAAdd.Arithmetic.Paper935.HmrFreezeEnd
+import ECDSAAdd.Arithmetic.Paper935.HmrFreezeCycle

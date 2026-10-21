@@ -4119,6 +4119,24 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.run_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.run_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.cleanup_after
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFireDeath_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFireDeath_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.fire_witness
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainFire_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEqualityLiterals_source
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEqualityLiterals_wires
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEqualityLiterals_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFire_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFire_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFire_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFireDrop_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFireDrop_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFreezeEnd_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.fire_away
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFreezePlan.Compiled.cycle
 
 LEAN
 )

@@ -25,7 +25,7 @@ theorem HmrFreezePlan.Compiled.cleanup_after (P : HmrFreezePlan) (A C D : Arena)
   have initial := compiled.run_spec P A C bits frozen record offset s m ready
   have midReady : C.Ready mid.basis := C.run_ready body first tailTape initial.2.2.2.2.1 owned
   have midValues : HmrKeeperValues P.zeroPlans mid.basis := by
-    apply hmrKeeperValues_frame P.zeroPlans first.basis mid.basis initial.2.2.2.2.2
+    apply hmrKeeperValues_frame P.zeroPlans first.basis mid.basis initial.2.2.2.2.2.1
     intro R hR q hq
     exact run_preserves_outside body tailTape first q (frame R hR q hq)
   have zc := compileHmrZero_contract A P.zeroArena bits 16 P.zeroPlans P.zeroKeeper compiled.zero

@@ -172,3 +172,21 @@ separately compiled cleanup, preserving its phase and proving final arena
 readiness. This is a conditional composition interface: the whole source
 body still needs to discharge that support condition. Fire's equality-test
 retirement and the complete F16/R13 placement remain separate obligations.
+
+F16 now has a checked source-order compiler. The equality literals are
+proved equal to the source enumerate/testBit list, and their conjunction
+is exactly the physical register's equality to the offset. The equality
+allocator borrows length(record)-1 sites and retains the whole ladder;
+only afterwards does the fire compiler borrow w1. The executed sequence
+computes w1, measures fire, measures w1, then releases the equality chain.
+Its theorem restores every other bit and preserves phase. Actual release
+returns both work allocations and the retired fire site.
+
+`compileHmrFreezeEnd` follows this with fresh-prefix reverse cleanup of
+the retained g-zero-test blocks. `HmrFreezePlan.Compiled.cycle` joins F7,
+a framed body, and F16. Its fire witness is derived from actual F7 execution
+and the independent chronological record invariant (old record < offset,
+and an unfrozen lane has zero record). The body still owes explicit
+support/ownership conditions; this theorem does not assume or establish
+that an entire source walk has already been compiled. R1/R13, global R11
+phase cancellation, and the full source arithmetic schedule remain open.

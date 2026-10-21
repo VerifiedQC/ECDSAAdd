@@ -16,7 +16,8 @@ theorem HmrFreezePlan.Compiled.run_spec (P : HmrFreezePlan) (A C : Arena) (bits 
     out.phase=s.phase ∧ out.basis P.fire=(decide (regValue bits s.basis=0) && !s.basis frozen) ∧
     out.basis frozen=(s.basis frozen || decide (regValue bits s.basis=0)) ∧
     regValue record out.basis=regValue record s.basis ^^^
-      (if decide (regValue bits s.basis=0) && !s.basis frozen then offset else 0) ∧ C.Ready out.basis ∧ HmrKeeperValues P.zeroPlans out.basis := by
+      (if decide (regValue bits s.basis=0) && !s.basis frozen then offset else 0) ∧ C.Ready out.basis ∧ HmrKeeperValues P.zeroPlans out.basis ∧
+      out.basis P.zeroKeeper=decide (regValue bits s.basis=0) := by
   have zc := compileHmrZero_contract A P.zeroArena bits 16 P.zeroPlans P.zeroKeeper compiled.zero
   let u := run (hmrBlockedProgram P.zeroPlans) m s
   let tape := m.drop (measurementCount (hmrBlockedProgram P.zeroPlans))
@@ -91,9 +92,13 @@ theorem HmrFreezePlan.Compiled.run_spec (P : HmrFreezePlan) (A C : Arena) (bits 
     exact latch.2.2.2.2 q nofire nofrozen norecord
   dsimp only
   rw [HmrFreezePlan.program,run_append,run_take]
-  refine ⟨latch.1.trans uphase,?_,?_,?_,C.run_ready _ u tape cr support,kept⟩
+  refine ⟨latch.1.trans uphase,?_,?_,?_,C.run_ready _ u tape cr support,kept,?_⟩
   · simpa only [zero,frame frozen (by simp)] using latch.2.1
   · simpa only [zero,frame frozen (by simp)] using latch.2.2.1
   · simpa only [zero,frame frozen (by simp),recordEq] using latch.2.2.2.1
+
+  · rw [latch.2.2.2.2 P.zeroKeeper (fun eq => hz (by simp [eq])) zf
+      (fun mem => hz (by simp [mem]))]
+    exact zero
 
 end ECDSAAdd.Arithmetic.Paper935
