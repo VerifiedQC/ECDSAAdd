@@ -64,3 +64,28 @@ This block uses three Toffoli gates and consumes three measurements on
 release. It has not yet been installed into `compileHmrWalk`. The source's
 cached decoder cube chains, physical allocation, and the complete walk
 correspondence remain open; these standalone flag proofs do not close them.
+
+## Source counter arithmetic (local component)
+
+`HmrCarryIncrement` implements the one-bit all-GID adder used by
+`engine.py:599–608,1254–1267` (source commit
+`64b5a13aa249f1360846657392e6c66817b26d0f`). Each carry is measured and
+corrected before its input target is flipped. Early increment uses the low
+counter bit as the ripple control, followed by an X on that low bit; armed
+increment surrounds the controlled ripple with X gates on the frozen bit.
+Decrement uses the source complement/add/complement construction, with the
+same forward measurement order. The full-state theorems hold for arbitrary
+tapes and preserve phase and all wires outside the counter.
+
+`compileHmrCounterStep` checks the six counter wires and frozen metadata,
+then actually borrows four carry cells in early steps or five in armed
+steps. Its return theorem proves the measured output is ready for the
+original arena and that releasing these cells succeeds. Both directions
+use four/five Toffolis and four/five measurements locally. These are local
+scratch counts, not the peak of the walk. The increment value theorem
+includes modular overflow; no signed no-overflow premise is silently added.
+
+This component has not yet replaced the old counter module in the whole
+walk. Source F2 complements z during row routing, F5 increments it before
+F6 shifts/resizes; the existing mixed front still has a different order.
+The new local results do not establish whole-source arithmetic correspondence.

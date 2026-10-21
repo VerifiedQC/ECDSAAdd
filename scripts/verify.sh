@@ -4282,6 +4282,31 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedReadPlan.Compiled.decoder_live_count
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyReadPlan.Compiled.decoder_live_count
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryIncrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_false
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryIncrement_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEarlyIncrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrArmedIncrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEarlyIncrement_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrArmedIncrement_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecrementBasis_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryDecrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryDecrement_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrComplementBasis_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecrementBasis_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrEarlyDecrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrArmedDecrement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCounterStepBasis_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryIncrement_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStep_live
 LEAN
 )
 task_axiom_lean_rc=$?

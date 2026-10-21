@@ -694,3 +694,11 @@ import ECDSAAdd.Arithmetic.Paper935.HmrEarlyReadState
 import ECDSAAdd.Arithmetic.Paper935.HmrEqualityDelayed
 import ECDSAAdd.Arithmetic.Paper935.HmrEqualityState
 import ECDSAAdd.Arithmetic.Paper935.HmrReadPrefixResources
+import ECDSAAdd.Arithmetic.Paper935.HmrCarryIncrement
+import ECDSAAdd.Arithmetic.Paper935.HmrCarryIncrementRun
+import ECDSAAdd.Arithmetic.Paper935.HmrCarryIncrementValue
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterIncrement
+import ECDSAAdd.Arithmetic.Paper935.HmrCarryDecrement
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterDecrement
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterStep
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterStepResources
