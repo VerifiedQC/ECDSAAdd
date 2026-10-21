@@ -174,3 +174,11 @@ value equaling the modeled call coefficient; `MagnitudeEncodes` is no longer an
 independent premise at this boundary. Width, ownership, separation and
 `LiftGood` remain explicit. Establishing that the source walk reaches this row,
 and the Horner/unpark/s6 lifecycle, remain separate obligations.
+
+`FusedRepackedInput.repackedRow_value` additionally proves that executing a
+valid repack journal preserves the signed value when both payload and sign
+views follow its permutation. The two pinned source journals have explicit
+`s2RepackedMagnitude_encoding` / `s6RepackedMagnitude_encoding` corollaries.
+These transport an existing physical signed-row invariant; they do not assert
+that the compiled walk reaches the source snapshot, nor that an arbitrary row
+parameter is the source's fv row. That source-view identification remains open.
