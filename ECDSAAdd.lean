@@ -557,3 +557,8 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRecordFixup
 import ECDSAAdd.Arithmetic.Paper935.HmrClassValues
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterAllocation
 import ECDSAAdd.Arithmetic.Paper935.HmrCounterLifetime
+import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterFree
+import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrCounterKeeperBinding
+import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterCycle
+import ECDSAAdd.Arithmetic.Paper935.HmrFreshCounterRelease

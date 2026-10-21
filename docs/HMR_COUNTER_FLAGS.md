@@ -54,6 +54,29 @@ sets the keeper to the zero test of the original counter list, rather than
 an unrelated abstract register. After that actual execution,
 `compileHmrCounter_release_chain` proves the five chain sites can be
 released: the remaining live set is precisely the original live set plus
-the keeper, and the resulting arena is ready. This certifies this local
-retention transition; it does not yet allocate the reverse recomputation
-prefix or bind all class/decoder lifetimes in the walk compiler.
+the keeper, and the resulting arena is ready. This certifies the local retention transition. The following results
+handle fresh reverse-prefix allocation; full class/decoder lifetimes
+remain to be bound in the walk compiler.
+
+The reverse prefix is now allocated independently by
+`compileHmrFreshCounter`: it borrows **four new sites** from the current
+arena, retaining the already-owned keeper. Their addresses need not equal
+any of the original five chain addresses. Its geometry and all four zero
+inputs follow from the borrow contract and that arena's `Ready` predicate.
+The eleven-port interface omits the old unused top-leaf port and is proved
+definitionally equal to the earlier release program under the port map.
+
+`compileHmrCounter_fresh_cycle` composes the actual initial test, release of
+its five leaves, a fresh four-site borrow, and the source release program.
+It proves restoration of the original full state and phase, deriving both
+the second borrow's capacity and clean entry from the first allocation and
+run. `compileHmrFreshCounter_release` then permits return of the new four
+sites and the old keeper, with a ready arena and exact resulting live set.
+
+`compileHmrCounter_class_value` connects the class zero port directly to
+the actual first program's keeper output and proves the signed predicate
+on the post-state. It has no independent zero-flag assumption. The explicit
+counter/sign view and the remaining class/decoder allocation still need
+binding inside the walk compiler. These component results address the
+fresh-prefix and keeper-value review requirements; they do not close the
+global walk or its record-phase proof.
