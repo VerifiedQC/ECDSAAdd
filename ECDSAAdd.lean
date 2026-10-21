@@ -619,3 +619,15 @@ import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeRun
 import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeRelease
 import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeWitness
 import ECDSAAdd.Arithmetic.Paper935.HmrUnfreezeCycle
+import ECDSAAdd.Arithmetic.Paper935.HmrAssemblyFixup
+import ECDSAAdd.Arithmetic.Paper935.HmrAssemblyMath
+import ECDSAAdd.Arithmetic.Paper935.HmrBranchPartition
+import ECDSAAdd.Arithmetic.Paper935.HmrDecodeFixup
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderBoundRun
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderRetireWrite
+import ECDSAAdd.Arithmetic.Paper935.HmrDecoderStrata
+import ECDSAAdd.Arithmetic.Paper935.HmrHistoryDecodeFixup
+import ECDSAAdd.Arithmetic.Paper935.HmrHistoryDecodeRecover
+import ECDSAAdd.Arithmetic.Paper935.HmrHistoryFixup
+import ECDSAAdd.Arithmetic.Paper935.HmrHistoryPop
+import ECDSAAdd.Arithmetic.Paper935.HmrHistoryTransfer

@@ -212,3 +212,20 @@ not absence from the gate support. Frozen, fire, and keeper ports may thus
 be controls in F8--F15 or the reverse body. The separate support bound only
 requires every addressed wire to belong to the live arena. This corrects
 the overly restrictive initial composition interfaces identified in review.
+
+The local history/branch recovery now uses the source depth partition
+2--4 versus divisibility by 32. Actual push, bare forward measurement, and
+pop may use different branch addresses; they restore the complete history,
+produce the stored branch contribution, and leave an explicitly derived
+old-outcome phase term. The cached R6 program obtains its shallow prediction
+from selector and integer-residue input bindings. Actual R7 reconstructs
+the old mathematical branch, and literal R11 cancels that measurement term.
+R12 then retires prediction and caches while preserving the recovered branch
+and corrected phase (`hmrHistory_decode_recover`).
+
+This is a local execution theorem, not the full nested walk's phase theorem.
+Its reverse flag and residue bindings still need to come from the actual
+compiled layouts and row values. The all-slot measurement ordinals, pending
+phase invariant, class/flag retirement, and whole source arithmetic schedule
+remain integration obligations. No whole-walk or peak-resource conclusion
+is claimed by these local recovery results.

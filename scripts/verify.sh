@@ -4150,6 +4150,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreezeKeep_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrUnfreeze_fire_witness
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrUnfreeze_cycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAssemblyFixup_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAssemblyFixup_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchAssembly_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchDepth_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchPieces
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderComputed_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecodeFixup_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrDecoderBindings.compute
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderErase_after_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderValue_strata
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_decode_fixup
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_decode_recover
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_fixup
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPop_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_transfer
 
 LEAN
 )
