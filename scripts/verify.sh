@@ -4251,6 +4251,22 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_read_retire
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClassRead_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmedRead_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmedRead_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedReadPlan.Compiled.run_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounter_class_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounter_delayed_free
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_eq_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterRetained_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterRetained_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterRetained_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_exists
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_state
+
 LEAN
 )
 task_axiom_lean_rc=$?

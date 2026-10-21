@@ -100,6 +100,16 @@ history and the recovered branch to change during R4--R12. These local
 composition theorems still need the counter-zero keeper, sigma witness,
 arithmetic scheduling, and full walk invariant to be connected.
 
+The armed R3--R6 compiler now releases the five counter-test chain sites
+before allocating the class/read block. Its program has a combined phase,
+readiness, and owned-data frame theorem, and its class predicate is derived
+from the actual zero keeper. Delayed keeper cleanup borrows four new prefix
+sites from the current arena and returns them together with the keeper;
+cleanliness comes from current readiness and preserved counter/keeper values.
+R2 sigma recovery also has an actual fresh-site program and a mathematical
+witness derived from the post-state coefficient. The early unkeeperized
+counter test and complete reverse-step composition remain separate work.
+
 The concrete whole-walk compiler has not yet been changed to allocate and
 execute all these source blocks. Class/selector composition, source arithmetic
 scheduling, the global record-phase invariant, whole-walk semantics, and
