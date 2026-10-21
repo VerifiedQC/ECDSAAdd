@@ -13,17 +13,22 @@ theorem HmrFreezePlan.Compiled.fire_away (P : HmrFreezePlan) (A C : Arena)
   intro R hR mem
   exact fresh (ports R hR (List.mem_toFinset.mpr mem))
 
-/-- Compose source F7 and F16 around a body that preserves their live
+/-- Compose source F7 and F16 around a body that preserves the values of their live
 witness ports. The body's own action and phase are retained. -/
 theorem HmrFreezePlan.Compiled.cycle (P : HmrFreezePlan) (A C D : Arena)
     (bits : List Wire) (frozen : Wire) (record : List Wire) (offset : Nat)
     (compiled : P.Compiled A C bits frozen record offset)
     (Q : HmrFreezeEndPlan)
     (endCompiled : compileHmrFreezeEnd C record offset P.zeroKeeper frozen P.fire P.zeroPlans=some (D,Q))
+    (s : State) (m : List Bool)
     (body : Program) (owned : wires body⊆C.live)
-    (frame : ∀R∈P.zeroPlans,∀q∈R.keeper::R.literals.map HmrLiteral.wire,q∉wires body)
-    (metaFrame : ∀q∈P.fire::P.zeroKeeper::frozen::record,q∉wires body)
-    (s : State) (m : List Bool) (ready : A.Ready s.basis)
+    (frame : ∀R∈P.zeroPlans,∀q∈R.keeper::R.literals.map HmrLiteral.wire,(run body (m.drop (measurementCount (P.program frozen record offset)))
+        (run (P.program frozen record offset) m s)).basis q=
+        (run (P.program frozen record offset) m s).basis q)
+    (metaFrame : ∀q∈P.fire::P.zeroKeeper::frozen::record,(run body (m.drop (measurementCount (P.program frozen record offset)))
+        (run (P.program frozen record offset) m s)).basis q=
+        (run (P.program frozen record offset) m s).basis q)
+    (ready : A.Ready s.basis)
     (past : regValue record s.basis<offset)
     (unfrozen : s.basis frozen=false → regValue record s.basis=0) :
     let first := run (P.program frozen record offset) m s
@@ -41,9 +46,9 @@ theorem HmrFreezePlan.Compiled.cycle (P : HmrFreezePlan) (A C D : Arena)
   have mv : HmrKeeperValues P.zeroPlans mid.basis := by
     apply hmrKeeperValues_frame P.zeroPlans first.basis mid.basis entry.2.2.2.2.2.1
     intro R hR q hq
-    exact run_preserves_outside body tailTape first q (frame R hR q hq)
+    exact frame R hR q hq
   have keep (q : Wire) (hq : q∈P.fire::P.zeroKeeper::frozen::record) : mid.basis q=first.basis q :=
-    run_preserves_outside body tailTape first q (metaFrame q hq)
+    metaFrame q hq
   have recordEq : regValue record mid.basis=regValue record first.basis :=
     regValue_congr record mid.basis first.basis (fun q hq => keep q (by simp [hq]))
   have witness := compiled.fire_witness P A C bits frozen record offset s m ready past unfrozen

@@ -9,9 +9,12 @@ theorem HmrFreezePlan.Compiled.cleanup_after (P : HmrFreezePlan) (A C D : Arena)
     (bits : List Wire) (frozen : Wire) (record : List Wire) (offset : Nat)
     (compiled : P.Compiled A C bits frozen record offset)
     (qs : List HmrBlockFreePlan) (drop : compileHmrBlockedDrop C P.zeroPlans=some (D,qs))
+    (s : State) (m : List Bool)
     (body : Program) (owned : wires body⊆C.live)
-    (frame : ∀R∈P.zeroPlans,∀q∈R.keeper::R.literals.map HmrLiteral.wire,q∉wires body)
-    (s : State) (m : List Bool) (ready : A.Ready s.basis) :
+    (frame : ∀R∈P.zeroPlans,∀q∈R.keeper::R.literals.map HmrLiteral.wire,(run body (m.drop (measurementCount (P.program frozen record offset)))
+        (run (P.program frozen record offset) m s)).basis q=
+        (run (P.program frozen record offset) m s).basis q)
+    (ready : A.Ready s.basis) :
     let first := run (P.program frozen record offset) m s
     let tailTape := m.drop (measurementCount (P.program frozen record offset))
     let mid := run body tailTape first
@@ -27,7 +30,7 @@ theorem HmrFreezePlan.Compiled.cleanup_after (P : HmrFreezePlan) (A C D : Arena)
   have midValues : HmrKeeperValues P.zeroPlans mid.basis := by
     apply hmrKeeperValues_frame P.zeroPlans first.basis mid.basis initial.2.2.2.2.2.1
     intro R hR q hq
-    exact run_preserves_outside body tailTape first q (frame R hR q hq)
+    exact frame R hR q hq
   have zc := compileHmrZero_contract A P.zeroArena bits 16 P.zeroPlans P.zeroKeeper compiled.zero
   have ordered := (compileHmrBlocked_order A P.zeroArena none _ P.zeroPlans zc.2.1).2
   have result := compileHmrBlockedDrop_run C D P.zeroPlans qs drop ordered mid

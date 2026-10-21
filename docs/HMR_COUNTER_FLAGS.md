@@ -167,10 +167,10 @@ and survive the latch; they are not caller-supplied output assumptions.
 
 `compileHmrBlockedDrop_run` permits delayed cleanup from the current keeper
 equations and the compiled keeper order. `cleanup_after` composes F7, an
-intervening program whose support avoids the keeper/input ports, and the
+intervening program that preserves the keeper/input values, and the
 separately compiled cleanup, preserving its phase and proving final arena
 readiness. This is a conditional composition interface: the whole source
-body still needs to discharge that support condition. Fire's equality-test
+body still needs to prove that value-preservation condition. Fire's equality-test
 retirement and the complete F16/R13 placement remain separate obligations.
 
 F16 now has a checked source-order compiler. The equality literals are
@@ -187,7 +187,7 @@ the retained g-zero-test blocks. `HmrFreezePlan.Compiled.cycle` joins F7,
 a framed body, and F16. Its fire witness is derived from actual F7 execution
 and the independent chronological record invariant (old record < offset,
 and an unfrozen lane has zero record). The body still owes explicit
-support/ownership conditions; this theorem does not assume or establish
+value-preservation and ownership conditions; this theorem does not assume or establish
 that an entire source walk has already been compiled. R1/R13, global R11
 phase cancellation, and the full source arithmetic schedule remain open.
 
@@ -200,9 +200,15 @@ R13 compiles a size-8 zero test, retires fireR against zero AND NOT frozen,
 then frees the zero-test keepers with fresh prefixes. Its actual execution
 restores every bit except the cleared fireR and preserves phase.
 
-`hmrUnfreeze_cycle` connects R1 and R13 around a body with explicit support
+`hmrUnfreeze_cycle` connects R1 and R13 around a body with explicit value-preservation
 conditions. The R13 witness follows from R1 execution and the successful
 lane invariant that entry g=0 agrees with frozen; it is not supplied as an
 assumed fireR output equation. The invariant and the body's frame must
 still be instantiated from the entire physical walk. These components do
 not yet prove global R11 cancellation or source arithmetic correspondence.
+
+The body interfaces use equality of the actual before/after port values,
+not absence from the gate support. Frozen, fire, and keeper ports may thus
+be controls in F8--F15 or the reverse body. The separate support bound only
+requires every addressed wire to belong to the live arena. This corrects
+the overly restrictive initial composition interfaces identified in review.
