@@ -3905,6 +3905,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedPlacementMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacementMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacementMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedMagnitude_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedRowFold_of_good
 LEAN
 )
 task_axiom_lean_rc=$?

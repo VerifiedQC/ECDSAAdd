@@ -129,3 +129,16 @@ ownership under the swap permutation, and readiness after every tape.
 Readiness is conditional on the initial source snapshot being ready. These
 are concrete source-snapshot results; reaching these snapshots from the
 compiled walk remains an independent obligation.
+
+## Finite placement execution
+
+`FusedPlacedExecution` turns the finite list placements into wire maps whose
+default is unused on reference ports. Allocator-derived list injectivity
+therefore supplies the finite injectivity needed by the actual interpreter.
+For every tape the renamed lift computes the encoded coefficient magnitude,
+restores its pool and sign, and preserves phase and outside wires. The
+renamed source-order fold computes the full magnitude fold under RowGood
+and restores every wire outside the placed low row, including the borrowed
+word and carry. Signed encoding, initial clean inputs, and numerical good
+conditions remain explicit physical preconditions. These results do not yet
+derive them at the three complete point-add call sites.
