@@ -4047,6 +4047,39 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_early_witness
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_afterLatch
 
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndReady_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainKeep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChainFree_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_all_write
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadder_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderOutput_pol
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderKeep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralCopy_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLiteralCopy_clear
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderFree_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderValue_literals
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLadderValue_reallocate
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrNegativeLiterals_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPreviousKeeper_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlock_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlock_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlock_retain
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_clean_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockKeep_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockKeep_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockKeep_fresh
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockKeep_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBlockLiterals_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlocked_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrChunks_flatten
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_value
+
 LEAN
 )
 task_axiom_lean_rc=$?

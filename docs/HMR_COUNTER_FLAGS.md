@@ -116,3 +116,27 @@ equals oldFrozen. This prevents incorrectly using newFrozen alone to clear
 sigma on the step that just froze. Full intervening history/flag composition,
 the blocked g-zero keeper lifetime through F16, and global record phase
 cancellation remain open.
+
+## Arbitrary-width blocked keepers
+
+The source literal ladder is now length-parametric. Its output is proved to
+equal the conjunction of its input literals, independently of temporary
+addresses. A one-literal block uses the source polarity-dressed CX; a longer
+block computes the AND ladder, copies its top and measures/releases all
+ladder targets. The complementary generic release reconstructs only the
+prefix and allows fresh prefix addresses, including the two-literal case
+with no prefix computation.
+
+compileHmrBlock/compileHmrBlockKeep allocate actual sites and validate
+geometry and input bindings. Execution changes only the retained keeper;
+the checked release returns all other borrowed sites, leaving exactly one
+additional live wire and preserving Ready. compileHmrBlocked composes those
+actual programs with a previous positive keeper and negative row bits.
+compileHmrZero partitions by a positive public block size and proves the
+final keeper equals the zero predicate of the original owned input row.
+This covers the forward size-16 and reverse size-8 interfaces.
+
+The generic free program is proved, but its fresh-prefix compiler and the
+reverse multi-block deallocation are still being connected. Whole-walk
+compilation success, global phase-debt cancellation and the final peak
+certificate remain separate unfinished obligations.
