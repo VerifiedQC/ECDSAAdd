@@ -882,3 +882,8 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceClassState
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedEqualityReturn
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceClassReturn
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceClassStore
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEarlyStore
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmedStore
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedSigma
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedSigmaReturn
+import ECDSAAdd.Arithmetic.Paper935.HmrBranchRetirement

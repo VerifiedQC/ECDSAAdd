@@ -4712,6 +4712,13 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_erase_return
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.erase_return
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.store_cycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceEarlyStore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceArmedStore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaLog_armed_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaLog_armed_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaDropLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchRetirement_run
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -371,3 +371,17 @@ storage composition and proves the branch/history values, phase, restored
 arena readiness and data frame. It retains the explicit capacity condition.
 The counter zero-test lifetime, sigma/branch retirement, complete F7--F17
 integration and reverse phase cancellation are not covered by this composition.
+
+
+The counter-test envelopes now compose this storage body with early full-chain
+retirement or armed keeper retirement from newly checked prefix logs. Both
+prove the incoming arena is ready again and retain the data frame. Logged
+F15 separately checks the guard borrow, proves sigma clearing from its stated
+value equation, and releases sigma only after clearing. F17 explicitly keeps
+the measurement-dependent phase debt while clearing and releasing the branch.
+
+These envelopes assume the history port is already owned. The source calls
+`_r_fit(t)` after computing the j-flags, so whole-step correspondence still
+requires that intervening record growth/trim and its actual allocation order.
+The F15 witness must also be connected to the arithmetic/row invariant in the
+assembled step, and F17's phase debt must be cancelled by the reverse leg.
