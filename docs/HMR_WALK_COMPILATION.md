@@ -278,3 +278,14 @@ permutation. The generic front allocator is still unchanged. Generated
 first-step examples check the two full exit resize/repack output banks;
 source allocation of the remaining stages and whole-walk integration remain
 open.
+
+Logged scratch allocation is now checked by `Arena.checkBorrow` (length,
+distinctness and `reserve`, with no address selection). The logged counter
+and hybrid/carry-in compilers prove their existing source gate programs,
+clean scratch return, local counts and physical gate legality. Hybrid k
+remains derived from the current arena cardinality. A second pinned export
+records the actual allocation events and hybrid-call active census; data
+checks verify their correspondence to resize snapshots and source call sizes.
+Six generated early/armed-counter and narrow-add examples are kernel checked.
+This does not yet replace all scratch allocation in the assembled front or
+prove complete forward/reverse walk correspondence.

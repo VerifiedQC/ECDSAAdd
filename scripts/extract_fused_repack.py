@@ -12,6 +12,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--source', type=Path, required=True)
 p.add_argument('--output', type=Path, required=True)
 p.add_argument('--resize-output', type=Path, help='Also export forward resize transactions from the same pinned run')
+p.add_argument('--allocation-output', type=Path, help='Also observe actual forward arithmetic scratch/home allocation events')
 a = p.parse_args()
 root = a.source.resolve()
 head = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
@@ -97,6 +98,104 @@ def observe_stage(method, name):
         return result
     return wrapped
 
+# Optional ordered observations of the original allocation methods. Nested
+# Builder calls inside HomePool are recorded once, at their logical boundary.
+allocation_records = []
+allocation_context = None
+allocation_step = {}
+allocation_flags = {}
+allocation_pool_depth = 0
+
+def observe_allocation_stage(method, name):
+    def wrapped(w, *args, **kwargs):
+        global allocation_context
+        if name == 'counter' and kwargs.get('dec', args[2] if len(args)>2 else False):
+            return method(w, *args, **kwargs)
+        if name == 'add':
+            allocation_step[id(w)] = args[1]
+        step = args[0] if name == 'shift_exit' else allocation_step[id(w)]
+        stage = {'phase': w.b.current_phase, 'step': step, 'stage': name,
+                 'live_before': live_ranges(w), 'events': [], 'calls': []}
+        if name == 'counter':
+            early = args[1]
+            stage.update(counter=list(w.z), early=early,
+                         control=allocation_flags[id(w)][0] if early else w.frz)
+        previous = allocation_context
+        allocation_context = (w, stage)
+        try:
+            result = method(w, *args, **kwargs)
+        finally:
+            allocation_context = previous
+        stage['live_after'] = live_ranges(w)
+        if name == 'add':
+            allocation_flags[id(w)] = list(result)
+            stage['retained_flags'] = list(result)
+        allocation_records.append(stage)
+        return result
+    return wrapped
+
+original_qubit = Builder.qubit
+original_recycle = Builder.recycle
+original_draw = E.HomePool.draw
+original_give = E.HomePool.give
+
+def observe_qubit(b, *args, **kwargs):
+    q = original_qubit(b, *args, **kwargs)
+    if allocation_context is not None and allocation_pool_depth == 0:
+        w, stage = allocation_context
+        assert b is w.b
+        stage['events'].append({'kind': 'take', 'wire': q, 'via': 'builder'})
+    return q
+
+def observe_recycle(b, q, *args, **kwargs):
+    result = original_recycle(b, q, *args, **kwargs)
+    if allocation_context is not None and allocation_pool_depth == 0:
+        w, stage = allocation_context
+        assert b is w.b
+        stage['events'].append({'kind': 'give', 'wire': q, 'via': 'builder'})
+    return result
+
+def observe_draw(pool, band):
+    global allocation_pool_depth
+    allocation_pool_depth += 1
+    try:
+        q = original_draw(pool, band)
+    finally:
+        allocation_pool_depth -= 1
+    if allocation_context is not None:
+        w, stage = allocation_context
+        assert pool is w.pool
+        stage['events'].append({'kind': 'take', 'wire': q, 'via': 'home:' + band})
+    return q
+
+def observe_give(pool, q):
+    global allocation_pool_depth
+    allocation_pool_depth += 1
+    try:
+        band = original_give(pool, q)
+    finally:
+        allocation_pool_depth -= 1
+    if allocation_context is not None:
+        w, stage = allocation_context
+        assert pool is w.pool
+        stage['events'].append({'kind': 'give', 'wire': q, 'via': 'home:' + band})
+    return band
+
+original_ctrl_add_rows = E.G.ctrl_add_rows
+
+def observe_ctrl_add_rows(g, ctl, src_w, tgt_w, carry, cin=None, qcap=None):
+    if allocation_context is None:
+        return original_ctrl_add_rows(g, ctl, src_w, tgt_w, carry, cin, qcap)
+    w, stage = allocation_context
+    assert g.b is w.b
+    call = {'start': len(stage['events']), 'control': ctl, 'source': list(src_w),
+            'target': list(tgt_w), 'carry': carry, 'cin': cin, 'qcap': qcap,
+            'active': g.b.active_qubits}
+    result = original_ctrl_add_rows(g, ctl, src_w, tgt_w, carry, cin, qcap)
+    call['end'] = len(stage['events'])
+    stage['calls'].append(call)
+    return result
+
 original_repack = E.WalkWBase._repack
 original_closer = E.WalkWBase.closer
 
@@ -155,6 +254,15 @@ if a.resize_output:
     E.WRow.shrink_to = observe_resize(E.WRow.shrink_to, 'shrink')
     E.WalkWBase._fwd_add = observe_stage(E.WalkWBase._fwd_add, 'add')
     E.WalkWBase._fwd_shift_exit = observe_stage(E.WalkWBase._fwd_shift_exit, 'shift_exit')
+if a.allocation_output:
+    E.G.ctrl_add_rows = observe_ctrl_add_rows
+    Builder.qubit = observe_qubit
+    Builder.recycle = observe_recycle
+    E.HomePool.draw = observe_draw
+    E.HomePool.give = observe_give
+    E.WalkWBase._fwd_add = observe_allocation_stage(E.WalkWBase._fwd_add, 'add')
+    E.WalkWBase._z_step = observe_allocation_stage(E.WalkWBase._z_step, 'counter')
+    E.WalkWBase._fwd_shift_exit = observe_allocation_stage(E.WalkWBase._fwd_shift_exit, 'shift_exit')
 b = Builder()
 try:
     C.build_circuit(b)
@@ -184,3 +292,15 @@ if a.resize_output:
                                 if a.resize_output.suffix == '.gz' else resize_bytes)
     print(json.dumps({'resize_stages': len(resize_records),
                       'resize_transactions': sum(len(x['resizes']) for x in resize_records)}))
+
+if a.allocation_output:
+    payload = (json.dumps({
+        'source_commit': PIN, 'entry': str(entry.relative_to(root)),
+        'engine_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+        'entry_sha256': hashlib.sha256(entry.read_bytes()).hexdigest(),
+        'qcap': C.QCAP, 'note': 'Observed allocation events only; release cleanliness is not asserted.',
+        'stages': allocation_records}, separators=(',', ':')) + '\n').encode()
+    a.allocation_output.write_bytes(gzip.compress(payload, mtime=0)
+                                    if a.allocation_output.suffix == '.gz' else payload)
+    print(json.dumps({'allocation_stages': len(allocation_records),
+                      'allocation_events': sum(len(x['events']) for x in allocation_records)}))

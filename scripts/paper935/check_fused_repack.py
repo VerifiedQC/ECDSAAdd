@@ -95,4 +95,60 @@ import subprocess
 import sys
 subprocess.run([sys.executable, str(root / 'scripts/paper935/generate_resize_instances.py'),
                 '--check'], check=True)
-print('Initial headroom Lean instances match the source trace exactly.')
+print('Selected Lean resize/exit/scratch instances match the source traces exactly.')
+
+allocation = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-allocations.json.gz').read_bytes()))
+for key in ('source_commit', 'entry', 'engine_sha256', 'entry_sha256', 'qcap'):
+    assert allocation[key] == data[key], (key, 'allocation pin mismatch')
+assert len(allocation['stages']) == 2 * 533 * 3
+assert sum(len(s['events']) for s in allocation['stages']) == 195080
+resize_index = {(s['phase'], s['step'], s['stage']): s for s in resize['stages']}
+def snapshot_live(s):
+    return set(s['allocated']) - set(sum(s['free'].values(), []))
+for phase in ('s2-walkA', 's6-walkC'):
+    stages = [s for s in allocation['stages'] if s['phase'] == phase]
+    assert [(s['step'], s['stage']) for s in stages] == [
+        (t, k) for t in range(533) for k in ('add', 'counter', 'shift_exit')]
+    for t in range(533):
+        add, counter, shift = stages[3*t:3*t+3]
+        assert add['live_after'] == counter['live_before']
+        assert counter['live_after'] == shift['live_before']
+    for stage in stages:
+        live = live_set(stage['live_before'])
+        sizes = [len(live)]
+        for event in stage['events']:
+            q = event['wire']
+            assert 0 <= q < 935
+            if event['kind'] == 'take':
+                assert q not in live
+                live.add(q)
+            else:
+                assert event['kind'] == 'give' and q in live
+                live.remove(q)
+            sizes.append(len(live))
+        assert live == live_set(stage['live_after'])
+        if stage['stage'] in ('add', 'shift_exit'):
+            row_stage = resize_index[(phase, stage['step'], stage['stage'])]
+            assert live_set(stage['live_before']) == snapshot_live(row_stage['before'])
+            assert live == snapshot_live(row_stage['after'])
+        if stage['stage'] == 'counter':
+            taken = [e['wire'] for e in stage['events'] if e['kind'] == 'take']
+            given = [e['wire'] for e in stage['events'] if e['kind'] == 'give']
+            assert len(taken) == (4 if stage['early'] else 5) and given == taken[::-1]
+            assert [e['kind'] for e in stage['events']] == ['take']*len(taken) + ['give']*len(taken)
+            assert len(stage['counter']) == 6
+            assert len(set([stage['control']] + stage['counter'])) == 7
+            assert set([stage['control']] + stage['counter']) <= live_set(stage['live_before'])
+            assert live == live_set(stage['live_before'])
+        if stage['stage'] == 'add':
+            assert len(stage['calls']) == 2
+            for call in stage['calls']:
+                assert call['active'] == sizes[call['start']]
+                assert call['qcap'] == 935 and len(call['source']) == len(call['target']) > 0
+                events = stage['events'][call['start']:call['end']]
+                taken = [e['wire'] for e in events if e['kind'] == 'take']
+                given = [e['wire'] for e in events if e['kind'] == 'give']
+                assert len(taken) == max(0, min(935-call['active'], len(call['source'])-1))
+                assert given == taken[::-1]
+                assert [e['kind'] for e in events] == ['take']*len(taken) + ['give']*len(taken)
+print('3198 allocation stages and 195080 observed borrow/return events checked; no cleanliness theorem inferred.')

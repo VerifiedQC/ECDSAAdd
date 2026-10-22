@@ -19,7 +19,8 @@ required by the source; this export used Python 3.13):
 ```sh
 python3.13 scripts/extract_fused_repack.py --source ../uncompute-paper \
   --output data/fused-hmr935-repack.json \
-  --resize-output data/paper935/hmr-source-resize.json.gz
+  --resize-output data/paper935/hmr-source-resize.json.gz \
+  --allocation-output data/paper935/hmr-source-allocations.json.gz
 python3 scripts/paper935/generate_resize_instances.py
 python3 scripts/paper935/check_fused_repack.py
 ```
@@ -37,3 +38,17 @@ The generated `HmrSourceExitInitial` also checks the first exit's relocation
 journal and resulting four row views for each walk. `HmrSourceExitReplay`
 checks the composed four exit resizes and relocation against those recorded
 physical row views. These are first-step examples, not all-step certificates.
+
+`hmr-source-allocations.json.gz` observes the original Builder and HomePool
+methods during add, counter and shift-exit stages: 3,198 stages and 195,080
+ordered take/give events. Nested Builder allocation inside HomePool is
+recorded once at the logical ownership boundary. Hybrid-call boundaries and
+the source's actual active-qubit census are recorded, as are counter inputs
+and early/armed mode. The checker replays ownership, compares matching resize
+snapshots, and checks the counter and hybrid borrow/return order and sizes.
+This replay does not assert quantum cleanliness at a return.
+
+`HmrSourceScratchInitial` checks six generated allocation examples: each
+walk's first early and armed counter, and its first narrow hybrid addition.
+The generic logged compilers prove actual counter/hybrid execution and clean
+returns from arena readiness. Full arithmetic-stage assembly is still open.

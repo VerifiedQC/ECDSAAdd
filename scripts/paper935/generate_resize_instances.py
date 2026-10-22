@@ -1,4 +1,4 @@
-"""Generate initial headroom resize instances from the pinned source trace.
+"""Generate selected resize, exit and scratch instances from pinned source traces.
 
 No allocator is simulated. This initial slice is not a whole-walk certificate.
 """
@@ -99,5 +99,54 @@ text = '\n'.join(lines)
 path = root/'ECDSAAdd/Arithmetic/Paper935/HmrSourceExitReplay.lean'
 if '--check' in sys.argv:
     assert path.read_text()==text, 'Generated exit replay differs; regenerate from pinned log.'
+else:
+    path.write_text(text)
+
+allocation = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-allocations.json.gz').read_bytes()))
+assert allocation['source_commit'] == data['source_commit']
+lines = ['import ECDSAAdd.Arithmetic.Paper935.HmrLoggedCounter',
+         'import ECDSAAdd.Arithmetic.Paper935.HmrLoggedHybridCin', '',
+         'namespace ECDSAAdd.Arithmetic.Paper935', '',
+         '/- Generated allocation examples: first early/armed counter stages',
+         'and the first narrow (fv/gv) hybrid call, for each pinned walk. -/', '']
+def arena_lines(name, ranges):
+    intervals = ' ∨ '.join(f'({a} ≤ q ∧ q < {b})' for a,b in ranges)
+    return [f'def {name}Arena : Arena :=',
+            f'  ⟨arenaWires.filter (fun q => {intervals}),Finset.filter_subset _ _⟩', '']
+for phase in ('s2-walkA', 's6-walkC'):
+    for early in (True, False):
+        stage = next(s for s in allocation['stages'] if s['phase']==phase and s['stage']=='counter' and s['early']==early)
+        name = phase[:2] + ('Early' if early else 'Armed') + 'CounterLog'
+        work = [e['wire'] for e in stage['events'] if e['kind']=='take']
+        lines += arena_lines(name, stage['live_before'])
+        lines += [f'def {name}Work : List Wire := {work}', '',
+                  f'/-- Recorded step {stage["step"]}. The early control site is the retained sigma;',
+                  'the early counter program ignores this control argument. -/',
+                  f'theorem {name}_checked :',
+                  f'    (compileHmrCounterStepLog {name}Arena {str(early).lower()} {stage["control"]}',
+                  f'      {stage["counter"]} {name}Work).isSome = true := by',
+                  '  decide +kernel', '']
+    stage = next(s for s in allocation['stages'] if s['phase']==phase and s['step']==0 and s['stage']=='add')
+    call = stage['calls'][1]
+    live = {q for a,b in stage['live_before'] for q in range(a,b)}
+    for event in stage['events'][:call['start']]:
+        (live.add if event['kind']=='take' else live.remove)(event['wire'])
+    ranges = []
+    for q in sorted(live):
+        if ranges and ranges[-1][1]==q: ranges[-1][1]=q+1
+        else: ranges.append([q,q+1])
+    name = phase[:2] + 'InitialNarrowLog'
+    work = [e['wire'] for e in stage['events'][call['start']:call['end']] if e['kind']=='take']
+    lines += arena_lines(name, ranges)
+    lines += [f'def {name}Work : List Wire := {work}', '',
+              f'theorem {name}_checked :',
+              f'    (compileHmrHybridCinLog {name}Arena {call["control"]} {call["cin"]} {call["carry"]}',
+              f'      {call["source"]} {call["target"]} {name}Work).isSome = true := by',
+              '  decide +kernel', '']
+lines += ['end ECDSAAdd.Arithmetic.Paper935', '']
+text = '\n'.join(lines)
+path = root/'ECDSAAdd/Arithmetic/Paper935/HmrSourceScratchInitial.lean'
+if '--check' in sys.argv:
+    assert path.read_text()==text, 'Generated scratch instances differ; regenerate from pinned log.'
 else:
     path.write_text(text)

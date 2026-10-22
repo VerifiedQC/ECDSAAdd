@@ -794,3 +794,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontRepack
 import ECDSAAdd.Arithmetic.Paper935.HmrRepackFrame
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitReplay
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBorrow
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedCounter
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedHybrid
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedHybridCin
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedResources
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedPhysical
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceScratchInitial

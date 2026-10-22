@@ -4530,6 +4530,36 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialExit_compiled
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialExit_compiled
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.run_repacked_counter
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_generic
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCinLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCinLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCinLog_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_census
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCinLog_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2EarlyCounterLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ArmedCounterLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialNarrowLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EarlyCounterLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ArmedCounterLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialNarrowLog_checked
 LEAN
 )
 task_axiom_lean_rc=$?
