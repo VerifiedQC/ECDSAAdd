@@ -4679,6 +4679,39 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockedLog_values
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZeroLog_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZeroLog_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedPorts_surjective
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLogged_return_current
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_depths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_values
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_erase_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_erase_in
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_arena_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedStore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstFreeze_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstFreeze_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstFreeze_cleanup_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstFreeze_cleanup_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_targets
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_delayed
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceClassLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.positive_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.run_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.value
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.census
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_erase_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.erase_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.store_cycle
 LEAN
 )
 task_axiom_lean_rc=$?

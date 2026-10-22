@@ -20,8 +20,10 @@ required by the source; this export used Python 3.13):
 python3.13 scripts/extract_fused_repack.py --source ../uncompute-paper \
   --output data/fused-hmr935-repack.json \
   --resize-output data/paper935/hmr-source-resize.json.gz \
-  --allocation-output data/paper935/hmr-source-allocations.json.gz
+  --allocation-output data/paper935/hmr-source-allocations.json.gz \
+  --control-output data/paper935/hmr-source-control.json.gz
 python3 scripts/paper935/generate_resize_instances.py
+python3 scripts/paper935/generate_control_instances.py
 python3 scripts/paper935/check_fused_repack.py
 ```
 
@@ -51,4 +53,20 @@ This replay does not assert quantum cleanliness at a return.
 `HmrSourceScratchInitial` checks six generated allocation examples: each
 walk's first early and armed counter, and its first narrow hybrid addition.
 The generic logged compilers prove actual counter/hybrid execution and clean
-returns from arena readiness. Full arithmetic-stage assembly is still open.
+returns from arena readiness. The logged arithmetic front now composes these generic checks; acceptance of
+all source front logs remains open.
+
+`hmr-source-control.json.gz` observes the post-shift body of the same 1,066
+forward steps, with 36,926 allocation events and 14,296 gadget calls. It
+records blocked zero tests, fresh-prefix cleanup, timestamp equality tests,
+and surrounding control calls. The original source methods execute unchanged;
+the optional instrumentation also reproduces the three earlier exports.
+The same checker validates ownership transitions, retained keeper counts,
+F7/F16 call parameters and the observed cleanup borrow/return order.
+
+`generate_control_instances.py --check` checks exact generation of
+`HmrSourceFreezeInitial` and `HmrSourceFreezeCleanupInitial`: each walk's first armed F7 checks its actual keeper
+addresses, fire and retained census; F16 checks acceptance using the then-current
+arena and independently observed prefix addresses, with the resulting live
+set matched to the source snapshot. These four kernel checks are selected
+examples, not certification of all calls, whole-step semantics or peak space.

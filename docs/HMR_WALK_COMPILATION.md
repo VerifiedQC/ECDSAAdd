@@ -339,5 +339,35 @@ independent integer `pinStep`, using the signed post-arithmetic g value and
 `PinState.RecordValid`. Before Tmin the scheduled program is empty; at and
 after Tmin it tests next.g=0. The signed-zero/physical-zero equivalence is
 proved, not supplied as an assumption. These are parameterized checked plans;
-the source export does not yet contain all freeze/cleanup allocation logs,
-and complete forward/reverse compilation and the whole-walk peak remain open.
+the source export now records forward freeze/cleanup allocation calls, but
+complete forward/reverse compilation and the whole-walk peak remain open.
+
+
+The same pinned extractor now observes all 1,066 forward post-shift bodies,
+including F7/F16 calls and independently reborrowed cleanup prefixes.
+`HmrSourceFreezeInitial` checks both walks' first armed F7 keeper addresses/fire/census
+and F16's resulting live set against this export. The existing data checker
+validates call/ownership structure and exact regeneration; it does not prove
+measurement semantics or the remaining complete history-body obligations.
+
+
+### Logged history storage
+
+`hmrLoggedStore_run` composes the actual allocated j-flags, finite history
+push and measured flag retirement. Under the stated history-capacity bound,
+it proves the resulting branch bit, history value, phase, restored incoming
+arena readiness and scratch release. The flag equations needed for cleanup
+follow from the finite push's bit-preservation theorem; they are not supplied
+as assumptions about an abstract body. This covers F9/F13 storage, not the
+remaining full F8--F15 composition or reverse history phase cancellation.
+
+`HmrSourceClassPlan.Logged` checks F8 with the actual two early inputs or
+three armed inputs, without unused placeholder ports. Its execution theorem
+proves the class predicate and preserves incoming data. `erase_return`
+retires the equality chain and positive bit after a body with the stated
+computed-bit equations, restoring the incoming arena and preserving the
+body's phase and owned data. `store_cycle` discharges these equations for the actual class/deep-history
+storage composition and proves the branch/history values, phase, restored
+arena readiness and data frame. It retains the explicit capacity condition.
+The counter zero-test lifetime, sigma/branch retirement, complete F7--F17
+integration and reverse phase cancellation are not covered by this composition.

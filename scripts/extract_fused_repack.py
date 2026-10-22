@@ -13,7 +13,10 @@ p.add_argument('--source', type=Path, required=True)
 p.add_argument('--output', type=Path, required=True)
 p.add_argument('--resize-output', type=Path, help='Also export forward resize transactions from the same pinned run')
 p.add_argument('--allocation-output', type=Path, help='Also observe actual forward arithmetic scratch/home allocation events')
+p.add_argument('--control-output', type=Path, help='Observe forward post-shift control calls and their actual allocation events')
 a = p.parse_args()
+if a.control_output and not a.allocation_output:
+    p.error('--control-output requires --allocation-output from the same run')
 root = a.source.resolve()
 head = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
 if head != PIN:
@@ -181,6 +184,63 @@ def observe_give(pool, q):
         stage['events'].append({'kind': 'give', 'wire': q, 'via': 'home:' + band})
     return band
 
+# The post-shift body is inline in HmrWalk.step_fwd. Start its observation
+# after the original shift/exit method returns, and close it when step_fwd
+# returns. Calls and allocation choices are observed, never reimplemented.
+control_records = []
+control_walk = None
+control_stage = None
+
+def observe_control_step(method):
+    def wrapped(w, t):
+        global control_walk, control_stage, allocation_context
+        previous_walk, previous_stage = control_walk, control_stage
+        previous_allocation = allocation_context
+        control_walk, control_stage = (w, t), None
+        try:
+            result = method(w, t)
+            assert control_stage is not None
+            control_stage['live_after'] = live_ranges(w)
+            control_records.append(control_stage)
+            return result
+        finally:
+            control_walk, control_stage = previous_walk, previous_stage
+            allocation_context = previous_allocation
+    return wrapped
+
+def begin_control_after_shift(method):
+    def wrapped(w, t, early):
+        global control_stage, allocation_context
+        result = method(w, t, early)
+        if control_walk is not None:
+            assert control_walk == (w, t)
+            control_stage = {
+                'phase': w.b.current_phase, 'step': t, 'stage': 'control',
+                'tmin': w.Tmin, 'early': early, 'counter': list(w.z),
+                'frozen': w.frz, 'timestamp': list(w.tst) if w.tst is not None else [],
+                'g': list(w.g.ids) + [w.g.sign],
+                'retained_flags': allocation_flags[id(w)],
+                'live_before': live_ranges(w), 'events': [], 'calls': []}
+            allocation_context = (w, control_stage)
+        return result
+    return wrapped
+
+def observe_control_call(method, name):
+    def wrapped(g, *args, **kwargs):
+        if allocation_context is None or allocation_context[1]['stage'] != 'control':
+            return method(g, *args, **kwargs)
+        w, stage = allocation_context
+        assert g.b is w.b
+        call = {'method': name, 'start': len(stage['events']),
+                'args': json.loads(json.dumps(args)),
+                'kwargs': json.loads(json.dumps(kwargs))}
+        stage['calls'].append(call)
+        result = method(g, *args, **kwargs)
+        call['end'] = len(stage['events'])
+        call['result'] = json.loads(json.dumps(result))
+        return result
+    return wrapped
+
 original_ctrl_add_rows = E.G.ctrl_add_rows
 
 def observe_ctrl_add_rows(g, ctl, src_w, tgt_w, carry, cin=None, qcap=None):
@@ -263,6 +323,12 @@ if a.allocation_output:
     E.WalkWBase._fwd_add = observe_allocation_stage(E.WalkWBase._fwd_add, 'add')
     E.WalkWBase._z_step = observe_allocation_stage(E.WalkWBase._z_step, 'counter')
     E.WalkWBase._fwd_shift_exit = observe_allocation_stage(E.WalkWBase._fwd_shift_exit, 'shift_exit')
+if a.control_output:
+    E.HmrWalk.step_fwd = observe_control_step(E.HmrWalk.step_fwd)
+    E.WalkWBase._fwd_shift_exit = begin_control_after_shift(E.WalkWBase._fwd_shift_exit)
+    for name in ['ztest_blocked', 'ztest_free', 'zero_test', 'eq_const',
+                 'and_chain', 'release_chain', 'andp', 'andm']:
+        setattr(E.G, name, observe_control_call(getattr(E.G, name), name))
 b = Builder()
 try:
     C.build_circuit(b)
@@ -304,3 +370,16 @@ if a.allocation_output:
                                     if a.allocation_output.suffix == '.gz' else payload)
     print(json.dumps({'allocation_stages': len(allocation_records),
                       'allocation_events': sum(len(x['events']) for x in allocation_records)}))
+
+if a.control_output:
+    payload = (json.dumps({
+        'source_commit': PIN, 'entry': str(entry.relative_to(root)),
+        'engine_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+        'entry_sha256': hashlib.sha256(entry.read_bytes()).hexdigest(),
+        'qcap': C.QCAP, 'note': 'Observed calls and addresses only; no semantic or peak theorem.',
+        'stages': control_records}, separators=(',', ':')) + '\n').encode()
+    a.control_output.write_bytes(gzip.compress(payload, mtime=0)
+                                 if a.control_output.suffix == '.gz' else payload)
+    print(json.dumps({'control_stages': len(control_records),
+                      'control_events': sum(len(x['events']) for x in control_records),
+                      'control_calls': sum(len(x['calls']) for x in control_records)}))

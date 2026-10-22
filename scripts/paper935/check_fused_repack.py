@@ -152,3 +152,36 @@ for phase in ('s2-walkA', 's6-walkC'):
                 assert given == taken[::-1]
                 assert [e['kind'] for e in events] == ['take']*len(taken) + ['give']*len(taken)
 print('3198 allocation stages and 195080 observed borrow/return events checked; no cleanliness theorem inferred.')
+
+from control_trace import replay, zero_logs, free_logs, freeze_calls
+control = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-control.json.gz').read_bytes()))
+for key in ('source_commit', 'entry', 'engine_sha256', 'entry_sha256', 'qcap'):
+    assert control[key] == data[key], (key, 'control pin mismatch')
+assert len(control['stages']) == 1066
+allocation_index = {(s['phase'],s['step'],s['stage']):s for s in allocation['stages']}
+for phase in ('s2-walkA','s6-walkC'):
+    stages = [s for s in control['stages'] if s['phase']==phase]
+    assert [s['step'] for s in stages]==list(range(533))
+    for s in stages:
+        assert s['stage']=='control' and s['tmin']==498 and s['early']==(s['step']<498)
+        assert s['live_before']==allocation_index[(phase,s['step'],'shift_exit')]['live_after']
+        states=replay(s)
+        for call in s['calls']:
+            assert 0<=call['start']<=call['end']<=len(s['events'])
+            if call['method']=='ztest_blocked':
+                logs=zero_logs(s,call)
+                keepers={k[1] for k in call['result'][1]}
+                assert states[call['end']]==states[call['start']]|keepers
+                assert len(states[call['end']])-len(states[call['start']])==len(logs)
+            if call['method']=='ztest_free':
+                free_logs(s,call)
+                keepers={k[1] for k in call['args'][0]}
+                assert states[call['end']]==states[call['start']]-keepers
+        if not s['early']:
+            zero,fire,eq,w1,drop=freeze_calls(s)
+            assert states[fire['end']]==states[zero['start']]|{k[1] for k in zero['result'][1]}|{fire['result']}
+        else:
+            assert not any(c['method'] in ('ztest_blocked','ztest_free') for c in s['calls'])
+print('1066 post-shift control journals checked, including actual F7/F16 calls and fresh cleanup prefixes; no quantum semantics inferred.')
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_control_instances.py'),'--check'],check=True)
+print('Selected Lean F7/F16 instances match the observed source call journals exactly.')
