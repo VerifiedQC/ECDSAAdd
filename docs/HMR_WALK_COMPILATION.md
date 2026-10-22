@@ -289,3 +289,13 @@ checks verify their correspondence to resize snapshots and source call sizes.
 Six generated early/armed-counter and narrow-add examples are kernel checked.
 This does not yet replace all scratch allocation in the assembled front or
 prove complete forward/reverse walk correspondence.
+
+`compileHmrHybridF4Log` now checks the shared flag/carry and both low-carry
+logs, reusing the existing F4 gate program. Its execution theorem proves
+both target words and clean return of the shared flag/carry. Both k values
+are computed on the arena that includes those two retained temporaries;
+local counts and allocation censuses refer to this same checked plan.
+Original counter/hybrid compilers are proved to be accepted logged instances.
+Logged bank resizes also expose static widths, ownership and separated
+metadata/frame preservation, independently of numeric window assumptions.
+The full logged arithmetic front is the next composition step.

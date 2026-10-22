@@ -4560,6 +4560,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6EarlyCounterLog_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6ArmedCounterLog_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialNarrowLog_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairAddLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridPairCoreLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrHybridF4Log_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedPorts_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedPorts_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridF4Log_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Logged.run_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Logged.counts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Logged.census
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrCounterStepLog_generic
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridRowLog_generic
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrHybridCinLog_generic
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Plan.Compiled.logged
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_external
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_static_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_static_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_fixed
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_widths
 LEAN
 )
 task_axiom_lean_rc=$?

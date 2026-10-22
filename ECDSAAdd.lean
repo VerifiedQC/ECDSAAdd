@@ -801,3 +801,12 @@ import ECDSAAdd.Arithmetic.Paper935.HmrLoggedHybridCin
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedResources
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedPhysical
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceScratchInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedPair
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedPairCore
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedF4
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedPorts
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedF4Compiler
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedF4Resources
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedCompatibility
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedRowLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBankGeometry
