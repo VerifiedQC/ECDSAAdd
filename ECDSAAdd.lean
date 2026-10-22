@@ -783,3 +783,8 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontRearMath
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontEntryFrame
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontPrepare
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontCorrect
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedResize
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBank
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedRows
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBankCorrect
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceResizeInitial

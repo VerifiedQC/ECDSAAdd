@@ -4486,6 +4486,28 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.prepare_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.program_prepare_rear
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.run_math
+#print axioms ECDSAAdd.Arithmetic.Paper935.growRow_reserved
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_old_sites
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_generic
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResizeLog_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialG_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialF_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialGv_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialFv_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialG_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialF_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialGv_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialFv_checked
 LEAN
 )
 task_axiom_lean_rc=$?

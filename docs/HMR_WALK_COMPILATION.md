@@ -247,3 +247,22 @@ uses generic `Arena.borrowMany`, while the source prefers home bands and
 performs a relocation journal. The front theorem proves the gate operations
 and ordering for its compiled layout; it does not identify that layout with
 the source HomePool trace, nor establish all 533 compilations or a new peak.
+
+### Pinned resize observations and checked replay
+
+`HmrLoggedResize` checks explicitly recorded growth addresses with
+`Arena.reserve`; it leaves the original allocator unchanged. `HmrLoggedBank`,
+`HmrLoggedRows`, and `HmrLoggedBankCorrect` compose these checks in the six
+source row orders. Accepted resizes preserve row values (under the requested
+numeric window), phase and arena readiness, with ownership, width, frame,
+proper-gate and support proofs. This is a log-driven checker, not a second
+implementation of HomePool.
+
+The same pinned-source extractor and existing repack checker now cover 12,792
+forward resize observations across both 533-step walks, including shift-exit
+repack journals. `HmrSourceResizeInitial` is generated from that export and
+kernel-checks the output physical row layouts of the first four headroom
+resizes in each walk. The full trace remains data, not a Lean certificate for
+all 533 steps. Allocation of flags/arithmetic scratch, whole-stage replay and
+integration into the source walk are still open. The earlier arithmetic-front
+correctness theorem retains its generic address-selection policy.
