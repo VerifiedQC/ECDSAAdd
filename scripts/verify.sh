@@ -4458,6 +4458,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_fixed
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_encodes
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_exit
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_fixed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_encodes
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_signed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.route_encodes
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.entry_encodes
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrCounterSign
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowLow
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRootPredicate
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.entry_swap
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.entry_branch_low
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.entry_controls
 LEAN
 )
 task_axiom_lean_rc=$?

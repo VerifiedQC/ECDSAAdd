@@ -218,3 +218,14 @@ rows fit the exit window. These obligations still need the preceding
 arithmetic and whole-step mathematical invariant. The exact gate-list
 factorization `program_stages` is independent of semantic correctness and
 does not assert compilation success for the public 533-step schedule.
+
+### Entry predicates and signed arithmetic
+
+The actual F1–F3 execution now establishes sigma as the mathematical swap
+predicate and branch as `bbit`, using the signed counter and input row
+encoding. It also establishes the routed four-row encoding. These are
+conclusions of the actual gate execution, not supplied control assumptions.
+F4–F5 signed arithmetic follows from its proven word operations and explicit
+signed result bounds; f/fv and retained controls are preserved by the actual
+layout. The whole-step composition and discharge of numerical window
+obligations remain outstanding.

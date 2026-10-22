@@ -767,3 +767,11 @@ import ECDSAAdd.Arithmetic.Paper935.HmrShiftRowValue
 import ECDSAAdd.Arithmetic.Paper935.HmrShiftPairValue
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontShiftValue
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontShiftFinish
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontSigned
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontArithmeticFrame
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontArithmeticRows
+import ECDSAAdd.Arithmetic.Paper935.HmrRouteStageSigned
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontRouteRows
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontEntryRows
+import ECDSAAdd.Arithmetic.Paper935.HmrFrontPredicates
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontEntryMath
