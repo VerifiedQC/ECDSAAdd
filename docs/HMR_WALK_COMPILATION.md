@@ -229,3 +229,21 @@ F4–F5 signed arithmetic follows from its proven word operations and explicit
 signed result bounds; f/fv and retained controls are preserved by the actual
 layout. The whole-step composition and discharge of numerical window
 obligations remain outstanding.
+
+### Complete arithmetic-front semantics
+
+`HmrSourceFront.Compiled.run_math` composes padding, F1–F3, headroom,
+F4–F5, shifts and exit shrinking. It establishes the next four signed
+row values, the next signed six-bit counter, phase preservation and exit
+readiness. Active lanes implement `zStep`; frozen lanes retain their rows
+and counter. Input f oddness and frozen g=0 imply the required g evenness;
+input pair windows imply intermediate arithmetic and fv shift bounds.
+Only input pair fit and output row/counter fit remain numerical window
+conditions. Later repacking, freeze/history operations and their records
+are outside this theorem.
+
+Physical-address correspondence remains separate: `planRowResize` currently
+uses generic `Arena.borrowMany`, while the source prefers home bands and
+performs a relocation journal. The front theorem proves the gate operations
+and ordering for its compiled layout; it does not identify that layout with
+the source HomePool trace, nor establish all 533 compilations or a new peak.
