@@ -3954,6 +3954,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_schedule
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrThreeCallDebt
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrParkedBoundary
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrUnparkBoundary
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEraseBoundary
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrUnparkInputRule
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEraseInputRule
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_parked_boundary
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_unpark_input
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_erase_input
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_phase
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrThreeCallDebt_zero_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_restored_iff

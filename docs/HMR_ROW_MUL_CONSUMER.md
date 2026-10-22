@@ -94,3 +94,22 @@ In particular, separate zero debts for s2, J and s6 are not required: their
 contributions may cancel across boundaries. The producer instances and the
 concrete cancellation equation remain open; this is not a RecordedAgreement
 or a proof of the point-addition permutation.
+
+## Lifecycle input relations
+
+`HmrLifecycleInput` derives the producer `pre` predicates from explicit basis
+boundary facts and a separate producer input rule. The parked boundary tracks
+the original sign, the actual placed lift/fold payload and clean scratch.
+Unpark additionally requires the demolished multiplier word to be zero; erase
+instead requires the original multiplier bits and the forward output value.
+The rule's record predicate relates the original and current absolute cursor.
+Its `accepts` proof must be supplied by the producer: the old arbitrary `pre`
+is not assumed to follow automatically from basis facts.
+
+`hmr_unpark_input` and `hmr_erase_input` consume forward execution, actual
+post-state frame/zero facts and the rule to conclude `unpark.pre` / `erase.pre`
+themselves. For s6, instantiate the original input with the actual s2+J output
+and the cursor advanced by its full measurement count. The basis frame permits
+phase-only corrections on those wires; it is weaker than support disjointness.
+No phase restoration follows from these input relations. Actual rule instances,
+frame/zero facts and record predicates are still source implementation work.
