@@ -205,3 +205,16 @@ arithmetic values. Layout disjointness and cleanliness follow from compiler
 results. The full F6/exit composition, mathematical whole-step invariant,
 repacking, history and complete 533-step source trace remain outstanding.
 These results do not establish a new whole-walk resource number.
+
+### F6 and ordered exit composition
+
+`HmrSourceFrontShiftFinish.shift_exit` now composes actual g downshift,
+free or frozen-controlled fv upshift, and actual ordered shrinking. It
+preserves phase and metadata, returns the exit arena clean, and establishes
+all four signed row values. Layout separation and nonempty payloads come
+from the compiled front. Its numerical input obligations remain explicit:
+g is even, fv fits its pre-doubling window whenever active, and the resulting
+rows fit the exit window. These obligations still need the preceding
+arithmetic and whole-step mathematical invariant. The exact gate-list
+factorization `program_stages` is independent of semantic correctness and
+does not assert compilation success for the public 533-step schedule.

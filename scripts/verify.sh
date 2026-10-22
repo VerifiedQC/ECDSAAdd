@@ -4446,6 +4446,18 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.head_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.headroom_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.shift_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.exit_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.program_stages
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftDown_row
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpFree_row
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftUpArmed_row
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrShiftPair_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_fixed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_encodes
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.shift_exit
 LEAN
 )
 task_axiom_lean_rc=$?
