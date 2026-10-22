@@ -4740,6 +4740,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6LastRecordGrow_borrow
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6LastRecordGrow_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceGrowingEarlyStore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyControlLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlPlan.Logged.run_spec
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlPlan.Logged.ready_of_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstEarlyControl_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstEarlyControl_checked
 LEAN
 )
 task_axiom_lean_rc=$?

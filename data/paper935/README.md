@@ -79,3 +79,10 @@ This is an observation of the pinned schedule, not a general no-trim theorem.
 walk (steps 0 and 322), while the j-flags remain live. The generated proofs
 separate input ownership/distinctness from the explicit borrow, then check
 compiler acceptance and resulting live cardinality.
+
+The control journal additionally observes fv read ports and each actual
+`_s_death` call. `early_control_log` checks all 996 early-stage call patterns
+and extracts the five actual allocation lists consumed by
+`compileHmrEarlyControlLog`. `HmrSourceEarlyControlInitial` checks each walk's
+first whole early control sequence and final live cardinality; these two
+examples do not replace all-stage kernel acceptance.

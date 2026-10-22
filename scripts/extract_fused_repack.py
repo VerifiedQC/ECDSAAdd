@@ -220,10 +220,24 @@ def begin_control_after_shift(method):
                 'tmin': w.Tmin, 'early': early, 'counter': list(w.z),
                 'frozen': w.frz, 'timestamp': list(w.tst) if w.tst is not None else [],
                 'g': list(w.g.ids) + [w.g.sign],
+                'fv_reads': [w.fv.pos(i) for i in range(1, 5)],
                 'retained_flags': allocation_flags[id(w)],
                 'record_before': list(w.R), 'record_fits': [],
                 'live_before': live_ranges(w), 'events': [], 'calls': []}
             allocation_context = (w, control_stage)
+        return result
+    return wrapped
+
+def observe_sigma_death(method):
+    def wrapped(w, g, sigma, fire):
+        if allocation_context is None or allocation_context[0] is not w or allocation_context[1]['stage'] != 'control':
+            return method(w, g, sigma, fire)
+        stage = allocation_context[1]
+        call = {'start': len(stage['events']), 'sigma': sigma, 'fire': fire, 'fv1': w.fv.pos(1)}
+        assert 'sigma_death' not in stage
+        stage['sigma_death'] = call
+        result = method(w, g, sigma, fire)
+        call['end'] = len(stage['events'])
         return result
     return wrapped
 
@@ -342,6 +356,7 @@ if a.allocation_output:
 if a.control_output:
     E.HmrWalk.step_fwd = observe_control_step(E.HmrWalk.step_fwd)
     E.WalkWBase._r_fit = observe_record_fit(E.WalkWBase._r_fit)
+    E.WalkWBase._s_death = observe_sigma_death(E.WalkWBase._s_death)
     E.WalkWBase._fwd_shift_exit = begin_control_after_shift(E.WalkWBase._fwd_shift_exit)
     for name in ['ztest_blocked', 'ztest_free', 'zero_test', 'eq_const',
                  'and_chain', 'release_chain', 'andp', 'andm']:

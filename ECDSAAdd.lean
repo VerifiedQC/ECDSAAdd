@@ -895,3 +895,7 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceClassExtend
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceGrowingClassStore
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceRecordGrowInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceGrowingEarlyStore
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlRun
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlMath
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEarlyControlInitial

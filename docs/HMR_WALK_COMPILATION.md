@@ -410,3 +410,21 @@ counter zero-test and measured retirement. It derives the enlarged history
 arena after cleanup from the actual growth result, preserving the body's
 phase and incoming non-history data. Complete freeze/sigma/branch composition
 and the reverse leg are still not supplied by this theorem.
+
+
+### Early control sequence
+
+`compileHmrEarlyControlLog` combines the actual early F8--F17 allocation
+checks into one entry point: six-bit counter test, class and j-flags, history
+growth, sigma retirement and branch retirement. Its execution theorem
+proves output readiness and the final basis/phase formula, with the branch
+measurement debt retained. `ready_of_rows` derives sigma's cleanup equation
+from the independent divsteps row invariant and the current fv row. The
+history-capacity condition remains explicit.
+
+The control export now includes actual fv reads and the `_s_death` event
+interval. The checker extracts and validates the call/allocation pattern of
+all 996 early stages. Generated first-step examples check whole early-control
+compiler acceptance and final live cardinality for each walk. This is not
+yet all-stage kernel acceptance, armed control integration, or complete
+forward/reverse walk correctness.

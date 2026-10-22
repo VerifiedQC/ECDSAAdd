@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import sys
 import re
-from control_trace import replay, zero_logs, free_logs, freeze_calls
+from control_trace import replay, zero_logs, free_logs, freeze_calls, early_control_log
 root=Path(__file__).resolve().parents[2]
 data=json.loads(gzip.decompress((root/'data/paper935/hmr-source-control.json.gz').read_bytes()))
 assert data['source_commit']=='64b5a13aa249f1360846657392e6c66817b26d0f'
@@ -75,6 +75,21 @@ for phase in ('s2-walkA','s6-walkC'):
                  f'  simpa only [compileHmrRecordGrowLog,if_pos {name}_inputs] using {name}_borrow','']
 grow+=['end ECDSAAdd.Arithmetic.Paper935','']
 outputs['HmrSourceRecordGrowInitial']='\n'.join(grow)
+early=['import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlCompiler','','namespace ECDSAAdd.Arithmetic.Paper935','']
+for phase in ('s2-walkA','s6-walkC'):
+    stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==0)
+    log=early_control_log(stage);states=replay(stage);name=phase[:2]+'FirstEarlyControl'
+    early+=arena(name+'Arena',states[0])
+    early+=[f'def {name}Log : HmrEarlyControlLog :=',
+            '  ⟨'+','.join(str(log[k]) for k in ['zero','positive','class','flags','fresh'])+'⟩','']
+    sigma,branch=stage['retained_flags'];fv1,b2,b3,b4=stage['fv_reads'];fit,=stage['record_fits']
+    early+=[f'theorem {name}_checked :',
+            f'    (compileHmrEarlyControlLog {name}Arena {stage["counter"]} {stage["record_before"]}',
+            f'      {stage["counter"][-1]} {sigma} {fv1} {b2} {b3} {b4} {branch} {fit["need"]} {name}Log).map',
+            f'      (fun P => P.outputArena.live.card) = some {len(states[-1])} := by',
+            '  decide +kernel','']
+early+=['end ECDSAAdd.Arithmetic.Paper935','']
+outputs['HmrSourceEarlyControlInitial']='\n'.join(early)
 for name,body in outputs.items():
     path=root/'ECDSAAdd/Arithmetic/Paper935'/f'{name}.lean'
     if '--check' in sys.argv:assert path.read_text()==body,'Generated control instances differ from pinned traces.'

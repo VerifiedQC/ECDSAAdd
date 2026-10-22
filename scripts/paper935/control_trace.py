@@ -79,3 +79,37 @@ def freeze_calls(stage):
         [('take',q) for q in eq_work]+[('take',w1['result']),('give',fire['result']),('give',w1['result'])]+
         [('give',q) for q in eq_work[::-1]])
     return zero, fire, eq, w1, drop
+
+
+def early_control_log(stage):
+    """Extract actual early F8--F17 logs and check their source call order."""
+    assert stage['early'] and len(stage['counter']) == 6
+    calls = stage['calls']
+    zero, positive, cls = calls[:3]
+    sigma, branch = stage['retained_flags']
+    fv1, b2, b3, b4 = stage['fv_reads']
+    assert zero['method'] == 'zero_test' and zero['args'] == [stage['counter']]
+    zero_work = [x[0] for x in zero['result'][1]]
+    assert positive['method'] == 'andp' and positive['args'] == [stage['counter'][-1], zero['result'][0]]
+    assert positive['kwargs'] == {'pol': [False, False]}
+    assert cls['method'] == 'and_chain' and cls['args'] == [[sigma, positive['result']], [False, False]]
+    class_work = [x[0] for x in cls['result'][1]]
+    fit, = stage['record_fits']
+    flag_events = stage['events'][cls['end']:fit['start']]
+    assert len(flag_events) == 6 and all(e['kind'] == 'take' for e in flag_events)
+    flag_work = [e['wire'] for e in flag_events]
+    for call, a, b, out in zip(calls[3:6], [cls['result'][0], flag_work[1], flag_work[3]],
+                              [b2, b3, b4], flag_work[::2]):
+        assert call['method'] == 'andp' and call['args'] == [a, b] and call['result'] == out
+    assert calls[9]['method'] == 'release_chain' and calls[9]['args'] == [cls['result'][1]]
+    assert calls[10]['method'] == 'andm' and calls[10]['args'] == [positive['result'], stage['counter'][-1], zero['result'][0]]
+    assert calls[11]['method'] == 'release_chain' and calls[11]['args'] == [zero['result'][1]]
+    assert len(calls) == 12
+    death = stage['sigma_death']
+    assert death['sigma'] == sigma and death['fire'] is None and death['fv1'] == fv1
+    events = stage['events'][death['start']:death['end']]
+    assert len(events) == 1 and events[0]['kind'] == 'give' and events[0]['wire'] == sigma
+    tail = stage['events'][death['end']:]
+    assert len(tail) == 1 and tail[0]['kind'] == 'give' and tail[0]['wire'] == branch
+    return {'zero': zero_work, 'positive': [positive['result']], 'class': class_work,
+            'flags': flag_work, 'fresh': fit['after'][len(fit['before']):]}

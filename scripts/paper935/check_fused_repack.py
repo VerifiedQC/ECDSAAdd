@@ -154,11 +154,12 @@ for phase in ('s2-walkA', 's6-walkC'):
 print('3198 allocation stages and 195080 observed borrow/return events checked; no cleanliness theorem inferred.')
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from control_trace import replay, zero_logs, free_logs, freeze_calls
+from control_trace import replay, zero_logs, free_logs, freeze_calls, early_control_log
 control = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-control.json.gz').read_bytes()))
 for key in ('source_commit', 'entry', 'engine_sha256', 'entry_sha256', 'qcap'):
     assert control[key] == data[key], (key, 'control pin mismatch')
 assert len(control['stages']) == 1066
+assert sum(len(f['after']) > len(f['before']) for s in control['stages'] for f in s['record_fits']) == 120
 allocation_index = {(s['phase'],s['step'],s['stage']):s for s in allocation['stages']}
 for phase in ('s2-walkA','s6-walkC'):
     stages = [s for s in control['stages'] if s['phase']==phase]
@@ -194,6 +195,7 @@ for phase in ('s2-walkA','s6-walkC'):
             zero,fire,eq,w1,drop=freeze_calls(s)
             assert states[fire['end']]==states[zero['start']]|{k[1] for k in zero['result'][1]}|{fire['result']}
         else:
+            early_control_log(s)
             assert not any(c['method'] in ('ztest_blocked','ztest_free') for c in s['calls'])
 print('1066 post-shift control journals checked, including actual F7/F16 calls and fresh cleanup prefixes; no quantum semantics inferred.')
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_control_instances.py'),'--check'],check=True)
