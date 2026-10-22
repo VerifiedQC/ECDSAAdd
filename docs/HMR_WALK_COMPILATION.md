@@ -314,3 +314,30 @@ the original counter when no relocation source is a counter wire. The
 execution conclusions. No new whole-walk resource claim follows: acceptance
 of all source front logs, subsequent freeze/history gates and the complete
 forward/reverse measurement-phase proof remain open.
+
+
+### Logged freeze and keeper lifetimes
+
+The blocked zero test now accepts an explicit scratch list per block, with
+no address selection. Its actual program returns every chain intermediate
+and retains exactly one keeper per block: the retained test increases live
+cardinality by the number of blocks, not by one for the whole test. F7 then
+borrows its fire bit from that retained arena. `HmrFreezePlan.Logged.run_spec`
+proves the zero predicate, freeze latch, timestamp update, phase and readiness;
+`frame` preserves incoming owned wires outside the latch and timestamp.
+
+Cleanup accepts separate prefix logs and checks each borrow against the
+then-current arena. It proves actual measured clearing before release, without
+requiring original scratch addresses. The logged F16 equality ladder, w1 and
+fire return compose with reverse-order keeper retirement in
+`HmrFreezePlan.Logged.cycle`. The intervening body must preserve the keeper
+and witness equations and have owned support; those obligations are not yet
+discharged for the full history body.
+
+`pin_armed` and `pin_scheduled` identify the latch/timestamp result with the
+independent integer `pinStep`, using the signed post-arithmetic g value and
+`PinState.RecordValid`. Before Tmin the scheduled program is empty; at and
+after Tmin it tests next.g=0. The signed-zero/physical-zero equivalence is
+proved, not supplied as an assumption. These are parameterized checked plans;
+the source export does not yet contain all freeze/cleanup allocation logs,
+and complete forward/reverse compilation and the whole-walk peak remain open.
