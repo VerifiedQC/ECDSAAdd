@@ -189,3 +189,19 @@ Compilation existence follows from concrete ownership, disjointness and
 positive-growth capacity conditions. Signed values, widths, readiness and
 external owned sites are preserved. These blocks still require whole-walk
 assembly and the public schedule's actual capacity proof.
+
+### Actual forward front compiler and partial execution bridge
+
+`HmrSourceFront` compiles ordered entry padding, two retained flags,
+headroom, shared-u F4 arithmetic, F5 counter update, physical F6 shifts,
+and ordered exit shrinking. Its contract exposes the actual allocator
+results. In the early case no frozen wire is allocated or assumed owned;
+the counter's unused control argument uses the already owned sigma wire.
+
+The execution bridge currently proves F1–F3 together, including the actual
+sigma predicate and post-routing branch bit, and proves headroom and F4–F5
+with actual scratch return, phase preservation, counter value and branch
+arithmetic values. Layout disjointness and cleanliness follow from compiler
+results. The full F6/exit composition, mathematical whole-step invariant,
+repacking, history and complete 533-step source trace remain outstanding.
+These results do not establish a new whole-walk resource number.

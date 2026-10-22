@@ -4420,6 +4420,32 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteRows_signed
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrBankOrder.rows_perm
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_static_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_static_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_fixed
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowOne_list
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowOne_extend
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrRouteStage_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceFront_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrFrontCounterControl_program
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBankResize_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrFrontEntryValid.inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.pair_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.flags_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.padding_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.root_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.root_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.route_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.route_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.branch_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.entry_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.entry_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.head_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.headroom_state
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.addCounter_state
 LEAN
 )
 task_axiom_lean_rc=$?
