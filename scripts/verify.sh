@@ -3979,6 +3979,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrLifecycle_restored_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrLifecycle_basis
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrLifecycle_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrBasisWrites
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_preserves_outside_writes
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_frame_after
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDemolish
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDemolish_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDemolish_tail_zero
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrDemolish_writes
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_unpark_input_of_demolition
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_erase_input_of_writes
 LEAN
 )
 task_axiom_lean_rc=$?

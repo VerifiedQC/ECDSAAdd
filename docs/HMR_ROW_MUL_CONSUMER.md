@@ -113,3 +113,16 @@ and the cursor advanced by its full measurement count. The basis frame permits
 phase-only corrections on those wires; it is weaker than support disjointness.
 No phase restoration follows from these input relations. Actual rule instances,
 frame/zero facts and record predicates are still source implementation work.
+
+`HmrLifecycleFrame` supplies sufficient facts from actual recorded instructions.
+`hmrBasisWrites` tracks ordinary targets and measurement targets, excluding
+control wires and all phase correction operands. It is not quantum support
+and must never be used as a resource count. The frame theorem therefore allows
+record-controlled Z/CZ on retained rows. `hmrDemolish_basis` proves destructive
+X measurement sets the whole word to zero on all tapes; no phase claim is made.
+The tail-zero theorem allows subsequent phase corrections while forbidding
+ordinary writes to that word. The two input corollaries consume these facts
+to conclude the producer `pre` predicates. Source program decomposition, write
+footprint exclusions, record validity and actual input-rule instances remain
+explicit, separate obligations; a recomputation that temporarily writes a
+retained wire may instead use the earlier, weaker final basis-frame theorem.

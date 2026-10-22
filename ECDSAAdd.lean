@@ -549,3 +549,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrArenaSchedule
 import ECDSAAdd.Arithmetic.Paper935.HmrLifecyclePhase
 
 import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleFrame
