@@ -35,3 +35,69 @@ if '--check' in sys.argv:
     assert path.read_text()==text, 'Generated resize instances differ; regenerate from pinned log.'
 else:
     path.write_text(text)
+
+lines = ['import ECDSAAdd.Arithmetic.Paper935.HmrBankRepack', '',
+         'namespace ECDSAAdd.Arithmetic.Paper935', '',
+         '/- Generated from the same pinned trace. First shift-exit journals',
+         'only; not an assertion of whole-walk source correspondence. -/', '']
+for phase in ('s2-walkA', 's6-walkC'):
+    stage = next(s for s in data['stages'] if s['phase']==phase and s['step']==0 and s['stage']=='shift_exit')
+    assert len(stage['repacks'])==1
+    record = stage['repacks'][0]
+    before, after = record['before'], record['after']
+    live = sorted(set(before['allocated']) - set(sum(before['free'].values(), [])))
+    ranges = []
+    for q in live:
+        if ranges and ranges[-1][1]==q:
+            ranges[-1][1]=q+1
+        else:
+            ranges.append([q,q+1])
+    intervals = ' ∨ '.join(f'({a} ≤ q ∧ q < {b})' for a,b in ranges)
+    moves = '[' + ', '.join(f'({m["old"]}, {m["fresh"]})' for m in record['moves']) + ']'
+    name = phase[:2] + 'InitialExit'
+    lines += [f'def {name}Arena : Arena :=',
+              f'  ⟨arenaWires.filter (fun q => {intervals}),Finset.filter_subset _ _⟩', '',
+              f'def {name}Moves : List (Wire × Wire) := {moves}', '']
+    for suffix,snap in [('Before',before),('After',after)]:
+        rows = ',\n    '.join(f'⟨{snap["rows"][row]["payload"]},{snap["rows"][row]["sign"]}⟩' for row in ('f','g','fv','gv'))
+        lines += [f'def {name}{suffix} : WindowBank :=', f'  ⟨{rows}⟩', '']
+    lines += [f'theorem {name}_checked :',
+              f'    ({name}Arena.checkRepack {name}Moves).isSome = true := by',
+              '  decide +kernel', '',
+              f'theorem {name}_views :',
+              f'    {name}Before.repacked {name}Moves={name}After := by',
+              '  decide +kernel', '']
+lines += ['end ECDSAAdd.Arithmetic.Paper935', '']
+text = '\n'.join(lines)
+path = root/'ECDSAAdd/Arithmetic/Paper935/HmrSourceExitInitial.lean'
+if '--check' in sys.argv:
+    assert path.read_text()==text, 'Generated exit instances differ; regenerate from pinned log.'
+else:
+    path.write_text(text)
+
+lines = ['import ECDSAAdd.Arithmetic.Paper935.HmrLoggedExit',
+         'import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitInitial', '',
+         'namespace ECDSAAdd.Arithmetic.Paper935', '',
+         '/- Generated first-step resize-plus-repack instances. -/', '']
+for phase in ('s2-walkA', 's6-walkC'):
+    stage = next(s for s in data['stages'] if s['phase']==phase and s['step']==0 and s['stage']=='shift_exit')
+    records = {r['row']: r for r in stage['resizes']}
+    intervals = ' ∨ '.join(f'({a} ≤ q ∧ q < {b})' for a,b in stage['resizes'][0]['live_before'])
+    name = phase[:2] + 'InitialExit'
+    rows = ',\n    '.join(f'⟨{records[row]["before"]},{records[row]["sign"]}⟩' for row in ('f','g','fv','gv'))
+    widths = ','.join(str(records[row]['width']) for row in ('f','g','fv','gv'))
+    logs = [r['after'][len(r['before']):] for r in stage['resizes']]
+    lines += [f'def {name}ResizeArena : Arena :=',
+              f'  ⟨arenaWires.filter (fun q => {intervals}),Finset.filter_subset _ _⟩', '',
+              f'def {name}ResizeBank : WindowBank :=', f'  ⟨{rows}⟩', '',
+              f'theorem {name}_compiled :',
+              f'    (compileHmrLoggedExit {name}ResizeArena {name}ResizeBank ⟨{widths}⟩',
+              f'      {logs} {name}Moves).map (fun (_,out,_) => out)=some {name}After := by',
+              '  decide +kernel', '']
+lines += ['end ECDSAAdd.Arithmetic.Paper935', '']
+text = '\n'.join(lines)
+path = root/'ECDSAAdd/Arithmetic/Paper935/HmrSourceExitReplay.lean'
+if '--check' in sys.argv:
+    assert path.read_text()==text, 'Generated exit replay differs; regenerate from pinned log.'
+else:
+    path.write_text(text)

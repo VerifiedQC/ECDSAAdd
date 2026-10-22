@@ -4508,6 +4508,28 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialF_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialGv_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialFv_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.repacked_wires
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowRow.repacked_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.repacked_rows
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.repacked_owned
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.repacked_encodes
+#print axioms ECDSAAdd.Arithmetic.Paper935.WindowBank.repacked_widths
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedExit_repack
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrLoggedExit_correct
+#print axioms ECDSAAdd.Arithmetic.Paper935.repack_proper
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrLoggedExit_resources
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.run_repacked
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_fixed
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_fixed_view
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialExit_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialExit_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialExit_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialExit_views
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2InitialExit_compiled
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6InitialExit_compiled
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Compiled.run_repacked_counter
 LEAN
 )
 task_axiom_lean_rc=$?

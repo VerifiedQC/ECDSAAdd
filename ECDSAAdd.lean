@@ -788,3 +788,9 @@ import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBank
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedRows
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBankCorrect
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceResizeInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrBankRepack
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedExit
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontRepack
+import ECDSAAdd.Arithmetic.Paper935.HmrRepackFrame
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitReplay

@@ -32,3 +32,8 @@ addresses. Neither the data checker nor these initial examples prove the
 complete walk's gate correspondence, arithmetic invariants, or peak space.
 Gzip timestamps are fixed to zero; comparisons may use decompressed JSON to
 avoid compression-library differences.
+
+The generated `HmrSourceExitInitial` also checks the first exit's relocation
+journal and resulting four row views for each walk. `HmrSourceExitReplay`
+checks the composed four exit resizes and relocation against those recorded
+physical row views. These are first-step examples, not all-step certificates.

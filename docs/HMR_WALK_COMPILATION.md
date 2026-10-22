@@ -266,3 +266,15 @@ resizes in each walk. The full trace remains data, not a Lean certificate for
 all 533 steps. Allocation of flags/arithmetic scratch, whole-stage replay and
 integration into the source walk are still open. The earlier arithmetic-front
 correctness theorem retains its generic address-selection policy.
+
+`compileHmrLoggedExit` now composes accepted exit resizes with the actual
+checked repack gates. It preserves signed row values, phase, readiness and
+widths, and proves proper gates, zero Toffolis/measurements and arena support.
+`HmrRepackFrame` proves that an owned wire not named as a relocation source
+remains at its address; destination freshness follows from the checker.
+`HmrSourceFrontRepack` composes the earlier parameterized arithmetic front
+with checked relocation, with the counter view transported by the same
+permutation. The generic front allocator is still unchanged. Generated
+first-step examples check the two full exit resize/repack output banks;
+source allocation of the remaining stages and whole-walk integration remain
+open.
