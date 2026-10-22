@@ -82,3 +82,15 @@ Basis postconditions are stated separately for s2 and s6. A restored row or
 zero output does not establish phase cancellation. Concrete programs, producer
 Spec instances and lifecycle input relations still need implementation; the
 new cancellation criterion is not a proof that the source meets it.
+
+The whole-caller theorem `hmr_three_call_phase` now consumes both forward
+Specs, the s2 unpark Spec and the s6 erase Spec at the actual intermediate
+states. It derives the phase of the same concatenation used by
+`hmr_three_call_schedule`. Its `hmrThreeCallDebt` combines the s2 lifecycle
+debt, the actual intervening caller's phase change, and the s6 lifecycle debt.
+`hmr_three_call_restored_iff` identifies full phase restoration with this debt
+being zero; `hmrThreeCallDebt_zero_iff` exposes the remaining source equation.
+In particular, separate zero debts for s2, J and s6 are not required: their
+contributions may cancel across boundaries. The producer instances and the
+concrete cancellation equation remain open; this is not a RecordedAgreement
+or a proof of the point-addition permutation.

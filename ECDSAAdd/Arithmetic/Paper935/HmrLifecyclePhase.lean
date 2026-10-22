@@ -177,4 +177,97 @@ theorem s6_hmrLifecycle_basis (L : HmrRowMulLayout) (H K R : RecordedProgram)
   have h := s6_hmrErase_consumer L H K R restore call s s tape cursor input
   exact ⟨h.1,h.2.1⟩
 
+/-- The complete caller's phase debt. The first and last terms are producer
+lifecycle debts; the intervening caller is evaluated on the actual s2 output. -/
+def hmrThreeCallDebt (H2 K2 U2 J H6 K6 : RecordedProgram)
+    (forward2 restore2 forward6 restore6 : List Bool → Nat → State → Bool)
+    (tape : List Bool) (cursor : Nat) (s : State) : Bool :=
+  xor (xor (hmrLifecycleDebt H2 K2 forward2 restore2 tape cursor s)
+    (hmrPhaseDelta J tape (cursor+recordedMeasurementCount (H2++K2++U2))
+      (runWithTape (H2++K2++U2) tape cursor s)))
+    (hmrLifecycleDebt H6 K6 forward6 restore6 tape
+      (cursor+recordedMeasurementCount ((H2++K2++U2)++J))
+      (runWithTape ((H2++K2++U2)++J) tape cursor s))
+
+/-- Compose both concrete producer interfaces into the whole three-call phase
+formula. The s6 precondition refers to the actual output of s2 plus J. Neither
+local phase restoration nor phase preservation by J is assumed. -/
+theorem hmr_three_call_phase
+    (L2 L6 : HmrRowMulLayout) (H2 K2 U2 J H6 K6 R6 : RecordedProgram)
+    (forward2 : HmrRowMulSpec L2 H2) (unpark : HmrRowUnparkSpec L2 U2)
+    (forward6 : HmrRowMulSpec L6 H6) (erase : HmrRowMulInvSpec L6 R6)
+    (call2 call6 : FusedCall) (s : State) (tape : List Bool) (cursor : Nat)
+    (legal2 : forward2.legalCursor cursor) (pre2 : HmrRowMulPre L2 call2 s)
+    (unparkInput : unpark.pre call2 s tape (cursor+recordedMeasurementCount (H2++K2))
+      (runWithTape (H2++K2) tape cursor s))
+    (legal6 : forward6.legalCursor (cursor+recordedMeasurementCount ((H2++K2++U2)++J)))
+    (pre6 : HmrRowMulPre L6 call6 (runWithTape ((H2++K2++U2)++J) tape cursor s))
+    (eraseInput : erase.pre call6 (runWithTape ((H2++K2++U2)++J) tape cursor s) tape
+      (cursor+recordedMeasurementCount ((H2++K2++U2)++J)+recordedMeasurementCount (H6++K6))
+      (runWithTape (H6++K6) tape (cursor+recordedMeasurementCount ((H2++K2++U2)++J))
+        (runWithTape ((H2++K2++U2)++J) tape cursor s))) :
+    (runWithTape (((H2++K2++U2)++J)++(H6++K6++R6)) tape cursor s).phase =
+      xor s.phase (hmrThreeCallDebt H2 K2 U2 J H6 K6
+        forward2.rowMulPhaseDebt unpark.phaseDebt forward6.rowMulPhaseDebt erase.phaseDebt
+        tape cursor s) := by
+  have first := s2_hmrLifecycle_phase L2 H2 K2 U2 forward2 unpark call2 s tape cursor
+    legal2 pre2 unparkInput
+  have last := s6_hmrLifecycle_phase L6 H6 K6 R6 forward6 erase call6
+    (runWithTape ((H2++K2++U2)++J) tape cursor s) tape
+    (cursor+recordedMeasurementCount ((H2++K2++U2)++J)) legal6 pre6 eraseInput
+  rw [runWithTape_append, last]
+  have middle := hmrPhaseDelta_eq J tape (cursor+recordedMeasurementCount (H2++K2++U2))
+    (runWithTape (H2++K2++U2) tape cursor s)
+  rw [←runWithTape_append] at middle
+  rw [middle,first]
+  simp only [hmrThreeCallDebt,Bool.xor_assoc]
+
+/-- Whole-caller cancellation is an equation between the two lifecycle debts
+and the actual intervening phase change. It permits cancellation across
+segments and does not demand that each lifecycle separately restore phase. -/
+theorem hmrThreeCallDebt_zero_iff (H2 K2 U2 J H6 K6 : RecordedProgram)
+    (forward2 restore2 forward6 restore6 : List Bool → Nat → State → Bool)
+    (tape : List Bool) (cursor : Nat) (s : State) :
+    hmrThreeCallDebt H2 K2 U2 J H6 K6 forward2 restore2 forward6 restore6 tape cursor s=false ↔
+    hmrPhaseDelta J tape (cursor+recordedMeasurementCount (H2++K2++U2))
+      (runWithTape (H2++K2++U2) tape cursor s)=
+      xor (hmrLifecycleDebt H2 K2 forward2 restore2 tape cursor s)
+        (hmrLifecycleDebt H6 K6 forward6 restore6 tape
+          (cursor+recordedMeasurementCount ((H2++K2++U2)++J))
+          (runWithTape ((H2++K2++U2)++J) tape cursor s)) := by
+  unfold hmrThreeCallDebt
+  generalize hmrLifecycleDebt H2 K2 forward2 restore2 tape cursor s = a
+  generalize hmrPhaseDelta J tape (cursor+recordedMeasurementCount (H2++K2++U2))
+    (runWithTape (H2++K2++U2) tape cursor s) = b
+  generalize hmrLifecycleDebt H6 K6 forward6 restore6 tape
+    (cursor+recordedMeasurementCount ((H2++K2++U2)++J))
+    (runWithTape ((H2++K2++U2)++J) tape cursor s) = c
+  cases a <;> cases b <;> cases c <;> decide
+
+/-- Exact whole-caller restoration criterion under the producer interfaces. -/
+theorem hmr_three_call_restored_iff
+    (L2 L6 : HmrRowMulLayout) (H2 K2 U2 J H6 K6 R6 : RecordedProgram)
+    (forward2 : HmrRowMulSpec L2 H2) (unpark : HmrRowUnparkSpec L2 U2)
+    (forward6 : HmrRowMulSpec L6 H6) (erase : HmrRowMulInvSpec L6 R6)
+    (call2 call6 : FusedCall) (s : State) (tape : List Bool) (cursor : Nat)
+    (legal2 : forward2.legalCursor cursor) (pre2 : HmrRowMulPre L2 call2 s)
+    (unparkInput : unpark.pre call2 s tape (cursor+recordedMeasurementCount (H2++K2))
+      (runWithTape (H2++K2) tape cursor s))
+    (legal6 : forward6.legalCursor (cursor+recordedMeasurementCount ((H2++K2++U2)++J)))
+    (pre6 : HmrRowMulPre L6 call6 (runWithTape ((H2++K2++U2)++J) tape cursor s))
+    (eraseInput : erase.pre call6 (runWithTape ((H2++K2++U2)++J) tape cursor s) tape
+      (cursor+recordedMeasurementCount ((H2++K2++U2)++J)+recordedMeasurementCount (H6++K6))
+      (runWithTape (H6++K6) tape (cursor+recordedMeasurementCount ((H2++K2++U2)++J))
+        (runWithTape ((H2++K2++U2)++J) tape cursor s))) :
+    (runWithTape (((H2++K2++U2)++J)++(H6++K6++R6)) tape cursor s).phase=s.phase ↔
+      hmrThreeCallDebt H2 K2 U2 J H6 K6
+        forward2.rowMulPhaseDebt unpark.phaseDebt forward6.rowMulPhaseDebt erase.phaseDebt
+        tape cursor s=false := by
+  rw [hmr_three_call_phase L2 L6 H2 K2 U2 J H6 K6 R6 forward2 unpark forward6 erase
+    call2 call6 s tape cursor legal2 pre2 unparkInput legal6 pre6 eraseInput]
+  cases s.phase <;>
+    cases hmrThreeCallDebt H2 K2 U2 J H6 K6
+      forward2.rowMulPhaseDebt unpark.phaseDebt forward6.rowMulPhaseDebt erase.phaseDebt
+      tape cursor s <;> decide
+
 end ECDSAAdd.Arithmetic.Paper935

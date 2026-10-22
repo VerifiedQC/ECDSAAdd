@@ -3953,6 +3953,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrArenaTransfer
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_schedule
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrThreeCallDebt
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrThreeCallDebt_zero_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_restored_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_eq
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_append
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrLifecycleDebt
