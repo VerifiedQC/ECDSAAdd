@@ -3905,6 +3905,23 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.liveCensus
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_stages
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.census_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_census
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkedBorrow_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_release_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaChain_peak
 LEAN
 )
 task_axiom_lean_rc=$?
