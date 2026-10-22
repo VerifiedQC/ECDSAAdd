@@ -16,9 +16,9 @@ allocator's zero-wire check; this is not a reset. `reserve_release_peak` proves
 that the three-snapshot stage peaks at its reserved state. `borrowMany_census`
 computes the peak for a successful n-wire reservation.
 
-`Arena.checkBorrow` is a new **arithmetic budget check**, not an allocator or
+`Arena.withinBudget` is a new **arithmetic budget check**, not an allocator or
 semantic checker. It checks `live.card + n ≤ budget` for an arbitrary budget.
-`checkedBorrow_peak` relates it to the actual two-snapshot peak only with a
+`borrowMany_withinBudget_iff` relates it to the actual two-snapshot peak only with a
 successful `borrowMany` equation. A passing arithmetic check alone does not
 supply an allocation, clean wires or program correctness.
 

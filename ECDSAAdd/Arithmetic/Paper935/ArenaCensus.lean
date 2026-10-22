@@ -68,12 +68,12 @@ theorem Arena.release_card (A B : Arena) (qs : Finset Wire) (s : BasisState)
 
 /-- Arithmetic budget check only. Passing this does not certify that a
 particular allocator call succeeds or that the borrowed wires are clean. -/
-def Arena.checkBorrow (A : Arena) (n budget : Nat) : Bool :=
+def Arena.withinBudget (A : Arena) (n budget : Nat) : Bool :=
   decide (A.live.card+n≤budget)
 
-theorem Arena.checkBorrow_iff (A : Arena) (n budget : Nat) :
-    A.checkBorrow n budget=true ↔ A.live.card+n≤budget := by
-  simp [Arena.checkBorrow]
+theorem Arena.withinBudget_iff (A : Arena) (n budget : Nat) :
+    A.withinBudget n budget=true ↔ A.live.card+n≤budget := by
+  simp [Arena.withinBudget]
 
 theorem Arena.borrowMany_census (A B : Arena) (n : Nat) (qs : List Wire)
     (borrow : A.borrowMany n=some (B,qs)) :
@@ -83,10 +83,10 @@ theorem Arena.borrowMany_census (A B : Arena) (n : Nat) (qs : List Wire)
   rw [(A.borrowMany_live B n qs borrow).2]
   omega
 
-theorem Arena.checkedBorrow_peak (A B : Arena) (n budget : Nat) (qs : List Wire)
+theorem Arena.borrowMany_withinBudget_iff (A B : Arena) (n budget : Nat) (qs : List Wire)
     (borrow : A.borrowMany n=some (B,qs)) :
-    livePeak [A.live,B.live]≤budget ↔ A.checkBorrow n budget=true := by
-  rw [A.borrowMany_census B n qs borrow,A.checkBorrow_iff]
+    livePeak [A.live,B.live]≤budget ↔ A.withinBudget n budget=true := by
+  rw [A.borrowMany_census B n qs borrow,A.withinBudget_iff]
 
 /-- A reservation, followed by actual cleaning and a successful release,
 has its maximum at the reserved state. This is independent of the cap. -/

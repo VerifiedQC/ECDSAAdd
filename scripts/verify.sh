@@ -3916,10 +3916,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.census_disjoint
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_card
-#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow
-#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_census
-#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkedBorrow_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_withinBudget_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_release_peak
 #print axioms ECDSAAdd.Arithmetic.Paper935.arenaChain_peak
 LEAN
