@@ -263,8 +263,7 @@ forward resize observations across both 533-step walks, including shift-exit
 repack journals. `HmrSourceResizeInitial` is generated from that export and
 kernel-checks the output physical row layouts of the first four headroom
 resizes in each walk. The full trace remains data, not a Lean certificate for
-all 533 steps. Allocation of flags/arithmetic scratch, whole-stage replay and
-integration into the source walk are still open. The earlier arithmetic-front
+all 533 steps. Complete trace acceptance and integration into the source walk remain open. The earlier arithmetic-front
 correctness theorem retains its generic address-selection policy.
 
 `compileHmrLoggedExit` now composes accepted exit resizes with the actual
@@ -287,8 +286,7 @@ remains derived from the current arena cardinality. A second pinned export
 records the actual allocation events and hybrid-call active census; data
 checks verify their correspondence to resize snapshots and source call sizes.
 Six generated early/armed-counter and narrow-add examples are kernel checked.
-This does not yet replace all scratch allocation in the assembled front or
-prove complete forward/reverse walk correspondence.
+These initial examples do not prove complete forward/reverse walk correspondence.
 
 `compileHmrHybridF4Log` now checks the shared flag/carry and both low-carry
 logs, reusing the existing F4 gate program. Its execution theorem proves
@@ -298,4 +296,21 @@ local counts and allocation censuses refer to this same checked plan.
 Original counter/hybrid compilers are proved to be accepted logged instances.
 Logged bank resizes also expose static widths, ownership and separated
 metadata/frame preservation, independently of numeric window assumptions.
-The full logged arithmetic front is the next composition step.
+
+`compileHmrSourceFrontLog` now checks all F1–F6 allocations from explicit
+logs, including entry/headroom/exit resizes, sigma/branch, shared flag/carry,
+both hybrid calls and counter scratch. It returns the existing front plan
+and gate program. Counter scratch is borrowed from the head arena after F4
+has returned its shared flag/carry; readiness follows from the F4 execution
+proof, not from an assumed clean intermediate state.
+
+`compileHmrSourceFrontLog_run` derives phase preservation, exit readiness,
+the four next signed rows and the next signed six-bit counter directly from
+compiler success. Its numerical input/output-window conditions and active
+versus frozen behavior match the generic front theorem.
+`compileHmrSourceFrontLog_repack_run` composes checked relocation, preserving
+the original counter when no relocation source is a counter wire. The
+`HmrSourceFront.Logged` certificate contains static checks only, not assumed
+execution conclusions. No new whole-walk resource claim follows: acceptance
+of all source front logs, subsequent freeze/history gates and the complete
+forward/reverse measurement-phase proof remain open.
