@@ -1,5 +1,7 @@
 # Conditional HMR row-multiply consumers
 
+For the one-page handoff, see [Producer checklist](HMR_PRODUCER_CHECKLIST.md).
+
 These interfaces implement the task #49/#50 → #51 agreement. They are
 parameterized certificates, **not instances for the source circuit**. No
 axiom, admitted theorem, or placeholder implementation is introduced.
