@@ -70,3 +70,12 @@ addresses, fire and retained census; F16 checks acceptance using the then-curren
 arena and independently observed prefix addresses, with the resulting live
 set matched to the source snapshot. These four kernel checks are selected
 examples, not certification of all calls, whole-step semantics or peak space.
+
+The same control journal also records each actual `_r_fit(t)` call, its
+incoming/outgoing history list and the precise allocation-event interval.
+All 1,066 forward calls are checked: 120 grow the history and none trim it.
+This is an observation of the pinned schedule, not a general no-trim theorem.
+`HmrSourceRecordGrowInitial` checks the first and last growing calls of each
+walk (steps 0 and 322), while the j-flags remain live. The generated proofs
+separate input ownership/distinctness from the explicit borrow, then check
+compiler acceptance and resulting live cardinality.

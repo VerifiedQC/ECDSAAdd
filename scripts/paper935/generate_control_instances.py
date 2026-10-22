@@ -53,6 +53,28 @@ for block in cleanup:text=text.replace(block+'\n','')
 outputs={'HmrSourceFreezeInitial':text,'HmrSourceFreezeCleanupInitial':
     'import ECDSAAdd.Arithmetic.Paper935.HmrSourceFreezeInitial\n\nnamespace ECDSAAdd.Arithmetic.Paper935\n\n'+
     '\n'.join(cleanup)+'\nend ECDSAAdd.Arithmetic.Paper935\n'}
+grow=['import ECDSAAdd.Arithmetic.Paper935.HmrLoggedRecordGrow','','namespace ECDSAAdd.Arithmetic.Paper935','']
+for phase in ('s2-walkA','s6-walkC'):
+    selected=[s for s in data['stages'] if s['phase']==phase and len(s['record_after'])>len(s['record_before'])]
+    for label,s in [('First',selected[0]),('Last',selected[-1])]:
+        fit,=s['record_fits'];states=replay(s);name=phase[:2]+label+'RecordGrow'
+        grow+=arena(name+'Arena',states[fit['start']])
+        grow+=arena(name+'After',states[fit['end']])
+        fresh=fit['after'][len(fit['before']):]
+        grow += [f'def {name}Old : List Wire := {fit["before"]}', '',
+                 f'theorem {name}_inputs :',
+                 f'    {name}Old.Nodup ∧ {name}Old.toFinset⊆{name}Arena.live ∧ {name}Old.length≤{fit["need"]} := by',
+                 '  decide +kernel','',
+                 f'theorem {name}_borrow :',
+                 f'    ({name}Arena.checkBorrow ({fit["need"]}-{name}Old.length) {fresh}).map (fun C => C.live.card) =',
+                 f'      some {len(states[fit["end"]])} := by', '  decide +kernel','',
+                 f'/-- Source step {s["step"]}, actual allocation while j-flags remain live. -/',
+                 f'theorem {name}_checked :',
+                 f'    (compileHmrRecordGrowLog {name}Arena {name}Old {fit["need"]} {fresh}).map (fun C => C.live.card) =',
+                 f'      some {len(states[fit["end"]])} := by',
+                 f'  simpa only [compileHmrRecordGrowLog,if_pos {name}_inputs] using {name}_borrow','']
+grow+=['end ECDSAAdd.Arithmetic.Paper935','']
+outputs['HmrSourceRecordGrowInitial']='\n'.join(grow)
 for name,body in outputs.items():
     path=root/'ECDSAAdd/Arithmetic/Paper935'/f'{name}.lean'
     if '--check' in sys.argv:assert path.read_text()==body,'Generated control instances differ from pinned traces.'

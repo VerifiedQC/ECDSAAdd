@@ -201,6 +201,7 @@ def observe_control_step(method):
             result = method(w, t)
             assert control_stage is not None
             control_stage['live_after'] = live_ranges(w)
+            control_stage['record_after'] = list(w.R)
             control_records.append(control_stage)
             return result
         finally:
@@ -220,8 +221,23 @@ def begin_control_after_shift(method):
                 'frozen': w.frz, 'timestamp': list(w.tst) if w.tst is not None else [],
                 'g': list(w.g.ids) + [w.g.sign],
                 'retained_flags': allocation_flags[id(w)],
+                'record_before': list(w.R), 'record_fits': [],
                 'live_before': live_ranges(w), 'events': [], 'calls': []}
             allocation_context = (w, control_stage)
+        return result
+    return wrapped
+
+def observe_record_fit(method):
+    def wrapped(w, t):
+        if allocation_context is None or allocation_context[0] is not w or allocation_context[1]['stage'] != 'control':
+            return method(w, t)
+        stage = allocation_context[1]
+        call = {'step': t, 'start': len(stage['events']), 'before': list(w.R),
+                'need': min(min(w.spans[t], t) + 1, w.Cr)}
+        stage['record_fits'].append(call)
+        result = method(w, t)
+        call['after'] = list(w.R)
+        call['end'] = len(stage['events'])
         return result
     return wrapped
 
@@ -325,6 +341,7 @@ if a.allocation_output:
     E.WalkWBase._fwd_shift_exit = observe_allocation_stage(E.WalkWBase._fwd_shift_exit, 'shift_exit')
 if a.control_output:
     E.HmrWalk.step_fwd = observe_control_step(E.HmrWalk.step_fwd)
+    E.WalkWBase._r_fit = observe_record_fit(E.WalkWBase._r_fit)
     E.WalkWBase._fwd_shift_exit = begin_control_after_shift(E.WalkWBase._fwd_shift_exit)
     for name in ['ztest_blocked', 'ztest_free', 'zero_test', 'eq_const',
                  'and_chain', 'release_chain', 'andp', 'andm']:

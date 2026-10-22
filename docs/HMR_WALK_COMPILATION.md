@@ -385,3 +385,28 @@ These envelopes assume the history port is already owned. The source calls
 requires that intervening record growth/trim and its actual allocation order.
 The F15 witness must also be connected to the arithmetic/row invariant in the
 assembled step, and F17's phase debt must be cancelled by the reverse leg.
+
+
+### Record growth while flags remain live
+
+`compileHmrRecordGrowLog` checks the observed fresh addresses and old history
+ownership. Its readiness theorem derives zero values for the new cells,
+preserves the numerical history value and proves the enlarged register's
+length, distinctness and ownership. The forward checker rejects trimming.
+The pinned control journal has 1,066 fit calls, with 120 growth calls and no
+trim calls; its validator checks their exact event intervals.
+
+`hmrLoggedGrowingStore_run` consumes the actual ordering of flag allocation
+followed by history growth. Checked disjoint reservations commute as arena
+certificates, allowing reuse of the unchanged gate proof while retaining
+the original ordering checks. `growing_store_cycle` also includes class
+computation and retirement and leaves the enlarged history in the output
+arena. No new allocator or changed gate sequence is used. Complete counter
+test/freeze/sigma/branch composition and reverse phase cancellation remain
+separate obligations.
+
+`hmrSourceGrowingEarlyStore_run` further encloses this body with the early
+counter zero-test and measured retirement. It derives the enlarged history
+arena after cleanup from the actual growth result, preserving the body's
+phase and incoming non-history data. Complete freeze/sigma/branch composition
+and the reverse leg are still not supplied by this theorem.

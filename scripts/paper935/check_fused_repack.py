@@ -153,6 +153,7 @@ for phase in ('s2-walkA', 's6-walkC'):
                 assert [e['kind'] for e in events] == ['take']*len(taken) + ['give']*len(taken)
 print('3198 allocation stages and 195080 observed borrow/return events checked; no cleanliness theorem inferred.')
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from control_trace import replay, zero_logs, free_logs, freeze_calls
 control = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-control.json.gz').read_bytes()))
 for key in ('source_commit', 'entry', 'engine_sha256', 'entry_sha256', 'qcap'):
@@ -166,6 +167,18 @@ for phase in ('s2-walkA','s6-walkC'):
         assert s['stage']=='control' and s['tmin']==498 and s['early']==(s['step']<498)
         assert s['live_before']==allocation_index[(phase,s['step'],'shift_exit')]['live_after']
         states=replay(s)
+        assert len(s['record_fits'])==1
+        fit=s['record_fits'][0]
+        assert fit['step']==s['step'] and fit['before']==s['record_before'] and fit['after']==s['record_after']
+        assert len(fit['before'])<=fit['need']==len(fit['after'])<=60
+        assert fit['after'][:len(fit['before'])]==fit['before']
+        added=fit['after'][len(fit['before']):]
+        events=s['events'][fit['start']:fit['end']]
+        assert [e['kind'] for e in events]==['take']*len(added)
+        assert [e['wire'] for e in events]==added
+        assert set(fit['before'])<=states[fit['start']]
+        assert states[fit['end']]==states[fit['start']]|set(added)
+        assert len(set(fit['after']))==len(fit['after'])
         for call in s['calls']:
             assert 0<=call['start']<=call['end']<=len(s['events'])
             if call['method']=='ztest_blocked':

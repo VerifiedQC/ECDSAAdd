@@ -4719,6 +4719,27 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaLog_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaDropLog_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchRetirement_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRecordGrowLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRecordGrowLog_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_commute
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_commute
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLoggedGrowingStore_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_transport
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.extend
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceClassPlan.Logged.growing_store_cycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstRecordGrow_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstRecordGrow_borrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2FirstRecordGrow_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2LastRecordGrow_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2LastRecordGrow_borrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2LastRecordGrow_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstRecordGrow_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstRecordGrow_borrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstRecordGrow_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6LastRecordGrow_inputs
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6LastRecordGrow_borrow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6LastRecordGrow_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceGrowingEarlyStore_run
 LEAN
 )
 task_axiom_lean_rc=$?
