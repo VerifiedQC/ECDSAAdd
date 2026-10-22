@@ -3952,6 +3952,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_s6_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrArenaTransfer
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_three_call_schedule
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLifecycleDebt
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrLifecycle_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrLifecycle_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrLifecycleDebt_zero_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_three
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_restored_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_recordZ
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrPhaseDelta_recordCZ
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrLifecycle_restored_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrLifecycle_restored_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2_hmrLifecycle_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6_hmrLifecycle_basis
 LEAN
 )
 task_axiom_lean_rc=$?

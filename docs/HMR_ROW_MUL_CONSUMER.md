@@ -61,3 +61,24 @@ erase preconditions, and new `compileHmrWalk` row addresses remain producer
 obligations. No old 907/28 or 620/315 layout is used, and no whole-circuit 935
 resource conclusion is claimed. Forward scratch cleanup does not cause an
 early release before the end of a lease.
+
+## Exact phase composition
+
+`HmrLifecyclePhase.lean` defines `hmrPhaseDelta` from the actual run result of
+a segment. This does not assert that any correction is effective. Its append
+and three-segment laws use each preceding output state and the absolute cursor
+advanced by `recordedMeasurementCount`; the tape is never restarted.
+
+The s2 and s6 phase theorems are separate. Each combines the producer's forward
+debt, the actual HMR/correction segment's phase change, and the unpark/erase
+debt. Each has an exact `restored_iff` theorem for equality with the input phase.
+The necessary and sufficient remaining equation is that the middle segment's
+actual phase change equals the XOR of the forward and final debts. There is
+no assumption that the middle segment preserves phase. Deferred Z and CZ
+correction lemmas evaluate their contributions as the stored outcome AND the
+current recomputed data bit(s); legality of record indices remains separate.
+
+Basis postconditions are stated separately for s2 and s6. A restored row or
+zero output does not establish phase cancellation. Concrete programs, producer
+Spec instances and lifecycle input relations still need implementation; the
+new cancellation criterion is not a proof that the source meets it.
