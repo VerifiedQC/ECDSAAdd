@@ -3922,6 +3922,20 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_withinBudget_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_release_peak
 #print axioms ECDSAAdd.Arithmetic.Paper935.arenaChain_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction.execute
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog.length
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_reserve_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_release_valid
 LEAN
 )
 task_axiom_lean_rc=$?

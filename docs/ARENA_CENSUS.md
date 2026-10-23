@@ -32,3 +32,29 @@ all interior live sets and prove they correspond to the actual allocation and
 release sequence. Merely listing initial/final sets can miss an interior peak.
 Boundary compatibility, program support, semantic cleanup, completeness of the
 trace, and the concrete census values remain implementation obligations.
+
+## Executable allocation-log validation
+
+`ArenaLogAction` records either a reservation or a release with a supplied
+boundary basis-state sample. `checkArenaLog` executes each operation through
+`Arena.reserve` / `Arena.release`, fails on an invalid operation, and generates
+the entire list of intermediate live sets. It does not accept a manually
+supplied list of occupancy counts. A log of n actions produces n+1 snapshots,
+including both the initial and terminal states.
+
+`checkArenaLog_iff` proves acceptance exactly matches the inductive valid-log
+relation, whose transitions require successful allocator equations.
+`checkedArenaPeak_sound` returns that relation and the exact maximum of all
+generated counts. `checkedArenaPeak_bound` equates an arbitrary budget bound
+with the bound on every generated snapshot. Reservations cannot overlap live
+wires; releases require ownership and zero values in the supplied sample.
+Kernel-checked examples cover an interior peak that disappears after release,
+overlapping reservations, and rejection of a dirty release sample.
+
+This checker validates **the given log**. It does not prove that the log contains
+all allocations emitted by the source program, that its initial Arena is the
+actual initial ownership, or that a release sample is the actual program state.
+Those three correspondence obligations must be discharged before its peak can
+be attributed to the circuit. In particular, passing a made-up all-zero sample
+does not prove that a cleaning circuit ran. The validator does not interpret
+quantum gates, establish phase cancellation, or reset a released qubit.

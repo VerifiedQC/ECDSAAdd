@@ -532,3 +532,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlags
 import ECDSAAdd.Arithmetic.Paper935.FusedSourceRepack
 
 import ECDSAAdd.Arithmetic.Paper935.ArenaCensus
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaLog
