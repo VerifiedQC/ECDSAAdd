@@ -1,0 +1,396 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition
+namespace ECDSAAdd.Arithmetic.Paper935
+def s2Step0ExitGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (783≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 782],769⟩
+def s2Step0ExitGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254],769⟩
+def s2Step0ExitGExtra : List Wire := [255, 782]
+theorem s2Step0ExitG_distinct : (s2Step0ExitGRow.sign::s2Step0ExitGRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step0ExitG_owned : (s2Step0ExitGRow.sign::s2Step0ExitGRow.payload).toFinset⊆s2Step0ExitGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step0ExitGBefore (fun q => (0≤q ∧ q<786)) rfl
+  decide +kernel
+theorem s2Step0ExitG_retired : s2Step0ExitGBefore.retireSet s2Step0ExitGExtra.toFinset=s2Step0ExitGAfter := by
+  unfold Arena.retireSet s2Step0ExitGAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step0ExitGBefore,s2Step0ExitGExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step0ExitG_checked : planRowResizeLog s2Step0ExitGBefore s2Step0ExitGRow 255 []=
+    some (s2Step0ExitGAfter,s2Step0ExitGOut,shrinkRow 769 s2Step0ExitGExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step0ExitGBefore s2Step0ExitGRow 255 s2Step0ExitG_distinct s2Step0ExitG_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step0ExitGRow.payload.take 255) s2Step0ExitGRow.sign=s2Step0ExitGOut := by decide +kernel
+  have hi : s2Step0ExitGRow.payload.drop 255=s2Step0ExitGExtra := by decide +kernel
+  rw [lo,hi,s2Step0ExitG_retired] at result
+  exact result
+def s2Step0ExitFBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (783≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 783],768⟩
+def s2Step0ExitFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step0ExitFExtra : List Wire := [783]
+theorem s2Step0ExitF_distinct : (s2Step0ExitFRow.sign::s2Step0ExitFRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step0ExitF_owned : (s2Step0ExitFRow.sign::s2Step0ExitFRow.payload).toFinset⊆s2Step0ExitFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step0ExitFBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (783≤q ∧ q<786)) rfl
+  decide +kernel
+theorem s2Step0ExitF_retired : s2Step0ExitFBefore.retireSet s2Step0ExitFExtra.toFinset=s2Step0ExitFAfter := by
+  unfold Arena.retireSet s2Step0ExitFAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step0ExitFBefore,s2Step0ExitFExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step0ExitF_checked : planRowResizeLog s2Step0ExitFBefore s2Step0ExitFRow 256 []=
+    some (s2Step0ExitFAfter,s2Step0ExitFOut,shrinkRow 768 s2Step0ExitFExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step0ExitFBefore s2Step0ExitFRow 256 s2Step0ExitF_distinct s2Step0ExitF_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step0ExitFRow.payload.take 256) s2Step0ExitFRow.sign=s2Step0ExitFOut := by decide +kernel
+  have hi : s2Step0ExitFRow.payload.drop 256=s2Step0ExitFExtra := by decide +kernel
+  rw [lo,hi,s2Step0ExitF_retired] at result
+  exact result
+def s2Step0ExitFvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitFvRow : WindowRow := ⟨[778, 785],770⟩
+def s2Step0ExitFvOut : WindowRow := ⟨[778, 785],770⟩
+def s2Step0ExitFvExtra : List Wire := []
+theorem s2Step0ExitFv_distinct : (s2Step0ExitFvRow.sign::s2Step0ExitFvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step0ExitFv_owned : (s2Step0ExitFvRow.sign::s2Step0ExitFvRow.payload).toFinset⊆s2Step0ExitFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step0ExitFvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)) rfl
+  decide +kernel
+theorem s2Step0ExitFv_reserved : s2Step0ExitFvBefore.reserve (∅ : Finset Wire)=some s2Step0ExitFvAfter := by
+  apply hmrArena_reserve_of_live
+  · simp
+  · simp
+  · simp only [Finset.union_empty]; rfl
+theorem s2Step0ExitFv_checked : planRowResizeLog s2Step0ExitFvBefore s2Step0ExitFvRow 2 []=
+    some (s2Step0ExitFvAfter,s2Step0ExitFvOut,growRow 770 []) := by
+  have result := planRowResizeLog_of_growth s2Step0ExitFvBefore s2Step0ExitFvAfter s2Step0ExitFvRow 2 []
+    s2Step0ExitFv_distinct s2Step0ExitFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step0ExitFv_reserved
+  have rowEq : WindowRow.mk (s2Step0ExitFvRow.payload++[]) s2Step0ExitFvRow.sign=s2Step0ExitFvOut := by decide +kernel
+  rw [rowEq] at result
+  exact result
+def s2Step0ExitGvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (785≤q ∧ q<786)),Finset.filter_subset _ _⟩
+def s2Step0ExitGvRow : WindowRow := ⟨[779, 784],771⟩
+def s2Step0ExitGvOut : WindowRow := ⟨[779],771⟩
+def s2Step0ExitGvExtra : List Wire := [784]
+theorem s2Step0ExitGv_distinct : (s2Step0ExitGvRow.sign::s2Step0ExitGvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step0ExitGv_owned : (s2Step0ExitGvRow.sign::s2Step0ExitGvRow.payload).toFinset⊆s2Step0ExitGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step0ExitGvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<782) ∨ (784≤q ∧ q<786)) rfl
+  decide +kernel
+theorem s2Step0ExitGv_retired : s2Step0ExitGvBefore.retireSet s2Step0ExitGvExtra.toFinset=s2Step0ExitGvAfter := by
+  unfold Arena.retireSet s2Step0ExitGvAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step0ExitGvBefore,s2Step0ExitGvExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step0ExitGv_checked : planRowResizeLog s2Step0ExitGvBefore s2Step0ExitGvRow 1 []=
+    some (s2Step0ExitGvAfter,s2Step0ExitGvOut,shrinkRow 771 s2Step0ExitGvExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step0ExitGvBefore s2Step0ExitGvRow 1 s2Step0ExitGv_distinct s2Step0ExitGv_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step0ExitGvRow.payload.take 1) s2Step0ExitGvRow.sign=s2Step0ExitGvOut := by decide +kernel
+  have hi : s2Step0ExitGvRow.payload.drop 1=s2Step0ExitGvExtra := by decide +kernel
+  rw [lo,hi,s2Step0ExitGv_retired] at result
+  exact result
+def s2Step498ExitGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<917) ∨ (918≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845, 917],769⟩
+def s2Step498ExitGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],769⟩
+def s2Step498ExitGExtra : List Wire := [845, 917]
+theorem s2Step498ExitG_distinct : (s2Step498ExitGRow.sign::s2Step498ExitGRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step498ExitG_owned : (s2Step498ExitGRow.sign::s2Step498ExitGRow.payload).toFinset⊆s2Step498ExitGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step498ExitGBefore (fun q => (0≤q ∧ q<921)) rfl
+  decide +kernel
+theorem s2Step498ExitG_retired : s2Step498ExitGBefore.retireSet s2Step498ExitGExtra.toFinset=s2Step498ExitGAfter := by
+  unfold Arena.retireSet s2Step498ExitGAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step498ExitGBefore,s2Step498ExitGExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step498ExitG_checked : planRowResizeLog s2Step498ExitGBefore s2Step498ExitGRow 24 []=
+    some (s2Step498ExitGAfter,s2Step498ExitGOut,shrinkRow 769 s2Step498ExitGExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step498ExitGBefore s2Step498ExitGRow 24 s2Step498ExitG_distinct s2Step498ExitG_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step498ExitGRow.payload.take 24) s2Step498ExitGRow.sign=s2Step498ExitGOut := by decide +kernel
+  have hi : s2Step498ExitGRow.payload.drop 24=s2Step498ExitGExtra := by decide +kernel
+  rw [lo,hi,s2Step498ExitG_retired] at result
+  exact result
+def s2Step498ExitFBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<917) ∨ (918≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901, 918],768⟩
+def s2Step498ExitFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535],768⟩
+def s2Step498ExitFExtra : List Wire := [901, 918]
+theorem s2Step498ExitF_distinct : (s2Step498ExitFRow.sign::s2Step498ExitFRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step498ExitF_owned : (s2Step498ExitFRow.sign::s2Step498ExitFRow.payload).toFinset⊆s2Step498ExitFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step498ExitFBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<917) ∨ (918≤q ∧ q<921)) rfl
+  decide +kernel
+theorem s2Step498ExitF_retired : s2Step498ExitFBefore.retireSet s2Step498ExitFExtra.toFinset=s2Step498ExitFAfter := by
+  unfold Arena.retireSet s2Step498ExitFAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step498ExitFBefore,s2Step498ExitFExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step498ExitF_checked : planRowResizeLog s2Step498ExitFBefore s2Step498ExitFRow 24 []=
+    some (s2Step498ExitFAfter,s2Step498ExitFOut,shrinkRow 768 s2Step498ExitFExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step498ExitFBefore s2Step498ExitFRow 24 s2Step498ExitF_distinct s2Step498ExitF_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step498ExitFRow.payload.take 24) s2Step498ExitFRow.sign=s2Step498ExitFOut := by decide +kernel
+  have hi : s2Step498ExitFRow.payload.drop 24=s2Step498ExitFExtra := by decide +kernel
+  rw [lo,hi,s2Step498ExitF_retired] at result
+  exact result
+def s2Step498ExitFvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791, 920],770⟩
+def s2Step498ExitFvOut : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791, 920],770⟩
+def s2Step498ExitFvExtra : List Wire := []
+theorem s2Step498ExitFv_distinct : (s2Step498ExitFvRow.sign::s2Step498ExitFvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step498ExitFv_owned : (s2Step498ExitFvRow.sign::s2Step498ExitFvRow.payload).toFinset⊆s2Step498ExitFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step498ExitFvBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)) rfl
+  decide +kernel
+theorem s2Step498ExitFv_reserved : s2Step498ExitFvBefore.reserve (∅ : Finset Wire)=some s2Step498ExitFvAfter := by
+  apply hmrArena_reserve_of_live
+  · simp
+  · simp
+  · simp only [Finset.union_empty]; rfl
+theorem s2Step498ExitFv_checked : planRowResizeLog s2Step498ExitFvBefore s2Step498ExitFvRow 267 []=
+    some (s2Step498ExitFvAfter,s2Step498ExitFvOut,growRow 770 []) := by
+  have result := planRowResizeLog_of_growth s2Step498ExitFvBefore s2Step498ExitFvAfter s2Step498ExitFvRow 267 []
+    s2Step498ExitFv_distinct s2Step498ExitFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step498ExitFv_reserved
+  have rowEq : WindowRow.mk (s2Step498ExitFvRow.payload++[]) s2Step498ExitFvRow.sign=s2Step498ExitFvOut := by decide +kernel
+  rw [rowEq] at result
+  exact result
+def s2Step498ExitGvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (920≤q ∧ q<921)),Finset.filter_subset _ _⟩
+def s2Step498ExitGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790, 919],771⟩
+def s2Step498ExitGvOut : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790],771⟩
+def s2Step498ExitGvExtra : List Wire := [919]
+theorem s2Step498ExitGv_distinct : (s2Step498ExitGvRow.sign::s2Step498ExitGvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s2Step498ExitGv_owned : (s2Step498ExitGvRow.sign::s2Step498ExitGvRow.payload).toFinset⊆s2Step498ExitGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step498ExitGvBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)) rfl
+  decide +kernel
+theorem s2Step498ExitGv_retired : s2Step498ExitGvBefore.retireSet s2Step498ExitGvExtra.toFinset=s2Step498ExitGvAfter := by
+  unfold Arena.retireSet s2Step498ExitGvAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step498ExitGvBefore,s2Step498ExitGvExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s2Step498ExitGv_checked : planRowResizeLog s2Step498ExitGvBefore s2Step498ExitGvRow 266 []=
+    some (s2Step498ExitGvAfter,s2Step498ExitGvOut,shrinkRow 771 s2Step498ExitGvExtra) := by
+  have result := planRowResizeLog_of_shrink s2Step498ExitGvBefore s2Step498ExitGvRow 266 s2Step498ExitGv_distinct s2Step498ExitGv_owned (by decide +kernel)
+  have lo : WindowRow.mk (s2Step498ExitGvRow.payload.take 266) s2Step498ExitGvRow.sign=s2Step498ExitGvOut := by decide +kernel
+  have hi : s2Step498ExitGvRow.payload.drop 266=s2Step498ExitGvExtra := by decide +kernel
+  rw [lo,hi,s2Step498ExitGv_retired] at result
+  exact result
+def s6Step0ExitGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 862],777⟩
+def s6Step0ExitGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254],777⟩
+def s6Step0ExitGExtra : List Wire := [255, 862]
+theorem s6Step0ExitG_distinct : (s6Step0ExitGRow.sign::s6Step0ExitGRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step0ExitG_owned : (s6Step0ExitGRow.sign::s6Step0ExitGRow.payload).toFinset⊆s6Step0ExitGBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step0ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  decide +kernel
+theorem s6Step0ExitG_retired : s6Step0ExitGBefore.retireSet s6Step0ExitGExtra.toFinset=s6Step0ExitGAfter := by
+  unfold Arena.retireSet s6Step0ExitGAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step0ExitGBefore,s6Step0ExitGExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step0ExitG_checked : planRowResizeLog s6Step0ExitGBefore s6Step0ExitGRow 255 []=
+    some (s6Step0ExitGAfter,s6Step0ExitGOut,shrinkRow 777 s6Step0ExitGExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step0ExitGBefore s6Step0ExitGRow 255 s6Step0ExitG_distinct s6Step0ExitG_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step0ExitGRow.payload.take 255) s6Step0ExitGRow.sign=s6Step0ExitGOut := by decide +kernel
+  have hi : s6Step0ExitGRow.payload.drop 255=s6Step0ExitGExtra := by decide +kernel
+  rw [lo,hi,s6Step0ExitG_retired] at result
+  exact result
+def s6Step0ExitFBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩
+def s6Step0ExitFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
+def s6Step0ExitFExtra : List Wire := [807]
+theorem s6Step0ExitF_distinct : (s6Step0ExitFRow.sign::s6Step0ExitFRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step0ExitF_owned : (s6Step0ExitFRow.sign::s6Step0ExitFRow.payload).toFinset⊆s6Step0ExitFBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step0ExitFBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  decide +kernel
+theorem s6Step0ExitF_retired : s6Step0ExitFBefore.retireSet s6Step0ExitFExtra.toFinset=s6Step0ExitFAfter := by
+  unfold Arena.retireSet s6Step0ExitFAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step0ExitFBefore,s6Step0ExitFExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step0ExitF_checked : planRowResizeLog s6Step0ExitFBefore s6Step0ExitFRow 256 []=
+    some (s6Step0ExitFAfter,s6Step0ExitFOut,shrinkRow 795 s6Step0ExitFExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step0ExitFBefore s6Step0ExitFRow 256 s6Step0ExitF_distinct s6Step0ExitF_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step0ExitFRow.payload.take 256) s6Step0ExitFRow.sign=s6Step0ExitFOut := by decide +kernel
+  have hi : s6Step0ExitFRow.payload.drop 256=s6Step0ExitFExtra := by decide +kernel
+  rw [lo,hi,s6Step0ExitF_retired] at result
+  exact result
+def s6Step0ExitFvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitFvRow : WindowRow := ⟨[768, 876],776⟩
+def s6Step0ExitFvOut : WindowRow := ⟨[768, 876],776⟩
+def s6Step0ExitFvExtra : List Wire := []
+theorem s6Step0ExitFv_distinct : (s6Step0ExitFvRow.sign::s6Step0ExitFvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step0ExitFv_owned : (s6Step0ExitFvRow.sign::s6Step0ExitFvRow.payload).toFinset⊆s6Step0ExitFvBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step0ExitFvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  decide +kernel
+theorem s6Step0ExitFv_reserved : s6Step0ExitFvBefore.reserve (∅ : Finset Wire)=some s6Step0ExitFvAfter := by
+  apply hmrArena_reserve_of_live
+  · simp
+  · simp
+  · simp only [Finset.union_empty]; rfl
+theorem s6Step0ExitFv_checked : planRowResizeLog s6Step0ExitFvBefore s6Step0ExitFvRow 2 []=
+    some (s6Step0ExitFvAfter,s6Step0ExitFvOut,growRow 776 []) := by
+  have result := planRowResizeLog_of_growth s6Step0ExitFvBefore s6Step0ExitFvAfter s6Step0ExitFvRow 2 []
+    s6Step0ExitFv_distinct s6Step0ExitFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step0ExitFv_reserved
+  have rowEq : WindowRow.mk (s6Step0ExitFvRow.payload++[]) s6Step0ExitFvRow.sign=s6Step0ExitFvOut := by decide +kernel
+  rw [rowEq] at result
+  exact result
+def s6Step0ExitGvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
+def s6Step0ExitGvRow : WindowRow := ⟨[859, 860],775⟩
+def s6Step0ExitGvOut : WindowRow := ⟨[859],775⟩
+def s6Step0ExitGvExtra : List Wire := [860]
+theorem s6Step0ExitGv_distinct : (s6Step0ExitGvRow.sign::s6Step0ExitGvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step0ExitGv_owned : (s6Step0ExitGvRow.sign::s6Step0ExitGvRow.payload).toFinset⊆s6Step0ExitGvBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step0ExitGvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  decide +kernel
+theorem s6Step0ExitGv_retired : s6Step0ExitGvBefore.retireSet s6Step0ExitGvExtra.toFinset=s6Step0ExitGvAfter := by
+  unfold Arena.retireSet s6Step0ExitGvAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step0ExitGvBefore,s6Step0ExitGvExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step0ExitGv_checked : planRowResizeLog s6Step0ExitGvBefore s6Step0ExitGvRow 1 []=
+    some (s6Step0ExitGvAfter,s6Step0ExitGvOut,shrinkRow 775 s6Step0ExitGvExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step0ExitGvBefore s6Step0ExitGvRow 1 s6Step0ExitGv_distinct s6Step0ExitGv_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step0ExitGvRow.payload.take 1) s6Step0ExitGvRow.sign=s6Step0ExitGvOut := by decide +kernel
+  have hi : s6Step0ExitGvRow.payload.drop 1=s6Step0ExitGvExtra := by decide +kernel
+  rw [lo,hi,s6Step0ExitGv_retired] at result
+  exact result
+def s6Step498ExitGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (798≤q ∧ q<800) ∨ (801≤q ∧ q<832) ∨ (833≤q ∧ q<914) ∨ (915≤q ∧ q<916) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (915≤q ∧ q<916) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 855, 798],777⟩
+def s6Step498ExitGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],777⟩
+def s6Step498ExitGExtra : List Wire := [855, 798]
+theorem s6Step498ExitG_distinct : (s6Step498ExitGRow.sign::s6Step498ExitGRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step498ExitG_owned : (s6Step498ExitGRow.sign::s6Step498ExitGRow.payload).toFinset⊆s6Step498ExitGBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step498ExitGBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (798≤q ∧ q<800) ∨ (801≤q ∧ q<832) ∨ (833≤q ∧ q<914) ∨ (915≤q ∧ q<916) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)) rfl
+  decide +kernel
+theorem s6Step498ExitG_retired : s6Step498ExitGBefore.retireSet s6Step498ExitGExtra.toFinset=s6Step498ExitGAfter := by
+  unfold Arena.retireSet s6Step498ExitGAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step498ExitGBefore,s6Step498ExitGExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step498ExitG_checked : planRowResizeLog s6Step498ExitGBefore s6Step498ExitGRow 24 []=
+    some (s6Step498ExitGAfter,s6Step498ExitGOut,shrinkRow 777 s6Step498ExitGExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step498ExitGBefore s6Step498ExitGRow 24 s6Step498ExitG_distinct s6Step498ExitG_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step498ExitGRow.payload.take 24) s6Step498ExitGRow.sign=s6Step498ExitGOut := by decide +kernel
+  have hi : s6Step498ExitGRow.payload.drop 24=s6Step498ExitGExtra := by decide +kernel
+  rw [lo,hi,s6Step498ExitG_retired] at result
+  exact result
+def s6Step498ExitFBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (915≤q ∧ q<916) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 915, 808],795⟩
+def s6Step498ExitFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279],795⟩
+def s6Step498ExitFExtra : List Wire := [915, 808]
+theorem s6Step498ExitF_distinct : (s6Step498ExitFRow.sign::s6Step498ExitFRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step498ExitF_owned : (s6Step498ExitFRow.sign::s6Step498ExitFRow.payload).toFinset⊆s6Step498ExitFBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step498ExitFBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (915≤q ∧ q<916) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)) rfl
+  decide +kernel
+theorem s6Step498ExitF_retired : s6Step498ExitFBefore.retireSet s6Step498ExitFExtra.toFinset=s6Step498ExitFAfter := by
+  unfold Arena.retireSet s6Step498ExitFAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step498ExitFBefore,s6Step498ExitFExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step498ExitF_checked : planRowResizeLog s6Step498ExitFBefore s6Step498ExitFRow 24 []=
+    some (s6Step498ExitFAfter,s6Step498ExitFOut,shrinkRow 795 s6Step498ExitFExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step498ExitFBefore s6Step498ExitFRow 24 s6Step498ExitF_distinct s6Step498ExitF_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step498ExitFRow.payload.take 24) s6Step498ExitFRow.sign=s6Step498ExitFOut := by decide +kernel
+  have hi : s6Step498ExitFRow.payload.drop 24=s6Step498ExitFExtra := by decide +kernel
+  rw [lo,hi,s6Step498ExitF_retired] at result
+  exact result
+def s6Step498ExitFvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 778, 848, 812, 825, 906, 888, 869, 898, 823, 839, 863, 876, 903, 920, 818, 864, 853, 891, 821, 784, 793, 833, 927, 856, 907, 768, 845, 838, 822, 780, 809, 908, 813, 779, 896],776⟩
+def s6Step498ExitFvOut : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 778, 848, 812, 825, 906, 888, 869, 898, 823, 839, 863, 876, 903, 920, 818, 864, 853, 891, 821, 784, 793, 833, 927, 856, 907, 768, 845, 838, 822, 780, 809, 908, 813, 779, 896],776⟩
+def s6Step498ExitFvExtra : List Wire := []
+theorem s6Step498ExitFv_distinct : (s6Step498ExitFvRow.sign::s6Step498ExitFvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step498ExitFv_owned : (s6Step498ExitFvRow.sign::s6Step498ExitFvRow.payload).toFinset⊆s6Step498ExitFvBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step498ExitFvBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)) rfl
+  decide +kernel
+theorem s6Step498ExitFv_reserved : s6Step498ExitFvBefore.reserve (∅ : Finset Wire)=some s6Step498ExitFvAfter := by
+  apply hmrArena_reserve_of_live
+  · simp
+  · simp
+  · simp only [Finset.union_empty]; rfl
+theorem s6Step498ExitFv_checked : planRowResizeLog s6Step498ExitFvBefore s6Step498ExitFvRow 267 []=
+    some (s6Step498ExitFvAfter,s6Step498ExitFvOut,growRow 776 []) := by
+  have result := planRowResizeLog_of_growth s6Step498ExitFvBefore s6Step498ExitFvAfter s6Step498ExitFvRow 267 []
+    s6Step498ExitFv_distinct s6Step498ExitFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step498ExitFv_reserved
+  have rowEq : WindowRow.mk (s6Step498ExitFvRow.payload++[]) s6Step498ExitFvRow.sign=s6Step498ExitFvOut := by decide +kernel
+  rw [rowEq] at result
+  exact result
+def s6Step498ExitGvBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<820) ∨ (821≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)),Finset.filter_subset _ _⟩
+def s6Step498ExitGvRow : WindowRow := ⟨[511, 510, 509, 508, 507, 506, 505, 504, 503, 502, 501, 500, 499, 498, 497, 496, 495, 494, 493, 492, 491, 490, 489, 488, 487, 486, 485, 484, 483, 482, 480, 481, 479, 478, 477, 475, 476, 474, 473, 472, 471, 470, 469, 468, 466, 467, 464, 465, 463, 462, 461, 460, 459, 458, 457, 456, 455, 454, 453, 452, 451, 450, 449, 448, 447, 446, 445, 444, 443, 442, 441, 440, 439, 438, 437, 436, 435, 434, 433, 432, 431, 430, 429, 428, 427, 425, 426, 424, 423, 422, 421, 419, 420, 418, 417, 416, 415, 414, 413, 412, 411, 409, 410, 408, 406, 407, 404, 405, 403, 402, 401, 400, 399, 398, 397, 396, 395, 394, 393, 391, 392, 390, 389, 388, 387, 385, 386, 384, 383, 382, 381, 380, 379, 378, 377, 376, 375, 374, 373, 372, 371, 370, 369, 368, 366, 367, 365, 364, 363, 362, 361, 360, 359, 358, 357, 355, 356, 353, 354, 352, 351, 350, 349, 348, 347, 346, 345, 344, 343, 341, 342, 340, 339, 338, 337, 336, 335, 334, 333, 332, 331, 330, 329, 328, 326, 327, 325, 323, 324, 322, 321, 320, 319, 317, 318, 316, 315, 314, 313, 312, 311, 310, 309, 308, 307, 306, 305, 304, 303, 302, 300, 301, 299, 298, 297, 296, 295, 294, 293, 292, 291, 290, 289, 288, 287, 286, 285, 284, 283, 282, 280, 281, 886, 887, 922, 807, 858, 802, 786, 796, 792, 803, 805, 850, 828, 862, 814, 868, 890, 794, 841, 867, 880, 830, 857, 859, 854, 882, 810, 865, 817, 860, 816, 789, 873, 875, 820],775⟩
+def s6Step498ExitGvOut : WindowRow := ⟨[511, 510, 509, 508, 507, 506, 505, 504, 503, 502, 501, 500, 499, 498, 497, 496, 495, 494, 493, 492, 491, 490, 489, 488, 487, 486, 485, 484, 483, 482, 480, 481, 479, 478, 477, 475, 476, 474, 473, 472, 471, 470, 469, 468, 466, 467, 464, 465, 463, 462, 461, 460, 459, 458, 457, 456, 455, 454, 453, 452, 451, 450, 449, 448, 447, 446, 445, 444, 443, 442, 441, 440, 439, 438, 437, 436, 435, 434, 433, 432, 431, 430, 429, 428, 427, 425, 426, 424, 423, 422, 421, 419, 420, 418, 417, 416, 415, 414, 413, 412, 411, 409, 410, 408, 406, 407, 404, 405, 403, 402, 401, 400, 399, 398, 397, 396, 395, 394, 393, 391, 392, 390, 389, 388, 387, 385, 386, 384, 383, 382, 381, 380, 379, 378, 377, 376, 375, 374, 373, 372, 371, 370, 369, 368, 366, 367, 365, 364, 363, 362, 361, 360, 359, 358, 357, 355, 356, 353, 354, 352, 351, 350, 349, 348, 347, 346, 345, 344, 343, 341, 342, 340, 339, 338, 337, 336, 335, 334, 333, 332, 331, 330, 329, 328, 326, 327, 325, 323, 324, 322, 321, 320, 319, 317, 318, 316, 315, 314, 313, 312, 311, 310, 309, 308, 307, 306, 305, 304, 303, 302, 300, 301, 299, 298, 297, 296, 295, 294, 293, 292, 291, 290, 289, 288, 287, 286, 285, 284, 283, 282, 280, 281, 886, 887, 922, 807, 858, 802, 786, 796, 792, 803, 805, 850, 828, 862, 814, 868, 890, 794, 841, 867, 880, 830, 857, 859, 854, 882, 810, 865, 817, 860, 816, 789, 873, 875],775⟩
+def s6Step498ExitGvExtra : List Wire := [820]
+theorem s6Step498ExitGv_distinct : (s6Step498ExitGvRow.sign::s6Step498ExitGvRow.payload).Nodup := by
+  apply hmrLayout_nodup_of_sorted
+  decide +kernel
+theorem s6Step498ExitGv_owned : (s6Step498ExitGvRow.sign::s6Step498ExitGvRow.payload).toFinset⊆s6Step498ExitGvBefore.live := by
+  apply hmrLayout_owned_of_filter s6Step498ExitGvBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<790) ∨ (791≤q ∧ q<797) ∨ (799≤q ∧ q<800) ∨ (801≤q ∧ q<808) ∨ (809≤q ∧ q<832) ∨ (833≤q ∧ q<855) ∨ (856≤q ∧ q<914) ∨ (917≤q ∧ q<918) ∨ (919≤q ∧ q<928) ∨ (932≤q ∧ q<933)) rfl
+  decide +kernel
+theorem s6Step498ExitGv_retired : s6Step498ExitGvBefore.retireSet s6Step498ExitGvExtra.toFinset=s6Step498ExitGvAfter := by
+  unfold Arena.retireSet s6Step498ExitGvAfter
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s6Step498ExitGvBefore,s6Step498ExitGvExtra,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_sdiff,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+  simp only [Wire] at *
+  omega
+theorem s6Step498ExitGv_checked : planRowResizeLog s6Step498ExitGvBefore s6Step498ExitGvRow 266 []=
+    some (s6Step498ExitGvAfter,s6Step498ExitGvOut,shrinkRow 775 s6Step498ExitGvExtra) := by
+  have result := planRowResizeLog_of_shrink s6Step498ExitGvBefore s6Step498ExitGvRow 266 s6Step498ExitGv_distinct s6Step498ExitGv_owned (by decide +kernel)
+  have lo : WindowRow.mk (s6Step498ExitGvRow.payload.take 266) s6Step498ExitGvRow.sign=s6Step498ExitGvOut := by decide +kernel
+  have hi : s6Step498ExitGvRow.payload.drop 266=s6Step498ExitGvExtra := by decide +kernel
+  rw [lo,hi,s6Step498ExitGv_retired] at result
+  exact result
+end ECDSAAdd.Arithmetic.Paper935

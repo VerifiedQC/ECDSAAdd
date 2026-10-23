@@ -958,3 +958,13 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFrontComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomParts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryParts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomBank
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryBank
+import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticParts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceF4Parts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitParts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitBank
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceCounterParts
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial

@@ -32,7 +32,7 @@ theorem compileHmrSourceFrontLog_of_parts (A : Arena) (bank : WindowBank)
     simp only [HmrSourceFront.sigma,sigmaWork]
   have br : hmrBorrowPorts logs.branch (0 : Fin 1)=P.branch := by
     simp only [HmrSourceFront.branch,branchWork]
-  simp only [compileHmrSourceFrontLog,if_neg (not_not.mpr entry),padding,Option.bind_some,
+  simp only [compileHmrSourceFrontLog,if_neg (not_not.mpr entry),padding,Bind.bind,Option.bind,
     sigma,branch,headroom,sig,br,arithmetic,counterChecked,exit]
   cases P
   simp_all

@@ -567,3 +567,15 @@ Sorting is used only to prove distinctness; emitted wire order is unchanged.
 This avoids normalizing a complete arena/gate plan in one kernel reduction.
 The generated file is checked by the pinned-source checker. These selected
 transactions are not a whole-walk acceptance certificate.
+
+
+`HmrSourceFrontInitial` now assembles each complete arithmetic front for
+steps 0 and 498 of both walks. Its exact returned plan is derived from the
+observed entry padding, sigma/branch borrows, four-row headroom transaction,
+two hybrid additions with shared flag/carry, counter scratch, and measured
+exit shrinking. Component arenas and ordered row views are joined explicitly;
+no front acceptance or execution agreement is assumed. All generated pieces
+are reproduced by the pinned-source checker. The chronological control and
+repack composition after these fronts still need their corresponding complete
+step certificates. The full two 533-step compiler probes return true at runtime;
+that diagnostic result remains distinct from a whole-walk kernel certificate.
