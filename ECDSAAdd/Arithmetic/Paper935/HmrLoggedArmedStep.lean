@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlMetadata
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedFrontControlRepack
 import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlFrame
 import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlMath
@@ -7,7 +8,7 @@ namespace ECDSAAdd.Arithmetic.Paper935
 
 /-- Full armed arithmetic/control composition. Timestamp range and history
 capacity remain conditions on the actual intermediate input. -/
-theorem HmrSourceFront.Logged.armed_step (P : HmrSourceFront) (A C : Arena) (bank : WindowBank)
+theorem HmrSourceFront.Logged.armed_step_chronology (P : HmrSourceFront) (A C : Arena) (bank : WindowBank)
     (fgWidth vWidth : Nat) (exitWidth : RowWindow) (frozen : Wire) (counter timestamp record : List Wire)
     {logs : HmrFrontResizeLogs} (front : P.Logged logs A bank fgWidth vWidth exitWidth false frozen counter)
     (moves : List (Wire × Wire)) (repacked : P.exitArena.checkRepack moves=some C)
@@ -42,7 +43,9 @@ theorem HmrSourceFront.Logged.armed_step (P : HmrSourceFront) (A C : Arena) (ban
       Q.program frozen sign P.sigma (P.exitBank.repacked moves).fv.second b2 b3 b4 P.branch timestamp record offset) m s
     Q.outputArena.Ready out.basis ∧
     (P.exitBank.repacked moves).Encodes out.basis (if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows) ∧
-    signedRegValue counter out.basis=(if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows).z := by
+    signedRegValue counter out.basis=(if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows).z ∧
+    regValue timestamp out.basis<offset+1 ∧
+    (out.basis frozen=false → regValue timestamp out.basis=0) := by
   let before := P.program false frozen counter++repack moves
   let first := run before m s
   let tape := m.drop (measurementCount before)
@@ -88,12 +91,56 @@ theorem HmrSourceFront.Logged.armed_step (P : HmrSourceFront) (A C : Arena) (ban
     frame q (owned q hq) (List.disjoint_left.mp apart hq)
   dsimp only
   rw [run_append,run_take]
-  refine ⟨result.2,?_,?_⟩
+  refine ⟨result.2,?_,?_,?_⟩
   · apply WindowBank.Encodes.frame (P.exitBank.repacked moves) first.basis _ _
       (by simpa only [Bool.false_eq_true,ite_false,frozenValue] using arith.2.2.1)
     exact fun q hq => keep q (List.mem_append_left _ hq)
   · unfold signedRegValue
     rw [regValue_congr counter _ first.basis (fun q hq => keep q (List.mem_append_right _ hq))]
     simpa only [Bool.false_eq_true,ite_false,frozenValue] using arith.2.2.2
+
+  · exact control.chronology Q C _ counter timestamp record frozen sign P.sigma _ b2 b3 b4 P.branch offset need
+      first tape arith.2.1 past uf sigma fits
+
+theorem HmrSourceFront.Logged.armed_step (P : HmrSourceFront) (A C : Arena) (bank : WindowBank)
+    (fgWidth vWidth : Nat) (exitWidth : RowWindow) (frozen : Wire) (counter timestamp record : List Wire)
+    {logs : HmrFrontResizeLogs} (front : P.Logged logs A bank fgWidth vWidth exitWidth false frozen counter)
+    (moves : List (Wire × Wire)) (repacked : P.exitArena.checkRepack moves=some C)
+    (movesAway : ∀p∈moves,p.1∉P.branch::P.sigma::frozen::counter)
+    (Q : HmrArmedControlPlan) (sign b2 b3 b4 : Wire) (offset need : Nat)
+    (control : Q.Logged C (P.exitBank.repacked moves).g.wires counter timestamp record frozen sign P.sigma
+      (P.exitBank.repacked moves).fv.second b2 b3 b4 P.branch offset need)
+    (nonempty : (P.exitBank.repacked moves).fv.payload≠[])
+    (owned : ∀q∈(P.exitBank.repacked moves).rows.flatMap WindowRow.wires++counter,q∈C.live)
+    (apart : List.Disjoint ((P.exitBank.repacked moves).rows.flatMap WindowRow.wires++counter)
+      (P.sigma::P.branch::frozen::(timestamp++record)))
+    (p : Int) (old : PinState) (inv : ECDSAAdd.Divsteps.Inv p old.rows) (odd : p%2=1)
+    (s : State) (m : List Bool) (ready : A.Ready s.basis) (encodes : bank.Encodes s.basis old.rows)
+    (counterValue : signedRegValue counter s.basis=old.rows.z) (fodd : old.rows.f%2=1)
+    (frozenValue : s.basis frozen=old.frozen) (frozenZero : old.frozen=true → old.rows.g=0)
+    (prefit : (RowWindow.mk fgWidth fgWidth vWidth vWidth).Fits old.rows)
+    (exitfit : exitWidth.Fits (if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows))
+    (zfit : PayloadFits (counter.length-1) (if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows).z)
+    (past : regValue timestamp (run (P.program false frozen counter++repack moves) m s).basis<offset)
+    (unfrozen : old.frozen=false → regValue timestamp (run (P.program false frozen counter++repack moves) m s).basis=0)
+    (fits : let before := P.program false frozen counter++repack moves
+      let arith := run before m s
+      let tape := m.drop (measurementCount before)
+      let first := run (Q.freezePlan.program frozen timestamp offset) tape arith
+      let t1 := tape.drop (measurementCount (Q.freezePlan.program frozen timestamp offset))
+      let u := run (hmrBlockedProgram Q.counterPlans) t1 first
+      let v := run (Q.classPlan.program sign Q.counterKeeper)
+        (t1.drop (measurementCount (hmrBlockedProgram Q.counterPlans))) u
+      (v.basis Q.classPlan.equality.top && !v.basis b2 && !v.basis b3 && !v.basis b4)=true →
+        2*regValue record v.basis+(v.basis P.branch).toNat<2^record.length) :
+    let out := run ((P.program false frozen counter++repack moves)++
+      Q.program frozen sign P.sigma (P.exitBank.repacked moves).fv.second b2 b3 b4 P.branch timestamp record offset) m s
+    Q.outputArena.Ready out.basis ∧
+    (P.exitBank.repacked moves).Encodes out.basis (if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows) ∧
+    signedRegValue counter out.basis=(if old.frozen then old.rows else ECDSAAdd.Divsteps.zStep old.rows).z := by
+  have result := front.armed_step_chronology P A C bank fgWidth vWidth exitWidth frozen counter timestamp record
+    moves repacked movesAway Q sign b2 b3 b4 offset need control nonempty owned apart
+    p old inv odd s m ready encodes counterValue fodd frozenValue frozenZero prefit exitfit zfit past unfrozen fits
+  exact ⟨result.1,result.2.1,result.2.2.1⟩
 
 end ECDSAAdd.Arithmetic.Paper935

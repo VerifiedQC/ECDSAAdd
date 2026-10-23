@@ -933,3 +933,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6ArmedParts
 import ECDSAAdd.Arithmetic.Paper935.HmrFreezeEndComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlMetadata
 import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedFrontLocality
+import ECDSAAdd.Arithmetic.Paper935.HmrArmedStepTimestamp
+import ECDSAAdd.Arithmetic.Paper935.HmrChronologicalStepCompiler

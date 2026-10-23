@@ -4835,6 +4835,17 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstArmedControl_sigma
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstArmedControl_ending
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6FirstArmedControl_branch
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.prepare_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.rear_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.run_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.run_repacked_locality
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.armed_step_chronology
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.timestamp_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.run_math_from_entry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.run_math_chronology_from_entry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.run_math_chronology
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrChronologicalStepLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrChronologicalStepLog_run
 LEAN
 )
 task_axiom_lean_rc=$?

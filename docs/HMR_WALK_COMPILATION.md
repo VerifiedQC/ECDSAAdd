@@ -502,3 +502,13 @@ the actual F8--F17 cleanup. Its chronological corollary proves that the final
 timestamp is below the next offset and remains zero while unfrozen. This is
 a control-segment invariant; preserving it through the next arithmetic front
 and proving the complete walk induction remain separate obligations.
+
+`run_locality` and its repacked counterpart now prove that incoming owned
+storage outside the arithmetic rows/counter keeps its value through the
+actual F1--F6 program. Applying them to the timestamp moves the chronological
+hypotheses back to the complete step's entry state. The chronological step
+checker verifies this storage separation and exclusion from relocation sources;
+its execution theorem returns the next rows/counter, output readiness, and
+the next timestamp bound/unfrozen-zero invariant. Arithmetic range and actual
+history-capacity hypotheses remain explicit. This does not yet establish
+all 533 source instances or the reverse phase cancellation.
