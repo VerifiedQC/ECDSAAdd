@@ -968,3 +968,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitParts
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitBank
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceCounterParts
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrStepComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitial

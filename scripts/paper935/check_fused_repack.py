@@ -214,3 +214,5 @@ subprocess.run([sys.executable,str(root/'scripts/paper935/generate_exit_parts.py
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_headroom_bank.py'),'--exit','--check'],check=True)
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_counter_parts.py'),'--check'],check=True)
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_front_parts.py'),'--check'],check=True)
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_step_parts.py'),'--check'],check=True)
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_lifecycle_steps.py'),'--check'],check=True)

@@ -579,3 +579,13 @@ are reproduced by the pinned-source checker. The chronological control and
 repack composition after these fronts still need their corresponding complete
 step certificates. The full two 533-step compiler probes return true at runtime;
 that diagnostic result remains distinct from a whole-walk kernel certificate.
+
+
+`HmrSourceStepInitial` now composes those same four fronts with their actual
+relocation journals and previously checked control blocks. The lifecycle
+certificates in `HmrSourceLifecycleInitial` additionally check timestamp
+separation and the exact seven-site arm borrow at step 498, starting from
+the pre-arm arena. Early steps retain the physically absent metadata state.
+Each named lifecycle plan is extracted only after acceptance is proved, and
+has an explicit `compileHmrSourceStepLog = some Plan` theorem. These are
+complete selected step certificates, still not all 533-step certificates.
