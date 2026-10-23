@@ -3936,6 +3936,13 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_bound
 #print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_reserve_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_release_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak_sound
 LEAN
 )
 task_axiom_lean_rc=$?

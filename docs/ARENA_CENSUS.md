@@ -58,3 +58,32 @@ Those three correspondence obligations must be discharged before its peak can
 be attributed to the circuit. In particular, passing a made-up all-zero sample
 does not prove that a cleaning circuit ran. The validator does not interpret
 quantum gates, establish phase cancellation, or reset a released qubit.
+
+## PR210 export and checker compatibility
+
+The exporter at PR210 `738b690` uses `live_before` and `live_after` lists of
+half-open `[lo, hi)` intervals. `arenaIntervalSet` has exactly the corresponding
+set semantics (including deduplication); its membership theorem is
+`∃ (lo,hi) in intervals, lo ≤ q ∧ q < hi`.
+
+`checkArenaStage` matches the supplied initial Arena to `live_before`, runs the
+existing allocation-log checker, and matches its final Arena to `live_after`.
+`checkedArenaStagePeak` still uses **every** generated snapshot, not the maximum
+of just the two boundary sets. Acceptance yields the valid allocator chain,
+its exact length, both boundary matches and the exact peak. Kernel examples
+check an interior peak with empty endpoints, a half-open endpoint mismatch,
+and overlapping intervals without double-counting.
+
+| Export/producer item | Integration |
+| --- | --- |
+| `events: {kind: take, wire: q}` | `ArenaLogAction.reserve {q}`; this calls the existing `Arena.reserve`. |
+| `events: {kind: give, wire: q}` | `ArenaLogAction.release {q} sample`; the exporter does not provide the required actual quantum state. Supply and prove that boundary-state binding separately. |
+| `Arena.checkBorrow n work` success (PR210) | Reuse its `checkBorrow_contract` to obtain the existing `reserve work.toFinset` equation plus length and Nodup. No second ordered-work checker is defined here. If the source allocates wires individually, retain those individual events for trace correspondence. |
+| `Arena.checkRepack` / compiled repack log | Keep the existing checker and expand its internal reserve/retire or proved release transitions when constructing a peak trace. Treating an entire repack as a single boundary change can omit its temporary occupancy. |
+| `compileHmr*Log` output | Reuse the producer's emitted event order and checker certificates; this module does not implement a competing compiler. |
+
+This is a Lean interval/boundary adapter, not a JSON parser or a completed
+PR210 instance. JSON-to-Lean transcription, ordered-work checker invocation,
+repack expansion, and the source/execution correspondence must still be supplied
+at integration. PR210's `checkBorrow` is not yet imported into this main-based
+branch; its implementation and declarations are not copied or redefined here.
