@@ -4861,6 +4861,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmLog_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceStepLog_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyStepPlan.program_frozen_irrelevant
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyStepLog_frozen_irrelevant
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceFrontLog_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.planRowResizeLog_of_growth
+#print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRowsLog_of_cons
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2ArmBoundary_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2ArmBoundary_input_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6ArmBoundary_checked

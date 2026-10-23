@@ -953,3 +953,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepRun
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkRun
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyFrozenIrrelevance
+import ECDSAAdd.Arithmetic.Paper935.HmrFrontComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition

@@ -201,3 +201,6 @@ for phase in ('s2-walkA','s6-walkC'):
 print('1066 post-shift control journals checked, including actual F7/F16 calls and fresh cleanup prefixes; no quantum semantics inferred.')
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_control_instances.py'),'--check'],check=True)
 print('Selected Lean F7/F16 instances match the observed source call journals exactly.')
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_arm_instances.py'),'--check'],check=True)
+print('Both Lean arm-boundary instances match the observed leading allocation events.')
+subprocess.run([sys.executable,str(root/'scripts/paper935/front_trace.py')],check=True)
