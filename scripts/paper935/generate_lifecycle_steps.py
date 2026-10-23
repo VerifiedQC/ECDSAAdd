@@ -1,5 +1,6 @@
 """Connect selected complete steps to the source metadata-lifetime scheduler."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitial',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmInitial',
@@ -7,7 +8,7 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitial',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 a=load('allocations');r=load('resize');c=load('control')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         entry=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         exit=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'shift_exit'))
         ctl=next(s for s in c if (s['phase'],s['step'])==(phase,t))
@@ -39,9 +40,9 @@ for phase in ('s2-walkA','s6-walkC'):
                       f'  have result := compileHmrSourceStepLog_of_arm {before} {A} {front}Bank {fgw} {vw} {ew} {qs} {record} 6 498 {need} {M} {complete}Log P {name}_arm hp',
                       '  rw [result]', '  rfl']
         else:
-            lines += [f'theorem {name}_checked : (compileHmrSourceStepLog {A} {front}Bank {fgw} {vw} {ew} {qs} {record} 6 498 0 {need} none (.early {complete}Log)).map (fun _ => true)=some true := by',
+            lines += [f'theorem {name}_checked : (compileHmrSourceStepLog {A} {front}Bank {fgw} {vw} {ew} {qs} {record} 6 498 {t} {need} none (.early {complete}Log)).map (fun _ => true)=some true := by',
                       f'  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp {complete}_checked',
-                      '  simp only [compileHmrSourceStepLog,if_pos (by decide : 0<498)]', '  rw [hp]', '  rfl']
+                      f'  simp only [compileHmrSourceStepLog,if_pos (by decide : {t}<498)]', '  rw [hp]', '  rfl']
 # Retain the exact compiler expression rather than recomputing or choosing a fallback.
 for statement in list(lines):
     if statement.startswith('theorem ') and 'Lifecycle_checked :' in statement:

@@ -60,6 +60,62 @@ theorem s2Step0Front_checked : compileHmrSourceFrontLog s2Step0EntryFBefore s2St
   · exact s2Step0Counter_checked
   · rfl
   · simpa only [s2Step0FrontPlan,headEq] using s2Step0ExitBank_checked
+def s2Step1FrontLog : HmrFrontAllocationLog := ⟨⟨[[], [781], [], [780]],[[783], [782], [786], [787]],[[], [], [], []]⟩,[778],[784],[788],[789],[790, 791, 792, 793, 794, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934],[790, 791, 792],[788, 789, 790, 791]⟩
+def s2Step1FrontBank : WindowBank := ⟨s2Step1EntryFRow,s2Step1EntryGRow,s2Step1EntryFvRow,s2Step1EntryGvRow⟩
+def s2Step1FrontPair : WindowBank := ⟨s2Step1EntryFOut,s2Step1EntryGOut,s2Step1EntryFvOut,s2Step1EntryGvOut⟩
+def s2Step1FrontHead : WindowBank := ⟨s2Step1HeadFOut,s2Step1HeadGOut,s2Step1HeadFvOut,s2Step1HeadGvOut⟩
+def s2Step1FrontOut : WindowBank := ⟨s2Step1ExitFOut,s2Step1ExitGOut,s2Step1ExitFvOut,s2Step1ExitGvOut⟩
+def s2Step1FrontSigmaArena : Arena := ⟨s2Step1EntryGvAfter.live∪{778},Finset.union_subset s2Step1EntryGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step1Front_sigma : s2Step1EntryGvAfter.checkBorrow 1 [778]=some s2Step1FrontSigmaArena := by
+  unfold Arena.checkBorrow
+  rw [if_pos (by decide)]
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step1EntryGvAfter,arenaWires]
+  · rfl
+theorem s2Step1Front_branch : s2Step1FrontSigmaArena.checkBorrow 1 [784]=some s2Step1HeadGBefore := by
+  unfold Arena.checkBorrow
+  rw [if_pos (by decide)]
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step1FrontSigmaArena,s2Step1EntryGvAfter,arenaWires]
+  · ext q
+    simp only [s2Step1FrontSigmaArena,s2Step1EntryGvAfter,s2Step1HeadGBefore,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step1Front_entry : HmrFrontEntryValid s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [772, 773, 774, 775, 776, 777] := by
+  have nd : ([772, 773, 774, 775, 776, 777]++(s2Step1FrontBank.rows.flatMap WindowRow.wires)).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  have owned : ([772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step1EntryFBefore.live := by
+    apply hmrLayout_owned_of_filter s2Step1EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (785≤q ∧ q<786) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+  have apart : Disjoint ([772, 773, 774, 775, 776, 777] : List Wire).toFinset (s2Step1FrontBank.rows.flatMap WindowRow.wires).toFinset := by
+    apply Finset.disjoint_left.mpr
+    intro q hq hr
+    exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
+  exact ⟨by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,(List.nodup_append'.mp nd).1,fun q hq => owned (List.mem_toFinset.mpr hq),apart⟩
+def s2Step1FrontPlan : HmrSourceFront := ⟨s2Step1EntryGvAfter,s2Step1FrontPair,(growRow 768 s2Step1EntryFFresh ++ (growRow 769 s2Step1EntryGFresh ++ (growRow 770 s2Step1EntryFvFresh ++ (growRow 771 s2Step1EntryGvFresh ++ [])))),s2Step1FrontSigmaArena,[778],s2Step1HeadGBefore,[784],
+  s2Step1HeadFvAfter,s2Step1FrontHead,(growRow 769 s2Step1HeadGFresh ++ (growRow 768 s2Step1HeadFFresh ++ (growRow 771 s2Step1HeadGvFresh ++ (growRow 770 s2Step1HeadFvFresh ++ [])))),s2Step1F4Plan,s2Step1CounterDuring,s2Step1CounterWork,s2Step1ExitGvAfter,s2Step1FrontOut,(shrinkRow 769 s2Step1ExitGExtra ++ (shrinkRow 768 s2Step1ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step1ExitGvExtra ++ []))))⟩
+theorem s2Step1Front_checked : compileHmrSourceFrontLog s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [772, 773, 774, 775, 776, 777] s2Step1FrontLog=some s2Step1FrontPlan := by
+  have pairEq : s2Step1FrontPair=⟨s2Step1HeadFRow,s2Step1HeadGRow,s2Step1HeadFvRow,s2Step1HeadGvRow⟩ := by decide +kernel
+  have headEq : s2Step1FrontHead=⟨s2Step1ExitFRow,s2Step1ExitGRow,s2Step1ExitFvRow,s2Step1ExitGvRow⟩ := by decide +kernel
+  have fEq : s2Step1Add0A=s2Step1FrontHead.f.wires := by decide +kernel
+  have gEq : s2Step1Add0B=s2Step1FrontHead.g.wires := by decide +kernel
+  have fvEq : s2Step1Add1A=s2Step1FrontHead.fv.wires := by decide +kernel
+  have gvEq : s2Step1Add1B=s2Step1FrontHead.gv.wires := by decide +kernel
+  apply compileHmrSourceFrontLog_of_parts s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [772, 773, 774, 775, 776, 777] s2Step1FrontLog s2Step1FrontPlan
+  · exact s2Step1Front_entry
+  · exact s2Step1EntryBank_checked
+  · exact s2Step1Front_sigma
+  · rfl
+  · exact s2Step1Front_branch
+  · rfl
+  · simpa only [s2Step1FrontPlan,pairEq] using s2Step1HeadBank_checked
+  · simpa only [s2Step1FrontPlan,fEq,gEq,fvEq,gvEq] using s2Step1F4_checked
+  · exact s2Step1Counter_checked
+  · rfl
+  · simpa only [s2Step1FrontPlan,headEq] using s2Step1ExitBank_checked
 def s2Step498FrontLog : HmrFrontAllocationLog := ⟨⟨[[901], [], [], []],[[917], [918], [919], [920]],[[], [], [], []]⟩,[879],[916],[921],[922],[923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934],[923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934],[921, 922, 923, 924, 925]⟩
 def s2Step498FrontBank : WindowBank := ⟨s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow⟩
 def s2Step498FrontPair : WindowBank := ⟨s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut⟩
@@ -172,6 +228,62 @@ theorem s6Step0Front_checked : compileHmrSourceFrontLog s6Step0EntryFBefore s6St
   · exact s6Step0Counter_checked
   · rfl
   · simpa only [s6Step0FrontPlan,headEq] using s6Step0ExitBank_checked
+def s6Step1FrontLog : HmrFrontAllocationLog := ⟨⟨[[], [813], [], [887]],[[807], [862], [874], [793]],[[], [], [], []]⟩,[768],[860],[927],[802],[875, 779, 868, 857, 907, 858, 908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934],[875, 779, 868],[927, 802, 875, 779]⟩
+def s6Step1FrontBank : WindowBank := ⟨s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow⟩
+def s6Step1FrontPair : WindowBank := ⟨s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut⟩
+def s6Step1FrontHead : WindowBank := ⟨s6Step1HeadFOut,s6Step1HeadGOut,s6Step1HeadFvOut,s6Step1HeadGvOut⟩
+def s6Step1FrontOut : WindowBank := ⟨s6Step1ExitFOut,s6Step1ExitGOut,s6Step1ExitFvOut,s6Step1ExitGvOut⟩
+def s6Step1FrontSigmaArena : Arena := ⟨s6Step1EntryGvAfter.live∪{768},Finset.union_subset s6Step1EntryGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s6Step1Front_sigma : s6Step1EntryGvAfter.checkBorrow 1 [768]=some s6Step1FrontSigmaArena := by
+  unfold Arena.checkBorrow
+  rw [if_pos (by decide)]
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s6Step1EntryGvAfter,arenaWires]
+  · rfl
+theorem s6Step1Front_branch : s6Step1FrontSigmaArena.checkBorrow 1 [860]=some s6Step1HeadGBefore := by
+  unfold Arena.checkBorrow
+  rw [if_pos (by decide)]
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s6Step1FrontSigmaArena,s6Step1EntryGvAfter,arenaWires]
+  · ext q
+    simp only [s6Step1FrontSigmaArena,s6Step1EntryGvAfter,s6Step1HeadGBefore,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s6Step1Front_entry : HmrFrontEntryValid s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [774, 773, 772, 771, 770, 769] := by
+  have nd : ([774, 773, 772, 771, 770, 769]++(s6Step1FrontBank.rows.flatMap WindowRow.wires)).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  have owned : ([774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step1EntryFBefore.live := by
+    apply hmrLayout_owned_of_filter s6Step1EntryFBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+  have apart : Disjoint ([774, 773, 772, 771, 770, 769] : List Wire).toFinset (s6Step1FrontBank.rows.flatMap WindowRow.wires).toFinset := by
+    apply Finset.disjoint_left.mpr
+    intro q hq hr
+    exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
+  exact ⟨by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,by decide +kernel,(List.nodup_append'.mp nd).1,fun q hq => owned (List.mem_toFinset.mpr hq),apart⟩
+def s6Step1FrontPlan : HmrSourceFront := ⟨s6Step1EntryGvAfter,s6Step1FrontPair,(growRow 795 s6Step1EntryFFresh ++ (growRow 777 s6Step1EntryGFresh ++ (growRow 776 s6Step1EntryFvFresh ++ (growRow 775 s6Step1EntryGvFresh ++ [])))),s6Step1FrontSigmaArena,[768],s6Step1HeadGBefore,[860],
+  s6Step1HeadFvAfter,s6Step1FrontHead,(growRow 777 s6Step1HeadGFresh ++ (growRow 795 s6Step1HeadFFresh ++ (growRow 775 s6Step1HeadGvFresh ++ (growRow 776 s6Step1HeadFvFresh ++ [])))),s6Step1F4Plan,s6Step1CounterDuring,s6Step1CounterWork,s6Step1ExitGvAfter,s6Step1FrontOut,(shrinkRow 777 s6Step1ExitGExtra ++ (shrinkRow 795 s6Step1ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step1ExitGvExtra ++ []))))⟩
+theorem s6Step1Front_checked : compileHmrSourceFrontLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [774, 773, 772, 771, 770, 769] s6Step1FrontLog=some s6Step1FrontPlan := by
+  have pairEq : s6Step1FrontPair=⟨s6Step1HeadFRow,s6Step1HeadGRow,s6Step1HeadFvRow,s6Step1HeadGvRow⟩ := by decide +kernel
+  have headEq : s6Step1FrontHead=⟨s6Step1ExitFRow,s6Step1ExitGRow,s6Step1ExitFvRow,s6Step1ExitGvRow⟩ := by decide +kernel
+  have fEq : s6Step1Add0A=s6Step1FrontHead.f.wires := by decide +kernel
+  have gEq : s6Step1Add0B=s6Step1FrontHead.g.wires := by decide +kernel
+  have fvEq : s6Step1Add1A=s6Step1FrontHead.fv.wires := by decide +kernel
+  have gvEq : s6Step1Add1B=s6Step1FrontHead.gv.wires := by decide +kernel
+  apply compileHmrSourceFrontLog_of_parts s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ true 0 [774, 773, 772, 771, 770, 769] s6Step1FrontLog s6Step1FrontPlan
+  · exact s6Step1Front_entry
+  · exact s6Step1EntryBank_checked
+  · exact s6Step1Front_sigma
+  · rfl
+  · exact s6Step1Front_branch
+  · rfl
+  · simpa only [s6Step1FrontPlan,pairEq] using s6Step1HeadBank_checked
+  · simpa only [s6Step1FrontPlan,fEq,gEq,fvEq,gvEq] using s6Step1F4_checked
+  · exact s6Step1Counter_checked
+  · rfl
+  · simpa only [s6Step1FrontPlan,headEq] using s6Step1ExitBank_checked
 def s6Step498FrontLog : HmrFrontAllocationLog := ⟨⟨[[915], [], [], []],[[798], [808], [820], [896]],[[], [], [], []]⟩,[791],[842],[790],[914],[916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934],[916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934],[790, 914, 916, 800, 918]⟩
 def s6Step498FrontBank : WindowBank := ⟨s6Step498EntryFRow,s6Step498EntryGRow,s6Step498EntryFvRow,s6Step498EntryGvRow⟩
 def s6Step498FrontPair : WindowBank := ⟨s6Step498EntryFOut,s6Step498EntryGOut,s6Step498EntryFvOut,s6Step498EntryGvOut⟩

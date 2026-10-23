@@ -603,3 +603,12 @@ compose while requiring the suffix to start at the prefix's returned arena,
 row bank, record, freeze metadata and next step number. Early control checks
 also have an exact-plan converse to their `Logged` contract. These helpers
 avoid repeating a monolithic reduction when extending the selected coverage.
+
+
+The generated selection now includes step 1 of each walk. Early controls use
+explicit returned plans assembled from separate equality, class, flag,
+history-growth and retirement checks. This exposes the boundary arenas and
+row banks without re-running the complete control checker during composition.
+`HmrSourceWalkPrefix` checks the first two steps of each actual exported list,
+including equality of the first step's output arena, bank and record with the
+second step's input. This remains a two-step prefix, not all 533 steps.

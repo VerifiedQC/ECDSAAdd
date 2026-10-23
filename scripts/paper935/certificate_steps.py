@@ -1,0 +1,5 @@
+"""Source steps with generated component acceptance certificates.
+
+The complete journal has 533 steps; this selection is not full coverage.
+"""
+CERTIFICATE_STEPS = (0, 1, 498)

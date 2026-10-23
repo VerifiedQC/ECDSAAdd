@@ -1,5 +1,6 @@
 """Assemble selected complete source arithmetic fronts from checked transactions."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, front_log
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryBank',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitBank',
@@ -9,7 +10,7 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryBank',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 a=load('allocations');r=load('resize');c=load('control')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         def pick(ss,kind): return next(s for s in ss if (s['phase'],s['step'],s['stage'])==(phase,t,kind))
         add,counter,entry,exit=pick(a,'add'),pick(a,'counter'),pick(r,'add'),pick(r,'shift_exit')
         control=next(s for s in c if (s['phase'],s['step'])==(phase,t))

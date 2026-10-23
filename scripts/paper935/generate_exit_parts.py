@@ -1,11 +1,12 @@
 """Certify selected source exit resizes, preserving measured shrink programs."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout',
        'import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         stage=next(s for s in load('resize') if (s['phase'],s['step'],s['stage'])==(phase,t,'shift_exit'))
         for r in stage['resizes']:
             name=phase[:2]+'Step'+str(t)+'Exit'+r['row'].capitalize()

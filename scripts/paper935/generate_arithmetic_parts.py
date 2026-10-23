@@ -1,11 +1,12 @@
 """Split source hybrid-addition acceptance into layout and borrow certificates."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, take
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 data=load('allocations')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         stage=next(s for s in data if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         for index,call in enumerate(stage['calls']):
             name=phase[:2]+'Step'+str(t)+'Add'+str(index)

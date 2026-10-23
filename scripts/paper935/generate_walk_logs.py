@@ -1,6 +1,7 @@
 """Generate the complete source walk journals, without assuming acceptance."""
 from pathlib import Path
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import load, front_log
 from control_trace import early_control_log, armed_control_log
 
@@ -68,8 +69,8 @@ bridge = ['import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2WalkLogs',
           'import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitial', '',
           'namespace ECDSAAdd.Arithmetic.Paper935', '']
 for prefix in ('s2','s6'):
-    for t in (0,498):
-        log = f'.early {prefix}Step0CompleteLog' if t == 0 else f'.arm {prefix}ArmBoundaryMetadata {prefix}Step498CompleteLog'
+    for t in CERTIFICATE_STEPS:
+        log = f'.early {prefix}Step{t}CompleteLog' if t < 498 else f'.arm {prefix}ArmBoundaryMetadata {prefix}Step498CompleteLog'
         bridge += [f'theorem {prefix}Observed_step{t}_log :',
                    f'    ({prefix}ObservedLogs[{t}]?).map HmrSourceWalkStepLog.log = some ({log}) := by',
                    f'  have index : {prefix}ObservedLogs[{t}]? = {prefix}ObservedLogs{t//16*16}[{t%16}]? := by',

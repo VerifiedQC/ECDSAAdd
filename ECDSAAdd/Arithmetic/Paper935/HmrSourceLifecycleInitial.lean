@@ -7,6 +7,11 @@ theorem s2Step0Lifecycle_checked : (compileHmrSourceStepLog s2Step0EntryFBefore 
   simp only [compileHmrSourceStepLog,if_pos (by decide : 0<498)]
   rw [hp]
   rfl
+theorem s2Step1Lifecycle_checked : (compileHmrSourceStepLog s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ [772, 773, 774, 775, 776, 777] [795] 6 498 1 1 none (.early s2Step1CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step1Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 1<498)]
+  rw [hp]
+  rfl
 theorem s2Step498Lifecycle_arm : compileHmrArmLog s2ArmBoundaryArena 6 s2ArmBoundaryMetadata=some s2Step498EntryFBefore := by
   unfold compileHmrArmLog Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
@@ -40,6 +45,11 @@ theorem s6Step0Lifecycle_checked : (compileHmrSourceStepLog s6Step0EntryFBefore 
   simp only [compileHmrSourceStepLog,if_pos (by decide : 0<498)]
   rw [hp]
   rfl
+theorem s6Step1Lifecycle_checked : (compileHmrSourceStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 1 1 none (.early s6Step1CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step1Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 1<498)]
+  rw [hp]
+  rfl
 theorem s6Step498Lifecycle_arm : compileHmrArmLog s6ArmBoundaryArena 6 s6ArmBoundaryMetadata=some s6Step498EntryFBefore := by
   unfold compileHmrArmLog Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
@@ -71,12 +81,18 @@ theorem s6Step498Lifecycle_checked : (compileHmrSourceStepLog s6ArmBoundaryArena
 def s2Step0LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s2Step0EntryFBefore s2Step0FrontBank 256 1 ⟨256,255,2,1⟩ [772, 773, 774, 775, 776, 777] [] 6 498 0 1 none (.early s2Step0CompleteLog)) s2Step0Lifecycle_checked
 theorem s2Step0Lifecycle_plan_checked : compileHmrSourceStepLog s2Step0EntryFBefore s2Step0FrontBank 256 1 ⟨256,255,2,1⟩ [772, 773, 774, 775, 776, 777] [] 6 498 0 1 none (.early s2Step0CompleteLog)=some s2Step0LifecyclePlan :=
   hmrAcceptedPlan_checked (compileHmrSourceStepLog s2Step0EntryFBefore s2Step0FrontBank 256 1 ⟨256,255,2,1⟩ [772, 773, 774, 775, 776, 777] [] 6 498 0 1 none (.early s2Step0CompleteLog)) s2Step0Lifecycle_checked
+def s2Step1LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ [772, 773, 774, 775, 776, 777] [795] 6 498 1 1 none (.early s2Step1CompleteLog)) s2Step1Lifecycle_checked
+theorem s2Step1Lifecycle_plan_checked : compileHmrSourceStepLog s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ [772, 773, 774, 775, 776, 777] [795] 6 498 1 1 none (.early s2Step1CompleteLog)=some s2Step1LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s2Step1EntryFBefore s2Step1FrontBank 256 2 ⟨256,255,3,1⟩ [772, 773, 774, 775, 776, 777] [795] 6 498 1 1 none (.early s2Step1CompleteLog)) s2Step1Lifecycle_checked
 def s2Step498LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s2ArmBoundaryArena s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 6 498 498 60 none (.arm s2ArmBoundaryMetadata s2Step498CompleteLog)) s2Step498Lifecycle_checked
 theorem s2Step498Lifecycle_plan_checked : compileHmrSourceStepLog s2ArmBoundaryArena s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 6 498 498 60 none (.arm s2ArmBoundaryMetadata s2Step498CompleteLog)=some s2Step498LifecyclePlan :=
   hmrAcceptedPlan_checked (compileHmrSourceStepLog s2ArmBoundaryArena s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 6 498 498 60 none (.arm s2ArmBoundaryMetadata s2Step498CompleteLog)) s2Step498Lifecycle_checked
 def s6Step0LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ [774, 773, 772, 771, 770, 769] [] 6 498 0 1 none (.early s6Step0CompleteLog)) s6Step0Lifecycle_checked
 theorem s6Step0Lifecycle_plan_checked : compileHmrSourceStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ [774, 773, 772, 771, 770, 769] [] 6 498 0 1 none (.early s6Step0CompleteLog)=some s6Step0LifecyclePlan :=
   hmrAcceptedPlan_checked (compileHmrSourceStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ [774, 773, 772, 771, 770, 769] [] 6 498 0 1 none (.early s6Step0CompleteLog)) s6Step0Lifecycle_checked
+def s6Step1LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 1 1 none (.early s6Step1CompleteLog)) s6Step1Lifecycle_checked
+theorem s6Step1Lifecycle_plan_checked : compileHmrSourceStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 1 1 none (.early s6Step1CompleteLog)=some s6Step1LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 1 1 none (.early s6Step1CompleteLog)) s6Step1Lifecycle_checked
 def s6Step498LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)) s6Step498Lifecycle_checked
 theorem s6Step498Lifecycle_plan_checked : compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)=some s6Step498LifecyclePlan :=
   hmrAcceptedPlan_checked (compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)) s6Step498Lifecycle_checked

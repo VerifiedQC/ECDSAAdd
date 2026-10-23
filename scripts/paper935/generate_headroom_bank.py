@@ -1,5 +1,6 @@
 """Compose the selected observed row certificates into bank transactions."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 entry_mode = '--entry' in sys.argv
 exit_mode = '--exit' in sys.argv
@@ -9,7 +10,7 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.'+parts,
        'namespace ECDSAAdd.Arithmetic.Paper935']
 data=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         stage=next(s for s in data if s['phase']==phase and s['step']==t and s['stage']==('shift_exit' if exit_mode else 'add'))
         rows=stage['resizes'] if exit_mode else (stage['resizes'][:4] if entry_mode else stage['resizes'][4:])
         ns=[phase[:2]+'Step'+str(t)+label+r['row'].capitalize() for r in rows]

@@ -1,5 +1,6 @@
 """Exact counter scratch plans for the selected early/arm steps."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, take
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition',
        'import ECDSAAdd.Arithmetic.Paper935.HmrLoggedCounter',
@@ -7,7 +8,7 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 a=load('allocations');r=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         s=next(s for s in a if (s['phase'],s['step'],s['stage'])==(phase,t,'counter'))
         resize=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         assert s['live_before']==resize['resizes'][-1]['live_after']

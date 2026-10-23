@@ -1,5 +1,6 @@
 """Compose selected observed fronts, relocations and control blocks."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceEarlyControlInitial',
@@ -8,12 +9,12 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 r=load('resize');c=load('control')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         e=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'shift_exit'))
         entry=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         ctl=next(s for s in c if (s['phase'],s['step'])==(phase,t))
         base=phase[:2]+'Step'+str(t);name=base+'Complete';front=base+'Front';A=base+'ExitGvAfter'
-        early=t<498;kind='Early' if early else 'Armed';control=phase[:2]+'First'+kind+'Control';C=control+'Arena'
+        early=t<498;kind='Early' if early else 'Armed';control=phase[:2]+('First' if t in (0,498) else 'Step'+str(t))+kind+'Control';C=control+'Arena'
         moves=[(m['old'],m['fresh']) for rp in e['repacks'] for m in rp['moves']]
         ms='['+','.join(f'({a},{b})' for a,b in moves)+']'
         lines += [f'def {name}Moves : List (Wire × Wire) := {ms}',
@@ -44,6 +45,7 @@ for phase in ('s2-walkA','s6-walkC'):
                   '    apply hmrLayout_nodup_of_sorted','    decide +kernel',"  exact (List.nodup_append'.mp nd).2.2"]
         fgw=entry['resizes'][0]['width'];vw=entry['resizes'][2]['width'];widths={x['row']:x['width'] for x in e['resizes']};ew='⟨'+','.join(str(widths[k]) for k in ('f','g','fv','gv'))+'⟩'
         params=f'{base}EntryFBefore {front}Bank {fgw} {vw} {ew} {frozen} {qs} '+('' if early else str(ts)+' ')+f'{record} '+('' if early else '1 ')+f'{need} {name}Log'
+        proof_start=len(lines)
         lines += [f'theorem {name}_checked : (compileHmr{kind}StepLog {params}).map (fun _ => true)=some true := by',
                   f'  obtain ⟨Q,hq,_⟩ := Option.map_eq_some_iff.mp {control}_checked',
                   f'  have fv1 : {name}Out.fv.second={ctl["fv_reads"][0]} := by decide +kernel']
@@ -61,6 +63,14 @@ for phase in ('s2-walkA','s6-walkC'):
         lines += [f'      change compileHmr{kind}ControlLog {callargs}=some Q',
                   '      rw ['+','.join(['fv1','fv2','fv3','fv4']+([] if early else ['gEq']))+']',
                   '      exact hq)', '  rw [result]', '  rfl']
+        if early:
+            proof=lines[proof_start:]
+            proof[0]=f'theorem {name}_explicit_checked : compileHmrEarlyStepLog {params}=some {name}Plan := by'
+            proof[1]=f'  let Q := {control}Plan\n  have hq := {control}_plan_checked'
+            proof[-2:]=['  exact result']
+            lines[proof_start:]=[f'def {name}Plan : HmrEarlyStepPlan := ⟨{front}Plan,{C},{control}Plan,{name}Moves⟩']+proof+[
+                f'theorem {name}_checked : (compileHmrEarlyStepLog {params}).map (fun _ => true)=some true := by',
+                f'  rw [{name}_explicit_checked]', '  rfl']
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceStepInitial.lean'

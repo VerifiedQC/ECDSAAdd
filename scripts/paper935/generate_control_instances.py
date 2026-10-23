@@ -76,19 +76,18 @@ for phase in ('s2-walkA','s6-walkC'):
                  f'  simpa only [compileHmrRecordGrowLog,if_pos {name}_inputs] using {name}_borrow','']
 grow+=['end ECDSAAdd.Arithmetic.Paper935','']
 outputs['HmrSourceRecordGrowInitial']='\n'.join(grow)
-early=['import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlCompiler','','namespace ECDSAAdd.Arithmetic.Paper935','']
+from early_parts import generate_early_parts
+from certificate_steps import CERTIFICATE_STEPS
+early=['import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlComposition',
+       'import ECDSAAdd.Arithmetic.Paper935.HmrControlDecidable', '',
+       'namespace ECDSAAdd.Arithmetic.Paper935', '',
+       'local instance hmrEarlyPartsDisjoint (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=',
+       '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm', '']
 for phase in ('s2-walkA','s6-walkC'):
-    stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==0)
-    log=early_control_log(stage);states=replay(stage);name=phase[:2]+'FirstEarlyControl'
-    early+=arena(name+'Arena',states[0])
-    early+=[f'def {name}Log : HmrEarlyControlLog :=',
-            '  ⟨'+','.join(str(log[k]) for k in ['zero','positive','class','flags','fresh'])+'⟩','']
-    sigma,branch=stage['retained_flags'];fv1,b2,b3,b4=stage['fv_reads'];fit,=stage['record_fits']
-    early+=[f'theorem {name}_checked :',
-            f'    (compileHmrEarlyControlLog {name}Arena {stage["counter"]} {stage["record_before"]}',
-            f'      {stage["counter"][-1]} {sigma} {fv1} {b2} {b3} {b4} {branch} {fit["need"]} {name}Log).map',
-            f'      (fun P => P.outputArena.live.card) = some {len(states[-1])} := by',
-            '  decide +kernel','']
+    for t in (t for t in CERTIFICATE_STEPS if t<498):
+        stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==t)
+        name=phase[:2]+('First' if t==0 else 'Step'+str(t))+'EarlyControl'
+        early+=generate_early_parts(stage,name,arena)
 early+=['end ECDSAAdd.Arithmetic.Paper935','']
 outputs['HmrSourceEarlyControlInitial']='\n'.join(early)
 armed=['import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlCompiler','','namespace ECDSAAdd.Arithmetic.Paper935','', 'local instance (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=', '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm', '']

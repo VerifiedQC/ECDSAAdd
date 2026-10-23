@@ -1,12 +1,13 @@
 """Compose the two observed hybrid calls and their shared flag/carry borrows."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticParts',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomBank',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 a=load('allocations');r=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         stage=next(s for s in a if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         resize=next(s for s in r if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
         base=phase[:2]+'Step'+str(t);name=base+'F4';first=base+'Add0';second=base+'Add1';H=base+'HeadFvAfter'

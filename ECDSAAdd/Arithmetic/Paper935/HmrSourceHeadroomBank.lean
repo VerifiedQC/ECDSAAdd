@@ -74,6 +74,80 @@ theorem s2Step0HeadBank_checked : compileHmrBankResizeLog .headroom s2Step0HeadG
   simp only [HmrBankOrder.requests]
   rw [s2Step0HeadBank_rows]
   rfl
+def s2Step1HeadGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 781, 783],769⟩
+def s2Step1HeadFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 782],768⟩
+def s2Step1HeadGvOut : WindowRow := ⟨[779, 780, 786],771⟩
+def s2Step1HeadFvOut : WindowRow := ⟨[255, 785, 787],770⟩
+theorem s2Step1HeadG_Incoming : rowsOwned s2Step1HeadGBefore [s2Step1HeadGRow,s2Step1HeadFRow,s2Step1HeadGvRow,s2Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadGBefore (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<786) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadG_Outgoing : rowsOwned s2Step1HeadFvAfter [s2Step1HeadGOut,s2Step1HeadFOut,s2Step1HeadGvOut,s2Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFvAfter (fun q => (0≤q ∧ q<788) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadF_Incoming : rowsOwned s2Step1HeadFBefore [s2Step1HeadFRow,s2Step1HeadGvRow,s2Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<786) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadF_Outgoing : rowsOwned s2Step1HeadFvAfter [s2Step1HeadFOut,s2Step1HeadGvOut,s2Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFvAfter (fun q => (0≤q ∧ q<788) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadGv_Incoming : rowsOwned s2Step1HeadGvBefore [s2Step1HeadGvRow,s2Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadGvBefore (fun q => (0≤q ∧ q<786) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadGv_Outgoing : rowsOwned s2Step1HeadFvAfter [s2Step1HeadGvOut,s2Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFvAfter (fun q => (0≤q ∧ q<788) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadFv_Incoming : rowsOwned s2Step1HeadFvBefore [s2Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFvBefore (fun q => (0≤q ∧ q<787) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadFv_Outgoing : rowsOwned s2Step1HeadFvAfter [s2Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s2Step1HeadFvAfter (fun q => (0≤q ∧ q<788) ∨ (795≤q ∧ q<796)) rfl
+    decide +kernel
+theorem s2Step1HeadBank_rows : planWindowRowsLog s2Step1HeadGBefore [(s2Step1HeadGRow,257),(s2Step1HeadFRow,257),(s2Step1HeadGvRow,3),(s2Step1HeadFvRow,3)] [s2Step1HeadGFresh,s2Step1HeadFFresh,s2Step1HeadGvFresh,s2Step1HeadFvFresh]=
+    some (s2Step1HeadFvAfter,[s2Step1HeadGOut,s2Step1HeadFOut,s2Step1HeadGvOut,s2Step1HeadFvOut],(growRow 769 s2Step1HeadGFresh ++ (growRow 768 s2Step1HeadFFresh ++ (growRow 771 s2Step1HeadGvFresh ++ (growRow 770 s2Step1HeadFvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step1HeadFvAfter [] []=some (s2Step1HeadFvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step1HeadFvBefore s2Step1HeadFvAfter s2Step1HeadFvAfter
+    s2Step1HeadFvRow s2Step1HeadFvOut 3 s2Step1HeadFvFresh [] [] []
+    (growRow 770 s2Step1HeadFvFresh) ([]) s2Step1HeadFv_Incoming s2Step1HeadFv_checked h4 s2Step1HeadFv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step1HeadGvBefore s2Step1HeadGvAfter s2Step1HeadFvAfter
+    s2Step1HeadGvRow s2Step1HeadGvOut 3 s2Step1HeadGvFresh [(s2Step1HeadFvRow,3)] [s2Step1HeadFvFresh] [s2Step1HeadFvOut]
+    (growRow 771 s2Step1HeadGvFresh) ((growRow 770 s2Step1HeadFvFresh ++ [])) s2Step1HeadGv_Incoming s2Step1HeadGv_checked h3 s2Step1HeadGv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step1HeadFBefore s2Step1HeadFAfter s2Step1HeadFvAfter
+    s2Step1HeadFRow s2Step1HeadFOut 257 s2Step1HeadFFresh [(s2Step1HeadGvRow,3),(s2Step1HeadFvRow,3)] [s2Step1HeadGvFresh,s2Step1HeadFvFresh] [s2Step1HeadGvOut,s2Step1HeadFvOut]
+    (growRow 768 s2Step1HeadFFresh) ((growRow 771 s2Step1HeadGvFresh ++ (growRow 770 s2Step1HeadFvFresh ++ []))) s2Step1HeadF_Incoming s2Step1HeadF_checked h2 s2Step1HeadF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step1HeadGBefore s2Step1HeadGAfter s2Step1HeadFvAfter
+    s2Step1HeadGRow s2Step1HeadGOut 257 s2Step1HeadGFresh [(s2Step1HeadFRow,257),(s2Step1HeadGvRow,3),(s2Step1HeadFvRow,3)] [s2Step1HeadFFresh,s2Step1HeadGvFresh,s2Step1HeadFvFresh] [s2Step1HeadFOut,s2Step1HeadGvOut,s2Step1HeadFvOut]
+    (growRow 769 s2Step1HeadGFresh) ((growRow 768 s2Step1HeadFFresh ++ (growRow 771 s2Step1HeadGvFresh ++ (growRow 770 s2Step1HeadFvFresh ++ [])))) s2Step1HeadG_Incoming s2Step1HeadG_checked h1 s2Step1HeadG_Outgoing
+  exact h0
+theorem s2Step1HeadBank_checked : compileHmrBankResizeLog .headroom s2Step1HeadGBefore ⟨s2Step1HeadFRow,s2Step1HeadGRow,s2Step1HeadFvRow,s2Step1HeadGvRow⟩ ⟨257,257,3,3⟩ [s2Step1HeadGFresh,s2Step1HeadFFresh,s2Step1HeadGvFresh,s2Step1HeadFvFresh]=
+    some (s2Step1HeadFvAfter,⟨s2Step1HeadFOut,s2Step1HeadGOut,s2Step1HeadFvOut,s2Step1HeadGvOut⟩,(growRow 769 s2Step1HeadGFresh ++ (growRow 768 s2Step1HeadFFresh ++ (growRow 771 s2Step1HeadGvFresh ++ (growRow 770 s2Step1HeadFvFresh ++ []))))) := by
+  unfold compileHmrBankResizeLog
+  simp only [HmrBankOrder.requests]
+  rw [s2Step1HeadBank_rows]
+  rfl
 def s2Step498HeadGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845, 917],769⟩
 def s2Step498HeadFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901, 918],768⟩
 def s2Step498HeadGvOut : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790, 919],771⟩
@@ -221,6 +295,80 @@ theorem s6Step0HeadBank_checked : compileHmrBankResizeLog .headroom s6Step0HeadG
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
   rw [s6Step0HeadBank_rows]
+  rfl
+def s6Step1HeadGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩
+def s6Step1HeadFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩
+def s6Step1HeadGvOut : WindowRow := ⟨[859, 887, 874],775⟩
+def s6Step1HeadFvOut : WindowRow := ⟨[255, 876, 793],776⟩
+theorem s6Step1HeadG_Incoming : rowsOwned s6Step1HeadGBefore [s6Step1HeadGRow,s6Step1HeadFRow,s6Step1HeadGvRow,s6Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadG_Outgoing : rowsOwned s6Step1HeadFvAfter [s6Step1HeadGOut,s6Step1HeadFOut,s6Step1HeadGvOut,s6Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadF_Incoming : rowsOwned s6Step1HeadFBefore [s6Step1HeadFRow,s6Step1HeadGvRow,s6Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadF_Outgoing : rowsOwned s6Step1HeadFvAfter [s6Step1HeadFOut,s6Step1HeadGvOut,s6Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadGv_Incoming : rowsOwned s6Step1HeadGvBefore [s6Step1HeadGvRow,s6Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadGv_Outgoing : rowsOwned s6Step1HeadFvAfter [s6Step1HeadGvOut,s6Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadFv_Incoming : rowsOwned s6Step1HeadFvBefore [s6Step1HeadFvRow] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadFv_Outgoing : rowsOwned s6Step1HeadFvAfter [s6Step1HeadFvOut] := by
+  constructor
+  · apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  · apply hmrLayout_owned_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+    decide +kernel
+theorem s6Step1HeadBank_rows : planWindowRowsLog s6Step1HeadGBefore [(s6Step1HeadGRow,257),(s6Step1HeadFRow,257),(s6Step1HeadGvRow,3),(s6Step1HeadFvRow,3)] [s6Step1HeadGFresh,s6Step1HeadFFresh,s6Step1HeadGvFresh,s6Step1HeadFvFresh]=
+    some (s6Step1HeadFvAfter,[s6Step1HeadGOut,s6Step1HeadFOut,s6Step1HeadGvOut,s6Step1HeadFvOut],(growRow 777 s6Step1HeadGFresh ++ (growRow 795 s6Step1HeadFFresh ++ (growRow 775 s6Step1HeadGvFresh ++ (growRow 776 s6Step1HeadFvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s6Step1HeadFvAfter [] []=some (s6Step1HeadFvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s6Step1HeadFvBefore s6Step1HeadFvAfter s6Step1HeadFvAfter
+    s6Step1HeadFvRow s6Step1HeadFvOut 3 s6Step1HeadFvFresh [] [] []
+    (growRow 776 s6Step1HeadFvFresh) ([]) s6Step1HeadFv_Incoming s6Step1HeadFv_checked h4 s6Step1HeadFv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s6Step1HeadGvBefore s6Step1HeadGvAfter s6Step1HeadFvAfter
+    s6Step1HeadGvRow s6Step1HeadGvOut 3 s6Step1HeadGvFresh [(s6Step1HeadFvRow,3)] [s6Step1HeadFvFresh] [s6Step1HeadFvOut]
+    (growRow 775 s6Step1HeadGvFresh) ((growRow 776 s6Step1HeadFvFresh ++ [])) s6Step1HeadGv_Incoming s6Step1HeadGv_checked h3 s6Step1HeadGv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s6Step1HeadFBefore s6Step1HeadFAfter s6Step1HeadFvAfter
+    s6Step1HeadFRow s6Step1HeadFOut 257 s6Step1HeadFFresh [(s6Step1HeadGvRow,3),(s6Step1HeadFvRow,3)] [s6Step1HeadGvFresh,s6Step1HeadFvFresh] [s6Step1HeadGvOut,s6Step1HeadFvOut]
+    (growRow 795 s6Step1HeadFFresh) ((growRow 775 s6Step1HeadGvFresh ++ (growRow 776 s6Step1HeadFvFresh ++ []))) s6Step1HeadF_Incoming s6Step1HeadF_checked h2 s6Step1HeadF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s6Step1HeadGBefore s6Step1HeadGAfter s6Step1HeadFvAfter
+    s6Step1HeadGRow s6Step1HeadGOut 257 s6Step1HeadGFresh [(s6Step1HeadFRow,257),(s6Step1HeadGvRow,3),(s6Step1HeadFvRow,3)] [s6Step1HeadFFresh,s6Step1HeadGvFresh,s6Step1HeadFvFresh] [s6Step1HeadFOut,s6Step1HeadGvOut,s6Step1HeadFvOut]
+    (growRow 777 s6Step1HeadGFresh) ((growRow 795 s6Step1HeadFFresh ++ (growRow 775 s6Step1HeadGvFresh ++ (growRow 776 s6Step1HeadFvFresh ++ [])))) s6Step1HeadG_Incoming s6Step1HeadG_checked h1 s6Step1HeadG_Outgoing
+  exact h0
+theorem s6Step1HeadBank_checked : compileHmrBankResizeLog .headroom s6Step1HeadGBefore ⟨s6Step1HeadFRow,s6Step1HeadGRow,s6Step1HeadFvRow,s6Step1HeadGvRow⟩ ⟨257,257,3,3⟩ [s6Step1HeadGFresh,s6Step1HeadFFresh,s6Step1HeadGvFresh,s6Step1HeadFvFresh]=
+    some (s6Step1HeadFvAfter,⟨s6Step1HeadFOut,s6Step1HeadGOut,s6Step1HeadFvOut,s6Step1HeadGvOut⟩,(growRow 777 s6Step1HeadGFresh ++ (growRow 795 s6Step1HeadFFresh ++ (growRow 775 s6Step1HeadGvFresh ++ (growRow 776 s6Step1HeadFvFresh ++ []))))) := by
+  unfold compileHmrBankResizeLog
+  simp only [HmrBankOrder.requests]
+  rw [s6Step1HeadBank_rows]
   rfl
 def s6Step498HeadGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 855, 798],777⟩
 def s6Step498HeadFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 915, 808],795⟩

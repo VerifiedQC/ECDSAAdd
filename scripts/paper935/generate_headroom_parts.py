@@ -1,5 +1,6 @@
 """Generate split certificates for selected actual headroom transactions."""
 import sys
+from certificate_steps import CERTIFICATE_STEPS
 from pathlib import Path
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout',
@@ -8,7 +9,7 @@ lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout',
 entry_mode = '--entry' in sys.argv
 data=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (0,498):
+    for t in CERTIFICATE_STEPS:
         s=next(s for s in data if s['phase']==phase and s['step']==t and s['stage']=='add')
         for r in (s['resizes'][:4] if entry_mode else s['resizes'][4:]):
             name=phase[:2]+'Step'+str(t)+('Entry' if entry_mode else 'Head')+r['row'].capitalize()
