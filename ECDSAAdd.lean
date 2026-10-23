@@ -977,3 +977,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2WalkLogs
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6WalkLogs
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkLogFixtures
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkPrefix
+import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix
+import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceMultiRepack

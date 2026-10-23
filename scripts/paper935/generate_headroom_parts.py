@@ -24,7 +24,7 @@ for phase in ('s2-walkA','s6-walkC'):
             f'theorem {name}_owned : ({name}Row.sign::{name}Row.payload).toFinset⊆{name}Before.live := by',
             f'  apply hmrLayout_owned_of_filter {name}Before (fun q => {pred}) rfl', '  decide +kernel',
             f'theorem {name}_reserved : {name}Before.reserve {name}Fresh.toFinset=some {name}After := by',
-            '  apply hmrArena_reserve_of_live',f'  · norm_num [{name}Fresh,arenaWires]',f'  · norm_num [{name}Before,{name}Fresh,arenaWires]',
+            '  apply hmrArena_reserve_of_live',f'  · norm_num [{name}Fresh,arenaWires'+(',Finset.insert_subset_iff' if len(fresh)>1 else '')+']',f'  · norm_num [{name}Before,{name}Fresh,arenaWires]',
             *([
             '  · ext q',f'    simp only [{name}After,{name}Before,{name}Fresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]',
             '    simp only [Wire] at *','    omega',

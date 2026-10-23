@@ -218,3 +218,4 @@ subprocess.run([sys.executable,str(root/'scripts/paper935/generate_step_parts.py
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_lifecycle_steps.py'),'--check'],check=True)
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_walk_logs.py'),'--check'],check=True)
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_walk_prefix.py'),'--check'],check=True)
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_multi_repack.py'),'--check'],check=True)

@@ -1,11 +1,13 @@
 """Compose selected observed fronts, relocations and control blocks."""
 import sys
 from certificate_steps import CERTIFICATE_STEPS
+from repack_parts import repack_parts
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceEarlyControlInitial',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmedControlInitial',
        'import ECDSAAdd.Arithmetic.Paper935.HmrStepComposition',
+       'import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 r=load('resize');c=load('control')
 for phase in ('s2-walkA','s6-walkC'):
@@ -20,8 +22,13 @@ for phase in ('s2-walkA','s6-walkC'):
         lines += [f'def {name}Moves : List (Wire × Wire) := {ms}',
                   f'def {name}Out : WindowBank := {front}Out.repacked {name}Moves',
                   f'def {name}Log : Hmr{kind}StepLog := ⟨{front}Log,{name}Moves,{control}Log⟩']
-        if moves:
-            assert len(moves)==1
+        if len(moves)>1:
+            before={q for lo,hi in e['resizes'][-1]['live_after'] for q in range(lo,hi)}
+            after={q for lo,hi in ctl['live_before'] for q in range(lo,hi)}
+            lines+=repack_parts(name+'Relocation',A,C,before,moves,after)
+            lines += [f'theorem {name}_repack : {A}.checkRepack {name}Moves=some {C} := by',
+                      f'  simpa only [{name}Moves] using {name}Relocation_checked']
+        elif moves:
             old,fresh=moves[0]
             lines += [f'def {name}MoveArena : Arena := ⟨{A}.live∪{{{fresh}}},Finset.union_subset {A}.bounded (by norm_num [arenaWires])⟩',
                       f'theorem {name}_repack : {A}.checkRepack {name}Moves=some {C} := by',

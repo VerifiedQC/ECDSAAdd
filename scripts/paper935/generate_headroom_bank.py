@@ -7,6 +7,7 @@ exit_mode = '--exit' in sys.argv
 label = 'Exit' if exit_mode else ('Entry' if entry_mode else 'Head')
 parts = 'HmrSourceExitParts' if exit_mode else ('HmrSourceEntryParts' if entry_mode else 'HmrSourceHeadroomParts')
 lines=['import ECDSAAdd.Arithmetic.Paper935.'+parts,
+       'import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 data=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
@@ -19,15 +20,21 @@ for phase in ('s2-walkA','s6-walkC'):
         for n,r in zip(ns,rows):
             if not exit_mode: lines += [f'def {n}Out : WindowRow := ⟨{r["after"]},{r["sign"]}⟩']
         def l(xs): return '['+','.join(xs)+']'
+        incoming=l([n+'Row' for n in ns]);outgoing=l([n+'Out' for n in ns])
+        pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in rows[-1]['live_after'])
+        lines += [f'theorem {name}_incomingDistinct : ({incoming}.flatMap WindowRow.wires).Nodup := by',
+                  '  apply hmrLayout_nodup_of_sorted','  decide +kernel',
+                  f'theorem {name}_outgoingOwned : rowsOwned {final} {outgoing} := by',
+                  '  constructor','  · apply hmrLayout_nodup_of_sorted','    decide +kernel',
+                  f'  · apply hmrLayout_owned_of_filter {final} (fun q => {pred}) rfl','    decide +kernel']
         for i,(n,r) in enumerate(zip(ns,rows)):
-            for suffix,arena,key,view in [('Incoming',n+'Before',r['live_before'],'Row'),
-                                          ('Outgoing',final,rows[-1]['live_after'],'Out')]:
-                rs=l([x+view for x in ns[i:]])
-                pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in key)
-                lines += [f'theorem {n}_{suffix} : rowsOwned {arena} {rs} := by',
-                          '  constructor', '  · apply hmrLayout_nodup_of_sorted', '    decide +kernel',
-                          f'  · apply hmrLayout_owned_of_filter {arena} (fun q => {pred}) rfl',
-                          '    decide +kernel']
+            rs=l([x+'Row' for x in ns[i:]])
+            pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in r['live_before'])
+            lines += [f'theorem {n}_Incoming : rowsOwned {n}Before {rs} := by',
+                      '  constructor',f'  · exact hmrRows_distinct_drop {incoming} {i} {name}_incomingDistinct',
+                      f'  · apply hmrLayout_owned_of_filter {n}Before (fun q => {pred}) rfl','    decide +kernel',
+                      f'theorem {n}_Outgoing : rowsOwned {final} {l([x+"Out" for x in ns[i:]])} :=',
+                      f'  hmrRows_owned_drop {final} {outgoing} {i} {name}_outgoingOwned']
         requests=l([f'({n}Row,{r["width"]})' for n,r in zip(ns,rows)])
         fresh=lambda n: '[]' if exit_mode else n+'Fresh'
         logs=l([fresh(n) for n in ns])

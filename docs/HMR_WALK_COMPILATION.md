@@ -612,3 +612,21 @@ row banks without re-running the complete control checker during composition.
 `HmrSourceWalkPrefix` checks the first two steps of each actual exported list,
 including equality of the first step's output arena, bank and record with the
 second step's input. This remains a two-step prefix, not all 533 steps.
+
+
+The current generated selection extends the continuous prefix to steps 0–15
+of both walks (and retains the isolated arm-boundary checks at step 498).
+`HmrSourceWalkPrefix` composes the actual first 16 entries, proving each
+intermediate arena, row view and history register matches the next checker.
+`HmrRowsSuffix` lets bank certificates reuse one full-bank distinctness or
+ownership check for their ordered suffixes. Neither change establishes the
+remaining 517 steps or the reverse program.
+
+
+The relocation composition also handles more than one move. The first
+observed two-move and three-move journals (steps 24 and 200 of each walk)
+have exact `checkRepack` certificates in `HmrSourceMultiRepack`. Each move
+uses the arena returned by its predecessor. These are relocation components,
+not complete step certificates at those later indices. Fragmented sample
+arenas use a Boolean interval-list predicate so their decidability does not
+require a large nested proposition during instance synthesis.
