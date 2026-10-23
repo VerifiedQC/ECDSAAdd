@@ -556,3 +556,14 @@ program. The forward result does not authorize returning dirty metadata.
 A complete 533-step source acceptance certificate, inverse cleanup/phase
 cancellation, observed reverse release census, and whole-walk peak proof
 remain outstanding.
+
+
+Selected headroom transactions now also have split certificates in
+`HmrSourceHeadroomParts`: each observed row layout is checked for distinctness
+and ownership, its exact source reservation is checked separately, and
+`planRowResizeLog_of_growth` assembles the original checker result. The
+examples cover all four headroom rows at steps 0 and 498 of both walks.
+Sorting is used only to prove distinctness; emitted wire order is unchanged.
+This avoids normalizing a complete arena/gate plan in one kernel reduction.
+The generated file is checked by the pinned-source checker. These selected
+transactions are not a whole-walk acceptance certificate.

@@ -204,3 +204,4 @@ print('Selected Lean F7/F16 instances match the observed source call journals ex
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_arm_instances.py'),'--check'],check=True)
 print('Both Lean arm-boundary instances match the observed leading allocation events.')
 subprocess.run([sys.executable,str(root/'scripts/paper935/front_trace.py')],check=True)
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_headroom_parts.py'),'--check'],check=True)

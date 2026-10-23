@@ -956,3 +956,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrEarlyFrozenIrrelevance
 import ECDSAAdd.Arithmetic.Paper935.HmrFrontComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomParts
