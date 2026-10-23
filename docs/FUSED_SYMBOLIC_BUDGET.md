@@ -20,13 +20,15 @@ For later certified estimates, `FusedMassBounds` permits nine upper bounds
 on these same exclusive cells. Nonnegativity of their total is derived from
 the mass inequality. No independence assumption or numerical epsilon occurs.
 
-## Outstanding application data
+## Empirical application (conditional)
 
-The counter/history/deadline/window and scaling masses remain pending symbolic
-terms. No actual input distribution or numerical estimates are selected here.
-The selected source caller correspondence and physical execution proof are
-also still required. This is the symbolic portion of task #52 only.
+Owner selected point-add-denominator-induced sampling and an explicitly
+empirical table. See [ASSUMPTIONS_B5.md](ASSUMPTIONS_B5.md) for both assumptions,
+precise original-point law, sample metadata, tables and limitations.
+`FusedEmpiricalBudget.lean` wraps assumed population bounds with separate sample
+metadata and reuses the symbolic theorems. Observations do not prove these
+bounds; the original exact symbolic theorems above remain unchanged.
 
-No empirical table is supplied by this change. Any future table must be labeled
-“empirical estimate, not a theorem” and include its sample size. Such numbers
-must not be used as Lean upper-bound hypotheses without separate justification.
+Actual circuit agreement and the HMR event-to-program binding remain open.
+The empirical tables do not complete those obligations or prove a numeric error
+bound for the point-add circuit.

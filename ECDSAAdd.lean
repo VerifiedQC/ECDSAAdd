@@ -532,3 +532,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlags
 import ECDSAAdd.Arithmetic.Paper935.FusedSourceRepack
 
 import ECDSAAdd.Arithmetic.Paper935.FusedSymbolicBudget
+
+import ECDSAAdd.Arithmetic.Paper935.FusedEmpiricalBudget
