@@ -113,3 +113,45 @@ def early_control_log(stage):
     assert len(tail) == 1 and tail[0]['kind'] == 'give' and tail[0]['wire'] == branch
     return {'zero': zero_work, 'positive': [positive['result']], 'class': class_work,
             'flags': flag_work, 'fresh': fit['after'][len(fit['before']):]}
+
+
+def armed_control_log(stage):
+    """Observe full armed control allocations, including both fresh cleanups."""
+    assert not stage['early'] and len(stage['counter']) == 6
+    zero, fire, eq, fire_guard, drop = freeze_calls(stage)
+    calls = stage['calls']
+    counter, = [c for c in calls if c['method'] == 'ztest_blocked' and c['args'][0] == stage['counter']]
+    counter_drop, = [c for c in calls if c['method'] == 'ztest_free' and c['args'] == [counter['result'][1]]]
+    positive, = [c for c in calls if c['method'] == 'andp' and c['start'] == counter['end']]
+    assert positive['args'] == [stage['counter'][-1], counter['result'][0]] and positive['kwargs'] == {'pol': [False, False]}
+    cls, = [c for c in calls if c['method'] == 'and_chain' and c['start'] == positive['end']]
+    sigma, branch = stage['retained_flags']
+    fv1, b2, b3, b4 = stage['fv_reads']
+    assert cls['args'] == [[stage['frozen'], sigma, positive['result']], [False, False, False]]
+    fit, = stage['record_fits']
+    assert fit['before'] == fit['after'] and fit['start'] == fit['end']
+    flag_events = stage['events'][cls['end']:fit['start']]
+    assert len(flag_events) == 6 and all(e['kind'] == 'take' for e in flag_events)
+    flags = [e['wire'] for e in flag_events]
+    ands = [c for c in calls if c['method'] == 'andp' and cls['end'] <= c['start'] < fit['start']]
+    assert len(ands) == 3
+    for call, a, b, out in zip(ands, [cls['result'][0], flags[1], flags[3]], [b2, b3, b4], flags[::2]):
+        assert call['args'] == [a, b] and call['result'] == out
+    releases = [c for c in calls if c['method'] == 'release_chain' and fit['end'] <= c['start'] < counter_drop['start']]
+    assert len(releases) == 1 and releases[0]['args'] == [cls['result'][1]]
+    death = stage['sigma_death']
+    assert death['sigma'] == sigma and death['fire'] == fire['result'] and death['fv1'] == fv1
+    sigma_events = stage['events'][death['start']:death['end']]
+    assert [e['kind'] for e in sigma_events] == ['take', 'give', 'give']
+    guard = sigma_events[0]['wire']
+    assert [e['wire'] for e in sigma_events[1:]] == [sigma, guard]
+    states = replay(stage)
+    assert states[counter_drop['end']] == states[fire['end']]
+    tail = stage['events'][drop['end']:]
+    assert len(tail) == 1 and tail[0]['kind'] == 'give' and tail[0]['wire'] == branch
+    return {'freezeZero': zero_logs(stage, zero), 'fire': [fire['result']],
+            'counterZero': zero_logs(stage, counter), 'positive': [positive['result']],
+            'classWork': [x[0] for x in cls['result'][1]], 'flags': flags,
+            'counterDrop': free_logs(stage, counter_drop), 'sigmaGuard': [guard],
+            'timestampEq': [e['wire'] for e in stage['events'][eq['start']:eq['end']]],
+            'fireGuard': [fire_guard['result']], 'freezeDrop': free_logs(stage, drop)}

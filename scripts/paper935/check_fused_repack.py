@@ -154,7 +154,7 @@ for phase in ('s2-walkA', 's6-walkC'):
 print('3198 allocation stages and 195080 observed borrow/return events checked; no cleanliness theorem inferred.')
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from control_trace import replay, zero_logs, free_logs, freeze_calls, early_control_log
+from control_trace import replay, zero_logs, free_logs, freeze_calls, early_control_log, armed_control_log
 control = json.loads(gzip.decompress((root / 'data/paper935/hmr-source-control.json.gz').read_bytes()))
 for key in ('source_commit', 'entry', 'engine_sha256', 'entry_sha256', 'qcap'):
     assert control[key] == data[key], (key, 'control pin mismatch')
@@ -192,6 +192,7 @@ for phase in ('s2-walkA','s6-walkC'):
                 keepers={k[1] for k in call['args'][0]}
                 assert states[call['end']]==states[call['start']]-keepers
         if not s['early']:
+            armed_control_log(s)
             zero,fire,eq,w1,drop=freeze_calls(s)
             assert states[fire['end']]==states[zero['start']]|{k[1] for k in zero['result'][1]}|{fire['result']}
         else:

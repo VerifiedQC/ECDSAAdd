@@ -428,3 +428,77 @@ all 996 early stages. Generated first-step examples check whole early-control
 compiler acceptance and final live cardinality for each walk. This is not
 yet all-stage kernel acceptance, armed control integration, or complete
 forward/reverse walk correctness.
+
+
+### Armed control and arithmetic-to-control values
+
+`compileHmrArmedControlLog` combines F7--F17 with explicit allocation logs:
+freeze keepers/fire, blocked counter test, class/history body, counter prefix
+reborrow, sigma retirement, timestamp/fire/freeze retirement, and bare branch
+measurement. The execution theorem derives cleanup of retained ports from
+the actual body's frame and sigma write; its result retains the final branch
+measurement's phase debt and proves output arena readiness. `sigma_witness`
+connects the cleanup equation to the independent row invariant and actual F7.
+Armed history growth is explicitly empty, as in the pinned source trace.
+
+The trace checker validates all 70 armed control segments. Two generated
+first-armed-step fixtures check whole compiler acceptance in
+the kernel. These finite fixtures do not prove all-stage acceptance.
+
+`run_control_values` proves that the actual arithmetic front preserves its
+computed sigma and old-branch values and the armed frozen input. The repacked
+version derives the same conclusion from checked moves excluding those
+source ports; destination exclusion follows from arena ownership. These
+lemmas connect the arithmetic output to subsequent control witnesses without
+assuming those output values separately. Full 533-step induction, reverse
+phase cancellation, and whole-walk peak accounting remain open.
+
+The early and armed control frame lemmas preserve incoming owned data
+outside the actual history, sigma, branch and (for armed control) freeze
+metadata ports. `HmrSourceFront.Logged.early_step` now composes the actual
+arithmetic front, checked relocation and whole early control sequence. From
+the independent divsteps invariant it derives sigma cleanup and concludes
+output readiness, all four next rows and the next signed counter. Static
+ownership/disjointness, row/counter fits and history capacity remain explicit;
+it neither assumes these output values nor erases the branch phase debt.
+
+`compileHmrEarlyStepLog` checks the complete early step and its remaining
+static layout conditions in one entry point. The returned plan's `run_math`
+uses its checked front, relocation and control certificates; callers retain
+only the mathematical state, range and history-capacity hypotheses. Coefficient
+bit reads saturate to the row sign port as in the pinned short-row source.
+
+The same armed plan also has independent symbolic resource accounting:
+`final_live` proves that its final live set is exactly the incoming set minus
+sigma and branch, and `final_card` proves a net reduction of two sites. The
+source examples' `_card` theorems obtain 914 from an independently checked
+incoming count of 916 and this generic theorem; they do not evaluate the
+compiled plan's output arena. These are boundary counts, not peak bounds.
+
+The armed checker avoids two redundant computations. Zero-test/drop arena
+identity is derived by `compileHmrZeroLog_drop_return`; unchanged history fit
+is derived from checked length equality, the incoming distinctness and the
+monotone ownership chain through the actual borrows. The returned `Logged`
+certificate still contains both original component acceptance equations.
+No cleanup condition or range premise is removed by these optimizations.
+
+`HmrSourceFront.Logged.armed_step` supplies the corresponding armed
+arithmetic/repack/F7--F17 composition. It derives the coefficient cleanup
+witness through the actual freeze operation and preserves the four resulting
+rows and counter through control retirement. Timestamp range/unfrozen-zero
+and history capacity are still required at their actual intermediate inputs;
+this theorem does not yet prove the full walk invariant or phase cancellation.
+
+Both early and armed steps now have a single logged compiler and a returned
+plan execution theorem. The armed source examples use component equations:
+small gate-plan projections are checked by the kernel, while complete arena
+identities are reconstructed from the allocation/live-set theorems. Canonical
+live sets are rendered from the observed addresses; no allocator selects
+replacement sites. The final acceptance theorem composes these checked
+equations, avoiding one giant normalization of the whole plan.
+
+The armed metadata theorem also carries F7's frozen flag and timestamp through
+the actual F8--F17 cleanup. Its chronological corollary proves that the final
+timestamp is below the next offset and remains zero while unfrozen. This is
+a control-segment invariant; preserving it through the next arithmetic front
+and proving the complete walk induction remain separate obligations.
