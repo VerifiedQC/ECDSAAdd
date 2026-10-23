@@ -4846,6 +4846,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.run_math_chronology
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrChronologicalStepLog_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrChronologicalStepLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedControlPlan.Logged.pin_armed
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPlan.Logged.run_pin
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrChronologicalStepLog_pin
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyPinnedStepLog_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyPinnedStepLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyStepPlan.Logged.run_pin
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.armed_pin
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrLoggedWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrScheduledStepLog_run
 LEAN
 )
 task_axiom_lean_rc=$?

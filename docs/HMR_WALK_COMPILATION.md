@@ -512,3 +512,16 @@ its execution theorem returns the next rows/counter, output readiness, and
 the next timestamp bound/unfrozen-zero invariant. Arithmetic range and actual
 history-capacity hypotheses remain explicit. This does not yet establish
 all 533 source instances or the reverse phase cancellation.
+
+The scheduled step checker now covers both early and armed source journals.
+Its correctness theorem returns the complete independent `pinStep` encoding:
+four rows, counter, frozen flag and timestamp, together with `Inv` and
+`RecordValid`. The latter is obtained directly from `pinStep_record`.
+
+`compileHmrLoggedWalk` threads the arena, row view and growing history register
+through the actual step compilers. Its forward theorem inducts on the source
+journal list with `pinWalk` as the specification; no per-step output agreement
+is assumed. It remains conditional on compiler acceptance and explicit integer
+range/actual record-capacity obligations. No complete 533-step source journal
+acceptance certificate, reverse phase cancellation, or whole-walk peak bound
+is claimed by this generic induction.

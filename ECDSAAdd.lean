@@ -936,3 +936,13 @@ import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedFrontLocality
 import ECDSAAdd.Arithmetic.Paper935.HmrArmedStepTimestamp
 import ECDSAAdd.Arithmetic.Paper935.HmrChronologicalStepCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlPin
+import ECDSAAdd.Arithmetic.Paper935.HmrArmedStepPin
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyPinnedCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyStepPin
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedArmedPin
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedWalkCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedWalkRun
+import ECDSAAdd.Arithmetic.Paper935.HmrScheduledStep
+import ECDSAAdd.Arithmetic.Paper935.HmrScheduledStepRun
+import ECDSAAdd.Arithmetic.Paper935.HmrStepCapacity
