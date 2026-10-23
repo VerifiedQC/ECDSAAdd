@@ -525,3 +525,34 @@ is assumed. It remains conditional on compiler acceptance and explicit integer
 range/actual record-capacity obligations. No complete 533-step source journal
 acceptance certificate, reverse phase cancellation, or whole-walk peak bound
 is claimed by this generic induction.
+
+
+### Physical arm boundary
+
+The preceding `compileHmrLoggedWalk` theorem requires pre-reserved physical
+freeze metadata. It is not a literal instance of the complete source walk:
+`engine.py` 910–920 allocates the timestamp and frozen site at `_arm_alloc`
+and releases them at `_arm_free`; `_fwd_add` 1213–1214 calls allocation exactly
+at step 498, before row padding. Earlier source steps have no such sites.
+
+`compileHmrSourceStepLog` and `compileHmrSourceWalk` model this lifetime
+explicitly. Early steps encode the mathematical zero freeze fields without
+physical metadata; at Tmin the checker borrows the observed timestamp sites
+followed by the frozen site. Incoming `Arena.Ready` proves all seven fresh
+sites zero. Subsequent armed steps retain this metadata. The forward theorem
+uses independent `pinWalk`, `Inv` and `RecordValid`, with the same explicit
+numeric and actual record-capacity obligations. Phase guards reject early
+steps at or after Tmin and reject allocation at any other index.
+
+`HmrSourceArmInitial` checks both observed allocation boundaries, extracted
+from the pinned allocation/control/resize traces. The extractor verifies the
+seven leading takes and the resulting live set before the first row resize.
+These are boundary counts, not whole-program peak bounds.
+
+`releaseHmrArmLog` checks the paired physical release; it preserves readiness
+and the early mathematical encoding, and matched borrow/release restores the
+original live set. Its zero-state premise must come from the actual inverse
+program. The forward result does not authorize returning dirty metadata.
+A complete 533-step source acceptance certificate, inverse cleanup/phase
+cancellation, observed reverse release census, and whole-walk peak proof
+remain outstanding.

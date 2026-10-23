@@ -946,3 +946,10 @@ import ECDSAAdd.Arithmetic.Paper935.HmrLoggedWalkRun
 import ECDSAAdd.Arithmetic.Paper935.HmrScheduledStep
 import ECDSAAdd.Arithmetic.Paper935.HmrScheduledStepRun
 import ECDSAAdd.Arithmetic.Paper935.HmrStepCapacity
+import ECDSAAdd.Arithmetic.Paper935.HmrArmAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrArmRelease
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepRun
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkRun
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmInitial

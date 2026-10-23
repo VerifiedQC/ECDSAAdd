@@ -4854,6 +4854,17 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyStepPlan.Logged.run_pin
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceFront.Logged.armed_pin
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrLoggedWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmLog_encoding
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmLog_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmLog_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.releaseHmrArmLog_encoding
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmLog_release
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceStepLog_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceWalk_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ArmBoundary_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ArmBoundary_input_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ArmBoundary_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ArmBoundary_input_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrScheduledStepLog_run
 LEAN
 )
