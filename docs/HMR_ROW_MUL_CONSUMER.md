@@ -128,3 +128,20 @@ to conclude the producer `pre` predicates. Source program decomposition, write
 footprint exclusions, record validity and actual input-rule instances remain
 explicit, separate obligations; a recomputation that temporarily writes a
 retained wire may instead use the earlier, weaker final basis-frame theorem.
+
+## Connecting the nine-event budget to call inputs
+
+`HmrGoodInput` consumes the same combined bad set as the symbolic budget.
+`HmrCallBinding` records only physical coefficient/multiplier equalities and
+zero output/scratch. Given an enabled call in the original label's modeled
+call list and absence from the combined bad set, `hmr_pre_of_not_bad` derives
+LiftGood/RowGood/HornerGood and hence the physical call precondition, while
+retaining SignGood separately for later sign correction.
+
+`hmr_reached_call_output` applies this at the actual state after a prefix P
+and advances the absolute cursor by P's measurement count. It proves the H
+output is exactly `call.beforeSign`; it does not replace that value with a
+canonical residue. Call-list membership, enabledness, physical binding and
+legal cursor remain explicit obligations, including when P is s2+J. This
+bridge neither selects an input law nor discharges whole-program
+RecordedAgreement or the concrete source producer instances.

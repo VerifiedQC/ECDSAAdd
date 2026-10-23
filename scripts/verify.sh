@@ -3988,6 +3988,9 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDemolish_writes
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_unpark_input_of_demolition
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_erase_input_of_writes
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrCallBinding
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_pre_of_not_bad
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmr_reached_call_output
 LEAN
 )
 task_axiom_lean_rc=$?

@@ -3,7 +3,12 @@
 Task #49/#50 supplies the items below for the selected `circuit.py` HMR
 configuration. PR211 supplies conditional consumers; **none of these source
 instances is supplied by those consumers**. This page is the delivery contract,
-not a completion claim. Definitions live in `HmrRowMulSpec.lean` and
+not a completion claim. Source references are pinned to
+`engine.py@64b5a13aa249f1360846657392e6c66817b26d0f`: `halve_horner_scan`
+2999, `sign_fix` 3174, `row_mul` 3254, `_row_lift` 3301, `_row_reduce` 3312,
+`row_unpark` 3326, and HMR plateau constants 3490/3492. See the
+[reference-to-caller port table](FUSED_CALL_LAYOUT.md#reference-to-caller-maps)
+for the exact lift/fold/Horner wire roles. Definitions live in `HmrRowMulSpec.lean` and
 `HmrLifecycleInput.lean`; usage is described in [the consumer guide](HMR_ROW_MUL_CONSUMER.md).
 
 ## Physical views and actual programs
