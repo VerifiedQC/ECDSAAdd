@@ -589,3 +589,17 @@ the pre-arm arena. Early steps retain the physically absent metadata state.
 Each named lifecycle plan is extracted only after acceptance is proved, and
 has an explicit `compileHmrSourceStepLog = some Plan` theorem. These are
 complete selected step certificates, still not all 533-step certificates.
+
+
+The complete source journals are now library data in `HmrSourceS2WalkLogs`
+and `HmrSourceS6WalkLogs`: each has 533 steps, generated in 16-step chunks
+by `generate_walk_logs.py` and reproduced by the pinned-source checker.
+`HmrSourceWalkLogFixtures` identifies the four certified lifecycle logs at
+their actual list indices. The diagnostic runner imports these same lists.
+These data and length/index proofs do not establish whole-walk acceptance.
+
+`compileHmrSourceWalk_append` permits separate segment acceptance proofs to
+compose while requiring the suffix to start at the prefix's returned arena,
+row bank, record, freeze metadata and next step number. Early control checks
+also have an exact-plan converse to their `Logged` contract. These helpers
+avoid repeating a monolithic reduction when extending the selected coverage.

@@ -971,3 +971,8 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrStepComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2WalkLogs
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6WalkLogs
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkLogFixtures
