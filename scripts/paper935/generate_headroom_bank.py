@@ -1,5 +1,6 @@
 """Compose the selected observed row certificates into bank transactions."""
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 entry_mode = '--entry' in sys.argv
@@ -64,7 +65,4 @@ for phase in ('s2-walkA','s6-walkC'):
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/('ECDSAAdd/Arithmetic/Paper935/HmrSourceExitBank.lean' if exit_mode else ('ECDSAAdd/Arithmetic/Paper935/HmrSourceEntryBank.lean' if entry_mode else 'ECDSAAdd/Arithmetic/Paper935/HmrSourceHeadroomBank.lean'))
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Headroom bank certificates differ from source'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

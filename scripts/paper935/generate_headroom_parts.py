@@ -1,5 +1,7 @@
 """Generate split certificates for selected actual headroom transactions."""
 import sys
+from generated_chunks import write_step_chunks
+from arena_sharing import share_arenas
 from certificate_steps import CERTIFICATE_STEPS
 from pathlib import Path
 from front_trace import ROOT, load
@@ -37,9 +39,6 @@ for phase in ('s2-walkA','s6-walkC'):
             '  exact result',
             ]
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
-text='\n'.join(lines)
+text=share_arenas('\n'.join(lines))
 path=ROOT/('ECDSAAdd/Arithmetic/Paper935/HmrSourceEntryParts.lean' if entry_mode else 'ECDSAAdd/Arithmetic/Paper935/HmrSourceHeadroomParts.lean')
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Headroom parts differ from pinned source observations'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

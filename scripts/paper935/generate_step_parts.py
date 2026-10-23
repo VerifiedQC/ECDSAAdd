@@ -1,5 +1,6 @@
 """Compose selected observed fronts, relocations and control blocks."""
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from repack_parts import repack_parts
 from front_trace import ROOT, load
@@ -81,7 +82,4 @@ for phase in ('s2-walkA','s6-walkC'):
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceStepInitial.lean'
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Complete steps differ from pinned observations'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

@@ -1,13 +1,16 @@
 """Certify selected source exit resizes, preserving measured shrink programs."""
 import sys
+from generated_chunks import write_step_chunks
+from arena_sharing import share_arenas
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout',
        'import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition',
        'namespace ECDSAAdd.Arithmetic.Paper935']
+resize_data=load('resize')
 for phase in ('s2-walkA','s6-walkC'):
     for t in CERTIFICATE_STEPS:
-        stage=next(s for s in load('resize') if (s['phase'],s['step'],s['stage'])==(phase,t,'shift_exit'))
+        stage=next(s for s in resize_data if (s['phase'],s['step'],s['stage'])==(phase,t,'shift_exit'))
         for r in stage['resizes']:
             name=phase[:2]+'Step'+str(t)+'Exit'+r['row'].capitalize()
             for suffix,key in [('Before','live_before'),('After','live_after')]:
@@ -44,9 +47,6 @@ for phase in ('s2-walkA','s6-walkC'):
                           f'  have rowEq : WindowRow.mk ({name}Row.payload++[]) {name}Row.sign={name}Out := by decide +kernel',
                           '  rw [rowEq] at result','  exact result']
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
-text='\n'.join(lines)
+text=share_arenas('\n'.join(lines))
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceExitParts.lean'
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Exit parts differ from pinned source'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

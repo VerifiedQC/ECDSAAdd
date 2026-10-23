@@ -76,20 +76,27 @@ for phase in ('s2-walkA','s6-walkC'):
                  f'  simpa only [compileHmrRecordGrowLog,if_pos {name}_inputs] using {name}_borrow','']
 grow+=['end ECDSAAdd.Arithmetic.Paper935','']
 outputs['HmrSourceRecordGrowInitial']='\n'.join(grow)
-from early_parts import generate_early_parts
+from early_fast_parts import generate_fast_early_parts
 from certificate_steps import CERTIFICATE_STEPS
-early=['import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlComposition',
-       'import ECDSAAdd.Arithmetic.Paper935.HmrControlDecidable', '',
-       'namespace ECDSAAdd.Arithmetic.Paper935', '',
-       'local instance hmrEarlyPartsDisjoint (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=',
-       '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm', '']
+early_imports=[]
 for phase in ('s2-walkA','s6-walkC'):
-    for t in (t for t in CERTIFICATE_STEPS if t<498):
-        stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==t)
-        name=phase[:2]+('First' if t==0 else 'Step'+str(t))+'EarlyControl'
-        early+=generate_early_parts(stage,name,arena)
-early+=['end ECDSAAdd.Arithmetic.Paper935','']
-outputs['HmrSourceEarlyControlInitial']='\n'.join(early)
+    selected=[t for t in CERTIFICATE_STEPS if t<498]
+    for offset in range(0,len(selected),8):
+        module='HmrSource'+phase[:2].upper()+'EarlyControl'+str(offset//8)
+        early_imports.append('import ECDSAAdd.Arithmetic.Paper935.'+module)
+        early=['import ECDSAAdd.Arithmetic.Paper935.HmrControlCheckParts',
+               'import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition',
+               'import ECDSAAdd.Arithmetic.Paper935.HmrControlDecidable','',
+               'namespace ECDSAAdd.Arithmetic.Paper935','',
+               'local instance '+module+'Disjoint (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=',
+               '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm','']
+        for t in selected[offset:offset+8]:
+            stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==t)
+            name=phase[:2]+('First' if t==0 else 'Step'+str(t))+'EarlyControl'
+            early+=generate_fast_early_parts(stage,name,arena)
+        early+=['end ECDSAAdd.Arithmetic.Paper935','']
+        outputs[module]='\n'.join(early)
+outputs['HmrSourceEarlyControlInitial']='\n'.join(early_imports+[''])
 armed=['import ECDSAAdd.Arithmetic.Paper935.HmrArmedControlCompiler','','namespace ECDSAAdd.Arithmetic.Paper935','', 'local instance (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=', '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm', '']
 for phase in ('s2-walkA','s6-walkC'):
     stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==s['tmin'])

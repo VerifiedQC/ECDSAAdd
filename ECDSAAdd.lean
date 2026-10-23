@@ -980,3 +980,4 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkPrefix
 import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix
 import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceMultiRepack
+import ECDSAAdd.Arithmetic.Paper935.HmrControlCheckParts

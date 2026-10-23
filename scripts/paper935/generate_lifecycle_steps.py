@@ -1,5 +1,6 @@
 """Connect selected complete steps to the source metadata-lifetime scheduler."""
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitial',
@@ -54,7 +55,4 @@ for statement in list(lines):
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceLifecycleInitial.lean'
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Lifecycle step certificates differ from source'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

@@ -9783,6 +9783,13 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6Step200MultiRepack_move2_reserve
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6Step200MultiRepack_move2_retire
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6Step200MultiRepack_checked
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkBorrow_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrArena_release_false_of_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEqualityLog_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSourceClassLog_of_logged
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlagsLog_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRecordGrowLog_of_parts
+#print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaDropLog_early_of_parts
 LEAN
 )
 task_axiom_lean_rc=$?

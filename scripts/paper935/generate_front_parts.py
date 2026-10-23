@@ -1,5 +1,6 @@
 """Assemble selected complete source arithmetic fronts from checked transactions."""
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, front_log
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryBank',
@@ -66,7 +67,4 @@ for phase in ('s2-walkA','s6-walkC'):
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceFrontInitial.lean'
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'Front certificates differ from pinned source logs'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

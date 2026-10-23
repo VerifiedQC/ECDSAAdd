@@ -1,5 +1,6 @@
 """Compose the two observed hybrid calls and their shared flag/carry borrows."""
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticParts',
@@ -41,7 +42,4 @@ for phase in ('s2-walkA','s6-walkC'):
 lines += ['end ECDSAAdd.Arithmetic.Paper935','']
 text='\n'.join(lines)
 path=ROOT/'ECDSAAdd/Arithmetic/Paper935/HmrSourceF4Parts.lean'
-if '--check' in sys.argv:
-    assert path.read_text()==text, 'F4 parts differ from pinned source calls'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check='--check' in sys.argv)

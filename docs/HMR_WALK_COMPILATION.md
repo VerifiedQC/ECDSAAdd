@@ -630,3 +630,23 @@ uses the arena returned by its predecessor. These are relocation components,
 not complete step certificates at those later indices. Fragmented sample
 arenas use a Boolean interval-list predicate so their decidability does not
 require a large nested proposition during instance synthesis.
+
+Early control certificates now use `HmrControlCheckParts`: input ownership,
+borrow shape, reservation, and release facts are established separately and
+then imply the original compiler's exact returned plan. Large arena filters
+stay symbolic during these checks. The public projection and exact-plan
+statements retain their previous names and types.
+
+Early control modules contain eight source steps each. Other selected-step
+certificate generators use `generated_chunks.py` to emit at most sixteen
+source steps per module, retaining an umbrella at the original import path.
+Chunks import their predecessor where shared definitions require it.
+`arena_sharing.py` replaces identical literal resize arenas with direct
+aliases of the first occurrence; the original observed wire sets are not
+changed. This also shares adjacent Before/After states. Proofs explicitly
+unfold the corresponding canonical arena when needed.
+
+The exit generator reads its pinned resize log once per invocation rather
+than once per step. All generated files remain covered by `--check` through
+the pinned-source checker. These changes optimize verification; the accepted
+continuous prefix remains sixteen steps of each walk.
