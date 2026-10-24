@@ -25870,7 +25870,28 @@
       ]
     }
   ],
-  "normalization": "SWAP = three CX; R = release-before-zero obligation, no instruction; immediate HMR corrections fused",
+  "normalization": {
+    "comparison_lemmas": [
+      "rowMul_ccx_controls",
+      "rowMul_cx_same_target"
+    ],
+    "measurement": {
+      "lowering": "HMR followed immediately by same-record Z/CZ -> measureX with ordered onOne corrections",
+      "proofs": [
+        "rowMul_record_corrections",
+        "rowMul_measure_fusion"
+      ]
+    },
+    "preserved": "Source CCX operand order and CX order unchanged; semantic comparison lemmas do not rewrite emitted data",
+    "release": "R emits only a lifecycle event; zero before release remains a separate obligation, never reset",
+    "swap": {
+      "lowering": "SWAP(a,b) -> CX(b,a);CX(a,b);CX(b,a)",
+      "proofs": [
+        "rowMul_swap_lowering",
+        "rowMul_swap_directions"
+      ]
+    }
+  },
   "source_commit": "64b5a13aa249f1360846657392e6c66817b26d0f",
   "source_files": {
     "tasks/modinv-point-add/circuits/_shared/luo_core.py": "2508e018aa99cf4bd9bddc650a56bb35987784a0ed9b98e1524f69c2fd8eb77e",

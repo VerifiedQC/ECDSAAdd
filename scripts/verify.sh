@@ -4075,6 +4075,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMulHalveInverse
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftForward
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_lowering
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_directions
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_ccx_controls
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_cx_same_target
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_record_corrections
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_measure_fusion
 LEAN
 )
 task_axiom_lean_rc=$?

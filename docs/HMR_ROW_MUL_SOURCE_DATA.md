@@ -44,7 +44,7 @@ Canonical ports are sign (0), row (1–280), multiplier (281–536), output
 scan control (819). The capture checks all fixed ports are distinct and every
 quantum operand is mapped. The control varies with the scan occurrence.
 
-SWAP expands to three CX gates. HMR becomes `measureX`; consecutive conditional
+SWAP expands using the existing `swapBits` order: CX(b,a), CX(a,b), CX(b,a). HMR becomes `measureX`; consecutive conditional
 Z/CZ corrections referring to that HMR are its immediate corrections. Other
 corrections use their actual absolute measurement ordinal. The call starts are
 53,734, 422,703, and 620,345. Classical outcome reuse is resolved to ordinals
@@ -76,9 +76,23 @@ then compares all generated Lean files and the manifest byte for byte. It does
 not just compare summary counts. The manifest also records source-file hashes,
 the full occurrence schedule, and physical raw-stream hashes. Source replay is
 an external data-transcription check; Lean checks the resulting definitions.
-All 29 new public data declarations are included in the strict existing axiom
+All 29 new public data declarations and six normalization/comparison lemmas are included in the strict existing axiom
 audit. This change adds no waiting proof, `sorry`, or axiom.
 
-Local full validation passed 4,568 build jobs and 3,902 exact public-entry audits
-in 355.41 seconds, including full source replay. The 3,873 baseline entries are
-unchanged and the 29 new declarations are appended.
+Local full validation passed 4,569 build jobs and 3,908 exact public-entry audits
+in 321.94 seconds, including full source replay. The 3,873 baseline entries are
+unchanged; 29 data declarations and six lemmas are appended.
+
+## Normalization proof follow-up
+
+`HmrSourceNormalization.lean` proves the selected three-CX lowering exchanges
+bits and preserves phase, and that both conventional expansions agree. It also
+proves immediate measurement/correction fusion on arbitrary tapes (including
+short tapes). The manifest names these rules and their Lean lemmas.
+
+Source CCX operand order and neighboring CX order are retained. Separate
+symmetry/commutation lemmas support comparison against older presentations;
+they do not rewrite the generated stream. The old fold list has reversed CCX
+controls and some exchanged adjacent same-target CX pairs. Therefore producer
+contracts must use full-state semantic prefix equivalence, not assume literal
+list equality. The complete source-prefix equivalence is a later obligation.
