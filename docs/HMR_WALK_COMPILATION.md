@@ -670,3 +670,39 @@ declarations. Explicit predecessor imports remain to bound parallel build
 work. Removing import lines from the import-only checkpoint leaves every Lean
 module body unchanged; future prefix expansions add the new step certificates
 separately.
+
+## Private component certificates for steps 64–95
+
+`HmrSourcePrivatePrefix96` extends both source prefixes to 96 steps. The
+existing 0–63 instance modules and their public declarations are retained.
+Each new step has a separate `HmrSourceS2PrivateStepN` or
+`HmrSourceS6PrivateStepN` module. Its public interface contains four concrete
+definitions (input arena, row bank, source specification and output plan),
+an exact `compileHmrSourceStepLog ... = some plan` theorem, and a theorem
+binding the specification to the corresponding entry of the pinned source
+journal. All component facts and local instances in that module are private.
+
+The generator executes the existing source-driven component generators into
+memory for the selected new step. It collects the needed dependency closure
+and emits it in the same file as the public certificate; it does not copy
+previously generated instance modules. The two new 16-step segments per walk
+use the same `_cons` rule and exact arena/bank/record boundaries, then append
+to the existing 64-step certificate. The final theorem concerns the actual
+first 96 entries of the original 533-step journal, not a separate synthetic
+list. The remaining 437 forward steps, actual reverse program, phase
+cancellation and whole-program resource theorem remain outstanding.
+
+`data/paper935/hmr-private-certificate-manifest.json` records every public
+declaration in all 71 new modules. Regeneration checks the exact module set,
+contents and public declaration list. The four-definition/two-theorem step
+interface is asserted independently of the emitted text. The checker also
+pins the ordered first 23575 audit entries by hash and requires the appended
+registry to equal exactly the 180 new public proofs. Every private proof
+still undergoes kernel checking and is traversed by the public certificate's
+recursive axiom audit.
+
+The verification runner reports source checks, build and axiom-audit phase
+times separately. Set `ECDSA_VERIFY_PHASE_LOG` to a file path to collect JSON
+records as well. Audit commands run in sequential batches of 1000 with the
+same imports; the original ordered registry and exact axiom whitelist are
+checked against their concatenated output.

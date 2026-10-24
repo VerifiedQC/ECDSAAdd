@@ -1,0 +1,1965 @@
+{
+  "baseline_entries": 23575,
+  "baseline_sha256": "5947d8e8bda092b8e062bb47fd01f8d1547cd251082b7881a0b41b2dd11ec53c",
+  "first_step": 64,
+  "last_step": 95,
+  "files": {
+    "HmrSourcePrivatePrefix96.lean": [],
+    "HmrSourceS2PrivatePrefix96.lean": [
+      {
+        "name": "s2ObservedPrefixPart4Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedPrefixPart4Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart4_metadata",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedPrefixPart5Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedPrefixPart5_metadata",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedExtended96_logs",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedExtended96Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedExtended96_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateSegment64.lean": [
+      {
+        "name": "s2ObservedSegment64Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedSegment64_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment64Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedSegment64_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment64_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment64_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment64_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment64_metadata",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateSegment80.lean": [
+      {
+        "name": "s2ObservedSegment80Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedSegment80_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment80Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2ObservedSegment80_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment80_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment80_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment80_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2ObservedSegment80_metadata",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep64.lean": [
+      {
+        "name": "s2PrivateStep64Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep64Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep64Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep64Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep64_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep64_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep65.lean": [
+      {
+        "name": "s2PrivateStep65Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep65Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep65Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep65Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep65_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep65_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep66.lean": [
+      {
+        "name": "s2PrivateStep66Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep66Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep66Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep66Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep66_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep66_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep67.lean": [
+      {
+        "name": "s2PrivateStep67Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep67Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep67Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep67Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep67_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep67_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep68.lean": [
+      {
+        "name": "s2PrivateStep68Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep68Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep68Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep68Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep68_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep68_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep69.lean": [
+      {
+        "name": "s2PrivateStep69Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep69Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep69Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep69Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep69_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep69_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep70.lean": [
+      {
+        "name": "s2PrivateStep70Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep70Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep70Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep70Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep70_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep70_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep71.lean": [
+      {
+        "name": "s2PrivateStep71Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep71Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep71Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep71Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep71_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep71_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep72.lean": [
+      {
+        "name": "s2PrivateStep72Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep72Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep72Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep72Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep72_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep72_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep73.lean": [
+      {
+        "name": "s2PrivateStep73Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep73Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep73Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep73Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep73_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep73_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep74.lean": [
+      {
+        "name": "s2PrivateStep74Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep74Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep74Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep74Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep74_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep74_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep75.lean": [
+      {
+        "name": "s2PrivateStep75Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep75Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep75Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep75Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep75_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep75_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep76.lean": [
+      {
+        "name": "s2PrivateStep76Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep76Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep76Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep76Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep76_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep76_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep77.lean": [
+      {
+        "name": "s2PrivateStep77Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep77Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep77Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep77Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep77_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep77_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep78.lean": [
+      {
+        "name": "s2PrivateStep78Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep78Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep78Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep78Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep78_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep78_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep79.lean": [
+      {
+        "name": "s2PrivateStep79Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep79Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep79Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep79Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep79_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep79_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep80.lean": [
+      {
+        "name": "s2PrivateStep80Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep80Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep80Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep80Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep80_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep80_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep81.lean": [
+      {
+        "name": "s2PrivateStep81Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep81Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep81Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep81Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep81_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep81_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep82.lean": [
+      {
+        "name": "s2PrivateStep82Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep82Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep82Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep82Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep82_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep82_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep83.lean": [
+      {
+        "name": "s2PrivateStep83Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep83Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep83Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep83Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep83_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep83_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep84.lean": [
+      {
+        "name": "s2PrivateStep84Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep84Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep84Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep84Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep84_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep84_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep85.lean": [
+      {
+        "name": "s2PrivateStep85Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep85Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep85Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep85Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep85_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep85_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep86.lean": [
+      {
+        "name": "s2PrivateStep86Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep86Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep86Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep86Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep86_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep86_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep87.lean": [
+      {
+        "name": "s2PrivateStep87Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep87Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep87Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep87Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep87_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep87_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep88.lean": [
+      {
+        "name": "s2PrivateStep88Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep88Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep88Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep88Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep88_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep88_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep89.lean": [
+      {
+        "name": "s2PrivateStep89Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep89Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep89Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep89Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep89_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep89_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep90.lean": [
+      {
+        "name": "s2PrivateStep90Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep90Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep90Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep90Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep90_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep90_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep91.lean": [
+      {
+        "name": "s2PrivateStep91Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep91Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep91Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep91Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep91_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep91_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep92.lean": [
+      {
+        "name": "s2PrivateStep92Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep92Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep92Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep92Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep92_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep92_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep93.lean": [
+      {
+        "name": "s2PrivateStep93Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep93Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep93Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep93Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep93_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep93_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep94.lean": [
+      {
+        "name": "s2PrivateStep94Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep94Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep94Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep94Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep94_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep94_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS2PrivateStep95.lean": [
+      {
+        "name": "s2PrivateStep95Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep95Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep95Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep95Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s2PrivateStep95_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s2PrivateStep95_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivatePrefix96.lean": [
+      {
+        "name": "s6ObservedPrefixPart4Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedPrefixPart4Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart4_metadata",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedPrefixPart5Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedPrefixPart5_metadata",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedExtended96_logs",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedExtended96Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedExtended96_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateSegment64.lean": [
+      {
+        "name": "s6ObservedSegment64Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedSegment64_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment64Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedSegment64_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment64_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment64_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment64_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment64_metadata",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateSegment80.lean": [
+      {
+        "name": "s6ObservedSegment80Logs",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedSegment80_length",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment80Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6ObservedSegment80_checked",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment80_outputArena",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment80_bank",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment80_record",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6ObservedSegment80_metadata",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep64.lean": [
+      {
+        "name": "s6PrivateStep64Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep64Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep64Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep64Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep64_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep64_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep65.lean": [
+      {
+        "name": "s6PrivateStep65Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep65Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep65Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep65Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep65_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep65_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep66.lean": [
+      {
+        "name": "s6PrivateStep66Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep66Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep66Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep66Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep66_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep66_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep67.lean": [
+      {
+        "name": "s6PrivateStep67Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep67Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep67Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep67Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep67_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep67_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep68.lean": [
+      {
+        "name": "s6PrivateStep68Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep68Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep68Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep68Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep68_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep68_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep69.lean": [
+      {
+        "name": "s6PrivateStep69Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep69Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep69Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep69Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep69_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep69_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep70.lean": [
+      {
+        "name": "s6PrivateStep70Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep70Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep70Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep70Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep70_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep70_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep71.lean": [
+      {
+        "name": "s6PrivateStep71Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep71Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep71Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep71Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep71_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep71_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep72.lean": [
+      {
+        "name": "s6PrivateStep72Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep72Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep72Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep72Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep72_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep72_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep73.lean": [
+      {
+        "name": "s6PrivateStep73Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep73Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep73Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep73Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep73_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep73_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep74.lean": [
+      {
+        "name": "s6PrivateStep74Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep74Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep74Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep74Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep74_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep74_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep75.lean": [
+      {
+        "name": "s6PrivateStep75Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep75Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep75Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep75Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep75_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep75_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep76.lean": [
+      {
+        "name": "s6PrivateStep76Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep76Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep76Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep76Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep76_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep76_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep77.lean": [
+      {
+        "name": "s6PrivateStep77Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep77Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep77Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep77Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep77_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep77_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep78.lean": [
+      {
+        "name": "s6PrivateStep78Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep78Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep78Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep78Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep78_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep78_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep79.lean": [
+      {
+        "name": "s6PrivateStep79Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep79Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep79Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep79Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep79_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep79_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep80.lean": [
+      {
+        "name": "s6PrivateStep80Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep80Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep80Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep80Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep80_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep80_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep81.lean": [
+      {
+        "name": "s6PrivateStep81Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep81Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep81Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep81Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep81_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep81_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep82.lean": [
+      {
+        "name": "s6PrivateStep82Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep82Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep82Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep82Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep82_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep82_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep83.lean": [
+      {
+        "name": "s6PrivateStep83Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep83Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep83Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep83Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep83_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep83_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep84.lean": [
+      {
+        "name": "s6PrivateStep84Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep84Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep84Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep84Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep84_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep84_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep85.lean": [
+      {
+        "name": "s6PrivateStep85Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep85Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep85Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep85Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep85_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep85_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep86.lean": [
+      {
+        "name": "s6PrivateStep86Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep86Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep86Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep86Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep86_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep86_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep87.lean": [
+      {
+        "name": "s6PrivateStep87Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep87Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep87Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep87Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep87_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep87_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep88.lean": [
+      {
+        "name": "s6PrivateStep88Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep88Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep88Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep88Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep88_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep88_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep89.lean": [
+      {
+        "name": "s6PrivateStep89Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep89Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep89Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep89Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep89_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep89_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep90.lean": [
+      {
+        "name": "s6PrivateStep90Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep90Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep90Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep90Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep90_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep90_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep91.lean": [
+      {
+        "name": "s6PrivateStep91Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep91Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep91Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep91Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep91_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep91_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep92.lean": [
+      {
+        "name": "s6PrivateStep92Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep92Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep92Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep92Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep92_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep92_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep93.lean": [
+      {
+        "name": "s6PrivateStep93Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep93Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep93Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep93Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep93_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep93_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep94.lean": [
+      {
+        "name": "s6PrivateStep94Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep94Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep94Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep94Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep94_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep94_checked",
+        "kind": "theorem"
+      }
+    ],
+    "HmrSourceS6PrivateStep95.lean": [
+      {
+        "name": "s6PrivateStep95Arena",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep95Bank",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep95Spec",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep95Plan",
+        "kind": "def"
+      },
+      {
+        "name": "s6PrivateStep95_source",
+        "kind": "theorem"
+      },
+      {
+        "name": "s6PrivateStep95_checked",
+        "kind": "theorem"
+      }
+    ]
+  }
+}

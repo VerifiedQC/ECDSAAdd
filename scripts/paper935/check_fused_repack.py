@@ -221,3 +221,5 @@ subprocess.run([sys.executable,str(root/'scripts/paper935/generate_walk_prefix.p
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_multi_repack.py'),'--check'],check=True)
 
 subprocess.run([sys.executable,str(root/'scripts/paper935/generate_fragmented_control.py'),'--check'],check=True)
+
+subprocess.run([sys.executable,str(root/'scripts/paper935/generate_private_steps.py'),'--check'],check=True)
