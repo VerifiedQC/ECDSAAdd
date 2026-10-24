@@ -3,6 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/paper935/generate_schedule.py --check
 python3 scripts/paper935/check_fused_repack.py
+python3 scripts/sample_b5.py --check --output data/b5-empirical.json
+python3 tests/test_sample_b5.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -3905,6 +3907,58 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.liveCensus
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_stages
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.census_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_census
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_withinBudget_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_release_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaChain_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction.execute
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog.length
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_reserve_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_release_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.mass_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total_nonneg
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_budget_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.EmpiricalBudget
+#print axioms ECDSAAdd.Arithmetic.Paper935.EmpiricalBudget.observedRate
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_nine_mass
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_calls_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.induced_denominator_mass
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_error
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedPlacementMap_injective
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedLiftPlacementMap_injective
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedFoldPlacementMap_injective
