@@ -696,13 +696,38 @@ cancellation and whole-program resource theorem remain outstanding.
 declaration in all 71 new modules. Regeneration checks the exact module set,
 contents and public declaration list. The four-definition/two-theorem step
 interface is asserted independently of the emitted text. The checker also
-pins the ordered first 23575 audit entries by hash and requires the appended
-registry to equal exactly the 180 new public proofs. Every private proof
+pins the existing registry prefixes by hash. The original 180 theorem
+registrations were supplemented with all 274 public definitions after review;
+the corrected 96-step registry contains 24029 entries. Both definitions and
+theorems must occur in the manifest and audit registry. Every private proof
 still undergoes kernel checking and is traversed by the public certificate's
 recursive axiom audit.
 
 The verification runner reports source checks, build and axiom-audit phase
 times separately. Set `ECDSA_VERIFY_PHASE_LOG` to a file path to collect JSON
-records as well. Audit commands run in sequential batches of 1000 with the
+records as well. At the 96-step checkpoint, audit commands ran in sequential
+batches of 1000 with the
 same imports; the original ordered registry and exact axiom whitelist are
 checked against their concatenated output.
+
+
+### 128-step source checkpoint
+
+The next checkpoint appends source steps 96–127 for both walks to the checked
+96-step prefix. Existing 0–95 Lean modules are unchanged. Each new step keeps
+its component facts private and exports the same four data definitions plus
+the exact compiler-result and source-binding theorems. Two 16-step segments
+per walk are connected using the existing append theorem, with all arena,
+bank, record and metadata boundaries checked.
+
+`HmrSourcePrivatePrefix128` imports both final certificates. The generated
+manifest covers both private checkpoints (64–95 and 96–127), preserves the
+first 24029 audit entries by hash and checks each appended checkpoint's
+public declaration list separately. The extension adds 454 public entries
+(180 theorems and 274 definitions) without reordering any prior entry. Full verification must pass before publication.
+
+This remains a forward-prefix certificate: 405 forward steps, the complete
+reverse program, phase cancellation and the whole point-addition resource
+claim remain outstanding. The complete ordered audit registry and exact
+whitelist remain required. Runner changes and their measurements are delivered
+in a separate commit; no proof or stack limits are increased.
