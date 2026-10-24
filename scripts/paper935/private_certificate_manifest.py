@@ -1,10 +1,10 @@
 """Check generated public declarations and the exact additive audit registry."""
 import hashlib,json,re
 from pathlib import Path
-# Prefixes include the 138 main 61311f7 entries inserted before PR entries.
+# Prefixes include the 173 main entries from 61311f7 and 4d0f000 before PR entries.
 # Hash the complete merged prefix directly; no entries are excluded.
-BASELINE_COUNT=23713
-BASELINE_SHA256='1ad9ee01295917e1c4149834096836ee3fcf5f2deecedfcb8eabd73007ebb48b'
+BASELINE_COUNT=23748
+BASELINE_SHA256='c80d9a492aa800e3d36c3f93d03443d752cefa10d683db8a0bf983f623c48a66'
 PUBLIC=re.compile(r'^(?:(?:noncomputable|local)\s+)?(def|theorem|lemma|abbrev|instance|structure|inductive|opaque|axiom)\s+([\w.]+)',re.M)
 
 def public_declarations(text):
@@ -46,7 +46,7 @@ def verify_manifest(ROOT,outputs,manifest):
  entries=re.findall(r'^#print axioms (.+)$',(ROOT/'scripts/verify.sh').read_text(),re.M)
  baseline=''.join('#print axioms '+name+'\n' for name in entries[:BASELINE_COUNT])
  assert hashlib.sha256(baseline.encode()).hexdigest()==BASELINE_SHA256,'Existing audit registry changed'
- assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:23893]).encode()).hexdigest()=='6e2a096b8dccbf7864a8441984a1ccbb228ae2192c683fd6dbc3ec532a2129ba','96-step audit registry changed'
- assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24167]).encode()).hexdigest()=='d5780092d5afe42a5a830299e5ea66a1c0d14e9568bbd4c12ef5d0e578a72781','Corrected 96-step registry changed'
- assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24621]).encode()).hexdigest()=='01388c88eeb7711b48148a7da970126aed0da142881d9aa566bcc5d495c67970','128-step merged audit registry changed'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:23928]).encode()).hexdigest()=='434b0e1478afa037eaae59a69a69e96dc94352422cab2f8c3348188bb75b7ccb','96-step audit registry changed'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24202]).encode()).hexdigest()=='f389888a2dce2a871b4ee1037787c3460181c9ae863d4b274be289e3d7c1a717','Corrected 96-step registry changed'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24656]).encode()).hexdigest()=='8e36c0ae03a686d8213ecc7d98e33cef92e0ea4cafce4d36518c70401cc48a2d','128-step merged audit registry changed'
  assert entries[BASELINE_COUNT:]==sorted(checkpoint_proofs[96])+sorted(old_defs)+sorted(checkpoint_proofs[128])+sorted(checkpoint_proofs[160]),'New public declarations and appended audit registry differ'

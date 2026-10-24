@@ -761,3 +761,11 @@ The 160-step log-binding proof reuses the 128-step binding and two 16-step
 source blocks; it avoids expanding all row data at once, without changing any
 recursion limit or the exact compiler result. The initial direct build attempt
 and the corrected complete verification are reported separately.
+
+The subsequent separate merge of main 4d0f000 adds 35 row-multiplication data and
+normalization entries after the previous 138 main entries. The current registry
+therefore contains 25110 commands. All historical hashes are updated over the
+complete merged prefixes (23748, 23928, 24202 and 24656 entries), without
+filtering. The preceding full 25075-entry verification and the new merge's
+incremental checks are reported separately; this merge does not change any of
+the 160-step Lean certificate modules.

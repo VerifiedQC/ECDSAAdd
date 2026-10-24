@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/run_verification_phase.py schedule python3 scripts/paper935/generate_schedule.py --check
+python3 scripts/run_verification_phase.py rowmul-source "${ECDSA_SOURCE_PYTHON:-python3}" scripts/paper935/generate_row_mul.py --check
 python3 scripts/run_verification_phase.py source-certificates python3 scripts/paper935/check_fused_repack.py
 python3 scripts/run_verification_phase.py empirical-count-check python3 scripts/sample_b5.py --check --output data/b5-empirical.json
 python3 scripts/run_verification_phase.py empirical-count-tests python3 tests/test_sample_b5.py
@@ -1036,7 +1037,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.negativeEven_spec
 #print axioms ECDSAAdd.Arithmetic.negativeEven_counts
 #print axioms ECDSAAdd.Arithmetic.negativeEven_wires
-
 #print axioms ECDSAAdd.kaliski_swap_from_r
 #print axioms ECDSAAdd.Arithmetic.recoverSwap_state
 #print axioms ECDSAAdd.Arithmetic.oneBitRound_spec
@@ -2255,11 +2255,9 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Submissions.Skywalk.measurement_count
 #print axioms ECDSAAdd.Submissions.Skywalk.qubit_count
 #print axioms ECDSAAdd.Submissions.Skywalk.zero_resources
-
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_correct
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_counts
 #print axioms ECDSAAdd.Arithmetic.ShortTriangular.triangularSquare_wires
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_measurements
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowAdd_signed
@@ -2779,7 +2777,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_class
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_unstored
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyCutoff_recovery_range
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.lookupBranch_support
@@ -3103,7 +3100,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.padding_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotRegisters.output_from_post
 #print axioms ECDSAAdd.Arithmetic.Paper935.unarmedPost_pinStep
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyInstructionCheck_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlot_resources
@@ -3123,7 +3119,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_selector
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileGrowingHistory_fit
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.capacity_at
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_capacity_at
 #print axioms ECDSAAdd.Arithmetic.Paper935.grownCapacities_bound
@@ -3153,14 +3148,12 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_total
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyBudget_good
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_trajectory_fit
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.grownCapacities_historyCapacity
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoryCapacityAt_eq
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorHistoryFailure_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorTrajectoryBudget_total
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorTrajectory_mass_le_requests
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_fit
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.counterPositive_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoryLayout.Valid.physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistory_instruction_check
@@ -3188,7 +3181,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_mass_lower
 #print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_exclusive
 #print axioms ECDSAAdd.Arithmetic.Paper935.counterWitness_constant_mass
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.chunkPorts_subset
 #print axioms ECDSAAdd.Arithmetic.Paper935.chunks_valid_of_distinct
 #print axioms ECDSAAdd.Arithmetic.Paper935.probeChunks_flatten
@@ -3203,7 +3195,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_ports
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_unarmed_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_armed_exists
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_layout
 #print axioms ECDSAAdd.Arithmetic.Paper935.planRowResize_frame_layout
 #print axioms ECDSAAdd.Arithmetic.Paper935.planWindowRows_exists
@@ -3230,7 +3221,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalSlot.undo_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.historicalWalkReverse_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.HistoricalWalkCompiled.forward_reverse_wellFormed
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.probeChunks_count
 #print axioms ECDSAAdd.Arithmetic.Paper935.postPoolSize_public
 #print axioms ECDSAAdd.Arithmetic.Paper935.postViews_geometry
@@ -3247,7 +3237,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.walkSeed_widths
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_realized
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.mathChecks_of_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileSlotFront_mathChecks
 #print axioms ECDSAAdd.Arithmetic.Paper935.postMath_geometry
@@ -3268,7 +3257,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinStep_frozen_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_frozen_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_offset_inputs
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyValue_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_history_value
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlot_value_step
@@ -3279,7 +3267,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorWalk_good_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_run
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedPublicSlot_static_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_arithmetic_undo
 #print axioms ECDSAAdd.Arithmetic.Paper935.walkUndoConditions_of_parts
@@ -3288,7 +3275,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_reverse_of_history
 #print axioms ECDSAAdd.Arithmetic.Paper935.pinWalk_stopping_time
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_scaled_inverse
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWalkMetadata_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_roundtrip
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedWalk_measurements
@@ -3296,7 +3282,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_inputs
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_inputs
 #print axioms ECDSAAdd.Arithmetic.Paper935.walkForwardInputs_prefix
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorRiderActivities_count
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorSeamRider_halves
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorSeamRider_correct
@@ -3512,7 +3497,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldRiderParity_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldRider_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldRider_inactive
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_history_undo
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_actual_reverse
 #print axioms ECDSAAdd.Arithmetic.Paper935.clearHistoryControls_away
@@ -3551,7 +3535,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_decoders
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_decoders
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_history_undo
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingNoBorrow_append
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorScalingNoBorrow_parts
 #print axioms ECDSAAdd.Arithmetic.Paper935.foldedActive_correct
@@ -3561,7 +3544,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_partition
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_pairwise
 #print axioms ECDSAAdd.Arithmetic.Paper935.scalingBad_mass
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_seed_read
 #print axioms ECDSAAdd.Arithmetic.Paper935.seededAuthorWalk_seed_relation
 #print axioms ECDSAAdd.Arithmetic.Paper935.quotientCallArgs_input
@@ -3574,7 +3556,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.mem_pointScalingFailure
 #print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingFailure_adapters
 #print axioms ECDSAAdd.Arithmetic.Paper935.pointScalingExclusive_disjoint
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.signedDecode_complement
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.seedNormalize_bank
@@ -3587,7 +3568,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_free_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_no_fresh_output
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalk_exit_widths
 #print axioms ECDSAAdd.Arithmetic.Paper935.authorExitWindow
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileAuthorWalk_exit_widths
@@ -3659,7 +3639,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_empty
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSpace_card_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.retainedOutputSet_empty
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.external_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileBorrowedPost_external_support
 #print axioms ECDSAAdd.Arithmetic.Paper935.compilePublicSlot_external_support
@@ -3680,7 +3659,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointOwnedOutputBorrow_capacity
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_certified
 #print axioms ECDSAAdd.Arithmetic.Paper935.endpointSlot_ownedOutput_bits
-
 #print axioms ECDSAAdd.extendWireMap_on
 #print axioms ECDSAAdd.extendWireMap_bijective
 #print axioms ECDSAAdd.finiteWirePermutation_on
@@ -3811,7 +3789,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.Arena.checkRepack_owned
 #print axioms ECDSAAdd.Arithmetic.Paper935.magnitudeWindow_physical
 #print axioms ECDSAAdd.Arithmetic.Paper935.fusedMagnitudeLift_physical
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_zero
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCopy_roundtrip
@@ -3846,7 +3823,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryFinishSweep_top
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryResult_top
 #print axioms ECDSAAdd.Arithmetic.Paper935.hornerCarryBlock_fullValue
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlotWidth_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileCheckedHistoricalSlotWidth_resources
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalSlotWidth_contract
@@ -3869,7 +3845,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.historyViewsWidth_geometry
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_static_exists
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHistoricalWalkWidth_exit_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrExitLiveCount
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exit_card
@@ -3882,7 +3857,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_exit_widths
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_card
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrWalk_closed_free
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagCell_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagCell_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlagSweep_measurementCount
@@ -3894,7 +3868,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_release
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrFlags_j5p
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceLive_bounded
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_checked
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceRepack_eq
@@ -4045,6 +4018,41 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrCallBinding
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_pre_of_not_bad
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_reached_call_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulLifecycleEvent
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulReleaseZero
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulTemplateUse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPort
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulInstantiate
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ErasePorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCmaForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCmaInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCopy
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulFoldForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulFoldInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulHalveForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulHalveInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_lowering
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_directions
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_ccx_controls
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_cx_same_target
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_record_corrections
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_measure_fusion
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCompute_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderRelease_run
@@ -4142,7 +4150,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPredictionDeath_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderComputed_prediction
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPredictionDeath_counts
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrGetD_eq_iff
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowClean
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowOwned
@@ -4176,7 +4183,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_outside
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_copy
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_return
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.program_eq_tagged_retire
 #print axioms ECDSAAdd.Arithmetic.Paper935.SlotFront.Compiled.run_tagged_math
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigmaDeath_early
@@ -4186,7 +4192,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_witness
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_early_witness
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSigma_afterLatch
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_outside
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_write
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndReady_write
@@ -4219,7 +4224,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrChunks_flatten
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrZero_value
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrBlockFreePlan.run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockFree_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrBlockFree_run
@@ -4305,7 +4309,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_fixup
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrPop_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrHistory_transfer
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrOddResidue8
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrOddResidue16
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBit8_residue
@@ -4322,13 +4325,11 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowPos_bit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowDecoder_bits
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRowDecoder_run
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrClassValue_math
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_math
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRecoverClass_conditions
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrFlags_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRowFlags_depths
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrowPorts_surjective
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBorrow_return_current
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrDecoder_state
@@ -4344,7 +4345,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRead_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.run_spec
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.read_state
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_math
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrAssembly_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrBranchAssembly_early
@@ -4370,10 +4370,8 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.released_live_count
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrFlagValues.write
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.output_outside
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recover_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.recoverRelease_wellFormed
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndPatch_advance
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndAdvance_patch
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrAndReady_patch
@@ -4388,9 +4386,7 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrRead_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrReadPlan.Compiled.released_frame
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrRowDecoder_geometry
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClass_read_retire
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrClassRead_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmedRead_contract
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrArmedRead_exists
@@ -4406,7 +4402,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_math
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrSigmaRead_state
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarly_class_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyCounter_exists
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEarlyRead_exists
@@ -4421,7 +4416,6 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.compileHmrEquality_state
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrArmedReadPlan.Compiled.decoder_live_count
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrEarlyReadPlan.Compiled.decoder_live_count
-
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_outside
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryBasis_write
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrCarryIncrement_run
