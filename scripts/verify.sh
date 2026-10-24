@@ -7,7 +7,7 @@ lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.
 
 # Report and check only the public proof entry points.
 set +e
-axioms=$(lake env lean /dev/stdin <<'LEAN'
+axioms=$(python3 scripts/audit_public_entries.py <<'LEAN'
 import ECDSAAdd
 import ECDSAAdd.Arithmetic.KnownOutputCarry
 import ECDSAAdd.Arithmetic.KnownOutputAdder
