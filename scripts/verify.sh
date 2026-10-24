@@ -4268,6 +4268,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_pool
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_anc
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_basis_of_anc
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignFix_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_control
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_control
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceSign_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceSign_of_good
 LEAN
 )
 task_axiom_lean_rc=$?

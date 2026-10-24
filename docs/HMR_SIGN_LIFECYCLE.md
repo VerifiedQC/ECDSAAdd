@@ -61,14 +61,26 @@ state, every tape, and every cursor.
   bit**. The recorded-Z phase contribution is retained; this is not a proof
   that the s6 gap restores phase.
 
+## Arithmetic output under explicit input premises
+
+`signCore_value` proves the reference core's mathematical output under the
+low-window no-borrow condition. `placedSignFix_of_good` transports that result
+to physical ports and includes the actual outer CX pair.
+`s2SourceSign_of_good` and `s6SourceSign_of_good` instantiate the exact source
+programs, output words, ancillary lists, and f-sign wires (768 and 795).
+Their result is `if call.negate then fold32Prime - call.beforeSign else
+call.beforeSign`. These are conditional execution theorems; no row-multiplication
+output encoding is assumed to have been proved.
+
 ## Remaining integration obligations
 
 Structural scratch cleanup and the basis roundtrip do not require arithmetic
 success. To use sign correction as the mathematical residue negation, callers
 must still supply `call.SignGood`, the before-sign value encoding, and the
 separate binding `call.negate = sf XOR sv` at the actual sign entry. No such
-binding is inferred from row multiplication. This increment does not assert
-the signed output value formula.
+binding is inferred from row multiplication. The source-bound signed-output formula is now proved under these premises;
+the preceding row-multiplication proof must still establish their applicability
+at each actual call boundary.
 
 The actual forward row multiplication, unpark, inverse multiplication, full
 walk, intermediate program J, and complete phase-debt cancellation still need
