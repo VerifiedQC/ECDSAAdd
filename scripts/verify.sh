@@ -4122,6 +4122,19 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrCallArena
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_reserve
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulSourcePrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLegacyPrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_measurements
 LEAN
 )
 task_axiom_lean_rc=$?
