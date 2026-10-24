@@ -16,7 +16,7 @@ def normalize(ops):
             out.append(['M',op[1],cs]);count+=1;i=j
         else:
             if tag=='SWAP':
-                a,b=op[1:];out.extend([['CX',a,b],['CX',b,a],['CX',a,b]])
+                a,b=op[1:];out.extend([['CX',b,a],['CX',a,b],['CX',b,a]])
             elif tag!='R':out.append(op)
             i+=1
     bounds[len(ops)]=len(out)
@@ -106,7 +106,14 @@ def rowMulInstantiate (ports : Array Wire) (start : Nat)
     text+='end ECDSAAdd.Arithmetic.Paper935\n'
     files[DEST/'HmrRowMulSourcePrograms.lean']=text
     manifest={k:v for k,v in data.items() if k!='templates'}
-    manifest['normalization']='SWAP = three CX; R = release-before-zero obligation, no instruction; immediate HMR corrections fused'
+    manifest['normalization']={
+        'swap': {'lowering': 'SWAP(a,b) -> CX(b,a);CX(a,b);CX(b,a)',
+                 'proofs': ['rowMul_swap_lowering','rowMul_swap_directions']},
+        'measurement': {'lowering': 'HMR followed immediately by same-record Z/CZ -> measureX with ordered onOne corrections',
+                        'proofs': ['rowMul_record_corrections','rowMul_measure_fusion']},
+        'release': 'R emits only a lifecycle event; zero before release remains a separate obligation, never reset',
+        'preserved': 'Source CCX operand order and CX order unchanged; semantic comparison lemmas do not rewrite emitted data',
+        'comparison_lemmas': ['rowMul_ccx_controls','rowMul_cx_same_target']}
     manifest['summary']=summaries
     files[ROOT/'scripts/paper935/row_mul_source_manifest.json']=json.dumps(manifest,indent=2,sort_keys=True)+'\n'
     return files

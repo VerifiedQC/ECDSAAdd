@@ -41,7 +41,7 @@ HmrEraseBoundary。records 固定 start=422703、cursor=620345，实际起点
 ## 两张审计表
 
 严格入口保持原白名单 propext、Classical.choice、Quot.sound。
-根模块不导入等待文件。合入 PR216 数据后严格登记为 3942 条。
+根模块不导入等待文件。合入 PR216 数据后严格登记为 3948 条。
 临时入口独立运行，共 46 条，其中 18 条登记为等待 Prop 证明。
 Lean 检查登记类型并遍历真实依赖；Python 拒绝未登记的 admission、缺失
 或重复入口及额外公理。14 个显式数据定义必须不依赖 sorryAx。
