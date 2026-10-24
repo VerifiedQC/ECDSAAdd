@@ -25,6 +25,12 @@ def extract(pattern):
 for tag, pair, borrow in zip(('s2', 's6'),
         (data['calls'][:2], data['calls'][2:]), data['seam_borrows']):
     record, later = pair
+    layout, = extract(r'def ' + tag + r'HmrSourceLayout : HmrRowMulLayout where([\s\S]*?)  row_length :=')
+    fields = {'row': tag + 'HmrSourceRow', 'y': tag + 'HmrSourceY',
+              'out': tag + 'HmrSourceOut', 'anc': tag + 'HmrSeamPorts.anc',
+              'flags': '{' + tag + 'HmrSeamPorts.flag}'}
+    actual = dict(re.findall(r'^  (\w+) := ([^\n]+)$', layout, re.M))
+    assert actual == fields, (tag, 'layout reference mismatch', actual)
     for key in ('row', 'y', 'out', 'ma'):
         assert record[key] == later[key], (tag, key, 'boundary changed')
     flag, anc = extract(r'def ' + tag + r'HmrSeamPorts : HmrSeamPorts := ⟨(\d+), (\[[^\n]*\]),')
