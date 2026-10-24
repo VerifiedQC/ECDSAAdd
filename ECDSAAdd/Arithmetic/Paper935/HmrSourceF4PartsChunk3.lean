@@ -1,5 +1,4 @@
 import ECDSAAdd.Arithmetic.Paper935.Arena
-import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Compiler
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBorrow
@@ -10,597 +9,597 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomPartsChunk3
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceF4PartsChunk2
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s6Step15F4FlagArena : Arena := ⟨s6Step15HeadFvAfter.live∪{888},Finset.union_subset s6Step15HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step15F4_flag : s6Step15HeadFvAfter.checkBorrow 1 [888]=some s6Step15F4FlagArena := by
+def s2Step48F4FlagArena : Arena := ⟨s2Step48HeadFvAfter.live∪{792},Finset.union_subset s2Step48HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step48F4_flag : s2Step48HeadFvAfter.checkBorrow 1 [792]=some s2Step48F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step15HeadFvAfter,arenaWires]
+  · norm_num [s2Step48HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step15F4_carry : s6Step15F4FlagArena.checkBorrow 1 [886]=some s6Step15Add0Arena := by
+theorem s2Step48F4_carry : s2Step48F4FlagArena.checkBorrow 1 [800]=some s2Step48Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step15F4FlagArena,s6Step15HeadFvAfter,arenaWires]
+  · norm_num [s2Step48F4FlagArena,s2Step48HeadFvAfter,arenaWires]
   · ext q
-    simp only [s6Step15F4FlagArena,s6Step15HeadFvAfter,s6Step15Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step48F4FlagArena,s2Step48HeadFvAfter,s2Step48Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step15F4_owned : (822::807::((s6Step15Add0A++s6Step15Add1A)++(s6Step15Add0B++s6Step15Add1B))).toFinset⊆s6Step15HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step15HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step48F4_owned : (798::803::((s2Step48Add0A++s2Step48Add1A)++(s2Step48Add0B++s2Step48Add1B))).toFinset⊆s2Step48HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step48HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862) ∨ (863≤q ∧ q<864)) rfl
   decide +kernel
-theorem s6Step15F4_distinct : (822::807::888::886::((s6Step15Add0A++s6Step15Add1A)++(s6Step15Add0B++s6Step15Add1B))).Nodup := by
+theorem s2Step48F4_distinct : (798::803::792::800::((s2Step48Add0A++s2Step48Add1A)++(s2Step48Add0B++s2Step48Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step15F4_apart : Disjoint (s6Step15Add0A++s6Step15Add0B).toFinset (s6Step15Add1A++s6Step15Add1B).toFinset := by
-  have nd : ((s6Step15Add0A++s6Step15Add0B)++(s6Step15Add1A++s6Step15Add1B)).Nodup := by
+theorem s2Step48F4_apart : Disjoint (s2Step48Add0A++s2Step48Add0B).toFinset (s2Step48Add1A++s2Step48Add1B).toFinset := by
+  have nd : ((s2Step48Add0A++s2Step48Add0B)++(s2Step48Add1A++s2Step48Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step15F4Plan : HmrHybridF4Plan := ⟨s6Step15F4FlagArena,[888],s6Step15Add0Arena,[886],s6Step15Add0During,s6Step15Add0Work,s6Step15Add1During,s6Step15Add1Work⟩
-theorem s6Step15F4_checked : compileHmrHybridF4Log s6Step15HeadFvAfter 822 807 s6Step15Add0A s6Step15Add0B s6Step15Add1A s6Step15Add1B [888] [886] s6Step15Add0Work s6Step15Add1Work=some s6Step15F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step15HeadFvAfter s6Step15F4FlagArena s6Step15Add0Arena s6Step15Add0During s6Step15Add1During 822 807
-    s6Step15Add0A s6Step15Add0B s6Step15Add1A s6Step15Add1B [888] [886] s6Step15Add0Work s6Step15Add1Work
-    (fun q hq => s6Step15F4_owned (List.mem_toFinset.mpr hq)) s6Step15F4_flag s6Step15F4_carry
-    s6Step15F4_distinct s6Step15F4_apart s6Step15Add0_checked s6Step15Add1_checked
-def s6Step16F4FlagArena : Arena := ⟨s6Step16HeadFvAfter.live∪{778},Finset.union_subset s6Step16HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step16F4_flag : s6Step16HeadFvAfter.checkBorrow 1 [778]=some s6Step16F4FlagArena := by
+def s2Step48F4Plan : HmrHybridF4Plan := ⟨s2Step48F4FlagArena,[792],s2Step48Add0Arena,[800],s2Step48Add0During,s2Step48Add0Work,s2Step48Add1During,s2Step48Add1Work⟩
+theorem s2Step48F4_checked : compileHmrHybridF4Log s2Step48HeadFvAfter 798 803 s2Step48Add0A s2Step48Add0B s2Step48Add1A s2Step48Add1B [792] [800] s2Step48Add0Work s2Step48Add1Work=some s2Step48F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step48HeadFvAfter s2Step48F4FlagArena s2Step48Add0Arena s2Step48Add0During s2Step48Add1During 798 803
+    s2Step48Add0A s2Step48Add0B s2Step48Add1A s2Step48Add1B [792] [800] s2Step48Add0Work s2Step48Add1Work
+    (fun q hq => s2Step48F4_owned (List.mem_toFinset.mpr hq)) s2Step48F4_flag s2Step48F4_carry
+    s2Step48F4_distinct s2Step48F4_apart s2Step48Add0_checked s2Step48Add1_checked
+def s2Step49F4FlagArena : Arena := ⟨s2Step49HeadFvAfter.live∪{792},Finset.union_subset s2Step49HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step49F4_flag : s2Step49HeadFvAfter.checkBorrow 1 [792]=some s2Step49F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step16HeadFvAfter,arenaWires]
+  · norm_num [s2Step49HeadFvAfter,s2Step48HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step16F4_carry : s6Step16F4FlagArena.checkBorrow 1 [838]=some s6Step16Add0Arena := by
+theorem s2Step49F4_carry : s2Step49F4FlagArena.checkBorrow 1 [800]=some s2Step49Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step16F4FlagArena,s6Step16HeadFvAfter,arenaWires]
+  · norm_num [s2Step49F4FlagArena,s2Step49HeadFvAfter,s2Step48HeadFvAfter,arenaWires]
   · ext q
-    simp only [s6Step16F4FlagArena,s6Step16HeadFvAfter,s6Step16Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step49F4FlagArena,s2Step49HeadFvAfter,s2Step48HeadFvAfter,s2Step49Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step16F4_owned : (780::813::((s6Step16Add0A++s6Step16Add1A)++(s6Step16Add0B++s6Step16Add1B))).toFinset⊆s6Step16HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step16HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (831≤q ∧ q<832) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (886≤q ∧ q<889) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step49F4_owned : (798::808::((s2Step49Add0A++s2Step49Add1A)++(s2Step49Add0B++s2Step49Add1B))).toFinset⊆s2Step49HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step49HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862) ∨ (863≤q ∧ q<864)) rfl
   decide +kernel
-theorem s6Step16F4_distinct : (780::813::778::838::((s6Step16Add0A++s6Step16Add1A)++(s6Step16Add0B++s6Step16Add1B))).Nodup := by
+theorem s2Step49F4_distinct : (798::808::792::800::((s2Step49Add0A++s2Step49Add1A)++(s2Step49Add0B++s2Step49Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step16F4_apart : Disjoint (s6Step16Add0A++s6Step16Add0B).toFinset (s6Step16Add1A++s6Step16Add1B).toFinset := by
-  have nd : ((s6Step16Add0A++s6Step16Add0B)++(s6Step16Add1A++s6Step16Add1B)).Nodup := by
+theorem s2Step49F4_apart : Disjoint (s2Step49Add0A++s2Step49Add0B).toFinset (s2Step49Add1A++s2Step49Add1B).toFinset := by
+  have nd : ((s2Step49Add0A++s2Step49Add0B)++(s2Step49Add1A++s2Step49Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step16F4Plan : HmrHybridF4Plan := ⟨s6Step16F4FlagArena,[778],s6Step16Add0Arena,[838],s6Step16Add0During,s6Step16Add0Work,s6Step16Add1During,s6Step16Add1Work⟩
-theorem s6Step16F4_checked : compileHmrHybridF4Log s6Step16HeadFvAfter 780 813 s6Step16Add0A s6Step16Add0B s6Step16Add1A s6Step16Add1B [778] [838] s6Step16Add0Work s6Step16Add1Work=some s6Step16F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step16HeadFvAfter s6Step16F4FlagArena s6Step16Add0Arena s6Step16Add0During s6Step16Add1During 780 813
-    s6Step16Add0A s6Step16Add0B s6Step16Add1A s6Step16Add1B [778] [838] s6Step16Add0Work s6Step16Add1Work
-    (fun q hq => s6Step16F4_owned (List.mem_toFinset.mpr hq)) s6Step16F4_flag s6Step16F4_carry
-    s6Step16F4_distinct s6Step16F4_apart s6Step16Add0_checked s6Step16Add1_checked
-def s6Step17F4FlagArena : Arena := ⟨s6Step17HeadFvAfter.live∪{814},Finset.union_subset s6Step17HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step17F4_flag : s6Step17HeadFvAfter.checkBorrow 1 [814]=some s6Step17F4FlagArena := by
+def s2Step49F4Plan : HmrHybridF4Plan := ⟨s2Step49F4FlagArena,[792],s2Step49Add0Arena,[800],s2Step49Add0During,s2Step49Add0Work,s2Step49Add1During,s2Step49Add1Work⟩
+theorem s2Step49F4_checked : compileHmrHybridF4Log s2Step49HeadFvAfter 798 808 s2Step49Add0A s2Step49Add0B s2Step49Add1A s2Step49Add1B [792] [800] s2Step49Add0Work s2Step49Add1Work=some s2Step49F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step49HeadFvAfter s2Step49F4FlagArena s2Step49Add0Arena s2Step49Add0During s2Step49Add1During 798 808
+    s2Step49Add0A s2Step49Add0B s2Step49Add1A s2Step49Add1B [792] [800] s2Step49Add0Work s2Step49Add1Work
+    (fun q hq => s2Step49F4_owned (List.mem_toFinset.mpr hq)) s2Step49F4_flag s2Step49F4_carry
+    s2Step49F4_distinct s2Step49F4_apart s2Step49Add0_checked s2Step49Add1_checked
+def s2Step50F4FlagArena : Arena := ⟨s2Step50HeadFvAfter.live∪{792},Finset.union_subset s2Step50HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step50F4_flag : s2Step50HeadFvAfter.checkBorrow 1 [792]=some s2Step50F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step17HeadFvAfter,arenaWires]
+  · norm_num [s2Step50HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step17F4_carry : s6Step17F4FlagArena.checkBorrow 1 [821]=some s6Step17Add0Arena := by
+theorem s2Step50F4_carry : s2Step50F4FlagArena.checkBorrow 1 [800]=some s2Step50Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step17F4FlagArena,s6Step17HeadFvAfter,arenaWires]
+  · norm_num [s2Step50F4FlagArena,s2Step50HeadFvAfter,arenaWires]
   · ext q
-    simp only [s6Step17F4FlagArena,s6Step17HeadFvAfter,s6Step17Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step50F4FlagArena,s2Step50HeadFvAfter,s2Step50Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step17F4_owned : (888::860::((s6Step17Add0A++s6Step17Add1A)++(s6Step17Add0B++s6Step17Add1B))).toFinset⊆s6Step17HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step17HeadFvAfter (fun q => (0≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (831≤q ∧ q<832) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (886≤q ∧ q<889) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step50F4_owned : (798::807::((s2Step50Add0A++s2Step50Add1A)++(s2Step50Add0B++s2Step50Add1B))).toFinset⊆s2Step50HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step50HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<864)) rfl
   decide +kernel
-theorem s6Step17F4_distinct : (888::860::814::821::((s6Step17Add0A++s6Step17Add1A)++(s6Step17Add0B++s6Step17Add1B))).Nodup := by
+theorem s2Step50F4_distinct : (798::807::792::800::((s2Step50Add0A++s2Step50Add1A)++(s2Step50Add0B++s2Step50Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step17F4_apart : Disjoint (s6Step17Add0A++s6Step17Add0B).toFinset (s6Step17Add1A++s6Step17Add1B).toFinset := by
-  have nd : ((s6Step17Add0A++s6Step17Add0B)++(s6Step17Add1A++s6Step17Add1B)).Nodup := by
+theorem s2Step50F4_apart : Disjoint (s2Step50Add0A++s2Step50Add0B).toFinset (s2Step50Add1A++s2Step50Add1B).toFinset := by
+  have nd : ((s2Step50Add0A++s2Step50Add0B)++(s2Step50Add1A++s2Step50Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step17F4Plan : HmrHybridF4Plan := ⟨s6Step17F4FlagArena,[814],s6Step17Add0Arena,[821],s6Step17Add0During,s6Step17Add0Work,s6Step17Add1During,s6Step17Add1Work⟩
-theorem s6Step17F4_checked : compileHmrHybridF4Log s6Step17HeadFvAfter 888 860 s6Step17Add0A s6Step17Add0B s6Step17Add1A s6Step17Add1B [814] [821] s6Step17Add0Work s6Step17Add1Work=some s6Step17F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step17HeadFvAfter s6Step17F4FlagArena s6Step17Add0Arena s6Step17Add0During s6Step17Add1During 888 860
-    s6Step17Add0A s6Step17Add0B s6Step17Add1A s6Step17Add1B [814] [821] s6Step17Add0Work s6Step17Add1Work
-    (fun q hq => s6Step17F4_owned (List.mem_toFinset.mpr hq)) s6Step17F4_flag s6Step17F4_carry
-    s6Step17F4_distinct s6Step17F4_apart s6Step17Add0_checked s6Step17Add1_checked
-def s6Step18F4FlagArena : Arena := ⟨s6Step18HeadFvAfter.live∪{869},Finset.union_subset s6Step18HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step18F4_flag : s6Step18HeadFvAfter.checkBorrow 1 [869]=some s6Step18F4FlagArena := by
+def s2Step50F4Plan : HmrHybridF4Plan := ⟨s2Step50F4FlagArena,[792],s2Step50Add0Arena,[800],s2Step50Add0During,s2Step50Add0Work,s2Step50Add1During,s2Step50Add1Work⟩
+theorem s2Step50F4_checked : compileHmrHybridF4Log s2Step50HeadFvAfter 798 807 s2Step50Add0A s2Step50Add0B s2Step50Add1A s2Step50Add1B [792] [800] s2Step50Add0Work s2Step50Add1Work=some s2Step50F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step50HeadFvAfter s2Step50F4FlagArena s2Step50Add0Arena s2Step50Add0During s2Step50Add1During 798 807
+    s2Step50Add0A s2Step50Add0B s2Step50Add1A s2Step50Add1B [792] [800] s2Step50Add0Work s2Step50Add1Work
+    (fun q hq => s2Step50F4_owned (List.mem_toFinset.mpr hq)) s2Step50F4_flag s2Step50F4_carry
+    s2Step50F4_distinct s2Step50F4_apart s2Step50Add0_checked s2Step50Add1_checked
+def s2Step51F4FlagArena : Arena := ⟨s2Step51HeadFvAfter.live∪{792},Finset.union_subset s2Step51HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step51F4_flag : s2Step51HeadFvAfter.checkBorrow 1 [792]=some s2Step51F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step18HeadFvAfter,arenaWires]
+  · norm_num [s2Step51HeadFvAfter,s2Step50HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step18F4_carry : s6Step18F4FlagArena.checkBorrow 1 [843]=some s6Step18Add0Arena := by
+theorem s2Step51F4_carry : s2Step51F4FlagArena.checkBorrow 1 [800]=some s2Step51Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step18F4FlagArena,s6Step18HeadFvAfter,arenaWires]
+  · norm_num [s2Step51F4FlagArena,s2Step51HeadFvAfter,s2Step50HeadFvAfter,arenaWires]
   · ext q
-    simp only [s6Step18F4FlagArena,s6Step18HeadFvAfter,s6Step18Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step51F4FlagArena,s2Step51HeadFvAfter,s2Step50HeadFvAfter,s2Step51Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step18F4_owned : (778::862::((s6Step18Add0A++s6Step18Add1A)++(s6Step18Add0B++s6Step18Add1B))).toFinset⊆s6Step18HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step18HeadFvAfter (fun q => (0≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<815) ∨ (818≤q ∧ q<819) ∨ (821≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (831≤q ∧ q<832) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (845≤q ∧ q<846) ∨ (852≤q ∧ q<853) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (886≤q ∧ q<889) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step51F4_owned : (810::808::((s2Step51Add0A++s2Step51Add1A)++(s2Step51Add0B++s2Step51Add1B))).toFinset⊆s2Step51HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step51HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<864)) rfl
   decide +kernel
-theorem s6Step18F4_distinct : (778::862::869::843::((s6Step18Add0A++s6Step18Add1A)++(s6Step18Add0B++s6Step18Add1B))).Nodup := by
+theorem s2Step51F4_distinct : (810::808::792::800::((s2Step51Add0A++s2Step51Add1A)++(s2Step51Add0B++s2Step51Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step18F4_apart : Disjoint (s6Step18Add0A++s6Step18Add0B).toFinset (s6Step18Add1A++s6Step18Add1B).toFinset := by
-  have nd : ((s6Step18Add0A++s6Step18Add0B)++(s6Step18Add1A++s6Step18Add1B)).Nodup := by
+theorem s2Step51F4_apart : Disjoint (s2Step51Add0A++s2Step51Add0B).toFinset (s2Step51Add1A++s2Step51Add1B).toFinset := by
+  have nd : ((s2Step51Add0A++s2Step51Add0B)++(s2Step51Add1A++s2Step51Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step18F4Plan : HmrHybridF4Plan := ⟨s6Step18F4FlagArena,[869],s6Step18Add0Arena,[843],s6Step18Add0During,s6Step18Add0Work,s6Step18Add1During,s6Step18Add1Work⟩
-theorem s6Step18F4_checked : compileHmrHybridF4Log s6Step18HeadFvAfter 778 862 s6Step18Add0A s6Step18Add0B s6Step18Add1A s6Step18Add1B [869] [843] s6Step18Add0Work s6Step18Add1Work=some s6Step18F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step18HeadFvAfter s6Step18F4FlagArena s6Step18Add0Arena s6Step18Add0During s6Step18Add1During 778 862
-    s6Step18Add0A s6Step18Add0B s6Step18Add1A s6Step18Add1B [869] [843] s6Step18Add0Work s6Step18Add1Work
-    (fun q hq => s6Step18F4_owned (List.mem_toFinset.mpr hq)) s6Step18F4_flag s6Step18F4_carry
-    s6Step18F4_distinct s6Step18F4_apart s6Step18Add0_checked s6Step18Add1_checked
-def s6Step19F4FlagArena : Arena := ⟨s6Step19HeadFvAfter.live∪{854},Finset.union_subset s6Step19HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step19F4_flag : s6Step19HeadFvAfter.checkBorrow 1 [854]=some s6Step19F4FlagArena := by
+def s2Step51F4Plan : HmrHybridF4Plan := ⟨s2Step51F4FlagArena,[792],s2Step51Add0Arena,[800],s2Step51Add0During,s2Step51Add0Work,s2Step51Add1During,s2Step51Add1Work⟩
+theorem s2Step51F4_checked : compileHmrHybridF4Log s2Step51HeadFvAfter 810 808 s2Step51Add0A s2Step51Add0B s2Step51Add1A s2Step51Add1B [792] [800] s2Step51Add0Work s2Step51Add1Work=some s2Step51F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step51HeadFvAfter s2Step51F4FlagArena s2Step51Add0Arena s2Step51Add0During s2Step51Add1During 810 808
+    s2Step51Add0A s2Step51Add0B s2Step51Add1A s2Step51Add1B [792] [800] s2Step51Add0Work s2Step51Add1Work
+    (fun q hq => s2Step51F4_owned (List.mem_toFinset.mpr hq)) s2Step51F4_flag s2Step51F4_carry
+    s2Step51F4_distinct s2Step51F4_apart s2Step51Add0_checked s2Step51Add1_checked
+def s2Step52F4FlagArena : Arena := ⟨s2Step52HeadFvAfter.live∪{792},Finset.union_subset s2Step52HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step52F4_flag : s2Step52HeadFvAfter.checkBorrow 1 [792]=some s2Step52F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step19HeadFvAfter,arenaWires]
+  · norm_num [s2Step52HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step19F4_carry : s6Step19F4FlagArena.checkBorrow 1 [830]=some s6Step19Add0Arena := by
+theorem s2Step52F4_carry : s2Step52F4FlagArena.checkBorrow 1 [800]=some s2Step52Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step19F4FlagArena,s6Step19HeadFvAfter,arenaWires]
+  · norm_num [s2Step52F4FlagArena,s2Step52HeadFvAfter,arenaWires]
   · ext q
-    simp only [s6Step19F4FlagArena,s6Step19HeadFvAfter,s6Step19Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step52F4FlagArena,s2Step52HeadFvAfter,s2Step52Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step19F4_owned : (814::807::((s6Step19Add0A++s6Step19Add1A)++(s6Step19Add0B++s6Step19Add1B))).toFinset⊆s6Step19HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step19HeadFvAfter (fun q => (0≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<815) ∨ (818≤q ∧ q<819) ∨ (821≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (831≤q ∧ q<832) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (845≤q ∧ q<846) ∨ (852≤q ∧ q<853) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (886≤q ∧ q<889) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step52F4_owned : (810::809::((s2Step52Add0A++s2Step52Add1A)++(s2Step52Add0B++s2Step52Add1B))).toFinset⊆s2Step52HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step52HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<865)) rfl
   decide +kernel
-theorem s6Step19F4_distinct : (814::807::854::830::((s6Step19Add0A++s6Step19Add1A)++(s6Step19Add0B++s6Step19Add1B))).Nodup := by
+theorem s2Step52F4_distinct : (810::809::792::800::((s2Step52Add0A++s2Step52Add1A)++(s2Step52Add0B++s2Step52Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step19F4_apart : Disjoint (s6Step19Add0A++s6Step19Add0B).toFinset (s6Step19Add1A++s6Step19Add1B).toFinset := by
-  have nd : ((s6Step19Add0A++s6Step19Add0B)++(s6Step19Add1A++s6Step19Add1B)).Nodup := by
+theorem s2Step52F4_apart : Disjoint (s2Step52Add0A++s2Step52Add0B).toFinset (s2Step52Add1A++s2Step52Add1B).toFinset := by
+  have nd : ((s2Step52Add0A++s2Step52Add0B)++(s2Step52Add1A++s2Step52Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step19F4Plan : HmrHybridF4Plan := ⟨s6Step19F4FlagArena,[854],s6Step19Add0Arena,[830],s6Step19Add0During,s6Step19Add0Work,s6Step19Add1During,s6Step19Add1Work⟩
-theorem s6Step19F4_checked : compileHmrHybridF4Log s6Step19HeadFvAfter 814 807 s6Step19Add0A s6Step19Add0B s6Step19Add1A s6Step19Add1B [854] [830] s6Step19Add0Work s6Step19Add1Work=some s6Step19F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step19HeadFvAfter s6Step19F4FlagArena s6Step19Add0Arena s6Step19Add0During s6Step19Add1During 814 807
-    s6Step19Add0A s6Step19Add0B s6Step19Add1A s6Step19Add1B [854] [830] s6Step19Add0Work s6Step19Add1Work
-    (fun q hq => s6Step19F4_owned (List.mem_toFinset.mpr hq)) s6Step19F4_flag s6Step19F4_carry
-    s6Step19F4_distinct s6Step19F4_apart s6Step19Add0_checked s6Step19Add1_checked
-def s6Step20F4FlagArena : Arena := ⟨s6Step20HeadFvAfter.live∪{898},Finset.union_subset s6Step20HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step20F4_flag : s6Step20HeadFvAfter.checkBorrow 1 [898]=some s6Step20F4FlagArena := by
+def s2Step52F4Plan : HmrHybridF4Plan := ⟨s2Step52F4FlagArena,[792],s2Step52Add0Arena,[800],s2Step52Add0During,s2Step52Add0Work,s2Step52Add1During,s2Step52Add1Work⟩
+theorem s2Step52F4_checked : compileHmrHybridF4Log s2Step52HeadFvAfter 810 809 s2Step52Add0A s2Step52Add0B s2Step52Add1A s2Step52Add1B [792] [800] s2Step52Add0Work s2Step52Add1Work=some s2Step52F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step52HeadFvAfter s2Step52F4FlagArena s2Step52Add0Arena s2Step52Add0During s2Step52Add1During 810 809
+    s2Step52Add0A s2Step52Add0B s2Step52Add1A s2Step52Add1B [792] [800] s2Step52Add0Work s2Step52Add1Work
+    (fun q hq => s2Step52F4_owned (List.mem_toFinset.mpr hq)) s2Step52F4_flag s2Step52F4_carry
+    s2Step52F4_distinct s2Step52F4_apart s2Step52Add0_checked s2Step52Add1_checked
+def s2Step53F4FlagArena : Arena := ⟨s2Step53HeadFvAfter.live∪{787},Finset.union_subset s2Step53HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step53F4_flag : s2Step53HeadFvAfter.checkBorrow 1 [787]=some s2Step53F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step20HeadFvAfter,arenaWires]
+  · norm_num [s2Step53HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step20F4_carry : s6Step20F4FlagArena.checkBorrow 1 [848]=some s6Step20Add0Arena := by
+theorem s2Step53F4_carry : s2Step53F4FlagArena.checkBorrow 1 [790]=some s2Step53Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step20F4FlagArena,s6Step20HeadFvAfter,arenaWires]
-  · change s6Step20Add0Arena.live=(s6Step20HeadFvAfter.live∪{898})∪{848}
-    apply hmrArena_union_pair_of_filter_check s6Step20HeadFvAfter s6Step20Add0Arena (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,839),(843,844),(845,846),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,839),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 898 848 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step20F4_owned : (869::813::((s6Step20Add0A++s6Step20Add1A)++(s6Step20Add0B++s6Step20Add1B))).toFinset⊆s6Step20HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step20HeadFvAfter (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,839),(843,844),(845,846),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step53F4FlagArena,s2Step53HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step53F4FlagArena,s2Step53HeadFvAfter,s2Step53Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step53F4_owned : (810::811::((s2Step53Add0A++s2Step53Add1A)++(s2Step53Add0B++s2Step53Add1B))).toFinset⊆s2Step53HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step53HeadFvAfter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<865)) rfl
   decide +kernel
-theorem s6Step20F4_distinct : (869::813::898::848::((s6Step20Add0A++s6Step20Add1A)++(s6Step20Add0B++s6Step20Add1B))).Nodup := by
+theorem s2Step53F4_distinct : (810::811::787::790::((s2Step53Add0A++s2Step53Add1A)++(s2Step53Add0B++s2Step53Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step20F4_apart : Disjoint (s6Step20Add0A++s6Step20Add0B).toFinset (s6Step20Add1A++s6Step20Add1B).toFinset := by
-  have nd : ((s6Step20Add0A++s6Step20Add0B)++(s6Step20Add1A++s6Step20Add1B)).Nodup := by
+theorem s2Step53F4_apart : Disjoint (s2Step53Add0A++s2Step53Add0B).toFinset (s2Step53Add1A++s2Step53Add1B).toFinset := by
+  have nd : ((s2Step53Add0A++s2Step53Add0B)++(s2Step53Add1A++s2Step53Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step20F4Plan : HmrHybridF4Plan := ⟨s6Step20F4FlagArena,[898],s6Step20Add0Arena,[848],s6Step20Add0During,s6Step20Add0Work,s6Step20Add1During,s6Step20Add1Work⟩
-theorem s6Step20F4_checked : compileHmrHybridF4Log s6Step20HeadFvAfter 869 813 s6Step20Add0A s6Step20Add0B s6Step20Add1A s6Step20Add1B [898] [848] s6Step20Add0Work s6Step20Add1Work=some s6Step20F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step20HeadFvAfter s6Step20F4FlagArena s6Step20Add0Arena s6Step20Add0During s6Step20Add1During 869 813
-    s6Step20Add0A s6Step20Add0B s6Step20Add1A s6Step20Add1B [898] [848] s6Step20Add0Work s6Step20Add1Work
-    (fun q hq => s6Step20F4_owned (List.mem_toFinset.mpr hq)) s6Step20F4_flag s6Step20F4_carry
-    s6Step20F4_distinct s6Step20F4_apart s6Step20Add0_checked s6Step20Add1_checked
-def s6Step21F4FlagArena : Arena := ⟨s6Step21HeadFvAfter.live∪{841},Finset.union_subset s6Step21HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step21F4_flag : s6Step21HeadFvAfter.checkBorrow 1 [841]=some s6Step21F4FlagArena := by
+def s2Step53F4Plan : HmrHybridF4Plan := ⟨s2Step53F4FlagArena,[787],s2Step53Add0Arena,[790],s2Step53Add0During,s2Step53Add0Work,s2Step53Add1During,s2Step53Add1Work⟩
+theorem s2Step53F4_checked : compileHmrHybridF4Log s2Step53HeadFvAfter 810 811 s2Step53Add0A s2Step53Add0B s2Step53Add1A s2Step53Add1B [787] [790] s2Step53Add0Work s2Step53Add1Work=some s2Step53F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step53HeadFvAfter s2Step53F4FlagArena s2Step53Add0Arena s2Step53Add0During s2Step53Add1During 810 811
+    s2Step53Add0A s2Step53Add0B s2Step53Add1A s2Step53Add1B [787] [790] s2Step53Add0Work s2Step53Add1Work
+    (fun q hq => s2Step53F4_owned (List.mem_toFinset.mpr hq)) s2Step53F4_flag s2Step53F4_carry
+    s2Step53F4_distinct s2Step53F4_apart s2Step53Add0_checked s2Step53Add1_checked
+def s2Step54F4FlagArena : Arena := ⟨s2Step54HeadFvAfter.live∪{792},Finset.union_subset s2Step54HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step54F4_flag : s2Step54HeadFvAfter.checkBorrow 1 [792]=some s2Step54F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step21HeadFvAfter,arenaWires]
+  · norm_num [s2Step54HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step21F4_carry : s6Step21F4FlagArena.checkBorrow 1 [839]=some s6Step21Add0Arena := by
+theorem s2Step54F4_carry : s2Step54F4FlagArena.checkBorrow 1 [800]=some s2Step54Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step21F4FlagArena,s6Step21HeadFvAfter,arenaWires]
-  · change s6Step21Add0Arena.live=(s6Step21HeadFvAfter.live∪{841})∪{839}
-    apply hmrArena_union_pair_of_filter_check s6Step21HeadFvAfter s6Step21Add0Arena (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,839),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 841 839 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step21F4_owned : (854::860::((s6Step21Add0A++s6Step21Add1A)++(s6Step21Add0B++s6Step21Add1B))).toFinset⊆s6Step21HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step21HeadFvAfter (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,839),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(911,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step54F4FlagArena,s2Step54HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step54F4FlagArena,s2Step54HeadFvAfter,s2Step54Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step54F4_owned : (810::807::((s2Step54Add0A++s2Step54Add1A)++(s2Step54Add0B++s2Step54Add1B))).toFinset⊆s2Step54HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step54HeadFvAfter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<866)) rfl
   decide +kernel
-theorem s6Step21F4_distinct : (854::860::841::839::((s6Step21Add0A++s6Step21Add1A)++(s6Step21Add0B++s6Step21Add1B))).Nodup := by
+theorem s2Step54F4_distinct : (810::807::792::800::((s2Step54Add0A++s2Step54Add1A)++(s2Step54Add0B++s2Step54Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step21F4_apart : Disjoint (s6Step21Add0A++s6Step21Add0B).toFinset (s6Step21Add1A++s6Step21Add1B).toFinset := by
-  have nd : ((s6Step21Add0A++s6Step21Add0B)++(s6Step21Add1A++s6Step21Add1B)).Nodup := by
+theorem s2Step54F4_apart : Disjoint (s2Step54Add0A++s2Step54Add0B).toFinset (s2Step54Add1A++s2Step54Add1B).toFinset := by
+  have nd : ((s2Step54Add0A++s2Step54Add0B)++(s2Step54Add1A++s2Step54Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step21F4Plan : HmrHybridF4Plan := ⟨s6Step21F4FlagArena,[841],s6Step21Add0Arena,[839],s6Step21Add0During,s6Step21Add0Work,s6Step21Add1During,s6Step21Add1Work⟩
-theorem s6Step21F4_checked : compileHmrHybridF4Log s6Step21HeadFvAfter 854 860 s6Step21Add0A s6Step21Add0B s6Step21Add1A s6Step21Add1B [841] [839] s6Step21Add0Work s6Step21Add1Work=some s6Step21F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step21HeadFvAfter s6Step21F4FlagArena s6Step21Add0Arena s6Step21Add0During s6Step21Add1During 854 860
-    s6Step21Add0A s6Step21Add0B s6Step21Add1A s6Step21Add1B [841] [839] s6Step21Add0Work s6Step21Add1Work
-    (fun q hq => s6Step21F4_owned (List.mem_toFinset.mpr hq)) s6Step21F4_flag s6Step21F4_carry
-    s6Step21F4_distinct s6Step21F4_apart s6Step21Add0_checked s6Step21Add1_checked
-def s6Step22F4FlagArena : Arena := ⟨s6Step22HeadFvAfter.live∪{794},Finset.union_subset s6Step22HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step22F4_flag : s6Step22HeadFvAfter.checkBorrow 1 [794]=some s6Step22F4FlagArena := by
+def s2Step54F4Plan : HmrHybridF4Plan := ⟨s2Step54F4FlagArena,[792],s2Step54Add0Arena,[800],s2Step54Add0During,s2Step54Add0Work,s2Step54Add1During,s2Step54Add1Work⟩
+theorem s2Step54F4_checked : compileHmrHybridF4Log s2Step54HeadFvAfter 810 807 s2Step54Add0A s2Step54Add0B s2Step54Add1A s2Step54Add1B [792] [800] s2Step54Add0Work s2Step54Add1Work=some s2Step54F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step54HeadFvAfter s2Step54F4FlagArena s2Step54Add0Arena s2Step54Add0During s2Step54Add1During 810 807
+    s2Step54Add0A s2Step54Add0B s2Step54Add1A s2Step54Add1B [792] [800] s2Step54Add0Work s2Step54Add1Work
+    (fun q hq => s2Step54F4_owned (List.mem_toFinset.mpr hq)) s2Step54F4_flag s2Step54F4_carry
+    s2Step54F4_distinct s2Step54F4_apart s2Step54Add0_checked s2Step54Add1_checked
+def s2Step55F4FlagArena : Arena := ⟨s2Step55HeadFvAfter.live∪{844},Finset.union_subset s2Step55HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step55F4_flag : s2Step55HeadFvAfter.checkBorrow 1 [844]=some s2Step55F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step22HeadFvAfter,arenaWires]
+  · norm_num [s2Step55HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step22F4_carry : s6Step22F4FlagArena.checkBorrow 1 [850]=some s6Step22Add0Arena := by
+theorem s2Step55F4_carry : s2Step55F4FlagArena.checkBorrow 1 [845]=some s2Step55Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step22F4FlagArena,s6Step22HeadFvAfter,arenaWires]
-  · change s6Step22Add0Arena.live=(s6Step22HeadFvAfter.live∪{794})∪{850}
-    apply hmrArena_union_pair_of_filter_check s6Step22HeadFvAfter s6Step22Add0Arena (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 794 850 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step22F4_owned : (898::862::((s6Step22Add0A++s6Step22Add1A)++(s6Step22Add0B++s6Step22Add1B))).toFinset⊆s6Step22HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step22HeadFvAfter (fun q => ([(0,781),(789,790),(793,794),(795,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step55F4FlagArena,s2Step55HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step55F4FlagArena,s2Step55HeadFvAfter,s2Step55Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step55F4_owned : (815::787::((s2Step55Add0A++s2Step55Add1A)++(s2Step55Add0B++s2Step55Add1B))).toFinset⊆s2Step55HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step55HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<866)) rfl
   decide +kernel
-theorem s6Step22F4_distinct : (898::862::794::850::((s6Step22Add0A++s6Step22Add1A)++(s6Step22Add0B++s6Step22Add1B))).Nodup := by
+theorem s2Step55F4_distinct : (815::787::844::845::((s2Step55Add0A++s2Step55Add1A)++(s2Step55Add0B++s2Step55Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step22F4_apart : Disjoint (s6Step22Add0A++s6Step22Add0B).toFinset (s6Step22Add1A++s6Step22Add1B).toFinset := by
-  have nd : ((s6Step22Add0A++s6Step22Add0B)++(s6Step22Add1A++s6Step22Add1B)).Nodup := by
+theorem s2Step55F4_apart : Disjoint (s2Step55Add0A++s2Step55Add0B).toFinset (s2Step55Add1A++s2Step55Add1B).toFinset := by
+  have nd : ((s2Step55Add0A++s2Step55Add0B)++(s2Step55Add1A++s2Step55Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step22F4Plan : HmrHybridF4Plan := ⟨s6Step22F4FlagArena,[794],s6Step22Add0Arena,[850],s6Step22Add0During,s6Step22Add0Work,s6Step22Add1During,s6Step22Add1Work⟩
-theorem s6Step22F4_checked : compileHmrHybridF4Log s6Step22HeadFvAfter 898 862 s6Step22Add0A s6Step22Add0B s6Step22Add1A s6Step22Add1B [794] [850] s6Step22Add0Work s6Step22Add1Work=some s6Step22F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step22HeadFvAfter s6Step22F4FlagArena s6Step22Add0Arena s6Step22Add0During s6Step22Add1During 898 862
-    s6Step22Add0A s6Step22Add0B s6Step22Add1A s6Step22Add1B [794] [850] s6Step22Add0Work s6Step22Add1Work
-    (fun q hq => s6Step22F4_owned (List.mem_toFinset.mpr hq)) s6Step22F4_flag s6Step22F4_carry
-    s6Step22F4_distinct s6Step22F4_apart s6Step22Add0_checked s6Step22Add1_checked
-def s6Step23F4FlagArena : Arena := ⟨s6Step23HeadFvAfter.live∪{881},Finset.union_subset s6Step23HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step23F4_flag : s6Step23HeadFvAfter.checkBorrow 1 [881]=some s6Step23F4FlagArena := by
+def s2Step55F4Plan : HmrHybridF4Plan := ⟨s2Step55F4FlagArena,[844],s2Step55Add0Arena,[845],s2Step55Add0During,s2Step55Add0Work,s2Step55Add1During,s2Step55Add1Work⟩
+theorem s2Step55F4_checked : compileHmrHybridF4Log s2Step55HeadFvAfter 815 787 s2Step55Add0A s2Step55Add0B s2Step55Add1A s2Step55Add1B [844] [845] s2Step55Add0Work s2Step55Add1Work=some s2Step55F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step55HeadFvAfter s2Step55F4FlagArena s2Step55Add0Arena s2Step55Add0During s2Step55Add1During 815 787
+    s2Step55Add0A s2Step55Add0B s2Step55Add1A s2Step55Add1B [844] [845] s2Step55Add0Work s2Step55Add1Work
+    (fun q hq => s2Step55F4_owned (List.mem_toFinset.mpr hq)) s2Step55F4_flag s2Step55F4_carry
+    s2Step55F4_distinct s2Step55F4_apart s2Step55Add0_checked s2Step55Add1_checked
+def s2Step56F4FlagArena : Arena := ⟨s2Step56HeadFvAfter.live∪{807},Finset.union_subset s2Step56HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step56F4_flag : s2Step56HeadFvAfter.checkBorrow 1 [807]=some s2Step56F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step23HeadFvAfter,arenaWires]
+  · norm_num [s2Step56HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step23F4_carry : s6Step23F4FlagArena.checkBorrow 1 [853]=some s6Step23Add0Arena := by
+theorem s2Step56F4_carry : s2Step56F4FlagArena.checkBorrow 1 [812]=some s2Step56Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step23F4FlagArena,s6Step23HeadFvAfter,arenaWires]
-  · change s6Step23Add0Arena.live=(s6Step23HeadFvAfter.live∪{881})∪{853}
-    apply hmrArena_union_pair_of_filter_check s6Step23HeadFvAfter s6Step23Add0Arena (fun q => ([(0,781),(789,790),(793,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 881 853 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step23F4_owned : (841::807::((s6Step23Add0A++s6Step23Add1A)++(s6Step23Add0B++s6Step23Add1B))).toFinset⊆s6Step23HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step23HeadFvAfter (fun q => ([(0,781),(789,790),(793,797),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,861),(862,866),(868,871),(872,877),(880,881),(882,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step56F4FlagArena,s2Step56HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step56F4FlagArena,s2Step56HeadFvAfter,s2Step56Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step56F4_owned : (815::814::((s2Step56Add0A++s2Step56Add1A)++(s2Step56Add0B++s2Step56Add1B))).toFinset⊆s2Step56HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step56HeadFvAfter (fun q => (0≤q ∧ q<807) ∨ (808≤q ∧ q<812) ∨ (813≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step23F4_distinct : (841::807::881::853::((s6Step23Add0A++s6Step23Add1A)++(s6Step23Add0B++s6Step23Add1B))).Nodup := by
+theorem s2Step56F4_distinct : (815::814::807::812::((s2Step56Add0A++s2Step56Add1A)++(s2Step56Add0B++s2Step56Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step23F4_apart : Disjoint (s6Step23Add0A++s6Step23Add0B).toFinset (s6Step23Add1A++s6Step23Add1B).toFinset := by
-  have nd : ((s6Step23Add0A++s6Step23Add0B)++(s6Step23Add1A++s6Step23Add1B)).Nodup := by
+theorem s2Step56F4_apart : Disjoint (s2Step56Add0A++s2Step56Add0B).toFinset (s2Step56Add1A++s2Step56Add1B).toFinset := by
+  have nd : ((s2Step56Add0A++s2Step56Add0B)++(s2Step56Add1A++s2Step56Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step23F4Plan : HmrHybridF4Plan := ⟨s6Step23F4FlagArena,[881],s6Step23Add0Arena,[853],s6Step23Add0During,s6Step23Add0Work,s6Step23Add1During,s6Step23Add1Work⟩
-theorem s6Step23F4_checked : compileHmrHybridF4Log s6Step23HeadFvAfter 841 807 s6Step23Add0A s6Step23Add0B s6Step23Add1A s6Step23Add1B [881] [853] s6Step23Add0Work s6Step23Add1Work=some s6Step23F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step23HeadFvAfter s6Step23F4FlagArena s6Step23Add0Arena s6Step23Add0During s6Step23Add1During 841 807
-    s6Step23Add0A s6Step23Add0B s6Step23Add1A s6Step23Add1B [881] [853] s6Step23Add0Work s6Step23Add1Work
-    (fun q hq => s6Step23F4_owned (List.mem_toFinset.mpr hq)) s6Step23F4_flag s6Step23F4_carry
-    s6Step23F4_distinct s6Step23F4_apart s6Step23Add0_checked s6Step23Add1_checked
-def s6Step24F4FlagArena : Arena := ⟨s6Step24HeadFvAfter.live∪{867},Finset.union_subset s6Step24HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step24F4_flag : s6Step24HeadFvAfter.checkBorrow 1 [867]=some s6Step24F4FlagArena := by
+def s2Step56F4Plan : HmrHybridF4Plan := ⟨s2Step56F4FlagArena,[807],s2Step56Add0Arena,[812],s2Step56Add0During,s2Step56Add0Work,s2Step56Add1During,s2Step56Add1Work⟩
+theorem s2Step56F4_checked : compileHmrHybridF4Log s2Step56HeadFvAfter 815 814 s2Step56Add0A s2Step56Add0B s2Step56Add1A s2Step56Add1B [807] [812] s2Step56Add0Work s2Step56Add1Work=some s2Step56F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step56HeadFvAfter s2Step56F4FlagArena s2Step56Add0Arena s2Step56Add0During s2Step56Add1During 815 814
+    s2Step56Add0A s2Step56Add0B s2Step56Add1A s2Step56Add1B [807] [812] s2Step56Add0Work s2Step56Add1Work
+    (fun q hq => s2Step56F4_owned (List.mem_toFinset.mpr hq)) s2Step56F4_flag s2Step56F4_carry
+    s2Step56F4_distinct s2Step56F4_apart s2Step56Add0_checked s2Step56Add1_checked
+def s2Step57F4FlagArena : Arena := ⟨s2Step57HeadFvAfter.live∪{807},Finset.union_subset s2Step57HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step57F4_flag : s2Step57HeadFvAfter.checkBorrow 1 [807]=some s2Step57F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step24HeadFvAfter,arenaWires]
+  · norm_num [s2Step57HeadFvAfter,s2Step56HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step24F4_carry : s6Step24F4FlagArena.checkBorrow 1 [786]=some s6Step24Add0Arena := by
+theorem s2Step57F4_carry : s2Step57F4FlagArena.checkBorrow 1 [812]=some s2Step57Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step24F4FlagArena,s6Step24HeadFvAfter,arenaWires]
-  · change s6Step24Add0Arena.live=(s6Step24HeadFvAfter.live∪{867})∪{786}
-    apply hmrArena_union_pair_of_filter_check s6Step24HeadFvAfter s6Step24Add0Arena (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 867 786 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step24F4_owned : (794::813::((s6Step24Add0A++s6Step24Add1A)++(s6Step24Add0B++s6Step24Add1B))).toFinset⊆s6Step24HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step24HeadFvAfter (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step57F4FlagArena,s2Step57HeadFvAfter,s2Step56HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step57F4FlagArena,s2Step57HeadFvAfter,s2Step56HeadFvAfter,s2Step57Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step57F4_owned : (815::817::((s2Step57Add0A++s2Step57Add1A)++(s2Step57Add0B++s2Step57Add1B))).toFinset⊆s2Step57HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step57HeadFvAfter (fun q => (0≤q ∧ q<807) ∨ (808≤q ∧ q<812) ∨ (813≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step24F4_distinct : (794::813::867::786::((s6Step24Add0A++s6Step24Add1A)++(s6Step24Add0B++s6Step24Add1B))).Nodup := by
+theorem s2Step57F4_distinct : (815::817::807::812::((s2Step57Add0A++s2Step57Add1A)++(s2Step57Add0B++s2Step57Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step24F4_apart : Disjoint (s6Step24Add0A++s6Step24Add0B).toFinset (s6Step24Add1A++s6Step24Add1B).toFinset := by
-  have nd : ((s6Step24Add0A++s6Step24Add0B)++(s6Step24Add1A++s6Step24Add1B)).Nodup := by
+theorem s2Step57F4_apart : Disjoint (s2Step57Add0A++s2Step57Add0B).toFinset (s2Step57Add1A++s2Step57Add1B).toFinset := by
+  have nd : ((s2Step57Add0A++s2Step57Add0B)++(s2Step57Add1A++s2Step57Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step24F4Plan : HmrHybridF4Plan := ⟨s6Step24F4FlagArena,[867],s6Step24Add0Arena,[786],s6Step24Add0During,s6Step24Add0Work,s6Step24Add1During,s6Step24Add1Work⟩
-theorem s6Step24F4_checked : compileHmrHybridF4Log s6Step24HeadFvAfter 794 813 s6Step24Add0A s6Step24Add0B s6Step24Add1A s6Step24Add1B [867] [786] s6Step24Add0Work s6Step24Add1Work=some s6Step24F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step24HeadFvAfter s6Step24F4FlagArena s6Step24Add0Arena s6Step24Add0During s6Step24Add1During 794 813
-    s6Step24Add0A s6Step24Add0B s6Step24Add1A s6Step24Add1B [867] [786] s6Step24Add0Work s6Step24Add1Work
-    (fun q hq => s6Step24F4_owned (List.mem_toFinset.mpr hq)) s6Step24F4_flag s6Step24F4_carry
-    s6Step24F4_distinct s6Step24F4_apart s6Step24Add0_checked s6Step24Add1_checked
-def s6Step25F4FlagArena : Arena := ⟨s6Step25HeadFvAfter.live∪{807},Finset.union_subset s6Step25HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step25F4_flag : s6Step25HeadFvAfter.checkBorrow 1 [807]=some s6Step25F4FlagArena := by
+def s2Step57F4Plan : HmrHybridF4Plan := ⟨s2Step57F4FlagArena,[807],s2Step57Add0Arena,[812],s2Step57Add0During,s2Step57Add0Work,s2Step57Add1During,s2Step57Add1Work⟩
+theorem s2Step57F4_checked : compileHmrHybridF4Log s2Step57HeadFvAfter 815 817 s2Step57Add0A s2Step57Add0B s2Step57Add1A s2Step57Add1B [807] [812] s2Step57Add0Work s2Step57Add1Work=some s2Step57F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step57HeadFvAfter s2Step57F4FlagArena s2Step57Add0Arena s2Step57Add0During s2Step57Add1During 815 817
+    s2Step57Add0A s2Step57Add0B s2Step57Add1A s2Step57Add1B [807] [812] s2Step57Add0Work s2Step57Add1Work
+    (fun q hq => s2Step57F4_owned (List.mem_toFinset.mpr hq)) s2Step57F4_flag s2Step57F4_carry
+    s2Step57F4_distinct s2Step57F4_apart s2Step57Add0_checked s2Step57Add1_checked
+def s2Step58F4FlagArena : Arena := ⟨s2Step58HeadFvAfter.live∪{814},Finset.union_subset s2Step58HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step58F4_flag : s2Step58HeadFvAfter.checkBorrow 1 [814]=some s2Step58F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step25HeadFvAfter,arenaWires]
+  · norm_num [s2Step58HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step25F4_carry : s6Step25F4FlagArena.checkBorrow 1 [862]=some s6Step25Add0Arena := by
+theorem s2Step58F4_carry : s2Step58F4FlagArena.checkBorrow 1 [800]=some s2Step58Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step25F4FlagArena,s6Step25HeadFvAfter,arenaWires]
-  · change s6Step25Add0Arena.live=(s6Step25HeadFvAfter.live∪{807})∪{862}
-    apply hmrArena_union_pair_of_filter_check s6Step25HeadFvAfter s6Step25Add0Arena (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(863,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 807 862 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step25F4_owned : (859::876::((s6Step25Add0A++s6Step25Add1A)++(s6Step25Add0B++s6Step25Add1B))).toFinset⊆s6Step25HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step25HeadFvAfter (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(863,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step58F4FlagArena,s2Step58HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step58F4FlagArena,s2Step58HeadFvAfter,s2Step58Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step58F4_owned : (815::816::((s2Step58Add0A++s2Step58Add1A)++(s2Step58Add0B++s2Step58Add1B))).toFinset⊆s2Step58HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step58HeadFvAfter (fun q => (0≤q ∧ q<800) ∨ (801≤q ∧ q<807) ∨ (808≤q ∧ q<812) ∨ (813≤q ∧ q<814) ∨ (815≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step25F4_distinct : (859::876::807::862::((s6Step25Add0A++s6Step25Add1A)++(s6Step25Add0B++s6Step25Add1B))).Nodup := by
+theorem s2Step58F4_distinct : (815::816::814::800::((s2Step58Add0A++s2Step58Add1A)++(s2Step58Add0B++s2Step58Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step25F4_apart : Disjoint (s6Step25Add0A++s6Step25Add0B).toFinset (s6Step25Add1A++s6Step25Add1B).toFinset := by
-  have nd : ((s6Step25Add0A++s6Step25Add0B)++(s6Step25Add1A++s6Step25Add1B)).Nodup := by
+theorem s2Step58F4_apart : Disjoint (s2Step58Add0A++s2Step58Add0B).toFinset (s2Step58Add1A++s2Step58Add1B).toFinset := by
+  have nd : ((s2Step58Add0A++s2Step58Add0B)++(s2Step58Add1A++s2Step58Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step25F4Plan : HmrHybridF4Plan := ⟨s6Step25F4FlagArena,[807],s6Step25Add0Arena,[862],s6Step25Add0During,s6Step25Add0Work,s6Step25Add1During,s6Step25Add1Work⟩
-theorem s6Step25F4_checked : compileHmrHybridF4Log s6Step25HeadFvAfter 859 876 s6Step25Add0A s6Step25Add0B s6Step25Add1A s6Step25Add1B [807] [862] s6Step25Add0Work s6Step25Add1Work=some s6Step25F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step25HeadFvAfter s6Step25F4FlagArena s6Step25Add0Arena s6Step25Add0During s6Step25Add1During 859 876
-    s6Step25Add0A s6Step25Add0B s6Step25Add1A s6Step25Add1B [807] [862] s6Step25Add0Work s6Step25Add1Work
-    (fun q hq => s6Step25F4_owned (List.mem_toFinset.mpr hq)) s6Step25F4_flag s6Step25F4_carry
-    s6Step25F4_distinct s6Step25F4_apart s6Step25Add0_checked s6Step25Add1_checked
-def s6Step26F4FlagArena : Arena := ⟨s6Step26HeadFvAfter.live∪{867},Finset.union_subset s6Step26HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step26F4_flag : s6Step26HeadFvAfter.checkBorrow 1 [867]=some s6Step26F4FlagArena := by
+def s2Step58F4Plan : HmrHybridF4Plan := ⟨s2Step58F4FlagArena,[814],s2Step58Add0Arena,[800],s2Step58Add0During,s2Step58Add0Work,s2Step58Add1During,s2Step58Add1Work⟩
+theorem s2Step58F4_checked : compileHmrHybridF4Log s2Step58HeadFvAfter 815 816 s2Step58Add0A s2Step58Add0B s2Step58Add1A s2Step58Add1B [814] [800] s2Step58Add0Work s2Step58Add1Work=some s2Step58F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step58HeadFvAfter s2Step58F4FlagArena s2Step58Add0Arena s2Step58Add0During s2Step58Add1During 815 816
+    s2Step58Add0A s2Step58Add0B s2Step58Add1A s2Step58Add1B [814] [800] s2Step58Add0Work s2Step58Add1Work
+    (fun q hq => s2Step58F4_owned (List.mem_toFinset.mpr hq)) s2Step58F4_flag s2Step58F4_carry
+    s2Step58F4_distinct s2Step58F4_apart s2Step58Add0_checked s2Step58Add1_checked
+def s2Step59F4FlagArena : Arena := ⟨s2Step59HeadFvAfter.live∪{807},Finset.union_subset s2Step59HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step59F4_flag : s2Step59HeadFvAfter.checkBorrow 1 [807]=some s2Step59F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step26HeadFvAfter,arenaWires]
+  · norm_num [s2Step59HeadFvAfter,s2Step56HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step26F4_carry : s6Step26F4FlagArena.checkBorrow 1 [786]=some s6Step26Add0Arena := by
+theorem s2Step59F4_carry : s2Step59F4FlagArena.checkBorrow 1 [812]=some s2Step59Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step26F4FlagArena,s6Step26HeadFvAfter,arenaWires]
-  · change s6Step26Add0Arena.live=(s6Step26HeadFvAfter.live∪{867})∪{786}
-    apply hmrArena_union_pair_of_filter_check s6Step26HeadFvAfter s6Step26Add0Arena (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 867 786 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step26F4_owned : (853::881::((s6Step26Add0A++s6Step26Add1A)++(s6Step26Add0B++s6Step26Add1B))).toFinset⊆s6Step26HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step26HeadFvAfter (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(868,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step59F4FlagArena,s2Step59HeadFvAfter,s2Step56HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step59F4FlagArena,s2Step59HeadFvAfter,s2Step56HeadFvAfter,s2Step59Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step59F4_owned : (792::790::((s2Step59Add0A++s2Step59Add1A)++(s2Step59Add0B++s2Step59Add1B))).toFinset⊆s2Step59HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step59HeadFvAfter (fun q => (0≤q ∧ q<807) ∨ (808≤q ∧ q<812) ∨ (813≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step26F4_distinct : (853::881::867::786::((s6Step26Add0A++s6Step26Add1A)++(s6Step26Add0B++s6Step26Add1B))).Nodup := by
+theorem s2Step59F4_distinct : (792::790::807::812::((s2Step59Add0A++s2Step59Add1A)++(s2Step59Add0B++s2Step59Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step26F4_apart : Disjoint (s6Step26Add0A++s6Step26Add0B).toFinset (s6Step26Add1A++s6Step26Add1B).toFinset := by
-  have nd : ((s6Step26Add0A++s6Step26Add0B)++(s6Step26Add1A++s6Step26Add1B)).Nodup := by
+theorem s2Step59F4_apart : Disjoint (s2Step59Add0A++s2Step59Add0B).toFinset (s2Step59Add1A++s2Step59Add1B).toFinset := by
+  have nd : ((s2Step59Add0A++s2Step59Add0B)++(s2Step59Add1A++s2Step59Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step26F4Plan : HmrHybridF4Plan := ⟨s6Step26F4FlagArena,[867],s6Step26Add0Arena,[786],s6Step26Add0During,s6Step26Add0Work,s6Step26Add1During,s6Step26Add1Work⟩
-theorem s6Step26F4_checked : compileHmrHybridF4Log s6Step26HeadFvAfter 853 881 s6Step26Add0A s6Step26Add0B s6Step26Add1A s6Step26Add1B [867] [786] s6Step26Add0Work s6Step26Add1Work=some s6Step26F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step26HeadFvAfter s6Step26F4FlagArena s6Step26Add0Arena s6Step26Add0During s6Step26Add1During 853 881
-    s6Step26Add0A s6Step26Add0B s6Step26Add1A s6Step26Add1B [867] [786] s6Step26Add0Work s6Step26Add1Work
-    (fun q hq => s6Step26F4_owned (List.mem_toFinset.mpr hq)) s6Step26F4_flag s6Step26F4_carry
-    s6Step26F4_distinct s6Step26F4_apart s6Step26Add0_checked s6Step26Add1_checked
-def s6Step27F4FlagArena : Arena := ⟨s6Step27HeadFvAfter.live∪{877},Finset.union_subset s6Step27HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step27F4_flag : s6Step27HeadFvAfter.checkBorrow 1 [877]=some s6Step27F4FlagArena := by
+def s2Step59F4Plan : HmrHybridF4Plan := ⟨s2Step59F4FlagArena,[807],s2Step59Add0Arena,[812],s2Step59Add0During,s2Step59Add0Work,s2Step59Add1During,s2Step59Add1Work⟩
+theorem s2Step59F4_checked : compileHmrHybridF4Log s2Step59HeadFvAfter 792 790 s2Step59Add0A s2Step59Add0B s2Step59Add1A s2Step59Add1B [807] [812] s2Step59Add0Work s2Step59Add1Work=some s2Step59F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step59HeadFvAfter s2Step59F4FlagArena s2Step59Add0Arena s2Step59Add0During s2Step59Add1During 792 790
+    s2Step59Add0A s2Step59Add0B s2Step59Add1A s2Step59Add1B [807] [812] s2Step59Add0Work s2Step59Add1Work
+    (fun q hq => s2Step59F4_owned (List.mem_toFinset.mpr hq)) s2Step59F4_flag s2Step59F4_carry
+    s2Step59F4_distinct s2Step59F4_apart s2Step59Add0_checked s2Step59Add1_checked
+def s2Step60F4FlagArena : Arena := ⟨s2Step60HeadFvAfter.live∪{844},Finset.union_subset s2Step60HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step60F4_flag : s2Step60HeadFvAfter.checkBorrow 1 [844]=some s2Step60F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step27HeadFvAfter,arenaWires]
+  · norm_num [s2Step60HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step27F4_carry : s6Step27F4FlagArena.checkBorrow 1 [855]=some s6Step27Add0Arena := by
+theorem s2Step60F4_carry : s2Step60F4FlagArena.checkBorrow 1 [845]=some s2Step60Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step27F4FlagArena,s6Step27HeadFvAfter,arenaWires]
-  · change s6Step27Add0Arena.live=(s6Step27HeadFvAfter.live∪{877})∪{855}
-    apply hmrArena_union_pair_of_filter_check s6Step27HeadFvAfter s6Step27Add0Arena (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,861),(862,866),(867,871),(872,878),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 877 855 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step27F4_owned : (807::887::((s6Step27Add0A++s6Step27Add1A)++(s6Step27Add0B++s6Step27Add1B))).toFinset⊆s6Step27HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step27HeadFvAfter (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step60F4FlagArena,s2Step60HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step60F4FlagArena,s2Step60HeadFvAfter,s2Step60Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step60F4_owned : (814::820::((s2Step60Add0A++s2Step60Add1A)++(s2Step60Add0B++s2Step60Add1B))).toFinset⊆s2Step60HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step60HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step27F4_distinct : (807::887::877::855::((s6Step27Add0A++s6Step27Add1A)++(s6Step27Add0B++s6Step27Add1B))).Nodup := by
+theorem s2Step60F4_distinct : (814::820::844::845::((s2Step60Add0A++s2Step60Add1A)++(s2Step60Add0B++s2Step60Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step27F4_apart : Disjoint (s6Step27Add0A++s6Step27Add0B).toFinset (s6Step27Add1A++s6Step27Add1B).toFinset := by
-  have nd : ((s6Step27Add0A++s6Step27Add0B)++(s6Step27Add1A++s6Step27Add1B)).Nodup := by
+theorem s2Step60F4_apart : Disjoint (s2Step60Add0A++s2Step60Add0B).toFinset (s2Step60Add1A++s2Step60Add1B).toFinset := by
+  have nd : ((s2Step60Add0A++s2Step60Add0B)++(s2Step60Add1A++s2Step60Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step27F4Plan : HmrHybridF4Plan := ⟨s6Step27F4FlagArena,[877],s6Step27Add0Arena,[855],s6Step27Add0During,s6Step27Add0Work,s6Step27Add1During,s6Step27Add1Work⟩
-theorem s6Step27F4_checked : compileHmrHybridF4Log s6Step27HeadFvAfter 807 887 s6Step27Add0A s6Step27Add0B s6Step27Add1A s6Step27Add1B [877] [855] s6Step27Add0Work s6Step27Add1Work=some s6Step27F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step27HeadFvAfter s6Step27F4FlagArena s6Step27Add0Arena s6Step27Add0During s6Step27Add1During 807 887
-    s6Step27Add0A s6Step27Add0B s6Step27Add1A s6Step27Add1B [877] [855] s6Step27Add0Work s6Step27Add1Work
-    (fun q hq => s6Step27F4_owned (List.mem_toFinset.mpr hq)) s6Step27F4_flag s6Step27F4_carry
-    s6Step27F4_distinct s6Step27F4_apart s6Step27Add0_checked s6Step27Add1_checked
-def s6Step28F4FlagArena : Arena := ⟨s6Step28HeadFvAfter.live∪{877},Finset.union_subset s6Step28HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step28F4_flag : s6Step28HeadFvAfter.checkBorrow 1 [877]=some s6Step28F4FlagArena := by
+def s2Step60F4Plan : HmrHybridF4Plan := ⟨s2Step60F4FlagArena,[844],s2Step60Add0Arena,[845],s2Step60Add0During,s2Step60Add0Work,s2Step60Add1During,s2Step60Add1Work⟩
+theorem s2Step60F4_checked : compileHmrHybridF4Log s2Step60HeadFvAfter 814 820 s2Step60Add0A s2Step60Add0B s2Step60Add1A s2Step60Add1B [844] [845] s2Step60Add0Work s2Step60Add1Work=some s2Step60F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step60HeadFvAfter s2Step60F4FlagArena s2Step60Add0Arena s2Step60Add0During s2Step60Add1During 814 820
+    s2Step60Add0A s2Step60Add0B s2Step60Add1A s2Step60Add1B [844] [845] s2Step60Add0Work s2Step60Add1Work
+    (fun q hq => s2Step60F4_owned (List.mem_toFinset.mpr hq)) s2Step60F4_flag s2Step60F4_carry
+    s2Step60F4_distinct s2Step60F4_apart s2Step60Add0_checked s2Step60Add1_checked
+def s2Step61F4FlagArena : Arena := ⟨s2Step61HeadFvAfter.live∪{846},Finset.union_subset s2Step61HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step61F4_flag : s2Step61HeadFvAfter.checkBorrow 1 [846]=some s2Step61F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step28HeadFvAfter,arenaWires]
+  · norm_num [s2Step61HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step28F4_carry : s6Step28F4FlagArena.checkBorrow 1 [855]=some s6Step28Add0Arena := by
+theorem s2Step61F4_carry : s2Step61F4FlagArena.checkBorrow 1 [847]=some s2Step61Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step28F4FlagArena,s6Step28HeadFvAfter,arenaWires]
-  · change s6Step28Add0Arena.live=(s6Step28HeadFvAfter.live∪{877})∪{855}
-    apply hmrArena_union_pair_of_filter_check s6Step28HeadFvAfter s6Step28Add0Arena (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,861),(862,866),(867,871),(872,878),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 877 855 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step28F4_owned : (793::859::((s6Step28Add0A++s6Step28Add1A)++(s6Step28Add0B++s6Step28Add1B))).toFinset⊆s6Step28HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step28HeadFvAfter (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step61F4FlagArena,s2Step61HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step61F4FlagArena,s2Step61HeadFvAfter,s2Step61Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step61F4_owned : (807::817::((s2Step61Add0A++s2Step61Add1A)++(s2Step61Add0B++s2Step61Add1B))).toFinset⊆s2Step61HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step61HeadFvAfter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step28F4_distinct : (793::859::877::855::((s6Step28Add0A++s6Step28Add1A)++(s6Step28Add0B++s6Step28Add1B))).Nodup := by
+theorem s2Step61F4_distinct : (807::817::846::847::((s2Step61Add0A++s2Step61Add1A)++(s2Step61Add0B++s2Step61Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step28F4_apart : Disjoint (s6Step28Add0A++s6Step28Add0B).toFinset (s6Step28Add1A++s6Step28Add1B).toFinset := by
-  have nd : ((s6Step28Add0A++s6Step28Add0B)++(s6Step28Add1A++s6Step28Add1B)).Nodup := by
+theorem s2Step61F4_apart : Disjoint (s2Step61Add0A++s2Step61Add0B).toFinset (s2Step61Add1A++s2Step61Add1B).toFinset := by
+  have nd : ((s2Step61Add0A++s2Step61Add0B)++(s2Step61Add1A++s2Step61Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step28F4Plan : HmrHybridF4Plan := ⟨s6Step28F4FlagArena,[877],s6Step28Add0Arena,[855],s6Step28Add0During,s6Step28Add0Work,s6Step28Add1During,s6Step28Add1Work⟩
-theorem s6Step28F4_checked : compileHmrHybridF4Log s6Step28HeadFvAfter 793 859 s6Step28Add0A s6Step28Add0B s6Step28Add1A s6Step28Add1B [877] [855] s6Step28Add0Work s6Step28Add1Work=some s6Step28F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step28HeadFvAfter s6Step28F4FlagArena s6Step28Add0Arena s6Step28Add0During s6Step28Add1During 793 859
-    s6Step28Add0A s6Step28Add0B s6Step28Add1A s6Step28Add1B [877] [855] s6Step28Add0Work s6Step28Add1Work
-    (fun q hq => s6Step28F4_owned (List.mem_toFinset.mpr hq)) s6Step28F4_flag s6Step28F4_carry
-    s6Step28F4_distinct s6Step28F4_apart s6Step28Add0_checked s6Step28Add1_checked
-def s6Step29F4FlagArena : Arena := ⟨s6Step29HeadFvAfter.live∪{877},Finset.union_subset s6Step29HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step29F4_flag : s6Step29HeadFvAfter.checkBorrow 1 [877]=some s6Step29F4FlagArena := by
+def s2Step61F4Plan : HmrHybridF4Plan := ⟨s2Step61F4FlagArena,[846],s2Step61Add0Arena,[847],s2Step61Add0During,s2Step61Add0Work,s2Step61Add1During,s2Step61Add1Work⟩
+theorem s2Step61F4_checked : compileHmrHybridF4Log s2Step61HeadFvAfter 807 817 s2Step61Add0A s2Step61Add0B s2Step61Add1A s2Step61Add1B [846] [847] s2Step61Add0Work s2Step61Add1Work=some s2Step61F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step61HeadFvAfter s2Step61F4FlagArena s2Step61Add0Arena s2Step61Add0During s2Step61Add1During 807 817
+    s2Step61Add0A s2Step61Add0B s2Step61Add1A s2Step61Add1B [846] [847] s2Step61Add0Work s2Step61Add1Work
+    (fun q hq => s2Step61F4_owned (List.mem_toFinset.mpr hq)) s2Step61F4_flag s2Step61F4_carry
+    s2Step61F4_distinct s2Step61F4_apart s2Step61Add0_checked s2Step61Add1_checked
+def s2Step62F4FlagArena : Arena := ⟨s2Step62HeadFvAfter.live∪{814},Finset.union_subset s2Step62HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step62F4_flag : s2Step62HeadFvAfter.checkBorrow 1 [814]=some s2Step62F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step29HeadFvAfter,s6Step28HeadFvAfter,arenaWires]
+  · norm_num [s2Step62HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step29F4_carry : s6Step29F4FlagArena.checkBorrow 1 [855]=some s6Step29Add0Arena := by
+theorem s2Step62F4_carry : s2Step62F4FlagArena.checkBorrow 1 [790]=some s2Step62Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step29F4FlagArena,s6Step29HeadFvAfter,s6Step28HeadFvAfter,arenaWires]
-  · change s6Step29Add0Arena.live=(s6Step29HeadFvAfter.live∪{877})∪{855}
-    apply hmrArena_union_pair_of_filter_check s6Step29HeadFvAfter s6Step29Add0Arena (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,861),(862,866),(867,871),(872,878),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 877 855 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step29F4_owned : (768::881::((s6Step29Add0A++s6Step29Add1A)++(s6Step29Add0B++s6Step29Add1B))).toFinset⊆s6Step29HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step29HeadFvAfter (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step62F4FlagArena,s2Step62HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step62F4FlagArena,s2Step62HeadFvAfter,s2Step62Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step62F4_owned : (819::822::((s2Step62Add0A++s2Step62Add1A)++(s2Step62Add0B++s2Step62Add1B))).toFinset⊆s2Step62HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step62HeadFvAfter (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<814) ∨ (815≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867)) rfl
   decide +kernel
-theorem s6Step29F4_distinct : (768::881::877::855::((s6Step29Add0A++s6Step29Add1A)++(s6Step29Add0B++s6Step29Add1B))).Nodup := by
+theorem s2Step62F4_distinct : (819::822::814::790::((s2Step62Add0A++s2Step62Add1A)++(s2Step62Add0B++s2Step62Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step29F4_apart : Disjoint (s6Step29Add0A++s6Step29Add0B).toFinset (s6Step29Add1A++s6Step29Add1B).toFinset := by
-  have nd : ((s6Step29Add0A++s6Step29Add0B)++(s6Step29Add1A++s6Step29Add1B)).Nodup := by
+theorem s2Step62F4_apart : Disjoint (s2Step62Add0A++s2Step62Add0B).toFinset (s2Step62Add1A++s2Step62Add1B).toFinset := by
+  have nd : ((s2Step62Add0A++s2Step62Add0B)++(s2Step62Add1A++s2Step62Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step29F4Plan : HmrHybridF4Plan := ⟨s6Step29F4FlagArena,[877],s6Step29Add0Arena,[855],s6Step29Add0During,s6Step29Add0Work,s6Step29Add1During,s6Step29Add1Work⟩
-theorem s6Step29F4_checked : compileHmrHybridF4Log s6Step29HeadFvAfter 768 881 s6Step29Add0A s6Step29Add0B s6Step29Add1A s6Step29Add1B [877] [855] s6Step29Add0Work s6Step29Add1Work=some s6Step29F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step29HeadFvAfter s6Step29F4FlagArena s6Step29Add0Arena s6Step29Add0During s6Step29Add1During 768 881
-    s6Step29Add0A s6Step29Add0B s6Step29Add1A s6Step29Add1B [877] [855] s6Step29Add0Work s6Step29Add1Work
-    (fun q hq => s6Step29F4_owned (List.mem_toFinset.mpr hq)) s6Step29F4_flag s6Step29F4_carry
-    s6Step29F4_distinct s6Step29F4_apart s6Step29Add0_checked s6Step29Add1_checked
-def s6Step30F4FlagArena : Arena := ⟨s6Step30HeadFvAfter.live∪{877},Finset.union_subset s6Step30HeadFvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step30F4_flag : s6Step30HeadFvAfter.checkBorrow 1 [877]=some s6Step30F4FlagArena := by
+def s2Step62F4Plan : HmrHybridF4Plan := ⟨s2Step62F4FlagArena,[814],s2Step62Add0Arena,[790],s2Step62Add0During,s2Step62Add0Work,s2Step62Add1During,s2Step62Add1Work⟩
+theorem s2Step62F4_checked : compileHmrHybridF4Log s2Step62HeadFvAfter 819 822 s2Step62Add0A s2Step62Add0B s2Step62Add1A s2Step62Add1B [814] [790] s2Step62Add0Work s2Step62Add1Work=some s2Step62F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step62HeadFvAfter s2Step62F4FlagArena s2Step62Add0Arena s2Step62Add0During s2Step62Add1During 819 822
+    s2Step62Add0A s2Step62Add0B s2Step62Add1A s2Step62Add1B [814] [790] s2Step62Add0Work s2Step62Add1Work
+    (fun q hq => s2Step62F4_owned (List.mem_toFinset.mpr hq)) s2Step62F4_flag s2Step62F4_carry
+    s2Step62F4_distinct s2Step62F4_apart s2Step62Add0_checked s2Step62Add1_checked
+def s2Step63F4FlagArena : Arena := ⟨s2Step63HeadFvAfter.live∪{814},Finset.union_subset s2Step63HeadFvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step63F4_flag : s2Step63HeadFvAfter.checkBorrow 1 [814]=some s2Step63F4FlagArena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step30HeadFvAfter,arenaWires]
+  · norm_num [s2Step63HeadFvAfter,arenaWires]
   · rfl
-theorem s6Step30F4_carry : s6Step30F4FlagArena.checkBorrow 1 [855]=some s6Step30Add0Arena := by
+theorem s2Step63F4_carry : s2Step63F4FlagArena.checkBorrow 1 [790]=some s2Step63Add0Arena := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide)]
   apply hmrArena_reserve_of_live
   · norm_num [arenaWires]
-  · norm_num [s6Step30F4FlagArena,s6Step30HeadFvAfter,arenaWires]
-  · change s6Step30Add0Arena.live=(s6Step30HeadFvAfter.live∪{877})∪{855}
-    apply hmrArena_union_pair_of_filter_check s6Step30HeadFvAfter s6Step30Add0Arena (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(917,918),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,861),(862,866),(867,871),(872,878),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(917,918),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) 877 855 rfl rfl
-    · norm_num [arenaWires,Finset.insert_subset_iff]
-    · decide +kernel
-theorem s6Step30F4_owned : (802::793::((s6Step30Add0A++s6Step30Add1A)++(s6Step30Add0B++s6Step30Add1B))).toFinset⊆s6Step30HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step30HeadFvAfter (fun q => ([(0,781),(786,787),(789,790),(793,797),(799,800),(802,803),(805,806),(807,808),(813,815),(818,819),(821,824),(827,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,855),(856,861),(862,866),(867,871),(872,877),(880,884),(886,889),(890,891),(892,893),(895,896),(898,899),(901,902),(907,909),(910,912),(917,918),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) rfl
+  · norm_num [s2Step63F4FlagArena,s2Step63HeadFvAfter,arenaWires]
+  · ext q
+    simp only [s2Step63F4FlagArena,s2Step63HeadFvAfter,s2Step63Add0Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [Wire] at *
+    omega
+theorem s2Step63F4_owned : (819::821::((s2Step63Add0A++s2Step63Add1A)++(s2Step63Add0B++s2Step63Add1B))).toFinset⊆s2Step63HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step63HeadFvAfter (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<814) ∨ (815≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<867) ∨ (869≤q ∧ q<870)) rfl
   decide +kernel
-theorem s6Step30F4_distinct : (802::793::877::855::((s6Step30Add0A++s6Step30Add1A)++(s6Step30Add0B++s6Step30Add1B))).Nodup := by
+theorem s2Step63F4_distinct : (819::821::814::790::((s2Step63Add0A++s2Step63Add1A)++(s2Step63Add0B++s2Step63Add1B))).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step30F4_apart : Disjoint (s6Step30Add0A++s6Step30Add0B).toFinset (s6Step30Add1A++s6Step30Add1B).toFinset := by
-  have nd : ((s6Step30Add0A++s6Step30Add0B)++(s6Step30Add1A++s6Step30Add1B)).Nodup := by
+theorem s2Step63F4_apart : Disjoint (s2Step63Add0A++s2Step63Add0B).toFinset (s2Step63Add1A++s2Step63Add1B).toFinset := by
+  have nd : ((s2Step63Add0A++s2Step63Add0B)++(s2Step63Add1A++s2Step63Add1B)).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   apply Finset.disjoint_left.mpr
   intro q hq hr
   exact List.disjoint_left.mp (List.nodup_append'.mp nd).2.2 (List.mem_toFinset.mp hq) (List.mem_toFinset.mp hr)
-def s6Step30F4Plan : HmrHybridF4Plan := ⟨s6Step30F4FlagArena,[877],s6Step30Add0Arena,[855],s6Step30Add0During,s6Step30Add0Work,s6Step30Add1During,s6Step30Add1Work⟩
-theorem s6Step30F4_checked : compileHmrHybridF4Log s6Step30HeadFvAfter 802 793 s6Step30Add0A s6Step30Add0B s6Step30Add1A s6Step30Add1B [877] [855] s6Step30Add0Work s6Step30Add1Work=some s6Step30F4Plan := by
-  exact compileHmrHybridF4Log_of_parts s6Step30HeadFvAfter s6Step30F4FlagArena s6Step30Add0Arena s6Step30Add0During s6Step30Add1During 802 793
-    s6Step30Add0A s6Step30Add0B s6Step30Add1A s6Step30Add1B [877] [855] s6Step30Add0Work s6Step30Add1Work
-    (fun q hq => s6Step30F4_owned (List.mem_toFinset.mpr hq)) s6Step30F4_flag s6Step30F4_carry
-    s6Step30F4_distinct s6Step30F4_apart s6Step30Add0_checked s6Step30Add1_checked
+def s2Step63F4Plan : HmrHybridF4Plan := ⟨s2Step63F4FlagArena,[814],s2Step63Add0Arena,[790],s2Step63Add0During,s2Step63Add0Work,s2Step63Add1During,s2Step63Add1Work⟩
+theorem s2Step63F4_checked : compileHmrHybridF4Log s2Step63HeadFvAfter 819 821 s2Step63Add0A s2Step63Add0B s2Step63Add1A s2Step63Add1B [814] [790] s2Step63Add0Work s2Step63Add1Work=some s2Step63F4Plan := by
+  exact compileHmrHybridF4Log_of_parts s2Step63HeadFvAfter s2Step63F4FlagArena s2Step63Add0Arena s2Step63Add0During s2Step63Add1During 819 821
+    s2Step63Add0A s2Step63Add0B s2Step63Add1A s2Step63Add1B [814] [790] s2Step63Add0Work s2Step63Add1Work
+    (fun q hq => s2Step63F4_owned (List.mem_toFinset.mpr hq)) s2Step63F4_flag s2Step63F4_carry
+    s2Step63F4_distinct s2Step63F4_apart s2Step63Add0_checked s2Step63Add1_checked
 
 end ECDSAAdd.Arithmetic.Paper935

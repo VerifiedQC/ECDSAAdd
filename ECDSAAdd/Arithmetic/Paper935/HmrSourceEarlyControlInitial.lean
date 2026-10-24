@@ -2,7 +2,15 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl0
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl1
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl2
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl3
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl4
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl5
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl6
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl7
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl0
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl1
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl2
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl3
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl4
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl5
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl6
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl7

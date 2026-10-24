@@ -594,8 +594,8 @@ complete selected step certificates, still not all 533-step certificates.
 The complete source journals are now library data in `HmrSourceS2WalkLogs`
 and `HmrSourceS6WalkLogs`: each has 533 steps, generated in 16-step chunks
 by `generate_walk_logs.py` and reproduced by the pinned-source checker.
-`HmrSourceWalkLogFixtures` identifies the four certified lifecycle logs at
-their actual list indices. The diagnostic runner imports these same lists.
+`HmrSourceWalkLogFixtures` identifies every selected lifecycle log at
+its actual list index. The diagnostic runner imports these same lists.
 These data and length/index proofs do not establish whole-walk acceptance.
 
 `compileHmrSourceWalk_append` permits separate segment acceptance proofs to
@@ -605,26 +605,26 @@ also have an exact-plan converse to their `Logged` contract. These helpers
 avoid repeating a monolithic reduction when extending the selected coverage.
 
 
-The generated selection now includes step 1 of each walk. Early controls use
+Early controls use
 explicit returned plans assembled from separate equality, class, flag,
 history-growth and retirement checks. This exposes the boundary arenas and
 row banks without re-running the complete control checker during composition.
 
 
-The current generated selection extends the continuous prefix to steps 0–31
+The current generated selection extends the continuous prefix to steps 0–63
 of both walks (and retains the isolated arm-boundary checks at step 498).
-`HmrSourceWalkPrefix` composes the actual first 32 entries, proving each
+`HmrSourceWalkPrefix` composes the actual first 64 entries, proving each
 intermediate arena, row view and history register matches the next checker.
 `HmrRowsSuffix` lets bank certificates reuse one full-bank distinctness or
 ownership check for their ordered suffixes. Neither change establishes the
-remaining 501 steps or the reverse program.
+remaining 469 steps or the reverse program.
 
 
 The relocation composition also handles more than one move. The first
 observed two-move and three-move journals (steps 24 and 200 of each walk)
 have exact `checkRepack` certificates in `HmrSourceMultiRepack`. Each move
-uses the arena returned by its predecessor. Step 24 is also included in the continuous prefix; step 200 remains an
-isolated relocation component. Fragmented sample
+uses the arena returned by its predecessor. Step 24 is included in the
+continuous prefix; step 200 remains an isolated relocation component. Sample
 arenas use a Boolean interval-list predicate so their decidability does not
 require a large nested proposition during instance synthesis.
 
@@ -646,12 +646,12 @@ unfold the corresponding canonical arena when needed.
 The exit generator reads its pinned resize log once per invocation rather
 than once per step. All generated files remain covered by `--check` through
 the pinned-source checker. These changes optimize verification; the accepted
-continuous prefix covers thirty-two steps of each walk.
+continuous prefix covers sixty-four steps of each walk.
 
-The 32-step proof is split into two 16-step segment modules per walk. A
+The 64-step proof is split into four 16-step segment modules per walk. A
 separate join uses `compileHmrSourceWalk_append`, supplying the exact arena,
-bank, record and metadata returned by the first segment. The generator
-checks the actual exported list prefix, rather than substituting a new list.
+bank, record and metadata returned by the accumulated prefix. The generator
+checks equality with the actual exported list prefix.
 
 Large interval predicates use `List.any` with a Boolean membership test.
 `hmrInterval_any_iff` relates it to mathematical interval membership.
@@ -662,5 +662,11 @@ actual s6 step 36 control block whose output has 43 disjoint live intervals,
 then binds the returned arena to that interval list. This is the state before
 step 37; the control input later within step 37 has only 41 intervals. The
 pinned-log generator checks that 43 is the maximum over all early control
-allocation states. This additional example does not extend the continuous
-prefix beyond step 31.
+allocation states. Source step 36 is also inside the certified 64-step
+prefix; this separate theorem characterizes its fragmented output arena.
+
+Generated certificate imports now name the modules providing their referenced
+declarations. Explicit predecessor imports remain to bound parallel build
+work. Removing import lines from the import-only checkpoint leaves every Lean
+module body unchanged; future prefix expansions add the new step certificates
+separately.

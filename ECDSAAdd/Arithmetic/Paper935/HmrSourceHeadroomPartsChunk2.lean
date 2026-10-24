@@ -4,1604 +4,1604 @@ import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomPartsChunk1
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s2Step498HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<917)),Finset.filter_subset _ _⟩
-def s2Step498HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<918)),Finset.filter_subset _ _⟩
-def s2Step498HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845],769⟩
-def s2Step498HeadGFresh : List Wire := [917]
-theorem s2Step498HeadG_distinct : (s2Step498HeadGRow.sign::s2Step498HeadGRow.payload).Nodup := by
+def s2Step32HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step32HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step32HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779, 786],769⟩
+def s2Step32HeadGFresh : List Wire := [780]
+theorem s2Step32HeadG_distinct : (s2Step32HeadGRow.sign::s2Step32HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498HeadG_owned : (s2Step498HeadGRow.sign::s2Step498HeadGRow.payload).toFinset⊆s2Step498HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s2Step498HeadGBefore (fun q => (0≤q ∧ q<917)) rfl
+theorem s2Step32HeadG_owned : (s2Step32HeadGRow.sign::s2Step32HeadGRow.payload).toFinset⊆s2Step32HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step32HeadGBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s2Step498HeadG_reserved : s2Step498HeadGBefore.reserve s2Step498HeadGFresh.toFinset=some s2Step498HeadGAfter := by
+theorem s2Step32HeadG_reserved : s2Step32HeadGBefore.reserve s2Step32HeadGFresh.toFinset=some s2Step32HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s2Step498HeadGFresh,arenaWires]
-  · norm_num [s2Step498HeadGBefore,s2Step498HeadGFresh,arenaWires]
+  · norm_num [s2Step32HeadGFresh,arenaWires]
+  · norm_num [s2Step32HeadGBefore,s2Step32HeadGFresh,arenaWires]
   · ext q
-    simp only [s2Step498HeadGAfter,s2Step498HeadGBefore,s2Step498HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step32HeadGAfter,s2Step32HeadGBefore,s2Step32HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s2Step498HeadG_checked : planRowResizeLog s2Step498HeadGBefore s2Step498HeadGRow 26 s2Step498HeadGFresh=
-    some (s2Step498HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845, 917],769⟩,growRow 769 s2Step498HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s2Step498HeadGBefore s2Step498HeadGAfter s2Step498HeadGRow 26 s2Step498HeadGFresh
-    s2Step498HeadG_distinct s2Step498HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step498HeadG_reserved
-  have rowEq : WindowRow.mk (s2Step498HeadGRow.payload++s2Step498HeadGFresh) s2Step498HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845, 917],769⟩ := by decide +kernel
+theorem s2Step32HeadG_checked : planRowResizeLog s2Step32HeadGBefore s2Step32HeadGRow 254 s2Step32HeadGFresh=
+    some (s2Step32HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779, 786, 780],769⟩,growRow 769 s2Step32HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step32HeadGBefore s2Step32HeadGAfter s2Step32HeadGRow 254 s2Step32HeadGFresh
+    s2Step32HeadG_distinct s2Step32HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step32HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step32HeadGRow.payload++s2Step32HeadGFresh) s2Step32HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779, 786, 780],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s2Step498HeadFBefore : Arena := s2Step498HeadGAfter
-def s2Step498HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<919)),Finset.filter_subset _ _⟩
-def s2Step498HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901],768⟩
-def s2Step498HeadFFresh : List Wire := [918]
-theorem s2Step498HeadF_distinct : (s2Step498HeadFRow.sign::s2Step498HeadFRow.payload).Nodup := by
+def s2Step32HeadFBefore : Arena := s2Step32HeadGAfter
+def s2Step32HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step32HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764],768⟩
+def s2Step32HeadFFresh : List Wire := [781]
+theorem s2Step32HeadF_distinct : (s2Step32HeadFRow.sign::s2Step32HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498HeadF_owned : (s2Step498HeadFRow.sign::s2Step498HeadFRow.payload).toFinset⊆s2Step498HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s2Step498HeadFBefore (fun q => (0≤q ∧ q<918)) rfl
+theorem s2Step32HeadF_owned : (s2Step32HeadFRow.sign::s2Step32HeadFRow.payload).toFinset⊆s2Step32HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step32HeadFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s2Step498HeadF_reserved : s2Step498HeadFBefore.reserve s2Step498HeadFFresh.toFinset=some s2Step498HeadFAfter := by
+theorem s2Step32HeadF_reserved : s2Step32HeadFBefore.reserve s2Step32HeadFFresh.toFinset=some s2Step32HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s2Step498HeadFFresh,arenaWires]
-  · norm_num [s2Step498HeadFBefore,s2Step498HeadGAfter,s2Step498HeadFFresh,arenaWires]
+  · norm_num [s2Step32HeadFFresh,arenaWires]
+  · norm_num [s2Step32HeadFBefore,s2Step32HeadGAfter,s2Step32HeadFFresh,arenaWires]
   · ext q
-    simp only [s2Step498HeadFAfter,s2Step498HeadFBefore,s2Step498HeadGAfter,s2Step498HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step32HeadFAfter,s2Step32HeadFBefore,s2Step32HeadGAfter,s2Step32HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s2Step498HeadF_checked : planRowResizeLog s2Step498HeadFBefore s2Step498HeadFRow 26 s2Step498HeadFFresh=
-    some (s2Step498HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901, 918],768⟩,growRow 768 s2Step498HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s2Step498HeadFBefore s2Step498HeadFAfter s2Step498HeadFRow 26 s2Step498HeadFFresh
-    s2Step498HeadF_distinct s2Step498HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step498HeadF_reserved
-  have rowEq : WindowRow.mk (s2Step498HeadFRow.payload++s2Step498HeadFFresh) s2Step498HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901, 918],768⟩ := by decide +kernel
+theorem s2Step32HeadF_checked : planRowResizeLog s2Step32HeadFBefore s2Step32HeadFRow 254 s2Step32HeadFFresh=
+    some (s2Step32HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 781],768⟩,growRow 768 s2Step32HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step32HeadFBefore s2Step32HeadFAfter s2Step32HeadFRow 254 s2Step32HeadFFresh
+    s2Step32HeadF_distinct s2Step32HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step32HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step32HeadFRow.payload++s2Step32HeadFFresh) s2Step32HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 781],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s2Step498HeadGvBefore : Arena := s2Step498HeadFAfter
-def s2Step498HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<920)),Finset.filter_subset _ _⟩
-def s2Step498HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790],771⟩
-def s2Step498HeadGvFresh : List Wire := [919]
-theorem s2Step498HeadGv_distinct : (s2Step498HeadGvRow.sign::s2Step498HeadGvRow.payload).Nodup := by
+def s2Step32HeadGvBefore : Arena := s2Step32HeadFAfter
+def s2Step32HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<785) ∨ (786≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step32HeadGvRow : WindowRow := ⟨[767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 791],771⟩
+def s2Step32HeadGvFresh : List Wire := [787]
+theorem s2Step32HeadGv_distinct : (s2Step32HeadGvRow.sign::s2Step32HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498HeadGv_owned : (s2Step498HeadGvRow.sign::s2Step498HeadGvRow.payload).toFinset⊆s2Step498HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s2Step498HeadGvBefore (fun q => (0≤q ∧ q<919)) rfl
+theorem s2Step32HeadGv_owned : (s2Step32HeadGvRow.sign::s2Step32HeadGvRow.payload).toFinset⊆s2Step32HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step32HeadGvBefore (fun q => (0≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s2Step498HeadGv_reserved : s2Step498HeadGvBefore.reserve s2Step498HeadGvFresh.toFinset=some s2Step498HeadGvAfter := by
+theorem s2Step32HeadGv_reserved : s2Step32HeadGvBefore.reserve s2Step32HeadGvFresh.toFinset=some s2Step32HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s2Step498HeadGvFresh,arenaWires]
-  · norm_num [s2Step498HeadGvBefore,s2Step498HeadFAfter,s2Step498HeadGvFresh,arenaWires]
+  · norm_num [s2Step32HeadGvFresh,arenaWires]
+  · norm_num [s2Step32HeadGvBefore,s2Step32HeadFAfter,s2Step32HeadGvFresh,arenaWires]
   · ext q
-    simp only [s2Step498HeadGvAfter,s2Step498HeadGvBefore,s2Step498HeadFAfter,s2Step498HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step32HeadGvAfter,s2Step32HeadGvBefore,s2Step32HeadFAfter,s2Step32HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s2Step498HeadGv_checked : planRowResizeLog s2Step498HeadGvBefore s2Step498HeadGvRow 267 s2Step498HeadGvFresh=
-    some (s2Step498HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790, 919],771⟩,growRow 771 s2Step498HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s2Step498HeadGvBefore s2Step498HeadGvAfter s2Step498HeadGvRow 267 s2Step498HeadGvFresh
-    s2Step498HeadGv_distinct s2Step498HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step498HeadGv_reserved
-  have rowEq : WindowRow.mk (s2Step498HeadGvRow.payload++s2Step498HeadGvFresh) s2Step498HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790, 919],771⟩ := by decide +kernel
+theorem s2Step32HeadGv_checked : planRowResizeLog s2Step32HeadGvBefore s2Step32HeadGvRow 30 s2Step32HeadGvFresh=
+    some (s2Step32HeadGvAfter,⟨[767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 791, 787],771⟩,growRow 771 s2Step32HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step32HeadGvBefore s2Step32HeadGvAfter s2Step32HeadGvRow 30 s2Step32HeadGvFresh
+    s2Step32HeadGv_distinct s2Step32HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step32HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step32HeadGvRow.payload++s2Step32HeadGvFresh) s2Step32HeadGvRow.sign=⟨[767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 791, 787],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s2Step498HeadFvBefore : Arena := s2Step498HeadGvAfter
-def s2Step498HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<921)),Finset.filter_subset _ _⟩
-def s2Step498HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791],770⟩
-def s2Step498HeadFvFresh : List Wire := [920]
-theorem s2Step498HeadFv_distinct : (s2Step498HeadFvRow.sign::s2Step498HeadFvRow.payload).Nodup := by
+def s2Step32HeadFvBefore : Arena := s2Step32HeadGvAfter
+def s2Step32HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step32HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841],770⟩
+def s2Step32HeadFvFresh : List Wire := [785]
+theorem s2Step32HeadFv_distinct : (s2Step32HeadFvRow.sign::s2Step32HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498HeadFv_owned : (s2Step498HeadFvRow.sign::s2Step498HeadFvRow.payload).toFinset⊆s2Step498HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s2Step498HeadFvBefore (fun q => (0≤q ∧ q<920)) rfl
+theorem s2Step32HeadFv_owned : (s2Step32HeadFvRow.sign::s2Step32HeadFvRow.payload).toFinset⊆s2Step32HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step32HeadFvBefore (fun q => (0≤q ∧ q<785) ∨ (786≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s2Step498HeadFv_reserved : s2Step498HeadFvBefore.reserve s2Step498HeadFvFresh.toFinset=some s2Step498HeadFvAfter := by
+theorem s2Step32HeadFv_reserved : s2Step32HeadFvBefore.reserve s2Step32HeadFvFresh.toFinset=some s2Step32HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s2Step498HeadFvFresh,arenaWires]
-  · norm_num [s2Step498HeadFvBefore,s2Step498HeadGvAfter,s2Step498HeadFvFresh,arenaWires]
+  · norm_num [s2Step32HeadFvFresh,arenaWires]
+  · norm_num [s2Step32HeadFvBefore,s2Step32HeadGvAfter,s2Step32HeadFvFresh,arenaWires]
   · ext q
-    simp only [s2Step498HeadFvAfter,s2Step498HeadFvBefore,s2Step498HeadGvAfter,s2Step498HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step32HeadFvAfter,s2Step32HeadFvBefore,s2Step32HeadGvAfter,s2Step32HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s2Step498HeadFv_checked : planRowResizeLog s2Step498HeadFvBefore s2Step498HeadFvRow 267 s2Step498HeadFvFresh=
-    some (s2Step498HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791, 920],770⟩,growRow 770 s2Step498HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s2Step498HeadFvBefore s2Step498HeadFvAfter s2Step498HeadFvRow 267 s2Step498HeadFvFresh
-    s2Step498HeadFv_distinct s2Step498HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step498HeadFv_reserved
-  have rowEq : WindowRow.mk (s2Step498HeadFvRow.payload++s2Step498HeadFvFresh) s2Step498HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791, 920],770⟩ := by decide +kernel
+theorem s2Step32HeadFv_checked : planRowResizeLog s2Step32HeadFvBefore s2Step32HeadFvRow 30 s2Step32HeadFvFresh=
+    some (s2Step32HeadFvAfter,⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 785],770⟩,growRow 770 s2Step32HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step32HeadFvBefore s2Step32HeadFvAfter s2Step32HeadFvRow 30 s2Step32HeadFvFresh
+    s2Step32HeadFv_distinct s2Step32HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step32HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step32HeadFvRow.payload++s2Step32HeadFvFresh) s2Step32HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 785],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step0HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255],777⟩
-def s6Step0HeadGFresh : List Wire := [862]
-theorem s6Step0HeadG_distinct : (s6Step0HeadGRow.sign::s6Step0HeadGRow.payload).Nodup := by
+def s2Step33HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step33HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step33HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779],769⟩
+def s2Step33HeadGFresh : List Wire := [791]
+theorem s2Step33HeadG_distinct : (s2Step33HeadGRow.sign::s2Step33HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0HeadG_owned : (s6Step0HeadGRow.sign::s6Step0HeadGRow.payload).toFinset⊆s6Step0HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step0HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step33HeadG_owned : (s2Step33HeadGRow.sign::s2Step33HeadGRow.payload).toFinset⊆s2Step33HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step33HeadGBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s6Step0HeadG_reserved : s6Step0HeadGBefore.reserve s6Step0HeadGFresh.toFinset=some s6Step0HeadGAfter := by
+theorem s2Step33HeadG_reserved : s2Step33HeadGBefore.reserve s2Step33HeadGFresh.toFinset=some s2Step33HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step0HeadGFresh,arenaWires]
-  · norm_num [s6Step0HeadGBefore,s6Step0HeadGFresh,arenaWires]
+  · norm_num [s2Step33HeadGFresh,arenaWires]
+  · norm_num [s2Step33HeadGBefore,s2Step33HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step0HeadGAfter,s6Step0HeadGBefore,s6Step0HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step33HeadGAfter,s2Step33HeadGBefore,s2Step33HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step0HeadG_checked : planRowResizeLog s6Step0HeadGBefore s6Step0HeadGRow 257 s6Step0HeadGFresh=
-    some (s6Step0HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 862],777⟩,growRow 777 s6Step0HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step0HeadGBefore s6Step0HeadGAfter s6Step0HeadGRow 257 s6Step0HeadGFresh
-    s6Step0HeadG_distinct s6Step0HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step0HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step0HeadGRow.payload++s6Step0HeadGFresh) s6Step0HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 862],777⟩ := by decide +kernel
+theorem s2Step33HeadG_checked : planRowResizeLog s2Step33HeadGBefore s2Step33HeadGRow 253 s2Step33HeadGFresh=
+    some (s2Step33HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779, 791],769⟩,growRow 769 s2Step33HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step33HeadGBefore s2Step33HeadGAfter s2Step33HeadGRow 253 s2Step33HeadGFresh
+    s2Step33HeadG_distinct s2Step33HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step33HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step33HeadGRow.payload++s2Step33HeadGFresh) s2Step33HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 779, 791],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step0HeadFBefore : Arena := s6Step0HeadGAfter
-def s6Step0HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step0HeadFFresh : List Wire := [807]
-theorem s6Step0HeadF_distinct : (s6Step0HeadFRow.sign::s6Step0HeadFRow.payload).Nodup := by
+def s2Step33HeadFBefore : Arena := s2Step33HeadGAfter
+def s2Step33HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step33HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763],768⟩
+def s2Step33HeadFFresh : List Wire := [787]
+theorem s2Step33HeadF_distinct : (s2Step33HeadFRow.sign::s2Step33HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0HeadF_owned : (s6Step0HeadFRow.sign::s6Step0HeadFRow.payload).toFinset⊆s6Step0HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step0HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step33HeadF_owned : (s2Step33HeadFRow.sign::s2Step33HeadFRow.payload).toFinset⊆s2Step33HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step33HeadFBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s6Step0HeadF_reserved : s6Step0HeadFBefore.reserve s6Step0HeadFFresh.toFinset=some s6Step0HeadFAfter := by
+theorem s2Step33HeadF_reserved : s2Step33HeadFBefore.reserve s2Step33HeadFFresh.toFinset=some s2Step33HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step0HeadFFresh,arenaWires]
-  · norm_num [s6Step0HeadFBefore,s6Step0HeadGAfter,s6Step0HeadFFresh,arenaWires]
+  · norm_num [s2Step33HeadFFresh,arenaWires]
+  · norm_num [s2Step33HeadFBefore,s2Step33HeadGAfter,s2Step33HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step0HeadFAfter,s6Step0HeadFBefore,s6Step0HeadGAfter,s6Step0HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step33HeadFAfter,s2Step33HeadFBefore,s2Step33HeadGAfter,s2Step33HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step0HeadF_checked : planRowResizeLog s6Step0HeadFBefore s6Step0HeadFRow 257 s6Step0HeadFFresh=
-    some (s6Step0HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩,growRow 795 s6Step0HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step0HeadFBefore s6Step0HeadFAfter s6Step0HeadFRow 257 s6Step0HeadFFresh
-    s6Step0HeadF_distinct s6Step0HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step0HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step0HeadFRow.payload++s6Step0HeadFFresh) s6Step0HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩ := by decide +kernel
+theorem s2Step33HeadF_checked : planRowResizeLog s2Step33HeadFBefore s2Step33HeadFRow 253 s2Step33HeadFFresh=
+    some (s2Step33HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 787],768⟩,growRow 768 s2Step33HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step33HeadFBefore s2Step33HeadFAfter s2Step33HeadFRow 253 s2Step33HeadFFresh
+    s2Step33HeadF_distinct s2Step33HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step33HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step33HeadFRow.payload++s2Step33HeadFFresh) s2Step33HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 787],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step0HeadGvBefore : Arena := s6Step0HeadFAfter
-def s6Step0HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0HeadGvRow : WindowRow := ⟨[859],775⟩
-def s6Step0HeadGvFresh : List Wire := [860]
-theorem s6Step0HeadGv_distinct : (s6Step0HeadGvRow.sign::s6Step0HeadGvRow.payload).Nodup := by
+def s2Step33HeadGvBefore : Arena := s2Step33HeadFAfter
+def s2Step33HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step33HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839],771⟩
+def s2Step33HeadGvFresh : List Wire := [785]
+theorem s2Step33HeadGv_distinct : (s2Step33HeadGvRow.sign::s2Step33HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0HeadGv_owned : (s6Step0HeadGvRow.sign::s6Step0HeadGvRow.payload).toFinset⊆s6Step0HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step0HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step33HeadGv_owned : (s2Step33HeadGvRow.sign::s2Step33HeadGvRow.payload).toFinset⊆s2Step33HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step33HeadGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s6Step0HeadGv_reserved : s6Step0HeadGvBefore.reserve s6Step0HeadGvFresh.toFinset=some s6Step0HeadGvAfter := by
+theorem s2Step33HeadGv_reserved : s2Step33HeadGvBefore.reserve s2Step33HeadGvFresh.toFinset=some s2Step33HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step0HeadGvFresh,arenaWires]
-  · norm_num [s6Step0HeadGvBefore,s6Step0HeadFAfter,s6Step0HeadGvFresh,arenaWires]
+  · norm_num [s2Step33HeadGvFresh,arenaWires]
+  · norm_num [s2Step33HeadGvBefore,s2Step33HeadFAfter,s2Step33HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step0HeadGvAfter,s6Step0HeadGvBefore,s6Step0HeadFAfter,s6Step0HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step33HeadGvAfter,s2Step33HeadGvBefore,s2Step33HeadFAfter,s2Step33HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step0HeadGv_checked : planRowResizeLog s6Step0HeadGvBefore s6Step0HeadGvRow 2 s6Step0HeadGvFresh=
-    some (s6Step0HeadGvAfter,⟨[859, 860],775⟩,growRow 775 s6Step0HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step0HeadGvBefore s6Step0HeadGvAfter s6Step0HeadGvRow 2 s6Step0HeadGvFresh
-    s6Step0HeadGv_distinct s6Step0HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step0HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step0HeadGvRow.payload++s6Step0HeadGvFresh) s6Step0HeadGvRow.sign=⟨[859, 860],775⟩ := by decide +kernel
+theorem s2Step33HeadGv_checked : planRowResizeLog s2Step33HeadGvBefore s2Step33HeadGvRow 30 s2Step33HeadGvFresh=
+    some (s2Step33HeadGvAfter,⟨[767, 766, 765, 764, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 785],771⟩,growRow 771 s2Step33HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step33HeadGvBefore s2Step33HeadGvAfter s2Step33HeadGvRow 30 s2Step33HeadGvFresh
+    s2Step33HeadGv_distinct s2Step33HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step33HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step33HeadGvRow.payload++s2Step33HeadGvFresh) s2Step33HeadGvRow.sign=⟨[767, 766, 765, 764, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 785],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step0HeadFvBefore : Arena := s6Step0HeadGvAfter
-def s6Step0HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0HeadFvRow : WindowRow := ⟨[768],776⟩
-def s6Step0HeadFvFresh : List Wire := [876]
-theorem s6Step0HeadFv_distinct : (s6Step0HeadFvRow.sign::s6Step0HeadFvRow.payload).Nodup := by
+def s2Step33HeadFvBefore : Arena := s2Step33HeadGvAfter
+def s2Step33HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)),Finset.filter_subset _ _⟩
+def s2Step33HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841],770⟩
+def s2Step33HeadFvFresh : List Wire := [781]
+theorem s2Step33HeadFv_distinct : (s2Step33HeadFvRow.sign::s2Step33HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0HeadFv_owned : (s6Step0HeadFvRow.sign::s6Step0HeadFvRow.payload).toFinset⊆s6Step0HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step0HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step33HeadFv_owned : (s2Step33HeadFvRow.sign::s2Step33HeadFvRow.payload).toFinset⊆s2Step33HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step33HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<855)) rfl
   decide +kernel
-theorem s6Step0HeadFv_reserved : s6Step0HeadFvBefore.reserve s6Step0HeadFvFresh.toFinset=some s6Step0HeadFvAfter := by
+theorem s2Step33HeadFv_reserved : s2Step33HeadFvBefore.reserve s2Step33HeadFvFresh.toFinset=some s2Step33HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step0HeadFvFresh,arenaWires]
-  · norm_num [s6Step0HeadFvBefore,s6Step0HeadGvAfter,s6Step0HeadFvFresh,arenaWires]
+  · norm_num [s2Step33HeadFvFresh,arenaWires]
+  · norm_num [s2Step33HeadFvBefore,s2Step33HeadGvAfter,s2Step33HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step0HeadFvAfter,s6Step0HeadFvBefore,s6Step0HeadGvAfter,s6Step0HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step33HeadFvAfter,s2Step33HeadFvBefore,s2Step33HeadGvAfter,s2Step33HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step0HeadFv_checked : planRowResizeLog s6Step0HeadFvBefore s6Step0HeadFvRow 2 s6Step0HeadFvFresh=
-    some (s6Step0HeadFvAfter,⟨[768, 876],776⟩,growRow 776 s6Step0HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step0HeadFvBefore s6Step0HeadFvAfter s6Step0HeadFvRow 2 s6Step0HeadFvFresh
-    s6Step0HeadFv_distinct s6Step0HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step0HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step0HeadFvRow.payload++s6Step0HeadFvFresh) s6Step0HeadFvRow.sign=⟨[768, 876],776⟩ := by decide +kernel
+theorem s2Step33HeadFv_checked : planRowResizeLog s2Step33HeadFvBefore s2Step33HeadFvRow 30 s2Step33HeadFvFresh=
+    some (s2Step33HeadFvAfter,⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781],770⟩,growRow 770 s2Step33HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step33HeadFvBefore s2Step33HeadFvAfter s2Step33HeadFvRow 30 s2Step33HeadFvFresh
+    s2Step33HeadFv_distinct s2Step33HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step33HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step33HeadFvRow.payload++s2Step33HeadFvFresh) s2Step33HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step1HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step1HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step1HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step1HeadGFresh : List Wire := [807]
-theorem s6Step1HeadG_distinct : (s6Step1HeadGRow.sign::s6Step1HeadGRow.payload).Nodup := by
+def s2Step34HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step34HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step34HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250],769⟩
+def s2Step34HeadGFresh : List Wire := [785]
+theorem s2Step34HeadG_distinct : (s2Step34HeadGRow.sign::s2Step34HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1HeadG_owned : (s6Step1HeadGRow.sign::s6Step1HeadGRow.payload).toFinset⊆s6Step1HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step1HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step34HeadG_owned : (s2Step34HeadGRow.sign::s2Step34HeadGRow.payload).toFinset⊆s2Step34HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step34HeadGBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step1HeadG_reserved : s6Step1HeadGBefore.reserve s6Step1HeadGFresh.toFinset=some s6Step1HeadGAfter := by
+theorem s2Step34HeadG_reserved : s2Step34HeadGBefore.reserve s2Step34HeadGFresh.toFinset=some s2Step34HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step1HeadGFresh,arenaWires]
-  · norm_num [s6Step1HeadGBefore,s6Step1HeadGFresh,arenaWires]
+  · norm_num [s2Step34HeadGFresh,arenaWires]
+  · norm_num [s2Step34HeadGBefore,s2Step34HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step1HeadGAfter,s6Step1HeadGBefore,s6Step1HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step34HeadGAfter,s2Step34HeadGBefore,s2Step34HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step1HeadG_checked : planRowResizeLog s6Step1HeadGBefore s6Step1HeadGRow 257 s6Step1HeadGFresh=
-    some (s6Step1HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩,growRow 777 s6Step1HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step1HeadGBefore s6Step1HeadGAfter s6Step1HeadGRow 257 s6Step1HeadGFresh
-    s6Step1HeadG_distinct s6Step1HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step1HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step1HeadGRow.payload++s6Step1HeadGFresh) s6Step1HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩ := by decide +kernel
+theorem s2Step34HeadG_checked : planRowResizeLog s2Step34HeadGBefore s2Step34HeadGRow 252 s2Step34HeadGFresh=
+    some (s2Step34HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 785],769⟩,growRow 769 s2Step34HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step34HeadGBefore s2Step34HeadGAfter s2Step34HeadGRow 252 s2Step34HeadGFresh
+    s2Step34HeadG_distinct s2Step34HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step34HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step34HeadGRow.payload++s2Step34HeadGFresh) s2Step34HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 785],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step1HeadFBefore : Arena := s6Step1HeadGAfter
-def s6Step1HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step1HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step1HeadFFresh : List Wire := [862]
-theorem s6Step1HeadF_distinct : (s6Step1HeadFRow.sign::s6Step1HeadFRow.payload).Nodup := by
+def s2Step34HeadFBefore : Arena := s2Step34HeadGAfter
+def s2Step34HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step34HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762],768⟩
+def s2Step34HeadFFresh : List Wire := [787]
+theorem s2Step34HeadF_distinct : (s2Step34HeadFRow.sign::s2Step34HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1HeadF_owned : (s6Step1HeadFRow.sign::s6Step1HeadFRow.payload).toFinset⊆s6Step1HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step1HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step34HeadF_owned : (s2Step34HeadFRow.sign::s2Step34HeadFRow.payload).toFinset⊆s2Step34HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step34HeadFBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step1HeadF_reserved : s6Step1HeadFBefore.reserve s6Step1HeadFFresh.toFinset=some s6Step1HeadFAfter := by
+theorem s2Step34HeadF_reserved : s2Step34HeadFBefore.reserve s2Step34HeadFFresh.toFinset=some s2Step34HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step1HeadFFresh,arenaWires]
-  · norm_num [s6Step1HeadFBefore,s6Step1HeadGAfter,s6Step1HeadFFresh,arenaWires]
+  · norm_num [s2Step34HeadFFresh,arenaWires]
+  · norm_num [s2Step34HeadFBefore,s2Step34HeadGAfter,s2Step34HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step1HeadFAfter,s6Step1HeadFBefore,s6Step1HeadGAfter,s6Step1HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step34HeadFAfter,s2Step34HeadFBefore,s2Step34HeadGAfter,s2Step34HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step1HeadF_checked : planRowResizeLog s6Step1HeadFBefore s6Step1HeadFRow 257 s6Step1HeadFFresh=
-    some (s6Step1HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩,growRow 795 s6Step1HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step1HeadFBefore s6Step1HeadFAfter s6Step1HeadFRow 257 s6Step1HeadFFresh
-    s6Step1HeadF_distinct s6Step1HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step1HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step1HeadFRow.payload++s6Step1HeadFFresh) s6Step1HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩ := by decide +kernel
+theorem s2Step34HeadF_checked : planRowResizeLog s2Step34HeadFBefore s2Step34HeadFRow 252 s2Step34HeadFFresh=
+    some (s2Step34HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 787],768⟩,growRow 768 s2Step34HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step34HeadFBefore s2Step34HeadFAfter s2Step34HeadFRow 252 s2Step34HeadFFresh
+    s2Step34HeadF_distinct s2Step34HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step34HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step34HeadFRow.payload++s2Step34HeadFFresh) s2Step34HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 787],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step1HeadGvBefore : Arena := s6Step1HeadFAfter
-def s6Step1HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step1HeadGvRow : WindowRow := ⟨[859, 887],775⟩
-def s6Step1HeadGvFresh : List Wire := [874]
-theorem s6Step1HeadGv_distinct : (s6Step1HeadGvRow.sign::s6Step1HeadGvRow.payload).Nodup := by
+def s2Step34HeadGvBefore : Arena := s2Step34HeadFAfter
+def s2Step34HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step34HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788],771⟩
+def s2Step34HeadGvFresh : List Wire := [779]
+theorem s2Step34HeadGv_distinct : (s2Step34HeadGvRow.sign::s2Step34HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1HeadGv_owned : (s6Step1HeadGvRow.sign::s6Step1HeadGvRow.payload).toFinset⊆s6Step1HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step1HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step34HeadGv_owned : (s2Step34HeadGvRow.sign::s2Step34HeadGvRow.payload).toFinset⊆s2Step34HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step34HeadGvBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step1HeadGv_reserved : s6Step1HeadGvBefore.reserve s6Step1HeadGvFresh.toFinset=some s6Step1HeadGvAfter := by
+theorem s2Step34HeadGv_reserved : s2Step34HeadGvBefore.reserve s2Step34HeadGvFresh.toFinset=some s2Step34HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step1HeadGvFresh,arenaWires]
-  · norm_num [s6Step1HeadGvBefore,s6Step1HeadFAfter,s6Step1HeadGvFresh,arenaWires]
+  · norm_num [s2Step34HeadGvFresh,arenaWires]
+  · norm_num [s2Step34HeadGvBefore,s2Step34HeadFAfter,s2Step34HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step1HeadGvAfter,s6Step1HeadGvBefore,s6Step1HeadFAfter,s6Step1HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step34HeadGvAfter,s2Step34HeadGvBefore,s2Step34HeadFAfter,s2Step34HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step1HeadGv_checked : planRowResizeLog s6Step1HeadGvBefore s6Step1HeadGvRow 3 s6Step1HeadGvFresh=
-    some (s6Step1HeadGvAfter,⟨[859, 887, 874],775⟩,growRow 775 s6Step1HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step1HeadGvBefore s6Step1HeadGvAfter s6Step1HeadGvRow 3 s6Step1HeadGvFresh
-    s6Step1HeadGv_distinct s6Step1HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step1HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step1HeadGvRow.payload++s6Step1HeadGvFresh) s6Step1HeadGvRow.sign=⟨[859, 887, 874],775⟩ := by decide +kernel
+theorem s2Step34HeadGv_checked : planRowResizeLog s2Step34HeadGvBefore s2Step34HeadGvRow 31 s2Step34HeadGvFresh=
+    some (s2Step34HeadGvAfter,⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 779],771⟩,growRow 771 s2Step34HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step34HeadGvBefore s2Step34HeadGvAfter s2Step34HeadGvRow 31 s2Step34HeadGvFresh
+    s2Step34HeadGv_distinct s2Step34HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step34HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step34HeadGvRow.payload++s2Step34HeadGvFresh) s2Step34HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 779],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step1HeadFvBefore : Arena := s6Step1HeadGvAfter
-def s6Step1HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step1HeadFvRow : WindowRow := ⟨[255, 876],776⟩
-def s6Step1HeadFvFresh : List Wire := [793]
-theorem s6Step1HeadFv_distinct : (s6Step1HeadFvRow.sign::s6Step1HeadFvRow.payload).Nodup := by
+def s2Step34HeadFvBefore : Arena := s2Step34HeadGvAfter
+def s2Step34HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step34HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781],770⟩
+def s2Step34HeadFvFresh : List Wire := [791]
+theorem s2Step34HeadFv_distinct : (s2Step34HeadFvRow.sign::s2Step34HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1HeadFv_owned : (s6Step1HeadFvRow.sign::s6Step1HeadFvRow.payload).toFinset⊆s6Step1HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step1HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step34HeadFv_owned : (s2Step34HeadFvRow.sign::s2Step34HeadFvRow.payload).toFinset⊆s2Step34HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step34HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step1HeadFv_reserved : s6Step1HeadFvBefore.reserve s6Step1HeadFvFresh.toFinset=some s6Step1HeadFvAfter := by
+theorem s2Step34HeadFv_reserved : s2Step34HeadFvBefore.reserve s2Step34HeadFvFresh.toFinset=some s2Step34HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step1HeadFvFresh,arenaWires]
-  · norm_num [s6Step1HeadFvBefore,s6Step1HeadGvAfter,s6Step1HeadFvFresh,arenaWires]
+  · norm_num [s2Step34HeadFvFresh,arenaWires]
+  · norm_num [s2Step34HeadFvBefore,s2Step34HeadGvAfter,s2Step34HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step1HeadFvAfter,s6Step1HeadFvBefore,s6Step1HeadGvAfter,s6Step1HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step34HeadFvAfter,s2Step34HeadFvBefore,s2Step34HeadGvAfter,s2Step34HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step1HeadFv_checked : planRowResizeLog s6Step1HeadFvBefore s6Step1HeadFvRow 3 s6Step1HeadFvFresh=
-    some (s6Step1HeadFvAfter,⟨[255, 876, 793],776⟩,growRow 776 s6Step1HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step1HeadFvBefore s6Step1HeadFvAfter s6Step1HeadFvRow 3 s6Step1HeadFvFresh
-    s6Step1HeadFv_distinct s6Step1HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step1HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step1HeadFvRow.payload++s6Step1HeadFvFresh) s6Step1HeadFvRow.sign=⟨[255, 876, 793],776⟩ := by decide +kernel
+theorem s2Step34HeadFv_checked : planRowResizeLog s2Step34HeadFvBefore s2Step34HeadFvRow 31 s2Step34HeadFvFresh=
+    some (s2Step34HeadFvAfter,⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 791],770⟩,growRow 770 s2Step34HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step34HeadFvBefore s2Step34HeadFvAfter s2Step34HeadFvRow 31 s2Step34HeadFvFresh
+    s2Step34HeadFv_distinct s2Step34HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step34HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step34HeadFvRow.payload++s2Step34HeadFvFresh) s2Step34HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 791],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step2HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step2HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)),Finset.filter_subset _ _⟩
-def s6Step2HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step2HeadGFresh : List Wire := [813]
-theorem s6Step2HeadG_distinct : (s6Step2HeadGRow.sign::s6Step2HeadGRow.payload).Nodup := by
+def s2Step35HeadGBefore : Arena := s2Step34HeadGBefore
+def s2Step35HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step35HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790],769⟩
+def s2Step35HeadGFresh : List Wire := [779]
+theorem s2Step35HeadG_distinct : (s2Step35HeadGRow.sign::s2Step35HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2HeadG_owned : (s6Step2HeadGRow.sign::s6Step2HeadGRow.payload).toFinset⊆s6Step2HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step2HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step35HeadG_owned : (s2Step35HeadGRow.sign::s2Step35HeadGRow.payload).toFinset⊆s2Step35HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step35HeadGBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step2HeadG_reserved : s6Step2HeadGBefore.reserve s6Step2HeadGFresh.toFinset=some s6Step2HeadGAfter := by
+theorem s2Step35HeadG_reserved : s2Step35HeadGBefore.reserve s2Step35HeadGFresh.toFinset=some s2Step35HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step2HeadGFresh,arenaWires]
-  · norm_num [s6Step2HeadGBefore,s6Step2HeadGFresh,arenaWires]
+  · norm_num [s2Step35HeadGFresh,arenaWires]
+  · norm_num [s2Step35HeadGBefore,s2Step34HeadGBefore,s2Step35HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step2HeadGAfter,s6Step2HeadGBefore,s6Step2HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step35HeadGAfter,s2Step35HeadGBefore,s2Step34HeadGBefore,s2Step35HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step2HeadG_checked : planRowResizeLog s6Step2HeadGBefore s6Step2HeadGRow 257 s6Step2HeadGFresh=
-    some (s6Step2HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩,growRow 777 s6Step2HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step2HeadGBefore s6Step2HeadGAfter s6Step2HeadGRow 257 s6Step2HeadGFresh
-    s6Step2HeadG_distinct s6Step2HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step2HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step2HeadGRow.payload++s6Step2HeadGFresh) s6Step2HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩ := by decide +kernel
+theorem s2Step35HeadG_checked : planRowResizeLog s2Step35HeadGBefore s2Step35HeadGRow 252 s2Step35HeadGFresh=
+    some (s2Step35HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790, 779],769⟩,growRow 769 s2Step35HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step35HeadGBefore s2Step35HeadGAfter s2Step35HeadGRow 252 s2Step35HeadGFresh
+    s2Step35HeadG_distinct s2Step35HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step35HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step35HeadGRow.payload++s2Step35HeadGFresh) s2Step35HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790, 779],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step2HeadFBefore : Arena := s6Step2HeadGAfter
-def s6Step2HeadFAfter : Arena := s6Step1HeadFvAfter
-def s6Step2HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step2HeadFFresh : List Wire := [807]
-theorem s6Step2HeadF_distinct : (s6Step2HeadFRow.sign::s6Step2HeadFRow.payload).Nodup := by
+def s2Step35HeadFBefore : Arena := s2Step35HeadGAfter
+def s2Step35HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step35HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762],768⟩
+def s2Step35HeadFFresh : List Wire := [791]
+theorem s2Step35HeadF_distinct : (s2Step35HeadFRow.sign::s2Step35HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2HeadF_owned : (s6Step2HeadFRow.sign::s6Step2HeadFRow.payload).toFinset⊆s6Step2HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step2HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step35HeadF_owned : (s2Step35HeadFRow.sign::s2Step35HeadFRow.payload).toFinset⊆s2Step35HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step35HeadFBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step2HeadF_reserved : s6Step2HeadFBefore.reserve s6Step2HeadFFresh.toFinset=some s6Step2HeadFAfter := by
+theorem s2Step35HeadF_reserved : s2Step35HeadFBefore.reserve s2Step35HeadFFresh.toFinset=some s2Step35HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step2HeadFFresh,arenaWires]
-  · norm_num [s6Step2HeadFBefore,s6Step2HeadGAfter,s6Step2HeadFFresh,arenaWires]
+  · norm_num [s2Step35HeadFFresh,arenaWires]
+  · norm_num [s2Step35HeadFBefore,s2Step35HeadGAfter,s2Step35HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step2HeadFAfter,s6Step1HeadFvAfter,s6Step2HeadFBefore,s6Step2HeadGAfter,s6Step2HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step35HeadFAfter,s2Step35HeadFBefore,s2Step35HeadGAfter,s2Step35HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step2HeadF_checked : planRowResizeLog s6Step2HeadFBefore s6Step2HeadFRow 257 s6Step2HeadFFresh=
-    some (s6Step2HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩,growRow 795 s6Step2HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step2HeadFBefore s6Step2HeadFAfter s6Step2HeadFRow 257 s6Step2HeadFFresh
-    s6Step2HeadF_distinct s6Step2HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step2HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step2HeadFRow.payload++s6Step2HeadFFresh) s6Step2HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩ := by decide +kernel
+theorem s2Step35HeadF_checked : planRowResizeLog s2Step35HeadFBefore s2Step35HeadFRow 252 s2Step35HeadFFresh=
+    some (s2Step35HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 791],768⟩,growRow 768 s2Step35HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step35HeadFBefore s2Step35HeadFAfter s2Step35HeadFRow 252 s2Step35HeadFFresh
+    s2Step35HeadF_distinct s2Step35HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step35HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step35HeadFRow.payload++s2Step35HeadFFresh) s2Step35HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 791],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step2HeadGvBefore : Arena := s6Step1HeadFvAfter
-def s6Step2HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step2HeadGvRow : WindowRow := ⟨[859, 768, 887],775⟩
-def s6Step2HeadGvFresh : List Wire := [927]
-theorem s6Step2HeadGv_distinct : (s6Step2HeadGvRow.sign::s6Step2HeadGvRow.payload).Nodup := by
+def s2Step35HeadGvBefore : Arena := s2Step35HeadFAfter
+def s2Step35HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)),Finset.filter_subset _ _⟩
+def s2Step35HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788],771⟩
+def s2Step35HeadGvFresh : List Wire := [787]
+theorem s2Step35HeadGv_distinct : (s2Step35HeadGvRow.sign::s2Step35HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2HeadGv_owned : (s6Step2HeadGvRow.sign::s6Step2HeadGvRow.payload).toFinset⊆s6Step2HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step2HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step35HeadGv_owned : (s2Step35HeadGvRow.sign::s2Step35HeadGvRow.payload).toFinset⊆s2Step35HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step35HeadGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step2HeadGv_reserved : s6Step2HeadGvBefore.reserve s6Step2HeadGvFresh.toFinset=some s6Step2HeadGvAfter := by
+theorem s2Step35HeadGv_reserved : s2Step35HeadGvBefore.reserve s2Step35HeadGvFresh.toFinset=some s2Step35HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step2HeadGvFresh,arenaWires]
-  · norm_num [s6Step2HeadGvBefore,s6Step1HeadFvAfter,s6Step2HeadGvFresh,arenaWires]
+  · norm_num [s2Step35HeadGvFresh,arenaWires]
+  · norm_num [s2Step35HeadGvBefore,s2Step35HeadFAfter,s2Step35HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step2HeadGvAfter,s6Step2HeadGvBefore,s6Step1HeadFvAfter,s6Step2HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step35HeadGvAfter,s2Step35HeadGvBefore,s2Step35HeadFAfter,s2Step35HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step2HeadGv_checked : planRowResizeLog s6Step2HeadGvBefore s6Step2HeadGvRow 4 s6Step2HeadGvFresh=
-    some (s6Step2HeadGvAfter,⟨[859, 768, 887, 927],775⟩,growRow 775 s6Step2HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step2HeadGvBefore s6Step2HeadGvAfter s6Step2HeadGvRow 4 s6Step2HeadGvFresh
-    s6Step2HeadGv_distinct s6Step2HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step2HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step2HeadGvRow.payload++s6Step2HeadGvFresh) s6Step2HeadGvRow.sign=⟨[859, 768, 887, 927],775⟩ := by decide +kernel
+theorem s2Step35HeadGv_checked : planRowResizeLog s2Step35HeadGvBefore s2Step35HeadGvRow 31 s2Step35HeadGvFresh=
+    some (s2Step35HeadGvAfter,⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 787],771⟩,growRow 771 s2Step35HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step35HeadGvBefore s2Step35HeadGvAfter s2Step35HeadGvRow 31 s2Step35HeadGvFresh
+    s2Step35HeadGv_distinct s2Step35HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step35HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step35HeadGvRow.payload++s2Step35HeadGvFresh) s2Step35HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 787],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step2HeadFvBefore : Arena := s6Step2HeadGvAfter
-def s6Step2HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step2HeadFvRow : WindowRow := ⟨[255, 876, 793],776⟩
-def s6Step2HeadFvFresh : List Wire := [802]
-theorem s6Step2HeadFv_distinct : (s6Step2HeadFvRow.sign::s6Step2HeadFvRow.payload).Nodup := by
+def s2Step35HeadFvBefore : Arena := s2Step35HeadGvAfter
+def s2Step35HeadFvAfter : Arena := s2Step34HeadFvAfter
+def s2Step35HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781],770⟩
+def s2Step35HeadFvFresh : List Wire := [785]
+theorem s2Step35HeadFv_distinct : (s2Step35HeadFvRow.sign::s2Step35HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2HeadFv_owned : (s6Step2HeadFvRow.sign::s6Step2HeadFvRow.payload).toFinset⊆s6Step2HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step2HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step35HeadFv_owned : (s2Step35HeadFvRow.sign::s2Step35HeadFvRow.payload).toFinset⊆s2Step35HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step35HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<785) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856)) rfl
   decide +kernel
-theorem s6Step2HeadFv_reserved : s6Step2HeadFvBefore.reserve s6Step2HeadFvFresh.toFinset=some s6Step2HeadFvAfter := by
+theorem s2Step35HeadFv_reserved : s2Step35HeadFvBefore.reserve s2Step35HeadFvFresh.toFinset=some s2Step35HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step2HeadFvFresh,arenaWires]
-  · norm_num [s6Step2HeadFvBefore,s6Step2HeadGvAfter,s6Step2HeadFvFresh,arenaWires]
+  · norm_num [s2Step35HeadFvFresh,arenaWires]
+  · norm_num [s2Step35HeadFvBefore,s2Step35HeadGvAfter,s2Step35HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step2HeadFvAfter,s6Step2HeadFvBefore,s6Step2HeadGvAfter,s6Step2HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step35HeadFvAfter,s2Step34HeadFvAfter,s2Step35HeadFvBefore,s2Step35HeadGvAfter,s2Step35HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step2HeadFv_checked : planRowResizeLog s6Step2HeadFvBefore s6Step2HeadFvRow 4 s6Step2HeadFvFresh=
-    some (s6Step2HeadFvAfter,⟨[255, 876, 793, 802],776⟩,growRow 776 s6Step2HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step2HeadFvBefore s6Step2HeadFvAfter s6Step2HeadFvRow 4 s6Step2HeadFvFresh
-    s6Step2HeadFv_distinct s6Step2HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step2HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step2HeadFvRow.payload++s6Step2HeadFvFresh) s6Step2HeadFvRow.sign=⟨[255, 876, 793, 802],776⟩ := by decide +kernel
+theorem s2Step35HeadFv_checked : planRowResizeLog s2Step35HeadFvBefore s2Step35HeadFvRow 31 s2Step35HeadFvFresh=
+    some (s2Step35HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785],770⟩,growRow 770 s2Step35HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step35HeadFvBefore s2Step35HeadFvAfter s2Step35HeadFvRow 31 s2Step35HeadFvFresh
+    s2Step35HeadFv_distinct s2Step35HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step35HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step35HeadFvRow.payload++s2Step35HeadFvFresh) s2Step35HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step3HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step3HeadGFresh : List Wire := [860]
-theorem s6Step3HeadG_distinct : (s6Step3HeadGRow.sign::s6Step3HeadGRow.payload).Nodup := by
+def s2Step36HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step36HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step36HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790],769⟩
+def s2Step36HeadGFresh : List Wire := [791]
+theorem s2Step36HeadG_distinct : (s2Step36HeadGRow.sign::s2Step36HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3HeadG_owned : (s6Step3HeadGRow.sign::s6Step3HeadGRow.payload).toFinset⊆s6Step3HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step3HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step36HeadG_owned : (s2Step36HeadGRow.sign::s2Step36HeadGRow.payload).toFinset⊆s2Step36HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step36HeadGBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step3HeadG_reserved : s6Step3HeadGBefore.reserve s6Step3HeadGFresh.toFinset=some s6Step3HeadGAfter := by
+theorem s2Step36HeadG_reserved : s2Step36HeadGBefore.reserve s2Step36HeadGFresh.toFinset=some s2Step36HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step3HeadGFresh,arenaWires]
-  · norm_num [s6Step3HeadGBefore,s6Step3HeadGFresh,arenaWires]
+  · norm_num [s2Step36HeadGFresh,arenaWires]
+  · norm_num [s2Step36HeadGBefore,s2Step36HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step3HeadGAfter,s6Step3HeadGBefore,s6Step3HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step36HeadGAfter,s2Step36HeadGBefore,s2Step36HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step3HeadG_checked : planRowResizeLog s6Step3HeadGBefore s6Step3HeadGRow 257 s6Step3HeadGFresh=
-    some (s6Step3HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩,growRow 777 s6Step3HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step3HeadGBefore s6Step3HeadGAfter s6Step3HeadGRow 257 s6Step3HeadGFresh
-    s6Step3HeadG_distinct s6Step3HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step3HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step3HeadGRow.payload++s6Step3HeadGFresh) s6Step3HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩ := by decide +kernel
+theorem s2Step36HeadG_checked : planRowResizeLog s2Step36HeadGBefore s2Step36HeadGRow 252 s2Step36HeadGFresh=
+    some (s2Step36HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790, 791],769⟩,growRow 769 s2Step36HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step36HeadGBefore s2Step36HeadGAfter s2Step36HeadGRow 252 s2Step36HeadGFresh
+    s2Step36HeadG_distinct s2Step36HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step36HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step36HeadGRow.payload++s2Step36HeadGFresh) s2Step36HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 790, 791],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step3HeadFBefore : Arena := s6Step3HeadGAfter
-def s6Step3HeadFAfter : Arena := s6Step2HeadFvAfter
-def s6Step3HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step3HeadFFresh : List Wire := [813]
-theorem s6Step3HeadF_distinct : (s6Step3HeadFRow.sign::s6Step3HeadFRow.payload).Nodup := by
+def s2Step36HeadFBefore : Arena := s2Step36HeadGAfter
+def s2Step36HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step36HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 793],768⟩
+def s2Step36HeadFFresh : List Wire := [779]
+theorem s2Step36HeadF_distinct : (s2Step36HeadFRow.sign::s2Step36HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3HeadF_owned : (s6Step3HeadFRow.sign::s6Step3HeadFRow.payload).toFinset⊆s6Step3HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step3HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step36HeadF_owned : (s2Step36HeadFRow.sign::s2Step36HeadFRow.payload).toFinset⊆s2Step36HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step36HeadFBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step3HeadF_reserved : s6Step3HeadFBefore.reserve s6Step3HeadFFresh.toFinset=some s6Step3HeadFAfter := by
+theorem s2Step36HeadF_reserved : s2Step36HeadFBefore.reserve s2Step36HeadFFresh.toFinset=some s2Step36HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step3HeadFFresh,arenaWires]
-  · norm_num [s6Step3HeadFBefore,s6Step3HeadGAfter,s6Step3HeadFFresh,arenaWires]
+  · norm_num [s2Step36HeadFFresh,arenaWires]
+  · norm_num [s2Step36HeadFBefore,s2Step36HeadGAfter,s2Step36HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step3HeadFAfter,s6Step2HeadFvAfter,s6Step3HeadFBefore,s6Step3HeadGAfter,s6Step3HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step36HeadFAfter,s2Step36HeadFBefore,s2Step36HeadGAfter,s2Step36HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step3HeadF_checked : planRowResizeLog s6Step3HeadFBefore s6Step3HeadFRow 257 s6Step3HeadFFresh=
-    some (s6Step3HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩,growRow 795 s6Step3HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step3HeadFBefore s6Step3HeadFAfter s6Step3HeadFRow 257 s6Step3HeadFFresh
-    s6Step3HeadF_distinct s6Step3HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step3HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step3HeadFRow.payload++s6Step3HeadFFresh) s6Step3HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩ := by decide +kernel
+theorem s2Step36HeadF_checked : planRowResizeLog s2Step36HeadFBefore s2Step36HeadFRow 252 s2Step36HeadFFresh=
+    some (s2Step36HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 793, 779],768⟩,growRow 768 s2Step36HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step36HeadFBefore s2Step36HeadFAfter s2Step36HeadFRow 252 s2Step36HeadFFresh
+    s2Step36HeadF_distinct s2Step36HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step36HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step36HeadFRow.payload++s2Step36HeadFFresh) s2Step36HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 793, 779],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step3HeadGvBefore : Arena := s6Step2HeadFvAfter
-def s6Step3HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3HeadGvRow : WindowRow := ⟨[859, 768, 874, 887],775⟩
-def s6Step3HeadGvFresh : List Wire := [875]
-theorem s6Step3HeadGv_distinct : (s6Step3HeadGvRow.sign::s6Step3HeadGvRow.payload).Nodup := by
+def s2Step36HeadGvBefore : Arena := s2Step36HeadFAfter
+def s2Step36HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step36HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789],771⟩
+def s2Step36HeadGvFresh : List Wire := [786]
+theorem s2Step36HeadGv_distinct : (s2Step36HeadGvRow.sign::s2Step36HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3HeadGv_owned : (s6Step3HeadGvRow.sign::s6Step3HeadGvRow.payload).toFinset⊆s6Step3HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step3HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step36HeadGv_owned : (s2Step36HeadGvRow.sign::s2Step36HeadGvRow.payload).toFinset⊆s2Step36HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step36HeadGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step3HeadGv_reserved : s6Step3HeadGvBefore.reserve s6Step3HeadGvFresh.toFinset=some s6Step3HeadGvAfter := by
+theorem s2Step36HeadGv_reserved : s2Step36HeadGvBefore.reserve s2Step36HeadGvFresh.toFinset=some s2Step36HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step3HeadGvFresh,arenaWires]
-  · norm_num [s6Step3HeadGvBefore,s6Step2HeadFvAfter,s6Step3HeadGvFresh,arenaWires]
+  · norm_num [s2Step36HeadGvFresh,arenaWires]
+  · norm_num [s2Step36HeadGvBefore,s2Step36HeadFAfter,s2Step36HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step3HeadGvAfter,s6Step3HeadGvBefore,s6Step2HeadFvAfter,s6Step3HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step36HeadGvAfter,s2Step36HeadGvBefore,s2Step36HeadFAfter,s2Step36HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step3HeadGv_checked : planRowResizeLog s6Step3HeadGvBefore s6Step3HeadGvRow 5 s6Step3HeadGvFresh=
-    some (s6Step3HeadGvAfter,⟨[859, 768, 874, 887, 875],775⟩,growRow 775 s6Step3HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step3HeadGvBefore s6Step3HeadGvAfter s6Step3HeadGvRow 5 s6Step3HeadGvFresh
-    s6Step3HeadGv_distinct s6Step3HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step3HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step3HeadGvRow.payload++s6Step3HeadGvFresh) s6Step3HeadGvRow.sign=⟨[859, 768, 874, 887, 875],775⟩ := by decide +kernel
+theorem s2Step36HeadGv_checked : planRowResizeLog s2Step36HeadGvBefore s2Step36HeadGvRow 32 s2Step36HeadGvFresh=
+    some (s2Step36HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 786],771⟩,growRow 771 s2Step36HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step36HeadGvBefore s2Step36HeadGvAfter s2Step36HeadGvRow 32 s2Step36HeadGvFresh
+    s2Step36HeadGv_distinct s2Step36HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step36HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step36HeadGvRow.payload++s2Step36HeadGvFresh) s2Step36HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 786],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step3HeadFvBefore : Arena := s6Step3HeadGvAfter
-def s6Step3HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3HeadFvRow : WindowRow := ⟨[255, 876, 793, 802],776⟩
-def s6Step3HeadFvFresh : List Wire := [779]
-theorem s6Step3HeadFv_distinct : (s6Step3HeadFvRow.sign::s6Step3HeadFvRow.payload).Nodup := by
+def s2Step36HeadFvBefore : Arena := s2Step36HeadGvAfter
+def s2Step36HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step36HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785],770⟩
+def s2Step36HeadFvFresh : List Wire := [780]
+theorem s2Step36HeadFv_distinct : (s2Step36HeadFvRow.sign::s2Step36HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3HeadFv_owned : (s6Step3HeadFvRow.sign::s6Step3HeadFvRow.payload).toFinset⊆s6Step3HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step3HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step36HeadFv_owned : (s2Step36HeadFvRow.sign::s2Step36HeadFvRow.payload).toFinset⊆s2Step36HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step36HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step3HeadFv_reserved : s6Step3HeadFvBefore.reserve s6Step3HeadFvFresh.toFinset=some s6Step3HeadFvAfter := by
+theorem s2Step36HeadFv_reserved : s2Step36HeadFvBefore.reserve s2Step36HeadFvFresh.toFinset=some s2Step36HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step3HeadFvFresh,arenaWires]
-  · norm_num [s6Step3HeadFvBefore,s6Step3HeadGvAfter,s6Step3HeadFvFresh,arenaWires]
+  · norm_num [s2Step36HeadFvFresh,arenaWires]
+  · norm_num [s2Step36HeadFvBefore,s2Step36HeadGvAfter,s2Step36HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step3HeadFvAfter,s6Step3HeadFvBefore,s6Step3HeadGvAfter,s6Step3HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step36HeadFvAfter,s2Step36HeadFvBefore,s2Step36HeadGvAfter,s2Step36HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step3HeadFv_checked : planRowResizeLog s6Step3HeadFvBefore s6Step3HeadFvRow 5 s6Step3HeadFvFresh=
-    some (s6Step3HeadFvAfter,⟨[255, 876, 793, 802, 779],776⟩,growRow 776 s6Step3HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step3HeadFvBefore s6Step3HeadFvAfter s6Step3HeadFvRow 5 s6Step3HeadFvFresh
-    s6Step3HeadFv_distinct s6Step3HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step3HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step3HeadFvRow.payload++s6Step3HeadFvFresh) s6Step3HeadFvRow.sign=⟨[255, 876, 793, 802, 779],776⟩ := by decide +kernel
+theorem s2Step36HeadFv_checked : planRowResizeLog s2Step36HeadFvBefore s2Step36HeadFvRow 32 s2Step36HeadFvFresh=
+    some (s2Step36HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 780],770⟩,growRow 770 s2Step36HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step36HeadFvBefore s2Step36HeadFvAfter s2Step36HeadFvRow 32 s2Step36HeadFvFresh
+    s2Step36HeadFv_distinct s2Step36HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step36HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step36HeadFvRow.payload++s2Step36HeadFvFresh) s2Step36HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 780],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step4HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step4HeadGFresh : List Wire := [862]
-theorem s6Step4HeadG_distinct : (s6Step4HeadGRow.sign::s6Step4HeadGRow.payload).Nodup := by
+def s2Step37HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step37HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step37HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249],769⟩
+def s2Step37HeadGFresh : List Wire := [786]
+theorem s2Step37HeadG_distinct : (s2Step37HeadGRow.sign::s2Step37HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4HeadG_owned : (s6Step4HeadGRow.sign::s6Step4HeadGRow.payload).toFinset⊆s6Step4HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step4HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step37HeadG_owned : (s2Step37HeadGRow.sign::s2Step37HeadGRow.payload).toFinset⊆s2Step37HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step37HeadGBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step4HeadG_reserved : s6Step4HeadGBefore.reserve s6Step4HeadGFresh.toFinset=some s6Step4HeadGAfter := by
+theorem s2Step37HeadG_reserved : s2Step37HeadGBefore.reserve s2Step37HeadGFresh.toFinset=some s2Step37HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step4HeadGFresh,arenaWires]
-  · norm_num [s6Step4HeadGBefore,s6Step4HeadGFresh,arenaWires]
+  · norm_num [s2Step37HeadGFresh,arenaWires]
+  · norm_num [s2Step37HeadGBefore,s2Step37HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step4HeadGAfter,s6Step4HeadGBefore,s6Step4HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step37HeadGAfter,s2Step37HeadGBefore,s2Step37HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step4HeadG_checked : planRowResizeLog s6Step4HeadGBefore s6Step4HeadGRow 257 s6Step4HeadGFresh=
-    some (s6Step4HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩,growRow 777 s6Step4HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step4HeadGBefore s6Step4HeadGAfter s6Step4HeadGRow 257 s6Step4HeadGFresh
-    s6Step4HeadG_distinct s6Step4HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step4HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step4HeadGRow.payload++s6Step4HeadGFresh) s6Step4HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩ := by decide +kernel
+theorem s2Step37HeadG_checked : planRowResizeLog s2Step37HeadGBefore s2Step37HeadGRow 251 s2Step37HeadGFresh=
+    some (s2Step37HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 786],769⟩,growRow 769 s2Step37HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step37HeadGBefore s2Step37HeadGAfter s2Step37HeadGRow 251 s2Step37HeadGFresh
+    s2Step37HeadG_distinct s2Step37HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step37HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step37HeadGRow.payload++s2Step37HeadGFresh) s2Step37HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 786],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step4HeadFBefore : Arena := s6Step4HeadGAfter
-def s6Step4HeadFAfter : Arena := s6Step3HeadFvAfter
-def s6Step4HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step4HeadFFresh : List Wire := [860]
-theorem s6Step4HeadF_distinct : (s6Step4HeadFRow.sign::s6Step4HeadFRow.payload).Nodup := by
+def s2Step37HeadFBefore : Arena := s2Step37HeadGAfter
+def s2Step37HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (780≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step37HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761],768⟩
+def s2Step37HeadFFresh : List Wire := [780]
+theorem s2Step37HeadF_distinct : (s2Step37HeadFRow.sign::s2Step37HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4HeadF_owned : (s6Step4HeadFRow.sign::s6Step4HeadFRow.payload).toFinset⊆s6Step4HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step4HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step37HeadF_owned : (s2Step37HeadFRow.sign::s2Step37HeadFRow.payload).toFinset⊆s2Step37HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step37HeadFBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step4HeadF_reserved : s6Step4HeadFBefore.reserve s6Step4HeadFFresh.toFinset=some s6Step4HeadFAfter := by
+theorem s2Step37HeadF_reserved : s2Step37HeadFBefore.reserve s2Step37HeadFFresh.toFinset=some s2Step37HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step4HeadFFresh,arenaWires]
-  · norm_num [s6Step4HeadFBefore,s6Step4HeadGAfter,s6Step4HeadFFresh,arenaWires]
+  · norm_num [s2Step37HeadFFresh,arenaWires]
+  · norm_num [s2Step37HeadFBefore,s2Step37HeadGAfter,s2Step37HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step4HeadFAfter,s6Step3HeadFvAfter,s6Step4HeadFBefore,s6Step4HeadGAfter,s6Step4HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step37HeadFAfter,s2Step37HeadFBefore,s2Step37HeadGAfter,s2Step37HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step4HeadF_checked : planRowResizeLog s6Step4HeadFBefore s6Step4HeadFRow 257 s6Step4HeadFFresh=
-    some (s6Step4HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩,growRow 795 s6Step4HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step4HeadFBefore s6Step4HeadFAfter s6Step4HeadFRow 257 s6Step4HeadFFresh
-    s6Step4HeadF_distinct s6Step4HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step4HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step4HeadFRow.payload++s6Step4HeadFFresh) s6Step4HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩ := by decide +kernel
+theorem s2Step37HeadF_checked : planRowResizeLog s2Step37HeadFBefore s2Step37HeadFRow 251 s2Step37HeadFFresh=
+    some (s2Step37HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 780],768⟩,growRow 768 s2Step37HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step37HeadFBefore s2Step37HeadFAfter s2Step37HeadFRow 251 s2Step37HeadFFresh
+    s2Step37HeadF_distinct s2Step37HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step37HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step37HeadFRow.payload++s2Step37HeadFFresh) s2Step37HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 780],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step4HeadGvBefore : Arena := s6Step3HeadFvAfter
-def s6Step4HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 887],775⟩
-def s6Step4HeadGvFresh : List Wire := [868]
-theorem s6Step4HeadGv_distinct : (s6Step4HeadGvRow.sign::s6Step4HeadGvRow.payload).Nodup := by
+def s2Step37HeadGvBefore : Arena := s2Step37HeadFAfter
+def s2Step37HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<779) ∨ (780≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step37HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789],771⟩
+def s2Step37HeadGvFresh : List Wire := [793]
+theorem s2Step37HeadGv_distinct : (s2Step37HeadGvRow.sign::s2Step37HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4HeadGv_owned : (s6Step4HeadGvRow.sign::s6Step4HeadGvRow.payload).toFinset⊆s6Step4HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step4HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step37HeadGv_owned : (s2Step37HeadGvRow.sign::s2Step37HeadGvRow.payload).toFinset⊆s2Step37HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step37HeadGvBefore (fun q => (0≤q ∧ q<779) ∨ (780≤q ∧ q<790) ∨ (792≤q ∧ q<793) ∨ (794≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step4HeadGv_reserved : s6Step4HeadGvBefore.reserve s6Step4HeadGvFresh.toFinset=some s6Step4HeadGvAfter := by
+theorem s2Step37HeadGv_reserved : s2Step37HeadGvBefore.reserve s2Step37HeadGvFresh.toFinset=some s2Step37HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step4HeadGvFresh,arenaWires]
-  · norm_num [s6Step4HeadGvBefore,s6Step3HeadFvAfter,s6Step4HeadGvFresh,arenaWires]
+  · norm_num [s2Step37HeadGvFresh,arenaWires]
+  · norm_num [s2Step37HeadGvBefore,s2Step37HeadFAfter,s2Step37HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step4HeadGvAfter,s6Step4HeadGvBefore,s6Step3HeadFvAfter,s6Step4HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step37HeadGvAfter,s2Step37HeadGvBefore,s2Step37HeadFAfter,s2Step37HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step4HeadGv_checked : planRowResizeLog s6Step4HeadGvBefore s6Step4HeadGvRow 6 s6Step4HeadGvFresh=
-    some (s6Step4HeadGvAfter,⟨[859, 768, 874, 927, 887, 868],775⟩,growRow 775 s6Step4HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step4HeadGvBefore s6Step4HeadGvAfter s6Step4HeadGvRow 6 s6Step4HeadGvFresh
-    s6Step4HeadGv_distinct s6Step4HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step4HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step4HeadGvRow.payload++s6Step4HeadGvFresh) s6Step4HeadGvRow.sign=⟨[859, 768, 874, 927, 887, 868],775⟩ := by decide +kernel
+theorem s2Step37HeadGv_checked : planRowResizeLog s2Step37HeadGvBefore s2Step37HeadGvRow 32 s2Step37HeadGvFresh=
+    some (s2Step37HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793],771⟩,growRow 771 s2Step37HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step37HeadGvBefore s2Step37HeadGvAfter s2Step37HeadGvRow 32 s2Step37HeadGvFresh
+    s2Step37HeadGv_distinct s2Step37HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step37HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step37HeadGvRow.payload++s2Step37HeadGvFresh) s2Step37HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step4HeadFvBefore : Arena := s6Step4HeadGvAfter
-def s6Step4HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779],776⟩
-def s6Step4HeadFvFresh : List Wire := [857]
-theorem s6Step4HeadFv_distinct : (s6Step4HeadFvRow.sign::s6Step4HeadFvRow.payload).Nodup := by
+def s2Step37HeadFvBefore : Arena := s2Step37HeadGvAfter
+def s2Step37HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)),Finset.filter_subset _ _⟩
+def s2Step37HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785],770⟩
+def s2Step37HeadFvFresh : List Wire := [779]
+theorem s2Step37HeadFv_distinct : (s2Step37HeadFvRow.sign::s2Step37HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4HeadFv_owned : (s6Step4HeadFvRow.sign::s6Step4HeadFvRow.payload).toFinset⊆s6Step4HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step4HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step37HeadFv_owned : (s2Step37HeadFvRow.sign::s2Step37HeadFvRow.payload).toFinset⊆s2Step37HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step37HeadFvBefore (fun q => (0≤q ∧ q<779) ∨ (780≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858)) rfl
   decide +kernel
-theorem s6Step4HeadFv_reserved : s6Step4HeadFvBefore.reserve s6Step4HeadFvFresh.toFinset=some s6Step4HeadFvAfter := by
+theorem s2Step37HeadFv_reserved : s2Step37HeadFvBefore.reserve s2Step37HeadFvFresh.toFinset=some s2Step37HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step4HeadFvFresh,arenaWires]
-  · norm_num [s6Step4HeadFvBefore,s6Step4HeadGvAfter,s6Step4HeadFvFresh,arenaWires]
+  · norm_num [s2Step37HeadFvFresh,arenaWires]
+  · norm_num [s2Step37HeadFvBefore,s2Step37HeadGvAfter,s2Step37HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step4HeadFvAfter,s6Step4HeadFvBefore,s6Step4HeadGvAfter,s6Step4HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step37HeadFvAfter,s2Step37HeadFvBefore,s2Step37HeadGvAfter,s2Step37HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step4HeadFv_checked : planRowResizeLog s6Step4HeadFvBefore s6Step4HeadFvRow 6 s6Step4HeadFvFresh=
-    some (s6Step4HeadFvAfter,⟨[255, 876, 793, 802, 779, 857],776⟩,growRow 776 s6Step4HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step4HeadFvBefore s6Step4HeadFvAfter s6Step4HeadFvRow 6 s6Step4HeadFvFresh
-    s6Step4HeadFv_distinct s6Step4HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step4HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step4HeadFvRow.payload++s6Step4HeadFvFresh) s6Step4HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857],776⟩ := by decide +kernel
+theorem s2Step37HeadFv_checked : planRowResizeLog s2Step37HeadFvBefore s2Step37HeadFvRow 32 s2Step37HeadFvFresh=
+    some (s2Step37HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779],770⟩,growRow 770 s2Step37HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step37HeadFvBefore s2Step37HeadFvAfter s2Step37HeadFvRow 32 s2Step37HeadFvFresh
+    s2Step37HeadFv_distinct s2Step37HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step37HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step37HeadFvRow.payload++s2Step37HeadFvFresh) s2Step37HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step5HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step5HeadGFresh : List Wire := [807]
-theorem s6Step5HeadG_distinct : (s6Step5HeadGRow.sign::s6Step5HeadGRow.payload).Nodup := by
+def s2Step38HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step38HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step38HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 792],769⟩
+def s2Step38HeadGFresh : List Wire := [780]
+theorem s2Step38HeadG_distinct : (s2Step38HeadGRow.sign::s2Step38HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5HeadG_owned : (s6Step5HeadGRow.sign::s6Step5HeadGRow.payload).toFinset⊆s6Step5HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step5HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step38HeadG_owned : (s2Step38HeadGRow.sign::s2Step38HeadGRow.payload).toFinset⊆s2Step38HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step38HeadGBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step5HeadG_reserved : s6Step5HeadGBefore.reserve s6Step5HeadGFresh.toFinset=some s6Step5HeadGAfter := by
+theorem s2Step38HeadG_reserved : s2Step38HeadGBefore.reserve s2Step38HeadGFresh.toFinset=some s2Step38HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step5HeadGFresh,arenaWires]
-  · norm_num [s6Step5HeadGBefore,s6Step5HeadGFresh,arenaWires]
+  · norm_num [s2Step38HeadGFresh,arenaWires]
+  · norm_num [s2Step38HeadGBefore,s2Step38HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step5HeadGAfter,s6Step5HeadGBefore,s6Step5HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step38HeadGAfter,s2Step38HeadGBefore,s2Step38HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step5HeadG_checked : planRowResizeLog s6Step5HeadGBefore s6Step5HeadGRow 257 s6Step5HeadGFresh=
-    some (s6Step5HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩,growRow 777 s6Step5HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step5HeadGBefore s6Step5HeadGAfter s6Step5HeadGRow 257 s6Step5HeadGFresh
-    s6Step5HeadG_distinct s6Step5HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step5HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step5HeadGRow.payload++s6Step5HeadGFresh) s6Step5HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩ := by decide +kernel
+theorem s2Step38HeadG_checked : planRowResizeLog s2Step38HeadGBefore s2Step38HeadGRow 251 s2Step38HeadGFresh=
+    some (s2Step38HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 792, 780],769⟩,growRow 769 s2Step38HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step38HeadGBefore s2Step38HeadGAfter s2Step38HeadGRow 251 s2Step38HeadGFresh
+    s2Step38HeadG_distinct s2Step38HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step38HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step38HeadGRow.payload++s2Step38HeadGFresh) s2Step38HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 792, 780],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step5HeadFBefore : Arena := s6Step5HeadGAfter
-def s6Step5HeadFAfter : Arena := s6Step4HeadFvAfter
-def s6Step5HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step5HeadFFresh : List Wire := [862]
-theorem s6Step5HeadF_distinct : (s6Step5HeadFRow.sign::s6Step5HeadFRow.payload).Nodup := by
+def s2Step38HeadFBefore : Arena := s2Step38HeadGAfter
+def s2Step38HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step38HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761],768⟩
+def s2Step38HeadFFresh : List Wire := [786]
+theorem s2Step38HeadF_distinct : (s2Step38HeadFRow.sign::s2Step38HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5HeadF_owned : (s6Step5HeadFRow.sign::s6Step5HeadFRow.payload).toFinset⊆s6Step5HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step5HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step38HeadF_owned : (s2Step38HeadFRow.sign::s2Step38HeadFRow.payload).toFinset⊆s2Step38HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step38HeadFBefore (fun q => (0≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step5HeadF_reserved : s6Step5HeadFBefore.reserve s6Step5HeadFFresh.toFinset=some s6Step5HeadFAfter := by
+theorem s2Step38HeadF_reserved : s2Step38HeadFBefore.reserve s2Step38HeadFFresh.toFinset=some s2Step38HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step5HeadFFresh,arenaWires]
-  · norm_num [s6Step5HeadFBefore,s6Step5HeadGAfter,s6Step5HeadFFresh,arenaWires]
+  · norm_num [s2Step38HeadFFresh,arenaWires]
+  · norm_num [s2Step38HeadFBefore,s2Step38HeadGAfter,s2Step38HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step5HeadFAfter,s6Step4HeadFvAfter,s6Step5HeadFBefore,s6Step5HeadGAfter,s6Step5HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step38HeadFAfter,s2Step38HeadFBefore,s2Step38HeadGAfter,s2Step38HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step5HeadF_checked : planRowResizeLog s6Step5HeadFBefore s6Step5HeadFRow 257 s6Step5HeadFFresh=
-    some (s6Step5HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩,growRow 795 s6Step5HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step5HeadFBefore s6Step5HeadFAfter s6Step5HeadFRow 257 s6Step5HeadFFresh
-    s6Step5HeadF_distinct s6Step5HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step5HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step5HeadFRow.payload++s6Step5HeadFFresh) s6Step5HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩ := by decide +kernel
+theorem s2Step38HeadF_checked : planRowResizeLog s2Step38HeadFBefore s2Step38HeadFRow 251 s2Step38HeadFFresh=
+    some (s2Step38HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 786],768⟩,growRow 768 s2Step38HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step38HeadFBefore s2Step38HeadFAfter s2Step38HeadFRow 251 s2Step38HeadFFresh
+    s2Step38HeadF_distinct s2Step38HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step38HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step38HeadFRow.payload++s2Step38HeadFFresh) s2Step38HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 786],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step5HeadGvBefore : Arena := s6Step4HeadFvAfter
-def s6Step5HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 887],775⟩
-def s6Step5HeadGvFresh : List Wire := [907]
-theorem s6Step5HeadGv_distinct : (s6Step5HeadGvRow.sign::s6Step5HeadGvRow.payload).Nodup := by
+def s2Step38HeadGvBefore : Arena := s2Step38HeadFAfter
+def s2Step38HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step38HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793],771⟩
+def s2Step38HeadGvFresh : List Wire := [790]
+theorem s2Step38HeadGv_distinct : (s2Step38HeadGvRow.sign::s2Step38HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5HeadGv_owned : (s6Step5HeadGvRow.sign::s6Step5HeadGvRow.payload).toFinset⊆s6Step5HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step5HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step38HeadGv_owned : (s2Step38HeadGvRow.sign::s2Step38HeadGvRow.payload).toFinset⊆s2Step38HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step38HeadGvBefore (fun q => (0≤q ∧ q<790) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step5HeadGv_reserved : s6Step5HeadGvBefore.reserve s6Step5HeadGvFresh.toFinset=some s6Step5HeadGvAfter := by
+theorem s2Step38HeadGv_reserved : s2Step38HeadGvBefore.reserve s2Step38HeadGvFresh.toFinset=some s2Step38HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step5HeadGvFresh,arenaWires]
-  · norm_num [s6Step5HeadGvBefore,s6Step4HeadFvAfter,s6Step5HeadGvFresh,arenaWires]
+  · norm_num [s2Step38HeadGvFresh,arenaWires]
+  · norm_num [s2Step38HeadGvBefore,s2Step38HeadFAfter,s2Step38HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step5HeadGvAfter,s6Step5HeadGvBefore,s6Step4HeadFvAfter,s6Step5HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step38HeadGvAfter,s2Step38HeadGvBefore,s2Step38HeadFAfter,s2Step38HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step5HeadGv_checked : planRowResizeLog s6Step5HeadGvBefore s6Step5HeadGvRow 7 s6Step5HeadGvFresh=
-    some (s6Step5HeadGvAfter,⟨[859, 768, 874, 927, 875, 887, 907],775⟩,growRow 775 s6Step5HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step5HeadGvBefore s6Step5HeadGvAfter s6Step5HeadGvRow 7 s6Step5HeadGvFresh
-    s6Step5HeadGv_distinct s6Step5HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step5HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step5HeadGvRow.payload++s6Step5HeadGvFresh) s6Step5HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 887, 907],775⟩ := by decide +kernel
+theorem s2Step38HeadGv_checked : planRowResizeLog s2Step38HeadGvBefore s2Step38HeadGvRow 33 s2Step38HeadGvFresh=
+    some (s2Step38HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 790],771⟩,growRow 771 s2Step38HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step38HeadGvBefore s2Step38HeadGvAfter s2Step38HeadGvRow 33 s2Step38HeadGvFresh
+    s2Step38HeadGv_distinct s2Step38HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step38HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step38HeadGvRow.payload++s2Step38HeadGvFresh) s2Step38HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 790],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step5HeadFvBefore : Arena := s6Step5HeadGvAfter
-def s6Step5HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857],776⟩
-def s6Step5HeadFvFresh : List Wire := [858]
-theorem s6Step5HeadFv_distinct : (s6Step5HeadFvRow.sign::s6Step5HeadFvRow.payload).Nodup := by
+def s2Step38HeadFvBefore : Arena := s2Step38HeadGvAfter
+def s2Step38HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step38HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779],770⟩
+def s2Step38HeadFvFresh : List Wire := [791]
+theorem s2Step38HeadFv_distinct : (s2Step38HeadFvRow.sign::s2Step38HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5HeadFv_owned : (s6Step5HeadFvRow.sign::s6Step5HeadFvRow.payload).toFinset⊆s6Step5HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step5HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step38HeadFv_owned : (s2Step38HeadFvRow.sign::s2Step38HeadFvRow.payload).toFinset⊆s2Step38HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step38HeadFvBefore (fun q => (0≤q ∧ q<791) ∨ (792≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step5HeadFv_reserved : s6Step5HeadFvBefore.reserve s6Step5HeadFvFresh.toFinset=some s6Step5HeadFvAfter := by
+theorem s2Step38HeadFv_reserved : s2Step38HeadFvBefore.reserve s2Step38HeadFvFresh.toFinset=some s2Step38HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step5HeadFvFresh,arenaWires]
-  · norm_num [s6Step5HeadFvBefore,s6Step5HeadGvAfter,s6Step5HeadFvFresh,arenaWires]
+  · norm_num [s2Step38HeadFvFresh,arenaWires]
+  · norm_num [s2Step38HeadFvBefore,s2Step38HeadGvAfter,s2Step38HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step5HeadFvAfter,s6Step5HeadFvBefore,s6Step5HeadGvAfter,s6Step5HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step38HeadFvAfter,s2Step38HeadFvBefore,s2Step38HeadGvAfter,s2Step38HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step5HeadFv_checked : planRowResizeLog s6Step5HeadFvBefore s6Step5HeadFvRow 7 s6Step5HeadFvFresh=
-    some (s6Step5HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858],776⟩,growRow 776 s6Step5HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step5HeadFvBefore s6Step5HeadFvAfter s6Step5HeadFvRow 7 s6Step5HeadFvFresh
-    s6Step5HeadFv_distinct s6Step5HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step5HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step5HeadFvRow.payload++s6Step5HeadFvFresh) s6Step5HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858],776⟩ := by decide +kernel
+theorem s2Step38HeadFv_checked : planRowResizeLog s2Step38HeadFvBefore s2Step38HeadFvRow 33 s2Step38HeadFvFresh=
+    some (s2Step38HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 791],770⟩,growRow 770 s2Step38HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step38HeadFvBefore s2Step38HeadFvAfter s2Step38HeadFvRow 33 s2Step38HeadFvFresh
+    s2Step38HeadFv_distinct s2Step38HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step38HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step38HeadFvRow.payload++s2Step38HeadFvFresh) s2Step38HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 791],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step6HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step6HeadGFresh : List Wire := [813]
-theorem s6Step6HeadG_distinct : (s6Step6HeadGRow.sign::s6Step6HeadGRow.payload).Nodup := by
+def s2Step39HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step39HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step39HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248],769⟩
+def s2Step39HeadGFresh : List Wire := [794]
+theorem s2Step39HeadG_distinct : (s2Step39HeadGRow.sign::s2Step39HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6HeadG_owned : (s6Step6HeadGRow.sign::s6Step6HeadGRow.payload).toFinset⊆s6Step6HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step6HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step39HeadG_owned : (s2Step39HeadGRow.sign::s2Step39HeadGRow.payload).toFinset⊆s2Step39HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step39HeadGBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step6HeadG_reserved : s6Step6HeadGBefore.reserve s6Step6HeadGFresh.toFinset=some s6Step6HeadGAfter := by
+theorem s2Step39HeadG_reserved : s2Step39HeadGBefore.reserve s2Step39HeadGFresh.toFinset=some s2Step39HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step6HeadGFresh,arenaWires]
-  · norm_num [s6Step6HeadGBefore,s6Step6HeadGFresh,arenaWires]
+  · norm_num [s2Step39HeadGFresh,arenaWires]
+  · norm_num [s2Step39HeadGBefore,s2Step39HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step6HeadGAfter,s6Step6HeadGBefore,s6Step6HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step39HeadGAfter,s2Step39HeadGBefore,s2Step39HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step6HeadG_checked : planRowResizeLog s6Step6HeadGBefore s6Step6HeadGRow 257 s6Step6HeadGFresh=
-    some (s6Step6HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩,growRow 777 s6Step6HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step6HeadGBefore s6Step6HeadGAfter s6Step6HeadGRow 257 s6Step6HeadGFresh
-    s6Step6HeadG_distinct s6Step6HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step6HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step6HeadGRow.payload++s6Step6HeadGFresh) s6Step6HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩ := by decide +kernel
+theorem s2Step39HeadG_checked : planRowResizeLog s2Step39HeadGBefore s2Step39HeadGRow 250 s2Step39HeadGFresh=
+    some (s2Step39HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 794],769⟩,growRow 769 s2Step39HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step39HeadGBefore s2Step39HeadGAfter s2Step39HeadGRow 250 s2Step39HeadGFresh
+    s2Step39HeadG_distinct s2Step39HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step39HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step39HeadGRow.payload++s2Step39HeadGFresh) s2Step39HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 794],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step6HeadFBefore : Arena := s6Step6HeadGAfter
-def s6Step6HeadFAfter : Arena := s6Step5HeadFvAfter
-def s6Step6HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step6HeadFFresh : List Wire := [807]
-theorem s6Step6HeadF_distinct : (s6Step6HeadFRow.sign::s6Step6HeadFRow.payload).Nodup := by
+def s2Step39HeadFBefore : Arena := s2Step39HeadGAfter
+def s2Step39HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step39HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760],768⟩
+def s2Step39HeadFFresh : List Wire := [790]
+theorem s2Step39HeadF_distinct : (s2Step39HeadFRow.sign::s2Step39HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6HeadF_owned : (s6Step6HeadFRow.sign::s6Step6HeadFRow.payload).toFinset⊆s6Step6HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step6HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step39HeadF_owned : (s2Step39HeadFRow.sign::s2Step39HeadFRow.payload).toFinset⊆s2Step39HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step39HeadFBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<790) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step6HeadF_reserved : s6Step6HeadFBefore.reserve s6Step6HeadFFresh.toFinset=some s6Step6HeadFAfter := by
+theorem s2Step39HeadF_reserved : s2Step39HeadFBefore.reserve s2Step39HeadFFresh.toFinset=some s2Step39HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step6HeadFFresh,arenaWires]
-  · norm_num [s6Step6HeadFBefore,s6Step6HeadGAfter,s6Step6HeadFFresh,arenaWires]
+  · norm_num [s2Step39HeadFFresh,arenaWires]
+  · norm_num [s2Step39HeadFBefore,s2Step39HeadGAfter,s2Step39HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step6HeadFAfter,s6Step5HeadFvAfter,s6Step6HeadFBefore,s6Step6HeadGAfter,s6Step6HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step39HeadFAfter,s2Step39HeadFBefore,s2Step39HeadGAfter,s2Step39HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step6HeadF_checked : planRowResizeLog s6Step6HeadFBefore s6Step6HeadFRow 257 s6Step6HeadFFresh=
-    some (s6Step6HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩,growRow 795 s6Step6HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step6HeadFBefore s6Step6HeadFAfter s6Step6HeadFRow 257 s6Step6HeadFFresh
-    s6Step6HeadF_distinct s6Step6HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step6HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step6HeadFRow.payload++s6Step6HeadFFresh) s6Step6HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩ := by decide +kernel
+theorem s2Step39HeadF_checked : planRowResizeLog s2Step39HeadFBefore s2Step39HeadFRow 250 s2Step39HeadFFresh=
+    some (s2Step39HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 790],768⟩,growRow 768 s2Step39HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step39HeadFBefore s2Step39HeadFAfter s2Step39HeadFRow 250 s2Step39HeadFFresh
+    s2Step39HeadF_distinct s2Step39HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step39HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step39HeadFRow.payload++s2Step39HeadFFresh) s2Step39HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 790],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step6HeadGvBefore : Arena := s6Step5HeadFvAfter
-def s6Step6HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 887],775⟩
-def s6Step6HeadGvFresh : List Wire := [908]
-theorem s6Step6HeadGv_distinct : (s6Step6HeadGvRow.sign::s6Step6HeadGvRow.payload).Nodup := by
+def s2Step39HeadGvBefore : Arena := s2Step39HeadFAfter
+def s2Step39HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step39HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793],771⟩
+def s2Step39HeadGvFresh : List Wire := [791]
+theorem s2Step39HeadGv_distinct : (s2Step39HeadGvRow.sign::s2Step39HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6HeadGv_owned : (s6Step6HeadGvRow.sign::s6Step6HeadGvRow.payload).toFinset⊆s6Step6HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step6HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step39HeadGv_owned : (s2Step39HeadGvRow.sign::s2Step39HeadGvRow.payload).toFinset⊆s2Step39HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step39HeadGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<791) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step6HeadGv_reserved : s6Step6HeadGvBefore.reserve s6Step6HeadGvFresh.toFinset=some s6Step6HeadGvAfter := by
+theorem s2Step39HeadGv_reserved : s2Step39HeadGvBefore.reserve s2Step39HeadGvFresh.toFinset=some s2Step39HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step6HeadGvFresh,arenaWires]
-  · norm_num [s6Step6HeadGvBefore,s6Step5HeadFvAfter,s6Step6HeadGvFresh,arenaWires]
+  · norm_num [s2Step39HeadGvFresh,arenaWires]
+  · norm_num [s2Step39HeadGvBefore,s2Step39HeadFAfter,s2Step39HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step6HeadGvAfter,s6Step6HeadGvBefore,s6Step5HeadFvAfter,s6Step6HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step39HeadGvAfter,s2Step39HeadGvBefore,s2Step39HeadFAfter,s2Step39HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step6HeadGv_checked : planRowResizeLog s6Step6HeadGvBefore s6Step6HeadGvRow 8 s6Step6HeadGvFresh=
-    some (s6Step6HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 887, 908],775⟩,growRow 775 s6Step6HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step6HeadGvBefore s6Step6HeadGvAfter s6Step6HeadGvRow 8 s6Step6HeadGvFresh
-    s6Step6HeadGv_distinct s6Step6HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step6HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step6HeadGvRow.payload++s6Step6HeadGvFresh) s6Step6HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 887, 908],775⟩ := by decide +kernel
+theorem s2Step39HeadGv_checked : planRowResizeLog s2Step39HeadGvBefore s2Step39HeadGvRow 33 s2Step39HeadGvFresh=
+    some (s2Step39HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 791],771⟩,growRow 771 s2Step39HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step39HeadGvBefore s2Step39HeadGvAfter s2Step39HeadGvRow 33 s2Step39HeadGvFresh
+    s2Step39HeadGv_distinct s2Step39HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step39HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step39HeadGvRow.payload++s2Step39HeadGvFresh) s2Step39HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 791],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step6HeadFvBefore : Arena := s6Step6HeadGvAfter
-def s6Step6HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858],776⟩
-def s6Step6HeadFvFresh : List Wire := [845]
-theorem s6Step6HeadFv_distinct : (s6Step6HeadFvRow.sign::s6Step6HeadFvRow.payload).Nodup := by
+def s2Step39HeadFvBefore : Arena := s2Step39HeadGvAfter
+def s2Step39HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step39HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779],770⟩
+def s2Step39HeadFvFresh : List Wire := [786]
+theorem s2Step39HeadFv_distinct : (s2Step39HeadFvRow.sign::s2Step39HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6HeadFv_owned : (s6Step6HeadFvRow.sign::s6Step6HeadFvRow.payload).toFinset⊆s6Step6HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step6HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step39HeadFv_owned : (s2Step39HeadFvRow.sign::s2Step39HeadFvRow.payload).toFinset⊆s2Step39HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step39HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<786) ∨ (787≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step6HeadFv_reserved : s6Step6HeadFvBefore.reserve s6Step6HeadFvFresh.toFinset=some s6Step6HeadFvAfter := by
+theorem s2Step39HeadFv_reserved : s2Step39HeadFvBefore.reserve s2Step39HeadFvFresh.toFinset=some s2Step39HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step6HeadFvFresh,arenaWires]
-  · norm_num [s6Step6HeadFvBefore,s6Step6HeadGvAfter,s6Step6HeadFvFresh,arenaWires]
+  · norm_num [s2Step39HeadFvFresh,arenaWires]
+  · norm_num [s2Step39HeadFvBefore,s2Step39HeadGvAfter,s2Step39HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step6HeadFvAfter,s6Step6HeadFvBefore,s6Step6HeadGvAfter,s6Step6HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step39HeadFvAfter,s2Step39HeadFvBefore,s2Step39HeadGvAfter,s2Step39HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step6HeadFv_checked : planRowResizeLog s6Step6HeadFvBefore s6Step6HeadFvRow 8 s6Step6HeadFvFresh=
-    some (s6Step6HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845],776⟩,growRow 776 s6Step6HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step6HeadFvBefore s6Step6HeadFvAfter s6Step6HeadFvRow 8 s6Step6HeadFvFresh
-    s6Step6HeadFv_distinct s6Step6HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step6HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step6HeadFvRow.payload++s6Step6HeadFvFresh) s6Step6HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845],776⟩ := by decide +kernel
+theorem s2Step39HeadFv_checked : planRowResizeLog s2Step39HeadFvBefore s2Step39HeadFvRow 33 s2Step39HeadFvFresh=
+    some (s2Step39HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786],770⟩,growRow 770 s2Step39HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step39HeadFvBefore s2Step39HeadFvAfter s2Step39HeadFvRow 33 s2Step39HeadFvFresh
+    s2Step39HeadFv_distinct s2Step39HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step39HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step39HeadFvRow.payload++s2Step39HeadFvFresh) s2Step39HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step7HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step7HeadGFresh : List Wire := [860]
-theorem s6Step7HeadG_distinct : (s6Step7HeadGRow.sign::s6Step7HeadGRow.payload).Nodup := by
+def s2Step40HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step40HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step40HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 787],769⟩
+def s2Step40HeadGFresh : List Wire := [790]
+theorem s2Step40HeadG_distinct : (s2Step40HeadGRow.sign::s2Step40HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7HeadG_owned : (s6Step7HeadGRow.sign::s6Step7HeadGRow.payload).toFinset⊆s6Step7HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step7HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step40HeadG_owned : (s2Step40HeadGRow.sign::s2Step40HeadGRow.payload).toFinset⊆s2Step40HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step40HeadGBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step7HeadG_reserved : s6Step7HeadGBefore.reserve s6Step7HeadGFresh.toFinset=some s6Step7HeadGAfter := by
+theorem s2Step40HeadG_reserved : s2Step40HeadGBefore.reserve s2Step40HeadGFresh.toFinset=some s2Step40HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step7HeadGFresh,arenaWires]
-  · norm_num [s6Step7HeadGBefore,s6Step7HeadGFresh,arenaWires]
+  · norm_num [s2Step40HeadGFresh,arenaWires]
+  · norm_num [s2Step40HeadGBefore,s2Step40HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step7HeadGAfter,s6Step7HeadGBefore,s6Step7HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step40HeadGAfter,s2Step40HeadGBefore,s2Step40HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step7HeadG_checked : planRowResizeLog s6Step7HeadGBefore s6Step7HeadGRow 257 s6Step7HeadGFresh=
-    some (s6Step7HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩,growRow 777 s6Step7HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step7HeadGBefore s6Step7HeadGAfter s6Step7HeadGRow 257 s6Step7HeadGFresh
-    s6Step7HeadG_distinct s6Step7HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step7HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step7HeadGRow.payload++s6Step7HeadGFresh) s6Step7HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩ := by decide +kernel
+theorem s2Step40HeadG_checked : planRowResizeLog s2Step40HeadGBefore s2Step40HeadGRow 250 s2Step40HeadGFresh=
+    some (s2Step40HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 787, 790],769⟩,growRow 769 s2Step40HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step40HeadGBefore s2Step40HeadGAfter s2Step40HeadGRow 250 s2Step40HeadGFresh
+    s2Step40HeadG_distinct s2Step40HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step40HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step40HeadGRow.payload++s2Step40HeadGFresh) s2Step40HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 787, 790],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step7HeadFBefore : Arena := s6Step7HeadGAfter
-def s6Step7HeadFAfter : Arena := s6Step6HeadFvAfter
-def s6Step7HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step7HeadFFresh : List Wire := [813]
-theorem s6Step7HeadF_distinct : (s6Step7HeadFRow.sign::s6Step7HeadFRow.payload).Nodup := by
+def s2Step40HeadFBefore : Arena := s2Step40HeadGAfter
+def s2Step40HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step40HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760],768⟩
+def s2Step40HeadFFresh : List Wire := [794]
+theorem s2Step40HeadF_distinct : (s2Step40HeadFRow.sign::s2Step40HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7HeadF_owned : (s6Step7HeadFRow.sign::s6Step7HeadFRow.payload).toFinset⊆s6Step7HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step7HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step40HeadF_owned : (s2Step40HeadFRow.sign::s2Step40HeadFRow.payload).toFinset⊆s2Step40HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step40HeadFBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step7HeadF_reserved : s6Step7HeadFBefore.reserve s6Step7HeadFFresh.toFinset=some s6Step7HeadFAfter := by
+theorem s2Step40HeadF_reserved : s2Step40HeadFBefore.reserve s2Step40HeadFFresh.toFinset=some s2Step40HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step7HeadFFresh,arenaWires]
-  · norm_num [s6Step7HeadFBefore,s6Step7HeadGAfter,s6Step7HeadFFresh,arenaWires]
+  · norm_num [s2Step40HeadFFresh,arenaWires]
+  · norm_num [s2Step40HeadFBefore,s2Step40HeadGAfter,s2Step40HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step7HeadFAfter,s6Step6HeadFvAfter,s6Step7HeadFBefore,s6Step7HeadGAfter,s6Step7HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step40HeadFAfter,s2Step40HeadFBefore,s2Step40HeadGAfter,s2Step40HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step7HeadF_checked : planRowResizeLog s6Step7HeadFBefore s6Step7HeadFRow 257 s6Step7HeadFFresh=
-    some (s6Step7HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩,growRow 795 s6Step7HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step7HeadFBefore s6Step7HeadFAfter s6Step7HeadFRow 257 s6Step7HeadFFresh
-    s6Step7HeadF_distinct s6Step7HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step7HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step7HeadFRow.payload++s6Step7HeadFFresh) s6Step7HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩ := by decide +kernel
+theorem s2Step40HeadF_checked : planRowResizeLog s2Step40HeadFBefore s2Step40HeadFRow 250 s2Step40HeadFFresh=
+    some (s2Step40HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 794],768⟩,growRow 768 s2Step40HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step40HeadFBefore s2Step40HeadFAfter s2Step40HeadFRow 250 s2Step40HeadFFresh
+    s2Step40HeadF_distinct s2Step40HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step40HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step40HeadFRow.payload++s2Step40HeadFFresh) s2Step40HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 794],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step7HeadGvBefore : Arena := s6Step6HeadFvAfter
-def s6Step7HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 887],775⟩
-def s6Step7HeadGvFresh : List Wire := [890]
-theorem s6Step7HeadGv_distinct : (s6Step7HeadGvRow.sign::s6Step7HeadGvRow.payload).Nodup := by
+def s2Step40HeadGvBefore : Arena := s2Step40HeadFAfter
+def s2Step40HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step40HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796],771⟩
+def s2Step40HeadGvFresh : List Wire := [792]
+theorem s2Step40HeadGv_distinct : (s2Step40HeadGvRow.sign::s2Step40HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7HeadGv_owned : (s6Step7HeadGvRow.sign::s6Step7HeadGvRow.payload).toFinset⊆s6Step7HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step7HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step40HeadGv_owned : (s2Step40HeadGvRow.sign::s2Step40HeadGvRow.payload).toFinset⊆s2Step40HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step40HeadGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step7HeadGv_reserved : s6Step7HeadGvBefore.reserve s6Step7HeadGvFresh.toFinset=some s6Step7HeadGvAfter := by
+theorem s2Step40HeadGv_reserved : s2Step40HeadGvBefore.reserve s2Step40HeadGvFresh.toFinset=some s2Step40HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step7HeadGvFresh,arenaWires]
-  · norm_num [s6Step7HeadGvBefore,s6Step6HeadFvAfter,s6Step7HeadGvFresh,arenaWires]
+  · norm_num [s2Step40HeadGvFresh,arenaWires]
+  · norm_num [s2Step40HeadGvBefore,s2Step40HeadFAfter,s2Step40HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step7HeadGvAfter,s6Step7HeadGvBefore,s6Step6HeadFvAfter,s6Step7HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step40HeadGvAfter,s2Step40HeadGvBefore,s2Step40HeadFAfter,s2Step40HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step7HeadGv_checked : planRowResizeLog s6Step7HeadGvBefore s6Step7HeadGvRow 9 s6Step7HeadGvFresh=
-    some (s6Step7HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 887, 890],775⟩,growRow 775 s6Step7HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step7HeadGvBefore s6Step7HeadGvAfter s6Step7HeadGvRow 9 s6Step7HeadGvFresh
-    s6Step7HeadGv_distinct s6Step7HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step7HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step7HeadGvRow.payload++s6Step7HeadGvFresh) s6Step7HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 887, 890],775⟩ := by decide +kernel
+theorem s2Step40HeadGv_checked : planRowResizeLog s2Step40HeadGvBefore s2Step40HeadGvRow 34 s2Step40HeadGvFresh=
+    some (s2Step40HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 792],771⟩,growRow 771 s2Step40HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step40HeadGvBefore s2Step40HeadGvAfter s2Step40HeadGvRow 34 s2Step40HeadGvFresh
+    s2Step40HeadGv_distinct s2Step40HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step40HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step40HeadGvRow.payload++s2Step40HeadGvFresh) s2Step40HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 792],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step7HeadFvBefore : Arena := s6Step7HeadGvAfter
-def s6Step7HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845],776⟩
-def s6Step7HeadFvFresh : List Wire := [805]
-theorem s6Step7HeadFv_distinct : (s6Step7HeadFvRow.sign::s6Step7HeadFvRow.payload).Nodup := by
+def s2Step40HeadFvBefore : Arena := s2Step40HeadGvAfter
+def s2Step40HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step40HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786],770⟩
+def s2Step40HeadFvFresh : List Wire := [780]
+theorem s2Step40HeadFv_distinct : (s2Step40HeadFvRow.sign::s2Step40HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7HeadFv_owned : (s6Step7HeadFvRow.sign::s6Step7HeadFvRow.payload).toFinset⊆s6Step7HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step7HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step40HeadFv_owned : (s2Step40HeadFvRow.sign::s2Step40HeadFvRow.payload).toFinset⊆s2Step40HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step40HeadFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step7HeadFv_reserved : s6Step7HeadFvBefore.reserve s6Step7HeadFvFresh.toFinset=some s6Step7HeadFvAfter := by
+theorem s2Step40HeadFv_reserved : s2Step40HeadFvBefore.reserve s2Step40HeadFvFresh.toFinset=some s2Step40HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step7HeadFvFresh,arenaWires]
-  · norm_num [s6Step7HeadFvBefore,s6Step7HeadGvAfter,s6Step7HeadFvFresh,arenaWires]
+  · norm_num [s2Step40HeadFvFresh,arenaWires]
+  · norm_num [s2Step40HeadFvBefore,s2Step40HeadGvAfter,s2Step40HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step7HeadFvAfter,s6Step7HeadFvBefore,s6Step7HeadGvAfter,s6Step7HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step40HeadFvAfter,s2Step40HeadFvBefore,s2Step40HeadGvAfter,s2Step40HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step7HeadFv_checked : planRowResizeLog s6Step7HeadFvBefore s6Step7HeadFvRow 9 s6Step7HeadFvFresh=
-    some (s6Step7HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805],776⟩,growRow 776 s6Step7HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step7HeadFvBefore s6Step7HeadFvAfter s6Step7HeadFvRow 9 s6Step7HeadFvFresh
-    s6Step7HeadFv_distinct s6Step7HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step7HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step7HeadFvRow.payload++s6Step7HeadFvFresh) s6Step7HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805],776⟩ := by decide +kernel
+theorem s2Step40HeadFv_checked : planRowResizeLog s2Step40HeadFvBefore s2Step40HeadFvRow 34 s2Step40HeadFvFresh=
+    some (s2Step40HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780],770⟩,growRow 770 s2Step40HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step40HeadFvBefore s2Step40HeadFvAfter s2Step40HeadFvRow 34 s2Step40HeadFvFresh
+    s2Step40HeadFv_distinct s2Step40HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step40HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step40HeadFvRow.payload++s2Step40HeadFvFresh) s2Step40HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step8HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step8HeadGFresh : List Wire := [862]
-theorem s6Step8HeadG_distinct : (s6Step8HeadGRow.sign::s6Step8HeadGRow.payload).Nodup := by
+def s2Step41HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step41HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step41HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247],769⟩
+def s2Step41HeadGFresh : List Wire := [792]
+theorem s2Step41HeadG_distinct : (s2Step41HeadGRow.sign::s2Step41HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8HeadG_owned : (s6Step8HeadGRow.sign::s6Step8HeadGRow.payload).toFinset⊆s6Step8HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step8HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step41HeadG_owned : (s2Step41HeadGRow.sign::s2Step41HeadGRow.payload).toFinset⊆s2Step41HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step41HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step8HeadG_reserved : s6Step8HeadGBefore.reserve s6Step8HeadGFresh.toFinset=some s6Step8HeadGAfter := by
+theorem s2Step41HeadG_reserved : s2Step41HeadGBefore.reserve s2Step41HeadGFresh.toFinset=some s2Step41HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step8HeadGFresh,arenaWires]
-  · norm_num [s6Step8HeadGBefore,s6Step8HeadGFresh,arenaWires]
+  · norm_num [s2Step41HeadGFresh,arenaWires]
+  · norm_num [s2Step41HeadGBefore,s2Step41HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step8HeadGAfter,s6Step8HeadGBefore,s6Step8HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step41HeadGAfter,s2Step41HeadGBefore,s2Step41HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step8HeadG_checked : planRowResizeLog s6Step8HeadGBefore s6Step8HeadGRow 257 s6Step8HeadGFresh=
-    some (s6Step8HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩,growRow 777 s6Step8HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step8HeadGBefore s6Step8HeadGAfter s6Step8HeadGRow 257 s6Step8HeadGFresh
-    s6Step8HeadG_distinct s6Step8HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step8HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step8HeadGRow.payload++s6Step8HeadGFresh) s6Step8HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩ := by decide +kernel
+theorem s2Step41HeadG_checked : planRowResizeLog s2Step41HeadGBefore s2Step41HeadGRow 249 s2Step41HeadGFresh=
+    some (s2Step41HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 792],769⟩,growRow 769 s2Step41HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step41HeadGBefore s2Step41HeadGAfter s2Step41HeadGRow 249 s2Step41HeadGFresh
+    s2Step41HeadG_distinct s2Step41HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step41HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step41HeadGRow.payload++s2Step41HeadGFresh) s2Step41HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 792],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step8HeadFBefore : Arena := s6Step8HeadGAfter
-def s6Step8HeadFAfter : Arena := s6Step7HeadFvAfter
-def s6Step8HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step8HeadFFresh : List Wire := [860]
-theorem s6Step8HeadF_distinct : (s6Step8HeadFRow.sign::s6Step8HeadFRow.payload).Nodup := by
+def s2Step41HeadFBefore : Arena := s2Step41HeadGAfter
+def s2Step41HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step41HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759],768⟩
+def s2Step41HeadFFresh : List Wire := [794]
+theorem s2Step41HeadF_distinct : (s2Step41HeadFRow.sign::s2Step41HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8HeadF_owned : (s6Step8HeadFRow.sign::s6Step8HeadFRow.payload).toFinset⊆s6Step8HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step8HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step41HeadF_owned : (s2Step41HeadFRow.sign::s2Step41HeadFRow.payload).toFinset⊆s2Step41HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step41HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step8HeadF_reserved : s6Step8HeadFBefore.reserve s6Step8HeadFFresh.toFinset=some s6Step8HeadFAfter := by
+theorem s2Step41HeadF_reserved : s2Step41HeadFBefore.reserve s2Step41HeadFFresh.toFinset=some s2Step41HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step8HeadFFresh,arenaWires]
-  · norm_num [s6Step8HeadFBefore,s6Step8HeadGAfter,s6Step8HeadFFresh,arenaWires]
+  · norm_num [s2Step41HeadFFresh,arenaWires]
+  · norm_num [s2Step41HeadFBefore,s2Step41HeadGAfter,s2Step41HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step8HeadFAfter,s6Step7HeadFvAfter,s6Step8HeadFBefore,s6Step8HeadGAfter,s6Step8HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step41HeadFAfter,s2Step41HeadFBefore,s2Step41HeadGAfter,s2Step41HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step8HeadF_checked : planRowResizeLog s6Step8HeadFBefore s6Step8HeadFRow 257 s6Step8HeadFFresh=
-    some (s6Step8HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩,growRow 795 s6Step8HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step8HeadFBefore s6Step8HeadFAfter s6Step8HeadFRow 257 s6Step8HeadFFresh
-    s6Step8HeadF_distinct s6Step8HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step8HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step8HeadFRow.payload++s6Step8HeadFFresh) s6Step8HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩ := by decide +kernel
+theorem s2Step41HeadF_checked : planRowResizeLog s2Step41HeadFBefore s2Step41HeadFRow 249 s2Step41HeadFFresh=
+    some (s2Step41HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 794],768⟩,growRow 768 s2Step41HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step41HeadFBefore s2Step41HeadFAfter s2Step41HeadFRow 249 s2Step41HeadFFresh
+    s2Step41HeadF_distinct s2Step41HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step41HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step41HeadFRow.payload++s2Step41HeadFFresh) s2Step41HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 794],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step8HeadGvBefore : Arena := s6Step7HeadFvAfter
-def s6Step8HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 887],775⟩
-def s6Step8HeadGvFresh : List Wire := [873]
-theorem s6Step8HeadGv_distinct : (s6Step8HeadGvRow.sign::s6Step8HeadGvRow.payload).Nodup := by
+def s2Step41HeadGvBefore : Arena := s2Step41HeadFAfter
+def s2Step41HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)),Finset.filter_subset _ _⟩
+def s2Step41HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 791],771⟩
+def s2Step41HeadGvFresh : List Wire := [787]
+theorem s2Step41HeadGv_distinct : (s2Step41HeadGvRow.sign::s2Step41HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8HeadGv_owned : (s6Step8HeadGvRow.sign::s6Step8HeadGvRow.payload).toFinset⊆s6Step8HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step8HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step41HeadGv_owned : (s2Step41HeadGvRow.sign::s2Step41HeadGvRow.payload).toFinset⊆s2Step41HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step41HeadGvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step8HeadGv_reserved : s6Step8HeadGvBefore.reserve s6Step8HeadGvFresh.toFinset=some s6Step8HeadGvAfter := by
+theorem s2Step41HeadGv_reserved : s2Step41HeadGvBefore.reserve s2Step41HeadGvFresh.toFinset=some s2Step41HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step8HeadGvFresh,arenaWires]
-  · norm_num [s6Step8HeadGvBefore,s6Step7HeadFvAfter,s6Step8HeadGvFresh,arenaWires]
+  · norm_num [s2Step41HeadGvFresh,arenaWires]
+  · norm_num [s2Step41HeadGvBefore,s2Step41HeadFAfter,s2Step41HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step8HeadGvAfter,s6Step8HeadGvBefore,s6Step7HeadFvAfter,s6Step8HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step41HeadGvAfter,s2Step41HeadGvBefore,s2Step41HeadFAfter,s2Step41HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step8HeadGv_checked : planRowResizeLog s6Step8HeadGvBefore s6Step8HeadGvRow 10 s6Step8HeadGvFresh=
-    some (s6Step8HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 887, 873],775⟩,growRow 775 s6Step8HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step8HeadGvBefore s6Step8HeadGvAfter s6Step8HeadGvRow 10 s6Step8HeadGvFresh
-    s6Step8HeadGv_distinct s6Step8HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step8HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step8HeadGvRow.payload++s6Step8HeadGvFresh) s6Step8HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 887, 873],775⟩ := by decide +kernel
+theorem s2Step41HeadGv_checked : planRowResizeLog s2Step41HeadGvBefore s2Step41HeadGvRow 35 s2Step41HeadGvFresh=
+    some (s2Step41HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 791, 787],771⟩,growRow 771 s2Step41HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step41HeadGvBefore s2Step41HeadGvAfter s2Step41HeadGvRow 35 s2Step41HeadGvFresh
+    s2Step41HeadGv_distinct s2Step41HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step41HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step41HeadGvRow.payload++s2Step41HeadGvFresh) s2Step41HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 791, 787],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step8HeadFvBefore : Arena := s6Step8HeadGvAfter
-def s6Step8HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805],776⟩
-def s6Step8HeadFvFresh : List Wire := [796]
-theorem s6Step8HeadFv_distinct : (s6Step8HeadFvRow.sign::s6Step8HeadFvRow.payload).Nodup := by
+def s2Step41HeadFvBefore : Arena := s2Step41HeadGvAfter
+def s2Step41HeadFvAfter : Arena := s2Step40HeadFvAfter
+def s2Step41HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780],770⟩
+def s2Step41HeadFvFresh : List Wire := [790]
+theorem s2Step41HeadFv_distinct : (s2Step41HeadFvRow.sign::s2Step41HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8HeadFv_owned : (s6Step8HeadFvRow.sign::s6Step8HeadFvRow.payload).toFinset⊆s6Step8HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step8HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step41HeadFv_owned : (s2Step41HeadFvRow.sign::s2Step41HeadFvRow.payload).toFinset⊆s2Step41HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step41HeadFvBefore (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860)) rfl
   decide +kernel
-theorem s6Step8HeadFv_reserved : s6Step8HeadFvBefore.reserve s6Step8HeadFvFresh.toFinset=some s6Step8HeadFvAfter := by
+theorem s2Step41HeadFv_reserved : s2Step41HeadFvBefore.reserve s2Step41HeadFvFresh.toFinset=some s2Step41HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step8HeadFvFresh,arenaWires]
-  · norm_num [s6Step8HeadFvBefore,s6Step8HeadGvAfter,s6Step8HeadFvFresh,arenaWires]
+  · norm_num [s2Step41HeadFvFresh,arenaWires]
+  · norm_num [s2Step41HeadFvBefore,s2Step41HeadGvAfter,s2Step41HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step8HeadFvAfter,s6Step8HeadFvBefore,s6Step8HeadGvAfter,s6Step8HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step41HeadFvAfter,s2Step40HeadFvAfter,s2Step41HeadFvBefore,s2Step41HeadGvAfter,s2Step41HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step8HeadFv_checked : planRowResizeLog s6Step8HeadFvBefore s6Step8HeadFvRow 10 s6Step8HeadFvFresh=
-    some (s6Step8HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796],776⟩,growRow 776 s6Step8HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step8HeadFvBefore s6Step8HeadFvAfter s6Step8HeadFvRow 10 s6Step8HeadFvFresh
-    s6Step8HeadFv_distinct s6Step8HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step8HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step8HeadFvRow.payload++s6Step8HeadFvFresh) s6Step8HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796],776⟩ := by decide +kernel
+theorem s2Step41HeadFv_checked : planRowResizeLog s2Step41HeadFvBefore s2Step41HeadFvRow 35 s2Step41HeadFvFresh=
+    some (s2Step41HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 790],770⟩,growRow 770 s2Step41HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step41HeadFvBefore s2Step41HeadFvAfter s2Step41HeadFvRow 35 s2Step41HeadFvFresh
+    s2Step41HeadFv_distinct s2Step41HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step41HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step41HeadFvRow.payload++s2Step41HeadFvFresh) s2Step41HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 790],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step9HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step9HeadGFresh : List Wire := [807]
-theorem s6Step9HeadG_distinct : (s6Step9HeadGRow.sign::s6Step9HeadGRow.payload).Nodup := by
+def s2Step42HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step42HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step42HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247],769⟩
+def s2Step42HeadGFresh : List Wire := [787]
+theorem s2Step42HeadG_distinct : (s2Step42HeadGRow.sign::s2Step42HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9HeadG_owned : (s6Step9HeadGRow.sign::s6Step9HeadGRow.payload).toFinset⊆s6Step9HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step9HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step42HeadG_owned : (s2Step42HeadGRow.sign::s2Step42HeadGRow.payload).toFinset⊆s2Step42HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step42HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step9HeadG_reserved : s6Step9HeadGBefore.reserve s6Step9HeadGFresh.toFinset=some s6Step9HeadGAfter := by
+theorem s2Step42HeadG_reserved : s2Step42HeadGBefore.reserve s2Step42HeadGFresh.toFinset=some s2Step42HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step9HeadGFresh,arenaWires]
-  · norm_num [s6Step9HeadGBefore,s6Step9HeadGFresh,arenaWires]
+  · norm_num [s2Step42HeadGFresh,arenaWires]
+  · norm_num [s2Step42HeadGBefore,s2Step42HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step9HeadGAfter,s6Step9HeadGBefore,s6Step9HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step42HeadGAfter,s2Step42HeadGBefore,s2Step42HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step9HeadG_checked : planRowResizeLog s6Step9HeadGBefore s6Step9HeadGRow 257 s6Step9HeadGFresh=
-    some (s6Step9HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩,growRow 777 s6Step9HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step9HeadGBefore s6Step9HeadGAfter s6Step9HeadGRow 257 s6Step9HeadGFresh
-    s6Step9HeadG_distinct s6Step9HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step9HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step9HeadGRow.payload++s6Step9HeadGFresh) s6Step9HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩ := by decide +kernel
+theorem s2Step42HeadG_checked : planRowResizeLog s2Step42HeadGBefore s2Step42HeadGRow 249 s2Step42HeadGFresh=
+    some (s2Step42HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 787],769⟩,growRow 769 s2Step42HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step42HeadGBefore s2Step42HeadGAfter s2Step42HeadGRow 249 s2Step42HeadGFresh
+    s2Step42HeadG_distinct s2Step42HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step42HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step42HeadGRow.payload++s2Step42HeadGFresh) s2Step42HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 787],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step9HeadFBefore : Arena := s6Step9HeadGAfter
-def s6Step9HeadFAfter : Arena := s6Step8HeadFvAfter
-def s6Step9HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step9HeadFFresh : List Wire := [862]
-theorem s6Step9HeadF_distinct : (s6Step9HeadFRow.sign::s6Step9HeadFRow.payload).Nodup := by
+def s2Step42HeadFBefore : Arena := s2Step42HeadGAfter
+def s2Step42HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step42HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759],768⟩
+def s2Step42HeadFFresh : List Wire := [790]
+theorem s2Step42HeadF_distinct : (s2Step42HeadFRow.sign::s2Step42HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9HeadF_owned : (s6Step9HeadFRow.sign::s6Step9HeadFRow.payload).toFinset⊆s6Step9HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step9HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step42HeadF_owned : (s2Step42HeadFRow.sign::s2Step42HeadFRow.payload).toFinset⊆s2Step42HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step42HeadFBefore (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step9HeadF_reserved : s6Step9HeadFBefore.reserve s6Step9HeadFFresh.toFinset=some s6Step9HeadFAfter := by
+theorem s2Step42HeadF_reserved : s2Step42HeadFBefore.reserve s2Step42HeadFFresh.toFinset=some s2Step42HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step9HeadFFresh,arenaWires]
-  · norm_num [s6Step9HeadFBefore,s6Step9HeadGAfter,s6Step9HeadFFresh,arenaWires]
+  · norm_num [s2Step42HeadFFresh,arenaWires]
+  · norm_num [s2Step42HeadFBefore,s2Step42HeadGAfter,s2Step42HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step9HeadFAfter,s6Step8HeadFvAfter,s6Step9HeadFBefore,s6Step9HeadGAfter,s6Step9HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step42HeadFAfter,s2Step42HeadFBefore,s2Step42HeadGAfter,s2Step42HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step9HeadF_checked : planRowResizeLog s6Step9HeadFBefore s6Step9HeadFRow 257 s6Step9HeadFFresh=
-    some (s6Step9HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩,growRow 795 s6Step9HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step9HeadFBefore s6Step9HeadFAfter s6Step9HeadFRow 257 s6Step9HeadFFresh
-    s6Step9HeadF_distinct s6Step9HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step9HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step9HeadFRow.payload++s6Step9HeadFFresh) s6Step9HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩ := by decide +kernel
+theorem s2Step42HeadF_checked : planRowResizeLog s2Step42HeadFBefore s2Step42HeadFRow 249 s2Step42HeadFFresh=
+    some (s2Step42HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 790],768⟩,growRow 768 s2Step42HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step42HeadFBefore s2Step42HeadFAfter s2Step42HeadFRow 249 s2Step42HeadFFresh
+    s2Step42HeadF_distinct s2Step42HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step42HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step42HeadFRow.payload++s2Step42HeadFFresh) s2Step42HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 790],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step9HeadGvBefore : Arena := s6Step8HeadFvAfter
-def s6Step9HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 887],775⟩
-def s6Step9HeadGvFresh : List Wire := [863]
-theorem s6Step9HeadGv_distinct : (s6Step9HeadGvRow.sign::s6Step9HeadGvRow.payload).Nodup := by
+def s2Step42HeadGvBefore : Arena := s2Step42HeadFAfter
+def s2Step42HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step42HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797],771⟩
+def s2Step42HeadGvFresh : List Wire := [794]
+theorem s2Step42HeadGv_distinct : (s2Step42HeadGvRow.sign::s2Step42HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9HeadGv_owned : (s6Step9HeadGvRow.sign::s6Step9HeadGvRow.payload).toFinset⊆s6Step9HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step9HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step42HeadGv_owned : (s2Step42HeadGvRow.sign::s2Step42HeadGvRow.payload).toFinset⊆s2Step42HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step42HeadGvBefore (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step9HeadGv_reserved : s6Step9HeadGvBefore.reserve s6Step9HeadGvFresh.toFinset=some s6Step9HeadGvAfter := by
+theorem s2Step42HeadGv_reserved : s2Step42HeadGvBefore.reserve s2Step42HeadGvFresh.toFinset=some s2Step42HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step9HeadGvFresh,arenaWires]
-  · norm_num [s6Step9HeadGvBefore,s6Step8HeadFvAfter,s6Step9HeadGvFresh,arenaWires]
+  · norm_num [s2Step42HeadGvFresh,arenaWires]
+  · norm_num [s2Step42HeadGvBefore,s2Step42HeadFAfter,s2Step42HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step9HeadGvAfter,s6Step9HeadGvBefore,s6Step8HeadFvAfter,s6Step9HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step42HeadGvAfter,s2Step42HeadGvBefore,s2Step42HeadFAfter,s2Step42HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step9HeadGv_checked : planRowResizeLog s6Step9HeadGvBefore s6Step9HeadGvRow 11 s6Step9HeadGvFresh=
-    some (s6Step9HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 887, 863],775⟩,growRow 775 s6Step9HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step9HeadGvBefore s6Step9HeadGvAfter s6Step9HeadGvRow 11 s6Step9HeadGvFresh
-    s6Step9HeadGv_distinct s6Step9HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step9HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step9HeadGvRow.payload++s6Step9HeadGvFresh) s6Step9HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 887, 863],775⟩ := by decide +kernel
+theorem s2Step42HeadGv_checked : planRowResizeLog s2Step42HeadGvBefore s2Step42HeadGvRow 35 s2Step42HeadGvFresh=
+    some (s2Step42HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794],771⟩,growRow 771 s2Step42HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step42HeadGvBefore s2Step42HeadGvAfter s2Step42HeadGvRow 35 s2Step42HeadGvFresh
+    s2Step42HeadGv_distinct s2Step42HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step42HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step42HeadGvRow.payload++s2Step42HeadGvFresh) s2Step42HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step9HeadFvBefore : Arena := s6Step9HeadGvAfter
-def s6Step9HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796],776⟩
-def s6Step9HeadFvFresh : List Wire := [856]
-theorem s6Step9HeadFv_distinct : (s6Step9HeadFvRow.sign::s6Step9HeadFvRow.payload).Nodup := by
+def s2Step42HeadFvBefore : Arena := s2Step42HeadGvAfter
+def s2Step42HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step42HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780],770⟩
+def s2Step42HeadFvFresh : List Wire := [792]
+theorem s2Step42HeadFv_distinct : (s2Step42HeadFvRow.sign::s2Step42HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9HeadFv_owned : (s6Step9HeadFvRow.sign::s6Step9HeadFvRow.payload).toFinset⊆s6Step9HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step9HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step42HeadFv_owned : (s2Step42HeadFvRow.sign::s2Step42HeadFvRow.payload).toFinset⊆s2Step42HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step42HeadFvBefore (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step9HeadFv_reserved : s6Step9HeadFvBefore.reserve s6Step9HeadFvFresh.toFinset=some s6Step9HeadFvAfter := by
+theorem s2Step42HeadFv_reserved : s2Step42HeadFvBefore.reserve s2Step42HeadFvFresh.toFinset=some s2Step42HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step9HeadFvFresh,arenaWires]
-  · norm_num [s6Step9HeadFvBefore,s6Step9HeadGvAfter,s6Step9HeadFvFresh,arenaWires]
+  · norm_num [s2Step42HeadFvFresh,arenaWires]
+  · norm_num [s2Step42HeadFvBefore,s2Step42HeadGvAfter,s2Step42HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step9HeadFvAfter,s6Step9HeadFvBefore,s6Step9HeadGvAfter,s6Step9HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step42HeadFvAfter,s2Step42HeadFvBefore,s2Step42HeadGvAfter,s2Step42HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step9HeadFv_checked : planRowResizeLog s6Step9HeadFvBefore s6Step9HeadFvRow 11 s6Step9HeadFvFresh=
-    some (s6Step9HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856],776⟩,growRow 776 s6Step9HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step9HeadFvBefore s6Step9HeadFvAfter s6Step9HeadFvRow 11 s6Step9HeadFvFresh
-    s6Step9HeadFv_distinct s6Step9HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step9HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step9HeadFvRow.payload++s6Step9HeadFvFresh) s6Step9HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856],776⟩ := by decide +kernel
+theorem s2Step42HeadFv_checked : planRowResizeLog s2Step42HeadFvBefore s2Step42HeadFvRow 35 s2Step42HeadFvFresh=
+    some (s2Step42HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 792],770⟩,growRow 770 s2Step42HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step42HeadFvBefore s2Step42HeadFvAfter s2Step42HeadFvRow 35 s2Step42HeadFvFresh
+    s2Step42HeadFv_distinct s2Step42HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step42HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step42HeadFvRow.payload++s2Step42HeadFvFresh) s2Step42HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 792],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step10HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step10HeadGFresh : List Wire := [813]
-theorem s6Step10HeadG_distinct : (s6Step10HeadGRow.sign::s6Step10HeadGRow.payload).Nodup := by
+def s2Step43HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step43HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step43HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246],769⟩
+def s2Step43HeadGFresh : List Wire := [800]
+theorem s2Step43HeadG_distinct : (s2Step43HeadGRow.sign::s2Step43HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10HeadG_owned : (s6Step10HeadGRow.sign::s6Step10HeadGRow.payload).toFinset⊆s6Step10HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step10HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step43HeadG_owned : (s2Step43HeadGRow.sign::s2Step43HeadGRow.payload).toFinset⊆s2Step43HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step43HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step10HeadG_reserved : s6Step10HeadGBefore.reserve s6Step10HeadGFresh.toFinset=some s6Step10HeadGAfter := by
+theorem s2Step43HeadG_reserved : s2Step43HeadGBefore.reserve s2Step43HeadGFresh.toFinset=some s2Step43HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step10HeadGFresh,arenaWires]
-  · norm_num [s6Step10HeadGBefore,s6Step10HeadGFresh,arenaWires]
+  · norm_num [s2Step43HeadGFresh,arenaWires]
+  · norm_num [s2Step43HeadGBefore,s2Step43HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step10HeadGAfter,s6Step10HeadGBefore,s6Step10HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step43HeadGAfter,s2Step43HeadGBefore,s2Step43HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step10HeadG_checked : planRowResizeLog s6Step10HeadGBefore s6Step10HeadGRow 257 s6Step10HeadGFresh=
-    some (s6Step10HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩,growRow 777 s6Step10HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step10HeadGBefore s6Step10HeadGAfter s6Step10HeadGRow 257 s6Step10HeadGFresh
-    s6Step10HeadG_distinct s6Step10HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step10HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step10HeadGRow.payload++s6Step10HeadGFresh) s6Step10HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩ := by decide +kernel
+theorem s2Step43HeadG_checked : planRowResizeLog s2Step43HeadGBefore s2Step43HeadGRow 248 s2Step43HeadGFresh=
+    some (s2Step43HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 800],769⟩,growRow 769 s2Step43HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step43HeadGBefore s2Step43HeadGAfter s2Step43HeadGRow 248 s2Step43HeadGFresh
+    s2Step43HeadG_distinct s2Step43HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step43HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step43HeadGRow.payload++s2Step43HeadGFresh) s2Step43HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 800],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step10HeadFBefore : Arena := s6Step10HeadGAfter
-def s6Step10HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step10HeadFFresh : List Wire := [807]
-theorem s6Step10HeadF_distinct : (s6Step10HeadFRow.sign::s6Step10HeadFRow.payload).Nodup := by
+def s2Step43HeadFBefore : Arena := s2Step43HeadGAfter
+def s2Step43HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step43HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758],768⟩
+def s2Step43HeadFFresh : List Wire := [792]
+theorem s2Step43HeadF_distinct : (s2Step43HeadFRow.sign::s2Step43HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10HeadF_owned : (s6Step10HeadFRow.sign::s6Step10HeadFRow.payload).toFinset⊆s6Step10HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step10HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step43HeadF_owned : (s2Step43HeadFRow.sign::s2Step43HeadFRow.payload).toFinset⊆s2Step43HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step43HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step10HeadF_reserved : s6Step10HeadFBefore.reserve s6Step10HeadFFresh.toFinset=some s6Step10HeadFAfter := by
+theorem s2Step43HeadF_reserved : s2Step43HeadFBefore.reserve s2Step43HeadFFresh.toFinset=some s2Step43HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step10HeadFFresh,arenaWires]
-  · norm_num [s6Step10HeadFBefore,s6Step10HeadGAfter,s6Step10HeadFFresh,arenaWires]
+  · norm_num [s2Step43HeadFFresh,arenaWires]
+  · norm_num [s2Step43HeadFBefore,s2Step43HeadGAfter,s2Step43HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step10HeadFAfter,s6Step10HeadFBefore,s6Step10HeadGAfter,s6Step10HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step43HeadFAfter,s2Step43HeadFBefore,s2Step43HeadGAfter,s2Step43HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step10HeadF_checked : planRowResizeLog s6Step10HeadFBefore s6Step10HeadFRow 257 s6Step10HeadFFresh=
-    some (s6Step10HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩,growRow 795 s6Step10HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step10HeadFBefore s6Step10HeadFAfter s6Step10HeadFRow 257 s6Step10HeadFFresh
-    s6Step10HeadF_distinct s6Step10HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step10HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step10HeadFRow.payload++s6Step10HeadFFresh) s6Step10HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩ := by decide +kernel
+theorem s2Step43HeadF_checked : planRowResizeLog s2Step43HeadFBefore s2Step43HeadFRow 248 s2Step43HeadFFresh=
+    some (s2Step43HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 792],768⟩,growRow 768 s2Step43HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step43HeadFBefore s2Step43HeadFAfter s2Step43HeadFRow 248 s2Step43HeadFFresh
+    s2Step43HeadF_distinct s2Step43HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step43HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step43HeadFRow.payload++s2Step43HeadFFresh) s2Step43HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 792],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step10HeadGvBefore : Arena := s6Step10HeadFAfter
-def s6Step10HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 887],775⟩
-def s6Step10HeadGvFresh : List Wire := [823]
-theorem s6Step10HeadGv_distinct : (s6Step10HeadGvRow.sign::s6Step10HeadGvRow.payload).Nodup := by
+def s2Step43HeadGvBefore : Arena := s2Step43HeadFAfter
+def s2Step43HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step43HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794],771⟩
+def s2Step43HeadGvFresh : List Wire := [790]
+theorem s2Step43HeadGv_distinct : (s2Step43HeadGvRow.sign::s2Step43HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10HeadGv_owned : (s6Step10HeadGvRow.sign::s6Step10HeadGvRow.payload).toFinset⊆s6Step10HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step10HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step43HeadGv_owned : (s2Step43HeadGvRow.sign::s2Step43HeadGvRow.payload).toFinset⊆s2Step43HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step43HeadGvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step10HeadGv_reserved : s6Step10HeadGvBefore.reserve s6Step10HeadGvFresh.toFinset=some s6Step10HeadGvAfter := by
+theorem s2Step43HeadGv_reserved : s2Step43HeadGvBefore.reserve s2Step43HeadGvFresh.toFinset=some s2Step43HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step10HeadGvFresh,arenaWires]
-  · norm_num [s6Step10HeadGvBefore,s6Step10HeadFAfter,s6Step10HeadGvFresh,arenaWires]
+  · norm_num [s2Step43HeadGvFresh,arenaWires]
+  · norm_num [s2Step43HeadGvBefore,s2Step43HeadFAfter,s2Step43HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step10HeadGvAfter,s6Step10HeadGvBefore,s6Step10HeadFAfter,s6Step10HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step43HeadGvAfter,s2Step43HeadGvBefore,s2Step43HeadFAfter,s2Step43HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step10HeadGv_checked : planRowResizeLog s6Step10HeadGvBefore s6Step10HeadGvRow 12 s6Step10HeadGvFresh=
-    some (s6Step10HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 887, 823],775⟩,growRow 775 s6Step10HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step10HeadGvBefore s6Step10HeadGvAfter s6Step10HeadGvRow 12 s6Step10HeadGvFresh
-    s6Step10HeadGv_distinct s6Step10HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step10HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step10HeadGvRow.payload++s6Step10HeadGvFresh) s6Step10HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 887, 823],775⟩ := by decide +kernel
+theorem s2Step43HeadGv_checked : planRowResizeLog s2Step43HeadGvBefore s2Step43HeadGvRow 36 s2Step43HeadGvFresh=
+    some (s2Step43HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 790],771⟩,growRow 771 s2Step43HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step43HeadGvBefore s2Step43HeadGvAfter s2Step43HeadGvRow 36 s2Step43HeadGvFresh
+    s2Step43HeadGv_distinct s2Step43HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step43HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step43HeadGvRow.payload++s2Step43HeadGvFresh) s2Step43HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 790],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step10HeadFvBefore : Arena := s6Step10HeadGvAfter
-def s6Step10HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856],776⟩
-def s6Step10HeadFvFresh : List Wire := [865]
-theorem s6Step10HeadFv_distinct : (s6Step10HeadFvRow.sign::s6Step10HeadFvRow.payload).Nodup := by
+def s2Step43HeadFvBefore : Arena := s2Step43HeadGvAfter
+def s2Step43HeadFvAfter : Arena := s2Step42HeadFvAfter
+def s2Step43HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 791],770⟩
+def s2Step43HeadFvFresh : List Wire := [787]
+theorem s2Step43HeadFv_distinct : (s2Step43HeadFvRow.sign::s2Step43HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10HeadFv_owned : (s6Step10HeadFvRow.sign::s6Step10HeadFvRow.payload).toFinset⊆s6Step10HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step10HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step43HeadFv_owned : (s2Step43HeadFvRow.sign::s2Step43HeadFvRow.payload).toFinset⊆s2Step43HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step43HeadFvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<856) ∨ (857≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step10HeadFv_reserved : s6Step10HeadFvBefore.reserve s6Step10HeadFvFresh.toFinset=some s6Step10HeadFvAfter := by
+theorem s2Step43HeadFv_reserved : s2Step43HeadFvBefore.reserve s2Step43HeadFvFresh.toFinset=some s2Step43HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step10HeadFvFresh,arenaWires]
-  · norm_num [s6Step10HeadFvBefore,s6Step10HeadGvAfter,s6Step10HeadFvFresh,arenaWires]
+  · norm_num [s2Step43HeadFvFresh,arenaWires]
+  · norm_num [s2Step43HeadFvBefore,s2Step43HeadGvAfter,s2Step43HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step10HeadFvAfter,s6Step10HeadFvBefore,s6Step10HeadGvAfter,s6Step10HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step43HeadFvAfter,s2Step42HeadFvAfter,s2Step43HeadFvBefore,s2Step43HeadGvAfter,s2Step43HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step10HeadFv_checked : planRowResizeLog s6Step10HeadFvBefore s6Step10HeadFvRow 12 s6Step10HeadFvFresh=
-    some (s6Step10HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865],776⟩,growRow 776 s6Step10HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step10HeadFvBefore s6Step10HeadFvAfter s6Step10HeadFvRow 12 s6Step10HeadFvFresh
-    s6Step10HeadFv_distinct s6Step10HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step10HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step10HeadFvRow.payload++s6Step10HeadFvFresh) s6Step10HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865],776⟩ := by decide +kernel
+theorem s2Step43HeadFv_checked : planRowResizeLog s2Step43HeadFvBefore s2Step43HeadFvRow 36 s2Step43HeadFvFresh=
+    some (s2Step43HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 791, 787],770⟩,growRow 770 s2Step43HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step43HeadFvBefore s2Step43HeadFvAfter s2Step43HeadFvRow 36 s2Step43HeadFvFresh
+    s2Step43HeadFv_distinct s2Step43HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step43HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step43HeadFvRow.payload++s2Step43HeadFvFresh) s2Step43HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 791, 787],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step11HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step11HeadGFresh : List Wire := [860]
-theorem s6Step11HeadG_distinct : (s6Step11HeadGRow.sign::s6Step11HeadGRow.payload).Nodup := by
+def s2Step44HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step44HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step44HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245],769⟩
+def s2Step44HeadGFresh : List Wire := [802]
+theorem s2Step44HeadG_distinct : (s2Step44HeadGRow.sign::s2Step44HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11HeadG_owned : (s6Step11HeadGRow.sign::s6Step11HeadGRow.payload).toFinset⊆s6Step11HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step11HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step44HeadG_owned : (s2Step44HeadGRow.sign::s2Step44HeadGRow.payload).toFinset⊆s2Step44HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step44HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step11HeadG_reserved : s6Step11HeadGBefore.reserve s6Step11HeadGFresh.toFinset=some s6Step11HeadGAfter := by
+theorem s2Step44HeadG_reserved : s2Step44HeadGBefore.reserve s2Step44HeadGFresh.toFinset=some s2Step44HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step11HeadGFresh,arenaWires]
-  · norm_num [s6Step11HeadGBefore,s6Step11HeadGFresh,arenaWires]
+  · norm_num [s2Step44HeadGFresh,arenaWires]
+  · norm_num [s2Step44HeadGBefore,s2Step44HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step11HeadGAfter,s6Step11HeadGBefore,s6Step11HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step44HeadGAfter,s2Step44HeadGBefore,s2Step44HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step11HeadG_checked : planRowResizeLog s6Step11HeadGBefore s6Step11HeadGRow 257 s6Step11HeadGFresh=
-    some (s6Step11HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩,growRow 777 s6Step11HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step11HeadGBefore s6Step11HeadGAfter s6Step11HeadGRow 257 s6Step11HeadGFresh
-    s6Step11HeadG_distinct s6Step11HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step11HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step11HeadGRow.payload++s6Step11HeadGFresh) s6Step11HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860],777⟩ := by decide +kernel
+theorem s2Step44HeadG_checked : planRowResizeLog s2Step44HeadGBefore s2Step44HeadGRow 247 s2Step44HeadGFresh=
+    some (s2Step44HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 802],769⟩,growRow 769 s2Step44HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step44HeadGBefore s2Step44HeadGAfter s2Step44HeadGRow 247 s2Step44HeadGFresh
+    s2Step44HeadG_distinct s2Step44HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step44HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step44HeadGRow.payload++s2Step44HeadGFresh) s2Step44HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 802],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step11HeadFBefore : Arena := s6Step11HeadGAfter
-def s6Step11HeadFAfter : Arena := s6Step10HeadFvAfter
-def s6Step11HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step11HeadFFresh : List Wire := [813]
-theorem s6Step11HeadF_distinct : (s6Step11HeadFRow.sign::s6Step11HeadFRow.payload).Nodup := by
+def s2Step44HeadFBefore : Arena := s2Step44HeadGAfter
+def s2Step44HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step44HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757],768⟩
+def s2Step44HeadFFresh : List Wire := [790]
+theorem s2Step44HeadF_distinct : (s2Step44HeadFRow.sign::s2Step44HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11HeadF_owned : (s6Step11HeadFRow.sign::s6Step11HeadFRow.payload).toFinset⊆s6Step11HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step11HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step44HeadF_owned : (s2Step44HeadFRow.sign::s2Step44HeadFRow.payload).toFinset⊆s2Step44HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step44HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step11HeadF_reserved : s6Step11HeadFBefore.reserve s6Step11HeadFFresh.toFinset=some s6Step11HeadFAfter := by
+theorem s2Step44HeadF_reserved : s2Step44HeadFBefore.reserve s2Step44HeadFFresh.toFinset=some s2Step44HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step11HeadFFresh,arenaWires]
-  · norm_num [s6Step11HeadFBefore,s6Step11HeadGAfter,s6Step11HeadFFresh,arenaWires]
+  · norm_num [s2Step44HeadFFresh,arenaWires]
+  · norm_num [s2Step44HeadFBefore,s2Step44HeadGAfter,s2Step44HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step11HeadFAfter,s6Step10HeadFvAfter,s6Step11HeadFBefore,s6Step11HeadGAfter,s6Step11HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step44HeadFAfter,s2Step44HeadFBefore,s2Step44HeadGAfter,s2Step44HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step11HeadF_checked : planRowResizeLog s6Step11HeadFBefore s6Step11HeadFRow 257 s6Step11HeadFFresh=
-    some (s6Step11HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩,growRow 795 s6Step11HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step11HeadFBefore s6Step11HeadFAfter s6Step11HeadFRow 257 s6Step11HeadFFresh
-    s6Step11HeadF_distinct s6Step11HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step11HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step11HeadFRow.payload++s6Step11HeadFFresh) s6Step11HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813],795⟩ := by decide +kernel
+theorem s2Step44HeadF_checked : planRowResizeLog s2Step44HeadFBefore s2Step44HeadFRow 247 s2Step44HeadFFresh=
+    some (s2Step44HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 790],768⟩,growRow 768 s2Step44HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step44HeadFBefore s2Step44HeadFAfter s2Step44HeadFRow 247 s2Step44HeadFFresh
+    s2Step44HeadF_distinct s2Step44HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step44HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step44HeadFRow.payload++s2Step44HeadFFresh) s2Step44HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 790],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step11HeadGvBefore : Arena := s6Step10HeadFvAfter
-def s6Step11HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 887],775⟩
-def s6Step11HeadGvFresh : List Wire := [880]
-theorem s6Step11HeadGv_distinct : (s6Step11HeadGvRow.sign::s6Step11HeadGvRow.payload).Nodup := by
+def s2Step44HeadGvBefore : Arena := s2Step44HeadFAfter
+def s2Step44HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step44HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794],771⟩
+def s2Step44HeadGvFresh : List Wire := [791]
+theorem s2Step44HeadGv_distinct : (s2Step44HeadGvRow.sign::s2Step44HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11HeadGv_owned : (s6Step11HeadGvRow.sign::s6Step11HeadGvRow.payload).toFinset⊆s6Step11HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step11HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step44HeadGv_owned : (s2Step44HeadGvRow.sign::s2Step44HeadGvRow.payload).toFinset⊆s2Step44HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step44HeadGvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step11HeadGv_reserved : s6Step11HeadGvBefore.reserve s6Step11HeadGvFresh.toFinset=some s6Step11HeadGvAfter := by
+theorem s2Step44HeadGv_reserved : s2Step44HeadGvBefore.reserve s2Step44HeadGvFresh.toFinset=some s2Step44HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step11HeadGvFresh,arenaWires]
-  · norm_num [s6Step11HeadGvBefore,s6Step10HeadFvAfter,s6Step11HeadGvFresh,arenaWires]
+  · norm_num [s2Step44HeadGvFresh,arenaWires]
+  · norm_num [s2Step44HeadGvBefore,s2Step44HeadFAfter,s2Step44HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step11HeadGvAfter,s6Step11HeadGvBefore,s6Step10HeadFvAfter,s6Step11HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step44HeadGvAfter,s2Step44HeadGvBefore,s2Step44HeadFAfter,s2Step44HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step11HeadGv_checked : planRowResizeLog s6Step11HeadGvBefore s6Step11HeadGvRow 13 s6Step11HeadGvFresh=
-    some (s6Step11HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 887, 880],775⟩,growRow 775 s6Step11HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step11HeadGvBefore s6Step11HeadGvAfter s6Step11HeadGvRow 13 s6Step11HeadGvFresh
-    s6Step11HeadGv_distinct s6Step11HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step11HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step11HeadGvRow.payload++s6Step11HeadGvFresh) s6Step11HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 887, 880],775⟩ := by decide +kernel
+theorem s2Step44HeadGv_checked : planRowResizeLog s2Step44HeadGvBefore s2Step44HeadGvRow 36 s2Step44HeadGvFresh=
+    some (s2Step44HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 791],771⟩,growRow 771 s2Step44HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step44HeadGvBefore s2Step44HeadGvAfter s2Step44HeadGvRow 36 s2Step44HeadGvFresh
+    s2Step44HeadGv_distinct s2Step44HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step44HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step44HeadGvRow.payload++s2Step44HeadGvFresh) s2Step44HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 791],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step11HeadFvBefore : Arena := s6Step11HeadGvAfter
-def s6Step11HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865],776⟩
-def s6Step11HeadFvFresh : List Wire := [789]
-theorem s6Step11HeadFv_distinct : (s6Step11HeadFvRow.sign::s6Step11HeadFvRow.payload).Nodup := by
+def s2Step44HeadFvBefore : Arena := s2Step44HeadGvAfter
+def s2Step44HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step44HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799],770⟩
+def s2Step44HeadFvFresh : List Wire := [787]
+theorem s2Step44HeadFv_distinct : (s2Step44HeadFvRow.sign::s2Step44HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11HeadFv_owned : (s6Step11HeadFvRow.sign::s6Step11HeadFvRow.payload).toFinset⊆s6Step11HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step11HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step44HeadFv_owned : (s2Step44HeadFvRow.sign::s2Step44HeadFvRow.payload).toFinset⊆s2Step44HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step44HeadFvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step11HeadFv_reserved : s6Step11HeadFvBefore.reserve s6Step11HeadFvFresh.toFinset=some s6Step11HeadFvAfter := by
+theorem s2Step44HeadFv_reserved : s2Step44HeadFvBefore.reserve s2Step44HeadFvFresh.toFinset=some s2Step44HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step11HeadFvFresh,arenaWires]
-  · norm_num [s6Step11HeadFvBefore,s6Step11HeadGvAfter,s6Step11HeadFvFresh,arenaWires]
+  · norm_num [s2Step44HeadFvFresh,arenaWires]
+  · norm_num [s2Step44HeadFvBefore,s2Step44HeadGvAfter,s2Step44HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step11HeadFvAfter,s6Step11HeadFvBefore,s6Step11HeadGvAfter,s6Step11HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step44HeadFvAfter,s2Step44HeadFvBefore,s2Step44HeadGvAfter,s2Step44HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step11HeadFv_checked : planRowResizeLog s6Step11HeadFvBefore s6Step11HeadFvRow 13 s6Step11HeadFvFresh=
-    some (s6Step11HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789],776⟩,growRow 776 s6Step11HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step11HeadFvBefore s6Step11HeadFvAfter s6Step11HeadFvRow 13 s6Step11HeadFvFresh
-    s6Step11HeadFv_distinct s6Step11HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step11HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step11HeadFvRow.payload++s6Step11HeadFvFresh) s6Step11HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789],776⟩ := by decide +kernel
+theorem s2Step44HeadFv_checked : planRowResizeLog s2Step44HeadFvBefore s2Step44HeadFvRow 36 s2Step44HeadFvFresh=
+    some (s2Step44HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 787],770⟩,growRow 770 s2Step44HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step44HeadFvBefore s2Step44HeadFvAfter s2Step44HeadFvRow 36 s2Step44HeadFvFresh
+    s2Step44HeadFv_distinct s2Step44HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step44HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step44HeadFvRow.payload++s2Step44HeadFvFresh) s2Step44HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 787],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step12HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step12HeadGFresh : List Wire := [862]
-theorem s6Step12HeadG_distinct : (s6Step12HeadGRow.sign::s6Step12HeadGRow.payload).Nodup := by
+def s2Step45HeadGBefore : Arena := s2Step44HeadGBefore
+def s2Step45HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step45HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 801],769⟩
+def s2Step45HeadGFresh : List Wire := [791]
+theorem s2Step45HeadG_distinct : (s2Step45HeadGRow.sign::s2Step45HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12HeadG_owned : (s6Step12HeadGRow.sign::s6Step12HeadGRow.payload).toFinset⊆s6Step12HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step12HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step45HeadG_owned : (s2Step45HeadGRow.sign::s2Step45HeadGRow.payload).toFinset⊆s2Step45HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step45HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step12HeadG_reserved : s6Step12HeadGBefore.reserve s6Step12HeadGFresh.toFinset=some s6Step12HeadGAfter := by
+theorem s2Step45HeadG_reserved : s2Step45HeadGBefore.reserve s2Step45HeadGFresh.toFinset=some s2Step45HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step12HeadGFresh,arenaWires]
-  · norm_num [s6Step12HeadGBefore,s6Step12HeadGFresh,arenaWires]
+  · norm_num [s2Step45HeadGFresh,arenaWires]
+  · norm_num [s2Step45HeadGBefore,s2Step44HeadGBefore,s2Step45HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step12HeadGAfter,s6Step12HeadGBefore,s6Step12HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step45HeadGAfter,s2Step45HeadGBefore,s2Step44HeadGBefore,s2Step45HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step12HeadG_checked : planRowResizeLog s6Step12HeadGBefore s6Step12HeadGRow 257 s6Step12HeadGFresh=
-    some (s6Step12HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩,growRow 777 s6Step12HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step12HeadGBefore s6Step12HeadGAfter s6Step12HeadGRow 257 s6Step12HeadGFresh
-    s6Step12HeadG_distinct s6Step12HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step12HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step12HeadGRow.payload++s6Step12HeadGFresh) s6Step12HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862],777⟩ := by decide +kernel
+theorem s2Step45HeadG_checked : planRowResizeLog s2Step45HeadGBefore s2Step45HeadGRow 247 s2Step45HeadGFresh=
+    some (s2Step45HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 801, 791],769⟩,growRow 769 s2Step45HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step45HeadGBefore s2Step45HeadGAfter s2Step45HeadGRow 247 s2Step45HeadGFresh
+    s2Step45HeadG_distinct s2Step45HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step45HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step45HeadGRow.payload++s2Step45HeadGFresh) s2Step45HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 801, 791],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step12HeadFBefore : Arena := s6Step12HeadGAfter
-def s6Step12HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step12HeadFFresh : List Wire := [860]
-theorem s6Step12HeadF_distinct : (s6Step12HeadFRow.sign::s6Step12HeadFRow.payload).Nodup := by
+def s2Step45HeadFBefore : Arena := s2Step45HeadGAfter
+def s2Step45HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step45HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757],768⟩
+def s2Step45HeadFFresh : List Wire := [787]
+theorem s2Step45HeadF_distinct : (s2Step45HeadFRow.sign::s2Step45HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12HeadF_owned : (s6Step12HeadFRow.sign::s6Step12HeadFRow.payload).toFinset⊆s6Step12HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step12HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step45HeadF_owned : (s2Step45HeadFRow.sign::s2Step45HeadFRow.payload).toFinset⊆s2Step45HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step45HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step12HeadF_reserved : s6Step12HeadFBefore.reserve s6Step12HeadFFresh.toFinset=some s6Step12HeadFAfter := by
+theorem s2Step45HeadF_reserved : s2Step45HeadFBefore.reserve s2Step45HeadFFresh.toFinset=some s2Step45HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step12HeadFFresh,arenaWires]
-  · norm_num [s6Step12HeadFBefore,s6Step12HeadGAfter,s6Step12HeadFFresh,arenaWires]
+  · norm_num [s2Step45HeadFFresh,arenaWires]
+  · norm_num [s2Step45HeadFBefore,s2Step45HeadGAfter,s2Step45HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step12HeadFAfter,s6Step12HeadFBefore,s6Step12HeadGAfter,s6Step12HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step45HeadFAfter,s2Step45HeadFBefore,s2Step45HeadGAfter,s2Step45HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step12HeadF_checked : planRowResizeLog s6Step12HeadFBefore s6Step12HeadFRow 257 s6Step12HeadFFresh=
-    some (s6Step12HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩,growRow 795 s6Step12HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step12HeadFBefore s6Step12HeadFAfter s6Step12HeadFRow 257 s6Step12HeadFFresh
-    s6Step12HeadF_distinct s6Step12HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step12HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step12HeadFRow.payload++s6Step12HeadFFresh) s6Step12HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860],795⟩ := by decide +kernel
+theorem s2Step45HeadF_checked : planRowResizeLog s2Step45HeadFBefore s2Step45HeadFRow 247 s2Step45HeadFFresh=
+    some (s2Step45HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 787],768⟩,growRow 768 s2Step45HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step45HeadFBefore s2Step45HeadFAfter s2Step45HeadFRow 247 s2Step45HeadFFresh
+    s2Step45HeadF_distinct s2Step45HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step45HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step45HeadFRow.payload++s2Step45HeadFFresh) s2Step45HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 787],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step12HeadGvBefore : Arena := s6Step12HeadFAfter
-def s6Step12HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 887],775⟩
-def s6Step12HeadGvFresh : List Wire := [864]
-theorem s6Step12HeadGv_distinct : (s6Step12HeadGvRow.sign::s6Step12HeadGvRow.payload).Nodup := by
+def s2Step45HeadGvBefore : Arena := s2Step45HeadFAfter
+def s2Step45HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step45HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794],771⟩
+def s2Step45HeadGvFresh : List Wire := [790]
+theorem s2Step45HeadGv_distinct : (s2Step45HeadGvRow.sign::s2Step45HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12HeadGv_owned : (s6Step12HeadGvRow.sign::s6Step12HeadGvRow.payload).toFinset⊆s6Step12HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step12HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step45HeadGv_owned : (s2Step45HeadGvRow.sign::s2Step45HeadGvRow.payload).toFinset⊆s2Step45HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step45HeadGvBefore (fun q => (0≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step12HeadGv_reserved : s6Step12HeadGvBefore.reserve s6Step12HeadGvFresh.toFinset=some s6Step12HeadGvAfter := by
+theorem s2Step45HeadGv_reserved : s2Step45HeadGvBefore.reserve s2Step45HeadGvFresh.toFinset=some s2Step45HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step12HeadGvFresh,arenaWires]
-  · norm_num [s6Step12HeadGvBefore,s6Step12HeadFAfter,s6Step12HeadGvFresh,arenaWires]
+  · norm_num [s2Step45HeadGvFresh,arenaWires]
+  · norm_num [s2Step45HeadGvBefore,s2Step45HeadFAfter,s2Step45HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step12HeadGvAfter,s6Step12HeadGvBefore,s6Step12HeadFAfter,s6Step12HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step45HeadGvAfter,s2Step45HeadGvBefore,s2Step45HeadFAfter,s2Step45HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step12HeadGv_checked : planRowResizeLog s6Step12HeadGvBefore s6Step12HeadGvRow 14 s6Step12HeadGvFresh=
-    some (s6Step12HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 887, 864],775⟩,growRow 775 s6Step12HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step12HeadGvBefore s6Step12HeadGvAfter s6Step12HeadGvRow 14 s6Step12HeadGvFresh
-    s6Step12HeadGv_distinct s6Step12HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step12HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step12HeadGvRow.payload++s6Step12HeadGvFresh) s6Step12HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 887, 864],775⟩ := by decide +kernel
+theorem s2Step45HeadGv_checked : planRowResizeLog s2Step45HeadGvBefore s2Step45HeadGvRow 36 s2Step45HeadGvFresh=
+    some (s2Step45HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 790],771⟩,growRow 771 s2Step45HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step45HeadGvBefore s2Step45HeadGvAfter s2Step45HeadGvRow 36 s2Step45HeadGvFresh
+    s2Step45HeadGv_distinct s2Step45HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step45HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step45HeadGvRow.payload++s2Step45HeadGvFresh) s2Step45HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 790],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step12HeadFvBefore : Arena := s6Step12HeadGvAfter
-def s6Step12HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789],776⟩
-def s6Step12HeadFvFresh : List Wire := [818]
-theorem s6Step12HeadFv_distinct : (s6Step12HeadFvRow.sign::s6Step12HeadFvRow.payload).Nodup := by
+def s2Step45HeadFvBefore : Arena := s2Step45HeadGvAfter
+def s2Step45HeadFvAfter : Arena := s2Step44HeadFvAfter
+def s2Step45HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799],770⟩
+def s2Step45HeadFvFresh : List Wire := [802]
+theorem s2Step45HeadFv_distinct : (s2Step45HeadFvRow.sign::s2Step45HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12HeadFv_owned : (s6Step12HeadFvRow.sign::s6Step12HeadFvRow.payload).toFinset⊆s6Step12HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step12HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step45HeadFv_owned : (s2Step45HeadFvRow.sign::s2Step45HeadFvRow.payload).toFinset⊆s2Step45HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step45HeadFvBefore (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<802) ∨ (803≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<860) ∨ (861≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step12HeadFv_reserved : s6Step12HeadFvBefore.reserve s6Step12HeadFvFresh.toFinset=some s6Step12HeadFvAfter := by
+theorem s2Step45HeadFv_reserved : s2Step45HeadFvBefore.reserve s2Step45HeadFvFresh.toFinset=some s2Step45HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step12HeadFvFresh,arenaWires]
-  · norm_num [s6Step12HeadFvBefore,s6Step12HeadGvAfter,s6Step12HeadFvFresh,arenaWires]
+  · norm_num [s2Step45HeadFvFresh,arenaWires]
+  · norm_num [s2Step45HeadFvBefore,s2Step45HeadGvAfter,s2Step45HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step12HeadFvAfter,s6Step12HeadFvBefore,s6Step12HeadGvAfter,s6Step12HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step45HeadFvAfter,s2Step44HeadFvAfter,s2Step45HeadFvBefore,s2Step45HeadGvAfter,s2Step45HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step12HeadFv_checked : planRowResizeLog s6Step12HeadFvBefore s6Step12HeadFvRow 14 s6Step12HeadFvFresh=
-    some (s6Step12HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818],776⟩,growRow 776 s6Step12HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step12HeadFvBefore s6Step12HeadFvAfter s6Step12HeadFvRow 14 s6Step12HeadFvFresh
-    s6Step12HeadFv_distinct s6Step12HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step12HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step12HeadFvRow.payload++s6Step12HeadFvFresh) s6Step12HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818],776⟩ := by decide +kernel
+theorem s2Step45HeadFv_checked : planRowResizeLog s2Step45HeadFvBefore s2Step45HeadFvRow 36 s2Step45HeadFvFresh=
+    some (s2Step45HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802],770⟩,growRow 770 s2Step45HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step45HeadFvBefore s2Step45HeadFvAfter s2Step45HeadFvRow 36 s2Step45HeadFvFresh
+    s2Step45HeadFv_distinct s2Step45HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step45HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step45HeadFvRow.payload++s2Step45HeadFvFresh) s2Step45HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step13HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step13HeadGFresh : List Wire := [807]
-theorem s6Step13HeadG_distinct : (s6Step13HeadGRow.sign::s6Step13HeadGRow.payload).Nodup := by
+def s2Step46HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step46HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step46HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244],769⟩
+def s2Step46HeadGFresh : List Wire := [790]
+theorem s2Step46HeadG_distinct : (s2Step46HeadGRow.sign::s2Step46HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13HeadG_owned : (s6Step13HeadGRow.sign::s6Step13HeadGRow.payload).toFinset⊆s6Step13HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step13HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step46HeadG_owned : (s2Step46HeadGRow.sign::s2Step46HeadGRow.payload).toFinset⊆s2Step46HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step46HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step13HeadG_reserved : s6Step13HeadGBefore.reserve s6Step13HeadGFresh.toFinset=some s6Step13HeadGAfter := by
+theorem s2Step46HeadG_reserved : s2Step46HeadGBefore.reserve s2Step46HeadGFresh.toFinset=some s2Step46HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step13HeadGFresh,arenaWires]
-  · norm_num [s6Step13HeadGBefore,s6Step13HeadGFresh,arenaWires]
+  · norm_num [s2Step46HeadGFresh,arenaWires]
+  · norm_num [s2Step46HeadGBefore,s2Step46HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step13HeadGAfter,s6Step13HeadGBefore,s6Step13HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step46HeadGAfter,s2Step46HeadGBefore,s2Step46HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step13HeadG_checked : planRowResizeLog s6Step13HeadGBefore s6Step13HeadGRow 257 s6Step13HeadGFresh=
-    some (s6Step13HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩,growRow 777 s6Step13HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step13HeadGBefore s6Step13HeadGAfter s6Step13HeadGRow 257 s6Step13HeadGFresh
-    s6Step13HeadG_distinct s6Step13HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step13HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step13HeadGRow.payload++s6Step13HeadGFresh) s6Step13HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807],777⟩ := by decide +kernel
+theorem s2Step46HeadG_checked : planRowResizeLog s2Step46HeadGBefore s2Step46HeadGRow 246 s2Step46HeadGFresh=
+    some (s2Step46HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 790],769⟩,growRow 769 s2Step46HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step46HeadGBefore s2Step46HeadGAfter s2Step46HeadGRow 246 s2Step46HeadGFresh
+    s2Step46HeadG_distinct s2Step46HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step46HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step46HeadGRow.payload++s2Step46HeadGFresh) s2Step46HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 790],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step13HeadFBefore : Arena := s6Step13HeadGAfter
-def s6Step13HeadFAfter : Arena := s6Step12HeadFvAfter
-def s6Step13HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step13HeadFFresh : List Wire := [862]
-theorem s6Step13HeadF_distinct : (s6Step13HeadFRow.sign::s6Step13HeadFRow.payload).Nodup := by
+def s2Step46HeadFBefore : Arena := s2Step46HeadGAfter
+def s2Step46HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step46HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756],768⟩
+def s2Step46HeadFFresh : List Wire := [787]
+theorem s2Step46HeadF_distinct : (s2Step46HeadFRow.sign::s2Step46HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13HeadF_owned : (s6Step13HeadFRow.sign::s6Step13HeadFRow.payload).toFinset⊆s6Step13HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step13HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step46HeadF_owned : (s2Step46HeadFRow.sign::s2Step46HeadFRow.payload).toFinset⊆s2Step46HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step46HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step13HeadF_reserved : s6Step13HeadFBefore.reserve s6Step13HeadFFresh.toFinset=some s6Step13HeadFAfter := by
+theorem s2Step46HeadF_reserved : s2Step46HeadFBefore.reserve s2Step46HeadFFresh.toFinset=some s2Step46HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step13HeadFFresh,arenaWires]
-  · norm_num [s6Step13HeadFBefore,s6Step13HeadGAfter,s6Step13HeadFFresh,arenaWires]
+  · norm_num [s2Step46HeadFFresh,arenaWires]
+  · norm_num [s2Step46HeadFBefore,s2Step46HeadGAfter,s2Step46HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step13HeadFAfter,s6Step12HeadFvAfter,s6Step13HeadFBefore,s6Step13HeadGAfter,s6Step13HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step46HeadFAfter,s2Step46HeadFBefore,s2Step46HeadGAfter,s2Step46HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step13HeadF_checked : planRowResizeLog s6Step13HeadFBefore s6Step13HeadFRow 257 s6Step13HeadFFresh=
-    some (s6Step13HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩,growRow 795 s6Step13HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step13HeadFBefore s6Step13HeadFAfter s6Step13HeadFRow 257 s6Step13HeadFFresh
-    s6Step13HeadF_distinct s6Step13HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step13HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step13HeadFRow.payload++s6Step13HeadFFresh) s6Step13HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862],795⟩ := by decide +kernel
+theorem s2Step46HeadF_checked : planRowResizeLog s2Step46HeadFBefore s2Step46HeadFRow 246 s2Step46HeadFFresh=
+    some (s2Step46HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 787],768⟩,growRow 768 s2Step46HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step46HeadFBefore s2Step46HeadFAfter s2Step46HeadFRow 246 s2Step46HeadFFresh
+    s2Step46HeadF_distinct s2Step46HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step46HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step46HeadFRow.payload++s2Step46HeadFFresh) s2Step46HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 787],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step13HeadGvBefore : Arena := s6Step12HeadFvAfter
-def s6Step13HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 887],775⟩
-def s6Step13HeadGvFresh : List Wire := [828]
-theorem s6Step13HeadGv_distinct : (s6Step13HeadGvRow.sign::s6Step13HeadGvRow.payload).Nodup := by
+def s2Step46HeadGvBefore : Arena := s2Step46HeadFAfter
+def s2Step46HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step46HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804],771⟩
+def s2Step46HeadGvFresh : List Wire := [801]
+theorem s2Step46HeadGv_distinct : (s2Step46HeadGvRow.sign::s2Step46HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13HeadGv_owned : (s6Step13HeadGvRow.sign::s6Step13HeadGvRow.payload).toFinset⊆s6Step13HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step13HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step46HeadGv_owned : (s2Step46HeadGvRow.sign::s2Step46HeadGvRow.payload).toFinset⊆s2Step46HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step46HeadGvBefore (fun q => (0≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step13HeadGv_reserved : s6Step13HeadGvBefore.reserve s6Step13HeadGvFresh.toFinset=some s6Step13HeadGvAfter := by
+theorem s2Step46HeadGv_reserved : s2Step46HeadGvBefore.reserve s2Step46HeadGvFresh.toFinset=some s2Step46HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step13HeadGvFresh,arenaWires]
-  · norm_num [s6Step13HeadGvBefore,s6Step12HeadFvAfter,s6Step13HeadGvFresh,arenaWires]
+  · norm_num [s2Step46HeadGvFresh,arenaWires]
+  · norm_num [s2Step46HeadGvBefore,s2Step46HeadFAfter,s2Step46HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step13HeadGvAfter,s6Step13HeadGvBefore,s6Step12HeadFvAfter,s6Step13HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step46HeadGvAfter,s2Step46HeadGvBefore,s2Step46HeadFAfter,s2Step46HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step13HeadGv_checked : planRowResizeLog s6Step13HeadGvBefore s6Step13HeadGvRow 15 s6Step13HeadGvFresh=
-    some (s6Step13HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 887, 828],775⟩,growRow 775 s6Step13HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step13HeadGvBefore s6Step13HeadGvAfter s6Step13HeadGvRow 15 s6Step13HeadGvFresh
-    s6Step13HeadGv_distinct s6Step13HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step13HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step13HeadGvRow.payload++s6Step13HeadGvFresh) s6Step13HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 887, 828],775⟩ := by decide +kernel
+theorem s2Step46HeadGv_checked : planRowResizeLog s2Step46HeadGvBefore s2Step46HeadGvRow 37 s2Step46HeadGvFresh=
+    some (s2Step46HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804, 801],771⟩,growRow 771 s2Step46HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step46HeadGvBefore s2Step46HeadGvAfter s2Step46HeadGvRow 37 s2Step46HeadGvFresh
+    s2Step46HeadGv_distinct s2Step46HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step46HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step46HeadGvRow.payload++s2Step46HeadGvFresh) s2Step46HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804, 801],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step13HeadFvBefore : Arena := s6Step13HeadGvAfter
-def s6Step13HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818],776⟩
-def s6Step13HeadFvFresh : List Wire := [892]
-theorem s6Step13HeadFv_distinct : (s6Step13HeadFvRow.sign::s6Step13HeadFvRow.payload).Nodup := by
+def s2Step46HeadFvBefore : Arena := s2Step46HeadGvAfter
+def s2Step46HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step46HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802],770⟩
+def s2Step46HeadFvFresh : List Wire := [791]
+theorem s2Step46HeadFv_distinct : (s2Step46HeadFvRow.sign::s2Step46HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13HeadFv_owned : (s6Step13HeadFvRow.sign::s6Step13HeadFvRow.payload).toFinset⊆s6Step13HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step13HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step46HeadFv_owned : (s2Step46HeadFvRow.sign::s2Step46HeadFvRow.payload).toFinset⊆s2Step46HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step46HeadFvBefore (fun q => (0≤q ∧ q<791) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step13HeadFv_reserved : s6Step13HeadFvBefore.reserve s6Step13HeadFvFresh.toFinset=some s6Step13HeadFvAfter := by
+theorem s2Step46HeadFv_reserved : s2Step46HeadFvBefore.reserve s2Step46HeadFvFresh.toFinset=some s2Step46HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step13HeadFvFresh,arenaWires]
-  · norm_num [s6Step13HeadFvBefore,s6Step13HeadGvAfter,s6Step13HeadFvFresh,arenaWires]
+  · norm_num [s2Step46HeadFvFresh,arenaWires]
+  · norm_num [s2Step46HeadFvBefore,s2Step46HeadGvAfter,s2Step46HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step13HeadFvAfter,s6Step13HeadFvBefore,s6Step13HeadGvAfter,s6Step13HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step46HeadFvAfter,s2Step46HeadFvBefore,s2Step46HeadGvAfter,s2Step46HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step13HeadFv_checked : planRowResizeLog s6Step13HeadFvBefore s6Step13HeadFvRow 15 s6Step13HeadFvFresh=
-    some (s6Step13HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892],776⟩,growRow 776 s6Step13HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step13HeadFvBefore s6Step13HeadFvAfter s6Step13HeadFvRow 15 s6Step13HeadFvFresh
-    s6Step13HeadFv_distinct s6Step13HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step13HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step13HeadFvRow.payload++s6Step13HeadFvFresh) s6Step13HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892],776⟩ := by decide +kernel
+theorem s2Step46HeadFv_checked : planRowResizeLog s2Step46HeadFvBefore s2Step46HeadFvRow 37 s2Step46HeadFvFresh=
+    some (s2Step46HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802, 791],770⟩,growRow 770 s2Step46HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step46HeadFvBefore s2Step46HeadFvAfter s2Step46HeadFvRow 37 s2Step46HeadFvFresh
+    s2Step46HeadFv_distinct s2Step46HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step46HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step46HeadFvRow.payload++s2Step46HeadFvFresh) s2Step46HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802, 791],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step14HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step14HeadGFresh : List Wire := [813]
-theorem s6Step14HeadG_distinct : (s6Step14HeadGRow.sign::s6Step14HeadGRow.payload).Nodup := by
+def s2Step47HeadGBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<805) ∨ (807≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step47HeadGAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<806) ∨ (807≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step47HeadGRow : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243],769⟩
+def s2Step47HeadGFresh : List Wire := [805]
+theorem s2Step47HeadG_distinct : (s2Step47HeadGRow.sign::s2Step47HeadGRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14HeadG_owned : (s6Step14HeadGRow.sign::s6Step14HeadGRow.payload).toFinset⊆s6Step14HeadGBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step14HeadGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step47HeadG_owned : (s2Step47HeadGRow.sign::s2Step47HeadGRow.payload).toFinset⊆s2Step47HeadGBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step47HeadGBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<805) ∨ (807≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step14HeadG_reserved : s6Step14HeadGBefore.reserve s6Step14HeadGFresh.toFinset=some s6Step14HeadGAfter := by
+theorem s2Step47HeadG_reserved : s2Step47HeadGBefore.reserve s2Step47HeadGFresh.toFinset=some s2Step47HeadGAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step14HeadGFresh,arenaWires]
-  · norm_num [s6Step14HeadGBefore,s6Step14HeadGFresh,arenaWires]
+  · norm_num [s2Step47HeadGFresh,arenaWires]
+  · norm_num [s2Step47HeadGBefore,s2Step47HeadGFresh,arenaWires]
   · ext q
-    simp only [s6Step14HeadGAfter,s6Step14HeadGBefore,s6Step14HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step47HeadGAfter,s2Step47HeadGBefore,s2Step47HeadGFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step14HeadG_checked : planRowResizeLog s6Step14HeadGBefore s6Step14HeadGRow 257 s6Step14HeadGFresh=
-    some (s6Step14HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩,growRow 777 s6Step14HeadGFresh) := by
-  have result := planRowResizeLog_of_growth s6Step14HeadGBefore s6Step14HeadGAfter s6Step14HeadGRow 257 s6Step14HeadGFresh
-    s6Step14HeadG_distinct s6Step14HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step14HeadG_reserved
-  have rowEq : WindowRow.mk (s6Step14HeadGRow.payload++s6Step14HeadGFresh) s6Step14HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813],777⟩ := by decide +kernel
+theorem s2Step47HeadG_checked : planRowResizeLog s2Step47HeadGBefore s2Step47HeadGRow 245 s2Step47HeadGFresh=
+    some (s2Step47HeadGAfter,⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 805],769⟩,growRow 769 s2Step47HeadGFresh) := by
+  have result := planRowResizeLog_of_growth s2Step47HeadGBefore s2Step47HeadGAfter s2Step47HeadGRow 245 s2Step47HeadGFresh
+    s2Step47HeadG_distinct s2Step47HeadG_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step47HeadG_reserved
+  have rowEq : WindowRow.mk (s2Step47HeadGRow.payload++s2Step47HeadGFresh) s2Step47HeadGRow.sign=⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 805],769⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step14HeadFBefore : Arena := s6Step14HeadGAfter
-def s6Step14HeadFAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14HeadFRow : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step14HeadFFresh : List Wire := [807]
-theorem s6Step14HeadF_distinct : (s6Step14HeadFRow.sign::s6Step14HeadFRow.payload).Nodup := by
+def s2Step47HeadFBefore : Arena := s2Step47HeadGAfter
+def s2Step47HeadFAfter : Arena := s2Step46HeadGBefore
+def s2Step47HeadFRow : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755],768⟩
+def s2Step47HeadFFresh : List Wire := [806]
+theorem s2Step47HeadF_distinct : (s2Step47HeadFRow.sign::s2Step47HeadFRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14HeadF_owned : (s6Step14HeadFRow.sign::s6Step14HeadFRow.payload).toFinset⊆s6Step14HeadFBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step14HeadFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step47HeadF_owned : (s2Step47HeadFRow.sign::s2Step47HeadFRow.payload).toFinset⊆s2Step47HeadFBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step47HeadFBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<806) ∨ (807≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step14HeadF_reserved : s6Step14HeadFBefore.reserve s6Step14HeadFFresh.toFinset=some s6Step14HeadFAfter := by
+theorem s2Step47HeadF_reserved : s2Step47HeadFBefore.reserve s2Step47HeadFFresh.toFinset=some s2Step47HeadFAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step14HeadFFresh,arenaWires]
-  · norm_num [s6Step14HeadFBefore,s6Step14HeadGAfter,s6Step14HeadFFresh,arenaWires]
+  · norm_num [s2Step47HeadFFresh,arenaWires]
+  · norm_num [s2Step47HeadFBefore,s2Step47HeadGAfter,s2Step47HeadFFresh,arenaWires]
   · ext q
-    simp only [s6Step14HeadFAfter,s6Step14HeadFBefore,s6Step14HeadGAfter,s6Step14HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step47HeadFAfter,s2Step46HeadGBefore,s2Step47HeadFBefore,s2Step47HeadGAfter,s2Step47HeadFFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step14HeadF_checked : planRowResizeLog s6Step14HeadFBefore s6Step14HeadFRow 257 s6Step14HeadFFresh=
-    some (s6Step14HeadFAfter,⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩,growRow 795 s6Step14HeadFFresh) := by
-  have result := planRowResizeLog_of_growth s6Step14HeadFBefore s6Step14HeadFAfter s6Step14HeadFRow 257 s6Step14HeadFFresh
-    s6Step14HeadF_distinct s6Step14HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step14HeadF_reserved
-  have rowEq : WindowRow.mk (s6Step14HeadFRow.payload++s6Step14HeadFFresh) s6Step14HeadFRow.sign=⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807],795⟩ := by decide +kernel
+theorem s2Step47HeadF_checked : planRowResizeLog s2Step47HeadFBefore s2Step47HeadFRow 245 s2Step47HeadFFresh=
+    some (s2Step47HeadFAfter,⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 806],768⟩,growRow 768 s2Step47HeadFFresh) := by
+  have result := planRowResizeLog_of_growth s2Step47HeadFBefore s2Step47HeadFAfter s2Step47HeadFRow 245 s2Step47HeadFFresh
+    s2Step47HeadF_distinct s2Step47HeadF_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step47HeadF_reserved
+  have rowEq : WindowRow.mk (s2Step47HeadFRow.payload++s2Step47HeadFFresh) s2Step47HeadFRow.sign=⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 806],768⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step14HeadGvBefore : Arena := s6Step14HeadFAfter
-def s6Step14HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14HeadGvRow : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 864, 887],775⟩
-def s6Step14HeadGvFresh : List Wire := [822]
-theorem s6Step14HeadGv_distinct : (s6Step14HeadGvRow.sign::s6Step14HeadGvRow.payload).Nodup := by
+def s2Step47HeadGvBefore : Arena := s2Step46HeadGBefore
+def s2Step47HeadGvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step47HeadGvRow : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804],771⟩
+def s2Step47HeadGvFresh : List Wire := [801]
+theorem s2Step47HeadGv_distinct : (s2Step47HeadGvRow.sign::s2Step47HeadGvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14HeadGv_owned : (s6Step14HeadGvRow.sign::s6Step14HeadGvRow.payload).toFinset⊆s6Step14HeadGvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step14HeadGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step47HeadGv_owned : (s2Step47HeadGvRow.sign::s2Step47HeadGvRow.payload).toFinset⊆s2Step47HeadGvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step47HeadGvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (802≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step14HeadGv_reserved : s6Step14HeadGvBefore.reserve s6Step14HeadGvFresh.toFinset=some s6Step14HeadGvAfter := by
+theorem s2Step47HeadGv_reserved : s2Step47HeadGvBefore.reserve s2Step47HeadGvFresh.toFinset=some s2Step47HeadGvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step14HeadGvFresh,arenaWires]
-  · norm_num [s6Step14HeadGvBefore,s6Step14HeadFAfter,s6Step14HeadGvFresh,arenaWires]
+  · norm_num [s2Step47HeadGvFresh,arenaWires]
+  · norm_num [s2Step47HeadGvBefore,s2Step46HeadGBefore,s2Step47HeadGvFresh,arenaWires]
   · ext q
-    simp only [s6Step14HeadGvAfter,s6Step14HeadGvBefore,s6Step14HeadFAfter,s6Step14HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step47HeadGvAfter,s2Step47HeadGvBefore,s2Step46HeadGBefore,s2Step47HeadGvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step14HeadGv_checked : planRowResizeLog s6Step14HeadGvBefore s6Step14HeadGvRow 16 s6Step14HeadGvFresh=
-    some (s6Step14HeadGvAfter,⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 864, 887, 822],775⟩,growRow 775 s6Step14HeadGvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step14HeadGvBefore s6Step14HeadGvAfter s6Step14HeadGvRow 16 s6Step14HeadGvFresh
-    s6Step14HeadGv_distinct s6Step14HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step14HeadGv_reserved
-  have rowEq : WindowRow.mk (s6Step14HeadGvRow.payload++s6Step14HeadGvFresh) s6Step14HeadGvRow.sign=⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 864, 887, 822],775⟩ := by decide +kernel
+theorem s2Step47HeadGv_checked : planRowResizeLog s2Step47HeadGvBefore s2Step47HeadGvRow 37 s2Step47HeadGvFresh=
+    some (s2Step47HeadGvAfter,⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804, 801],771⟩,growRow 771 s2Step47HeadGvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step47HeadGvBefore s2Step47HeadGvAfter s2Step47HeadGvRow 37 s2Step47HeadGvFresh
+    s2Step47HeadGv_distinct s2Step47HeadGv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step47HeadGv_reserved
+  have rowEq : WindowRow.mk (s2Step47HeadGvRow.payload++s2Step47HeadGvFresh) s2Step47HeadGvRow.sign=⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 788, 789, 793, 796, 797, 794, 804, 801],771⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
-def s6Step14HeadFvBefore : Arena := s6Step14HeadGvAfter
-def s6Step14HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14HeadFvRow : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892],776⟩
-def s6Step14HeadFvFresh : List Wire := [882]
-theorem s6Step14HeadFv_distinct : (s6Step14HeadFvRow.sign::s6Step14HeadFvRow.payload).Nodup := by
+def s2Step47HeadFvBefore : Arena := s2Step47HeadGvAfter
+def s2Step47HeadFvAfter : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (791≤q ∧ q<792) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)),Finset.filter_subset _ _⟩
+def s2Step47HeadFvRow : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802],770⟩
+def s2Step47HeadFvFresh : List Wire := [791]
+theorem s2Step47HeadFv_distinct : (s2Step47HeadFvRow.sign::s2Step47HeadFvRow.payload).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14HeadFv_owned : (s6Step14HeadFvRow.sign::s6Step14HeadFvRow.payload).toFinset⊆s6Step14HeadFvBefore.live := by
-  apply hmrLayout_owned_of_filter s6Step14HeadFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step47HeadFv_owned : (s2Step47HeadFvRow.sign::s2Step47HeadFvRow.payload).toFinset⊆s2Step47HeadFvBefore.live := by
+  apply hmrLayout_owned_of_filter s2Step47HeadFvBefore (fun q => (0≤q ∧ q<787) ∨ (788≤q ∧ q<790) ∨ (793≤q ∧ q<800) ∨ (801≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<862)) rfl
   decide +kernel
-theorem s6Step14HeadFv_reserved : s6Step14HeadFvBefore.reserve s6Step14HeadFvFresh.toFinset=some s6Step14HeadFvAfter := by
+theorem s2Step47HeadFv_reserved : s2Step47HeadFvBefore.reserve s2Step47HeadFvFresh.toFinset=some s2Step47HeadFvAfter := by
   apply hmrArena_reserve_of_live
-  · norm_num [s6Step14HeadFvFresh,arenaWires]
-  · norm_num [s6Step14HeadFvBefore,s6Step14HeadGvAfter,s6Step14HeadFvFresh,arenaWires]
+  · norm_num [s2Step47HeadFvFresh,arenaWires]
+  · norm_num [s2Step47HeadFvBefore,s2Step47HeadGvAfter,s2Step47HeadFvFresh,arenaWires]
   · ext q
-    simp only [s6Step14HeadFvAfter,s6Step14HeadFvBefore,s6Step14HeadGvAfter,s6Step14HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
+    simp only [s2Step47HeadFvAfter,s2Step47HeadFvBefore,s2Step47HeadGvAfter,s2Step47HeadFvFresh,arenaWires,Finset.mem_filter,Finset.mem_range,List.toFinset_cons,List.toFinset_nil,Finset.mem_union,Finset.mem_insert,Finset.notMem_empty,or_false]
     simp only [Wire] at *
     omega
-theorem s6Step14HeadFv_checked : planRowResizeLog s6Step14HeadFvBefore s6Step14HeadFvRow 16 s6Step14HeadFvFresh=
-    some (s6Step14HeadFvAfter,⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892, 882],776⟩,growRow 776 s6Step14HeadFvFresh) := by
-  have result := planRowResizeLog_of_growth s6Step14HeadFvBefore s6Step14HeadFvAfter s6Step14HeadFvRow 16 s6Step14HeadFvFresh
-    s6Step14HeadFv_distinct s6Step14HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s6Step14HeadFv_reserved
-  have rowEq : WindowRow.mk (s6Step14HeadFvRow.payload++s6Step14HeadFvFresh) s6Step14HeadFvRow.sign=⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892, 882],776⟩ := by decide +kernel
+theorem s2Step47HeadFv_checked : planRowResizeLog s2Step47HeadFvBefore s2Step47HeadFvRow 37 s2Step47HeadFvFresh=
+    some (s2Step47HeadFvAfter,⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802, 791],770⟩,growRow 770 s2Step47HeadFvFresh) := by
+  have result := planRowResizeLog_of_growth s2Step47HeadFvBefore s2Step47HeadFvAfter s2Step47HeadFvRow 37 s2Step47HeadFvFresh
+    s2Step47HeadFv_distinct s2Step47HeadFv_owned (by decide +kernel) (by decide +kernel) (by decide +kernel) s2Step47HeadFv_reserved
+  have rowEq : WindowRow.mk (s2Step47HeadFvRow.payload++s2Step47HeadFvFresh) s2Step47HeadFvRow.sign=⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 781, 785, 779, 786, 780, 799, 802, 791],770⟩ := by decide +kernel
   rw [rowEq] at result
   exact result
 
