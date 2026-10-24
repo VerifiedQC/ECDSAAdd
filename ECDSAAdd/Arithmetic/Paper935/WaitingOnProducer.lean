@@ -1,3 +1,4 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixLayout
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceCallPorts
 import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
 import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSourcePrograms
@@ -104,21 +105,21 @@ theorem forward2_program_eq : s2ForwardProgram = forward2Prefix ++ forward2Tail 
 
 theorem forward2_legal_start : forward2Legal s2ForwardMeasurementStart := rfl
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by the actual source-prefix semantic equivalence and layout binding. -/
 theorem forward2_prefix_run (tape : List Bool) (cursor : Nat) (s : State)
     (_legal : forward2Legal cursor) :
     runWithTape forward2Prefix tape cursor s =
       runWithTape (embedRecorded (s2HmrSourceLayout.lift ++ s2HmrSourceLayout.fold)) tape cursor s := by
-  sorry
+  have h := congrArg Prod.fst (s2ForwardPrefix_run ⟨tape, cursor⟩ s)
+  rw [s2ForwardPrefix_layout] at h
+  exact h
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by the actual source-prefix semantic equivalence and layout binding. -/
 theorem forward2_prefix_measurements : recordedMeasurementCount forward2Prefix =
     recordedMeasurementCount (embedRecorded (s2HmrSourceLayout.lift ++ s2HmrSourceLayout.fold)) := by
-  sorry
+  have h := s2ForwardPrefix_measurements
+  rw [s2ForwardPrefix_layout] at h
+  exact h
 
 /-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
 confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
@@ -186,21 +187,21 @@ theorem forward6_program_eq : s6ForwardProgram = forward6Prefix ++ forward6Tail 
 
 theorem forward6_legal_start : forward6Legal s6ForwardMeasurementStart := rfl
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by the actual source-prefix semantic equivalence and layout binding. -/
 theorem forward6_prefix_run (tape : List Bool) (cursor : Nat) (s : State)
     (_legal : forward6Legal cursor) :
     runWithTape forward6Prefix tape cursor s =
       runWithTape (embedRecorded (s6HmrSourceLayout.lift ++ s6HmrSourceLayout.fold)) tape cursor s := by
-  sorry
+  have h := congrArg Prod.fst (s6ForwardPrefix_run ⟨tape, cursor⟩ s)
+  rw [s6ForwardPrefix_layout] at h
+  exact h
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by the actual source-prefix semantic equivalence and layout binding. -/
 theorem forward6_prefix_measurements : recordedMeasurementCount forward6Prefix =
     recordedMeasurementCount (embedRecorded (s6HmrSourceLayout.lift ++ s6HmrSourceLayout.fold)) := by
-  sorry
+  have h := s6ForwardPrefix_measurements
+  rw [s6ForwardPrefix_layout] at h
+  exact h
 
 /-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
 confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/

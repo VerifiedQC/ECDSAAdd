@@ -565,3 +565,7 @@ import ECDSAAdd.Arithmetic.Paper935.HmrGoodInput
 import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSourcePrograms
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceNormalization
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceCallPorts
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixEquivalence
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixLayout

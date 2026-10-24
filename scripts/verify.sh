@@ -9,10 +9,15 @@ python3 tests/test_sample_b5.py
 python3 scripts/paper935/check_hmr_call_ports.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
+# Build the separate waiting module so its four discharged proofs can be audited
+# strictly below. The strict root still does not import this module.
+lake build ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer
+
 # Report and check only the public proof entry points.
 set +e
 axioms=$(lake env lean /dev/stdin <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer
 import ECDSAAdd.Arithmetic.KnownOutputCarry
 import ECDSAAdd.Arithmetic.KnownOutputAdder
 import ECDSAAdd.Arithmetic.NativeFirstKnownProgram
@@ -4122,6 +4127,25 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrCallArena
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_reserve
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulSourcePrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLegacyPrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements
 LEAN
 )
 task_axiom_lean_rc=$?

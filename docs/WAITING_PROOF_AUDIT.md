@@ -24,12 +24,12 @@ HmrEraseBoundary。records 固定 start=422703、cursor=620345，实际起点
 
 ## 等待项与边界
 
-唯一允许 sorry 的文件是 WaitingOnProducer.lean。共有 18 条具名 Prop 义务：
+唯一允许 sorry 的文件是 WaitingOnProducer.lean。剩余 14 条具名 Prop 义务：
 
 | 项目 | 数量 | 生产方 |
 |---|---:|---|
 | unpark2 的 support、run | 2 | task #50 |
-| forward2/forward6 各自 prefix_run、prefix_measurements、wellFormed、support、run | 10 | task #49 |
+| forward2/forward6 各自 wellFormed、support、run | 6 | task #49 |
 | erase6 的 wellFormed、support、run | 3 | task #49 / task #50 |
 | 三个程序各自 releaseZero | 3 | task #49 / task #50 |
 
@@ -41,8 +41,10 @@ HmrEraseBoundary。records 固定 start=422703、cursor=620345，实际起点
 ## 两张审计表
 
 严格入口保持原白名单 propext、Classical.choice、Quot.sound。
-根模块不导入等待文件。合入 PR216 数据后严格登记为 3948 条。
-临时入口独立运行，共 46 条，其中 18 条登记为等待 Prop 证明。
+根模块不导入等待文件。本次严格登记从 3948 增至 3967 条，原入口顺序不变。
+两处 prefix_run 和 prefix_measurements 共四条已证明并移入严格表；
+严格审计单独导入等待模块以检查这四个证明的实际依赖，根模块仍不导入它。
+临时入口独立运行，共 42 条，其中 14 条登记为等待 Prop 证明。
 Lean 检查登记类型并遍历真实依赖；Python 拒绝未登记的 admission、缺失
 或重复入口及额外公理。14 个显式数据定义必须不依赖 sorryAx。
 临时表通过只表示假设边界可追踪，不能记作严格电路证明完成。
