@@ -1,6 +1,9 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrLoggedCounter
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomParts
+import ECDSAAdd.Arithmetic.Paper935.Arena
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBorrow
+import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomPartsChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
 def s2Step0CounterWork : List Wire := [786, 787, 788, 789]

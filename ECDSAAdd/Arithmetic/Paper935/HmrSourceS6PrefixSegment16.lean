@@ -1,4 +1,12 @@
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkLogFixtures
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryPartsChunk3
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryPartsChunk4
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitialChunk3
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitialChunk4
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6WalkLogs
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk3
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk4
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkCompiler
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkComposition
 
 namespace ECDSAAdd.Arithmetic.Paper935

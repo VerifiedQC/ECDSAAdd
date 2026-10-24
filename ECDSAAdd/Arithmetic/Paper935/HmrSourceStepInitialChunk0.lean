@@ -1,5 +1,15 @@
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitial
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceEarlyControlInitial
+import ECDSAAdd.Arithmetic.Paper935.Arena
+import ECDSAAdd.Arithmetic.Paper935.FusedRepackAllocation
+import ECDSAAdd.Arithmetic.Paper935.HmrEarlyControlCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedEarlyCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryPartsChunk0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitPartsChunk0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitialChunk0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl1
+import ECDSAAdd.Arithmetic.Paper935.WindowAllocator
+import ECDSAAdd.Arithmetic.Paper935.WindowBank
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmedControlInitial
 import ECDSAAdd.Arithmetic.Paper935.HmrStepComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition

@@ -1,6 +1,7 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2WalkLogs
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6WalkLogs
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceWalkCompiler
 
 
 namespace ECDSAAdd.Arithmetic.Paper935

@@ -4,6 +4,7 @@ Chunks import their predecessor so literal arena aliases remain available.
 The public umbrella and all declaration names stay stable.
 """
 import re
+from generated_imports import narrow_imports
 from arena_sharing import expand_arena_aliases,read_arena_aliases
 
 def write_step_chunks(path,text,check=False,limit=16,key_pattern=r'(s[26]Step\d+)\w*'):
@@ -30,5 +31,6 @@ def write_step_chunks(path,text,check=False,limit=16,key_pattern=r'(s[26]Step\d+
         prior=name
     outputs[path]='import ECDSAAdd.Arithmetic.Paper935.'+prior+'\n'
     for output,content in outputs.items():
+        content=narrow_imports(output,content)
         if check:assert output.read_text()==content,f'Generated certificate chunk differs: {output}'
         else:output.write_text(content)

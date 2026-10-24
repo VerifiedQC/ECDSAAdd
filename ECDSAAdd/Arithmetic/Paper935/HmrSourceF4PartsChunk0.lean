@@ -1,5 +1,11 @@
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticParts
-import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomBank
+import ECDSAAdd.Arithmetic.Paper935.Arena
+import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrHybridF4Compiler
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedBorrow
+import ECDSAAdd.Arithmetic.Paper935.HmrLoggedF4Compiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticPartsChunk0
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomPartsChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
 def s2Step0F4FlagArena : Arena := ⟨s2Step0HeadFvAfter.live∪{786},Finset.union_subset s2Step0HeadFvAfter.bounded (by norm_num [arenaWires])⟩

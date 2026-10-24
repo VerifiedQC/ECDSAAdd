@@ -1,5 +1,6 @@
 """Connect checked early steps using their actual output boundaries."""
 import sys
+from generated_imports import narrow_imports
 from certificate_steps import CERTIFICATE_STEPS
 PREFIX_LENGTH=next(n for n in range(499) if n not in CERTIFICATE_STEPS)
 assert 1 <= PREFIX_LENGTH <= 498
@@ -125,5 +126,6 @@ for module,blocks in buckets.items():
 outputs['HmrSourceWalkPrefix']=''.join('import ECDSAAdd.Arithmetic.Paper935.HmrSource'+p+'PrefixJoin\n' for p in ('S2','S6'))
 for module,content in outputs.items():
     path=ROOT/'ECDSAAdd/Arithmetic/Paper935'/f'{module}.lean'
+    content=narrow_imports(path,content)
     if '--check' in sys.argv:assert path.read_text()==content
     else:path.write_text(content)
