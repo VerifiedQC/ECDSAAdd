@@ -23,6 +23,6 @@ port array and measurement start. `rowMulLegacyPrefix` builds the old programs
 from the sign, 280 row ports, 256 output ports and 24 ancilla ports in that array.
 
 These theorems do not prove the full row-multiplication scan, any release-zero
-obligation, or cancellation of phase debt between calls. They also do not
-construct consumer layouts or change `WaitingOnProducer.lean`; a consumer must
-bind its layout fields to these ordered source ports.
+obligation, or cancellation of phase debt between calls. `HmrRowMulPrefixLayout.lean` separately binds the existing consumer layouts to
+these ordered source ports. The four forward-prefix waiting obligations now
+apply these proved results; the remaining 14 waiting proofs are unchanged.

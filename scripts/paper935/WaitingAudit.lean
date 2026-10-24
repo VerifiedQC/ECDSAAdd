@@ -25,14 +25,10 @@ elab "#waiting_dependencies " n:ident : command => do
   let targets := [
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_run,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_run,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_releaseZero,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_run,
@@ -75,14 +71,10 @@ elab "#waiting_prop " n:ident : command => do
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRule2
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRule2
 
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_run
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_releaseZero
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_run
@@ -103,10 +95,6 @@ elab "#waiting_prop " n:ident : command => do
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_program_eq
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_legal_start
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_legal_start
-#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run
-#waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run
-#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements
-#waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_support
@@ -129,10 +117,6 @@ elab "#waiting_prop " n:ident : command => do
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_program_eq
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_legal_start
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_legal_start
-#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run
-#waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run
-#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements
-#waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_support
