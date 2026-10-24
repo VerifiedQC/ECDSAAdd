@@ -531,6 +531,14 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlagChain
 import ECDSAAdd.Arithmetic.Paper935.HmrFlags
 import ECDSAAdd.Arithmetic.Paper935.FusedSourceRepack
 
+import ECDSAAdd.Arithmetic.Paper935.ArenaCensus
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaLog
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaLogIntervals
+import ECDSAAdd.Arithmetic.Paper935.FusedSymbolicBudget
+
+import ECDSAAdd.Arithmetic.Paper935.FusedEmpiricalBudget
 import ECDSAAdd.Arithmetic.Paper935.FusedPlacedExecution
 
 import ECDSAAdd.Arithmetic.Paper935.FusedPlacedInverse
