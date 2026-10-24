@@ -129,3 +129,56 @@ ownership under the swap permutation, and readiness after every tape.
 Readiness is conditional on the initial source snapshot being ready. These
 are concrete source-snapshot results; reaching these snapshots from the
 compiled walk remains an independent obligation.
+
+## Finite placement execution
+
+`FusedPlacedExecution` turns the finite list placements into wire maps whose
+default is unused on reference ports. Allocator-derived list injectivity
+therefore supplies the finite injectivity needed by the actual interpreter.
+For every tape the renamed lift computes the encoded coefficient magnitude,
+restores its pool and sign, and preserves phase and outside wires. The
+renamed source-order fold computes the full magnitude fold under RowGood
+and restores every wire outside the placed low row, including the borrowed
+word and carry. Signed encoding, initial clean inputs, and numerical good
+conditions remain explicit physical preconditions. These results do not yet
+derive them at the three complete point-add call sites.
+
+`FusedPlacementViews` proves that the physical lift payload and fold
+low-then-high payload are the same row in the same order. Its
+`placedLift_fold_encoding` derives the fold's coefficient encoding from
+actual lift execution; the lift pool's zero precondition follows from
+arena readiness and successful reservation via `fusedPool_zero`.
+`FusedPlacedInverse` proves full physical forward/inverse restoration for
+both components and independent tapes. The inverse starts at the actual
+forward output; this does not yet discharge the lifecycle invariant after
+intervening Horner/sign/measurement operations. The borrowed zero word,
+sequential pool release and complete call-site invariants remain to connect.
+
+`FusedPlacedBorrow` derives the borrowed word's zero state from actual
+measurement and proves that a disjoint renamed lift preserves it. This
+does not erase measurement phase debt. The physical pool sites are restored
+by the lift and the subsequent fold's carry is proved to be the cleaned
+P[0]. A reservation/release theorem returns the lift's clean pool with the
+original live set and readiness. It is an ownership contract, not an early
+pool release inserted into the source program: release after the complete
+Horner/unpark lifecycle and the exact call-site schedule remain open.
+
+## Signed physical input bridge
+
+`FusedSignedPlacement.placedMagnitude_encoding` derives the reference lift's
+sign and two's-complement payload from `WindowRow.value` on the physical row.
+`placedSignedLift_fold_encoding` composes this with the actual renamed lift,
+using allocator readiness to obtain its clean pool, and establishes the fold's
+magnitude input. The only arithmetic input equality is the physical signed row
+value equaling the modeled call coefficient; `MagnitudeEncodes` is no longer an
+independent premise at this boundary. Width, ownership, separation and
+`LiftGood` remain explicit. Establishing that the source walk reaches this row,
+and the Horner/unpark/s6 lifecycle, remain separate obligations.
+
+`FusedRepackedInput.repackedRow_value` additionally proves that executing a
+valid repack journal preserves the signed value when both payload and sign
+views follow its permutation. The two pinned source journals have explicit
+`s2RepackedMagnitude_encoding` / `s6RepackedMagnitude_encoding` corollaries.
+These transport an existing physical signed-row invariant; they do not assert
+that the compiled walk reaches the source snapshot, nor that an arbitrary row
+parameter is the source's fv row. That source-view identification remains open.

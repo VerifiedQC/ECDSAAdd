@@ -539,3 +539,25 @@ import ECDSAAdd.Arithmetic.Paper935.ArenaLogIntervals
 import ECDSAAdd.Arithmetic.Paper935.FusedSymbolicBudget
 
 import ECDSAAdd.Arithmetic.Paper935.FusedEmpiricalBudget
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedExecution
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedInverse
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacementViews
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedBorrow
+
+import ECDSAAdd.Arithmetic.Paper935.FusedSignedPlacement
+
+import ECDSAAdd.Arithmetic.Paper935.FusedRepackedInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSpec
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulConsumer
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaSchedule
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecyclePhase
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleFrame
+
+import ECDSAAdd.Arithmetic.Paper935.HmrGoodInput
