@@ -6,6 +6,7 @@ python3 scripts/paper935/generate_schedule.py --check
 python3 scripts/paper935/check_fused_repack.py
 python3 scripts/sample_b5.py --check --output data/b5-empirical.json
 python3 tests/test_sample_b5.py
+python3 scripts/paper935/check_hmr_call_ports.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -4081,6 +4082,46 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_cx_same_target
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_record_corrections
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_measure_fusion
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.top
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.tq
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.clean3
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceUnpark
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_return
 LEAN
 )
 task_axiom_lean_rc=$?
@@ -4103,3 +4144,6 @@ for name,body in entries:
  assert names<=allowed,(name,names)
 print('All',len(actual),'public entry-point axiom audits passed the exact whitelist.')
 PY
+
+# Separate temporary proof audit; never widen the strict table above.
+bash scripts/verify_waiting.sh

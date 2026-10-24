@@ -56,9 +56,15 @@ structure HmrRowMulPre (L : HmrRowMulLayout) (call : FusedCall) (s : State) : Pr
 must be proved for actual execution; the caller never supplies an arbitrary
 phase-correctness hypothesis. No concrete instance is asserted here. -/
 structure HmrRowMulSpec (L : HmrRowMulLayout) (H : RecordedProgram) where
+  actualPrefix : RecordedProgram
   scanAndHalves : RecordedProgram
-  program_eq : H=embedRecorded (L.lift++L.fold)++scanAndHalves
+  program_eq : H=actualPrefix++scanAndHalves
   legalCursor : Nat → Prop
+  prefix_run : ∀tape cursor s, legalCursor cursor →
+    runWithTape actualPrefix tape cursor s =
+      runWithTape (embedRecorded (L.lift++L.fold)) tape cursor s
+  prefix_measurements : recordedMeasurementCount actualPrefix =
+    recordedMeasurementCount (embedRecorded (L.lift++L.fold))
   wellFormed : ∀cursor,legalCursor cursor → RecordedWellFormedAt cursor H
   support : recordedWires H⊆L.support
   rowMulPhaseDebt : List Bool → Nat → State → Bool
