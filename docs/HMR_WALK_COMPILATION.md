@@ -867,3 +867,22 @@ The total includes source checks, the separate waiting-module build and audit.
 
 The remaining work includes 181 forward steps, the reverse program, phase
 cancellation and the whole-program resource theorem.
+
+### 384-step source checkpoint
+
+Both actual walks now have checked compiler prefixes through step 383, using
+two further 16-step segments per walk and retaining all previous Lean modules.
+The 71 new modules declare 454 public entries (274 definitions, 180 theorems);
+the complete existing 28042-entry registry remains a prefix of the
+28496-entry registry. The manifest covers 710 modules.
+
+Full `scripts/verify.sh` passed: 5910 root build jobs, all 28496 strict public
+axiom entries, and the separate temporary table (42 entries, 14 registered and
+admitted obligations). Total wall time was 2988.139 seconds (49.80 minutes),
+including 1295.160 seconds for the first incremental build of this checkpoint
+and 1501.986 seconds for the strict audit. There was no pre-warm, failed run,
+proof modification during verification, or limit increase. Existing verified
+352-step and main artifacts were reused. This is not a clean dependency build.
+
+The remaining 149 forward steps, reverse execution, phase cancellation and
+whole-program resource bound remain unfinished.
