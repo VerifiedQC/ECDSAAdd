@@ -733,3 +733,31 @@ process, with unchanged imports, ordered commands, whitelist and exact output
 comparison; individual batch times are now reported. No stack or Lean limits
 are increased. Timing and the bounded comparison with the former 1000-entry
 batches are recorded in the PR description.
+
+### 160-step source checkpoint
+
+This extension appends actual source steps 128–159 for both walks. All prior
+0–127 Lean modules are unchanged. Each walk adds two consecutive 16-step
+segments and joins them to its checked 128-step prefix using the existing
+append theorem; intermediate arena, row bank and measurement-record boundaries
+are checked rather than assumed. `HmrSourcePrivatePrefix160` imports both final
+160-step certificates.
+
+The manifest now covers all three private checkpoints and freezes the first
+24621 audit commands by hash. Another 454 public declarations (274 definitions
+and 180 theorems) are appended, bringing the registry to 25075 entries. The
+2000-command audit batches and exact whitelist are unchanged. The initial direct verification included the new builds without a separate
+warm-up build. After the log-binding proof correction, the complete verification
+passed using the completed artifacts. Both runs are timed separately in the PR
+description.
+
+There remain 373 forward steps, the complete reverse program, phase cancellation
+and the whole-program resource theorem. This prefix is not a completed walk or
+a 935-qubit point-addition claim.
+
+The merged prefix includes main 61311f7's 138 audit entries before this PR's
+entries. Every historical baseline hashes the complete merged prefix directly.
+The 160-step log-binding proof reuses the 128-step binding and two 16-step
+source blocks; it avoids expanding all row data at once, without changing any
+recursion limit or the exact compiler result. The initial direct build attempt
+and the corrected complete verification are reported separately.

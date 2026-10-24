@@ -1017,3 +1017,4 @@ import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceFragmentedControl
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix96
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix128
+import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix160

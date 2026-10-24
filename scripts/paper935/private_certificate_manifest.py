@@ -24,11 +24,11 @@ def manifest_for(outputs):
    expected=[{'name':name+s,'kind':'def'} for s in ('Arena','Bank','Spec','Plan')]+[{'name':name+s,'kind':'theorem'} for s in ('_source','_checked')]
    assert declared==expected,(module,declared)
   files[module+'.lean']=declared
- return {'baseline_entries':BASELINE_COUNT,'baseline_sha256':BASELINE_SHA256,'first_step':64,'last_step':127,'files':files}
+ return {'baseline_entries':BASELINE_COUNT,'baseline_sha256':BASELINE_SHA256,'first_step':64,'last_step':159,'files':files}
 
 def verify_manifest(ROOT,outputs,manifest):
  base=ROOT/'ECDSAAdd/Arithmetic/Paper935'
- actualproofs=[]; checkpoint_proofs={96:[],128:[]}; old_defs=[]
+ actualproofs=[]; checkpoint_proofs={96:[],128:[],160:[]}; old_defs=[]
  expected_files=set(manifest['files'])
  actual_files={p.name for p in base.glob('HmrSource*Private*.lean')}
  assert actual_files==expected_files,'Unexpected private-certificate module set'
@@ -39,8 +39,8 @@ def verify_manifest(ROOT,outputs,manifest):
   proofs=['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected ]
   actualproofs += proofs
   number=int(re.search(r'(\d+)\.lean$',filename).group(1))
-  checkpoint=96 if (number<=96 if 'Prefix' in filename else number<96) else 128
-  checkpoint_proofs[checkpoint] += ['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected if checkpoint==128 or d['kind']=='theorem']
+  checkpoint=next(end for end in (96,128,160) if (number<=end if 'Prefix' in filename else number<end))
+  checkpoint_proofs[checkpoint] += ['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected if checkpoint!=96 or d['kind']=='theorem']
   if checkpoint==96:old_defs += ['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected if d['kind']=='def']
  assert len(actualproofs)==len(set(actualproofs))
  entries=re.findall(r'^#print axioms (.+)$',(ROOT/'scripts/verify.sh').read_text(),re.M)
@@ -48,4 +48,5 @@ def verify_manifest(ROOT,outputs,manifest):
  assert hashlib.sha256(baseline.encode()).hexdigest()==BASELINE_SHA256,'Existing audit registry changed'
  assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:23893]).encode()).hexdigest()=='6e2a096b8dccbf7864a8441984a1ccbb228ae2192c683fd6dbc3ec532a2129ba','96-step audit registry changed'
  assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24167]).encode()).hexdigest()=='d5780092d5afe42a5a830299e5ea66a1c0d14e9568bbd4c12ef5d0e578a72781','Corrected 96-step registry changed'
- assert entries[BASELINE_COUNT:]==sorted(checkpoint_proofs[96])+sorted(old_defs)+sorted(checkpoint_proofs[128]),'New public declarations and appended audit registry differ'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24621]).encode()).hexdigest()=='01388c88eeb7711b48148a7da970126aed0da142881d9aa566bcc5d495c67970','128-step merged audit registry changed'
+ assert entries[BASELINE_COUNT:]==sorted(checkpoint_proofs[96])+sorted(old_defs)+sorted(checkpoint_proofs[128])+sorted(checkpoint_proofs[160]),'New public declarations and appended audit registry differ'
