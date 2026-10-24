@@ -40,7 +40,7 @@ obligations; these structures do not assert them.
 ## Input rules and K-side facts
 
 - Instantiate `HmrUnparkInputRule` / `HmrEraseInputRule`: define `records` and prove
-  `accepts` from its record condition and the declared boundary to the **existing
+  `accepts` from `HmrRowMulPre L call original`, its record condition and the declared boundary to the **existing
   pre itself**. Respect the universal quantifiers of these fields. Then prove
   `records` at the actual start/end cursors; an empty/vacuous rule is insufficient.
 - Unpark boundary: original sign, actual parked payload, zero scratch, and zero

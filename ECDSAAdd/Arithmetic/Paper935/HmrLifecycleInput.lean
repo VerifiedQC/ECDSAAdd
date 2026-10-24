@@ -20,12 +20,13 @@ structure HmrEraseBoundary (L : HmrRowMulLayout) (call : FusedCall) (original : 
   multiplier : ∀q∈L.y,current.basis q=original.basis q
   output : regValue L.out current.basis=call.beforeSign
 
-/-- The producer must prove that these concrete basis facts and record
+/-- The producer must prove that the original call precondition, concrete basis facts and record
 conditions suffice for its predicate. No source instance is asserted. -/
 structure HmrUnparkInputRule (L : HmrRowMulLayout) (U : RecordedProgram)
     (spec : HmrRowUnparkSpec L U) where
   records : List Bool → Nat → Nat → Prop
   accepts : ∀call original tape start cursor current,
+    HmrRowMulPre L call original →
     records tape start cursor → HmrUnparkBoundary L original tape start current →
     spec.pre call original tape cursor current
 
@@ -33,6 +34,7 @@ structure HmrEraseInputRule (L : HmrRowMulLayout) (R : RecordedProgram)
     (spec : HmrRowMulInvSpec L R) where
   records : List Bool → Nat → Nat → Prop
   accepts : ∀call original tape start cursor current,
+    HmrRowMulPre L call original →
     records tape start cursor → HmrEraseBoundary L call original tape start current →
     spec.pre call original tape cursor current
 
@@ -67,7 +69,7 @@ theorem hmr_unpark_input (L : HmrRowMulLayout) (H K U : RecordedProgram)
     (records : rule.records tape cursor (cursor+recordedMeasurementCount (H++K))) :
     unpark.pre call s tape (cursor+recordedMeasurementCount (H++K))
       (runWithTape (H++K) tape cursor s) := by
-  apply rule.accepts call s tape cursor _ _ records
+  apply rule.accepts call s tape cursor _ _ pre records
   exact ⟨hmr_parked_boundary L H K forward call s tape cursor legal pre frame,demolished⟩
 
 theorem hmr_erase_input (L : HmrRowMulLayout) (H K R : RecordedProgram)
@@ -81,7 +83,7 @@ theorem hmr_erase_input (L : HmrRowMulLayout) (H K R : RecordedProgram)
     erase.pre call s tape (cursor+recordedMeasurementCount (H++K))
       (runWithTape (H++K) tape cursor s) := by
   have h := forward.run call s tape cursor legal pre
-  apply rule.accepts call s tape cursor _ _ records
+  apply rule.accepts call s tape cursor _ _ pre records
   constructor
   · apply hmr_parked_boundary L H K forward call s tape cursor legal pre
     intro q hq
