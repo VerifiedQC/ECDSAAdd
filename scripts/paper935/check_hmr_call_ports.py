@@ -12,6 +12,9 @@ assert data['entry'] == 'tasks/modinv-point-add/circuits/divsteps/circuit.py'
 assert data['qcap'] == 935 and data['wide'] is False
 assert [r['kind'] for r in data['calls']] == ['forward', 'unpark', 'forward', 'erase']
 assert len(data['seam_borrows']) == 2
+assert len(data['fold_temporary']) == 1494
+assert data['call_operation_counts'] == {'0':2185556,'2':2185556,'3':2203069}
+assert data['position_unit'] == 'zero-based source operations within row_mul, including R and SWAP'
 for absent in ('carry', 'top', 'tq'):
     assert re.search(r'def HmrSeamPorts\.' + absent +
         r' \(_ : HmrSeamPorts\) : Option Wire := none', lean)
@@ -28,7 +31,7 @@ for tag, pair, borrow in zip(('s2', 's6'),
     layout, = extract(r'def ' + tag + r'HmrSourceLayout : HmrRowMulLayout where([\s\S]*?)  row_length :=')
     fields = {'row': tag + 'HmrSourceRow', 'y': tag + 'HmrSourceY',
               'out': tag + 'HmrSourceOut', 'anc': tag + 'HmrSeamPorts.anc',
-              'flags': '{' + tag + 'HmrSeamPorts.flag}'}
+              'flags': '{' + tag + 'HmrSeamPorts.flag, ' + tag + 'HmrFoldTemporary}'}
     actual = dict(re.findall(r'^  (\w+) := ([^\n]+)$', layout, re.M))
     assert actual == fields, (tag, 'layout reference mismatch', actual)
     for key in ('row', 'y', 'out', 'ma'):
@@ -56,6 +59,24 @@ for tag, pair, borrow in zip(('s2', 's6'),
     assert set(borrow['new']) == {int(flag), *anc}
     assert set(borrow['before_allocated']).isdisjoint(borrow['new'])
     assert set(borrow['after_allocated']) == set(borrow['before_allocated']) | set(borrow['new'])
+    temporary, = extract(r'def ' + tag + r'HmrFoldTemporary : Wire := (\d+)')
+    temporary = int(temporary)
+    missing, = extract(r'def ' + tag + r'HmrCallArena : Arena :=\s*⟨arenaWires \\ \{([\d, ]+)\},')
+    actual = set(range(935)) - {int(q) for q in missing.split(',')}
+    assert actual == set(record['allocated']), (tag, 'call arena')
+    assert temporary not in actual
+    for index in ((0,) if tag == 's2' else (2, 3)):
+        events = [e for e in data['fold_temporary'] if e['call_index'] == index]
+        assert len(events) == 498
+        previous = -1
+        for event in events:
+            assert event['wire'] == temporary
+            assert event['mode'] == ('double' if index == 3 else 'halve')
+            assert event['before_count'] == event['after_count'] == len(record['allocated'])
+            assert event['free_before'] is True and event['returned_free'] is True
+            allocate, release = event['allocate_source_op'], event['release_source_op']
+            assert previous < allocate < release < data['call_operation_counts'][str(index)]
+            previous = release
     for boundary in pair:
         assert set(boundary['walk_live']) == set(boundary['allocated']) - set(boundary['home_free'])
 print('Both ordered HMR seam layouts and independent allocation snapshots match the pinned export.')

@@ -28,6 +28,11 @@ assert C.QCAP == 935
 
 records = []
 borrows = []
+fold_temporary = []
+active_call = None
+active_fold = None
+call_start_ops = {}
+call_operation_counts = {}
 class Captured(Exception):
     pass
 
@@ -48,6 +53,9 @@ def snap(inv, y, out, ma, kind):
 original_on = E.MulMachine.on
 original_mul = E.DivstepInvBase.row_mul
 original_unpark = E.DivstepInvBase.row_unpark
+original_fold = E.DivstepInvBase._fold_stage
+original_qubit = Builder.qubit
+original_recycle = Builder.recycle
 
 def capture_on(mm, k, seam=False):
     before = allocated(mm.b)
@@ -60,17 +68,64 @@ def capture_on(mm, k, seam=False):
                         'anc': list(mm.ma['anc']), 'flag': mm.ma['flag']})
 
 def capture_mul(obj, y, out, ma, inv=False):
-    reverse = inv
-    records.append(snap(obj,y,out,ma,'erase' if reverse else 'forward'))
-    if reverse:
+    global active_call
+    records.append(snap(obj,y,out,ma,'erase' if inv else 'forward'))
+    assert not obj.b._loop_stack
+    active_call = len(records)-1
+    call_start_ops[active_call] = len(obj.b._target())
+    try:
+        result = original_mul(obj,y,out,ma,inv=inv)
+        call_operation_counts[active_call] = len(obj.b._target())-call_start_ops[active_call]
+    finally:
+        active_call = None
+    if inv:
         raise Captured()
-    return original_mul(obj,y,out,ma,inv=reverse)
+    return result
+
+def capture_qubit(b, *args, **kwargs):
+    wire = original_qubit(b, *args, **kwargs)
+    if active_fold is not None:
+        active_fold['allocations'].append(wire)
+        active_fold['allocate_source_op'] = len(b._target())-call_start_ops[active_call]
+    return wire
+
+def capture_recycle(b, wire, *args, **kwargs):
+    if active_fold is not None:
+        active_fold['releases'].append(wire)
+        active_fold['release_source_op'] = len(b._target())-call_start_ops[active_call]
+    return original_recycle(b,wire,*args,**kwargs)
+
+def capture_fold(obj, mode, reg, anc, alive=None):
+    global active_fold
+    if active_call is None or alive is not None:
+        return original_fold(obj,mode,reg,anc,alive=alive)
+    before = set(allocated(obj.b))
+    assert before == set(records[active_call]['allocated'])
+    event = {'call_index':active_call, 'mode':mode, 'allocations':[], 'releases':[]}
+    active_fold = event
+    try:
+        result = original_fold(obj,mode,reg,anc,alive=alive)
+    finally:
+        active_fold = None
+    assert len(event['allocations']) == 1, event
+    wire = event.pop('allocations')[0]
+    assert event.pop('releases') == [wire]
+    assert wire not in before
+    assert set(allocated(obj.b)) == before
+    assert wire in obj.b._free_set
+    event.update(wire=wire, before_count=len(before), after_count=len(before),
+                 free_before=True, returned_free=True)
+    fold_temporary.append(event)
+    return result
 
 def capture_unpark(inv, zeros, ma):
     previous = records[-1]
     records.append(snap(inv,zeros,previous['out'],ma,'unpark'))
     return original_unpark(inv,zeros,ma)
 
+Builder.qubit = capture_qubit
+Builder.recycle = capture_recycle
+E.DivstepInvBase._fold_stage = capture_fold
 E.MulMachine.on = capture_on
 E.DivstepInvBase.row_mul = capture_mul
 E.DivstepInvBase.row_unpark = capture_unpark
@@ -96,5 +151,7 @@ a.output.write_text(json.dumps({'source_commit':PIN,
     'entry_sha256':hashlib.sha256(entry.read_bytes()).hexdigest(),
     'entry':str(entry.relative_to(root)), 'qcap':935, 'wide':False,
     'note':'Actual ordered allocation data; not a state-cleanliness or execution proof.',
-    'seam_borrows':borrows,'calls':records},indent=2)+'\n')
-print('Exported four call boundaries and two actual seam pool acquisitions.')
+    'seam_borrows':borrows,'calls':records,'fold_temporary':fold_temporary,
+    'call_operation_counts':call_operation_counts,
+    'position_unit':'zero-based source operations within row_mul, including R and SWAP'},indent=2)+'\n')
+print('Exported four call boundaries, two seam acquisitions, and', len(fold_temporary), 'temporary fold leases.')

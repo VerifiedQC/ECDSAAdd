@@ -34,7 +34,7 @@ Dirac 在 4edc5f50 允许先落 A 组，在 c04f36f4 要求只暂缺 Prop 证明
 
 ## 两张审计表
 
-`verify.sh` 先运行原有严格构建和 3853 个精确公理入口。
+`verify.sh` 先运行原有严格构建和 3861 个精确公理入口。
 严格根模块不导入等待文件。白名单仍只有 propext、Classical.choice、Quot.sound。
 
 之后 `verify_waiting.sh` 单独构建等待模块，运行 10 个临时入口。
@@ -53,6 +53,8 @@ forward2、forward6、erase6、eraseRule6 尚未建立等待声明。
 H2/H6/R6 必须先有无 sorry 的实际程序生成定义。
 Lamport 在 eade25d0 发现 `_fold_stage` 临时 w 超出旧布局支持范围，
 Dirac 在 aee144ad 批准修正；须先捕获 w 的实际地址、借还和零态条件，
-修正布局并确认收窄签名。A 组 unpark 不调用 `_halve_out`，不受该缺口影响。
+布局已加入实际 w，且借还定理保留显式零态前提；B 组仍须确认收窄签名。
+A 组 unpark 不调用 `_halve_out`。扩大的 scratch 使其前提明确要求 w 为零，
+但 U2 门流没有变化，未新增语义等待条目。
 
 三个集成任务仍需 owner 批准启动。这里不宣称整机正确性、≤935 或数值误差界。

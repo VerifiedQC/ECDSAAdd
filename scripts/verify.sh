@@ -4024,6 +4024,14 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam_matches_export
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrExportedAfterSeam
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_return
 LEAN
 )
 task_axiom_lean_rc=$?

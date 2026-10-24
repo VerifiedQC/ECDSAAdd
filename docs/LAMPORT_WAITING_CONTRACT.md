@@ -115,8 +115,7 @@ engine.py:3312–3335 指定 fold 使用 anc[0]，unpark 借用被测 y 字。
 
 `scripts/extract_hmr_call_ports.py` 直接运行固定 circuit.py，输出
 `data/hmr-call-ports.json`。它记录 s2 forward/unpark、s6 forward/erase
-的有序端口，以及两次 seam 分配前后的 Builder 占用集合。导出在
-逆乘入口停止；不声称执行了完整逆程。两次重复导出逐字节一致。
+的有序端口，以及两次 seam 分配前后的 Builder 占用集合。导出器在生成 s6 逆乘门流后停止；不生成后续 closer_inv，也不证明实际量子执行。两次重复导出逐字节一致。
 
 Builder allocated、HomePool home_free、差集 walk_live 分别记录。
 s2 输出 A 仍在 Builder allocated 内，却在 walk 的 home_free 内。
@@ -129,3 +128,26 @@ Lamport 在 f66c33b2 确认端口数据和 unpark 定义，并要求补自动对
 `s2HmrExportedAfterSeam` / `s6HmrExportedAfterSeam` 独立编码导出后的集合；
 `*_matches_export` 证明 reserve 返回值与它们的 live 集合相等。
 这项数据核对不是六个等待签名的可行性确认。
+
+## 无条件 fold 临时线（eade25d0 / 2cc0c1f2）
+
+固定源码 engine.py:3200–3246 在 `_fold_stage` 中临时分配 w，并通过
+`recycle` 发出 R。s2 的实际地址为804，s6为856。三个 row_mul 调用
+各捕获498次借还（256次扫描内的 fold 加242次固定缩放 fold），分别为
+halve / halve / double。每次均复用同一地址。
+
+导出 JSON 的 `fold_temporary` 包含每次分配和释放的源操作位置、地址、
+模式及前后分配数量。位置是 row_mul 内从0开始的源操作序号，包含 R
+和 SWAP；不是展开后的 Lean 程序偏移。导出器检查每次前后的完整
+Builder 分配集合相等。调用开始时有894个已分配地址，w在集合外。
+这与 mm.on 后、closer 前的925个地址属于不同边界。
+
+`L2/L6.flags` 现在额外包含对应 w，因此 scratch 的清零前提也明确包含 w。
+ma 的角色仍然只有 flag 和 anc[24]；w不是假造的 ma 字段。
+`HmrCallArena` 独立转录调用边界的分配集合。
+`HmrFoldTemporary_reserve` 证明可借入该地址；`HmrFoldTemporary_return`
+只有在调用者提供释放前 `state w = false` 的证据时，才证明归还后
+恢复原分配集合。源 R 事件不提供零态证明，不能当成 Lean reset。
+
+检查器逐项核对 w、调用集合、三组借还事件和操作位置的范围及顺序。
+完整源门流到 Lean 的对应及所有释放前零态证据仍由 task #49/#50 提供。
