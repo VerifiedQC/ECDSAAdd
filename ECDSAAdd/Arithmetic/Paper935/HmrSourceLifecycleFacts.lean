@@ -59,6 +59,13 @@ theorem s6SourceGap_row_disjoint :
   apply (sourceAvoids_iff _ _).mp
   decide +kernel
 
+theorem s2SourceGap_flags_disjoint :
+    Disjoint s2HmrSourceLayout.flags (hmrBasisWrites s2SourceGap) := by
+  have checked : sourceAvoids [851,804] s2SourceGap = true := by decide +kernel
+  have flags : s2HmrSourceLayout.flags = ([851,804] : List Wire).toFinset := by decide +kernel
+  rw [flags]
+  exact (sourceAvoids_iff _ _).mp checked
+
 attribute [local irreducible] s2SourceGap s6SourceGap s2HmrSourceRow s6HmrSourceRow
 
 theorem s2SourceGap_row_frame (tape : List Bool) (cursor : Nat) (s : State)
@@ -72,6 +79,12 @@ theorem s6SourceGap_row_frame (tape : List Bool) (cursor : Nat) (s : State)
     (runWithTape s6SourceGap tape cursor s).basis q = s.basis q :=
   hmr_preserves_outside_writes _ _ _ _ _ (fun hw =>
     Finset.disjoint_left.mp s6SourceGap_row_disjoint (List.mem_toFinset.mpr hq) hw)
+
+theorem s2SourceGap_flags_frame (tape : List Bool) (cursor : Nat) (s : State)
+    (q : Wire) (hq : q ∈ s2HmrSourceLayout.flags) :
+    (runWithTape s2SourceGap tape cursor s).basis q = s.basis q :=
+  hmr_preserves_outside_writes _ _ _ _ _ (fun hw =>
+    Finset.disjoint_left.mp s2SourceGap_flags_disjoint hq hw)
 
 theorem s6SourceCorrection_writes : hmrBasisWrites s6SourceCorrection = ∅ := by
   decide +kernel

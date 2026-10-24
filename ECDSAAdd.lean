@@ -572,3 +572,4 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixLayout
 
 import ECDSAAdd.Arithmetic.Paper935.HmrSignLifecycle
 import ECDSAAdd.Arithmetic.Paper935.HmrSignValue
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceThreeCall
