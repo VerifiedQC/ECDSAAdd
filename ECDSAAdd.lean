@@ -536,3 +536,6 @@ import ECDSAAdd.Arithmetic.Paper935.ArenaCensus
 import ECDSAAdd.Arithmetic.Paper935.ArenaLog
 
 import ECDSAAdd.Arithmetic.Paper935.ArenaLogIntervals
+import ECDSAAdd.Arithmetic.Paper935.FusedSymbolicBudget
+
+import ECDSAAdd.Arithmetic.Paper935.FusedEmpiricalBudget

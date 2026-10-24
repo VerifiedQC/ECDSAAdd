@@ -3,6 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/paper935/generate_schedule.py --check
 python3 scripts/paper935/check_fused_repack.py
+python3 scripts/sample_b5.py --check --output data/b5-empirical.json
+python3 tests/test_sample_b5.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -3943,6 +3945,20 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_complete
 #print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak
 #print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.mass_le
+#print axioms ECDSAAdd.Arithmetic.Paper935.FusedMassBounds.total_nonneg
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fusedExactBounds_total
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_budget_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_of_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.fused_error_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.EmpiricalBudget
+#print axioms ECDSAAdd.Arithmetic.Paper935.EmpiricalBudget.observedRate
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_nine_mass
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_calls_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.induced_denominator_mass
+#print axioms ECDSAAdd.Arithmetic.Paper935.empirical_error
 LEAN
 )
 task_axiom_lean_rc=$?
