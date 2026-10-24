@@ -1027,3 +1027,5 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix192
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix224
 
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix256
+
+import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix288
