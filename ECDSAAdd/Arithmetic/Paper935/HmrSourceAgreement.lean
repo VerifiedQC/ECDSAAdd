@@ -45,10 +45,11 @@ theorem hmrSource_run_eq (call2 call6 : FusedCall) (s : State)
     call2 call6 s tape cursor ready.legal2 ready.pre2 ready.records2
     ready.legal6 ready.pre6 ready.records6
   rw [cancel, Bool.xor_false] at hp
-  exact State.mk.injEq.mpr ⟨hp, basis⟩
+  exact State.extensionality _ _ hp basis
 
 variable {X : Type*} [Fintype X] [DecidableEq X]
 
+omit [Fintype X] [DecidableEq X] in
 /-- Derive all-tape agreement from the source-specific execution obligations.
 No tape distribution or uniform input law is assumed. `bad` is supplied
 independently; the caller must prove every premise outside that same event. -/
@@ -68,5 +69,32 @@ theorem hmrSource_recordedAgreement (input output : X → BasisState) (bad : Fin
   exact hmrSource_run_eq J forward2 unpark unparkRule forward6 erase eraseRule
     (call2 x) (call6 x) _ tape 0 _ (ready x hx phase tape)
     (basis x hx phase tape) (cancel x hx phase tape)
+
+/-- Conditional quantum error for the SAME program and original-label bad set.
+The circuit equality prevents substituting an unrelated legal circuit. The
+empirical population bounds remain assumptions, never inferred from counts. -/
+theorem hmrSource_empirical_error {n l : Nat} (c : Circuit n 0 l)
+    (program_eq : c.program = hmrSourceThreeCall J)
+    (ι : X ↪ Bits n) (idealOp : X ≃ X) (μ : InputLaw X)
+    (events : FailureEvents X) (scaling : Finset X) (calls : X → List FusedCall)
+    (b : EmpiricalBudget μ events scaling calls) (hlt : b.bounds.total < 1)
+    (call2 call6 : X → FusedCall)
+    (ready : ∀ x, x ∉ scalingBad events scaling ∪ (fusedFailures calls).bad → ∀ phase tape,
+      HmrSourceRunConditions J forward2 unpark unparkRule forward6 erase eraseRule
+        (call2 x) (call6 x) ⟨phase,extend (ι x)⟩ tape 0)
+    (basis : ∀ x, x ∉ scalingBad events scaling ∪ (fusedFailures calls).bad → ∀ phase tape,
+      (runWithTape (hmrSourceThreeCall J) tape 0 ⟨phase,extend (ι x)⟩).basis =
+        extend (ι (idealOp x)))
+    (cancel : ∀ x, x ∉ scalingBad events scaling ∪ (fusedFailures calls).bad → ∀ phase tape,
+      hmrThreeCallDebt s2ForwardProgram s2SourceGap s2HmrSourceUnpark J
+        s6ForwardProgram s6SourceGap forward2.rowMulPhaseDebt unpark.phaseDebt
+        forward6.rowMulPhaseDebt erase.phaseDebt tape 0 ⟨phase,extend (ι x)⟩ = false)
+    (ψ : EuclideanSpace ℂ (Bits n)) (hn : ‖ψ‖=1)
+    (matching : ∀ x, ‖ψ x‖^2=(μ.push ι).weight x) :
+    ‖actual c ψ-ideal l (encodedPerm ι idealOp) ψ‖ ≤ 2*Real.sqrt b.bounds.total := by
+  apply empirical_error c ι idealOp μ events scaling calls b hlt _ ψ hn matching
+  rw [program_eq]
+  exact hmrSource_recordedAgreement J forward2 unpark unparkRule forward6 erase eraseRule
+    _ _ _ call2 call6 ready basis cancel
 
 end ECDSAAdd.Arithmetic.Paper935

@@ -4296,6 +4296,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceS6Lifecycle
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceThreeCall
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrSourceThreeCall_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSourceRunConditions
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSource_run_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSource_recordedAgreement
+#print axioms ECDSAAdd.Arithmetic.Paper935.hmrSource_empirical_error
 LEAN
 )
 task_axiom_lean_rc=$?
