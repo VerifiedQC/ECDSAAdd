@@ -787,3 +787,15 @@ are reported in the PR description before publication.
 This remains a forward-prefix certificate: 341 forward steps, the actual reverse
 program, record-phase cancellation and the whole-program resource theorem remain
 outstanding. It does not establish the whole 935-qubit point-addition bound.
+
+### 224-step source checkpoint
+
+This verified extension adds source steps 192–223 for both walks as two new
+16-step segments per walk, joined to the checked 192-step prefix. All previous
+0–191 Lean modules remain unchanged. The manifest contains 355 modules and locks
+the complete 25564-entry registry prefix; another 454 declarations (274 definitions
+and 180 theorems) bring the prepared audit registry to 26018 entries.
+
+The full build and exact public axiom audit passed; the PR description records
+the complete verification and first-build costs. There remain 309 forward steps,
+the reverse program, phase cancellation and the whole-program resource theorem.
