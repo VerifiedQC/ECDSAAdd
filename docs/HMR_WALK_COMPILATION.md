@@ -728,6 +728,8 @@ public declaration list separately. The extension adds 454 public entries
 
 This remains a forward-prefix certificate: 405 forward steps, the complete
 reverse program, phase cancellation and the whole point-addition resource
-claim remain outstanding. The complete ordered audit registry and exact
-whitelist remain required. Runner changes and their measurements are delivered
-in a separate commit; no proof or stack limits are increased.
+claim remain outstanding. The batch audit runner uses 2000 commands per
+process, with unchanged imports, ordered commands, whitelist and exact output
+comparison; individual batch times are now reported. No stack or Lean limits
+are increased. Timing and the bounded comparison with the former 1000-entry
+batches are recorded in the PR description.

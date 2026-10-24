@@ -26,13 +26,15 @@ def main():
     if not imports or not commands:
         raise ValueError('Public audit needs imports and registered commands')
     started = time.monotonic()
-    for offset in range(0, len(commands), 1000):
-        source = '\n'.join(imports + commands[offset:offset + 1000]) + '\n'
+    batch_size = 2000
+    for offset in range(0, len(commands), batch_size):
+        batch_started = time.monotonic()
+        source = '\n'.join(imports + commands[offset:offset + batch_size]) + '\n'
         result = subprocess.run(['lake', 'env', 'lean', '/dev/stdin'],
                                 input=source, text=True)
         if result.returncode:
             return result.returncode if result.returncode > 0 else 128 - result.returncode
-        print(f'Public axiom audit batch: {min(offset + 1000, len(commands))}/{len(commands)} entries checked.',
+        print(f'Public axiom audit batch: {min(offset + batch_size, len(commands))}/{len(commands)} entries checked in {time.monotonic() - batch_started:.3f} seconds.',
               file=sys.stderr, flush=True)
     print(f'Public axiom audit: {len(commands)} entries, '
           f'{time.monotonic() - started:.3f} seconds.', file=sys.stderr)
