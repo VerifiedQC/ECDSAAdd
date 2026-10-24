@@ -10,8 +10,16 @@ jobs:
     timeout-minutes: 120
     env:
       LEAN_NUM_THREADS: '1'
+      ECDSA_PAPER_SOURCE: ${{ github.workspace }}/.source-uncompute
     steps:
       - uses: actions/checkout@v4
+      - name: Fetch pinned circuit source for complete stream checks
+        uses: actions/checkout@v4
+        with:
+          repository: andigu/uncompute
+          ref: 64b5a13aa249f1360846657392e6c66817b26d0f
+          path: .source-uncompute
+          persist-credentials: false
       - name: Install elan
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none

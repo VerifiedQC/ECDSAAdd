@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/paper935/generate_schedule.py --check
+"${ECDSA_SOURCE_PYTHON:-python3}" scripts/paper935/generate_row_mul.py --check
 python3 scripts/paper935/check_fused_repack.py
 python3 scripts/sample_b5.py --check --output data/b5-empirical.json
 python3 tests/test_sample_b5.py
@@ -4045,6 +4046,41 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrCallBinding
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_pre_of_not_bad
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_reached_call_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulLifecycleEvent
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulReleaseZero
+#print axioms ECDSAAdd.Arithmetic.Paper935.RowMulTemplateUse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPort
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulInstantiate
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ErasePorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseUses
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseLifecycle
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseMeasurementStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6EraseProgram
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCmaForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCmaInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulCopy
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulFoldForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulFoldInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulHalveForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulHalveInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftForward
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLiftInverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_lowering
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_swap_directions
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_ccx_controls
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_cx_same_target
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_record_corrections
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_measure_fusion
 LEAN
 )
 task_axiom_lean_rc=$?

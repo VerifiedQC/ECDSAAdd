@@ -561,3 +561,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
 import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleFrame
 
 import ECDSAAdd.Arithmetic.Paper935.HmrGoodInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSourcePrograms
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceNormalization
