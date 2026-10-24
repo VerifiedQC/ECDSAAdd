@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrControlCheckParts
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrControlDecidable
 

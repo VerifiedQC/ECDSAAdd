@@ -609,25 +609,22 @@ The generated selection now includes step 1 of each walk. Early controls use
 explicit returned plans assembled from separate equality, class, flag,
 history-growth and retirement checks. This exposes the boundary arenas and
 row banks without re-running the complete control checker during composition.
-`HmrSourceWalkPrefix` checks the first two steps of each actual exported list,
-including equality of the first step's output arena, bank and record with the
-second step's input. This remains a two-step prefix, not all 533 steps.
 
 
-The current generated selection extends the continuous prefix to steps 0–15
+The current generated selection extends the continuous prefix to steps 0–31
 of both walks (and retains the isolated arm-boundary checks at step 498).
-`HmrSourceWalkPrefix` composes the actual first 16 entries, proving each
+`HmrSourceWalkPrefix` composes the actual first 32 entries, proving each
 intermediate arena, row view and history register matches the next checker.
 `HmrRowsSuffix` lets bank certificates reuse one full-bank distinctness or
 ownership check for their ordered suffixes. Neither change establishes the
-remaining 517 steps or the reverse program.
+remaining 501 steps or the reverse program.
 
 
 The relocation composition also handles more than one move. The first
 observed two-move and three-move journals (steps 24 and 200 of each walk)
 have exact `checkRepack` certificates in `HmrSourceMultiRepack`. Each move
-uses the arena returned by its predecessor. These are relocation components,
-not complete step certificates at those later indices. Fragmented sample
+uses the arena returned by its predecessor. Step 24 is also included in the continuous prefix; step 200 remains an
+isolated relocation component. Fragmented sample
 arenas use a Boolean interval-list predicate so their decidability does not
 require a large nested proposition during instance synthesis.
 
@@ -649,4 +646,21 @@ unfold the corresponding canonical arena when needed.
 The exit generator reads its pinned resize log once per invocation rather
 than once per step. All generated files remain covered by `--check` through
 the pinned-source checker. These changes optimize verification; the accepted
-continuous prefix remains sixteen steps of each walk.
+continuous prefix covers thirty-two steps of each walk.
+
+The 32-step proof is split into two 16-step segment modules per walk. A
+separate join uses `compileHmrSourceWalk_append`, supplying the exact arena,
+bank, record and metadata returned by the first segment. The generator
+checks the actual exported list prefix, rather than substituting a new list.
+
+Large interval predicates use `List.any` with a Boolean membership test.
+`hmrInterval_any_iff` relates it to mathematical interval membership.
+`HmrArenaFiniteChecks` derives exact set unions, differences and updates
+from kernel-checked pointwise equivalences on the bounded 935-wire universe;
+no proof limit is increased. `HmrSourceFragmentedControl` checks an isolated
+actual s6 step 36 control block whose output has 43 disjoint live intervals,
+then binds the returned arena to that interval list. This is the state before
+step 37; the control input later within step 37 has only 41 intervals. The
+pinned-log generator checks that 43 is the maximum over all early control
+allocation states. This additional example does not extend the continuous
+prefix beyond step 31.

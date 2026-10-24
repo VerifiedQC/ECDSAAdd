@@ -6,517 +6,631 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s2Step498CompleteMoves : List (Wire × Wire) := []
-def s2Step498CompleteOut : WindowBank := s2Step498FrontOut.repacked s2Step498CompleteMoves
-def s2Step498CompleteLog : HmrArmedStepLog := ⟨s2Step498FrontLog,s2Step498CompleteMoves,s2FirstArmedControlLog⟩
-theorem s2Step498Complete_repack : s2Step498ExitGvAfter.checkRepack s2Step498CompleteMoves=some s2FirstArmedControlArena := by rfl
-theorem s2Step498Complete_owned : (s2Step498CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2FirstArmedControlArena.live := by
-  apply hmrLayout_owned_of_filter s2FirstArmedControlArena (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (920≤q ∧ q<921)) rfl
+def s2Step16CompleteMoves : List (Wire × Wire) := []
+def s2Step16CompleteOut : WindowBank := s2Step16FrontOut.repacked s2Step16CompleteMoves
+def s2Step16CompleteLog : HmrEarlyStepLog := ⟨s2Step16FrontLog,s2Step16CompleteMoves,s2Step16EarlyControlLog⟩
+theorem s2Step16Complete_repack : s2Step16ExitGvAfter.checkRepack s2Step16CompleteMoves=some s2Step16EarlyControlArena := by rfl
+theorem s2Step16Complete_owned : (s2Step16CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step16EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step16EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Complete_apart : List.Disjoint (s2Step498CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [879, 916, 914, 827, 786, 812, 839, 849, 844, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] := by
-  have nd : ((s2Step498CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[879, 916, 914, 827, 786, 812, 839, 849, 844, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912]).Nodup := by
+theorem s2Step16Complete_apart : List.Disjoint (s2Step16CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [816, 781, 795, 813, 818, 823, 828] := by
+  have nd : ((s2Step16CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[816, 781, 795, 813, 818, 823, 828]).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   exact (List.nodup_append'.mp nd).2.2
-theorem s2Step498Complete_checked : (compileHmrArmedStepLog s2Step498EntryFBefore s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ 914 [772, 773, 774, 775, 776, 777] [827, 786, 812, 839, 849, 844] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 1 60 s2Step498CompleteLog).map (fun _ => true)=some true := by
-  obtain ⟨Q,hq,_⟩ := Option.map_eq_some_iff.mp s2FirstArmedControl_checked
-  have fv1 : s2Step498CompleteOut.fv.second=254 := by decide +kernel
-  have fv2 : s2Step498CompleteOut.fv.payload[2]?.getD s2Step498CompleteOut.fv.sign=253 := by decide +kernel
-  have fv3 : s2Step498CompleteOut.fv.payload[3]?.getD s2Step498CompleteOut.fv.sign=252 := by decide +kernel
-  have fv4 : s2Step498CompleteOut.fv.payload[4]?.getD s2Step498CompleteOut.fv.sign=251 := by decide +kernel
-  have gEq : s2Step498CompleteOut.g.wires=s2FirstArmedControlG := by decide +kernel
-  have result := compileHmrArmedStepLog_of_parts s2Step498EntryFBefore s2FirstArmedControlArena s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ 914 [772, 773, 774, 775, 776, 777] [827, 786, 812, 839, 849, 844] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 1 60 s2Step498CompleteLog s2Step498FrontPlan Q
-    s2Step498Front_checked s2Step498Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step498Complete_owned s2Step498Complete_apart)))
+def s2Step16CompletePlan : HmrEarlyStepPlan := ⟨s2Step16FrontPlan,s2Step16EarlyControlArena,s2Step16EarlyControlPlan,s2Step16CompleteMoves⟩
+theorem s2Step16Complete_explicit_checked : compileHmrEarlyStepLog s2Step16EntryFBefore s2Step16FrontBank 256 17 ⟨256,255,18,16⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 5 s2Step16CompleteLog=some s2Step16CompletePlan := by
+  let Q := s2Step16EarlyControlPlan
+  have hq := s2Step16EarlyControl_plan_checked
+  have fv1 : s2Step16CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step16CompleteOut.fv.payload[2]?.getD s2Step16CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step16CompleteOut.fv.payload[3]?.getD s2Step16CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step16CompleteOut.fv.payload[4]?.getD s2Step16CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step16EntryFBefore s2Step16EarlyControlArena s2Step16FrontBank 256 17 ⟨256,255,18,16⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 5 s2Step16CompleteLog s2Step16FrontPlan Q
+    s2Step16Front_checked s2Step16Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step16Complete_owned s2Step16Complete_apart)))
     (by
-      change compileHmrArmedControlLog s2FirstArmedControlArena s2Step498CompleteOut.g.wires [772, 773, 774, 775, 776, 777] [827, 786, 812, 839, 849, 844] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 914 777 879 s2Step498CompleteOut.fv.second (s2Step498CompleteOut.fv.payload[2]?.getD s2Step498CompleteOut.fv.sign) (s2Step498CompleteOut.fv.payload[3]?.getD s2Step498CompleteOut.fv.sign) (s2Step498CompleteOut.fv.payload[4]?.getD s2Step498CompleteOut.fv.sign) 916 1 60 s2FirstArmedControlLog=some Q
-      rw [fv1,fv2,fv3,fv4,gEq]
+      change compileHmrEarlyControlLog s2Step16EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 777 816 s2Step16CompleteOut.fv.second (s2Step16CompleteOut.fv.payload[2]?.getD s2Step16CompleteOut.fv.sign) (s2Step16CompleteOut.fv.payload[3]?.getD s2Step16CompleteOut.fv.sign) (s2Step16CompleteOut.fv.payload[4]?.getD s2Step16CompleteOut.fv.sign) 781 5 s2Step16EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
       exact hq)
-  rw [result]
+  exact result
+theorem s2Step16Complete_checked : (compileHmrEarlyStepLog s2Step16EntryFBefore s2Step16FrontBank 256 17 ⟨256,255,18,16⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 5 s2Step16CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step16Complete_explicit_checked]
   rfl
-def s6Step0CompleteMoves : List (Wire × Wire) := [(768,255)]
-def s6Step0CompleteOut : WindowBank := s6Step0FrontOut.repacked s6Step0CompleteMoves
-def s6Step0CompleteLog : HmrEarlyStepLog := ⟨s6Step0FrontLog,s6Step0CompleteMoves,s6FirstEarlyControlLog⟩
-def s6Step0CompleteMoveArena : Arena := ⟨s6Step0ExitGvAfter.live∪{255},Finset.union_subset s6Step0ExitGvAfter.bounded (by norm_num [arenaWires])⟩
-theorem s6Step0Complete_repack : s6Step0ExitGvAfter.checkRepack s6Step0CompleteMoves=some s6FirstEarlyControlArena := by
-  have owned : 768∈s6Step0ExitGvAfter.live := by norm_num [s6Step0ExitGvAfter,arenaWires]
-  have reserve : s6Step0ExitGvAfter.reserve {255}=some s6Step0CompleteMoveArena := by
+def s2Step17CompleteMoves : List (Wire × Wire) := []
+def s2Step17CompleteOut : WindowBank := s2Step17FrontOut.repacked s2Step17CompleteMoves
+def s2Step17CompleteLog : HmrEarlyStepLog := ⟨s2Step17FrontLog,s2Step17CompleteMoves,s2Step17EarlyControlLog⟩
+theorem s2Step17Complete_repack : s2Step17ExitGvAfter.checkRepack s2Step17CompleteMoves=some s2Step17EarlyControlArena := by rfl
+theorem s2Step17Complete_owned : (s2Step17CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step17EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step17EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
+  decide +kernel
+theorem s2Step17Complete_apart : List.Disjoint (s2Step17CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [819, 784, 795, 813, 818, 823, 828] := by
+  have nd : ((s2Step17CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[819, 784, 795, 813, 818, 823, 828]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step17CompletePlan : HmrEarlyStepPlan := ⟨s2Step17FrontPlan,s2Step17EarlyControlArena,s2Step17EarlyControlPlan,s2Step17CompleteMoves⟩
+theorem s2Step17Complete_explicit_checked : compileHmrEarlyStepLog s2Step17EntryFBefore s2Step17FrontBank 256 18 ⟨256,255,19,17⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 6 s2Step17CompleteLog=some s2Step17CompletePlan := by
+  let Q := s2Step17EarlyControlPlan
+  have hq := s2Step17EarlyControl_plan_checked
+  have fv1 : s2Step17CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step17CompleteOut.fv.payload[2]?.getD s2Step17CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step17CompleteOut.fv.payload[3]?.getD s2Step17CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step17CompleteOut.fv.payload[4]?.getD s2Step17CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step17EntryFBefore s2Step17EarlyControlArena s2Step17FrontBank 256 18 ⟨256,255,19,17⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 6 s2Step17CompleteLog s2Step17FrontPlan Q
+    s2Step17Front_checked s2Step17Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step17Complete_owned s2Step17Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step17EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 777 819 s2Step17CompleteOut.fv.second (s2Step17CompleteOut.fv.payload[2]?.getD s2Step17CompleteOut.fv.sign) (s2Step17CompleteOut.fv.payload[3]?.getD s2Step17CompleteOut.fv.sign) (s2Step17CompleteOut.fv.payload[4]?.getD s2Step17CompleteOut.fv.sign) 784 6 s2Step17EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step17Complete_checked : (compileHmrEarlyStepLog s2Step17EntryFBefore s2Step17FrontBank 256 18 ⟨256,255,19,17⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 6 s2Step17CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step17Complete_explicit_checked]
+  rfl
+def s2Step18CompleteMoves : List (Wire × Wire) := []
+def s2Step18CompleteOut : WindowBank := s2Step18FrontOut.repacked s2Step18CompleteMoves
+def s2Step18CompleteLog : HmrEarlyStepLog := ⟨s2Step18FrontLog,s2Step18CompleteMoves,s2Step18EarlyControlLog⟩
+theorem s2Step18Complete_repack : s2Step18ExitGvAfter.checkRepack s2Step18CompleteMoves=some s2Step18EarlyControlArena := by rfl
+theorem s2Step18Complete_owned : (s2Step18CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step18EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step18EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
+  decide +kernel
+theorem s2Step18Complete_apart : List.Disjoint (s2Step18CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [821, 782, 795, 813, 818, 823, 828, 833] := by
+  have nd : ((s2Step18CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[821, 782, 795, 813, 818, 823, 828, 833]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step18CompletePlan : HmrEarlyStepPlan := ⟨s2Step18FrontPlan,s2Step18EarlyControlArena,s2Step18EarlyControlPlan,s2Step18CompleteMoves⟩
+theorem s2Step18Complete_explicit_checked : compileHmrEarlyStepLog s2Step18EntryFBefore s2Step18FrontBank 256 19 ⟨256,255,20,18⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 6 s2Step18CompleteLog=some s2Step18CompletePlan := by
+  let Q := s2Step18EarlyControlPlan
+  have hq := s2Step18EarlyControl_plan_checked
+  have fv1 : s2Step18CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step18CompleteOut.fv.payload[2]?.getD s2Step18CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step18CompleteOut.fv.payload[3]?.getD s2Step18CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step18CompleteOut.fv.payload[4]?.getD s2Step18CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step18EntryFBefore s2Step18EarlyControlArena s2Step18FrontBank 256 19 ⟨256,255,20,18⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 6 s2Step18CompleteLog s2Step18FrontPlan Q
+    s2Step18Front_checked s2Step18Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step18Complete_owned s2Step18Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step18EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 777 821 s2Step18CompleteOut.fv.second (s2Step18CompleteOut.fv.payload[2]?.getD s2Step18CompleteOut.fv.sign) (s2Step18CompleteOut.fv.payload[3]?.getD s2Step18CompleteOut.fv.sign) (s2Step18CompleteOut.fv.payload[4]?.getD s2Step18CompleteOut.fv.sign) 782 6 s2Step18EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step18Complete_checked : (compileHmrEarlyStepLog s2Step18EntryFBefore s2Step18FrontBank 256 19 ⟨256,255,20,18⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 6 s2Step18CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step18Complete_explicit_checked]
+  rfl
+def s2Step19CompleteMoves : List (Wire × Wire) := []
+def s2Step19CompleteOut : WindowBank := s2Step19FrontOut.repacked s2Step19CompleteMoves
+def s2Step19CompleteLog : HmrEarlyStepLog := ⟨s2Step19FrontLog,s2Step19CompleteMoves,s2Step19EarlyControlLog⟩
+theorem s2Step19Complete_repack : s2Step19ExitGvAfter.checkRepack s2Step19CompleteMoves=some s2Step19EarlyControlArena := by rfl
+theorem s2Step19Complete_owned : (s2Step19CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step19EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step19EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
+  decide +kernel
+theorem s2Step19Complete_apart : List.Disjoint (s2Step19CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [824, 783, 795, 813, 818, 823, 828, 833] := by
+  have nd : ((s2Step19CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[824, 783, 795, 813, 818, 823, 828, 833]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step19CompletePlan : HmrEarlyStepPlan := ⟨s2Step19FrontPlan,s2Step19EarlyControlArena,s2Step19EarlyControlPlan,s2Step19CompleteMoves⟩
+theorem s2Step19Complete_explicit_checked : compileHmrEarlyStepLog s2Step19EntryFBefore s2Step19FrontBank 256 20 ⟨256,255,21,19⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 7 s2Step19CompleteLog=some s2Step19CompletePlan := by
+  let Q := s2Step19EarlyControlPlan
+  have hq := s2Step19EarlyControl_plan_checked
+  have fv1 : s2Step19CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step19CompleteOut.fv.payload[2]?.getD s2Step19CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step19CompleteOut.fv.payload[3]?.getD s2Step19CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step19CompleteOut.fv.payload[4]?.getD s2Step19CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step19EntryFBefore s2Step19EarlyControlArena s2Step19FrontBank 256 20 ⟨256,255,21,19⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 7 s2Step19CompleteLog s2Step19FrontPlan Q
+    s2Step19Front_checked s2Step19Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step19Complete_owned s2Step19Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step19EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 777 824 s2Step19CompleteOut.fv.second (s2Step19CompleteOut.fv.payload[2]?.getD s2Step19CompleteOut.fv.sign) (s2Step19CompleteOut.fv.payload[3]?.getD s2Step19CompleteOut.fv.sign) (s2Step19CompleteOut.fv.payload[4]?.getD s2Step19CompleteOut.fv.sign) 783 7 s2Step19EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step19Complete_checked : (compileHmrEarlyStepLog s2Step19EntryFBefore s2Step19FrontBank 256 20 ⟨256,255,21,19⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 7 s2Step19CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step19Complete_explicit_checked]
+  rfl
+def s2Step20CompleteMoves : List (Wire × Wire) := []
+def s2Step20CompleteOut : WindowBank := s2Step20FrontOut.repacked s2Step20CompleteMoves
+def s2Step20CompleteLog : HmrEarlyStepLog := ⟨s2Step20FrontLog,s2Step20CompleteMoves,s2Step20EarlyControlLog⟩
+theorem s2Step20Complete_repack : s2Step20ExitGvAfter.checkRepack s2Step20CompleteMoves=some s2Step20EarlyControlArena := by rfl
+theorem s2Step20Complete_owned : (s2Step20CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step20EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step20EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
+  decide +kernel
+theorem s2Step20Complete_apart : List.Disjoint (s2Step20CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [826, 781, 795, 813, 818, 823, 828, 833, 838] := by
+  have nd : ((s2Step20CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[826, 781, 795, 813, 818, 823, 828, 833, 838]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step20CompletePlan : HmrEarlyStepPlan := ⟨s2Step20FrontPlan,s2Step20EarlyControlArena,s2Step20EarlyControlPlan,s2Step20CompleteMoves⟩
+theorem s2Step20Complete_explicit_checked : compileHmrEarlyStepLog s2Step20EntryFBefore s2Step20FrontBank 256 21 ⟨256,255,22,20⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 7 s2Step20CompleteLog=some s2Step20CompletePlan := by
+  let Q := s2Step20EarlyControlPlan
+  have hq := s2Step20EarlyControl_plan_checked
+  have fv1 : s2Step20CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step20CompleteOut.fv.payload[2]?.getD s2Step20CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step20CompleteOut.fv.payload[3]?.getD s2Step20CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step20CompleteOut.fv.payload[4]?.getD s2Step20CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step20EntryFBefore s2Step20EarlyControlArena s2Step20FrontBank 256 21 ⟨256,255,22,20⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 7 s2Step20CompleteLog s2Step20FrontPlan Q
+    s2Step20Front_checked s2Step20Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step20Complete_owned s2Step20Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step20EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 777 826 s2Step20CompleteOut.fv.second (s2Step20CompleteOut.fv.payload[2]?.getD s2Step20CompleteOut.fv.sign) (s2Step20CompleteOut.fv.payload[3]?.getD s2Step20CompleteOut.fv.sign) (s2Step20CompleteOut.fv.payload[4]?.getD s2Step20CompleteOut.fv.sign) 781 7 s2Step20EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step20Complete_checked : (compileHmrEarlyStepLog s2Step20EntryFBefore s2Step20FrontBank 256 21 ⟨256,255,22,20⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 7 s2Step20CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step20Complete_explicit_checked]
+  rfl
+def s2Step21CompleteMoves : List (Wire × Wire) := []
+def s2Step21CompleteOut : WindowBank := s2Step21FrontOut.repacked s2Step21CompleteMoves
+def s2Step21CompleteLog : HmrEarlyStepLog := ⟨s2Step21FrontLog,s2Step21CompleteMoves,s2Step21EarlyControlLog⟩
+theorem s2Step21Complete_repack : s2Step21ExitGvAfter.checkRepack s2Step21CompleteMoves=some s2Step21EarlyControlArena := by rfl
+theorem s2Step21Complete_owned : (s2Step21CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step21EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step21EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
+  decide +kernel
+theorem s2Step21Complete_apart : List.Disjoint (s2Step21CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [829, 784, 795, 813, 818, 823, 828, 833, 838] := by
+  have nd : ((s2Step21CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[829, 784, 795, 813, 818, 823, 828, 833, 838]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step21CompletePlan : HmrEarlyStepPlan := ⟨s2Step21FrontPlan,s2Step21EarlyControlArena,s2Step21EarlyControlPlan,s2Step21CompleteMoves⟩
+theorem s2Step21Complete_explicit_checked : compileHmrEarlyStepLog s2Step21EntryFBefore s2Step21FrontBank 256 22 ⟨256,255,23,21⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 8 s2Step21CompleteLog=some s2Step21CompletePlan := by
+  let Q := s2Step21EarlyControlPlan
+  have hq := s2Step21EarlyControl_plan_checked
+  have fv1 : s2Step21CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step21CompleteOut.fv.payload[2]?.getD s2Step21CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step21CompleteOut.fv.payload[3]?.getD s2Step21CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step21CompleteOut.fv.payload[4]?.getD s2Step21CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step21EntryFBefore s2Step21EarlyControlArena s2Step21FrontBank 256 22 ⟨256,255,23,21⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 8 s2Step21CompleteLog s2Step21FrontPlan Q
+    s2Step21Front_checked s2Step21Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step21Complete_owned s2Step21Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step21EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 777 829 s2Step21CompleteOut.fv.second (s2Step21CompleteOut.fv.payload[2]?.getD s2Step21CompleteOut.fv.sign) (s2Step21CompleteOut.fv.payload[3]?.getD s2Step21CompleteOut.fv.sign) (s2Step21CompleteOut.fv.payload[4]?.getD s2Step21CompleteOut.fv.sign) 784 8 s2Step21EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step21Complete_checked : (compileHmrEarlyStepLog s2Step21EntryFBefore s2Step21FrontBank 256 22 ⟨256,255,23,21⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 8 s2Step21CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step21Complete_explicit_checked]
+  rfl
+def s2Step22CompleteMoves : List (Wire × Wire) := []
+def s2Step22CompleteOut : WindowBank := s2Step22FrontOut.repacked s2Step22CompleteMoves
+def s2Step22CompleteLog : HmrEarlyStepLog := ⟨s2Step22FrontLog,s2Step22CompleteMoves,s2Step22EarlyControlLog⟩
+theorem s2Step22Complete_repack : s2Step22ExitGvAfter.checkRepack s2Step22CompleteMoves=some s2Step22EarlyControlArena := by rfl
+theorem s2Step22Complete_owned : (s2Step22CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step22EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step22EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
+  decide +kernel
+theorem s2Step22Complete_apart : List.Disjoint (s2Step22CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [831, 782, 795, 813, 818, 823, 828, 833, 838, 843] := by
+  have nd : ((s2Step22CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[831, 782, 795, 813, 818, 823, 828, 833, 838, 843]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step22CompletePlan : HmrEarlyStepPlan := ⟨s2Step22FrontPlan,s2Step22EarlyControlArena,s2Step22EarlyControlPlan,s2Step22CompleteMoves⟩
+theorem s2Step22Complete_explicit_checked : compileHmrEarlyStepLog s2Step22EntryFBefore s2Step22FrontBank 256 23 ⟨256,255,24,22⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 8 s2Step22CompleteLog=some s2Step22CompletePlan := by
+  let Q := s2Step22EarlyControlPlan
+  have hq := s2Step22EarlyControl_plan_checked
+  have fv1 : s2Step22CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step22CompleteOut.fv.payload[2]?.getD s2Step22CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step22CompleteOut.fv.payload[3]?.getD s2Step22CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step22CompleteOut.fv.payload[4]?.getD s2Step22CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step22EntryFBefore s2Step22EarlyControlArena s2Step22FrontBank 256 23 ⟨256,255,24,22⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 8 s2Step22CompleteLog s2Step22FrontPlan Q
+    s2Step22Front_checked s2Step22Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step22Complete_owned s2Step22Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step22EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 777 831 s2Step22CompleteOut.fv.second (s2Step22CompleteOut.fv.payload[2]?.getD s2Step22CompleteOut.fv.sign) (s2Step22CompleteOut.fv.payload[3]?.getD s2Step22CompleteOut.fv.sign) (s2Step22CompleteOut.fv.payload[4]?.getD s2Step22CompleteOut.fv.sign) 782 8 s2Step22EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step22Complete_checked : (compileHmrEarlyStepLog s2Step22EntryFBefore s2Step22FrontBank 256 23 ⟨256,255,24,22⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 8 s2Step22CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step22Complete_explicit_checked]
+  rfl
+def s2Step23CompleteMoves : List (Wire × Wire) := []
+def s2Step23CompleteOut : WindowBank := s2Step23FrontOut.repacked s2Step23CompleteMoves
+def s2Step23CompleteLog : HmrEarlyStepLog := ⟨s2Step23FrontLog,s2Step23CompleteMoves,s2Step23EarlyControlLog⟩
+theorem s2Step23Complete_repack : s2Step23ExitGvAfter.checkRepack s2Step23CompleteMoves=some s2Step23EarlyControlArena := by rfl
+theorem s2Step23Complete_owned : (s2Step23CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step23EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step23EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
+  decide +kernel
+theorem s2Step23Complete_apart : List.Disjoint (s2Step23CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [834, 783, 795, 813, 818, 823, 828, 833, 838, 843] := by
+  have nd : ((s2Step23CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[834, 783, 795, 813, 818, 823, 828, 833, 838, 843]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step23CompletePlan : HmrEarlyStepPlan := ⟨s2Step23FrontPlan,s2Step23EarlyControlArena,s2Step23EarlyControlPlan,s2Step23CompleteMoves⟩
+theorem s2Step23Complete_explicit_checked : compileHmrEarlyStepLog s2Step23EntryFBefore s2Step23FrontBank 256 24 ⟨256,255,25,23⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 9 s2Step23CompleteLog=some s2Step23CompletePlan := by
+  let Q := s2Step23EarlyControlPlan
+  have hq := s2Step23EarlyControl_plan_checked
+  have fv1 : s2Step23CompleteOut.fv.second=785 := by decide +kernel
+  have fv2 : s2Step23CompleteOut.fv.payload[2]?.getD s2Step23CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step23CompleteOut.fv.payload[3]?.getD s2Step23CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step23CompleteOut.fv.payload[4]?.getD s2Step23CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step23EntryFBefore s2Step23EarlyControlArena s2Step23FrontBank 256 24 ⟨256,255,25,23⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 9 s2Step23CompleteLog s2Step23FrontPlan Q
+    s2Step23Front_checked s2Step23Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step23Complete_owned s2Step23Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step23EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 777 834 s2Step23CompleteOut.fv.second (s2Step23CompleteOut.fv.payload[2]?.getD s2Step23CompleteOut.fv.sign) (s2Step23CompleteOut.fv.payload[3]?.getD s2Step23CompleteOut.fv.sign) (s2Step23CompleteOut.fv.payload[4]?.getD s2Step23CompleteOut.fv.sign) 783 9 s2Step23EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step23Complete_checked : (compileHmrEarlyStepLog s2Step23EntryFBefore s2Step23FrontBank 256 24 ⟨256,255,25,23⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 9 s2Step23CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step23Complete_explicit_checked]
+  rfl
+def s2Step24CompleteMoves : List (Wire × Wire) := [(785,254),(779,767)]
+def s2Step24CompleteOut : WindowBank := s2Step24FrontOut.repacked s2Step24CompleteMoves
+def s2Step24CompleteLog : HmrEarlyStepLog := ⟨s2Step24FrontLog,s2Step24CompleteMoves,s2Step24EarlyControlLog⟩
+def s2Step24CompleteRelocationMove0After : Arena := ⟨arenaWires.filter (fun q => ([(0,767),(768,780),(781,782),(786,839),(843,844),(848,849)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true),Finset.filter_subset _ _⟩
+def s2Step24CompleteRelocationMove0Borrowed : Arena := ⟨s2Step24ExitGvAfter.live∪{254},Finset.union_subset s2Step24ExitGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step24CompleteRelocation_move0_owned : 785∈s2Step24ExitGvAfter.live := by norm_num [s2Step24ExitGvAfter,arenaWires]
+theorem s2Step24CompleteRelocation_move0_reserve : s2Step24ExitGvAfter.reserve {254}=some s2Step24CompleteRelocationMove0Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step24ExitGvAfter,arenaWires]
+  · rfl
+theorem s2Step24CompleteRelocation_move0_retire : s2Step24CompleteRelocationMove0Borrowed.retireSet {785}=s2Step24CompleteRelocationMove0After := by
+  unfold Arena.retireSet s2Step24CompleteRelocationMove0After
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step24CompleteRelocationMove0Borrowed,s2Step24ExitGvAfter,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+def s2Step24CompleteRelocationMove1Borrowed : Arena := ⟨s2Step24CompleteRelocationMove0After.live∪{767},Finset.union_subset s2Step24CompleteRelocationMove0After.bounded (by norm_num [arenaWires])⟩
+theorem s2Step24CompleteRelocation_move1_owned : 779∈s2Step24CompleteRelocationMove0After.live := by norm_num [s2Step24CompleteRelocationMove0After,arenaWires]
+theorem s2Step24CompleteRelocation_move1_reserve : s2Step24CompleteRelocationMove0After.reserve {767}=some s2Step24CompleteRelocationMove1Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step24CompleteRelocationMove0After,arenaWires]
+  · rfl
+theorem s2Step24CompleteRelocation_move1_retire : s2Step24CompleteRelocationMove1Borrowed.retireSet {779}=s2Step24EarlyControlArena := by
+  unfold Arena.retireSet s2Step24EarlyControlArena
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step24CompleteRelocationMove1Borrowed,s2Step24CompleteRelocationMove0After,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+theorem s2Step24CompleteRelocation_checked : s2Step24ExitGvAfter.checkRepack [(785,254),(779,767)]=some s2Step24EarlyControlArena := by
+  have tail2 : s2Step24EarlyControlArena.checkRepack []=some s2Step24EarlyControlArena := rfl
+  have tail1 := Arena.checkRepack_cons_of_parts s2Step24CompleteRelocationMove0After s2Step24CompleteRelocationMove1Borrowed s2Step24EarlyControlArena s2Step24EarlyControlArena 779 767 []
+    s2Step24CompleteRelocation_move1_owned s2Step24CompleteRelocation_move1_reserve s2Step24CompleteRelocation_move1_retire tail2
+  have tail0 := Arena.checkRepack_cons_of_parts s2Step24ExitGvAfter s2Step24CompleteRelocationMove0Borrowed s2Step24CompleteRelocationMove0After s2Step24EarlyControlArena 785 254 [(779,767)]
+    s2Step24CompleteRelocation_move0_owned s2Step24CompleteRelocation_move0_reserve s2Step24CompleteRelocation_move0_retire tail1
+  exact tail0
+theorem s2Step24Complete_repack : s2Step24ExitGvAfter.checkRepack s2Step24CompleteMoves=some s2Step24EarlyControlArena := by
+  simpa only [s2Step24CompleteMoves] using s2Step24CompleteRelocation_checked
+theorem s2Step24Complete_owned : (s2Step24CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step24EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step24EarlyControlArena (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<782) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
+  decide +kernel
+theorem s2Step24Complete_apart : List.Disjoint (s2Step24CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [836, 781, 795, 813, 818, 823, 828, 833, 838, 843, 848] := by
+  have nd : ((s2Step24CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[836, 781, 795, 813, 818, 823, 828, 833, 838, 843, 848]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step24CompletePlan : HmrEarlyStepPlan := ⟨s2Step24FrontPlan,s2Step24EarlyControlArena,s2Step24EarlyControlPlan,s2Step24CompleteMoves⟩
+theorem s2Step24Complete_explicit_checked : compileHmrEarlyStepLog s2Step24EntryFBefore s2Step24FrontBank 256 25 ⟨255,254,25,24⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 9 s2Step24CompleteLog=some s2Step24CompletePlan := by
+  let Q := s2Step24EarlyControlPlan
+  have hq := s2Step24EarlyControl_plan_checked
+  have fv1 : s2Step24CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step24CompleteOut.fv.payload[2]?.getD s2Step24CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step24CompleteOut.fv.payload[3]?.getD s2Step24CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step24CompleteOut.fv.payload[4]?.getD s2Step24CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step24EntryFBefore s2Step24EarlyControlArena s2Step24FrontBank 256 25 ⟨255,254,25,24⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 9 s2Step24CompleteLog s2Step24FrontPlan Q
+    s2Step24Front_checked s2Step24Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step24Complete_owned s2Step24Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step24EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 777 836 s2Step24CompleteOut.fv.second (s2Step24CompleteOut.fv.payload[2]?.getD s2Step24CompleteOut.fv.sign) (s2Step24CompleteOut.fv.payload[3]?.getD s2Step24CompleteOut.fv.sign) (s2Step24CompleteOut.fv.payload[4]?.getD s2Step24CompleteOut.fv.sign) 781 9 s2Step24EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step24Complete_checked : (compileHmrEarlyStepLog s2Step24EntryFBefore s2Step24FrontBank 256 25 ⟨255,254,25,24⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 9 s2Step24CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step24Complete_explicit_checked]
+  rfl
+def s2Step25CompleteMoves : List (Wire × Wire) := []
+def s2Step25CompleteOut : WindowBank := s2Step25FrontOut.repacked s2Step25CompleteMoves
+def s2Step25CompleteLog : HmrEarlyStepLog := ⟨s2Step25FrontLog,s2Step25CompleteMoves,s2Step25EarlyControlLog⟩
+theorem s2Step25Complete_repack : s2Step25ExitGvAfter.checkRepack s2Step25CompleteMoves=some s2Step25EarlyControlArena := by rfl
+theorem s2Step25Complete_owned : (s2Step25CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step25EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step25EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
+  decide +kernel
+theorem s2Step25Complete_apart : List.Disjoint (s2Step25CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [779, 785, 795, 813, 818, 823, 828, 833, 838, 843, 848] := by
+  have nd : ((s2Step25CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[779, 785, 795, 813, 818, 823, 828, 833, 838, 843, 848]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step25CompletePlan : HmrEarlyStepPlan := ⟨s2Step25FrontPlan,s2Step25EarlyControlArena,s2Step25EarlyControlPlan,s2Step25CompleteMoves⟩
+theorem s2Step25Complete_explicit_checked : compileHmrEarlyStepLog s2Step25EntryFBefore s2Step25FrontBank 255 25 ⟨255,254,26,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 10 s2Step25CompleteLog=some s2Step25CompletePlan := by
+  let Q := s2Step25EarlyControlPlan
+  have hq := s2Step25EarlyControl_plan_checked
+  have fv1 : s2Step25CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step25CompleteOut.fv.payload[2]?.getD s2Step25CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step25CompleteOut.fv.payload[3]?.getD s2Step25CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step25CompleteOut.fv.payload[4]?.getD s2Step25CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step25EntryFBefore s2Step25EarlyControlArena s2Step25FrontBank 255 25 ⟨255,254,26,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 10 s2Step25CompleteLog s2Step25FrontPlan Q
+    s2Step25Front_checked s2Step25Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step25Complete_owned s2Step25Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step25EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 777 779 s2Step25CompleteOut.fv.second (s2Step25CompleteOut.fv.payload[2]?.getD s2Step25CompleteOut.fv.sign) (s2Step25CompleteOut.fv.payload[3]?.getD s2Step25CompleteOut.fv.sign) (s2Step25CompleteOut.fv.payload[4]?.getD s2Step25CompleteOut.fv.sign) 785 10 s2Step25EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step25Complete_checked : (compileHmrEarlyStepLog s2Step25EntryFBefore s2Step25FrontBank 255 25 ⟨255,254,26,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 10 s2Step25CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step25Complete_explicit_checked]
+  rfl
+def s2Step26CompleteMoves : List (Wire × Wire) := []
+def s2Step26CompleteOut : WindowBank := s2Step26FrontOut.repacked s2Step26CompleteMoves
+def s2Step26CompleteLog : HmrEarlyStepLog := ⟨s2Step26FrontLog,s2Step26CompleteMoves,s2Step26EarlyControlLog⟩
+theorem s2Step26Complete_repack : s2Step26ExitGvAfter.checkRepack s2Step26CompleteMoves=some s2Step26EarlyControlArena := by rfl
+theorem s2Step26Complete_owned : (s2Step26CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step26EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step26EarlyControlArena (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
+  decide +kernel
+theorem s2Step26Complete_apart : List.Disjoint (s2Step26CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [840, 839, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850] := by
+  have nd : ((s2Step26CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[840, 839, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step26CompletePlan : HmrEarlyStepPlan := ⟨s2Step26FrontPlan,s2Step26EarlyControlArena,s2Step26EarlyControlPlan,s2Step26CompleteMoves⟩
+theorem s2Step26Complete_explicit_checked : compileHmrEarlyStepLog s2Step26EntryFBefore s2Step26FrontBank 255 26 ⟨255,254,27,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 10 s2Step26CompleteLog=some s2Step26CompletePlan := by
+  let Q := s2Step26EarlyControlPlan
+  have hq := s2Step26EarlyControl_plan_checked
+  have fv1 : s2Step26CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step26CompleteOut.fv.payload[2]?.getD s2Step26CompleteOut.fv.sign=787 := by decide +kernel
+  have fv3 : s2Step26CompleteOut.fv.payload[3]?.getD s2Step26CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step26CompleteOut.fv.payload[4]?.getD s2Step26CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step26EntryFBefore s2Step26EarlyControlArena s2Step26FrontBank 255 26 ⟨255,254,27,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 10 s2Step26CompleteLog s2Step26FrontPlan Q
+    s2Step26Front_checked s2Step26Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step26Complete_owned s2Step26Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step26EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 777 840 s2Step26CompleteOut.fv.second (s2Step26CompleteOut.fv.payload[2]?.getD s2Step26CompleteOut.fv.sign) (s2Step26CompleteOut.fv.payload[3]?.getD s2Step26CompleteOut.fv.sign) (s2Step26CompleteOut.fv.payload[4]?.getD s2Step26CompleteOut.fv.sign) 839 10 s2Step26EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step26Complete_checked : (compileHmrEarlyStepLog s2Step26EntryFBefore s2Step26FrontBank 255 26 ⟨255,254,27,25⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 10 s2Step26CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step26Complete_explicit_checked]
+  rfl
+def s2Step27CompleteMoves : List (Wire × Wire) := [(787,253),(778,766)]
+def s2Step27CompleteOut : WindowBank := s2Step27FrontOut.repacked s2Step27CompleteMoves
+def s2Step27CompleteLog : HmrEarlyStepLog := ⟨s2Step27FrontLog,s2Step27CompleteMoves,s2Step27EarlyControlLog⟩
+def s2Step27CompleteRelocationMove0After : Arena := ⟨arenaWires.filter (fun q => ([(0,766),(767,779),(780,781),(782,785),(786,787),(788,839),(840,841),(842,844),(848,849),(850,851)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true),Finset.filter_subset _ _⟩
+def s2Step27CompleteRelocationMove0Borrowed : Arena := ⟨s2Step27ExitGvAfter.live∪{253},Finset.union_subset s2Step27ExitGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step27CompleteRelocation_move0_owned : 787∈s2Step27ExitGvAfter.live := by norm_num [s2Step27ExitGvAfter,arenaWires]
+theorem s2Step27CompleteRelocation_move0_reserve : s2Step27ExitGvAfter.reserve {253}=some s2Step27CompleteRelocationMove0Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step27ExitGvAfter,arenaWires]
+  · rfl
+theorem s2Step27CompleteRelocation_move0_retire : s2Step27CompleteRelocationMove0Borrowed.retireSet {787}=s2Step27CompleteRelocationMove0After := by
+  unfold Arena.retireSet s2Step27CompleteRelocationMove0After
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step27CompleteRelocationMove0Borrowed,s2Step27ExitGvAfter,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+def s2Step27CompleteRelocationMove1Borrowed : Arena := ⟨s2Step27CompleteRelocationMove0After.live∪{766},Finset.union_subset s2Step27CompleteRelocationMove0After.bounded (by norm_num [arenaWires])⟩
+theorem s2Step27CompleteRelocation_move1_owned : 778∈s2Step27CompleteRelocationMove0After.live := by norm_num [s2Step27CompleteRelocationMove0After,arenaWires]
+theorem s2Step27CompleteRelocation_move1_reserve : s2Step27CompleteRelocationMove0After.reserve {766}=some s2Step27CompleteRelocationMove1Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step27CompleteRelocationMove0After,arenaWires]
+  · rfl
+theorem s2Step27CompleteRelocation_move1_retire : s2Step27CompleteRelocationMove1Borrowed.retireSet {778}=s2Step27EarlyControlArena := by
+  unfold Arena.retireSet s2Step27EarlyControlArena
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step27CompleteRelocationMove1Borrowed,s2Step27CompleteRelocationMove0After,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+theorem s2Step27CompleteRelocation_checked : s2Step27ExitGvAfter.checkRepack [(787,253),(778,766)]=some s2Step27EarlyControlArena := by
+  have tail2 : s2Step27EarlyControlArena.checkRepack []=some s2Step27EarlyControlArena := rfl
+  have tail1 := Arena.checkRepack_cons_of_parts s2Step27CompleteRelocationMove0After s2Step27CompleteRelocationMove1Borrowed s2Step27EarlyControlArena s2Step27EarlyControlArena 778 766 []
+    s2Step27CompleteRelocation_move1_owned s2Step27CompleteRelocation_move1_reserve s2Step27CompleteRelocation_move1_retire tail2
+  have tail0 := Arena.checkRepack_cons_of_parts s2Step27ExitGvAfter s2Step27CompleteRelocationMove0Borrowed s2Step27CompleteRelocationMove0After s2Step27EarlyControlArena 787 253 [(778,766)]
+    s2Step27CompleteRelocation_move0_owned s2Step27CompleteRelocation_move0_reserve s2Step27CompleteRelocation_move0_retire tail1
+  exact tail0
+theorem s2Step27Complete_repack : s2Step27ExitGvAfter.checkRepack s2Step27CompleteMoves=some s2Step27EarlyControlArena := by
+  simpa only [s2Step27CompleteMoves] using s2Step27CompleteRelocation_checked
+theorem s2Step27Complete_owned : (s2Step27CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step27EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step27EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
+  decide +kernel
+theorem s2Step27Complete_apart : List.Disjoint (s2Step27CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [783, 780, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850] := by
+  have nd : ((s2Step27CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[783, 780, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step27CompletePlan : HmrEarlyStepPlan := ⟨s2Step27FrontPlan,s2Step27EarlyControlArena,s2Step27EarlyControlPlan,s2Step27CompleteMoves⟩
+theorem s2Step27Complete_explicit_checked : compileHmrEarlyStepLog s2Step27EntryFBefore s2Step27FrontBank 255 27 ⟨254,253,28,26⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 11 s2Step27CompleteLog=some s2Step27CompletePlan := by
+  let Q := s2Step27EarlyControlPlan
+  have hq := s2Step27EarlyControl_plan_checked
+  have fv1 : s2Step27CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step27CompleteOut.fv.payload[2]?.getD s2Step27CompleteOut.fv.sign=253 := by decide +kernel
+  have fv3 : s2Step27CompleteOut.fv.payload[3]?.getD s2Step27CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step27CompleteOut.fv.payload[4]?.getD s2Step27CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step27EntryFBefore s2Step27EarlyControlArena s2Step27FrontBank 255 27 ⟨254,253,28,26⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 11 s2Step27CompleteLog s2Step27FrontPlan Q
+    s2Step27Front_checked s2Step27Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step27Complete_owned s2Step27Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step27EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 777 783 s2Step27CompleteOut.fv.second (s2Step27CompleteOut.fv.payload[2]?.getD s2Step27CompleteOut.fv.sign) (s2Step27CompleteOut.fv.payload[3]?.getD s2Step27CompleteOut.fv.sign) (s2Step27CompleteOut.fv.payload[4]?.getD s2Step27CompleteOut.fv.sign) 780 11 s2Step27EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step27Complete_checked : (compileHmrEarlyStepLog s2Step27EntryFBefore s2Step27FrontBank 255 27 ⟨254,253,28,26⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 11 s2Step27CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step27Complete_explicit_checked]
+  rfl
+def s2Step28CompleteMoves : List (Wire × Wire) := []
+def s2Step28CompleteOut : WindowBank := s2Step28FrontOut.repacked s2Step28CompleteMoves
+def s2Step28CompleteLog : HmrEarlyStepLog := ⟨s2Step28FrontLog,s2Step28CompleteMoves,s2Step28EarlyControlLog⟩
+theorem s2Step28Complete_repack : s2Step28ExitGvAfter.checkRepack s2Step28CompleteMoves=some s2Step28EarlyControlArena := by rfl
+theorem s2Step28Complete_owned : (s2Step28CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step28EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step28EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
+  decide +kernel
+theorem s2Step28Complete_apart : List.Disjoint (s2Step28CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [787, 779, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] := by
+  have nd : ((s2Step28CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[787, 779, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step28CompletePlan : HmrEarlyStepPlan := ⟨s2Step28FrontPlan,s2Step28EarlyControlArena,s2Step28EarlyControlPlan,s2Step28CompleteMoves⟩
+theorem s2Step28Complete_explicit_checked : compileHmrEarlyStepLog s2Step28EntryFBefore s2Step28FrontBank 254 28 ⟨254,253,28,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 11 s2Step28CompleteLog=some s2Step28CompletePlan := by
+  let Q := s2Step28EarlyControlPlan
+  have hq := s2Step28EarlyControl_plan_checked
+  have fv1 : s2Step28CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step28CompleteOut.fv.payload[2]?.getD s2Step28CompleteOut.fv.sign=253 := by decide +kernel
+  have fv3 : s2Step28CompleteOut.fv.payload[3]?.getD s2Step28CompleteOut.fv.sign=789 := by decide +kernel
+  have fv4 : s2Step28CompleteOut.fv.payload[4]?.getD s2Step28CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step28EntryFBefore s2Step28EarlyControlArena s2Step28FrontBank 254 28 ⟨254,253,28,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 11 s2Step28CompleteLog s2Step28FrontPlan Q
+    s2Step28Front_checked s2Step28Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step28Complete_owned s2Step28Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step28EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 777 787 s2Step28CompleteOut.fv.second (s2Step28CompleteOut.fv.payload[2]?.getD s2Step28CompleteOut.fv.sign) (s2Step28CompleteOut.fv.payload[3]?.getD s2Step28CompleteOut.fv.sign) (s2Step28CompleteOut.fv.payload[4]?.getD s2Step28CompleteOut.fv.sign) 779 11 s2Step28EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step28Complete_checked : (compileHmrEarlyStepLog s2Step28EntryFBefore s2Step28FrontBank 254 28 ⟨254,253,28,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 11 s2Step28CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step28Complete_explicit_checked]
+  rfl
+def s2Step29CompleteMoves : List (Wire × Wire) := [(789,252),(786,765)]
+def s2Step29CompleteOut : WindowBank := s2Step29FrontOut.repacked s2Step29CompleteMoves
+def s2Step29CompleteLog : HmrEarlyStepLog := ⟨s2Step29FrontLog,s2Step29CompleteMoves,s2Step29EarlyControlLog⟩
+def s2Step29CompleteRelocationMove0After : Arena := ⟨arenaWires.filter (fun q => ([(0,765),(766,779),(782,785),(786,787),(788,789),(790,844),(848,849),(850,851),(852,853)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true),Finset.filter_subset _ _⟩
+def s2Step29CompleteRelocationMove0Borrowed : Arena := ⟨s2Step29ExitGvAfter.live∪{252},Finset.union_subset s2Step29ExitGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step29CompleteRelocation_move0_owned : 789∈s2Step29ExitGvAfter.live := by norm_num [s2Step29ExitGvAfter,arenaWires]
+theorem s2Step29CompleteRelocation_move0_reserve : s2Step29ExitGvAfter.reserve {252}=some s2Step29CompleteRelocationMove0Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step29ExitGvAfter,arenaWires]
+  · rfl
+theorem s2Step29CompleteRelocation_move0_retire : s2Step29CompleteRelocationMove0Borrowed.retireSet {789}=s2Step29CompleteRelocationMove0After := by
+  unfold Arena.retireSet s2Step29CompleteRelocationMove0After
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step29CompleteRelocationMove0Borrowed,s2Step29ExitGvAfter,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+def s2Step29CompleteRelocationMove1Borrowed : Arena := ⟨s2Step29CompleteRelocationMove0After.live∪{765},Finset.union_subset s2Step29CompleteRelocationMove0After.bounded (by norm_num [arenaWires])⟩
+theorem s2Step29CompleteRelocation_move1_owned : 786∈s2Step29CompleteRelocationMove0After.live := by norm_num [s2Step29CompleteRelocationMove0After,arenaWires]
+theorem s2Step29CompleteRelocation_move1_reserve : s2Step29CompleteRelocationMove0After.reserve {765}=some s2Step29CompleteRelocationMove1Borrowed := by
+  apply hmrArena_reserve_of_live
+  · norm_num [arenaWires]
+  · norm_num [s2Step29CompleteRelocationMove0After,arenaWires]
+  · rfl
+theorem s2Step29CompleteRelocation_move1_retire : s2Step29CompleteRelocationMove1Borrowed.retireSet {786}=s2Step29EarlyControlArena := by
+  unfold Arena.retireSet s2Step29EarlyControlArena
+  simp only [Arena.mk.injEq]
+  ext q
+  simp only [s2Step29CompleteRelocationMove1Borrowed,s2Step29CompleteRelocationMove0After,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
+  simp only [Wire] at *
+  omega
+theorem s2Step29CompleteRelocation_checked : s2Step29ExitGvAfter.checkRepack [(789,252),(786,765)]=some s2Step29EarlyControlArena := by
+  have tail2 : s2Step29EarlyControlArena.checkRepack []=some s2Step29EarlyControlArena := rfl
+  have tail1 := Arena.checkRepack_cons_of_parts s2Step29CompleteRelocationMove0After s2Step29CompleteRelocationMove1Borrowed s2Step29EarlyControlArena s2Step29EarlyControlArena 786 765 []
+    s2Step29CompleteRelocation_move1_owned s2Step29CompleteRelocation_move1_reserve s2Step29CompleteRelocation_move1_retire tail2
+  have tail0 := Arena.checkRepack_cons_of_parts s2Step29ExitGvAfter s2Step29CompleteRelocationMove0Borrowed s2Step29CompleteRelocationMove0After s2Step29EarlyControlArena 789 252 [(786,765)]
+    s2Step29CompleteRelocation_move0_owned s2Step29CompleteRelocation_move0_reserve s2Step29CompleteRelocation_move0_retire tail1
+  exact tail0
+theorem s2Step29Complete_repack : s2Step29ExitGvAfter.checkRepack s2Step29CompleteMoves=some s2Step29EarlyControlArena := by
+  simpa only [s2Step29CompleteMoves] using s2Step29CompleteRelocation_checked
+theorem s2Step29Complete_owned : (s2Step29CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step29EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step29EarlyControlArena (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
+  decide +kernel
+theorem s2Step29Complete_apart : List.Disjoint (s2Step29CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [778, 839, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] := by
+  have nd : ((s2Step29CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[778, 839, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step29CompletePlan : HmrEarlyStepPlan := ⟨s2Step29FrontPlan,s2Step29EarlyControlArena,s2Step29EarlyControlPlan,s2Step29CompleteMoves⟩
+theorem s2Step29Complete_explicit_checked : compileHmrEarlyStepLog s2Step29EntryFBefore s2Step29FrontBank 254 28 ⟨253,252,29,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 12 s2Step29CompleteLog=some s2Step29CompletePlan := by
+  let Q := s2Step29EarlyControlPlan
+  have hq := s2Step29EarlyControl_plan_checked
+  have fv1 : s2Step29CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step29CompleteOut.fv.payload[2]?.getD s2Step29CompleteOut.fv.sign=253 := by decide +kernel
+  have fv3 : s2Step29CompleteOut.fv.payload[3]?.getD s2Step29CompleteOut.fv.sign=252 := by decide +kernel
+  have fv4 : s2Step29CompleteOut.fv.payload[4]?.getD s2Step29CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step29EntryFBefore s2Step29EarlyControlArena s2Step29FrontBank 254 28 ⟨253,252,29,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 12 s2Step29CompleteLog s2Step29FrontPlan Q
+    s2Step29Front_checked s2Step29Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step29Complete_owned s2Step29Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step29EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 777 778 s2Step29CompleteOut.fv.second (s2Step29CompleteOut.fv.payload[2]?.getD s2Step29CompleteOut.fv.sign) (s2Step29CompleteOut.fv.payload[3]?.getD s2Step29CompleteOut.fv.sign) (s2Step29CompleteOut.fv.payload[4]?.getD s2Step29CompleteOut.fv.sign) 839 12 s2Step29EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step29Complete_checked : (compileHmrEarlyStepLog s2Step29EntryFBefore s2Step29FrontBank 254 28 ⟨253,252,29,27⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 12 s2Step29CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step29Complete_explicit_checked]
+  rfl
+def s2Step30CompleteMoves : List (Wire × Wire) := []
+def s2Step30CompleteOut : WindowBank := s2Step30FrontOut.repacked s2Step30CompleteMoves
+def s2Step30CompleteLog : HmrEarlyStepLog := ⟨s2Step30FrontLog,s2Step30CompleteMoves,s2Step30EarlyControlLog⟩
+theorem s2Step30Complete_repack : s2Step30ExitGvAfter.checkRepack s2Step30CompleteMoves=some s2Step30EarlyControlArena := by rfl
+theorem s2Step30Complete_owned : (s2Step30CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step30EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step30EarlyControlArena (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
+  decide +kernel
+theorem s2Step30Complete_apart : List.Disjoint (s2Step30CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [789, 787, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] := by
+  have nd : ((s2Step30CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[789, 787, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853]).Nodup := by
+    apply hmrLayout_nodup_of_sorted
+    decide +kernel
+  exact (List.nodup_append'.mp nd).2.2
+def s2Step30CompletePlan : HmrEarlyStepPlan := ⟨s2Step30FrontPlan,s2Step30EarlyControlArena,s2Step30EarlyControlPlan,s2Step30CompleteMoves⟩
+theorem s2Step30Complete_explicit_checked : compileHmrEarlyStepLog s2Step30EntryFBefore s2Step30FrontBank 253 29 ⟨253,252,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 12 s2Step30CompleteLog=some s2Step30CompletePlan := by
+  let Q := s2Step30EarlyControlPlan
+  have hq := s2Step30EarlyControl_plan_checked
+  have fv1 : s2Step30CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step30CompleteOut.fv.payload[2]?.getD s2Step30CompleteOut.fv.sign=253 := by decide +kernel
+  have fv3 : s2Step30CompleteOut.fv.payload[3]?.getD s2Step30CompleteOut.fv.sign=252 := by decide +kernel
+  have fv4 : s2Step30CompleteOut.fv.payload[4]?.getD s2Step30CompleteOut.fv.sign=791 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step30EntryFBefore s2Step30EarlyControlArena s2Step30FrontBank 253 29 ⟨253,252,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 12 s2Step30CompleteLog s2Step30FrontPlan Q
+    s2Step30Front_checked s2Step30Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step30Complete_owned s2Step30Complete_apart)))
+    (by
+      change compileHmrEarlyControlLog s2Step30EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 777 789 s2Step30CompleteOut.fv.second (s2Step30CompleteOut.fv.payload[2]?.getD s2Step30CompleteOut.fv.sign) (s2Step30CompleteOut.fv.payload[3]?.getD s2Step30CompleteOut.fv.sign) (s2Step30CompleteOut.fv.payload[4]?.getD s2Step30CompleteOut.fv.sign) 787 12 s2Step30EarlyControlLog=some Q
+      rw [fv1,fv2,fv3,fv4]
+      exact hq)
+  exact result
+theorem s2Step30Complete_checked : (compileHmrEarlyStepLog s2Step30EntryFBefore s2Step30FrontBank 253 29 ⟨253,252,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 12 s2Step30CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step30Complete_explicit_checked]
+  rfl
+def s2Step31CompleteMoves : List (Wire × Wire) := [(791,251)]
+def s2Step31CompleteOut : WindowBank := s2Step31FrontOut.repacked s2Step31CompleteMoves
+def s2Step31CompleteLog : HmrEarlyStepLog := ⟨s2Step31FrontLog,s2Step31CompleteMoves,s2Step31EarlyControlLog⟩
+def s2Step31CompleteMoveArena : Arena := ⟨s2Step31ExitGvAfter.live∪{251},Finset.union_subset s2Step31ExitGvAfter.bounded (by norm_num [arenaWires])⟩
+theorem s2Step31Complete_repack : s2Step31ExitGvAfter.checkRepack s2Step31CompleteMoves=some s2Step31EarlyControlArena := by
+  have owned : 791∈s2Step31ExitGvAfter.live := by norm_num [s2Step31ExitGvAfter,arenaWires]
+  have reserve : s2Step31ExitGvAfter.reserve {251}=some s2Step31CompleteMoveArena := by
     apply hmrArena_reserve_of_live
     · norm_num [arenaWires]
-    · norm_num [s6Step0ExitGvAfter,arenaWires]
+    · norm_num [s2Step31ExitGvAfter,arenaWires]
     · rfl
-  have retired : s6Step0CompleteMoveArena.retireSet {768}=s6FirstEarlyControlArena := by
-    unfold Arena.retireSet s6FirstEarlyControlArena
+  have retired : s2Step31CompleteMoveArena.retireSet {791}=s2Step31EarlyControlArena := by
+    unfold Arena.retireSet s2Step31EarlyControlArena
     simp only [Arena.mk.injEq]
     ext q
-    simp only [s6Step0CompleteMoveArena,s6Step0ExitGvAfter,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range]
+    simp only [s2Step31CompleteMoveArena,s2Step31ExitGvAfter,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range]
     simp only [Wire] at *
     omega
-  simp only [s6Step0CompleteMoves]
+  simp only [s2Step31CompleteMoves]
   rw [Arena.checkRepack,if_pos owned,reserve]
-  change (s6Step0CompleteMoveArena.retireSet {768}).checkRepack []=some s6FirstEarlyControlArena
+  change (s2Step31CompleteMoveArena.retireSet {791}).checkRepack []=some s2Step31EarlyControlArena
   rw [retired]
   rfl
-theorem s6Step0Complete_owned : (s6Step0CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6FirstEarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6FirstEarlyControlArena (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step31Complete_owned : (s2Step31CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]).toFinset⊆s2Step31EarlyControlArena.live := by
+  apply hmrLayout_owned_of_filter s2Step31EarlyControlArena (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<791) ∨ (792≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step0Complete_apart : List.Disjoint (s6Step0CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [887, 813] := by
-  have nd : ((s6Step0CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[887, 813]).Nodup := by
+theorem s2Step31Complete_apart : List.Disjoint (s2Step31CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) [786, 779, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] := by
+  have nd : ((s2Step31CompleteOut.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])++[786, 779, 795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853]).Nodup := by
     apply hmrLayout_nodup_of_sorted
     decide +kernel
   exact (List.nodup_append'.mp nd).2.2
-def s6Step0CompletePlan : HmrEarlyStepPlan := ⟨s6Step0FrontPlan,s6FirstEarlyControlArena,s6FirstEarlyControlPlan,s6Step0CompleteMoves⟩
-theorem s6Step0Complete_explicit_checked : compileHmrEarlyStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ 0 [774, 773, 772, 771, 770, 769] [] 1 s6Step0CompleteLog=some s6Step0CompletePlan := by
-  let Q := s6FirstEarlyControlPlan
-  have hq := s6FirstEarlyControl_plan_checked
-  have fv1 : s6Step0CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step0CompleteOut.fv.payload[2]?.getD s6Step0CompleteOut.fv.sign=776 := by decide +kernel
-  have fv3 : s6Step0CompleteOut.fv.payload[3]?.getD s6Step0CompleteOut.fv.sign=776 := by decide +kernel
-  have fv4 : s6Step0CompleteOut.fv.payload[4]?.getD s6Step0CompleteOut.fv.sign=776 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step0EntryFBefore s6FirstEarlyControlArena s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ 0 [774, 773, 772, 771, 770, 769] [] 1 s6Step0CompleteLog s6Step0FrontPlan Q
-    s6Step0Front_checked s6Step0Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step0Complete_owned s6Step0Complete_apart)))
+def s2Step31CompletePlan : HmrEarlyStepPlan := ⟨s2Step31FrontPlan,s2Step31EarlyControlArena,s2Step31EarlyControlPlan,s2Step31CompleteMoves⟩
+theorem s2Step31Complete_explicit_checked : compileHmrEarlyStepLog s2Step31EntryFBefore s2Step31FrontBank 253 29 ⟨253,251,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 13 s2Step31CompleteLog=some s2Step31CompletePlan := by
+  let Q := s2Step31EarlyControlPlan
+  have hq := s2Step31EarlyControl_plan_checked
+  have fv1 : s2Step31CompleteOut.fv.second=254 := by decide +kernel
+  have fv2 : s2Step31CompleteOut.fv.payload[2]?.getD s2Step31CompleteOut.fv.sign=253 := by decide +kernel
+  have fv3 : s2Step31CompleteOut.fv.payload[3]?.getD s2Step31CompleteOut.fv.sign=252 := by decide +kernel
+  have fv4 : s2Step31CompleteOut.fv.payload[4]?.getD s2Step31CompleteOut.fv.sign=251 := by decide +kernel
+  have result := compileHmrEarlyStepLog_of_parts s2Step31EntryFBefore s2Step31EarlyControlArena s2Step31FrontBank 253 29 ⟨253,251,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 13 s2Step31CompleteLog s2Step31FrontPlan Q
+    s2Step31Front_checked s2Step31Complete_repack
+    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s2Step31Complete_owned s2Step31Complete_apart)))
     (by
-      change compileHmrEarlyControlLog s6FirstEarlyControlArena [774, 773, 772, 771, 770, 769] [] 769 887 s6Step0CompleteOut.fv.second (s6Step0CompleteOut.fv.payload[2]?.getD s6Step0CompleteOut.fv.sign) (s6Step0CompleteOut.fv.payload[3]?.getD s6Step0CompleteOut.fv.sign) (s6Step0CompleteOut.fv.payload[4]?.getD s6Step0CompleteOut.fv.sign) 813 1 s6FirstEarlyControlLog=some Q
+      change compileHmrEarlyControlLog s2Step31EarlyControlArena [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 777 786 s2Step31CompleteOut.fv.second (s2Step31CompleteOut.fv.payload[2]?.getD s2Step31CompleteOut.fv.sign) (s2Step31CompleteOut.fv.payload[3]?.getD s2Step31CompleteOut.fv.sign) (s2Step31CompleteOut.fv.payload[4]?.getD s2Step31CompleteOut.fv.sign) 779 13 s2Step31EarlyControlLog=some Q
       rw [fv1,fv2,fv3,fv4]
       exact hq)
   exact result
-theorem s6Step0Complete_checked : (compileHmrEarlyStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ 0 [774, 773, 772, 771, 770, 769] [] 1 s6Step0CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step0Complete_explicit_checked]
-  rfl
-def s6Step1CompleteMoves : List (Wire × Wire) := []
-def s6Step1CompleteOut : WindowBank := s6Step1FrontOut.repacked s6Step1CompleteMoves
-def s6Step1CompleteLog : HmrEarlyStepLog := ⟨s6Step1FrontLog,s6Step1CompleteMoves,s6Step1EarlyControlLog⟩
-theorem s6Step1Complete_repack : s6Step1ExitGvAfter.checkRepack s6Step1CompleteMoves=some s6Step1EarlyControlArena := by rfl
-theorem s6Step1Complete_owned : (s6Step1CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step1EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step1EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
-  decide +kernel
-theorem s6Step1Complete_apart : List.Disjoint (s6Step1CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [768, 860, 895] := by
-  have nd : ((s6Step1CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[768, 860, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step1CompletePlan : HmrEarlyStepPlan := ⟨s6Step1FrontPlan,s6Step1EarlyControlArena,s6Step1EarlyControlPlan,s6Step1CompleteMoves⟩
-theorem s6Step1Complete_explicit_checked : compileHmrEarlyStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step1CompleteLog=some s6Step1CompletePlan := by
-  let Q := s6Step1EarlyControlPlan
-  have hq := s6Step1EarlyControl_plan_checked
-  have fv1 : s6Step1CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step1CompleteOut.fv.payload[2]?.getD s6Step1CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step1CompleteOut.fv.payload[3]?.getD s6Step1CompleteOut.fv.sign=776 := by decide +kernel
-  have fv4 : s6Step1CompleteOut.fv.payload[4]?.getD s6Step1CompleteOut.fv.sign=776 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step1EntryFBefore s6Step1EarlyControlArena s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step1CompleteLog s6Step1FrontPlan Q
-    s6Step1Front_checked s6Step1Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step1Complete_owned s6Step1Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step1EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 768 s6Step1CompleteOut.fv.second (s6Step1CompleteOut.fv.payload[2]?.getD s6Step1CompleteOut.fv.sign) (s6Step1CompleteOut.fv.payload[3]?.getD s6Step1CompleteOut.fv.sign) (s6Step1CompleteOut.fv.payload[4]?.getD s6Step1CompleteOut.fv.sign) 860 1 s6Step1EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step1Complete_checked : (compileHmrEarlyStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step1CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step1Complete_explicit_checked]
-  rfl
-def s6Step2CompleteMoves : List (Wire × Wire) := []
-def s6Step2CompleteOut : WindowBank := s6Step2FrontOut.repacked s6Step2CompleteMoves
-def s6Step2CompleteLog : HmrEarlyStepLog := ⟨s6Step2FrontLog,s6Step2CompleteMoves,s6Step2EarlyControlLog⟩
-theorem s6Step2Complete_repack : s6Step2ExitGvAfter.checkRepack s6Step2CompleteMoves=some s6Step2EarlyControlArena := by rfl
-theorem s6Step2Complete_owned : (s6Step2CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step2EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step2EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
-  decide +kernel
-theorem s6Step2Complete_apart : List.Disjoint (s6Step2CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [874, 862, 895] := by
-  have nd : ((s6Step2CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[874, 862, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step2CompletePlan : HmrEarlyStepPlan := ⟨s6Step2FrontPlan,s6Step2EarlyControlArena,s6Step2EarlyControlPlan,s6Step2CompleteMoves⟩
-theorem s6Step2Complete_explicit_checked : compileHmrEarlyStepLog s6Step2EntryFBefore s6Step2FrontBank 256 3 ⟨256,255,4,2⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step2CompleteLog=some s6Step2CompletePlan := by
-  let Q := s6Step2EarlyControlPlan
-  have hq := s6Step2EarlyControl_plan_checked
-  have fv1 : s6Step2CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step2CompleteOut.fv.payload[2]?.getD s6Step2CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step2CompleteOut.fv.payload[3]?.getD s6Step2CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step2CompleteOut.fv.payload[4]?.getD s6Step2CompleteOut.fv.sign=776 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step2EntryFBefore s6Step2EarlyControlArena s6Step2FrontBank 256 3 ⟨256,255,4,2⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step2CompleteLog s6Step2FrontPlan Q
-    s6Step2Front_checked s6Step2Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step2Complete_owned s6Step2Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step2EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 874 s6Step2CompleteOut.fv.second (s6Step2CompleteOut.fv.payload[2]?.getD s6Step2CompleteOut.fv.sign) (s6Step2CompleteOut.fv.payload[3]?.getD s6Step2CompleteOut.fv.sign) (s6Step2CompleteOut.fv.payload[4]?.getD s6Step2CompleteOut.fv.sign) 862 1 s6Step2EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step2Complete_checked : (compileHmrEarlyStepLog s6Step2EntryFBefore s6Step2FrontBank 256 3 ⟨256,255,4,2⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step2CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step2Complete_explicit_checked]
-  rfl
-def s6Step3CompleteMoves : List (Wire × Wire) := []
-def s6Step3CompleteOut : WindowBank := s6Step3FrontOut.repacked s6Step3CompleteMoves
-def s6Step3CompleteLog : HmrEarlyStepLog := ⟨s6Step3FrontLog,s6Step3CompleteMoves,s6Step3EarlyControlLog⟩
-theorem s6Step3Complete_repack : s6Step3ExitGvAfter.checkRepack s6Step3CompleteMoves=some s6Step3EarlyControlArena := by rfl
-theorem s6Step3Complete_owned : (s6Step3CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step3EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step3EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step3Complete_apart : List.Disjoint (s6Step3CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [927, 807, 895] := by
-  have nd : ((s6Step3CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[927, 807, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step3CompletePlan : HmrEarlyStepPlan := ⟨s6Step3FrontPlan,s6Step3EarlyControlArena,s6Step3EarlyControlPlan,s6Step3CompleteMoves⟩
-theorem s6Step3Complete_explicit_checked : compileHmrEarlyStepLog s6Step3EntryFBefore s6Step3FrontBank 256 4 ⟨256,255,5,3⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step3CompleteLog=some s6Step3CompletePlan := by
-  let Q := s6Step3EarlyControlPlan
-  have hq := s6Step3EarlyControl_plan_checked
-  have fv1 : s6Step3CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step3CompleteOut.fv.payload[2]?.getD s6Step3CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step3CompleteOut.fv.payload[3]?.getD s6Step3CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step3CompleteOut.fv.payload[4]?.getD s6Step3CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step3EntryFBefore s6Step3EarlyControlArena s6Step3FrontBank 256 4 ⟨256,255,5,3⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step3CompleteLog s6Step3FrontPlan Q
-    s6Step3Front_checked s6Step3Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step3Complete_owned s6Step3Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step3EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 927 s6Step3CompleteOut.fv.second (s6Step3CompleteOut.fv.payload[2]?.getD s6Step3CompleteOut.fv.sign) (s6Step3CompleteOut.fv.payload[3]?.getD s6Step3CompleteOut.fv.sign) (s6Step3CompleteOut.fv.payload[4]?.getD s6Step3CompleteOut.fv.sign) 807 1 s6Step3EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step3Complete_checked : (compileHmrEarlyStepLog s6Step3EntryFBefore s6Step3FrontBank 256 4 ⟨256,255,5,3⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step3CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step3Complete_explicit_checked]
-  rfl
-def s6Step4CompleteMoves : List (Wire × Wire) := []
-def s6Step4CompleteOut : WindowBank := s6Step4FrontOut.repacked s6Step4CompleteMoves
-def s6Step4CompleteLog : HmrEarlyStepLog := ⟨s6Step4FrontLog,s6Step4CompleteMoves,s6Step4EarlyControlLog⟩
-theorem s6Step4Complete_repack : s6Step4ExitGvAfter.checkRepack s6Step4CompleteMoves=some s6Step4EarlyControlArena := by rfl
-theorem s6Step4Complete_owned : (s6Step4CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step4EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step4EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step4Complete_apart : List.Disjoint (s6Step4CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [875, 813, 895] := by
-  have nd : ((s6Step4CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[875, 813, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step4CompletePlan : HmrEarlyStepPlan := ⟨s6Step4FrontPlan,s6Step4EarlyControlArena,s6Step4EarlyControlPlan,s6Step4CompleteMoves⟩
-theorem s6Step4Complete_explicit_checked : compileHmrEarlyStepLog s6Step4EntryFBefore s6Step4FrontBank 256 5 ⟨256,255,6,4⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step4CompleteLog=some s6Step4CompletePlan := by
-  let Q := s6Step4EarlyControlPlan
-  have hq := s6Step4EarlyControl_plan_checked
-  have fv1 : s6Step4CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step4CompleteOut.fv.payload[2]?.getD s6Step4CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step4CompleteOut.fv.payload[3]?.getD s6Step4CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step4CompleteOut.fv.payload[4]?.getD s6Step4CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step4EntryFBefore s6Step4EarlyControlArena s6Step4FrontBank 256 5 ⟨256,255,6,4⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step4CompleteLog s6Step4FrontPlan Q
-    s6Step4Front_checked s6Step4Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step4Complete_owned s6Step4Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step4EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 875 s6Step4CompleteOut.fv.second (s6Step4CompleteOut.fv.payload[2]?.getD s6Step4CompleteOut.fv.sign) (s6Step4CompleteOut.fv.payload[3]?.getD s6Step4CompleteOut.fv.sign) (s6Step4CompleteOut.fv.payload[4]?.getD s6Step4CompleteOut.fv.sign) 813 1 s6Step4EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step4Complete_checked : (compileHmrEarlyStepLog s6Step4EntryFBefore s6Step4FrontBank 256 5 ⟨256,255,6,4⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step4CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step4Complete_explicit_checked]
-  rfl
-def s6Step5CompleteMoves : List (Wire × Wire) := []
-def s6Step5CompleteOut : WindowBank := s6Step5FrontOut.repacked s6Step5CompleteMoves
-def s6Step5CompleteLog : HmrEarlyStepLog := ⟨s6Step5FrontLog,s6Step5CompleteMoves,s6Step5EarlyControlLog⟩
-theorem s6Step5Complete_repack : s6Step5ExitGvAfter.checkRepack s6Step5CompleteMoves=some s6Step5EarlyControlArena := by rfl
-theorem s6Step5Complete_owned : (s6Step5CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step5EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step5EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step5Complete_apart : List.Disjoint (s6Step5CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [868, 860, 895] := by
-  have nd : ((s6Step5CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[868, 860, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step5CompletePlan : HmrEarlyStepPlan := ⟨s6Step5FrontPlan,s6Step5EarlyControlArena,s6Step5EarlyControlPlan,s6Step5CompleteMoves⟩
-theorem s6Step5Complete_explicit_checked : compileHmrEarlyStepLog s6Step5EntryFBefore s6Step5FrontBank 256 6 ⟨256,255,7,5⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step5CompleteLog=some s6Step5CompletePlan := by
-  let Q := s6Step5EarlyControlPlan
-  have hq := s6Step5EarlyControl_plan_checked
-  have fv1 : s6Step5CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step5CompleteOut.fv.payload[2]?.getD s6Step5CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step5CompleteOut.fv.payload[3]?.getD s6Step5CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step5CompleteOut.fv.payload[4]?.getD s6Step5CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step5EntryFBefore s6Step5EarlyControlArena s6Step5FrontBank 256 6 ⟨256,255,7,5⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step5CompleteLog s6Step5FrontPlan Q
-    s6Step5Front_checked s6Step5Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step5Complete_owned s6Step5Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step5EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 868 s6Step5CompleteOut.fv.second (s6Step5CompleteOut.fv.payload[2]?.getD s6Step5CompleteOut.fv.sign) (s6Step5CompleteOut.fv.payload[3]?.getD s6Step5CompleteOut.fv.sign) (s6Step5CompleteOut.fv.payload[4]?.getD s6Step5CompleteOut.fv.sign) 860 1 s6Step5EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step5Complete_checked : (compileHmrEarlyStepLog s6Step5EntryFBefore s6Step5FrontBank 256 6 ⟨256,255,7,5⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step5CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step5Complete_explicit_checked]
-  rfl
-def s6Step6CompleteMoves : List (Wire × Wire) := []
-def s6Step6CompleteOut : WindowBank := s6Step6FrontOut.repacked s6Step6CompleteMoves
-def s6Step6CompleteLog : HmrEarlyStepLog := ⟨s6Step6FrontLog,s6Step6CompleteMoves,s6Step6EarlyControlLog⟩
-theorem s6Step6Complete_repack : s6Step6ExitGvAfter.checkRepack s6Step6CompleteMoves=some s6Step6EarlyControlArena := by rfl
-theorem s6Step6Complete_owned : (s6Step6CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step6EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step6EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step6Complete_apart : List.Disjoint (s6Step6CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [907, 862, 895] := by
-  have nd : ((s6Step6CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[907, 862, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step6CompletePlan : HmrEarlyStepPlan := ⟨s6Step6FrontPlan,s6Step6EarlyControlArena,s6Step6EarlyControlPlan,s6Step6CompleteMoves⟩
-theorem s6Step6Complete_explicit_checked : compileHmrEarlyStepLog s6Step6EntryFBefore s6Step6FrontBank 256 7 ⟨256,255,8,6⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step6CompleteLog=some s6Step6CompletePlan := by
-  let Q := s6Step6EarlyControlPlan
-  have hq := s6Step6EarlyControl_plan_checked
-  have fv1 : s6Step6CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step6CompleteOut.fv.payload[2]?.getD s6Step6CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step6CompleteOut.fv.payload[3]?.getD s6Step6CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step6CompleteOut.fv.payload[4]?.getD s6Step6CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step6EntryFBefore s6Step6EarlyControlArena s6Step6FrontBank 256 7 ⟨256,255,8,6⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step6CompleteLog s6Step6FrontPlan Q
-    s6Step6Front_checked s6Step6Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step6Complete_owned s6Step6Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step6EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 907 s6Step6CompleteOut.fv.second (s6Step6CompleteOut.fv.payload[2]?.getD s6Step6CompleteOut.fv.sign) (s6Step6CompleteOut.fv.payload[3]?.getD s6Step6CompleteOut.fv.sign) (s6Step6CompleteOut.fv.payload[4]?.getD s6Step6CompleteOut.fv.sign) 862 1 s6Step6EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step6Complete_checked : (compileHmrEarlyStepLog s6Step6EntryFBefore s6Step6FrontBank 256 7 ⟨256,255,8,6⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step6CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step6Complete_explicit_checked]
-  rfl
-def s6Step7CompleteMoves : List (Wire × Wire) := []
-def s6Step7CompleteOut : WindowBank := s6Step7FrontOut.repacked s6Step7CompleteMoves
-def s6Step7CompleteLog : HmrEarlyStepLog := ⟨s6Step7FrontLog,s6Step7CompleteMoves,s6Step7EarlyControlLog⟩
-theorem s6Step7Complete_repack : s6Step7ExitGvAfter.checkRepack s6Step7CompleteMoves=some s6Step7EarlyControlArena := by rfl
-theorem s6Step7Complete_owned : (s6Step7CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step7EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step7EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step7Complete_apart : List.Disjoint (s6Step7CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [908, 807, 895] := by
-  have nd : ((s6Step7CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[908, 807, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step7CompletePlan : HmrEarlyStepPlan := ⟨s6Step7FrontPlan,s6Step7EarlyControlArena,s6Step7EarlyControlPlan,s6Step7CompleteMoves⟩
-theorem s6Step7Complete_explicit_checked : compileHmrEarlyStepLog s6Step7EntryFBefore s6Step7FrontBank 256 8 ⟨256,255,9,7⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step7CompleteLog=some s6Step7CompletePlan := by
-  let Q := s6Step7EarlyControlPlan
-  have hq := s6Step7EarlyControl_plan_checked
-  have fv1 : s6Step7CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step7CompleteOut.fv.payload[2]?.getD s6Step7CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step7CompleteOut.fv.payload[3]?.getD s6Step7CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step7CompleteOut.fv.payload[4]?.getD s6Step7CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step7EntryFBefore s6Step7EarlyControlArena s6Step7FrontBank 256 8 ⟨256,255,9,7⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step7CompleteLog s6Step7FrontPlan Q
-    s6Step7Front_checked s6Step7Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step7Complete_owned s6Step7Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step7EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 908 s6Step7CompleteOut.fv.second (s6Step7CompleteOut.fv.payload[2]?.getD s6Step7CompleteOut.fv.sign) (s6Step7CompleteOut.fv.payload[3]?.getD s6Step7CompleteOut.fv.sign) (s6Step7CompleteOut.fv.payload[4]?.getD s6Step7CompleteOut.fv.sign) 807 1 s6Step7EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step7Complete_checked : (compileHmrEarlyStepLog s6Step7EntryFBefore s6Step7FrontBank 256 8 ⟨256,255,9,7⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step7CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step7Complete_explicit_checked]
-  rfl
-def s6Step8CompleteMoves : List (Wire × Wire) := []
-def s6Step8CompleteOut : WindowBank := s6Step8FrontOut.repacked s6Step8CompleteMoves
-def s6Step8CompleteLog : HmrEarlyStepLog := ⟨s6Step8FrontLog,s6Step8CompleteMoves,s6Step8EarlyControlLog⟩
-theorem s6Step8Complete_repack : s6Step8ExitGvAfter.checkRepack s6Step8CompleteMoves=some s6Step8EarlyControlArena := by rfl
-theorem s6Step8Complete_owned : (s6Step8CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step8EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step8EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step8Complete_apart : List.Disjoint (s6Step8CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [890, 813, 895] := by
-  have nd : ((s6Step8CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[890, 813, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step8CompletePlan : HmrEarlyStepPlan := ⟨s6Step8FrontPlan,s6Step8EarlyControlArena,s6Step8EarlyControlPlan,s6Step8CompleteMoves⟩
-theorem s6Step8Complete_explicit_checked : compileHmrEarlyStepLog s6Step8EntryFBefore s6Step8FrontBank 256 9 ⟨256,255,10,8⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step8CompleteLog=some s6Step8CompletePlan := by
-  let Q := s6Step8EarlyControlPlan
-  have hq := s6Step8EarlyControl_plan_checked
-  have fv1 : s6Step8CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step8CompleteOut.fv.payload[2]?.getD s6Step8CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step8CompleteOut.fv.payload[3]?.getD s6Step8CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step8CompleteOut.fv.payload[4]?.getD s6Step8CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step8EntryFBefore s6Step8EarlyControlArena s6Step8FrontBank 256 9 ⟨256,255,10,8⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step8CompleteLog s6Step8FrontPlan Q
-    s6Step8Front_checked s6Step8Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step8Complete_owned s6Step8Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step8EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 890 s6Step8CompleteOut.fv.second (s6Step8CompleteOut.fv.payload[2]?.getD s6Step8CompleteOut.fv.sign) (s6Step8CompleteOut.fv.payload[3]?.getD s6Step8CompleteOut.fv.sign) (s6Step8CompleteOut.fv.payload[4]?.getD s6Step8CompleteOut.fv.sign) 813 1 s6Step8EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step8Complete_checked : (compileHmrEarlyStepLog s6Step8EntryFBefore s6Step8FrontBank 256 9 ⟨256,255,10,8⟩ 0 [774, 773, 772, 771, 770, 769] [895] 1 s6Step8CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step8Complete_explicit_checked]
-  rfl
-def s6Step9CompleteMoves : List (Wire × Wire) := []
-def s6Step9CompleteOut : WindowBank := s6Step9FrontOut.repacked s6Step9CompleteMoves
-def s6Step9CompleteLog : HmrEarlyStepLog := ⟨s6Step9FrontLog,s6Step9CompleteMoves,s6Step9EarlyControlLog⟩
-theorem s6Step9Complete_repack : s6Step9ExitGvAfter.checkRepack s6Step9CompleteMoves=some s6Step9EarlyControlArena := by rfl
-theorem s6Step9Complete_owned : (s6Step9CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step9EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step9EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step9Complete_apart : List.Disjoint (s6Step9CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [873, 860, 895] := by
-  have nd : ((s6Step9CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[873, 860, 895]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step9CompletePlan : HmrEarlyStepPlan := ⟨s6Step9FrontPlan,s6Step9EarlyControlArena,s6Step9EarlyControlPlan,s6Step9CompleteMoves⟩
-theorem s6Step9Complete_explicit_checked : compileHmrEarlyStepLog s6Step9EntryFBefore s6Step9FrontBank 256 10 ⟨256,255,11,9⟩ 0 [774, 773, 772, 771, 770, 769] [895] 2 s6Step9CompleteLog=some s6Step9CompletePlan := by
-  let Q := s6Step9EarlyControlPlan
-  have hq := s6Step9EarlyControl_plan_checked
-  have fv1 : s6Step9CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step9CompleteOut.fv.payload[2]?.getD s6Step9CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step9CompleteOut.fv.payload[3]?.getD s6Step9CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step9CompleteOut.fv.payload[4]?.getD s6Step9CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step9EntryFBefore s6Step9EarlyControlArena s6Step9FrontBank 256 10 ⟨256,255,11,9⟩ 0 [774, 773, 772, 771, 770, 769] [895] 2 s6Step9CompleteLog s6Step9FrontPlan Q
-    s6Step9Front_checked s6Step9Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step9Complete_owned s6Step9Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step9EarlyControlArena [774, 773, 772, 771, 770, 769] [895] 769 873 s6Step9CompleteOut.fv.second (s6Step9CompleteOut.fv.payload[2]?.getD s6Step9CompleteOut.fv.sign) (s6Step9CompleteOut.fv.payload[3]?.getD s6Step9CompleteOut.fv.sign) (s6Step9CompleteOut.fv.payload[4]?.getD s6Step9CompleteOut.fv.sign) 860 2 s6Step9EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step9Complete_checked : (compileHmrEarlyStepLog s6Step9EntryFBefore s6Step9FrontBank 256 10 ⟨256,255,11,9⟩ 0 [774, 773, 772, 771, 770, 769] [895] 2 s6Step9CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step9Complete_explicit_checked]
-  rfl
-def s6Step10CompleteMoves : List (Wire × Wire) := []
-def s6Step10CompleteOut : WindowBank := s6Step10FrontOut.repacked s6Step10CompleteMoves
-def s6Step10CompleteLog : HmrEarlyStepLog := ⟨s6Step10FrontLog,s6Step10CompleteMoves,s6Step10EarlyControlLog⟩
-theorem s6Step10Complete_repack : s6Step10ExitGvAfter.checkRepack s6Step10CompleteMoves=some s6Step10EarlyControlArena := by rfl
-theorem s6Step10Complete_owned : (s6Step10CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step10EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step10EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step10Complete_apart : List.Disjoint (s6Step10CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [863, 862, 895, 870] := by
-  have nd : ((s6Step10CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[863, 862, 895, 870]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step10CompletePlan : HmrEarlyStepPlan := ⟨s6Step10FrontPlan,s6Step10EarlyControlArena,s6Step10EarlyControlPlan,s6Step10CompleteMoves⟩
-theorem s6Step10Complete_explicit_checked : compileHmrEarlyStepLog s6Step10EntryFBefore s6Step10FrontBank 256 11 ⟨256,255,12,10⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 2 s6Step10CompleteLog=some s6Step10CompletePlan := by
-  let Q := s6Step10EarlyControlPlan
-  have hq := s6Step10EarlyControl_plan_checked
-  have fv1 : s6Step10CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step10CompleteOut.fv.payload[2]?.getD s6Step10CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step10CompleteOut.fv.payload[3]?.getD s6Step10CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step10CompleteOut.fv.payload[4]?.getD s6Step10CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step10EntryFBefore s6Step10EarlyControlArena s6Step10FrontBank 256 11 ⟨256,255,12,10⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 2 s6Step10CompleteLog s6Step10FrontPlan Q
-    s6Step10Front_checked s6Step10Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step10Complete_owned s6Step10Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step10EarlyControlArena [774, 773, 772, 771, 770, 769] [895, 870] 769 863 s6Step10CompleteOut.fv.second (s6Step10CompleteOut.fv.payload[2]?.getD s6Step10CompleteOut.fv.sign) (s6Step10CompleteOut.fv.payload[3]?.getD s6Step10CompleteOut.fv.sign) (s6Step10CompleteOut.fv.payload[4]?.getD s6Step10CompleteOut.fv.sign) 862 2 s6Step10EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step10Complete_checked : (compileHmrEarlyStepLog s6Step10EntryFBefore s6Step10FrontBank 256 11 ⟨256,255,12,10⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 2 s6Step10CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step10Complete_explicit_checked]
-  rfl
-def s6Step11CompleteMoves : List (Wire × Wire) := []
-def s6Step11CompleteOut : WindowBank := s6Step11FrontOut.repacked s6Step11CompleteMoves
-def s6Step11CompleteLog : HmrEarlyStepLog := ⟨s6Step11FrontLog,s6Step11CompleteMoves,s6Step11EarlyControlLog⟩
-theorem s6Step11Complete_repack : s6Step11ExitGvAfter.checkRepack s6Step11CompleteMoves=some s6Step11EarlyControlArena := by rfl
-theorem s6Step11Complete_owned : (s6Step11CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step11EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step11EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step11Complete_apart : List.Disjoint (s6Step11CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [823, 807, 895, 870] := by
-  have nd : ((s6Step11CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[823, 807, 895, 870]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step11CompletePlan : HmrEarlyStepPlan := ⟨s6Step11FrontPlan,s6Step11EarlyControlArena,s6Step11EarlyControlPlan,s6Step11CompleteMoves⟩
-theorem s6Step11Complete_explicit_checked : compileHmrEarlyStepLog s6Step11EntryFBefore s6Step11FrontBank 256 12 ⟨256,255,13,11⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 3 s6Step11CompleteLog=some s6Step11CompletePlan := by
-  let Q := s6Step11EarlyControlPlan
-  have hq := s6Step11EarlyControl_plan_checked
-  have fv1 : s6Step11CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step11CompleteOut.fv.payload[2]?.getD s6Step11CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step11CompleteOut.fv.payload[3]?.getD s6Step11CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step11CompleteOut.fv.payload[4]?.getD s6Step11CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step11EntryFBefore s6Step11EarlyControlArena s6Step11FrontBank 256 12 ⟨256,255,13,11⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 3 s6Step11CompleteLog s6Step11FrontPlan Q
-    s6Step11Front_checked s6Step11Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step11Complete_owned s6Step11Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step11EarlyControlArena [774, 773, 772, 771, 770, 769] [895, 870] 769 823 s6Step11CompleteOut.fv.second (s6Step11CompleteOut.fv.payload[2]?.getD s6Step11CompleteOut.fv.sign) (s6Step11CompleteOut.fv.payload[3]?.getD s6Step11CompleteOut.fv.sign) (s6Step11CompleteOut.fv.payload[4]?.getD s6Step11CompleteOut.fv.sign) 807 3 s6Step11EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step11Complete_checked : (compileHmrEarlyStepLog s6Step11EntryFBefore s6Step11FrontBank 256 12 ⟨256,255,13,11⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870] 3 s6Step11CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step11Complete_explicit_checked]
-  rfl
-def s6Step12CompleteMoves : List (Wire × Wire) := []
-def s6Step12CompleteOut : WindowBank := s6Step12FrontOut.repacked s6Step12CompleteMoves
-def s6Step12CompleteLog : HmrEarlyStepLog := ⟨s6Step12FrontLog,s6Step12CompleteMoves,s6Step12EarlyControlLog⟩
-theorem s6Step12Complete_repack : s6Step12ExitGvAfter.checkRepack s6Step12CompleteMoves=some s6Step12EarlyControlArena := by rfl
-theorem s6Step12Complete_owned : (s6Step12CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step12EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step12EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step12Complete_apart : List.Disjoint (s6Step12CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [880, 813, 895, 870, 872] := by
-  have nd : ((s6Step12CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[880, 813, 895, 870, 872]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step12CompletePlan : HmrEarlyStepPlan := ⟨s6Step12FrontPlan,s6Step12EarlyControlArena,s6Step12EarlyControlPlan,s6Step12CompleteMoves⟩
-theorem s6Step12Complete_explicit_checked : compileHmrEarlyStepLog s6Step12EntryFBefore s6Step12FrontBank 256 13 ⟨256,255,14,12⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 3 s6Step12CompleteLog=some s6Step12CompletePlan := by
-  let Q := s6Step12EarlyControlPlan
-  have hq := s6Step12EarlyControl_plan_checked
-  have fv1 : s6Step12CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step12CompleteOut.fv.payload[2]?.getD s6Step12CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step12CompleteOut.fv.payload[3]?.getD s6Step12CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step12CompleteOut.fv.payload[4]?.getD s6Step12CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step12EntryFBefore s6Step12EarlyControlArena s6Step12FrontBank 256 13 ⟨256,255,14,12⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 3 s6Step12CompleteLog s6Step12FrontPlan Q
-    s6Step12Front_checked s6Step12Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step12Complete_owned s6Step12Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step12EarlyControlArena [774, 773, 772, 771, 770, 769] [895, 870, 872] 769 880 s6Step12CompleteOut.fv.second (s6Step12CompleteOut.fv.payload[2]?.getD s6Step12CompleteOut.fv.sign) (s6Step12CompleteOut.fv.payload[3]?.getD s6Step12CompleteOut.fv.sign) (s6Step12CompleteOut.fv.payload[4]?.getD s6Step12CompleteOut.fv.sign) 813 3 s6Step12EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step12Complete_checked : (compileHmrEarlyStepLog s6Step12EntryFBefore s6Step12FrontBank 256 13 ⟨256,255,14,12⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 3 s6Step12CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step12Complete_explicit_checked]
-  rfl
-def s6Step13CompleteMoves : List (Wire × Wire) := []
-def s6Step13CompleteOut : WindowBank := s6Step13FrontOut.repacked s6Step13CompleteMoves
-def s6Step13CompleteLog : HmrEarlyStepLog := ⟨s6Step13FrontLog,s6Step13CompleteMoves,s6Step13EarlyControlLog⟩
-theorem s6Step13Complete_repack : s6Step13ExitGvAfter.checkRepack s6Step13CompleteMoves=some s6Step13EarlyControlArena := by rfl
-theorem s6Step13Complete_owned : (s6Step13CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step13EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step13EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step13Complete_apart : List.Disjoint (s6Step13CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [864, 860, 895, 870, 872] := by
-  have nd : ((s6Step13CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[864, 860, 895, 870, 872]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step13CompletePlan : HmrEarlyStepPlan := ⟨s6Step13FrontPlan,s6Step13EarlyControlArena,s6Step13EarlyControlPlan,s6Step13CompleteMoves⟩
-theorem s6Step13Complete_explicit_checked : compileHmrEarlyStepLog s6Step13EntryFBefore s6Step13FrontBank 256 14 ⟨256,255,15,13⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 4 s6Step13CompleteLog=some s6Step13CompletePlan := by
-  let Q := s6Step13EarlyControlPlan
-  have hq := s6Step13EarlyControl_plan_checked
-  have fv1 : s6Step13CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step13CompleteOut.fv.payload[2]?.getD s6Step13CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step13CompleteOut.fv.payload[3]?.getD s6Step13CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step13CompleteOut.fv.payload[4]?.getD s6Step13CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step13EntryFBefore s6Step13EarlyControlArena s6Step13FrontBank 256 14 ⟨256,255,15,13⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 4 s6Step13CompleteLog s6Step13FrontPlan Q
-    s6Step13Front_checked s6Step13Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step13Complete_owned s6Step13Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step13EarlyControlArena [774, 773, 772, 771, 770, 769] [895, 870, 872] 769 864 s6Step13CompleteOut.fv.second (s6Step13CompleteOut.fv.payload[2]?.getD s6Step13CompleteOut.fv.sign) (s6Step13CompleteOut.fv.payload[3]?.getD s6Step13CompleteOut.fv.sign) (s6Step13CompleteOut.fv.payload[4]?.getD s6Step13CompleteOut.fv.sign) 860 4 s6Step13EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step13Complete_checked : (compileHmrEarlyStepLog s6Step13EntryFBefore s6Step13FrontBank 256 14 ⟨256,255,15,13⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872] 4 s6Step13CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step13Complete_explicit_checked]
-  rfl
-def s6Step14CompleteMoves : List (Wire × Wire) := []
-def s6Step14CompleteOut : WindowBank := s6Step14FrontOut.repacked s6Step14CompleteMoves
-def s6Step14CompleteLog : HmrEarlyStepLog := ⟨s6Step14FrontLog,s6Step14CompleteMoves,s6Step14EarlyControlLog⟩
-theorem s6Step14Complete_repack : s6Step14ExitGvAfter.checkRepack s6Step14CompleteMoves=some s6Step14EarlyControlArena := by rfl
-theorem s6Step14Complete_owned : (s6Step14CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]).toFinset⊆s6Step14EarlyControlArena.live := by
-  apply hmrLayout_owned_of_filter s6Step14EarlyControlArena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
-  decide +kernel
-theorem s6Step14Complete_apart : List.Disjoint (s6Step14CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769]) [828, 862, 895, 870, 872, 883] := by
-  have nd : ((s6Step14CompleteOut.rows.flatMap WindowRow.wires++[774, 773, 772, 771, 770, 769])++[828, 862, 895, 870, 872, 883]).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-def s6Step14CompletePlan : HmrEarlyStepPlan := ⟨s6Step14FrontPlan,s6Step14EarlyControlArena,s6Step14EarlyControlPlan,s6Step14CompleteMoves⟩
-theorem s6Step14Complete_explicit_checked : compileHmrEarlyStepLog s6Step14EntryFBefore s6Step14FrontBank 256 15 ⟨256,255,16,14⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872, 883] 4 s6Step14CompleteLog=some s6Step14CompletePlan := by
-  let Q := s6Step14EarlyControlPlan
-  have hq := s6Step14EarlyControl_plan_checked
-  have fv1 : s6Step14CompleteOut.fv.second=876 := by decide +kernel
-  have fv2 : s6Step14CompleteOut.fv.payload[2]?.getD s6Step14CompleteOut.fv.sign=793 := by decide +kernel
-  have fv3 : s6Step14CompleteOut.fv.payload[3]?.getD s6Step14CompleteOut.fv.sign=802 := by decide +kernel
-  have fv4 : s6Step14CompleteOut.fv.payload[4]?.getD s6Step14CompleteOut.fv.sign=779 := by decide +kernel
-  have result := compileHmrEarlyStepLog_of_parts s6Step14EntryFBefore s6Step14EarlyControlArena s6Step14FrontBank 256 15 ⟨256,255,16,14⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872, 883] 4 s6Step14CompleteLog s6Step14FrontPlan Q
-    s6Step14Front_checked s6Step14Complete_repack
-    (And.intro (by decide +kernel) (And.intro (by decide +kernel) (And.intro s6Step14Complete_owned s6Step14Complete_apart)))
-    (by
-      change compileHmrEarlyControlLog s6Step14EarlyControlArena [774, 773, 772, 771, 770, 769] [895, 870, 872, 883] 769 828 s6Step14CompleteOut.fv.second (s6Step14CompleteOut.fv.payload[2]?.getD s6Step14CompleteOut.fv.sign) (s6Step14CompleteOut.fv.payload[3]?.getD s6Step14CompleteOut.fv.sign) (s6Step14CompleteOut.fv.payload[4]?.getD s6Step14CompleteOut.fv.sign) 862 4 s6Step14EarlyControlLog=some Q
-      rw [fv1,fv2,fv3,fv4]
-      exact hq)
-  exact result
-theorem s6Step14Complete_checked : (compileHmrEarlyStepLog s6Step14EntryFBefore s6Step14FrontBank 256 15 ⟨256,255,16,14⟩ 0 [774, 773, 772, 771, 770, 769] [895, 870, 872, 883] 4 s6Step14CompleteLog).map (fun _ => true)=some true := by
-  rw [s6Step14Complete_explicit_checked]
+theorem s2Step31Complete_checked : (compileHmrEarlyStepLog s2Step31EntryFBefore s2Step31FrontBank 253 29 ⟨253,251,29,28⟩ 0 [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 13 s2Step31CompleteLog).map (fun _ => true)=some true := by
+  rw [s2Step31Complete_explicit_checked]
   rfl
 
 end ECDSAAdd.Arithmetic.Paper935

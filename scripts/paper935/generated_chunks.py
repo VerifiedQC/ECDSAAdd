@@ -6,7 +6,7 @@ The public umbrella and all declaration names stay stable.
 import re
 from arena_sharing import expand_arena_aliases,read_arena_aliases
 
-def write_step_chunks(path,text,check=False,limit=16):
+def write_step_chunks(path,text,check=False,limit=16,key_pattern=r'(s[26]Step\d+)\w*'):
     if path.stem not in ('HmrSourceEntryParts','HmrSourceHeadroomParts','HmrSourceExitParts'):
         text=expand_arena_aliases(text,read_arena_aliases(path.parent))
     namespace='namespace ECDSAAdd.Arithmetic.Paper935'
@@ -14,7 +14,7 @@ def write_step_chunks(path,text,check=False,limit=16):
     header,body=text.split(namespace,1)
     body=body.rsplit(ending,1)[0].strip()+'\n'
     starts=[];previous=None
-    for match in re.finditer(r'^(?:def|theorem) (s[26]Step\d+)\w*',body,re.M):
+    for match in re.finditer(r'^(?:def|theorem) '+key_pattern,body,re.M):
         key=match.group(1)
         if key!=previous:
             starts.append((match.start(),key));previous=key

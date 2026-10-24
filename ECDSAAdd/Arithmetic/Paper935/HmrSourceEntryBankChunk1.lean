@@ -3,1013 +3,1013 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryBankChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s2Step498EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901],768⟩
-def s2Step498EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845],769⟩
-def s2Step498EntryFvOut : WindowRow := ⟨[255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791],770⟩
-def s2Step498EntryGvOut : WindowRow := ⟨[767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790],771⟩
-theorem s2Step498EntryBank_incomingDistinct : ([s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step16EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step16EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783],769⟩
+def s2Step16EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817],770⟩
+def s2Step16EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 780],771⟩
+theorem s2Step16EntryBank_incomingDistinct : ([s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498EntryBank_outgoingOwned : rowsOwned s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] := by
+theorem s2Step16EntryBank_outgoingOwned : rowsOwned s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s2Step498EntryGvAfter (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<916)) rfl
+  · apply hmrLayout_owned_of_filter s2Step16EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498EntryF_Incoming : rowsOwned s2Step498EntryFBefore [s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] := by
+theorem s2Step16EntryF_Incoming : rowsOwned s2Step16EntryFBefore [s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] 0 s2Step498EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498EntryFBefore (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<901) ∨ (902≤q ∧ q<916)) rfl
+  · exact hmrRows_distinct_drop [s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] 0 s2Step16EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<814) ∨ (815≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498EntryF_Outgoing : rowsOwned s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] :=
-  hmrRows_owned_drop s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] 0 s2Step498EntryBank_outgoingOwned
-theorem s2Step498EntryG_Incoming : rowsOwned s2Step498EntryGBefore [s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] := by
+theorem s2Step16EntryF_Outgoing : rowsOwned s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] :=
+  hmrRows_owned_drop s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] 0 s2Step16EntryBank_outgoingOwned
+theorem s2Step16EntryG_Incoming : rowsOwned s2Step16EntryGBefore [s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] 1 s2Step498EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498EntryGBefore (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<916)) rfl
+  · exact hmrRows_distinct_drop [s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] 1 s2Step16EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<814) ∨ (815≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498EntryG_Outgoing : rowsOwned s2Step498EntryGvAfter [s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] :=
-  hmrRows_owned_drop s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] 1 s2Step498EntryBank_outgoingOwned
-theorem s2Step498EntryFv_Incoming : rowsOwned s2Step498EntryFvBefore [s2Step498EntryFvRow,s2Step498EntryGvRow] := by
+theorem s2Step16EntryG_Outgoing : rowsOwned s2Step16EntryGvAfter [s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] :=
+  hmrRows_owned_drop s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] 1 s2Step16EntryBank_outgoingOwned
+theorem s2Step16EntryFv_Incoming : rowsOwned s2Step16EntryFvBefore [s2Step16EntryFvRow,s2Step16EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] 2 s2Step498EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498EntryFvBefore (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<916)) rfl
+  · exact hmrRows_distinct_drop [s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] 2 s2Step16EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<814) ∨ (815≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498EntryFv_Outgoing : rowsOwned s2Step498EntryGvAfter [s2Step498EntryFvOut,s2Step498EntryGvOut] :=
-  hmrRows_owned_drop s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] 2 s2Step498EntryBank_outgoingOwned
-theorem s2Step498EntryGv_Incoming : rowsOwned s2Step498EntryGvBefore [s2Step498EntryGvRow] := by
+theorem s2Step16EntryFv_Outgoing : rowsOwned s2Step16EntryGvAfter [s2Step16EntryFvOut,s2Step16EntryGvOut] :=
+  hmrRows_owned_drop s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] 2 s2Step16EntryBank_outgoingOwned
+theorem s2Step16EntryGv_Incoming : rowsOwned s2Step16EntryGvBefore [s2Step16EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow] 3 s2Step498EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498EntryGvBefore (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<916)) rfl
+  · exact hmrRows_distinct_drop [s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow] 3 s2Step16EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<814) ∨ (815≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498EntryGv_Outgoing : rowsOwned s2Step498EntryGvAfter [s2Step498EntryGvOut] :=
-  hmrRows_owned_drop s2Step498EntryGvAfter [s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut] 3 s2Step498EntryBank_outgoingOwned
-theorem s2Step498EntryBank_rows : planWindowRowsLog s2Step498EntryFBefore [(s2Step498EntryFRow,25),(s2Step498EntryGRow,25),(s2Step498EntryFvRow,266),(s2Step498EntryGvRow,266)] [s2Step498EntryFFresh,s2Step498EntryGFresh,s2Step498EntryFvFresh,s2Step498EntryGvFresh]=
-    some (s2Step498EntryGvAfter,[s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut],(growRow 768 s2Step498EntryFFresh ++ (growRow 769 s2Step498EntryGFresh ++ (growRow 770 s2Step498EntryFvFresh ++ (growRow 771 s2Step498EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s2Step498EntryGvAfter [] []=some (s2Step498EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s2Step498EntryGvBefore s2Step498EntryGvAfter s2Step498EntryGvAfter
-    s2Step498EntryGvRow s2Step498EntryGvOut 266 s2Step498EntryGvFresh [] [] []
-    (growRow 771 s2Step498EntryGvFresh) ([]) s2Step498EntryGv_Incoming s2Step498EntryGv_checked h4 s2Step498EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s2Step498EntryFvBefore s2Step498EntryFvAfter s2Step498EntryGvAfter
-    s2Step498EntryFvRow s2Step498EntryFvOut 266 s2Step498EntryFvFresh [(s2Step498EntryGvRow,266)] [s2Step498EntryGvFresh] [s2Step498EntryGvOut]
-    (growRow 770 s2Step498EntryFvFresh) ((growRow 771 s2Step498EntryGvFresh ++ [])) s2Step498EntryFv_Incoming s2Step498EntryFv_checked h3 s2Step498EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s2Step498EntryGBefore s2Step498EntryGAfter s2Step498EntryGvAfter
-    s2Step498EntryGRow s2Step498EntryGOut 25 s2Step498EntryGFresh [(s2Step498EntryFvRow,266),(s2Step498EntryGvRow,266)] [s2Step498EntryFvFresh,s2Step498EntryGvFresh] [s2Step498EntryFvOut,s2Step498EntryGvOut]
-    (growRow 769 s2Step498EntryGFresh) ((growRow 770 s2Step498EntryFvFresh ++ (growRow 771 s2Step498EntryGvFresh ++ []))) s2Step498EntryG_Incoming s2Step498EntryG_checked h2 s2Step498EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s2Step498EntryFBefore s2Step498EntryFAfter s2Step498EntryGvAfter
-    s2Step498EntryFRow s2Step498EntryFOut 25 s2Step498EntryFFresh [(s2Step498EntryGRow,25),(s2Step498EntryFvRow,266),(s2Step498EntryGvRow,266)] [s2Step498EntryGFresh,s2Step498EntryFvFresh,s2Step498EntryGvFresh] [s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut]
-    (growRow 768 s2Step498EntryFFresh) ((growRow 769 s2Step498EntryGFresh ++ (growRow 770 s2Step498EntryFvFresh ++ (growRow 771 s2Step498EntryGvFresh ++ [])))) s2Step498EntryF_Incoming s2Step498EntryF_checked h1 s2Step498EntryF_Outgoing
+theorem s2Step16EntryGv_Outgoing : rowsOwned s2Step16EntryGvAfter [s2Step16EntryGvOut] :=
+  hmrRows_owned_drop s2Step16EntryGvAfter [s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut] 3 s2Step16EntryBank_outgoingOwned
+theorem s2Step16EntryBank_rows : planWindowRowsLog s2Step16EntryFBefore [(s2Step16EntryFRow,256),(s2Step16EntryGRow,256),(s2Step16EntryFvRow,17),(s2Step16EntryGvRow,17)] [s2Step16EntryFFresh,s2Step16EntryGFresh,s2Step16EntryFvFresh,s2Step16EntryGvFresh]=
+    some (s2Step16EntryGvAfter,[s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut],(growRow 768 s2Step16EntryFFresh ++ (growRow 769 s2Step16EntryGFresh ++ (growRow 770 s2Step16EntryFvFresh ++ (growRow 771 s2Step16EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step16EntryGvAfter [] []=some (s2Step16EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step16EntryGvBefore s2Step16EntryGvAfter s2Step16EntryGvAfter
+    s2Step16EntryGvRow s2Step16EntryGvOut 17 s2Step16EntryGvFresh [] [] []
+    (growRow 771 s2Step16EntryGvFresh) ([]) s2Step16EntryGv_Incoming s2Step16EntryGv_checked h4 s2Step16EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step16EntryFvBefore s2Step16EntryFvAfter s2Step16EntryGvAfter
+    s2Step16EntryFvRow s2Step16EntryFvOut 17 s2Step16EntryFvFresh [(s2Step16EntryGvRow,17)] [s2Step16EntryGvFresh] [s2Step16EntryGvOut]
+    (growRow 770 s2Step16EntryFvFresh) ((growRow 771 s2Step16EntryGvFresh ++ [])) s2Step16EntryFv_Incoming s2Step16EntryFv_checked h3 s2Step16EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step16EntryGBefore s2Step16EntryGAfter s2Step16EntryGvAfter
+    s2Step16EntryGRow s2Step16EntryGOut 256 s2Step16EntryGFresh [(s2Step16EntryFvRow,17),(s2Step16EntryGvRow,17)] [s2Step16EntryFvFresh,s2Step16EntryGvFresh] [s2Step16EntryFvOut,s2Step16EntryGvOut]
+    (growRow 769 s2Step16EntryGFresh) ((growRow 770 s2Step16EntryFvFresh ++ (growRow 771 s2Step16EntryGvFresh ++ []))) s2Step16EntryG_Incoming s2Step16EntryG_checked h2 s2Step16EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step16EntryFBefore s2Step16EntryFAfter s2Step16EntryGvAfter
+    s2Step16EntryFRow s2Step16EntryFOut 256 s2Step16EntryFFresh [(s2Step16EntryGRow,256),(s2Step16EntryFvRow,17),(s2Step16EntryGvRow,17)] [s2Step16EntryGFresh,s2Step16EntryFvFresh,s2Step16EntryGvFresh] [s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut]
+    (growRow 768 s2Step16EntryFFresh) ((growRow 769 s2Step16EntryGFresh ++ (growRow 770 s2Step16EntryFvFresh ++ (growRow 771 s2Step16EntryGvFresh ++ [])))) s2Step16EntryF_Incoming s2Step16EntryF_checked h1 s2Step16EntryF_Outgoing
   exact h0
-theorem s2Step498EntryBank_checked : compileHmrBankResizeLog .entry s2Step498EntryFBefore ⟨s2Step498EntryFRow,s2Step498EntryGRow,s2Step498EntryFvRow,s2Step498EntryGvRow⟩ ⟨25,25,266,266⟩ [s2Step498EntryFFresh,s2Step498EntryGFresh,s2Step498EntryFvFresh,s2Step498EntryGvFresh]=
-    some (s2Step498EntryGvAfter,⟨s2Step498EntryFOut,s2Step498EntryGOut,s2Step498EntryFvOut,s2Step498EntryGvOut⟩,(growRow 768 s2Step498EntryFFresh ++ (growRow 769 s2Step498EntryGFresh ++ (growRow 770 s2Step498EntryFvFresh ++ (growRow 771 s2Step498EntryGvFresh ++ []))))) := by
+theorem s2Step16EntryBank_checked : compileHmrBankResizeLog .entry s2Step16EntryFBefore ⟨s2Step16EntryFRow,s2Step16EntryGRow,s2Step16EntryFvRow,s2Step16EntryGvRow⟩ ⟨256,256,17,17⟩ [s2Step16EntryFFresh,s2Step16EntryGFresh,s2Step16EntryFvFresh,s2Step16EntryGvFresh]=
+    some (s2Step16EntryGvAfter,⟨s2Step16EntryFOut,s2Step16EntryGOut,s2Step16EntryFvOut,s2Step16EntryGvOut⟩,(growRow 768 s2Step16EntryFFresh ++ (growRow 769 s2Step16EntryGFresh ++ (growRow 770 s2Step16EntryFvFresh ++ (growRow 771 s2Step16EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s2Step498EntryBank_rows]
+  rw [s2Step16EntryBank_rows]
   rfl
-def s6Step0EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step0EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255],777⟩
-def s6Step0EntryFvOut : WindowRow := ⟨[768],776⟩
-def s6Step0EntryGvOut : WindowRow := ⟨[859],775⟩
-theorem s6Step0EntryBank_incomingDistinct : ([s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step17EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step17EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 781],769⟩
+def s2Step17EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820],770⟩
+def s2Step17EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 780],771⟩
+theorem s2Step17EntryBank_incomingDistinct : ([s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0EntryBank_outgoingOwned : rowsOwned s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] := by
+theorem s2Step17EntryBank_outgoingOwned : rowsOwned s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step0EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860)) rfl
+  · apply hmrLayout_owned_of_filter s2Step17EntryGvAfter (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0EntryF_Incoming : rowsOwned s6Step0EntryFBefore [s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] := by
+theorem s2Step17EntryF_Incoming : rowsOwned s2Step17EntryFBefore [s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] 0 s6Step0EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860)) rfl
+  · exact hmrRows_distinct_drop [s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] 0 s2Step17EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0EntryF_Outgoing : rowsOwned s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] :=
-  hmrRows_owned_drop s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] 0 s6Step0EntryBank_outgoingOwned
-theorem s6Step0EntryG_Incoming : rowsOwned s6Step0EntryGBefore [s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] := by
+theorem s2Step17EntryF_Outgoing : rowsOwned s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] :=
+  hmrRows_owned_drop s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] 0 s2Step17EntryBank_outgoingOwned
+theorem s2Step17EntryG_Incoming : rowsOwned s2Step17EntryGBefore [s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] 1 s6Step0EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860)) rfl
+  · exact hmrRows_distinct_drop [s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] 1 s2Step17EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0EntryG_Outgoing : rowsOwned s6Step0EntryGvAfter [s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] :=
-  hmrRows_owned_drop s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] 1 s6Step0EntryBank_outgoingOwned
-theorem s6Step0EntryFv_Incoming : rowsOwned s6Step0EntryFvBefore [s6Step0EntryFvRow,s6Step0EntryGvRow] := by
+theorem s2Step17EntryG_Outgoing : rowsOwned s2Step17EntryGvAfter [s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] :=
+  hmrRows_owned_drop s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] 1 s2Step17EntryBank_outgoingOwned
+theorem s2Step17EntryFv_Incoming : rowsOwned s2Step17EntryFvBefore [s2Step17EntryFvRow,s2Step17EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] 2 s6Step0EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860)) rfl
+  · exact hmrRows_distinct_drop [s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] 2 s2Step17EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0EntryFv_Outgoing : rowsOwned s6Step0EntryGvAfter [s6Step0EntryFvOut,s6Step0EntryGvOut] :=
-  hmrRows_owned_drop s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] 2 s6Step0EntryBank_outgoingOwned
-theorem s6Step0EntryGv_Incoming : rowsOwned s6Step0EntryGvBefore [s6Step0EntryGvRow] := by
+theorem s2Step17EntryFv_Outgoing : rowsOwned s2Step17EntryGvAfter [s2Step17EntryFvOut,s2Step17EntryGvOut] :=
+  hmrRows_owned_drop s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] 2 s2Step17EntryBank_outgoingOwned
+theorem s2Step17EntryGv_Incoming : rowsOwned s2Step17EntryGvBefore [s2Step17EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow] 3 s6Step0EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860)) rfl
+  · exact hmrRows_distinct_drop [s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow] 3 s2Step17EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<816) ∨ (817≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0EntryGv_Outgoing : rowsOwned s6Step0EntryGvAfter [s6Step0EntryGvOut] :=
-  hmrRows_owned_drop s6Step0EntryGvAfter [s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut] 3 s6Step0EntryBank_outgoingOwned
-theorem s6Step0EntryBank_rows : planWindowRowsLog s6Step0EntryFBefore [(s6Step0EntryFRow,256),(s6Step0EntryGRow,256),(s6Step0EntryFvRow,1),(s6Step0EntryGvRow,1)] [s6Step0EntryFFresh,s6Step0EntryGFresh,s6Step0EntryFvFresh,s6Step0EntryGvFresh]=
-    some (s6Step0EntryGvAfter,[s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut],(growRow 795 s6Step0EntryFFresh ++ (growRow 777 s6Step0EntryGFresh ++ (growRow 776 s6Step0EntryFvFresh ++ (growRow 775 s6Step0EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step0EntryGvAfter [] []=some (s6Step0EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step0EntryGvBefore s6Step0EntryGvAfter s6Step0EntryGvAfter
-    s6Step0EntryGvRow s6Step0EntryGvOut 1 s6Step0EntryGvFresh [] [] []
-    (growRow 775 s6Step0EntryGvFresh) ([]) s6Step0EntryGv_Incoming s6Step0EntryGv_checked h4 s6Step0EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step0EntryFvBefore s6Step0EntryFvAfter s6Step0EntryGvAfter
-    s6Step0EntryFvRow s6Step0EntryFvOut 1 s6Step0EntryFvFresh [(s6Step0EntryGvRow,1)] [s6Step0EntryGvFresh] [s6Step0EntryGvOut]
-    (growRow 776 s6Step0EntryFvFresh) ((growRow 775 s6Step0EntryGvFresh ++ [])) s6Step0EntryFv_Incoming s6Step0EntryFv_checked h3 s6Step0EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step0EntryGBefore s6Step0EntryGAfter s6Step0EntryGvAfter
-    s6Step0EntryGRow s6Step0EntryGOut 256 s6Step0EntryGFresh [(s6Step0EntryFvRow,1),(s6Step0EntryGvRow,1)] [s6Step0EntryFvFresh,s6Step0EntryGvFresh] [s6Step0EntryFvOut,s6Step0EntryGvOut]
-    (growRow 777 s6Step0EntryGFresh) ((growRow 776 s6Step0EntryFvFresh ++ (growRow 775 s6Step0EntryGvFresh ++ []))) s6Step0EntryG_Incoming s6Step0EntryG_checked h2 s6Step0EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step0EntryFBefore s6Step0EntryFAfter s6Step0EntryGvAfter
-    s6Step0EntryFRow s6Step0EntryFOut 256 s6Step0EntryFFresh [(s6Step0EntryGRow,256),(s6Step0EntryFvRow,1),(s6Step0EntryGvRow,1)] [s6Step0EntryGFresh,s6Step0EntryFvFresh,s6Step0EntryGvFresh] [s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut]
-    (growRow 795 s6Step0EntryFFresh) ((growRow 777 s6Step0EntryGFresh ++ (growRow 776 s6Step0EntryFvFresh ++ (growRow 775 s6Step0EntryGvFresh ++ [])))) s6Step0EntryF_Incoming s6Step0EntryF_checked h1 s6Step0EntryF_Outgoing
+theorem s2Step17EntryGv_Outgoing : rowsOwned s2Step17EntryGvAfter [s2Step17EntryGvOut] :=
+  hmrRows_owned_drop s2Step17EntryGvAfter [s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut] 3 s2Step17EntryBank_outgoingOwned
+theorem s2Step17EntryBank_rows : planWindowRowsLog s2Step17EntryFBefore [(s2Step17EntryFRow,256),(s2Step17EntryGRow,256),(s2Step17EntryFvRow,18),(s2Step17EntryGvRow,18)] [s2Step17EntryFFresh,s2Step17EntryGFresh,s2Step17EntryFvFresh,s2Step17EntryGvFresh]=
+    some (s2Step17EntryGvAfter,[s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut],(growRow 768 s2Step17EntryFFresh ++ (growRow 769 s2Step17EntryGFresh ++ (growRow 770 s2Step17EntryFvFresh ++ (growRow 771 s2Step17EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step17EntryGvAfter [] []=some (s2Step17EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step17EntryGvBefore s2Step17EntryGvAfter s2Step17EntryGvAfter
+    s2Step17EntryGvRow s2Step17EntryGvOut 18 s2Step17EntryGvFresh [] [] []
+    (growRow 771 s2Step17EntryGvFresh) ([]) s2Step17EntryGv_Incoming s2Step17EntryGv_checked h4 s2Step17EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step17EntryFvBefore s2Step17EntryFvAfter s2Step17EntryGvAfter
+    s2Step17EntryFvRow s2Step17EntryFvOut 18 s2Step17EntryFvFresh [(s2Step17EntryGvRow,18)] [s2Step17EntryGvFresh] [s2Step17EntryGvOut]
+    (growRow 770 s2Step17EntryFvFresh) ((growRow 771 s2Step17EntryGvFresh ++ [])) s2Step17EntryFv_Incoming s2Step17EntryFv_checked h3 s2Step17EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step17EntryGBefore s2Step17EntryGAfter s2Step17EntryGvAfter
+    s2Step17EntryGRow s2Step17EntryGOut 256 s2Step17EntryGFresh [(s2Step17EntryFvRow,18),(s2Step17EntryGvRow,18)] [s2Step17EntryFvFresh,s2Step17EntryGvFresh] [s2Step17EntryFvOut,s2Step17EntryGvOut]
+    (growRow 769 s2Step17EntryGFresh) ((growRow 770 s2Step17EntryFvFresh ++ (growRow 771 s2Step17EntryGvFresh ++ []))) s2Step17EntryG_Incoming s2Step17EntryG_checked h2 s2Step17EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step17EntryFBefore s2Step17EntryFAfter s2Step17EntryGvAfter
+    s2Step17EntryFRow s2Step17EntryFOut 256 s2Step17EntryFFresh [(s2Step17EntryGRow,256),(s2Step17EntryFvRow,18),(s2Step17EntryGvRow,18)] [s2Step17EntryGFresh,s2Step17EntryFvFresh,s2Step17EntryGvFresh] [s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut]
+    (growRow 768 s2Step17EntryFFresh) ((growRow 769 s2Step17EntryGFresh ++ (growRow 770 s2Step17EntryFvFresh ++ (growRow 771 s2Step17EntryGvFresh ++ [])))) s2Step17EntryF_Incoming s2Step17EntryF_checked h1 s2Step17EntryF_Outgoing
   exact h0
-theorem s6Step0EntryBank_checked : compileHmrBankResizeLog .entry s6Step0EntryFBefore ⟨s6Step0EntryFRow,s6Step0EntryGRow,s6Step0EntryFvRow,s6Step0EntryGvRow⟩ ⟨256,256,1,1⟩ [s6Step0EntryFFresh,s6Step0EntryGFresh,s6Step0EntryFvFresh,s6Step0EntryGvFresh]=
-    some (s6Step0EntryGvAfter,⟨s6Step0EntryFOut,s6Step0EntryGOut,s6Step0EntryFvOut,s6Step0EntryGvOut⟩,(growRow 795 s6Step0EntryFFresh ++ (growRow 777 s6Step0EntryGFresh ++ (growRow 776 s6Step0EntryFvFresh ++ (growRow 775 s6Step0EntryGvFresh ++ []))))) := by
+theorem s2Step17EntryBank_checked : compileHmrBankResizeLog .entry s2Step17EntryFBefore ⟨s2Step17EntryFRow,s2Step17EntryGRow,s2Step17EntryFvRow,s2Step17EntryGvRow⟩ ⟨256,256,18,18⟩ [s2Step17EntryFFresh,s2Step17EntryGFresh,s2Step17EntryFvFresh,s2Step17EntryGvFresh]=
+    some (s2Step17EntryGvAfter,⟨s2Step17EntryFOut,s2Step17EntryGOut,s2Step17EntryFvOut,s2Step17EntryGvOut⟩,(growRow 768 s2Step17EntryFFresh ++ (growRow 769 s2Step17EntryGFresh ++ (growRow 770 s2Step17EntryFvFresh ++ (growRow 771 s2Step17EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step0EntryBank_rows]
+  rw [s2Step17EntryBank_rows]
   rfl
-def s6Step1EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step1EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step1EntryFvOut : WindowRow := ⟨[255, 876],776⟩
-def s6Step1EntryGvOut : WindowRow := ⟨[859, 887],775⟩
-theorem s6Step1EntryBank_incomingDistinct : ([s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step18EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step18EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 784],769⟩
+def s2Step18EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822],770⟩
+def s2Step18EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 780],771⟩
+theorem s2Step18EntryBank_incomingDistinct : ([s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1EntryBank_outgoingOwned : rowsOwned s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] := by
+theorem s2Step18EntryBank_outgoingOwned : rowsOwned s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step1EntryGvAfter (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · apply hmrLayout_owned_of_filter s2Step18EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1EntryF_Incoming : rowsOwned s6Step1EntryFBefore [s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] := by
+theorem s2Step18EntryF_Incoming : rowsOwned s2Step18EntryFBefore [s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] 0 s6Step1EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1EntryFBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] 0 s2Step18EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1EntryF_Outgoing : rowsOwned s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] :=
-  hmrRows_owned_drop s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] 0 s6Step1EntryBank_outgoingOwned
-theorem s6Step1EntryG_Incoming : rowsOwned s6Step1EntryGBefore [s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] := by
+theorem s2Step18EntryF_Outgoing : rowsOwned s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] :=
+  hmrRows_owned_drop s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] 0 s2Step18EntryBank_outgoingOwned
+theorem s2Step18EntryG_Incoming : rowsOwned s2Step18EntryGBefore [s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] 1 s6Step1EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1EntryGBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] 1 s2Step18EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1EntryG_Outgoing : rowsOwned s6Step1EntryGvAfter [s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] :=
-  hmrRows_owned_drop s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] 1 s6Step1EntryBank_outgoingOwned
-theorem s6Step1EntryFv_Incoming : rowsOwned s6Step1EntryFvBefore [s6Step1EntryFvRow,s6Step1EntryGvRow] := by
+theorem s2Step18EntryG_Outgoing : rowsOwned s2Step18EntryGvAfter [s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] :=
+  hmrRows_owned_drop s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] 1 s2Step18EntryBank_outgoingOwned
+theorem s2Step18EntryFv_Incoming : rowsOwned s2Step18EntryFvBefore [s2Step18EntryFvRow,s2Step18EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] 2 s6Step1EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1EntryFvBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] 2 s2Step18EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1EntryFv_Outgoing : rowsOwned s6Step1EntryGvAfter [s6Step1EntryFvOut,s6Step1EntryGvOut] :=
-  hmrRows_owned_drop s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] 2 s6Step1EntryBank_outgoingOwned
-theorem s6Step1EntryGv_Incoming : rowsOwned s6Step1EntryGvBefore [s6Step1EntryGvRow] := by
+theorem s2Step18EntryFv_Outgoing : rowsOwned s2Step18EntryGvAfter [s2Step18EntryFvOut,s2Step18EntryGvOut] :=
+  hmrRows_owned_drop s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] 2 s2Step18EntryBank_outgoingOwned
+theorem s2Step18EntryGv_Incoming : rowsOwned s2Step18EntryGvBefore [s2Step18EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow] 3 s6Step1EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1EntryGvBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow] 3 s2Step18EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1EntryGv_Outgoing : rowsOwned s6Step1EntryGvAfter [s6Step1EntryGvOut] :=
-  hmrRows_owned_drop s6Step1EntryGvAfter [s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut] 3 s6Step1EntryBank_outgoingOwned
-theorem s6Step1EntryBank_rows : planWindowRowsLog s6Step1EntryFBefore [(s6Step1EntryFRow,256),(s6Step1EntryGRow,256),(s6Step1EntryFvRow,2),(s6Step1EntryGvRow,2)] [s6Step1EntryFFresh,s6Step1EntryGFresh,s6Step1EntryFvFresh,s6Step1EntryGvFresh]=
-    some (s6Step1EntryGvAfter,[s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut],(growRow 795 s6Step1EntryFFresh ++ (growRow 777 s6Step1EntryGFresh ++ (growRow 776 s6Step1EntryFvFresh ++ (growRow 775 s6Step1EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step1EntryGvAfter [] []=some (s6Step1EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step1EntryGvBefore s6Step1EntryGvAfter s6Step1EntryGvAfter
-    s6Step1EntryGvRow s6Step1EntryGvOut 2 s6Step1EntryGvFresh [] [] []
-    (growRow 775 s6Step1EntryGvFresh) ([]) s6Step1EntryGv_Incoming s6Step1EntryGv_checked h4 s6Step1EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step1EntryFvBefore s6Step1EntryFvAfter s6Step1EntryGvAfter
-    s6Step1EntryFvRow s6Step1EntryFvOut 2 s6Step1EntryFvFresh [(s6Step1EntryGvRow,2)] [s6Step1EntryGvFresh] [s6Step1EntryGvOut]
-    (growRow 776 s6Step1EntryFvFresh) ((growRow 775 s6Step1EntryGvFresh ++ [])) s6Step1EntryFv_Incoming s6Step1EntryFv_checked h3 s6Step1EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step1EntryGBefore s6Step1EntryGAfter s6Step1EntryGvAfter
-    s6Step1EntryGRow s6Step1EntryGOut 256 s6Step1EntryGFresh [(s6Step1EntryFvRow,2),(s6Step1EntryGvRow,2)] [s6Step1EntryFvFresh,s6Step1EntryGvFresh] [s6Step1EntryFvOut,s6Step1EntryGvOut]
-    (growRow 777 s6Step1EntryGFresh) ((growRow 776 s6Step1EntryFvFresh ++ (growRow 775 s6Step1EntryGvFresh ++ []))) s6Step1EntryG_Incoming s6Step1EntryG_checked h2 s6Step1EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step1EntryFBefore s6Step1EntryFAfter s6Step1EntryGvAfter
-    s6Step1EntryFRow s6Step1EntryFOut 256 s6Step1EntryFFresh [(s6Step1EntryGRow,256),(s6Step1EntryFvRow,2),(s6Step1EntryGvRow,2)] [s6Step1EntryGFresh,s6Step1EntryFvFresh,s6Step1EntryGvFresh] [s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut]
-    (growRow 795 s6Step1EntryFFresh) ((growRow 777 s6Step1EntryGFresh ++ (growRow 776 s6Step1EntryFvFresh ++ (growRow 775 s6Step1EntryGvFresh ++ [])))) s6Step1EntryF_Incoming s6Step1EntryF_checked h1 s6Step1EntryF_Outgoing
+theorem s2Step18EntryGv_Outgoing : rowsOwned s2Step18EntryGvAfter [s2Step18EntryGvOut] :=
+  hmrRows_owned_drop s2Step18EntryGvAfter [s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut] 3 s2Step18EntryBank_outgoingOwned
+theorem s2Step18EntryBank_rows : planWindowRowsLog s2Step18EntryFBefore [(s2Step18EntryFRow,256),(s2Step18EntryGRow,256),(s2Step18EntryFvRow,19),(s2Step18EntryGvRow,19)] [s2Step18EntryFFresh,s2Step18EntryGFresh,s2Step18EntryFvFresh,s2Step18EntryGvFresh]=
+    some (s2Step18EntryGvAfter,[s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut],(growRow 768 s2Step18EntryFFresh ++ (growRow 769 s2Step18EntryGFresh ++ (growRow 770 s2Step18EntryFvFresh ++ (growRow 771 s2Step18EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step18EntryGvAfter [] []=some (s2Step18EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step18EntryGvBefore s2Step18EntryGvAfter s2Step18EntryGvAfter
+    s2Step18EntryGvRow s2Step18EntryGvOut 19 s2Step18EntryGvFresh [] [] []
+    (growRow 771 s2Step18EntryGvFresh) ([]) s2Step18EntryGv_Incoming s2Step18EntryGv_checked h4 s2Step18EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step18EntryFvBefore s2Step18EntryFvAfter s2Step18EntryGvAfter
+    s2Step18EntryFvRow s2Step18EntryFvOut 19 s2Step18EntryFvFresh [(s2Step18EntryGvRow,19)] [s2Step18EntryGvFresh] [s2Step18EntryGvOut]
+    (growRow 770 s2Step18EntryFvFresh) ((growRow 771 s2Step18EntryGvFresh ++ [])) s2Step18EntryFv_Incoming s2Step18EntryFv_checked h3 s2Step18EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step18EntryGBefore s2Step18EntryGAfter s2Step18EntryGvAfter
+    s2Step18EntryGRow s2Step18EntryGOut 256 s2Step18EntryGFresh [(s2Step18EntryFvRow,19),(s2Step18EntryGvRow,19)] [s2Step18EntryFvFresh,s2Step18EntryGvFresh] [s2Step18EntryFvOut,s2Step18EntryGvOut]
+    (growRow 769 s2Step18EntryGFresh) ((growRow 770 s2Step18EntryFvFresh ++ (growRow 771 s2Step18EntryGvFresh ++ []))) s2Step18EntryG_Incoming s2Step18EntryG_checked h2 s2Step18EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step18EntryFBefore s2Step18EntryFAfter s2Step18EntryGvAfter
+    s2Step18EntryFRow s2Step18EntryFOut 256 s2Step18EntryFFresh [(s2Step18EntryGRow,256),(s2Step18EntryFvRow,19),(s2Step18EntryGvRow,19)] [s2Step18EntryGFresh,s2Step18EntryFvFresh,s2Step18EntryGvFresh] [s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut]
+    (growRow 768 s2Step18EntryFFresh) ((growRow 769 s2Step18EntryGFresh ++ (growRow 770 s2Step18EntryFvFresh ++ (growRow 771 s2Step18EntryGvFresh ++ [])))) s2Step18EntryF_Incoming s2Step18EntryF_checked h1 s2Step18EntryF_Outgoing
   exact h0
-theorem s6Step1EntryBank_checked : compileHmrBankResizeLog .entry s6Step1EntryFBefore ⟨s6Step1EntryFRow,s6Step1EntryGRow,s6Step1EntryFvRow,s6Step1EntryGvRow⟩ ⟨256,256,2,2⟩ [s6Step1EntryFFresh,s6Step1EntryGFresh,s6Step1EntryFvFresh,s6Step1EntryGvFresh]=
-    some (s6Step1EntryGvAfter,⟨s6Step1EntryFOut,s6Step1EntryGOut,s6Step1EntryFvOut,s6Step1EntryGvOut⟩,(growRow 795 s6Step1EntryFFresh ++ (growRow 777 s6Step1EntryGFresh ++ (growRow 776 s6Step1EntryFvFresh ++ (growRow 775 s6Step1EntryGvFresh ++ []))))) := by
+theorem s2Step18EntryBank_checked : compileHmrBankResizeLog .entry s2Step18EntryFBefore ⟨s2Step18EntryFRow,s2Step18EntryGRow,s2Step18EntryFvRow,s2Step18EntryGvRow⟩ ⟨256,256,19,19⟩ [s2Step18EntryFFresh,s2Step18EntryGFresh,s2Step18EntryFvFresh,s2Step18EntryGvFresh]=
+    some (s2Step18EntryGvAfter,⟨s2Step18EntryFOut,s2Step18EntryGOut,s2Step18EntryFvOut,s2Step18EntryGvOut⟩,(growRow 768 s2Step18EntryFFresh ++ (growRow 769 s2Step18EntryGFresh ++ (growRow 770 s2Step18EntryFvFresh ++ (growRow 771 s2Step18EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step1EntryBank_rows]
+  rw [s2Step18EntryBank_rows]
   rfl
-def s6Step2EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step2EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step2EntryFvOut : WindowRow := ⟨[255, 876, 793],776⟩
-def s6Step2EntryGvOut : WindowRow := ⟨[859, 768, 887],775⟩
-theorem s6Step2EntryBank_incomingDistinct : ([s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step19EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step19EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 782],769⟩
+def s2Step19EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825],770⟩
+def s2Step19EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 780],771⟩
+theorem s2Step19EntryBank_incomingDistinct : ([s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2EntryBank_outgoingOwned : rowsOwned s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] := by
+theorem s2Step19EntryBank_outgoingOwned : rowsOwned s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step2EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · apply hmrLayout_owned_of_filter s2Step19EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2EntryF_Incoming : rowsOwned s6Step2EntryFBefore [s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] := by
+theorem s2Step19EntryF_Incoming : rowsOwned s2Step19EntryFBefore [s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] 0 s6Step2EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2EntryFBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] 0 s2Step19EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2EntryF_Outgoing : rowsOwned s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] :=
-  hmrRows_owned_drop s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] 0 s6Step2EntryBank_outgoingOwned
-theorem s6Step2EntryG_Incoming : rowsOwned s6Step2EntryGBefore [s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] := by
+theorem s2Step19EntryF_Outgoing : rowsOwned s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] :=
+  hmrRows_owned_drop s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] 0 s2Step19EntryBank_outgoingOwned
+theorem s2Step19EntryG_Incoming : rowsOwned s2Step19EntryGBefore [s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] 1 s6Step2EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2EntryGBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] 1 s2Step19EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2EntryG_Outgoing : rowsOwned s6Step2EntryGvAfter [s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] :=
-  hmrRows_owned_drop s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] 1 s6Step2EntryBank_outgoingOwned
-theorem s6Step2EntryFv_Incoming : rowsOwned s6Step2EntryFvBefore [s6Step2EntryFvRow,s6Step2EntryGvRow] := by
+theorem s2Step19EntryG_Outgoing : rowsOwned s2Step19EntryGvAfter [s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] :=
+  hmrRows_owned_drop s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] 1 s2Step19EntryBank_outgoingOwned
+theorem s2Step19EntryFv_Incoming : rowsOwned s2Step19EntryFvBefore [s2Step19EntryFvRow,s2Step19EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] 2 s6Step2EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2EntryFvBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] 2 s2Step19EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2EntryFv_Outgoing : rowsOwned s6Step2EntryGvAfter [s6Step2EntryFvOut,s6Step2EntryGvOut] :=
-  hmrRows_owned_drop s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] 2 s6Step2EntryBank_outgoingOwned
-theorem s6Step2EntryGv_Incoming : rowsOwned s6Step2EntryGvBefore [s6Step2EntryGvRow] := by
+theorem s2Step19EntryFv_Outgoing : rowsOwned s2Step19EntryGvAfter [s2Step19EntryFvOut,s2Step19EntryGvOut] :=
+  hmrRows_owned_drop s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] 2 s2Step19EntryBank_outgoingOwned
+theorem s2Step19EntryGv_Incoming : rowsOwned s2Step19EntryGvBefore [s2Step19EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow] 3 s6Step2EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2EntryGvBefore (fun q => (0≤q ∧ q<768) ∨ (769≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow] 3 s2Step19EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2EntryGv_Outgoing : rowsOwned s6Step2EntryGvAfter [s6Step2EntryGvOut] :=
-  hmrRows_owned_drop s6Step2EntryGvAfter [s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut] 3 s6Step2EntryBank_outgoingOwned
-theorem s6Step2EntryBank_rows : planWindowRowsLog s6Step2EntryFBefore [(s6Step2EntryFRow,256),(s6Step2EntryGRow,256),(s6Step2EntryFvRow,3),(s6Step2EntryGvRow,3)] [s6Step2EntryFFresh,s6Step2EntryGFresh,s6Step2EntryFvFresh,s6Step2EntryGvFresh]=
-    some (s6Step2EntryGvAfter,[s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut],(growRow 795 s6Step2EntryFFresh ++ (growRow 777 s6Step2EntryGFresh ++ (growRow 776 s6Step2EntryFvFresh ++ (growRow 775 s6Step2EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step2EntryGvAfter [] []=some (s6Step2EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step2EntryGvBefore s6Step2EntryGvAfter s6Step2EntryGvAfter
-    s6Step2EntryGvRow s6Step2EntryGvOut 3 s6Step2EntryGvFresh [] [] []
-    (growRow 775 s6Step2EntryGvFresh) ([]) s6Step2EntryGv_Incoming s6Step2EntryGv_checked h4 s6Step2EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step2EntryFvBefore s6Step2EntryFvAfter s6Step2EntryGvAfter
-    s6Step2EntryFvRow s6Step2EntryFvOut 3 s6Step2EntryFvFresh [(s6Step2EntryGvRow,3)] [s6Step2EntryGvFresh] [s6Step2EntryGvOut]
-    (growRow 776 s6Step2EntryFvFresh) ((growRow 775 s6Step2EntryGvFresh ++ [])) s6Step2EntryFv_Incoming s6Step2EntryFv_checked h3 s6Step2EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step2EntryGBefore s6Step2EntryGAfter s6Step2EntryGvAfter
-    s6Step2EntryGRow s6Step2EntryGOut 256 s6Step2EntryGFresh [(s6Step2EntryFvRow,3),(s6Step2EntryGvRow,3)] [s6Step2EntryFvFresh,s6Step2EntryGvFresh] [s6Step2EntryFvOut,s6Step2EntryGvOut]
-    (growRow 777 s6Step2EntryGFresh) ((growRow 776 s6Step2EntryFvFresh ++ (growRow 775 s6Step2EntryGvFresh ++ []))) s6Step2EntryG_Incoming s6Step2EntryG_checked h2 s6Step2EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step2EntryFBefore s6Step2EntryFAfter s6Step2EntryGvAfter
-    s6Step2EntryFRow s6Step2EntryFOut 256 s6Step2EntryFFresh [(s6Step2EntryGRow,256),(s6Step2EntryFvRow,3),(s6Step2EntryGvRow,3)] [s6Step2EntryGFresh,s6Step2EntryFvFresh,s6Step2EntryGvFresh] [s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut]
-    (growRow 795 s6Step2EntryFFresh) ((growRow 777 s6Step2EntryGFresh ++ (growRow 776 s6Step2EntryFvFresh ++ (growRow 775 s6Step2EntryGvFresh ++ [])))) s6Step2EntryF_Incoming s6Step2EntryF_checked h1 s6Step2EntryF_Outgoing
+theorem s2Step19EntryGv_Outgoing : rowsOwned s2Step19EntryGvAfter [s2Step19EntryGvOut] :=
+  hmrRows_owned_drop s2Step19EntryGvAfter [s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut] 3 s2Step19EntryBank_outgoingOwned
+theorem s2Step19EntryBank_rows : planWindowRowsLog s2Step19EntryFBefore [(s2Step19EntryFRow,256),(s2Step19EntryGRow,256),(s2Step19EntryFvRow,20),(s2Step19EntryGvRow,20)] [s2Step19EntryFFresh,s2Step19EntryGFresh,s2Step19EntryFvFresh,s2Step19EntryGvFresh]=
+    some (s2Step19EntryGvAfter,[s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut],(growRow 768 s2Step19EntryFFresh ++ (growRow 769 s2Step19EntryGFresh ++ (growRow 770 s2Step19EntryFvFresh ++ (growRow 771 s2Step19EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step19EntryGvAfter [] []=some (s2Step19EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step19EntryGvBefore s2Step19EntryGvAfter s2Step19EntryGvAfter
+    s2Step19EntryGvRow s2Step19EntryGvOut 20 s2Step19EntryGvFresh [] [] []
+    (growRow 771 s2Step19EntryGvFresh) ([]) s2Step19EntryGv_Incoming s2Step19EntryGv_checked h4 s2Step19EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step19EntryFvBefore s2Step19EntryFvAfter s2Step19EntryGvAfter
+    s2Step19EntryFvRow s2Step19EntryFvOut 20 s2Step19EntryFvFresh [(s2Step19EntryGvRow,20)] [s2Step19EntryGvFresh] [s2Step19EntryGvOut]
+    (growRow 770 s2Step19EntryFvFresh) ((growRow 771 s2Step19EntryGvFresh ++ [])) s2Step19EntryFv_Incoming s2Step19EntryFv_checked h3 s2Step19EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step19EntryGBefore s2Step19EntryGAfter s2Step19EntryGvAfter
+    s2Step19EntryGRow s2Step19EntryGOut 256 s2Step19EntryGFresh [(s2Step19EntryFvRow,20),(s2Step19EntryGvRow,20)] [s2Step19EntryFvFresh,s2Step19EntryGvFresh] [s2Step19EntryFvOut,s2Step19EntryGvOut]
+    (growRow 769 s2Step19EntryGFresh) ((growRow 770 s2Step19EntryFvFresh ++ (growRow 771 s2Step19EntryGvFresh ++ []))) s2Step19EntryG_Incoming s2Step19EntryG_checked h2 s2Step19EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step19EntryFBefore s2Step19EntryFAfter s2Step19EntryGvAfter
+    s2Step19EntryFRow s2Step19EntryFOut 256 s2Step19EntryFFresh [(s2Step19EntryGRow,256),(s2Step19EntryFvRow,20),(s2Step19EntryGvRow,20)] [s2Step19EntryGFresh,s2Step19EntryFvFresh,s2Step19EntryGvFresh] [s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut]
+    (growRow 768 s2Step19EntryFFresh) ((growRow 769 s2Step19EntryGFresh ++ (growRow 770 s2Step19EntryFvFresh ++ (growRow 771 s2Step19EntryGvFresh ++ [])))) s2Step19EntryF_Incoming s2Step19EntryF_checked h1 s2Step19EntryF_Outgoing
   exact h0
-theorem s6Step2EntryBank_checked : compileHmrBankResizeLog .entry s6Step2EntryFBefore ⟨s6Step2EntryFRow,s6Step2EntryGRow,s6Step2EntryFvRow,s6Step2EntryGvRow⟩ ⟨256,256,3,3⟩ [s6Step2EntryFFresh,s6Step2EntryGFresh,s6Step2EntryFvFresh,s6Step2EntryGvFresh]=
-    some (s6Step2EntryGvAfter,⟨s6Step2EntryFOut,s6Step2EntryGOut,s6Step2EntryFvOut,s6Step2EntryGvOut⟩,(growRow 795 s6Step2EntryFFresh ++ (growRow 777 s6Step2EntryGFresh ++ (growRow 776 s6Step2EntryFvFresh ++ (growRow 775 s6Step2EntryGvFresh ++ []))))) := by
+theorem s2Step19EntryBank_checked : compileHmrBankResizeLog .entry s2Step19EntryFBefore ⟨s2Step19EntryFRow,s2Step19EntryGRow,s2Step19EntryFvRow,s2Step19EntryGvRow⟩ ⟨256,256,20,20⟩ [s2Step19EntryFFresh,s2Step19EntryGFresh,s2Step19EntryFvFresh,s2Step19EntryGvFresh]=
+    some (s2Step19EntryGvAfter,⟨s2Step19EntryFOut,s2Step19EntryGOut,s2Step19EntryFvOut,s2Step19EntryGvOut⟩,(growRow 768 s2Step19EntryFFresh ++ (growRow 769 s2Step19EntryGFresh ++ (growRow 770 s2Step19EntryFvFresh ++ (growRow 771 s2Step19EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step2EntryBank_rows]
+  rw [s2Step19EntryBank_rows]
   rfl
-def s6Step3EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step3EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step3EntryFvOut : WindowRow := ⟨[255, 876, 793, 802],776⟩
-def s6Step3EntryGvOut : WindowRow := ⟨[859, 768, 874, 887],775⟩
-theorem s6Step3EntryBank_incomingDistinct : ([s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step20EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step20EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783],769⟩
+def s2Step20EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827],770⟩
+def s2Step20EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 780],771⟩
+theorem s2Step20EntryBank_incomingDistinct : ([s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3EntryBank_outgoingOwned : rowsOwned s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] := by
+theorem s2Step20EntryBank_outgoingOwned : rowsOwned s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step3EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · apply hmrLayout_owned_of_filter s2Step20EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3EntryF_Incoming : rowsOwned s6Step3EntryFBefore [s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] := by
+theorem s2Step20EntryF_Incoming : rowsOwned s2Step20EntryFBefore [s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] 0 s6Step3EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] 0 s2Step20EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3EntryF_Outgoing : rowsOwned s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] :=
-  hmrRows_owned_drop s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] 0 s6Step3EntryBank_outgoingOwned
-theorem s6Step3EntryG_Incoming : rowsOwned s6Step3EntryGBefore [s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] := by
+theorem s2Step20EntryF_Outgoing : rowsOwned s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] :=
+  hmrRows_owned_drop s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] 0 s2Step20EntryBank_outgoingOwned
+theorem s2Step20EntryG_Incoming : rowsOwned s2Step20EntryGBefore [s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] 1 s6Step3EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] 1 s2Step20EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3EntryG_Outgoing : rowsOwned s6Step3EntryGvAfter [s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] :=
-  hmrRows_owned_drop s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] 1 s6Step3EntryBank_outgoingOwned
-theorem s6Step3EntryFv_Incoming : rowsOwned s6Step3EntryFvBefore [s6Step3EntryFvRow,s6Step3EntryGvRow] := by
+theorem s2Step20EntryG_Outgoing : rowsOwned s2Step20EntryGvAfter [s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] :=
+  hmrRows_owned_drop s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] 1 s2Step20EntryBank_outgoingOwned
+theorem s2Step20EntryFv_Incoming : rowsOwned s2Step20EntryFvBefore [s2Step20EntryFvRow,s2Step20EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] 2 s6Step3EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] 2 s2Step20EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3EntryFv_Outgoing : rowsOwned s6Step3EntryGvAfter [s6Step3EntryFvOut,s6Step3EntryGvOut] :=
-  hmrRows_owned_drop s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] 2 s6Step3EntryBank_outgoingOwned
-theorem s6Step3EntryGv_Incoming : rowsOwned s6Step3EntryGvBefore [s6Step3EntryGvRow] := by
+theorem s2Step20EntryFv_Outgoing : rowsOwned s2Step20EntryGvAfter [s2Step20EntryFvOut,s2Step20EntryGvOut] :=
+  hmrRows_owned_drop s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] 2 s2Step20EntryBank_outgoingOwned
+theorem s2Step20EntryGv_Incoming : rowsOwned s2Step20EntryGvBefore [s2Step20EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow] 3 s6Step3EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow] 3 s2Step20EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3EntryGv_Outgoing : rowsOwned s6Step3EntryGvAfter [s6Step3EntryGvOut] :=
-  hmrRows_owned_drop s6Step3EntryGvAfter [s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut] 3 s6Step3EntryBank_outgoingOwned
-theorem s6Step3EntryBank_rows : planWindowRowsLog s6Step3EntryFBefore [(s6Step3EntryFRow,256),(s6Step3EntryGRow,256),(s6Step3EntryFvRow,4),(s6Step3EntryGvRow,4)] [s6Step3EntryFFresh,s6Step3EntryGFresh,s6Step3EntryFvFresh,s6Step3EntryGvFresh]=
-    some (s6Step3EntryGvAfter,[s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut],(growRow 795 s6Step3EntryFFresh ++ (growRow 777 s6Step3EntryGFresh ++ (growRow 776 s6Step3EntryFvFresh ++ (growRow 775 s6Step3EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step3EntryGvAfter [] []=some (s6Step3EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step3EntryGvBefore s6Step3EntryGvAfter s6Step3EntryGvAfter
-    s6Step3EntryGvRow s6Step3EntryGvOut 4 s6Step3EntryGvFresh [] [] []
-    (growRow 775 s6Step3EntryGvFresh) ([]) s6Step3EntryGv_Incoming s6Step3EntryGv_checked h4 s6Step3EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step3EntryFvBefore s6Step3EntryFvAfter s6Step3EntryGvAfter
-    s6Step3EntryFvRow s6Step3EntryFvOut 4 s6Step3EntryFvFresh [(s6Step3EntryGvRow,4)] [s6Step3EntryGvFresh] [s6Step3EntryGvOut]
-    (growRow 776 s6Step3EntryFvFresh) ((growRow 775 s6Step3EntryGvFresh ++ [])) s6Step3EntryFv_Incoming s6Step3EntryFv_checked h3 s6Step3EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step3EntryGBefore s6Step3EntryGAfter s6Step3EntryGvAfter
-    s6Step3EntryGRow s6Step3EntryGOut 256 s6Step3EntryGFresh [(s6Step3EntryFvRow,4),(s6Step3EntryGvRow,4)] [s6Step3EntryFvFresh,s6Step3EntryGvFresh] [s6Step3EntryFvOut,s6Step3EntryGvOut]
-    (growRow 777 s6Step3EntryGFresh) ((growRow 776 s6Step3EntryFvFresh ++ (growRow 775 s6Step3EntryGvFresh ++ []))) s6Step3EntryG_Incoming s6Step3EntryG_checked h2 s6Step3EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step3EntryFBefore s6Step3EntryFAfter s6Step3EntryGvAfter
-    s6Step3EntryFRow s6Step3EntryFOut 256 s6Step3EntryFFresh [(s6Step3EntryGRow,256),(s6Step3EntryFvRow,4),(s6Step3EntryGvRow,4)] [s6Step3EntryGFresh,s6Step3EntryFvFresh,s6Step3EntryGvFresh] [s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut]
-    (growRow 795 s6Step3EntryFFresh) ((growRow 777 s6Step3EntryGFresh ++ (growRow 776 s6Step3EntryFvFresh ++ (growRow 775 s6Step3EntryGvFresh ++ [])))) s6Step3EntryF_Incoming s6Step3EntryF_checked h1 s6Step3EntryF_Outgoing
+theorem s2Step20EntryGv_Outgoing : rowsOwned s2Step20EntryGvAfter [s2Step20EntryGvOut] :=
+  hmrRows_owned_drop s2Step20EntryGvAfter [s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut] 3 s2Step20EntryBank_outgoingOwned
+theorem s2Step20EntryBank_rows : planWindowRowsLog s2Step20EntryFBefore [(s2Step20EntryFRow,256),(s2Step20EntryGRow,256),(s2Step20EntryFvRow,21),(s2Step20EntryGvRow,21)] [s2Step20EntryFFresh,s2Step20EntryGFresh,s2Step20EntryFvFresh,s2Step20EntryGvFresh]=
+    some (s2Step20EntryGvAfter,[s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut],(growRow 768 s2Step20EntryFFresh ++ (growRow 769 s2Step20EntryGFresh ++ (growRow 770 s2Step20EntryFvFresh ++ (growRow 771 s2Step20EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step20EntryGvAfter [] []=some (s2Step20EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step20EntryGvBefore s2Step20EntryGvAfter s2Step20EntryGvAfter
+    s2Step20EntryGvRow s2Step20EntryGvOut 21 s2Step20EntryGvFresh [] [] []
+    (growRow 771 s2Step20EntryGvFresh) ([]) s2Step20EntryGv_Incoming s2Step20EntryGv_checked h4 s2Step20EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step20EntryFvBefore s2Step20EntryFvAfter s2Step20EntryGvAfter
+    s2Step20EntryFvRow s2Step20EntryFvOut 21 s2Step20EntryFvFresh [(s2Step20EntryGvRow,21)] [s2Step20EntryGvFresh] [s2Step20EntryGvOut]
+    (growRow 770 s2Step20EntryFvFresh) ((growRow 771 s2Step20EntryGvFresh ++ [])) s2Step20EntryFv_Incoming s2Step20EntryFv_checked h3 s2Step20EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step20EntryGBefore s2Step20EntryGAfter s2Step20EntryGvAfter
+    s2Step20EntryGRow s2Step20EntryGOut 256 s2Step20EntryGFresh [(s2Step20EntryFvRow,21),(s2Step20EntryGvRow,21)] [s2Step20EntryFvFresh,s2Step20EntryGvFresh] [s2Step20EntryFvOut,s2Step20EntryGvOut]
+    (growRow 769 s2Step20EntryGFresh) ((growRow 770 s2Step20EntryFvFresh ++ (growRow 771 s2Step20EntryGvFresh ++ []))) s2Step20EntryG_Incoming s2Step20EntryG_checked h2 s2Step20EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step20EntryFBefore s2Step20EntryFAfter s2Step20EntryGvAfter
+    s2Step20EntryFRow s2Step20EntryFOut 256 s2Step20EntryFFresh [(s2Step20EntryGRow,256),(s2Step20EntryFvRow,21),(s2Step20EntryGvRow,21)] [s2Step20EntryGFresh,s2Step20EntryFvFresh,s2Step20EntryGvFresh] [s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut]
+    (growRow 768 s2Step20EntryFFresh) ((growRow 769 s2Step20EntryGFresh ++ (growRow 770 s2Step20EntryFvFresh ++ (growRow 771 s2Step20EntryGvFresh ++ [])))) s2Step20EntryF_Incoming s2Step20EntryF_checked h1 s2Step20EntryF_Outgoing
   exact h0
-theorem s6Step3EntryBank_checked : compileHmrBankResizeLog .entry s6Step3EntryFBefore ⟨s6Step3EntryFRow,s6Step3EntryGRow,s6Step3EntryFvRow,s6Step3EntryGvRow⟩ ⟨256,256,4,4⟩ [s6Step3EntryFFresh,s6Step3EntryGFresh,s6Step3EntryFvFresh,s6Step3EntryGvFresh]=
-    some (s6Step3EntryGvAfter,⟨s6Step3EntryFOut,s6Step3EntryGOut,s6Step3EntryFvOut,s6Step3EntryGvOut⟩,(growRow 795 s6Step3EntryFFresh ++ (growRow 777 s6Step3EntryGFresh ++ (growRow 776 s6Step3EntryFvFresh ++ (growRow 775 s6Step3EntryGvFresh ++ []))))) := by
+theorem s2Step20EntryBank_checked : compileHmrBankResizeLog .entry s2Step20EntryFBefore ⟨s2Step20EntryFRow,s2Step20EntryGRow,s2Step20EntryFvRow,s2Step20EntryGvRow⟩ ⟨256,256,21,21⟩ [s2Step20EntryFFresh,s2Step20EntryGFresh,s2Step20EntryFvFresh,s2Step20EntryGvFresh]=
+    some (s2Step20EntryGvAfter,⟨s2Step20EntryFOut,s2Step20EntryGOut,s2Step20EntryFvOut,s2Step20EntryGvOut⟩,(growRow 768 s2Step20EntryFFresh ++ (growRow 769 s2Step20EntryGFresh ++ (growRow 770 s2Step20EntryFvFresh ++ (growRow 771 s2Step20EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step3EntryBank_rows]
+  rw [s2Step20EntryBank_rows]
   rfl
-def s6Step4EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step4EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step4EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779],776⟩
-def s6Step4EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 887],775⟩
-theorem s6Step4EntryBank_incomingDistinct : ([s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step21EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step21EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 781],769⟩
+def s2Step21EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830],770⟩
+def s2Step21EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 780],771⟩
+theorem s2Step21EntryBank_incomingDistinct : ([s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4EntryBank_outgoingOwned : rowsOwned s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] := by
+theorem s2Step21EntryBank_outgoingOwned : rowsOwned s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step4EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step21EntryGvAfter (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4EntryF_Incoming : rowsOwned s6Step4EntryFBefore [s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] := by
+theorem s2Step21EntryF_Incoming : rowsOwned s2Step21EntryFBefore [s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] 0 s6Step4EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] 0 s2Step21EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4EntryF_Outgoing : rowsOwned s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] :=
-  hmrRows_owned_drop s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] 0 s6Step4EntryBank_outgoingOwned
-theorem s6Step4EntryG_Incoming : rowsOwned s6Step4EntryGBefore [s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] := by
+theorem s2Step21EntryF_Outgoing : rowsOwned s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] :=
+  hmrRows_owned_drop s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] 0 s2Step21EntryBank_outgoingOwned
+theorem s2Step21EntryG_Incoming : rowsOwned s2Step21EntryGBefore [s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] 1 s6Step4EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] 1 s2Step21EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4EntryG_Outgoing : rowsOwned s6Step4EntryGvAfter [s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] :=
-  hmrRows_owned_drop s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] 1 s6Step4EntryBank_outgoingOwned
-theorem s6Step4EntryFv_Incoming : rowsOwned s6Step4EntryFvBefore [s6Step4EntryFvRow,s6Step4EntryGvRow] := by
+theorem s2Step21EntryG_Outgoing : rowsOwned s2Step21EntryGvAfter [s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] :=
+  hmrRows_owned_drop s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] 1 s2Step21EntryBank_outgoingOwned
+theorem s2Step21EntryFv_Incoming : rowsOwned s2Step21EntryFvBefore [s2Step21EntryFvRow,s2Step21EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] 2 s6Step4EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] 2 s2Step21EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4EntryFv_Outgoing : rowsOwned s6Step4EntryGvAfter [s6Step4EntryFvOut,s6Step4EntryGvOut] :=
-  hmrRows_owned_drop s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] 2 s6Step4EntryBank_outgoingOwned
-theorem s6Step4EntryGv_Incoming : rowsOwned s6Step4EntryGvBefore [s6Step4EntryGvRow] := by
+theorem s2Step21EntryFv_Outgoing : rowsOwned s2Step21EntryGvAfter [s2Step21EntryFvOut,s2Step21EntryGvOut] :=
+  hmrRows_owned_drop s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] 2 s2Step21EntryBank_outgoingOwned
+theorem s2Step21EntryGv_Incoming : rowsOwned s2Step21EntryGvBefore [s2Step21EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow] 3 s6Step4EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow] 3 s2Step21EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4EntryGv_Outgoing : rowsOwned s6Step4EntryGvAfter [s6Step4EntryGvOut] :=
-  hmrRows_owned_drop s6Step4EntryGvAfter [s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut] 3 s6Step4EntryBank_outgoingOwned
-theorem s6Step4EntryBank_rows : planWindowRowsLog s6Step4EntryFBefore [(s6Step4EntryFRow,256),(s6Step4EntryGRow,256),(s6Step4EntryFvRow,5),(s6Step4EntryGvRow,5)] [s6Step4EntryFFresh,s6Step4EntryGFresh,s6Step4EntryFvFresh,s6Step4EntryGvFresh]=
-    some (s6Step4EntryGvAfter,[s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut],(growRow 795 s6Step4EntryFFresh ++ (growRow 777 s6Step4EntryGFresh ++ (growRow 776 s6Step4EntryFvFresh ++ (growRow 775 s6Step4EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step4EntryGvAfter [] []=some (s6Step4EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step4EntryGvBefore s6Step4EntryGvAfter s6Step4EntryGvAfter
-    s6Step4EntryGvRow s6Step4EntryGvOut 5 s6Step4EntryGvFresh [] [] []
-    (growRow 775 s6Step4EntryGvFresh) ([]) s6Step4EntryGv_Incoming s6Step4EntryGv_checked h4 s6Step4EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step4EntryFvBefore s6Step4EntryFvAfter s6Step4EntryGvAfter
-    s6Step4EntryFvRow s6Step4EntryFvOut 5 s6Step4EntryFvFresh [(s6Step4EntryGvRow,5)] [s6Step4EntryGvFresh] [s6Step4EntryGvOut]
-    (growRow 776 s6Step4EntryFvFresh) ((growRow 775 s6Step4EntryGvFresh ++ [])) s6Step4EntryFv_Incoming s6Step4EntryFv_checked h3 s6Step4EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step4EntryGBefore s6Step4EntryGAfter s6Step4EntryGvAfter
-    s6Step4EntryGRow s6Step4EntryGOut 256 s6Step4EntryGFresh [(s6Step4EntryFvRow,5),(s6Step4EntryGvRow,5)] [s6Step4EntryFvFresh,s6Step4EntryGvFresh] [s6Step4EntryFvOut,s6Step4EntryGvOut]
-    (growRow 777 s6Step4EntryGFresh) ((growRow 776 s6Step4EntryFvFresh ++ (growRow 775 s6Step4EntryGvFresh ++ []))) s6Step4EntryG_Incoming s6Step4EntryG_checked h2 s6Step4EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step4EntryFBefore s6Step4EntryFAfter s6Step4EntryGvAfter
-    s6Step4EntryFRow s6Step4EntryFOut 256 s6Step4EntryFFresh [(s6Step4EntryGRow,256),(s6Step4EntryFvRow,5),(s6Step4EntryGvRow,5)] [s6Step4EntryGFresh,s6Step4EntryFvFresh,s6Step4EntryGvFresh] [s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut]
-    (growRow 795 s6Step4EntryFFresh) ((growRow 777 s6Step4EntryGFresh ++ (growRow 776 s6Step4EntryFvFresh ++ (growRow 775 s6Step4EntryGvFresh ++ [])))) s6Step4EntryF_Incoming s6Step4EntryF_checked h1 s6Step4EntryF_Outgoing
+theorem s2Step21EntryGv_Outgoing : rowsOwned s2Step21EntryGvAfter [s2Step21EntryGvOut] :=
+  hmrRows_owned_drop s2Step21EntryGvAfter [s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut] 3 s2Step21EntryBank_outgoingOwned
+theorem s2Step21EntryBank_rows : planWindowRowsLog s2Step21EntryFBefore [(s2Step21EntryFRow,256),(s2Step21EntryGRow,256),(s2Step21EntryFvRow,22),(s2Step21EntryGvRow,22)] [s2Step21EntryFFresh,s2Step21EntryGFresh,s2Step21EntryFvFresh,s2Step21EntryGvFresh]=
+    some (s2Step21EntryGvAfter,[s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut],(growRow 768 s2Step21EntryFFresh ++ (growRow 769 s2Step21EntryGFresh ++ (growRow 770 s2Step21EntryFvFresh ++ (growRow 771 s2Step21EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step21EntryGvAfter [] []=some (s2Step21EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step21EntryGvBefore s2Step21EntryGvAfter s2Step21EntryGvAfter
+    s2Step21EntryGvRow s2Step21EntryGvOut 22 s2Step21EntryGvFresh [] [] []
+    (growRow 771 s2Step21EntryGvFresh) ([]) s2Step21EntryGv_Incoming s2Step21EntryGv_checked h4 s2Step21EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step21EntryFvBefore s2Step21EntryFvAfter s2Step21EntryGvAfter
+    s2Step21EntryFvRow s2Step21EntryFvOut 22 s2Step21EntryFvFresh [(s2Step21EntryGvRow,22)] [s2Step21EntryGvFresh] [s2Step21EntryGvOut]
+    (growRow 770 s2Step21EntryFvFresh) ((growRow 771 s2Step21EntryGvFresh ++ [])) s2Step21EntryFv_Incoming s2Step21EntryFv_checked h3 s2Step21EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step21EntryGBefore s2Step21EntryGAfter s2Step21EntryGvAfter
+    s2Step21EntryGRow s2Step21EntryGOut 256 s2Step21EntryGFresh [(s2Step21EntryFvRow,22),(s2Step21EntryGvRow,22)] [s2Step21EntryFvFresh,s2Step21EntryGvFresh] [s2Step21EntryFvOut,s2Step21EntryGvOut]
+    (growRow 769 s2Step21EntryGFresh) ((growRow 770 s2Step21EntryFvFresh ++ (growRow 771 s2Step21EntryGvFresh ++ []))) s2Step21EntryG_Incoming s2Step21EntryG_checked h2 s2Step21EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step21EntryFBefore s2Step21EntryFAfter s2Step21EntryGvAfter
+    s2Step21EntryFRow s2Step21EntryFOut 256 s2Step21EntryFFresh [(s2Step21EntryGRow,256),(s2Step21EntryFvRow,22),(s2Step21EntryGvRow,22)] [s2Step21EntryGFresh,s2Step21EntryFvFresh,s2Step21EntryGvFresh] [s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut]
+    (growRow 768 s2Step21EntryFFresh) ((growRow 769 s2Step21EntryGFresh ++ (growRow 770 s2Step21EntryFvFresh ++ (growRow 771 s2Step21EntryGvFresh ++ [])))) s2Step21EntryF_Incoming s2Step21EntryF_checked h1 s2Step21EntryF_Outgoing
   exact h0
-theorem s6Step4EntryBank_checked : compileHmrBankResizeLog .entry s6Step4EntryFBefore ⟨s6Step4EntryFRow,s6Step4EntryGRow,s6Step4EntryFvRow,s6Step4EntryGvRow⟩ ⟨256,256,5,5⟩ [s6Step4EntryFFresh,s6Step4EntryGFresh,s6Step4EntryFvFresh,s6Step4EntryGvFresh]=
-    some (s6Step4EntryGvAfter,⟨s6Step4EntryFOut,s6Step4EntryGOut,s6Step4EntryFvOut,s6Step4EntryGvOut⟩,(growRow 795 s6Step4EntryFFresh ++ (growRow 777 s6Step4EntryGFresh ++ (growRow 776 s6Step4EntryFvFresh ++ (growRow 775 s6Step4EntryGvFresh ++ []))))) := by
+theorem s2Step21EntryBank_checked : compileHmrBankResizeLog .entry s2Step21EntryFBefore ⟨s2Step21EntryFRow,s2Step21EntryGRow,s2Step21EntryFvRow,s2Step21EntryGvRow⟩ ⟨256,256,22,22⟩ [s2Step21EntryFFresh,s2Step21EntryGFresh,s2Step21EntryFvFresh,s2Step21EntryGvFresh]=
+    some (s2Step21EntryGvAfter,⟨s2Step21EntryFOut,s2Step21EntryGOut,s2Step21EntryFvOut,s2Step21EntryGvOut⟩,(growRow 768 s2Step21EntryFFresh ++ (growRow 769 s2Step21EntryGFresh ++ (growRow 770 s2Step21EntryFvFresh ++ (growRow 771 s2Step21EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step4EntryBank_rows]
+  rw [s2Step21EntryBank_rows]
   rfl
-def s6Step5EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step5EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step5EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857],776⟩
-def s6Step5EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 887],775⟩
-theorem s6Step5EntryBank_incomingDistinct : ([s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step22EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step22EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 784],769⟩
+def s2Step22EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832],770⟩
+def s2Step22EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 780],771⟩
+theorem s2Step22EntryBank_incomingDistinct : ([s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5EntryBank_outgoingOwned : rowsOwned s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] := by
+theorem s2Step22EntryBank_outgoingOwned : rowsOwned s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step5EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step22EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5EntryF_Incoming : rowsOwned s6Step5EntryFBefore [s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] := by
+theorem s2Step22EntryF_Incoming : rowsOwned s2Step22EntryFBefore [s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] 0 s6Step5EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] 0 s2Step22EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5EntryF_Outgoing : rowsOwned s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] :=
-  hmrRows_owned_drop s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] 0 s6Step5EntryBank_outgoingOwned
-theorem s6Step5EntryG_Incoming : rowsOwned s6Step5EntryGBefore [s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] := by
+theorem s2Step22EntryF_Outgoing : rowsOwned s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] :=
+  hmrRows_owned_drop s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] 0 s2Step22EntryBank_outgoingOwned
+theorem s2Step22EntryG_Incoming : rowsOwned s2Step22EntryGBefore [s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] 1 s6Step5EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] 1 s2Step22EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5EntryG_Outgoing : rowsOwned s6Step5EntryGvAfter [s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] :=
-  hmrRows_owned_drop s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] 1 s6Step5EntryBank_outgoingOwned
-theorem s6Step5EntryFv_Incoming : rowsOwned s6Step5EntryFvBefore [s6Step5EntryFvRow,s6Step5EntryGvRow] := by
+theorem s2Step22EntryG_Outgoing : rowsOwned s2Step22EntryGvAfter [s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] :=
+  hmrRows_owned_drop s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] 1 s2Step22EntryBank_outgoingOwned
+theorem s2Step22EntryFv_Incoming : rowsOwned s2Step22EntryFvBefore [s2Step22EntryFvRow,s2Step22EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] 2 s6Step5EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] 2 s2Step22EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5EntryFv_Outgoing : rowsOwned s6Step5EntryGvAfter [s6Step5EntryFvOut,s6Step5EntryGvOut] :=
-  hmrRows_owned_drop s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] 2 s6Step5EntryBank_outgoingOwned
-theorem s6Step5EntryGv_Incoming : rowsOwned s6Step5EntryGvBefore [s6Step5EntryGvRow] := by
+theorem s2Step22EntryFv_Outgoing : rowsOwned s2Step22EntryGvAfter [s2Step22EntryFvOut,s2Step22EntryGvOut] :=
+  hmrRows_owned_drop s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] 2 s2Step22EntryBank_outgoingOwned
+theorem s2Step22EntryGv_Incoming : rowsOwned s2Step22EntryGvBefore [s2Step22EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow] 3 s6Step5EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow] 3 s2Step22EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5EntryGv_Outgoing : rowsOwned s6Step5EntryGvAfter [s6Step5EntryGvOut] :=
-  hmrRows_owned_drop s6Step5EntryGvAfter [s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut] 3 s6Step5EntryBank_outgoingOwned
-theorem s6Step5EntryBank_rows : planWindowRowsLog s6Step5EntryFBefore [(s6Step5EntryFRow,256),(s6Step5EntryGRow,256),(s6Step5EntryFvRow,6),(s6Step5EntryGvRow,6)] [s6Step5EntryFFresh,s6Step5EntryGFresh,s6Step5EntryFvFresh,s6Step5EntryGvFresh]=
-    some (s6Step5EntryGvAfter,[s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut],(growRow 795 s6Step5EntryFFresh ++ (growRow 777 s6Step5EntryGFresh ++ (growRow 776 s6Step5EntryFvFresh ++ (growRow 775 s6Step5EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step5EntryGvAfter [] []=some (s6Step5EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step5EntryGvBefore s6Step5EntryGvAfter s6Step5EntryGvAfter
-    s6Step5EntryGvRow s6Step5EntryGvOut 6 s6Step5EntryGvFresh [] [] []
-    (growRow 775 s6Step5EntryGvFresh) ([]) s6Step5EntryGv_Incoming s6Step5EntryGv_checked h4 s6Step5EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step5EntryFvBefore s6Step5EntryFvAfter s6Step5EntryGvAfter
-    s6Step5EntryFvRow s6Step5EntryFvOut 6 s6Step5EntryFvFresh [(s6Step5EntryGvRow,6)] [s6Step5EntryGvFresh] [s6Step5EntryGvOut]
-    (growRow 776 s6Step5EntryFvFresh) ((growRow 775 s6Step5EntryGvFresh ++ [])) s6Step5EntryFv_Incoming s6Step5EntryFv_checked h3 s6Step5EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step5EntryGBefore s6Step5EntryGAfter s6Step5EntryGvAfter
-    s6Step5EntryGRow s6Step5EntryGOut 256 s6Step5EntryGFresh [(s6Step5EntryFvRow,6),(s6Step5EntryGvRow,6)] [s6Step5EntryFvFresh,s6Step5EntryGvFresh] [s6Step5EntryFvOut,s6Step5EntryGvOut]
-    (growRow 777 s6Step5EntryGFresh) ((growRow 776 s6Step5EntryFvFresh ++ (growRow 775 s6Step5EntryGvFresh ++ []))) s6Step5EntryG_Incoming s6Step5EntryG_checked h2 s6Step5EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step5EntryFBefore s6Step5EntryFAfter s6Step5EntryGvAfter
-    s6Step5EntryFRow s6Step5EntryFOut 256 s6Step5EntryFFresh [(s6Step5EntryGRow,256),(s6Step5EntryFvRow,6),(s6Step5EntryGvRow,6)] [s6Step5EntryGFresh,s6Step5EntryFvFresh,s6Step5EntryGvFresh] [s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut]
-    (growRow 795 s6Step5EntryFFresh) ((growRow 777 s6Step5EntryGFresh ++ (growRow 776 s6Step5EntryFvFresh ++ (growRow 775 s6Step5EntryGvFresh ++ [])))) s6Step5EntryF_Incoming s6Step5EntryF_checked h1 s6Step5EntryF_Outgoing
+theorem s2Step22EntryGv_Outgoing : rowsOwned s2Step22EntryGvAfter [s2Step22EntryGvOut] :=
+  hmrRows_owned_drop s2Step22EntryGvAfter [s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut] 3 s2Step22EntryBank_outgoingOwned
+theorem s2Step22EntryBank_rows : planWindowRowsLog s2Step22EntryFBefore [(s2Step22EntryFRow,256),(s2Step22EntryGRow,256),(s2Step22EntryFvRow,23),(s2Step22EntryGvRow,23)] [s2Step22EntryFFresh,s2Step22EntryGFresh,s2Step22EntryFvFresh,s2Step22EntryGvFresh]=
+    some (s2Step22EntryGvAfter,[s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut],(growRow 768 s2Step22EntryFFresh ++ (growRow 769 s2Step22EntryGFresh ++ (growRow 770 s2Step22EntryFvFresh ++ (growRow 771 s2Step22EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step22EntryGvAfter [] []=some (s2Step22EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step22EntryGvBefore s2Step22EntryGvAfter s2Step22EntryGvAfter
+    s2Step22EntryGvRow s2Step22EntryGvOut 23 s2Step22EntryGvFresh [] [] []
+    (growRow 771 s2Step22EntryGvFresh) ([]) s2Step22EntryGv_Incoming s2Step22EntryGv_checked h4 s2Step22EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step22EntryFvBefore s2Step22EntryFvAfter s2Step22EntryGvAfter
+    s2Step22EntryFvRow s2Step22EntryFvOut 23 s2Step22EntryFvFresh [(s2Step22EntryGvRow,23)] [s2Step22EntryGvFresh] [s2Step22EntryGvOut]
+    (growRow 770 s2Step22EntryFvFresh) ((growRow 771 s2Step22EntryGvFresh ++ [])) s2Step22EntryFv_Incoming s2Step22EntryFv_checked h3 s2Step22EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step22EntryGBefore s2Step22EntryGAfter s2Step22EntryGvAfter
+    s2Step22EntryGRow s2Step22EntryGOut 256 s2Step22EntryGFresh [(s2Step22EntryFvRow,23),(s2Step22EntryGvRow,23)] [s2Step22EntryFvFresh,s2Step22EntryGvFresh] [s2Step22EntryFvOut,s2Step22EntryGvOut]
+    (growRow 769 s2Step22EntryGFresh) ((growRow 770 s2Step22EntryFvFresh ++ (growRow 771 s2Step22EntryGvFresh ++ []))) s2Step22EntryG_Incoming s2Step22EntryG_checked h2 s2Step22EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step22EntryFBefore s2Step22EntryFAfter s2Step22EntryGvAfter
+    s2Step22EntryFRow s2Step22EntryFOut 256 s2Step22EntryFFresh [(s2Step22EntryGRow,256),(s2Step22EntryFvRow,23),(s2Step22EntryGvRow,23)] [s2Step22EntryGFresh,s2Step22EntryFvFresh,s2Step22EntryGvFresh] [s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut]
+    (growRow 768 s2Step22EntryFFresh) ((growRow 769 s2Step22EntryGFresh ++ (growRow 770 s2Step22EntryFvFresh ++ (growRow 771 s2Step22EntryGvFresh ++ [])))) s2Step22EntryF_Incoming s2Step22EntryF_checked h1 s2Step22EntryF_Outgoing
   exact h0
-theorem s6Step5EntryBank_checked : compileHmrBankResizeLog .entry s6Step5EntryFBefore ⟨s6Step5EntryFRow,s6Step5EntryGRow,s6Step5EntryFvRow,s6Step5EntryGvRow⟩ ⟨256,256,6,6⟩ [s6Step5EntryFFresh,s6Step5EntryGFresh,s6Step5EntryFvFresh,s6Step5EntryGvFresh]=
-    some (s6Step5EntryGvAfter,⟨s6Step5EntryFOut,s6Step5EntryGOut,s6Step5EntryFvOut,s6Step5EntryGvOut⟩,(growRow 795 s6Step5EntryFFresh ++ (growRow 777 s6Step5EntryGFresh ++ (growRow 776 s6Step5EntryFvFresh ++ (growRow 775 s6Step5EntryGvFresh ++ []))))) := by
+theorem s2Step22EntryBank_checked : compileHmrBankResizeLog .entry s2Step22EntryFBefore ⟨s2Step22EntryFRow,s2Step22EntryGRow,s2Step22EntryFvRow,s2Step22EntryGvRow⟩ ⟨256,256,23,23⟩ [s2Step22EntryFFresh,s2Step22EntryGFresh,s2Step22EntryFvFresh,s2Step22EntryGvFresh]=
+    some (s2Step22EntryGvAfter,⟨s2Step22EntryFOut,s2Step22EntryGOut,s2Step22EntryFvOut,s2Step22EntryGvOut⟩,(growRow 768 s2Step22EntryFFresh ++ (growRow 769 s2Step22EntryGFresh ++ (growRow 770 s2Step22EntryFvFresh ++ (growRow 771 s2Step22EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step5EntryBank_rows]
+  rw [s2Step22EntryBank_rows]
   rfl
-def s6Step6EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step6EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step6EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858],776⟩
-def s6Step6EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 887],775⟩
-theorem s6Step6EntryBank_incomingDistinct : ([s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step23EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step23EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 782],769⟩
+def s2Step23EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835],770⟩
+def s2Step23EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 780],771⟩
+theorem s2Step23EntryBank_incomingDistinct : ([s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6EntryBank_outgoingOwned : rowsOwned s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] := by
+theorem s2Step23EntryBank_outgoingOwned : rowsOwned s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step6EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step23EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6EntryF_Incoming : rowsOwned s6Step6EntryFBefore [s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] := by
+theorem s2Step23EntryF_Incoming : rowsOwned s2Step23EntryFBefore [s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] 0 s6Step6EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] 0 s2Step23EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6EntryF_Outgoing : rowsOwned s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] :=
-  hmrRows_owned_drop s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] 0 s6Step6EntryBank_outgoingOwned
-theorem s6Step6EntryG_Incoming : rowsOwned s6Step6EntryGBefore [s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] := by
+theorem s2Step23EntryF_Outgoing : rowsOwned s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] :=
+  hmrRows_owned_drop s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] 0 s2Step23EntryBank_outgoingOwned
+theorem s2Step23EntryG_Incoming : rowsOwned s2Step23EntryGBefore [s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] 1 s6Step6EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] 1 s2Step23EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6EntryG_Outgoing : rowsOwned s6Step6EntryGvAfter [s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] :=
-  hmrRows_owned_drop s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] 1 s6Step6EntryBank_outgoingOwned
-theorem s6Step6EntryFv_Incoming : rowsOwned s6Step6EntryFvBefore [s6Step6EntryFvRow,s6Step6EntryGvRow] := by
+theorem s2Step23EntryG_Outgoing : rowsOwned s2Step23EntryGvAfter [s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] :=
+  hmrRows_owned_drop s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] 1 s2Step23EntryBank_outgoingOwned
+theorem s2Step23EntryFv_Incoming : rowsOwned s2Step23EntryFvBefore [s2Step23EntryFvRow,s2Step23EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] 2 s6Step6EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] 2 s2Step23EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6EntryFv_Outgoing : rowsOwned s6Step6EntryGvAfter [s6Step6EntryFvOut,s6Step6EntryGvOut] :=
-  hmrRows_owned_drop s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] 2 s6Step6EntryBank_outgoingOwned
-theorem s6Step6EntryGv_Incoming : rowsOwned s6Step6EntryGvBefore [s6Step6EntryGvRow] := by
+theorem s2Step23EntryFv_Outgoing : rowsOwned s2Step23EntryGvAfter [s2Step23EntryFvOut,s2Step23EntryGvOut] :=
+  hmrRows_owned_drop s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] 2 s2Step23EntryBank_outgoingOwned
+theorem s2Step23EntryGv_Incoming : rowsOwned s2Step23EntryGvBefore [s2Step23EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow] 3 s6Step6EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow] 3 s2Step23EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6EntryGv_Outgoing : rowsOwned s6Step6EntryGvAfter [s6Step6EntryGvOut] :=
-  hmrRows_owned_drop s6Step6EntryGvAfter [s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut] 3 s6Step6EntryBank_outgoingOwned
-theorem s6Step6EntryBank_rows : planWindowRowsLog s6Step6EntryFBefore [(s6Step6EntryFRow,256),(s6Step6EntryGRow,256),(s6Step6EntryFvRow,7),(s6Step6EntryGvRow,7)] [s6Step6EntryFFresh,s6Step6EntryGFresh,s6Step6EntryFvFresh,s6Step6EntryGvFresh]=
-    some (s6Step6EntryGvAfter,[s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut],(growRow 795 s6Step6EntryFFresh ++ (growRow 777 s6Step6EntryGFresh ++ (growRow 776 s6Step6EntryFvFresh ++ (growRow 775 s6Step6EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step6EntryGvAfter [] []=some (s6Step6EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step6EntryGvBefore s6Step6EntryGvAfter s6Step6EntryGvAfter
-    s6Step6EntryGvRow s6Step6EntryGvOut 7 s6Step6EntryGvFresh [] [] []
-    (growRow 775 s6Step6EntryGvFresh) ([]) s6Step6EntryGv_Incoming s6Step6EntryGv_checked h4 s6Step6EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step6EntryFvBefore s6Step6EntryFvAfter s6Step6EntryGvAfter
-    s6Step6EntryFvRow s6Step6EntryFvOut 7 s6Step6EntryFvFresh [(s6Step6EntryGvRow,7)] [s6Step6EntryGvFresh] [s6Step6EntryGvOut]
-    (growRow 776 s6Step6EntryFvFresh) ((growRow 775 s6Step6EntryGvFresh ++ [])) s6Step6EntryFv_Incoming s6Step6EntryFv_checked h3 s6Step6EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step6EntryGBefore s6Step6EntryGAfter s6Step6EntryGvAfter
-    s6Step6EntryGRow s6Step6EntryGOut 256 s6Step6EntryGFresh [(s6Step6EntryFvRow,7),(s6Step6EntryGvRow,7)] [s6Step6EntryFvFresh,s6Step6EntryGvFresh] [s6Step6EntryFvOut,s6Step6EntryGvOut]
-    (growRow 777 s6Step6EntryGFresh) ((growRow 776 s6Step6EntryFvFresh ++ (growRow 775 s6Step6EntryGvFresh ++ []))) s6Step6EntryG_Incoming s6Step6EntryG_checked h2 s6Step6EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step6EntryFBefore s6Step6EntryFAfter s6Step6EntryGvAfter
-    s6Step6EntryFRow s6Step6EntryFOut 256 s6Step6EntryFFresh [(s6Step6EntryGRow,256),(s6Step6EntryFvRow,7),(s6Step6EntryGvRow,7)] [s6Step6EntryGFresh,s6Step6EntryFvFresh,s6Step6EntryGvFresh] [s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut]
-    (growRow 795 s6Step6EntryFFresh) ((growRow 777 s6Step6EntryGFresh ++ (growRow 776 s6Step6EntryFvFresh ++ (growRow 775 s6Step6EntryGvFresh ++ [])))) s6Step6EntryF_Incoming s6Step6EntryF_checked h1 s6Step6EntryF_Outgoing
+theorem s2Step23EntryGv_Outgoing : rowsOwned s2Step23EntryGvAfter [s2Step23EntryGvOut] :=
+  hmrRows_owned_drop s2Step23EntryGvAfter [s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut] 3 s2Step23EntryBank_outgoingOwned
+theorem s2Step23EntryBank_rows : planWindowRowsLog s2Step23EntryFBefore [(s2Step23EntryFRow,256),(s2Step23EntryGRow,256),(s2Step23EntryFvRow,24),(s2Step23EntryGvRow,24)] [s2Step23EntryFFresh,s2Step23EntryGFresh,s2Step23EntryFvFresh,s2Step23EntryGvFresh]=
+    some (s2Step23EntryGvAfter,[s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut],(growRow 768 s2Step23EntryFFresh ++ (growRow 769 s2Step23EntryGFresh ++ (growRow 770 s2Step23EntryFvFresh ++ (growRow 771 s2Step23EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step23EntryGvAfter [] []=some (s2Step23EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step23EntryGvBefore s2Step23EntryGvAfter s2Step23EntryGvAfter
+    s2Step23EntryGvRow s2Step23EntryGvOut 24 s2Step23EntryGvFresh [] [] []
+    (growRow 771 s2Step23EntryGvFresh) ([]) s2Step23EntryGv_Incoming s2Step23EntryGv_checked h4 s2Step23EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step23EntryFvBefore s2Step23EntryFvAfter s2Step23EntryGvAfter
+    s2Step23EntryFvRow s2Step23EntryFvOut 24 s2Step23EntryFvFresh [(s2Step23EntryGvRow,24)] [s2Step23EntryGvFresh] [s2Step23EntryGvOut]
+    (growRow 770 s2Step23EntryFvFresh) ((growRow 771 s2Step23EntryGvFresh ++ [])) s2Step23EntryFv_Incoming s2Step23EntryFv_checked h3 s2Step23EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step23EntryGBefore s2Step23EntryGAfter s2Step23EntryGvAfter
+    s2Step23EntryGRow s2Step23EntryGOut 256 s2Step23EntryGFresh [(s2Step23EntryFvRow,24),(s2Step23EntryGvRow,24)] [s2Step23EntryFvFresh,s2Step23EntryGvFresh] [s2Step23EntryFvOut,s2Step23EntryGvOut]
+    (growRow 769 s2Step23EntryGFresh) ((growRow 770 s2Step23EntryFvFresh ++ (growRow 771 s2Step23EntryGvFresh ++ []))) s2Step23EntryG_Incoming s2Step23EntryG_checked h2 s2Step23EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step23EntryFBefore s2Step23EntryFAfter s2Step23EntryGvAfter
+    s2Step23EntryFRow s2Step23EntryFOut 256 s2Step23EntryFFresh [(s2Step23EntryGRow,256),(s2Step23EntryFvRow,24),(s2Step23EntryGvRow,24)] [s2Step23EntryGFresh,s2Step23EntryFvFresh,s2Step23EntryGvFresh] [s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut]
+    (growRow 768 s2Step23EntryFFresh) ((growRow 769 s2Step23EntryGFresh ++ (growRow 770 s2Step23EntryFvFresh ++ (growRow 771 s2Step23EntryGvFresh ++ [])))) s2Step23EntryF_Incoming s2Step23EntryF_checked h1 s2Step23EntryF_Outgoing
   exact h0
-theorem s6Step6EntryBank_checked : compileHmrBankResizeLog .entry s6Step6EntryFBefore ⟨s6Step6EntryFRow,s6Step6EntryGRow,s6Step6EntryFvRow,s6Step6EntryGvRow⟩ ⟨256,256,7,7⟩ [s6Step6EntryFFresh,s6Step6EntryGFresh,s6Step6EntryFvFresh,s6Step6EntryGvFresh]=
-    some (s6Step6EntryGvAfter,⟨s6Step6EntryFOut,s6Step6EntryGOut,s6Step6EntryFvOut,s6Step6EntryGvOut⟩,(growRow 795 s6Step6EntryFFresh ++ (growRow 777 s6Step6EntryGFresh ++ (growRow 776 s6Step6EntryFvFresh ++ (growRow 775 s6Step6EntryGvFresh ++ []))))) := by
+theorem s2Step23EntryBank_checked : compileHmrBankResizeLog .entry s2Step23EntryFBefore ⟨s2Step23EntryFRow,s2Step23EntryGRow,s2Step23EntryFvRow,s2Step23EntryGvRow⟩ ⟨256,256,24,24⟩ [s2Step23EntryFFresh,s2Step23EntryGFresh,s2Step23EntryFvFresh,s2Step23EntryGvFresh]=
+    some (s2Step23EntryGvAfter,⟨s2Step23EntryFOut,s2Step23EntryGOut,s2Step23EntryFvOut,s2Step23EntryGvOut⟩,(growRow 768 s2Step23EntryFFresh ++ (growRow 769 s2Step23EntryGFresh ++ (growRow 770 s2Step23EntryFvFresh ++ (growRow 771 s2Step23EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step6EntryBank_rows]
+  rw [s2Step23EntryBank_rows]
   rfl
-def s6Step7EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step7EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step7EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845],776⟩
-def s6Step7EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 887],775⟩
-theorem s6Step7EntryBank_incomingDistinct : ([s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step24EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767],768⟩
+def s2Step24EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783],769⟩
+def s2Step24EntryFvOut : WindowRow := ⟨[255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837],770⟩
+def s2Step24EntryGvOut : WindowRow := ⟨[779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 780],771⟩
+theorem s2Step24EntryBank_incomingDistinct : ([s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7EntryBank_outgoingOwned : rowsOwned s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] := by
+theorem s2Step24EntryBank_outgoingOwned : rowsOwned s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step7EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step24EntryGvAfter (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7EntryF_Incoming : rowsOwned s6Step7EntryFBefore [s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] := by
+theorem s2Step24EntryF_Incoming : rowsOwned s2Step24EntryFBefore [s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] 0 s6Step7EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] 0 s2Step24EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24EntryFBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7EntryF_Outgoing : rowsOwned s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] :=
-  hmrRows_owned_drop s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] 0 s6Step7EntryBank_outgoingOwned
-theorem s6Step7EntryG_Incoming : rowsOwned s6Step7EntryGBefore [s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] := by
+theorem s2Step24EntryF_Outgoing : rowsOwned s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] :=
+  hmrRows_owned_drop s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] 0 s2Step24EntryBank_outgoingOwned
+theorem s2Step24EntryG_Incoming : rowsOwned s2Step24EntryGBefore [s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] 1 s6Step7EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] 1 s2Step24EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24EntryGBefore (fun q => (0≤q ∧ q<780) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7EntryG_Outgoing : rowsOwned s6Step7EntryGvAfter [s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] :=
-  hmrRows_owned_drop s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] 1 s6Step7EntryBank_outgoingOwned
-theorem s6Step7EntryFv_Incoming : rowsOwned s6Step7EntryFvBefore [s6Step7EntryFvRow,s6Step7EntryGvRow] := by
+theorem s2Step24EntryG_Outgoing : rowsOwned s2Step24EntryGvAfter [s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] :=
+  hmrRows_owned_drop s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] 1 s2Step24EntryBank_outgoingOwned
+theorem s2Step24EntryFv_Incoming : rowsOwned s2Step24EntryFvBefore [s2Step24EntryFvRow,s2Step24EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] 2 s6Step7EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] 2 s2Step24EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24EntryFvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7EntryFv_Outgoing : rowsOwned s6Step7EntryGvAfter [s6Step7EntryFvOut,s6Step7EntryGvOut] :=
-  hmrRows_owned_drop s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] 2 s6Step7EntryBank_outgoingOwned
-theorem s6Step7EntryGv_Incoming : rowsOwned s6Step7EntryGvBefore [s6Step7EntryGvRow] := by
+theorem s2Step24EntryFv_Outgoing : rowsOwned s2Step24EntryGvAfter [s2Step24EntryFvOut,s2Step24EntryGvOut] :=
+  hmrRows_owned_drop s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] 2 s2Step24EntryBank_outgoingOwned
+theorem s2Step24EntryGv_Incoming : rowsOwned s2Step24EntryGvBefore [s2Step24EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow] 3 s6Step7EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow] 3 s2Step24EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24EntryGvBefore (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7EntryGv_Outgoing : rowsOwned s6Step7EntryGvAfter [s6Step7EntryGvOut] :=
-  hmrRows_owned_drop s6Step7EntryGvAfter [s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut] 3 s6Step7EntryBank_outgoingOwned
-theorem s6Step7EntryBank_rows : planWindowRowsLog s6Step7EntryFBefore [(s6Step7EntryFRow,256),(s6Step7EntryGRow,256),(s6Step7EntryFvRow,8),(s6Step7EntryGvRow,8)] [s6Step7EntryFFresh,s6Step7EntryGFresh,s6Step7EntryFvFresh,s6Step7EntryGvFresh]=
-    some (s6Step7EntryGvAfter,[s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut],(growRow 795 s6Step7EntryFFresh ++ (growRow 777 s6Step7EntryGFresh ++ (growRow 776 s6Step7EntryFvFresh ++ (growRow 775 s6Step7EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step7EntryGvAfter [] []=some (s6Step7EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step7EntryGvBefore s6Step7EntryGvAfter s6Step7EntryGvAfter
-    s6Step7EntryGvRow s6Step7EntryGvOut 8 s6Step7EntryGvFresh [] [] []
-    (growRow 775 s6Step7EntryGvFresh) ([]) s6Step7EntryGv_Incoming s6Step7EntryGv_checked h4 s6Step7EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step7EntryFvBefore s6Step7EntryFvAfter s6Step7EntryGvAfter
-    s6Step7EntryFvRow s6Step7EntryFvOut 8 s6Step7EntryFvFresh [(s6Step7EntryGvRow,8)] [s6Step7EntryGvFresh] [s6Step7EntryGvOut]
-    (growRow 776 s6Step7EntryFvFresh) ((growRow 775 s6Step7EntryGvFresh ++ [])) s6Step7EntryFv_Incoming s6Step7EntryFv_checked h3 s6Step7EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step7EntryGBefore s6Step7EntryGAfter s6Step7EntryGvAfter
-    s6Step7EntryGRow s6Step7EntryGOut 256 s6Step7EntryGFresh [(s6Step7EntryFvRow,8),(s6Step7EntryGvRow,8)] [s6Step7EntryFvFresh,s6Step7EntryGvFresh] [s6Step7EntryFvOut,s6Step7EntryGvOut]
-    (growRow 777 s6Step7EntryGFresh) ((growRow 776 s6Step7EntryFvFresh ++ (growRow 775 s6Step7EntryGvFresh ++ []))) s6Step7EntryG_Incoming s6Step7EntryG_checked h2 s6Step7EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step7EntryFBefore s6Step7EntryFAfter s6Step7EntryGvAfter
-    s6Step7EntryFRow s6Step7EntryFOut 256 s6Step7EntryFFresh [(s6Step7EntryGRow,256),(s6Step7EntryFvRow,8),(s6Step7EntryGvRow,8)] [s6Step7EntryGFresh,s6Step7EntryFvFresh,s6Step7EntryGvFresh] [s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut]
-    (growRow 795 s6Step7EntryFFresh) ((growRow 777 s6Step7EntryGFresh ++ (growRow 776 s6Step7EntryFvFresh ++ (growRow 775 s6Step7EntryGvFresh ++ [])))) s6Step7EntryF_Incoming s6Step7EntryF_checked h1 s6Step7EntryF_Outgoing
+theorem s2Step24EntryGv_Outgoing : rowsOwned s2Step24EntryGvAfter [s2Step24EntryGvOut] :=
+  hmrRows_owned_drop s2Step24EntryGvAfter [s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut] 3 s2Step24EntryBank_outgoingOwned
+theorem s2Step24EntryBank_rows : planWindowRowsLog s2Step24EntryFBefore [(s2Step24EntryFRow,256),(s2Step24EntryGRow,256),(s2Step24EntryFvRow,25),(s2Step24EntryGvRow,25)] [s2Step24EntryFFresh,s2Step24EntryGFresh,s2Step24EntryFvFresh,s2Step24EntryGvFresh]=
+    some (s2Step24EntryGvAfter,[s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut],(growRow 768 s2Step24EntryFFresh ++ (growRow 769 s2Step24EntryGFresh ++ (growRow 770 s2Step24EntryFvFresh ++ (growRow 771 s2Step24EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step24EntryGvAfter [] []=some (s2Step24EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step24EntryGvBefore s2Step24EntryGvAfter s2Step24EntryGvAfter
+    s2Step24EntryGvRow s2Step24EntryGvOut 25 s2Step24EntryGvFresh [] [] []
+    (growRow 771 s2Step24EntryGvFresh) ([]) s2Step24EntryGv_Incoming s2Step24EntryGv_checked h4 s2Step24EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step24EntryFvBefore s2Step24EntryFvAfter s2Step24EntryGvAfter
+    s2Step24EntryFvRow s2Step24EntryFvOut 25 s2Step24EntryFvFresh [(s2Step24EntryGvRow,25)] [s2Step24EntryGvFresh] [s2Step24EntryGvOut]
+    (growRow 770 s2Step24EntryFvFresh) ((growRow 771 s2Step24EntryGvFresh ++ [])) s2Step24EntryFv_Incoming s2Step24EntryFv_checked h3 s2Step24EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step24EntryGBefore s2Step24EntryGAfter s2Step24EntryGvAfter
+    s2Step24EntryGRow s2Step24EntryGOut 256 s2Step24EntryGFresh [(s2Step24EntryFvRow,25),(s2Step24EntryGvRow,25)] [s2Step24EntryFvFresh,s2Step24EntryGvFresh] [s2Step24EntryFvOut,s2Step24EntryGvOut]
+    (growRow 769 s2Step24EntryGFresh) ((growRow 770 s2Step24EntryFvFresh ++ (growRow 771 s2Step24EntryGvFresh ++ []))) s2Step24EntryG_Incoming s2Step24EntryG_checked h2 s2Step24EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step24EntryFBefore s2Step24EntryFAfter s2Step24EntryGvAfter
+    s2Step24EntryFRow s2Step24EntryFOut 256 s2Step24EntryFFresh [(s2Step24EntryGRow,256),(s2Step24EntryFvRow,25),(s2Step24EntryGvRow,25)] [s2Step24EntryGFresh,s2Step24EntryFvFresh,s2Step24EntryGvFresh] [s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut]
+    (growRow 768 s2Step24EntryFFresh) ((growRow 769 s2Step24EntryGFresh ++ (growRow 770 s2Step24EntryFvFresh ++ (growRow 771 s2Step24EntryGvFresh ++ [])))) s2Step24EntryF_Incoming s2Step24EntryF_checked h1 s2Step24EntryF_Outgoing
   exact h0
-theorem s6Step7EntryBank_checked : compileHmrBankResizeLog .entry s6Step7EntryFBefore ⟨s6Step7EntryFRow,s6Step7EntryGRow,s6Step7EntryFvRow,s6Step7EntryGvRow⟩ ⟨256,256,8,8⟩ [s6Step7EntryFFresh,s6Step7EntryGFresh,s6Step7EntryFvFresh,s6Step7EntryGvFresh]=
-    some (s6Step7EntryGvAfter,⟨s6Step7EntryFOut,s6Step7EntryGOut,s6Step7EntryFvOut,s6Step7EntryGvOut⟩,(growRow 795 s6Step7EntryFFresh ++ (growRow 777 s6Step7EntryGFresh ++ (growRow 776 s6Step7EntryFvFresh ++ (growRow 775 s6Step7EntryGvFresh ++ []))))) := by
+theorem s2Step24EntryBank_checked : compileHmrBankResizeLog .entry s2Step24EntryFBefore ⟨s2Step24EntryFRow,s2Step24EntryGRow,s2Step24EntryFvRow,s2Step24EntryGvRow⟩ ⟨256,256,25,25⟩ [s2Step24EntryFFresh,s2Step24EntryGFresh,s2Step24EntryFvFresh,s2Step24EntryGvFresh]=
+    some (s2Step24EntryGvAfter,⟨s2Step24EntryFOut,s2Step24EntryGOut,s2Step24EntryFvOut,s2Step24EntryGvOut⟩,(growRow 768 s2Step24EntryFFresh ++ (growRow 769 s2Step24EntryGFresh ++ (growRow 770 s2Step24EntryFvFresh ++ (growRow 771 s2Step24EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step7EntryBank_rows]
+  rw [s2Step24EntryBank_rows]
   rfl
-def s6Step8EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step8EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step8EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805],776⟩
-def s6Step8EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 887],775⟩
-theorem s6Step8EntryBank_incomingDistinct : ([s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step25EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766],768⟩
+def s2Step25EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 781],769⟩
+def s2Step25EntryFvOut : WindowRow := ⟨[255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837],770⟩
+def s2Step25EntryGvOut : WindowRow := ⟨[767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836],771⟩
+theorem s2Step25EntryBank_incomingDistinct : ([s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8EntryBank_outgoingOwned : rowsOwned s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] := by
+theorem s2Step25EntryBank_outgoingOwned : rowsOwned s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step8EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step25EntryGvAfter (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<782) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8EntryF_Incoming : rowsOwned s6Step8EntryFBefore [s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] := by
+theorem s2Step25EntryF_Incoming : rowsOwned s2Step25EntryFBefore [s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] 0 s6Step8EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] 0 s2Step25EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25EntryFBefore (fun q => (0≤q ∧ q<779) ∨ (786≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8EntryF_Outgoing : rowsOwned s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] :=
-  hmrRows_owned_drop s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] 0 s6Step8EntryBank_outgoingOwned
-theorem s6Step8EntryG_Incoming : rowsOwned s6Step8EntryGBefore [s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] := by
+theorem s2Step25EntryF_Outgoing : rowsOwned s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] :=
+  hmrRows_owned_drop s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] 0 s2Step25EntryBank_outgoingOwned
+theorem s2Step25EntryG_Incoming : rowsOwned s2Step25EntryGBefore [s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] 1 s6Step8EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] 1 s2Step25EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25EntryGBefore (fun q => (0≤q ∧ q<779) ∨ (786≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8EntryG_Outgoing : rowsOwned s6Step8EntryGvAfter [s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] :=
-  hmrRows_owned_drop s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] 1 s6Step8EntryBank_outgoingOwned
-theorem s6Step8EntryFv_Incoming : rowsOwned s6Step8EntryFvBefore [s6Step8EntryFvRow,s6Step8EntryGvRow] := by
+theorem s2Step25EntryG_Outgoing : rowsOwned s2Step25EntryGvAfter [s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] :=
+  hmrRows_owned_drop s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] 1 s2Step25EntryBank_outgoingOwned
+theorem s2Step25EntryFv_Incoming : rowsOwned s2Step25EntryFvBefore [s2Step25EntryFvRow,s2Step25EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] 2 s6Step8EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] 2 s2Step25EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25EntryFvBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<782) ∨ (786≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8EntryFv_Outgoing : rowsOwned s6Step8EntryGvAfter [s6Step8EntryFvOut,s6Step8EntryGvOut] :=
-  hmrRows_owned_drop s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] 2 s6Step8EntryBank_outgoingOwned
-theorem s6Step8EntryGv_Incoming : rowsOwned s6Step8EntryGvBefore [s6Step8EntryGvRow] := by
+theorem s2Step25EntryFv_Outgoing : rowsOwned s2Step25EntryGvAfter [s2Step25EntryFvOut,s2Step25EntryGvOut] :=
+  hmrRows_owned_drop s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] 2 s2Step25EntryBank_outgoingOwned
+theorem s2Step25EntryGv_Incoming : rowsOwned s2Step25EntryGvBefore [s2Step25EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow] 3 s6Step8EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow] 3 s2Step25EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25EntryGvBefore (fun q => (0≤q ∧ q<779) ∨ (781≤q ∧ q<782) ∨ (786≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8EntryGv_Outgoing : rowsOwned s6Step8EntryGvAfter [s6Step8EntryGvOut] :=
-  hmrRows_owned_drop s6Step8EntryGvAfter [s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut] 3 s6Step8EntryBank_outgoingOwned
-theorem s6Step8EntryBank_rows : planWindowRowsLog s6Step8EntryFBefore [(s6Step8EntryFRow,256),(s6Step8EntryGRow,256),(s6Step8EntryFvRow,9),(s6Step8EntryGvRow,9)] [s6Step8EntryFFresh,s6Step8EntryGFresh,s6Step8EntryFvFresh,s6Step8EntryGvFresh]=
-    some (s6Step8EntryGvAfter,[s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut],(growRow 795 s6Step8EntryFFresh ++ (growRow 777 s6Step8EntryGFresh ++ (growRow 776 s6Step8EntryFvFresh ++ (growRow 775 s6Step8EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step8EntryGvAfter [] []=some (s6Step8EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step8EntryGvBefore s6Step8EntryGvAfter s6Step8EntryGvAfter
-    s6Step8EntryGvRow s6Step8EntryGvOut 9 s6Step8EntryGvFresh [] [] []
-    (growRow 775 s6Step8EntryGvFresh) ([]) s6Step8EntryGv_Incoming s6Step8EntryGv_checked h4 s6Step8EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step8EntryFvBefore s6Step8EntryFvAfter s6Step8EntryGvAfter
-    s6Step8EntryFvRow s6Step8EntryFvOut 9 s6Step8EntryFvFresh [(s6Step8EntryGvRow,9)] [s6Step8EntryGvFresh] [s6Step8EntryGvOut]
-    (growRow 776 s6Step8EntryFvFresh) ((growRow 775 s6Step8EntryGvFresh ++ [])) s6Step8EntryFv_Incoming s6Step8EntryFv_checked h3 s6Step8EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step8EntryGBefore s6Step8EntryGAfter s6Step8EntryGvAfter
-    s6Step8EntryGRow s6Step8EntryGOut 256 s6Step8EntryGFresh [(s6Step8EntryFvRow,9),(s6Step8EntryGvRow,9)] [s6Step8EntryFvFresh,s6Step8EntryGvFresh] [s6Step8EntryFvOut,s6Step8EntryGvOut]
-    (growRow 777 s6Step8EntryGFresh) ((growRow 776 s6Step8EntryFvFresh ++ (growRow 775 s6Step8EntryGvFresh ++ []))) s6Step8EntryG_Incoming s6Step8EntryG_checked h2 s6Step8EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step8EntryFBefore s6Step8EntryFAfter s6Step8EntryGvAfter
-    s6Step8EntryFRow s6Step8EntryFOut 256 s6Step8EntryFFresh [(s6Step8EntryGRow,256),(s6Step8EntryFvRow,9),(s6Step8EntryGvRow,9)] [s6Step8EntryGFresh,s6Step8EntryFvFresh,s6Step8EntryGvFresh] [s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut]
-    (growRow 795 s6Step8EntryFFresh) ((growRow 777 s6Step8EntryGFresh ++ (growRow 776 s6Step8EntryFvFresh ++ (growRow 775 s6Step8EntryGvFresh ++ [])))) s6Step8EntryF_Incoming s6Step8EntryF_checked h1 s6Step8EntryF_Outgoing
+theorem s2Step25EntryGv_Outgoing : rowsOwned s2Step25EntryGvAfter [s2Step25EntryGvOut] :=
+  hmrRows_owned_drop s2Step25EntryGvAfter [s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut] 3 s2Step25EntryBank_outgoingOwned
+theorem s2Step25EntryBank_rows : planWindowRowsLog s2Step25EntryFBefore [(s2Step25EntryFRow,255),(s2Step25EntryGRow,255),(s2Step25EntryFvRow,25),(s2Step25EntryGvRow,25)] [s2Step25EntryFFresh,s2Step25EntryGFresh,s2Step25EntryFvFresh,s2Step25EntryGvFresh]=
+    some (s2Step25EntryGvAfter,[s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut],(growRow 768 s2Step25EntryFFresh ++ (growRow 769 s2Step25EntryGFresh ++ (growRow 770 s2Step25EntryFvFresh ++ (growRow 771 s2Step25EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step25EntryGvAfter [] []=some (s2Step25EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step25EntryGvBefore s2Step25EntryGvAfter s2Step25EntryGvAfter
+    s2Step25EntryGvRow s2Step25EntryGvOut 25 s2Step25EntryGvFresh [] [] []
+    (growRow 771 s2Step25EntryGvFresh) ([]) s2Step25EntryGv_Incoming s2Step25EntryGv_checked h4 s2Step25EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step25EntryFvBefore s2Step25EntryFvAfter s2Step25EntryGvAfter
+    s2Step25EntryFvRow s2Step25EntryFvOut 25 s2Step25EntryFvFresh [(s2Step25EntryGvRow,25)] [s2Step25EntryGvFresh] [s2Step25EntryGvOut]
+    (growRow 770 s2Step25EntryFvFresh) ((growRow 771 s2Step25EntryGvFresh ++ [])) s2Step25EntryFv_Incoming s2Step25EntryFv_checked h3 s2Step25EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step25EntryGBefore s2Step25EntryGAfter s2Step25EntryGvAfter
+    s2Step25EntryGRow s2Step25EntryGOut 255 s2Step25EntryGFresh [(s2Step25EntryFvRow,25),(s2Step25EntryGvRow,25)] [s2Step25EntryFvFresh,s2Step25EntryGvFresh] [s2Step25EntryFvOut,s2Step25EntryGvOut]
+    (growRow 769 s2Step25EntryGFresh) ((growRow 770 s2Step25EntryFvFresh ++ (growRow 771 s2Step25EntryGvFresh ++ []))) s2Step25EntryG_Incoming s2Step25EntryG_checked h2 s2Step25EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step25EntryFBefore s2Step25EntryFAfter s2Step25EntryGvAfter
+    s2Step25EntryFRow s2Step25EntryFOut 255 s2Step25EntryFFresh [(s2Step25EntryGRow,255),(s2Step25EntryFvRow,25),(s2Step25EntryGvRow,25)] [s2Step25EntryGFresh,s2Step25EntryFvFresh,s2Step25EntryGvFresh] [s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut]
+    (growRow 768 s2Step25EntryFFresh) ((growRow 769 s2Step25EntryGFresh ++ (growRow 770 s2Step25EntryFvFresh ++ (growRow 771 s2Step25EntryGvFresh ++ [])))) s2Step25EntryF_Incoming s2Step25EntryF_checked h1 s2Step25EntryF_Outgoing
   exact h0
-theorem s6Step8EntryBank_checked : compileHmrBankResizeLog .entry s6Step8EntryFBefore ⟨s6Step8EntryFRow,s6Step8EntryGRow,s6Step8EntryFvRow,s6Step8EntryGvRow⟩ ⟨256,256,9,9⟩ [s6Step8EntryFFresh,s6Step8EntryGFresh,s6Step8EntryFvFresh,s6Step8EntryGvFresh]=
-    some (s6Step8EntryGvAfter,⟨s6Step8EntryFOut,s6Step8EntryGOut,s6Step8EntryFvOut,s6Step8EntryGvOut⟩,(growRow 795 s6Step8EntryFFresh ++ (growRow 777 s6Step8EntryGFresh ++ (growRow 776 s6Step8EntryFvFresh ++ (growRow 775 s6Step8EntryGvFresh ++ []))))) := by
+theorem s2Step25EntryBank_checked : compileHmrBankResizeLog .entry s2Step25EntryFBefore ⟨s2Step25EntryFRow,s2Step25EntryGRow,s2Step25EntryFvRow,s2Step25EntryGvRow⟩ ⟨255,255,25,25⟩ [s2Step25EntryFFresh,s2Step25EntryGFresh,s2Step25EntryFvFresh,s2Step25EntryGvFresh]=
+    some (s2Step25EntryGvAfter,⟨s2Step25EntryFOut,s2Step25EntryGOut,s2Step25EntryFvOut,s2Step25EntryGvOut⟩,(growRow 768 s2Step25EntryFFresh ++ (growRow 769 s2Step25EntryGFresh ++ (growRow 770 s2Step25EntryFvFresh ++ (growRow 771 s2Step25EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step8EntryBank_rows]
+  rw [s2Step25EntryBank_rows]
   rfl
-def s6Step9EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step9EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step9EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796],776⟩
-def s6Step9EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 887],775⟩
-theorem s6Step9EntryBank_incomingDistinct : ([s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step26EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766],768⟩
+def s2Step26EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 785],769⟩
+def s2Step26EntryFvOut : WindowRow := ⟨[255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784],770⟩
+def s2Step26EntryGvOut : WindowRow := ⟨[767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 779],771⟩
+theorem s2Step26EntryBank_incomingDistinct : ([s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9EntryBank_outgoingOwned : rowsOwned s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] := by
+theorem s2Step26EntryBank_outgoingOwned : rowsOwned s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step9EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step26EntryGvAfter (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9EntryF_Incoming : rowsOwned s6Step9EntryFBefore [s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] := by
+theorem s2Step26EntryF_Incoming : rowsOwned s2Step26EntryFBefore [s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] 0 s6Step9EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] 0 s2Step26EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26EntryFBefore (fun q => (0≤q ∧ q<779) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9EntryF_Outgoing : rowsOwned s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] :=
-  hmrRows_owned_drop s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] 0 s6Step9EntryBank_outgoingOwned
-theorem s6Step9EntryG_Incoming : rowsOwned s6Step9EntryGBefore [s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] := by
+theorem s2Step26EntryF_Outgoing : rowsOwned s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] :=
+  hmrRows_owned_drop s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] 0 s2Step26EntryBank_outgoingOwned
+theorem s2Step26EntryG_Incoming : rowsOwned s2Step26EntryGBefore [s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] 1 s6Step9EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] 1 s2Step26EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26EntryGBefore (fun q => (0≤q ∧ q<779) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9EntryG_Outgoing : rowsOwned s6Step9EntryGvAfter [s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] :=
-  hmrRows_owned_drop s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] 1 s6Step9EntryBank_outgoingOwned
-theorem s6Step9EntryFv_Incoming : rowsOwned s6Step9EntryFvBefore [s6Step9EntryFvRow,s6Step9EntryGvRow] := by
+theorem s2Step26EntryG_Outgoing : rowsOwned s2Step26EntryGvAfter [s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] :=
+  hmrRows_owned_drop s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] 1 s2Step26EntryBank_outgoingOwned
+theorem s2Step26EntryFv_Incoming : rowsOwned s2Step26EntryFvBefore [s2Step26EntryFvRow,s2Step26EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] 2 s6Step9EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] 2 s2Step26EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26EntryFvBefore (fun q => (0≤q ∧ q<779) ∨ (784≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9EntryFv_Outgoing : rowsOwned s6Step9EntryGvAfter [s6Step9EntryFvOut,s6Step9EntryGvOut] :=
-  hmrRows_owned_drop s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] 2 s6Step9EntryBank_outgoingOwned
-theorem s6Step9EntryGv_Incoming : rowsOwned s6Step9EntryGvBefore [s6Step9EntryGvRow] := by
+theorem s2Step26EntryFv_Outgoing : rowsOwned s2Step26EntryGvAfter [s2Step26EntryFvOut,s2Step26EntryGvOut] :=
+  hmrRows_owned_drop s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] 2 s2Step26EntryBank_outgoingOwned
+theorem s2Step26EntryGv_Incoming : rowsOwned s2Step26EntryGvBefore [s2Step26EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow] 3 s6Step9EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow] 3 s2Step26EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26EntryGvBefore (fun q => (0≤q ∧ q<779) ∨ (784≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9EntryGv_Outgoing : rowsOwned s6Step9EntryGvAfter [s6Step9EntryGvOut] :=
-  hmrRows_owned_drop s6Step9EntryGvAfter [s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut] 3 s6Step9EntryBank_outgoingOwned
-theorem s6Step9EntryBank_rows : planWindowRowsLog s6Step9EntryFBefore [(s6Step9EntryFRow,256),(s6Step9EntryGRow,256),(s6Step9EntryFvRow,10),(s6Step9EntryGvRow,10)] [s6Step9EntryFFresh,s6Step9EntryGFresh,s6Step9EntryFvFresh,s6Step9EntryGvFresh]=
-    some (s6Step9EntryGvAfter,[s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut],(growRow 795 s6Step9EntryFFresh ++ (growRow 777 s6Step9EntryGFresh ++ (growRow 776 s6Step9EntryFvFresh ++ (growRow 775 s6Step9EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step9EntryGvAfter [] []=some (s6Step9EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step9EntryGvBefore s6Step9EntryGvAfter s6Step9EntryGvAfter
-    s6Step9EntryGvRow s6Step9EntryGvOut 10 s6Step9EntryGvFresh [] [] []
-    (growRow 775 s6Step9EntryGvFresh) ([]) s6Step9EntryGv_Incoming s6Step9EntryGv_checked h4 s6Step9EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step9EntryFvBefore s6Step9EntryFvAfter s6Step9EntryGvAfter
-    s6Step9EntryFvRow s6Step9EntryFvOut 10 s6Step9EntryFvFresh [(s6Step9EntryGvRow,10)] [s6Step9EntryGvFresh] [s6Step9EntryGvOut]
-    (growRow 776 s6Step9EntryFvFresh) ((growRow 775 s6Step9EntryGvFresh ++ [])) s6Step9EntryFv_Incoming s6Step9EntryFv_checked h3 s6Step9EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step9EntryGBefore s6Step9EntryGAfter s6Step9EntryGvAfter
-    s6Step9EntryGRow s6Step9EntryGOut 256 s6Step9EntryGFresh [(s6Step9EntryFvRow,10),(s6Step9EntryGvRow,10)] [s6Step9EntryFvFresh,s6Step9EntryGvFresh] [s6Step9EntryFvOut,s6Step9EntryGvOut]
-    (growRow 777 s6Step9EntryGFresh) ((growRow 776 s6Step9EntryFvFresh ++ (growRow 775 s6Step9EntryGvFresh ++ []))) s6Step9EntryG_Incoming s6Step9EntryG_checked h2 s6Step9EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step9EntryFBefore s6Step9EntryFAfter s6Step9EntryGvAfter
-    s6Step9EntryFRow s6Step9EntryFOut 256 s6Step9EntryFFresh [(s6Step9EntryGRow,256),(s6Step9EntryFvRow,10),(s6Step9EntryGvRow,10)] [s6Step9EntryGFresh,s6Step9EntryFvFresh,s6Step9EntryGvFresh] [s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut]
-    (growRow 795 s6Step9EntryFFresh) ((growRow 777 s6Step9EntryGFresh ++ (growRow 776 s6Step9EntryFvFresh ++ (growRow 775 s6Step9EntryGvFresh ++ [])))) s6Step9EntryF_Incoming s6Step9EntryF_checked h1 s6Step9EntryF_Outgoing
+theorem s2Step26EntryGv_Outgoing : rowsOwned s2Step26EntryGvAfter [s2Step26EntryGvOut] :=
+  hmrRows_owned_drop s2Step26EntryGvAfter [s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut] 3 s2Step26EntryBank_outgoingOwned
+theorem s2Step26EntryBank_rows : planWindowRowsLog s2Step26EntryFBefore [(s2Step26EntryFRow,255),(s2Step26EntryGRow,255),(s2Step26EntryFvRow,26),(s2Step26EntryGvRow,26)] [s2Step26EntryFFresh,s2Step26EntryGFresh,s2Step26EntryFvFresh,s2Step26EntryGvFresh]=
+    some (s2Step26EntryGvAfter,[s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut],(growRow 768 s2Step26EntryFFresh ++ (growRow 769 s2Step26EntryGFresh ++ (growRow 770 s2Step26EntryFvFresh ++ (growRow 771 s2Step26EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step26EntryGvAfter [] []=some (s2Step26EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step26EntryGvBefore s2Step26EntryGvAfter s2Step26EntryGvAfter
+    s2Step26EntryGvRow s2Step26EntryGvOut 26 s2Step26EntryGvFresh [] [] []
+    (growRow 771 s2Step26EntryGvFresh) ([]) s2Step26EntryGv_Incoming s2Step26EntryGv_checked h4 s2Step26EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step26EntryFvBefore s2Step26EntryFvAfter s2Step26EntryGvAfter
+    s2Step26EntryFvRow s2Step26EntryFvOut 26 s2Step26EntryFvFresh [(s2Step26EntryGvRow,26)] [s2Step26EntryGvFresh] [s2Step26EntryGvOut]
+    (growRow 770 s2Step26EntryFvFresh) ((growRow 771 s2Step26EntryGvFresh ++ [])) s2Step26EntryFv_Incoming s2Step26EntryFv_checked h3 s2Step26EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step26EntryGBefore s2Step26EntryGAfter s2Step26EntryGvAfter
+    s2Step26EntryGRow s2Step26EntryGOut 255 s2Step26EntryGFresh [(s2Step26EntryFvRow,26),(s2Step26EntryGvRow,26)] [s2Step26EntryFvFresh,s2Step26EntryGvFresh] [s2Step26EntryFvOut,s2Step26EntryGvOut]
+    (growRow 769 s2Step26EntryGFresh) ((growRow 770 s2Step26EntryFvFresh ++ (growRow 771 s2Step26EntryGvFresh ++ []))) s2Step26EntryG_Incoming s2Step26EntryG_checked h2 s2Step26EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step26EntryFBefore s2Step26EntryFAfter s2Step26EntryGvAfter
+    s2Step26EntryFRow s2Step26EntryFOut 255 s2Step26EntryFFresh [(s2Step26EntryGRow,255),(s2Step26EntryFvRow,26),(s2Step26EntryGvRow,26)] [s2Step26EntryGFresh,s2Step26EntryFvFresh,s2Step26EntryGvFresh] [s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut]
+    (growRow 768 s2Step26EntryFFresh) ((growRow 769 s2Step26EntryGFresh ++ (growRow 770 s2Step26EntryFvFresh ++ (growRow 771 s2Step26EntryGvFresh ++ [])))) s2Step26EntryF_Incoming s2Step26EntryF_checked h1 s2Step26EntryF_Outgoing
   exact h0
-theorem s6Step9EntryBank_checked : compileHmrBankResizeLog .entry s6Step9EntryFBefore ⟨s6Step9EntryFRow,s6Step9EntryGRow,s6Step9EntryFvRow,s6Step9EntryGvRow⟩ ⟨256,256,10,10⟩ [s6Step9EntryFFresh,s6Step9EntryGFresh,s6Step9EntryFvFresh,s6Step9EntryGvFresh]=
-    some (s6Step9EntryGvAfter,⟨s6Step9EntryFOut,s6Step9EntryGOut,s6Step9EntryFvOut,s6Step9EntryGvOut⟩,(growRow 795 s6Step9EntryFFresh ++ (growRow 777 s6Step9EntryGFresh ++ (growRow 776 s6Step9EntryFvFresh ++ (growRow 775 s6Step9EntryGvFresh ++ []))))) := by
+theorem s2Step26EntryBank_checked : compileHmrBankResizeLog .entry s2Step26EntryFBefore ⟨s2Step26EntryFRow,s2Step26EntryGRow,s2Step26EntryFvRow,s2Step26EntryGvRow⟩ ⟨255,255,26,26⟩ [s2Step26EntryFFresh,s2Step26EntryGFresh,s2Step26EntryFvFresh,s2Step26EntryGvFresh]=
+    some (s2Step26EntryGvAfter,⟨s2Step26EntryFOut,s2Step26EntryGOut,s2Step26EntryFvOut,s2Step26EntryGvOut⟩,(growRow 768 s2Step26EntryFFresh ++ (growRow 769 s2Step26EntryGFresh ++ (growRow 770 s2Step26EntryFvFresh ++ (growRow 771 s2Step26EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step9EntryBank_rows]
+  rw [s2Step26EntryBank_rows]
   rfl
-def s6Step10EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step10EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step10EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856],776⟩
-def s6Step10EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 887],775⟩
-theorem s6Step10EntryBank_incomingDistinct : ([s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step27EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766],768⟩
+def s2Step27EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 839],769⟩
+def s2Step27EntryFvOut : WindowRow := ⟨[255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782],770⟩
+def s2Step27EntryGvOut : WindowRow := ⟨[767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 779],771⟩
+theorem s2Step27EntryBank_incomingDistinct : ([s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10EntryBank_outgoingOwned : rowsOwned s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] := by
+theorem s2Step27EntryBank_outgoingOwned : rowsOwned s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step10EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step27EntryGvAfter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10EntryF_Incoming : rowsOwned s6Step10EntryFBefore [s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] := by
+theorem s2Step27EntryF_Incoming : rowsOwned s2Step27EntryFBefore [s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] 0 s6Step10EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] 0 s2Step27EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27EntryFBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10EntryF_Outgoing : rowsOwned s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] :=
-  hmrRows_owned_drop s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] 0 s6Step10EntryBank_outgoingOwned
-theorem s6Step10EntryG_Incoming : rowsOwned s6Step10EntryGBefore [s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] := by
+theorem s2Step27EntryF_Outgoing : rowsOwned s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] :=
+  hmrRows_owned_drop s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] 0 s2Step27EntryBank_outgoingOwned
+theorem s2Step27EntryG_Incoming : rowsOwned s2Step27EntryGBefore [s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] 1 s6Step10EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] 1 s2Step27EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27EntryGBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10EntryG_Outgoing : rowsOwned s6Step10EntryGvAfter [s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] :=
-  hmrRows_owned_drop s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] 1 s6Step10EntryBank_outgoingOwned
-theorem s6Step10EntryFv_Incoming : rowsOwned s6Step10EntryFvBefore [s6Step10EntryFvRow,s6Step10EntryGvRow] := by
+theorem s2Step27EntryG_Outgoing : rowsOwned s2Step27EntryGvAfter [s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] :=
+  hmrRows_owned_drop s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] 1 s2Step27EntryBank_outgoingOwned
+theorem s2Step27EntryFv_Incoming : rowsOwned s2Step27EntryFvBefore [s2Step27EntryFvRow,s2Step27EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] 2 s6Step10EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] 2 s2Step27EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27EntryFvBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<840) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10EntryFv_Outgoing : rowsOwned s6Step10EntryGvAfter [s6Step10EntryFvOut,s6Step10EntryGvOut] :=
-  hmrRows_owned_drop s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] 2 s6Step10EntryBank_outgoingOwned
-theorem s6Step10EntryGv_Incoming : rowsOwned s6Step10EntryGvBefore [s6Step10EntryGvRow] := by
+theorem s2Step27EntryFv_Outgoing : rowsOwned s2Step27EntryGvAfter [s2Step27EntryFvOut,s2Step27EntryGvOut] :=
+  hmrRows_owned_drop s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] 2 s2Step27EntryBank_outgoingOwned
+theorem s2Step27EntryGv_Incoming : rowsOwned s2Step27EntryGvBefore [s2Step27EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow] 3 s6Step10EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow] 3 s2Step27EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27EntryGvBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<840) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10EntryGv_Outgoing : rowsOwned s6Step10EntryGvAfter [s6Step10EntryGvOut] :=
-  hmrRows_owned_drop s6Step10EntryGvAfter [s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut] 3 s6Step10EntryBank_outgoingOwned
-theorem s6Step10EntryBank_rows : planWindowRowsLog s6Step10EntryFBefore [(s6Step10EntryFRow,256),(s6Step10EntryGRow,256),(s6Step10EntryFvRow,11),(s6Step10EntryGvRow,11)] [s6Step10EntryFFresh,s6Step10EntryGFresh,s6Step10EntryFvFresh,s6Step10EntryGvFresh]=
-    some (s6Step10EntryGvAfter,[s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut],(growRow 795 s6Step10EntryFFresh ++ (growRow 777 s6Step10EntryGFresh ++ (growRow 776 s6Step10EntryFvFresh ++ (growRow 775 s6Step10EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step10EntryGvAfter [] []=some (s6Step10EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step10EntryGvBefore s6Step10EntryGvAfter s6Step10EntryGvAfter
-    s6Step10EntryGvRow s6Step10EntryGvOut 11 s6Step10EntryGvFresh [] [] []
-    (growRow 775 s6Step10EntryGvFresh) ([]) s6Step10EntryGv_Incoming s6Step10EntryGv_checked h4 s6Step10EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step10EntryFvBefore s6Step10EntryFvAfter s6Step10EntryGvAfter
-    s6Step10EntryFvRow s6Step10EntryFvOut 11 s6Step10EntryFvFresh [(s6Step10EntryGvRow,11)] [s6Step10EntryGvFresh] [s6Step10EntryGvOut]
-    (growRow 776 s6Step10EntryFvFresh) ((growRow 775 s6Step10EntryGvFresh ++ [])) s6Step10EntryFv_Incoming s6Step10EntryFv_checked h3 s6Step10EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step10EntryGBefore s6Step10EntryGAfter s6Step10EntryGvAfter
-    s6Step10EntryGRow s6Step10EntryGOut 256 s6Step10EntryGFresh [(s6Step10EntryFvRow,11),(s6Step10EntryGvRow,11)] [s6Step10EntryFvFresh,s6Step10EntryGvFresh] [s6Step10EntryFvOut,s6Step10EntryGvOut]
-    (growRow 777 s6Step10EntryGFresh) ((growRow 776 s6Step10EntryFvFresh ++ (growRow 775 s6Step10EntryGvFresh ++ []))) s6Step10EntryG_Incoming s6Step10EntryG_checked h2 s6Step10EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step10EntryFBefore s6Step10EntryFAfter s6Step10EntryGvAfter
-    s6Step10EntryFRow s6Step10EntryFOut 256 s6Step10EntryFFresh [(s6Step10EntryGRow,256),(s6Step10EntryFvRow,11),(s6Step10EntryGvRow,11)] [s6Step10EntryGFresh,s6Step10EntryFvFresh,s6Step10EntryGvFresh] [s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut]
-    (growRow 795 s6Step10EntryFFresh) ((growRow 777 s6Step10EntryGFresh ++ (growRow 776 s6Step10EntryFvFresh ++ (growRow 775 s6Step10EntryGvFresh ++ [])))) s6Step10EntryF_Incoming s6Step10EntryF_checked h1 s6Step10EntryF_Outgoing
+theorem s2Step27EntryGv_Outgoing : rowsOwned s2Step27EntryGvAfter [s2Step27EntryGvOut] :=
+  hmrRows_owned_drop s2Step27EntryGvAfter [s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut] 3 s2Step27EntryBank_outgoingOwned
+theorem s2Step27EntryBank_rows : planWindowRowsLog s2Step27EntryFBefore [(s2Step27EntryFRow,255),(s2Step27EntryGRow,255),(s2Step27EntryFvRow,27),(s2Step27EntryGvRow,27)] [s2Step27EntryFFresh,s2Step27EntryGFresh,s2Step27EntryFvFresh,s2Step27EntryGvFresh]=
+    some (s2Step27EntryGvAfter,[s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut],(growRow 768 s2Step27EntryFFresh ++ (growRow 769 s2Step27EntryGFresh ++ (growRow 770 s2Step27EntryFvFresh ++ (growRow 771 s2Step27EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step27EntryGvAfter [] []=some (s2Step27EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step27EntryGvBefore s2Step27EntryGvAfter s2Step27EntryGvAfter
+    s2Step27EntryGvRow s2Step27EntryGvOut 27 s2Step27EntryGvFresh [] [] []
+    (growRow 771 s2Step27EntryGvFresh) ([]) s2Step27EntryGv_Incoming s2Step27EntryGv_checked h4 s2Step27EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step27EntryFvBefore s2Step27EntryFvAfter s2Step27EntryGvAfter
+    s2Step27EntryFvRow s2Step27EntryFvOut 27 s2Step27EntryFvFresh [(s2Step27EntryGvRow,27)] [s2Step27EntryGvFresh] [s2Step27EntryGvOut]
+    (growRow 770 s2Step27EntryFvFresh) ((growRow 771 s2Step27EntryGvFresh ++ [])) s2Step27EntryFv_Incoming s2Step27EntryFv_checked h3 s2Step27EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step27EntryGBefore s2Step27EntryGAfter s2Step27EntryGvAfter
+    s2Step27EntryGRow s2Step27EntryGOut 255 s2Step27EntryGFresh [(s2Step27EntryFvRow,27),(s2Step27EntryGvRow,27)] [s2Step27EntryFvFresh,s2Step27EntryGvFresh] [s2Step27EntryFvOut,s2Step27EntryGvOut]
+    (growRow 769 s2Step27EntryGFresh) ((growRow 770 s2Step27EntryFvFresh ++ (growRow 771 s2Step27EntryGvFresh ++ []))) s2Step27EntryG_Incoming s2Step27EntryG_checked h2 s2Step27EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step27EntryFBefore s2Step27EntryFAfter s2Step27EntryGvAfter
+    s2Step27EntryFRow s2Step27EntryFOut 255 s2Step27EntryFFresh [(s2Step27EntryGRow,255),(s2Step27EntryFvRow,27),(s2Step27EntryGvRow,27)] [s2Step27EntryGFresh,s2Step27EntryFvFresh,s2Step27EntryGvFresh] [s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut]
+    (growRow 768 s2Step27EntryFFresh) ((growRow 769 s2Step27EntryGFresh ++ (growRow 770 s2Step27EntryFvFresh ++ (growRow 771 s2Step27EntryGvFresh ++ [])))) s2Step27EntryF_Incoming s2Step27EntryF_checked h1 s2Step27EntryF_Outgoing
   exact h0
-theorem s6Step10EntryBank_checked : compileHmrBankResizeLog .entry s6Step10EntryFBefore ⟨s6Step10EntryFRow,s6Step10EntryGRow,s6Step10EntryFvRow,s6Step10EntryGvRow⟩ ⟨256,256,11,11⟩ [s6Step10EntryFFresh,s6Step10EntryGFresh,s6Step10EntryFvFresh,s6Step10EntryGvFresh]=
-    some (s6Step10EntryGvAfter,⟨s6Step10EntryFOut,s6Step10EntryGOut,s6Step10EntryFvOut,s6Step10EntryGvOut⟩,(growRow 795 s6Step10EntryFFresh ++ (growRow 777 s6Step10EntryGFresh ++ (growRow 776 s6Step10EntryFvFresh ++ (growRow 775 s6Step10EntryGvFresh ++ []))))) := by
+theorem s2Step27EntryBank_checked : compileHmrBankResizeLog .entry s2Step27EntryFBefore ⟨s2Step27EntryFRow,s2Step27EntryGRow,s2Step27EntryFvRow,s2Step27EntryGvRow⟩ ⟨255,255,27,27⟩ [s2Step27EntryFFresh,s2Step27EntryGFresh,s2Step27EntryFvFresh,s2Step27EntryGvFresh]=
+    some (s2Step27EntryGvAfter,⟨s2Step27EntryFOut,s2Step27EntryGOut,s2Step27EntryFvOut,s2Step27EntryGvOut⟩,(growRow 768 s2Step27EntryFFresh ++ (growRow 769 s2Step27EntryGFresh ++ (growRow 770 s2Step27EntryFvFresh ++ (growRow 771 s2Step27EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step10EntryBank_rows]
+  rw [s2Step27EntryBank_rows]
   rfl
-def s6Step11EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step11EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862],777⟩
-def s6Step11EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865],776⟩
-def s6Step11EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 887],775⟩
-theorem s6Step11EntryBank_incomingDistinct : ([s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step28EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765],768⟩
+def s2Step28EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 780],769⟩
+def s2Step28EntryFvOut : WindowRow := ⟨[255, 254, 253, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842],770⟩
+def s2Step28EntryGvOut : WindowRow := ⟨[767, 766, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778],771⟩
+theorem s2Step28EntryBank_incomingDistinct : ([s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11EntryBank_outgoingOwned : rowsOwned s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] := by
+theorem s2Step28EntryBank_outgoingOwned : rowsOwned s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step11EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step28EntryGvAfter (fun q => (0≤q ∧ q<779) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11EntryF_Incoming : rowsOwned s6Step11EntryFBefore [s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] := by
+theorem s2Step28EntryF_Incoming : rowsOwned s2Step28EntryFBefore [s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] 0 s6Step11EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] 0 s2Step28EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11EntryF_Outgoing : rowsOwned s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] :=
-  hmrRows_owned_drop s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] 0 s6Step11EntryBank_outgoingOwned
-theorem s6Step11EntryG_Incoming : rowsOwned s6Step11EntryGBefore [s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] := by
+theorem s2Step28EntryF_Outgoing : rowsOwned s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] :=
+  hmrRows_owned_drop s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] 0 s2Step28EntryBank_outgoingOwned
+theorem s2Step28EntryG_Incoming : rowsOwned s2Step28EntryGBefore [s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] 1 s6Step11EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] 1 s2Step28EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11EntryG_Outgoing : rowsOwned s6Step11EntryGvAfter [s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] :=
-  hmrRows_owned_drop s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] 1 s6Step11EntryBank_outgoingOwned
-theorem s6Step11EntryFv_Incoming : rowsOwned s6Step11EntryFvBefore [s6Step11EntryFvRow,s6Step11EntryGvRow] := by
+theorem s2Step28EntryG_Outgoing : rowsOwned s2Step28EntryGvAfter [s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] :=
+  hmrRows_owned_drop s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] 1 s2Step28EntryBank_outgoingOwned
+theorem s2Step28EntryFv_Incoming : rowsOwned s2Step28EntryFvBefore [s2Step28EntryFvRow,s2Step28EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] 2 s6Step11EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] 2 s2Step28EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11EntryFv_Outgoing : rowsOwned s6Step11EntryGvAfter [s6Step11EntryFvOut,s6Step11EntryGvOut] :=
-  hmrRows_owned_drop s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] 2 s6Step11EntryBank_outgoingOwned
-theorem s6Step11EntryGv_Incoming : rowsOwned s6Step11EntryGvBefore [s6Step11EntryGvRow] := by
+theorem s2Step28EntryFv_Outgoing : rowsOwned s2Step28EntryGvAfter [s2Step28EntryFvOut,s2Step28EntryGvOut] :=
+  hmrRows_owned_drop s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] 2 s2Step28EntryBank_outgoingOwned
+theorem s2Step28EntryGv_Incoming : rowsOwned s2Step28EntryGvBefore [s2Step28EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow] 3 s6Step11EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow] 3 s2Step28EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11EntryGv_Outgoing : rowsOwned s6Step11EntryGvAfter [s6Step11EntryGvOut] :=
-  hmrRows_owned_drop s6Step11EntryGvAfter [s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut] 3 s6Step11EntryBank_outgoingOwned
-theorem s6Step11EntryBank_rows : planWindowRowsLog s6Step11EntryFBefore [(s6Step11EntryFRow,256),(s6Step11EntryGRow,256),(s6Step11EntryFvRow,12),(s6Step11EntryGvRow,12)] [s6Step11EntryFFresh,s6Step11EntryGFresh,s6Step11EntryFvFresh,s6Step11EntryGvFresh]=
-    some (s6Step11EntryGvAfter,[s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut],(growRow 795 s6Step11EntryFFresh ++ (growRow 777 s6Step11EntryGFresh ++ (growRow 776 s6Step11EntryFvFresh ++ (growRow 775 s6Step11EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step11EntryGvAfter [] []=some (s6Step11EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step11EntryGvBefore s6Step11EntryGvAfter s6Step11EntryGvAfter
-    s6Step11EntryGvRow s6Step11EntryGvOut 12 s6Step11EntryGvFresh [] [] []
-    (growRow 775 s6Step11EntryGvFresh) ([]) s6Step11EntryGv_Incoming s6Step11EntryGv_checked h4 s6Step11EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step11EntryFvBefore s6Step11EntryFvAfter s6Step11EntryGvAfter
-    s6Step11EntryFvRow s6Step11EntryFvOut 12 s6Step11EntryFvFresh [(s6Step11EntryGvRow,12)] [s6Step11EntryGvFresh] [s6Step11EntryGvOut]
-    (growRow 776 s6Step11EntryFvFresh) ((growRow 775 s6Step11EntryGvFresh ++ [])) s6Step11EntryFv_Incoming s6Step11EntryFv_checked h3 s6Step11EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step11EntryGBefore s6Step11EntryGAfter s6Step11EntryGvAfter
-    s6Step11EntryGRow s6Step11EntryGOut 256 s6Step11EntryGFresh [(s6Step11EntryFvRow,12),(s6Step11EntryGvRow,12)] [s6Step11EntryFvFresh,s6Step11EntryGvFresh] [s6Step11EntryFvOut,s6Step11EntryGvOut]
-    (growRow 777 s6Step11EntryGFresh) ((growRow 776 s6Step11EntryFvFresh ++ (growRow 775 s6Step11EntryGvFresh ++ []))) s6Step11EntryG_Incoming s6Step11EntryG_checked h2 s6Step11EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step11EntryFBefore s6Step11EntryFAfter s6Step11EntryGvAfter
-    s6Step11EntryFRow s6Step11EntryFOut 256 s6Step11EntryFFresh [(s6Step11EntryGRow,256),(s6Step11EntryFvRow,12),(s6Step11EntryGvRow,12)] [s6Step11EntryGFresh,s6Step11EntryFvFresh,s6Step11EntryGvFresh] [s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut]
-    (growRow 795 s6Step11EntryFFresh) ((growRow 777 s6Step11EntryGFresh ++ (growRow 776 s6Step11EntryFvFresh ++ (growRow 775 s6Step11EntryGvFresh ++ [])))) s6Step11EntryF_Incoming s6Step11EntryF_checked h1 s6Step11EntryF_Outgoing
+theorem s2Step28EntryGv_Outgoing : rowsOwned s2Step28EntryGvAfter [s2Step28EntryGvOut] :=
+  hmrRows_owned_drop s2Step28EntryGvAfter [s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut] 3 s2Step28EntryBank_outgoingOwned
+theorem s2Step28EntryBank_rows : planWindowRowsLog s2Step28EntryFBefore [(s2Step28EntryFRow,254),(s2Step28EntryGRow,254),(s2Step28EntryFvRow,28),(s2Step28EntryGvRow,28)] [s2Step28EntryFFresh,s2Step28EntryGFresh,s2Step28EntryFvFresh,s2Step28EntryGvFresh]=
+    some (s2Step28EntryGvAfter,[s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut],(growRow 768 s2Step28EntryFFresh ++ (growRow 769 s2Step28EntryGFresh ++ (growRow 770 s2Step28EntryFvFresh ++ (growRow 771 s2Step28EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step28EntryGvAfter [] []=some (s2Step28EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step28EntryGvBefore s2Step28EntryGvAfter s2Step28EntryGvAfter
+    s2Step28EntryGvRow s2Step28EntryGvOut 28 s2Step28EntryGvFresh [] [] []
+    (growRow 771 s2Step28EntryGvFresh) ([]) s2Step28EntryGv_Incoming s2Step28EntryGv_checked h4 s2Step28EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step28EntryFvBefore s2Step28EntryFvAfter s2Step28EntryGvAfter
+    s2Step28EntryFvRow s2Step28EntryFvOut 28 s2Step28EntryFvFresh [(s2Step28EntryGvRow,28)] [s2Step28EntryGvFresh] [s2Step28EntryGvOut]
+    (growRow 770 s2Step28EntryFvFresh) ((growRow 771 s2Step28EntryGvFresh ++ [])) s2Step28EntryFv_Incoming s2Step28EntryFv_checked h3 s2Step28EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step28EntryGBefore s2Step28EntryGAfter s2Step28EntryGvAfter
+    s2Step28EntryGRow s2Step28EntryGOut 254 s2Step28EntryGFresh [(s2Step28EntryFvRow,28),(s2Step28EntryGvRow,28)] [s2Step28EntryFvFresh,s2Step28EntryGvFresh] [s2Step28EntryFvOut,s2Step28EntryGvOut]
+    (growRow 769 s2Step28EntryGFresh) ((growRow 770 s2Step28EntryFvFresh ++ (growRow 771 s2Step28EntryGvFresh ++ []))) s2Step28EntryG_Incoming s2Step28EntryG_checked h2 s2Step28EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step28EntryFBefore s2Step28EntryFAfter s2Step28EntryGvAfter
+    s2Step28EntryFRow s2Step28EntryFOut 254 s2Step28EntryFFresh [(s2Step28EntryGRow,254),(s2Step28EntryFvRow,28),(s2Step28EntryGvRow,28)] [s2Step28EntryGFresh,s2Step28EntryFvFresh,s2Step28EntryGvFresh] [s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut]
+    (growRow 768 s2Step28EntryFFresh) ((growRow 769 s2Step28EntryGFresh ++ (growRow 770 s2Step28EntryFvFresh ++ (growRow 771 s2Step28EntryGvFresh ++ [])))) s2Step28EntryF_Incoming s2Step28EntryF_checked h1 s2Step28EntryF_Outgoing
   exact h0
-theorem s6Step11EntryBank_checked : compileHmrBankResizeLog .entry s6Step11EntryFBefore ⟨s6Step11EntryFRow,s6Step11EntryGRow,s6Step11EntryFvRow,s6Step11EntryGvRow⟩ ⟨256,256,12,12⟩ [s6Step11EntryFFresh,s6Step11EntryGFresh,s6Step11EntryFvFresh,s6Step11EntryGvFresh]=
-    some (s6Step11EntryGvAfter,⟨s6Step11EntryFOut,s6Step11EntryGOut,s6Step11EntryFvOut,s6Step11EntryGvOut⟩,(growRow 795 s6Step11EntryFFresh ++ (growRow 777 s6Step11EntryGFresh ++ (growRow 776 s6Step11EntryFvFresh ++ (growRow 775 s6Step11EntryGvFresh ++ []))))) := by
+theorem s2Step28EntryBank_checked : compileHmrBankResizeLog .entry s2Step28EntryFBefore ⟨s2Step28EntryFRow,s2Step28EntryGRow,s2Step28EntryFvRow,s2Step28EntryGvRow⟩ ⟨254,254,28,28⟩ [s2Step28EntryFFresh,s2Step28EntryGFresh,s2Step28EntryFvFresh,s2Step28EntryGvFresh]=
+    some (s2Step28EntryGvAfter,⟨s2Step28EntryFOut,s2Step28EntryGOut,s2Step28EntryFvOut,s2Step28EntryGvOut⟩,(growRow 768 s2Step28EntryFFresh ++ (growRow 769 s2Step28EntryGFresh ++ (growRow 770 s2Step28EntryFvFresh ++ (growRow 771 s2Step28EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step11EntryBank_rows]
+  rw [s2Step28EntryBank_rows]
   rfl
-def s6Step12EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step12EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807],777⟩
-def s6Step12EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789],776⟩
-def s6Step12EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 887],775⟩
-theorem s6Step12EntryBank_incomingDistinct : ([s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step29EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765],768⟩
+def s2Step29EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 779],769⟩
+def s2Step29EntryFvOut : WindowRow := ⟨[255, 254, 253, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842],770⟩
+def s2Step29EntryGvOut : WindowRow := ⟨[767, 766, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 787],771⟩
+theorem s2Step29EntryBank_incomingDistinct : ([s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12EntryBank_outgoingOwned : rowsOwned s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] := by
+theorem s2Step29EntryBank_outgoingOwned : rowsOwned s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step12EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step29EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12EntryF_Incoming : rowsOwned s6Step12EntryFBefore [s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] := by
+theorem s2Step29EntryF_Incoming : rowsOwned s2Step29EntryFBefore [s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] 0 s6Step12EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] 0 s2Step29EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12EntryF_Outgoing : rowsOwned s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] :=
-  hmrRows_owned_drop s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] 0 s6Step12EntryBank_outgoingOwned
-theorem s6Step12EntryG_Incoming : rowsOwned s6Step12EntryGBefore [s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] := by
+theorem s2Step29EntryF_Outgoing : rowsOwned s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] :=
+  hmrRows_owned_drop s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] 0 s2Step29EntryBank_outgoingOwned
+theorem s2Step29EntryG_Incoming : rowsOwned s2Step29EntryGBefore [s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] 1 s6Step12EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] 1 s2Step29EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12EntryG_Outgoing : rowsOwned s6Step12EntryGvAfter [s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] :=
-  hmrRows_owned_drop s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] 1 s6Step12EntryBank_outgoingOwned
-theorem s6Step12EntryFv_Incoming : rowsOwned s6Step12EntryFvBefore [s6Step12EntryFvRow,s6Step12EntryGvRow] := by
+theorem s2Step29EntryG_Outgoing : rowsOwned s2Step29EntryGvAfter [s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] :=
+  hmrRows_owned_drop s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] 1 s2Step29EntryBank_outgoingOwned
+theorem s2Step29EntryFv_Incoming : rowsOwned s2Step29EntryFvBefore [s2Step29EntryFvRow,s2Step29EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] 2 s6Step12EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] 2 s2Step29EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12EntryFv_Outgoing : rowsOwned s6Step12EntryGvAfter [s6Step12EntryFvOut,s6Step12EntryGvOut] :=
-  hmrRows_owned_drop s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] 2 s6Step12EntryBank_outgoingOwned
-theorem s6Step12EntryGv_Incoming : rowsOwned s6Step12EntryGvBefore [s6Step12EntryGvRow] := by
+theorem s2Step29EntryFv_Outgoing : rowsOwned s2Step29EntryGvAfter [s2Step29EntryFvOut,s2Step29EntryGvOut] :=
+  hmrRows_owned_drop s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] 2 s2Step29EntryBank_outgoingOwned
+theorem s2Step29EntryGv_Incoming : rowsOwned s2Step29EntryGvBefore [s2Step29EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow] 3 s6Step12EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow] 3 s2Step29EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12EntryGv_Outgoing : rowsOwned s6Step12EntryGvAfter [s6Step12EntryGvOut] :=
-  hmrRows_owned_drop s6Step12EntryGvAfter [s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut] 3 s6Step12EntryBank_outgoingOwned
-theorem s6Step12EntryBank_rows : planWindowRowsLog s6Step12EntryFBefore [(s6Step12EntryFRow,256),(s6Step12EntryGRow,256),(s6Step12EntryFvRow,13),(s6Step12EntryGvRow,13)] [s6Step12EntryFFresh,s6Step12EntryGFresh,s6Step12EntryFvFresh,s6Step12EntryGvFresh]=
-    some (s6Step12EntryGvAfter,[s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut],(growRow 795 s6Step12EntryFFresh ++ (growRow 777 s6Step12EntryGFresh ++ (growRow 776 s6Step12EntryFvFresh ++ (growRow 775 s6Step12EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step12EntryGvAfter [] []=some (s6Step12EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step12EntryGvBefore s6Step12EntryGvAfter s6Step12EntryGvAfter
-    s6Step12EntryGvRow s6Step12EntryGvOut 13 s6Step12EntryGvFresh [] [] []
-    (growRow 775 s6Step12EntryGvFresh) ([]) s6Step12EntryGv_Incoming s6Step12EntryGv_checked h4 s6Step12EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step12EntryFvBefore s6Step12EntryFvAfter s6Step12EntryGvAfter
-    s6Step12EntryFvRow s6Step12EntryFvOut 13 s6Step12EntryFvFresh [(s6Step12EntryGvRow,13)] [s6Step12EntryGvFresh] [s6Step12EntryGvOut]
-    (growRow 776 s6Step12EntryFvFresh) ((growRow 775 s6Step12EntryGvFresh ++ [])) s6Step12EntryFv_Incoming s6Step12EntryFv_checked h3 s6Step12EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step12EntryGBefore s6Step12EntryGAfter s6Step12EntryGvAfter
-    s6Step12EntryGRow s6Step12EntryGOut 256 s6Step12EntryGFresh [(s6Step12EntryFvRow,13),(s6Step12EntryGvRow,13)] [s6Step12EntryFvFresh,s6Step12EntryGvFresh] [s6Step12EntryFvOut,s6Step12EntryGvOut]
-    (growRow 777 s6Step12EntryGFresh) ((growRow 776 s6Step12EntryFvFresh ++ (growRow 775 s6Step12EntryGvFresh ++ []))) s6Step12EntryG_Incoming s6Step12EntryG_checked h2 s6Step12EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step12EntryFBefore s6Step12EntryFAfter s6Step12EntryGvAfter
-    s6Step12EntryFRow s6Step12EntryFOut 256 s6Step12EntryFFresh [(s6Step12EntryGRow,256),(s6Step12EntryFvRow,13),(s6Step12EntryGvRow,13)] [s6Step12EntryGFresh,s6Step12EntryFvFresh,s6Step12EntryGvFresh] [s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut]
-    (growRow 795 s6Step12EntryFFresh) ((growRow 777 s6Step12EntryGFresh ++ (growRow 776 s6Step12EntryFvFresh ++ (growRow 775 s6Step12EntryGvFresh ++ [])))) s6Step12EntryF_Incoming s6Step12EntryF_checked h1 s6Step12EntryF_Outgoing
+theorem s2Step29EntryGv_Outgoing : rowsOwned s2Step29EntryGvAfter [s2Step29EntryGvOut] :=
+  hmrRows_owned_drop s2Step29EntryGvAfter [s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut] 3 s2Step29EntryBank_outgoingOwned
+theorem s2Step29EntryBank_rows : planWindowRowsLog s2Step29EntryFBefore [(s2Step29EntryFRow,254),(s2Step29EntryGRow,254),(s2Step29EntryFvRow,28),(s2Step29EntryGvRow,28)] [s2Step29EntryFFresh,s2Step29EntryGFresh,s2Step29EntryFvFresh,s2Step29EntryGvFresh]=
+    some (s2Step29EntryGvAfter,[s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut],(growRow 768 s2Step29EntryFFresh ++ (growRow 769 s2Step29EntryGFresh ++ (growRow 770 s2Step29EntryFvFresh ++ (growRow 771 s2Step29EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step29EntryGvAfter [] []=some (s2Step29EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step29EntryGvBefore s2Step29EntryGvAfter s2Step29EntryGvAfter
+    s2Step29EntryGvRow s2Step29EntryGvOut 28 s2Step29EntryGvFresh [] [] []
+    (growRow 771 s2Step29EntryGvFresh) ([]) s2Step29EntryGv_Incoming s2Step29EntryGv_checked h4 s2Step29EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step29EntryFvBefore s2Step29EntryFvAfter s2Step29EntryGvAfter
+    s2Step29EntryFvRow s2Step29EntryFvOut 28 s2Step29EntryFvFresh [(s2Step29EntryGvRow,28)] [s2Step29EntryGvFresh] [s2Step29EntryGvOut]
+    (growRow 770 s2Step29EntryFvFresh) ((growRow 771 s2Step29EntryGvFresh ++ [])) s2Step29EntryFv_Incoming s2Step29EntryFv_checked h3 s2Step29EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step29EntryGBefore s2Step29EntryGAfter s2Step29EntryGvAfter
+    s2Step29EntryGRow s2Step29EntryGOut 254 s2Step29EntryGFresh [(s2Step29EntryFvRow,28),(s2Step29EntryGvRow,28)] [s2Step29EntryFvFresh,s2Step29EntryGvFresh] [s2Step29EntryFvOut,s2Step29EntryGvOut]
+    (growRow 769 s2Step29EntryGFresh) ((growRow 770 s2Step29EntryFvFresh ++ (growRow 771 s2Step29EntryGvFresh ++ []))) s2Step29EntryG_Incoming s2Step29EntryG_checked h2 s2Step29EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step29EntryFBefore s2Step29EntryFAfter s2Step29EntryGvAfter
+    s2Step29EntryFRow s2Step29EntryFOut 254 s2Step29EntryFFresh [(s2Step29EntryGRow,254),(s2Step29EntryFvRow,28),(s2Step29EntryGvRow,28)] [s2Step29EntryGFresh,s2Step29EntryFvFresh,s2Step29EntryGvFresh] [s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut]
+    (growRow 768 s2Step29EntryFFresh) ((growRow 769 s2Step29EntryGFresh ++ (growRow 770 s2Step29EntryFvFresh ++ (growRow 771 s2Step29EntryGvFresh ++ [])))) s2Step29EntryF_Incoming s2Step29EntryF_checked h1 s2Step29EntryF_Outgoing
   exact h0
-theorem s6Step12EntryBank_checked : compileHmrBankResizeLog .entry s6Step12EntryFBefore ⟨s6Step12EntryFRow,s6Step12EntryGRow,s6Step12EntryFvRow,s6Step12EntryGvRow⟩ ⟨256,256,13,13⟩ [s6Step12EntryFFresh,s6Step12EntryGFresh,s6Step12EntryFvFresh,s6Step12EntryGvFresh]=
-    some (s6Step12EntryGvAfter,⟨s6Step12EntryFOut,s6Step12EntryGOut,s6Step12EntryFvOut,s6Step12EntryGvOut⟩,(growRow 795 s6Step12EntryFFresh ++ (growRow 777 s6Step12EntryGFresh ++ (growRow 776 s6Step12EntryFvFresh ++ (growRow 775 s6Step12EntryGvFresh ++ []))))) := by
+theorem s2Step29EntryBank_checked : compileHmrBankResizeLog .entry s2Step29EntryFBefore ⟨s2Step29EntryFRow,s2Step29EntryGRow,s2Step29EntryFvRow,s2Step29EntryGvRow⟩ ⟨254,254,28,28⟩ [s2Step29EntryFFresh,s2Step29EntryGFresh,s2Step29EntryFvFresh,s2Step29EntryGvFresh]=
+    some (s2Step29EntryGvAfter,⟨s2Step29EntryFOut,s2Step29EntryGOut,s2Step29EntryFvOut,s2Step29EntryGvOut⟩,(growRow 768 s2Step29EntryFFresh ++ (growRow 769 s2Step29EntryGFresh ++ (growRow 770 s2Step29EntryFvFresh ++ (growRow 771 s2Step29EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step12EntryBank_rows]
+  rw [s2Step29EntryBank_rows]
   rfl
-def s6Step13EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step13EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813],777⟩
-def s6Step13EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818],776⟩
-def s6Step13EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 887],775⟩
-theorem s6Step13EntryBank_incomingDistinct : ([s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step30EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764],768⟩
+def s2Step30EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 839],769⟩
+def s2Step30EntryFvOut : WindowRow := ⟨[255, 254, 253, 252, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841],770⟩
+def s2Step30EntryGvOut : WindowRow := ⟨[767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 786],771⟩
+theorem s2Step30EntryBank_incomingDistinct : ([s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13EntryBank_outgoingOwned : rowsOwned s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] := by
+theorem s2Step30EntryBank_outgoingOwned : rowsOwned s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step13EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step30EntryGvAfter (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13EntryF_Incoming : rowsOwned s6Step13EntryFBefore [s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] := by
+theorem s2Step30EntryF_Incoming : rowsOwned s2Step30EntryFBefore [s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] 0 s6Step13EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] 0 s2Step30EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13EntryF_Outgoing : rowsOwned s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] :=
-  hmrRows_owned_drop s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] 0 s6Step13EntryBank_outgoingOwned
-theorem s6Step13EntryG_Incoming : rowsOwned s6Step13EntryGBefore [s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] := by
+theorem s2Step30EntryF_Outgoing : rowsOwned s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] :=
+  hmrRows_owned_drop s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] 0 s2Step30EntryBank_outgoingOwned
+theorem s2Step30EntryG_Incoming : rowsOwned s2Step30EntryGBefore [s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] 1 s6Step13EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] 1 s2Step30EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13EntryG_Outgoing : rowsOwned s6Step13EntryGvAfter [s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] :=
-  hmrRows_owned_drop s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] 1 s6Step13EntryBank_outgoingOwned
-theorem s6Step13EntryFv_Incoming : rowsOwned s6Step13EntryFvBefore [s6Step13EntryFvRow,s6Step13EntryGvRow] := by
+theorem s2Step30EntryG_Outgoing : rowsOwned s2Step30EntryGvAfter [s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] :=
+  hmrRows_owned_drop s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] 1 s2Step30EntryBank_outgoingOwned
+theorem s2Step30EntryFv_Incoming : rowsOwned s2Step30EntryFvBefore [s2Step30EntryFvRow,s2Step30EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] 2 s6Step13EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] 2 s2Step30EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13EntryFv_Outgoing : rowsOwned s6Step13EntryGvAfter [s6Step13EntryFvOut,s6Step13EntryGvOut] :=
-  hmrRows_owned_drop s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] 2 s6Step13EntryBank_outgoingOwned
-theorem s6Step13EntryGv_Incoming : rowsOwned s6Step13EntryGvBefore [s6Step13EntryGvRow] := by
+theorem s2Step30EntryFv_Outgoing : rowsOwned s2Step30EntryGvAfter [s2Step30EntryFvOut,s2Step30EntryGvOut] :=
+  hmrRows_owned_drop s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] 2 s2Step30EntryBank_outgoingOwned
+theorem s2Step30EntryGv_Incoming : rowsOwned s2Step30EntryGvBefore [s2Step30EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow] 3 s6Step13EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow] 3 s2Step30EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13EntryGv_Outgoing : rowsOwned s6Step13EntryGvAfter [s6Step13EntryGvOut] :=
-  hmrRows_owned_drop s6Step13EntryGvAfter [s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut] 3 s6Step13EntryBank_outgoingOwned
-theorem s6Step13EntryBank_rows : planWindowRowsLog s6Step13EntryFBefore [(s6Step13EntryFRow,256),(s6Step13EntryGRow,256),(s6Step13EntryFvRow,14),(s6Step13EntryGvRow,14)] [s6Step13EntryFFresh,s6Step13EntryGFresh,s6Step13EntryFvFresh,s6Step13EntryGvFresh]=
-    some (s6Step13EntryGvAfter,[s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut],(growRow 795 s6Step13EntryFFresh ++ (growRow 777 s6Step13EntryGFresh ++ (growRow 776 s6Step13EntryFvFresh ++ (growRow 775 s6Step13EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step13EntryGvAfter [] []=some (s6Step13EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step13EntryGvBefore s6Step13EntryGvAfter s6Step13EntryGvAfter
-    s6Step13EntryGvRow s6Step13EntryGvOut 14 s6Step13EntryGvFresh [] [] []
-    (growRow 775 s6Step13EntryGvFresh) ([]) s6Step13EntryGv_Incoming s6Step13EntryGv_checked h4 s6Step13EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step13EntryFvBefore s6Step13EntryFvAfter s6Step13EntryGvAfter
-    s6Step13EntryFvRow s6Step13EntryFvOut 14 s6Step13EntryFvFresh [(s6Step13EntryGvRow,14)] [s6Step13EntryGvFresh] [s6Step13EntryGvOut]
-    (growRow 776 s6Step13EntryFvFresh) ((growRow 775 s6Step13EntryGvFresh ++ [])) s6Step13EntryFv_Incoming s6Step13EntryFv_checked h3 s6Step13EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step13EntryGBefore s6Step13EntryGAfter s6Step13EntryGvAfter
-    s6Step13EntryGRow s6Step13EntryGOut 256 s6Step13EntryGFresh [(s6Step13EntryFvRow,14),(s6Step13EntryGvRow,14)] [s6Step13EntryFvFresh,s6Step13EntryGvFresh] [s6Step13EntryFvOut,s6Step13EntryGvOut]
-    (growRow 777 s6Step13EntryGFresh) ((growRow 776 s6Step13EntryFvFresh ++ (growRow 775 s6Step13EntryGvFresh ++ []))) s6Step13EntryG_Incoming s6Step13EntryG_checked h2 s6Step13EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step13EntryFBefore s6Step13EntryFAfter s6Step13EntryGvAfter
-    s6Step13EntryFRow s6Step13EntryFOut 256 s6Step13EntryFFresh [(s6Step13EntryGRow,256),(s6Step13EntryFvRow,14),(s6Step13EntryGvRow,14)] [s6Step13EntryGFresh,s6Step13EntryFvFresh,s6Step13EntryGvFresh] [s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut]
-    (growRow 795 s6Step13EntryFFresh) ((growRow 777 s6Step13EntryGFresh ++ (growRow 776 s6Step13EntryFvFresh ++ (growRow 775 s6Step13EntryGvFresh ++ [])))) s6Step13EntryF_Incoming s6Step13EntryF_checked h1 s6Step13EntryF_Outgoing
+theorem s2Step30EntryGv_Outgoing : rowsOwned s2Step30EntryGvAfter [s2Step30EntryGvOut] :=
+  hmrRows_owned_drop s2Step30EntryGvAfter [s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut] 3 s2Step30EntryBank_outgoingOwned
+theorem s2Step30EntryBank_rows : planWindowRowsLog s2Step30EntryFBefore [(s2Step30EntryFRow,253),(s2Step30EntryGRow,253),(s2Step30EntryFvRow,29),(s2Step30EntryGvRow,29)] [s2Step30EntryFFresh,s2Step30EntryGFresh,s2Step30EntryFvFresh,s2Step30EntryGvFresh]=
+    some (s2Step30EntryGvAfter,[s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut],(growRow 768 s2Step30EntryFFresh ++ (growRow 769 s2Step30EntryGFresh ++ (growRow 770 s2Step30EntryFvFresh ++ (growRow 771 s2Step30EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step30EntryGvAfter [] []=some (s2Step30EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step30EntryGvBefore s2Step30EntryGvAfter s2Step30EntryGvAfter
+    s2Step30EntryGvRow s2Step30EntryGvOut 29 s2Step30EntryGvFresh [] [] []
+    (growRow 771 s2Step30EntryGvFresh) ([]) s2Step30EntryGv_Incoming s2Step30EntryGv_checked h4 s2Step30EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step30EntryFvBefore s2Step30EntryFvAfter s2Step30EntryGvAfter
+    s2Step30EntryFvRow s2Step30EntryFvOut 29 s2Step30EntryFvFresh [(s2Step30EntryGvRow,29)] [s2Step30EntryGvFresh] [s2Step30EntryGvOut]
+    (growRow 770 s2Step30EntryFvFresh) ((growRow 771 s2Step30EntryGvFresh ++ [])) s2Step30EntryFv_Incoming s2Step30EntryFv_checked h3 s2Step30EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step30EntryGBefore s2Step30EntryGAfter s2Step30EntryGvAfter
+    s2Step30EntryGRow s2Step30EntryGOut 253 s2Step30EntryGFresh [(s2Step30EntryFvRow,29),(s2Step30EntryGvRow,29)] [s2Step30EntryFvFresh,s2Step30EntryGvFresh] [s2Step30EntryFvOut,s2Step30EntryGvOut]
+    (growRow 769 s2Step30EntryGFresh) ((growRow 770 s2Step30EntryFvFresh ++ (growRow 771 s2Step30EntryGvFresh ++ []))) s2Step30EntryG_Incoming s2Step30EntryG_checked h2 s2Step30EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step30EntryFBefore s2Step30EntryFAfter s2Step30EntryGvAfter
+    s2Step30EntryFRow s2Step30EntryFOut 253 s2Step30EntryFFresh [(s2Step30EntryGRow,253),(s2Step30EntryFvRow,29),(s2Step30EntryGvRow,29)] [s2Step30EntryGFresh,s2Step30EntryFvFresh,s2Step30EntryGvFresh] [s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut]
+    (growRow 768 s2Step30EntryFFresh) ((growRow 769 s2Step30EntryGFresh ++ (growRow 770 s2Step30EntryFvFresh ++ (growRow 771 s2Step30EntryGvFresh ++ [])))) s2Step30EntryF_Incoming s2Step30EntryF_checked h1 s2Step30EntryF_Outgoing
   exact h0
-theorem s6Step13EntryBank_checked : compileHmrBankResizeLog .entry s6Step13EntryFBefore ⟨s6Step13EntryFRow,s6Step13EntryGRow,s6Step13EntryFvRow,s6Step13EntryGvRow⟩ ⟨256,256,14,14⟩ [s6Step13EntryFFresh,s6Step13EntryGFresh,s6Step13EntryFvFresh,s6Step13EntryGvFresh]=
-    some (s6Step13EntryGvAfter,⟨s6Step13EntryFOut,s6Step13EntryGOut,s6Step13EntryFvOut,s6Step13EntryGvOut⟩,(growRow 795 s6Step13EntryFFresh ++ (growRow 777 s6Step13EntryGFresh ++ (growRow 776 s6Step13EntryFvFresh ++ (growRow 775 s6Step13EntryGvFresh ++ []))))) := by
+theorem s2Step30EntryBank_checked : compileHmrBankResizeLog .entry s2Step30EntryFBefore ⟨s2Step30EntryFRow,s2Step30EntryGRow,s2Step30EntryFvRow,s2Step30EntryGvRow⟩ ⟨253,253,29,29⟩ [s2Step30EntryFFresh,s2Step30EntryGFresh,s2Step30EntryFvFresh,s2Step30EntryGvFresh]=
+    some (s2Step30EntryGvAfter,⟨s2Step30EntryFOut,s2Step30EntryGOut,s2Step30EntryFvOut,s2Step30EntryGvOut⟩,(growRow 768 s2Step30EntryFFresh ++ (growRow 769 s2Step30EntryGFresh ++ (growRow 770 s2Step30EntryFvFresh ++ (growRow 771 s2Step30EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step13EntryBank_rows]
+  rw [s2Step30EntryBank_rows]
   rfl
-def s6Step14EntryFOut : WindowRow := ⟨[256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],795⟩
-def s6Step14EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860],777⟩
-def s6Step14EntryFvOut : WindowRow := ⟨[255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892],776⟩
-def s6Step14EntryGvOut : WindowRow := ⟨[859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 864, 887],775⟩
-theorem s6Step14EntryBank_incomingDistinct : ([s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow].flatMap WindowRow.wires).Nodup := by
+def s2Step31EntryFOut : WindowRow := ⟨[512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764],768⟩
+def s2Step31EntryGOut : WindowRow := ⟨[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 787],769⟩
+def s2Step31EntryFvOut : WindowRow := ⟨[255, 254, 253, 252, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841],770⟩
+def s2Step31EntryGvOut : WindowRow := ⟨[767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 789],771⟩
+theorem s2Step31EntryBank_incomingDistinct : ([s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14EntryBank_outgoingOwned : rowsOwned s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] := by
+theorem s2Step31EntryBank_outgoingOwned : rowsOwned s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step14EntryGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step31EntryGvAfter (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14EntryF_Incoming : rowsOwned s6Step14EntryFBefore [s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] := by
+theorem s2Step31EntryF_Incoming : rowsOwned s2Step31EntryFBefore [s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] 0 s6Step14EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14EntryFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] 0 s2Step31EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31EntryFBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14EntryF_Outgoing : rowsOwned s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] :=
-  hmrRows_owned_drop s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] 0 s6Step14EntryBank_outgoingOwned
-theorem s6Step14EntryG_Incoming : rowsOwned s6Step14EntryGBefore [s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] := by
+theorem s2Step31EntryF_Outgoing : rowsOwned s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] :=
+  hmrRows_owned_drop s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] 0 s2Step31EntryBank_outgoingOwned
+theorem s2Step31EntryG_Incoming : rowsOwned s2Step31EntryGBefore [s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] 1 s6Step14EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14EntryGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] 1 s2Step31EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31EntryGBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14EntryG_Outgoing : rowsOwned s6Step14EntryGvAfter [s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] :=
-  hmrRows_owned_drop s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] 1 s6Step14EntryBank_outgoingOwned
-theorem s6Step14EntryFv_Incoming : rowsOwned s6Step14EntryFvBefore [s6Step14EntryFvRow,s6Step14EntryGvRow] := by
+theorem s2Step31EntryG_Outgoing : rowsOwned s2Step31EntryGvAfter [s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] :=
+  hmrRows_owned_drop s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] 1 s2Step31EntryBank_outgoingOwned
+theorem s2Step31EntryFv_Incoming : rowsOwned s2Step31EntryFvBefore [s2Step31EntryFvRow,s2Step31EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] 2 s6Step14EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14EntryFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] 2 s2Step31EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31EntryFvBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14EntryFv_Outgoing : rowsOwned s6Step14EntryGvAfter [s6Step14EntryFvOut,s6Step14EntryGvOut] :=
-  hmrRows_owned_drop s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] 2 s6Step14EntryBank_outgoingOwned
-theorem s6Step14EntryGv_Incoming : rowsOwned s6Step14EntryGvBefore [s6Step14EntryGvRow] := by
+theorem s2Step31EntryFv_Outgoing : rowsOwned s2Step31EntryGvAfter [s2Step31EntryFvOut,s2Step31EntryGvOut] :=
+  hmrRows_owned_drop s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] 2 s2Step31EntryBank_outgoingOwned
+theorem s2Step31EntryGv_Incoming : rowsOwned s2Step31EntryGvBefore [s2Step31EntryGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow] 3 s6Step14EntryBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14EntryGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (883≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow] 3 s2Step31EntryBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31EntryGvBefore (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14EntryGv_Outgoing : rowsOwned s6Step14EntryGvAfter [s6Step14EntryGvOut] :=
-  hmrRows_owned_drop s6Step14EntryGvAfter [s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut] 3 s6Step14EntryBank_outgoingOwned
-theorem s6Step14EntryBank_rows : planWindowRowsLog s6Step14EntryFBefore [(s6Step14EntryFRow,256),(s6Step14EntryGRow,256),(s6Step14EntryFvRow,15),(s6Step14EntryGvRow,15)] [s6Step14EntryFFresh,s6Step14EntryGFresh,s6Step14EntryFvFresh,s6Step14EntryGvFresh]=
-    some (s6Step14EntryGvAfter,[s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut],(growRow 795 s6Step14EntryFFresh ++ (growRow 777 s6Step14EntryGFresh ++ (growRow 776 s6Step14EntryFvFresh ++ (growRow 775 s6Step14EntryGvFresh ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step14EntryGvAfter [] []=some (s6Step14EntryGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step14EntryGvBefore s6Step14EntryGvAfter s6Step14EntryGvAfter
-    s6Step14EntryGvRow s6Step14EntryGvOut 15 s6Step14EntryGvFresh [] [] []
-    (growRow 775 s6Step14EntryGvFresh) ([]) s6Step14EntryGv_Incoming s6Step14EntryGv_checked h4 s6Step14EntryGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step14EntryFvBefore s6Step14EntryFvAfter s6Step14EntryGvAfter
-    s6Step14EntryFvRow s6Step14EntryFvOut 15 s6Step14EntryFvFresh [(s6Step14EntryGvRow,15)] [s6Step14EntryGvFresh] [s6Step14EntryGvOut]
-    (growRow 776 s6Step14EntryFvFresh) ((growRow 775 s6Step14EntryGvFresh ++ [])) s6Step14EntryFv_Incoming s6Step14EntryFv_checked h3 s6Step14EntryFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step14EntryGBefore s6Step14EntryGAfter s6Step14EntryGvAfter
-    s6Step14EntryGRow s6Step14EntryGOut 256 s6Step14EntryGFresh [(s6Step14EntryFvRow,15),(s6Step14EntryGvRow,15)] [s6Step14EntryFvFresh,s6Step14EntryGvFresh] [s6Step14EntryFvOut,s6Step14EntryGvOut]
-    (growRow 777 s6Step14EntryGFresh) ((growRow 776 s6Step14EntryFvFresh ++ (growRow 775 s6Step14EntryGvFresh ++ []))) s6Step14EntryG_Incoming s6Step14EntryG_checked h2 s6Step14EntryG_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step14EntryFBefore s6Step14EntryFAfter s6Step14EntryGvAfter
-    s6Step14EntryFRow s6Step14EntryFOut 256 s6Step14EntryFFresh [(s6Step14EntryGRow,256),(s6Step14EntryFvRow,15),(s6Step14EntryGvRow,15)] [s6Step14EntryGFresh,s6Step14EntryFvFresh,s6Step14EntryGvFresh] [s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut]
-    (growRow 795 s6Step14EntryFFresh) ((growRow 777 s6Step14EntryGFresh ++ (growRow 776 s6Step14EntryFvFresh ++ (growRow 775 s6Step14EntryGvFresh ++ [])))) s6Step14EntryF_Incoming s6Step14EntryF_checked h1 s6Step14EntryF_Outgoing
+theorem s2Step31EntryGv_Outgoing : rowsOwned s2Step31EntryGvAfter [s2Step31EntryGvOut] :=
+  hmrRows_owned_drop s2Step31EntryGvAfter [s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut] 3 s2Step31EntryBank_outgoingOwned
+theorem s2Step31EntryBank_rows : planWindowRowsLog s2Step31EntryFBefore [(s2Step31EntryFRow,253),(s2Step31EntryGRow,253),(s2Step31EntryFvRow,29),(s2Step31EntryGvRow,29)] [s2Step31EntryFFresh,s2Step31EntryGFresh,s2Step31EntryFvFresh,s2Step31EntryGvFresh]=
+    some (s2Step31EntryGvAfter,[s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut],(growRow 768 s2Step31EntryFFresh ++ (growRow 769 s2Step31EntryGFresh ++ (growRow 770 s2Step31EntryFvFresh ++ (growRow 771 s2Step31EntryGvFresh ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step31EntryGvAfter [] []=some (s2Step31EntryGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step31EntryGvBefore s2Step31EntryGvAfter s2Step31EntryGvAfter
+    s2Step31EntryGvRow s2Step31EntryGvOut 29 s2Step31EntryGvFresh [] [] []
+    (growRow 771 s2Step31EntryGvFresh) ([]) s2Step31EntryGv_Incoming s2Step31EntryGv_checked h4 s2Step31EntryGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step31EntryFvBefore s2Step31EntryFvAfter s2Step31EntryGvAfter
+    s2Step31EntryFvRow s2Step31EntryFvOut 29 s2Step31EntryFvFresh [(s2Step31EntryGvRow,29)] [s2Step31EntryGvFresh] [s2Step31EntryGvOut]
+    (growRow 770 s2Step31EntryFvFresh) ((growRow 771 s2Step31EntryGvFresh ++ [])) s2Step31EntryFv_Incoming s2Step31EntryFv_checked h3 s2Step31EntryFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step31EntryGBefore s2Step31EntryGAfter s2Step31EntryGvAfter
+    s2Step31EntryGRow s2Step31EntryGOut 253 s2Step31EntryGFresh [(s2Step31EntryFvRow,29),(s2Step31EntryGvRow,29)] [s2Step31EntryFvFresh,s2Step31EntryGvFresh] [s2Step31EntryFvOut,s2Step31EntryGvOut]
+    (growRow 769 s2Step31EntryGFresh) ((growRow 770 s2Step31EntryFvFresh ++ (growRow 771 s2Step31EntryGvFresh ++ []))) s2Step31EntryG_Incoming s2Step31EntryG_checked h2 s2Step31EntryG_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step31EntryFBefore s2Step31EntryFAfter s2Step31EntryGvAfter
+    s2Step31EntryFRow s2Step31EntryFOut 253 s2Step31EntryFFresh [(s2Step31EntryGRow,253),(s2Step31EntryFvRow,29),(s2Step31EntryGvRow,29)] [s2Step31EntryGFresh,s2Step31EntryFvFresh,s2Step31EntryGvFresh] [s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut]
+    (growRow 768 s2Step31EntryFFresh) ((growRow 769 s2Step31EntryGFresh ++ (growRow 770 s2Step31EntryFvFresh ++ (growRow 771 s2Step31EntryGvFresh ++ [])))) s2Step31EntryF_Incoming s2Step31EntryF_checked h1 s2Step31EntryF_Outgoing
   exact h0
-theorem s6Step14EntryBank_checked : compileHmrBankResizeLog .entry s6Step14EntryFBefore ⟨s6Step14EntryFRow,s6Step14EntryGRow,s6Step14EntryFvRow,s6Step14EntryGvRow⟩ ⟨256,256,15,15⟩ [s6Step14EntryFFresh,s6Step14EntryGFresh,s6Step14EntryFvFresh,s6Step14EntryGvFresh]=
-    some (s6Step14EntryGvAfter,⟨s6Step14EntryFOut,s6Step14EntryGOut,s6Step14EntryFvOut,s6Step14EntryGvOut⟩,(growRow 795 s6Step14EntryFFresh ++ (growRow 777 s6Step14EntryGFresh ++ (growRow 776 s6Step14EntryFvFresh ++ (growRow 775 s6Step14EntryGvFresh ++ []))))) := by
+theorem s2Step31EntryBank_checked : compileHmrBankResizeLog .entry s2Step31EntryFBefore ⟨s2Step31EntryFRow,s2Step31EntryGRow,s2Step31EntryFvRow,s2Step31EntryGvRow⟩ ⟨253,253,29,29⟩ [s2Step31EntryFFresh,s2Step31EntryGFresh,s2Step31EntryFvFresh,s2Step31EntryGvFresh]=
+    some (s2Step31EntryGvAfter,⟨s2Step31EntryFOut,s2Step31EntryGOut,s2Step31EntryFvOut,s2Step31EntryGvOut⟩,(growRow 768 s2Step31EntryFFresh ++ (growRow 769 s2Step31EntryGFresh ++ (growRow 770 s2Step31EntryFvFresh ++ (growRow 771 s2Step31EntryGvFresh ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step14EntryBank_rows]
+  rw [s2Step31EntryBank_rows]
   rfl
 
 end ECDSAAdd.Arithmetic.Paper935

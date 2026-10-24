@@ -1,6 +1,7 @@
 """Generate the complete source walk journals, without assuming acceptance."""
 from pathlib import Path
 import sys
+from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import load, front_log
 from control_trace import early_control_log, armed_control_log
@@ -79,7 +80,4 @@ for prefix in ('s2','s6'):
 bridge += ['end ECDSAAdd.Arithmetic.Paper935', '']
 path = root/'ECDSAAdd/Arithmetic/Paper935/HmrSourceWalkLogFixtures.lean'
 text = '\n'.join(bridge)
-if check:
-    assert path.read_text() == text, 'walk log fixtures are stale'
-else:
-    path.write_text(text)
+write_step_chunks(path,text,check=check,key_pattern=r'(s[26]Observed_step\d+)\w*')

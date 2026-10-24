@@ -981,3 +981,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix
 import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceMultiRepack
 import ECDSAAdd.Arithmetic.Paper935.HmrControlCheckParts
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
+
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFragmentedControl

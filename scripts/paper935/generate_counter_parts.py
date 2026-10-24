@@ -1,5 +1,6 @@
 """Exact counter scratch plans for the selected early/arm steps."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, take
@@ -15,7 +16,7 @@ for phase in ('s2-walkA','s6-walkC'):
         assert s['live_before']==resize['resizes'][-1]['live_after']
         base=phase[:2]+'Step'+str(t);name=base+'Counter';H=base+'HeadFvAfter'
         early=str(s['early']).lower();control=s['control'];qs=s['counter'];work=take(s['events'])
-        pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in s['live_before'])
+        pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in s['live_before']))
         lines += [f'def {name}Work : List Wire := {work}',
                   f'theorem {name}_bounded : {name}Work.toFinset⊆arenaWires := by norm_num [{name}Work,arenaWires,Finset.insert_subset_iff]',
                   f'def {name}During : Arena := ⟨{H}.live∪{name}Work.toFinset,Finset.union_subset {H}.bounded {name}_bounded⟩',

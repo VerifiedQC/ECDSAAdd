@@ -1,5 +1,6 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
 import ECDSAAdd.Arithmetic.Paper935.HmrResizeComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 
 namespace ECDSAAdd.Arithmetic.Paper935
 def s2Step0EntryFBefore : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<780)),Finset.filter_subset _ _⟩

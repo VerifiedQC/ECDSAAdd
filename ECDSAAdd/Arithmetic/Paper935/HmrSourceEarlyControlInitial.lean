@@ -1,4 +1,8 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl0
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl1
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl2
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS2EarlyControl3
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl0
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl1
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl2
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceS6EarlyControl3

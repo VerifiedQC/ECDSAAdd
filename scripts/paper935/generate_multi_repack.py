@@ -4,6 +4,7 @@ from front_trace import ROOT,load
 from repack_parts import arena,repack_parts
 r=load('resize');c=load('control')
 lines=['import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition',
+       'import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks',
        'import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout',
        'namespace ECDSAAdd.Arithmetic.Paper935']
 def expand(ranges):return {q for lo,hi in ranges for q in range(lo,hi)}

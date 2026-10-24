@@ -1,5 +1,6 @@
 """Compose selected observed fronts, relocations and control blocks."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate, live_ranges
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from repack_parts import repack_parts
@@ -23,10 +24,10 @@ for phase in ('s2-walkA','s6-walkC'):
         lines += [f'def {name}Moves : List (Wire × Wire) := {ms}',
                   f'def {name}Out : WindowBank := {front}Out.repacked {name}Moves',
                   f'def {name}Log : Hmr{kind}StepLog := ⟨{front}Log,{name}Moves,{control}Log⟩']
-        if len(moves)>1:
+        if len(moves)>1 or (moves and max(len(e['resizes'][-1]['live_after']),len(ctl['live_before']))>30):
             before={q for lo,hi in e['resizes'][-1]['live_after'] for q in range(lo,hi)}
             after={q for lo,hi in ctl['live_before'] for q in range(lo,hi)}
-            lines+=repack_parts(name+'Relocation',A,C,before,moves,after)
+            lines+=repack_parts(name+'Relocation',A,C,before,moves,after,interval_predicate(live_ranges(before)),interval_predicate(live_ranges(after)))
             lines += [f'theorem {name}_repack : {A}.checkRepack {name}Moves=some {C} := by',
                       f'  simpa only [{name}Moves] using {name}Relocation_checked']
         elif moves:
@@ -45,7 +46,7 @@ for phase in ('s2-walkA','s6-walkC'):
             lines += [f'theorem {name}_repack : {A}.checkRepack {name}Moves=some {C} := by rfl']
         qs=ctl['counter'];record=ctl['record_before'];ts=ctl['timestamp'];frozen=ctl['frozen'] or 0;sigma,branch=ctl['retained_flags'];need=ctl['record_fits'][0]['need']
         rest=[sigma,branch]+([] if early else [frozen]+ts)+record
-        pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in ctl['live_before'])
+        pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in ctl['live_before']))
         lines += [f'theorem {name}_owned : ({name}Out.rows.flatMap WindowRow.wires++{qs}).toFinset⊆{C}.live := by',
                   f'  apply hmrLayout_owned_of_filter {C} (fun q => {pred}) rfl','  decide +kernel',
                   f'theorem {name}_apart : List.Disjoint ({name}Out.rows.flatMap WindowRow.wires++{qs}) {rest} := by',

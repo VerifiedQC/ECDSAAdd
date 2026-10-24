@@ -3,949 +3,949 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRowsSuffix
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceExitBankChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-theorem s2Step498ExitBank_incomingDistinct : ([s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step16ExitBank_incomingDistinct : ([s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498ExitBank_outgoingOwned : rowsOwned s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] := by
+theorem s2Step16ExitBank_outgoingOwned : rowsOwned s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s2Step498ExitGvAfter (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (920≤q ∧ q<921)) rfl
+  · apply hmrLayout_owned_of_filter s2Step16ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<819) ∨ (820≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498ExitG_Incoming : rowsOwned s2Step498ExitGBefore [s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] := by
+theorem s2Step16ExitG_Incoming : rowsOwned s2Step16ExitGBefore [s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] 0 s2Step498ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498ExitGBefore (fun q => (0≤q ∧ q<921)) rfl
+  · exact hmrRows_distinct_drop [s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] 0 s2Step16ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16ExitGBefore (fun q => (0≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498ExitG_Outgoing : rowsOwned s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] :=
-  hmrRows_owned_drop s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] 0 s2Step498ExitBank_outgoingOwned
-theorem s2Step498ExitF_Incoming : rowsOwned s2Step498ExitFBefore [s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] := by
+theorem s2Step16ExitG_Outgoing : rowsOwned s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] :=
+  hmrRows_owned_drop s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] 0 s2Step16ExitBank_outgoingOwned
+theorem s2Step16ExitF_Incoming : rowsOwned s2Step16ExitFBefore [s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] 1 s2Step498ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498ExitFBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<917) ∨ (918≤q ∧ q<921)) rfl
+  · exact hmrRows_distinct_drop [s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] 1 s2Step16ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16ExitFBefore (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498ExitF_Outgoing : rowsOwned s2Step498ExitGvAfter [s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] :=
-  hmrRows_owned_drop s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] 1 s2Step498ExitBank_outgoingOwned
-theorem s2Step498ExitFv_Incoming : rowsOwned s2Step498ExitFvBefore [s2Step498ExitFvRow,s2Step498ExitGvRow] := by
+theorem s2Step16ExitF_Outgoing : rowsOwned s2Step16ExitGvAfter [s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] :=
+  hmrRows_owned_drop s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] 1 s2Step16ExitBank_outgoingOwned
+theorem s2Step16ExitFv_Incoming : rowsOwned s2Step16ExitFvBefore [s2Step16ExitFvRow,s2Step16ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] 2 s2Step498ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498ExitFvBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)) rfl
+  · exact hmrRows_distinct_drop [s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] 2 s2Step16ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16ExitFvBefore (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498ExitFv_Outgoing : rowsOwned s2Step498ExitGvAfter [s2Step498ExitFvOut,s2Step498ExitGvOut] :=
-  hmrRows_owned_drop s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] 2 s2Step498ExitBank_outgoingOwned
-theorem s2Step498ExitGv_Incoming : rowsOwned s2Step498ExitGvBefore [s2Step498ExitGvRow] := by
+theorem s2Step16ExitFv_Outgoing : rowsOwned s2Step16ExitGvAfter [s2Step16ExitFvOut,s2Step16ExitGvOut] :=
+  hmrRows_owned_drop s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] 2 s2Step16ExitBank_outgoingOwned
+theorem s2Step16ExitGv_Incoming : rowsOwned s2Step16ExitGvBefore [s2Step16ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s2Step498ExitGRow,s2Step498ExitFRow,s2Step498ExitFvRow,s2Step498ExitGvRow] 3 s2Step498ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s2Step498ExitGvBefore (fun q => (0≤q ∧ q<845) ∨ (846≤q ∧ q<901) ∨ (902≤q ∧ q<917) ∨ (919≤q ∧ q<921)) rfl
+  · exact hmrRows_distinct_drop [s2Step16ExitGRow,s2Step16ExitFRow,s2Step16ExitFvRow,s2Step16ExitGvRow] 3 s2Step16ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step16ExitGvBefore (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s2Step498ExitGv_Outgoing : rowsOwned s2Step498ExitGvAfter [s2Step498ExitGvOut] :=
-  hmrRows_owned_drop s2Step498ExitGvAfter [s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut] 3 s2Step498ExitBank_outgoingOwned
-theorem s2Step498ExitBank_rows : planWindowRowsLog s2Step498ExitGBefore [(s2Step498ExitGRow,24),(s2Step498ExitFRow,24),(s2Step498ExitFvRow,267),(s2Step498ExitGvRow,266)] [[],[],[],[]]=
-    some (s2Step498ExitGvAfter,[s2Step498ExitGOut,s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut],(shrinkRow 769 s2Step498ExitGExtra ++ (shrinkRow 768 s2Step498ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step498ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s2Step498ExitGvAfter [] []=some (s2Step498ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s2Step498ExitGvBefore s2Step498ExitGvAfter s2Step498ExitGvAfter
-    s2Step498ExitGvRow s2Step498ExitGvOut 266 [] [] [] []
-    (shrinkRow 771 s2Step498ExitGvExtra) ([]) s2Step498ExitGv_Incoming s2Step498ExitGv_checked h4 s2Step498ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s2Step498ExitFvBefore s2Step498ExitFvAfter s2Step498ExitGvAfter
-    s2Step498ExitFvRow s2Step498ExitFvOut 267 [] [(s2Step498ExitGvRow,266)] [[]] [s2Step498ExitGvOut]
-    (growRow 770 []) ((shrinkRow 771 s2Step498ExitGvExtra ++ [])) s2Step498ExitFv_Incoming s2Step498ExitFv_checked h3 s2Step498ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s2Step498ExitFBefore s2Step498ExitFAfter s2Step498ExitGvAfter
-    s2Step498ExitFRow s2Step498ExitFOut 24 [] [(s2Step498ExitFvRow,267),(s2Step498ExitGvRow,266)] [[],[]] [s2Step498ExitFvOut,s2Step498ExitGvOut]
-    (shrinkRow 768 s2Step498ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step498ExitGvExtra ++ []))) s2Step498ExitF_Incoming s2Step498ExitF_checked h2 s2Step498ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s2Step498ExitGBefore s2Step498ExitGAfter s2Step498ExitGvAfter
-    s2Step498ExitGRow s2Step498ExitGOut 24 [] [(s2Step498ExitFRow,24),(s2Step498ExitFvRow,267),(s2Step498ExitGvRow,266)] [[],[],[]] [s2Step498ExitFOut,s2Step498ExitFvOut,s2Step498ExitGvOut]
-    (shrinkRow 769 s2Step498ExitGExtra) ((shrinkRow 768 s2Step498ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step498ExitGvExtra ++ [])))) s2Step498ExitG_Incoming s2Step498ExitG_checked h1 s2Step498ExitG_Outgoing
+theorem s2Step16ExitGv_Outgoing : rowsOwned s2Step16ExitGvAfter [s2Step16ExitGvOut] :=
+  hmrRows_owned_drop s2Step16ExitGvAfter [s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut] 3 s2Step16ExitBank_outgoingOwned
+theorem s2Step16ExitBank_rows : planWindowRowsLog s2Step16ExitGBefore [(s2Step16ExitGRow,255),(s2Step16ExitFRow,256),(s2Step16ExitFvRow,18),(s2Step16ExitGvRow,16)] [[],[],[],[]]=
+    some (s2Step16ExitGvAfter,[s2Step16ExitGOut,s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut],(shrinkRow 769 s2Step16ExitGExtra ++ (shrinkRow 768 s2Step16ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step16ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step16ExitGvAfter [] []=some (s2Step16ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step16ExitGvBefore s2Step16ExitGvAfter s2Step16ExitGvAfter
+    s2Step16ExitGvRow s2Step16ExitGvOut 16 [] [] [] []
+    (shrinkRow 771 s2Step16ExitGvExtra) ([]) s2Step16ExitGv_Incoming s2Step16ExitGv_checked h4 s2Step16ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step16ExitFvBefore s2Step16ExitFvAfter s2Step16ExitGvAfter
+    s2Step16ExitFvRow s2Step16ExitFvOut 18 [] [(s2Step16ExitGvRow,16)] [[]] [s2Step16ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step16ExitGvExtra ++ [])) s2Step16ExitFv_Incoming s2Step16ExitFv_checked h3 s2Step16ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step16ExitFBefore s2Step16ExitFAfter s2Step16ExitGvAfter
+    s2Step16ExitFRow s2Step16ExitFOut 256 [] [(s2Step16ExitFvRow,18),(s2Step16ExitGvRow,16)] [[],[]] [s2Step16ExitFvOut,s2Step16ExitGvOut]
+    (shrinkRow 768 s2Step16ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step16ExitGvExtra ++ []))) s2Step16ExitF_Incoming s2Step16ExitF_checked h2 s2Step16ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step16ExitGBefore s2Step16ExitGAfter s2Step16ExitGvAfter
+    s2Step16ExitGRow s2Step16ExitGOut 255 [] [(s2Step16ExitFRow,256),(s2Step16ExitFvRow,18),(s2Step16ExitGvRow,16)] [[],[],[]] [s2Step16ExitFOut,s2Step16ExitFvOut,s2Step16ExitGvOut]
+    (shrinkRow 769 s2Step16ExitGExtra) ((shrinkRow 768 s2Step16ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step16ExitGvExtra ++ [])))) s2Step16ExitG_Incoming s2Step16ExitG_checked h1 s2Step16ExitG_Outgoing
   exact h0
-theorem s2Step498ExitBank_checked : compileHmrBankResizeLog .exit s2Step498ExitGBefore ⟨s2Step498ExitFRow,s2Step498ExitGRow,s2Step498ExitFvRow,s2Step498ExitGvRow⟩ ⟨24,24,267,266⟩ [[],[],[],[]]=
-    some (s2Step498ExitGvAfter,⟨s2Step498ExitFOut,s2Step498ExitGOut,s2Step498ExitFvOut,s2Step498ExitGvOut⟩,(shrinkRow 769 s2Step498ExitGExtra ++ (shrinkRow 768 s2Step498ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step498ExitGvExtra ++ []))))) := by
+theorem s2Step16ExitBank_checked : compileHmrBankResizeLog .exit s2Step16ExitGBefore ⟨s2Step16ExitFRow,s2Step16ExitGRow,s2Step16ExitFvRow,s2Step16ExitGvRow⟩ ⟨256,255,18,16⟩ [[],[],[],[]]=
+    some (s2Step16ExitGvAfter,⟨s2Step16ExitFOut,s2Step16ExitGOut,s2Step16ExitFvOut,s2Step16ExitGvOut⟩,(shrinkRow 769 s2Step16ExitGExtra ++ (shrinkRow 768 s2Step16ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step16ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s2Step498ExitBank_rows]
+  rw [s2Step16ExitBank_rows]
   rfl
-theorem s6Step0ExitBank_incomingDistinct : ([s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step17ExitBank_incomingDistinct : ([s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0ExitBank_outgoingOwned : rowsOwned s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] := by
+theorem s2Step17ExitBank_outgoingOwned : rowsOwned s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step0ExitGvAfter (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  · apply hmrLayout_owned_of_filter s2Step17ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<821) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0ExitG_Incoming : rowsOwned s6Step0ExitGBefore [s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] := by
+theorem s2Step17ExitG_Incoming : rowsOwned s2Step17ExitGBefore [s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] 0 s6Step0ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  · exact hmrRows_distinct_drop [s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] 0 s2Step17ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17ExitGBefore (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0ExitG_Outgoing : rowsOwned s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] :=
-  hmrRows_owned_drop s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] 0 s6Step0ExitBank_outgoingOwned
-theorem s6Step0ExitF_Incoming : rowsOwned s6Step0ExitFBefore [s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] := by
+theorem s2Step17ExitG_Outgoing : rowsOwned s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] :=
+  hmrRows_owned_drop s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] 0 s2Step17ExitBank_outgoingOwned
+theorem s2Step17ExitF_Incoming : rowsOwned s2Step17ExitFBefore [s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] 1 s6Step0ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0ExitFBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  · exact hmrRows_distinct_drop [s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] 1 s2Step17ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17ExitFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0ExitF_Outgoing : rowsOwned s6Step0ExitGvAfter [s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] :=
-  hmrRows_owned_drop s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] 1 s6Step0ExitBank_outgoingOwned
-theorem s6Step0ExitFv_Incoming : rowsOwned s6Step0ExitFvBefore [s6Step0ExitFvRow,s6Step0ExitGvRow] := by
+theorem s2Step17ExitF_Outgoing : rowsOwned s2Step17ExitGvAfter [s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] :=
+  hmrRows_owned_drop s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] 1 s2Step17ExitBank_outgoingOwned
+theorem s2Step17ExitFv_Incoming : rowsOwned s2Step17ExitFvBefore [s2Step17ExitFvRow,s2Step17ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] 2 s6Step0ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0ExitFvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  · exact hmrRows_distinct_drop [s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] 2 s2Step17ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0ExitFv_Outgoing : rowsOwned s6Step0ExitGvAfter [s6Step0ExitFvOut,s6Step0ExitGvOut] :=
-  hmrRows_owned_drop s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] 2 s6Step0ExitBank_outgoingOwned
-theorem s6Step0ExitGv_Incoming : rowsOwned s6Step0ExitGvBefore [s6Step0ExitGvRow] := by
+theorem s2Step17ExitFv_Outgoing : rowsOwned s2Step17ExitGvAfter [s2Step17ExitFvOut,s2Step17ExitGvOut] :=
+  hmrRows_owned_drop s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] 2 s2Step17ExitBank_outgoingOwned
+theorem s2Step17ExitGv_Incoming : rowsOwned s2Step17ExitGvBefore [s2Step17ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step0ExitGRow,s6Step0ExitFRow,s6Step0ExitFvRow,s6Step0ExitGvRow] 3 s6Step0ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step0ExitGvBefore (fun q => (0≤q ∧ q<255) ∨ (256≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  · exact hmrRows_distinct_drop [s2Step17ExitGRow,s2Step17ExitFRow,s2Step17ExitFvRow,s2Step17ExitGvRow] 3 s2Step17ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step17ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
     decide +kernel
-theorem s6Step0ExitGv_Outgoing : rowsOwned s6Step0ExitGvAfter [s6Step0ExitGvOut] :=
-  hmrRows_owned_drop s6Step0ExitGvAfter [s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut] 3 s6Step0ExitBank_outgoingOwned
-theorem s6Step0ExitBank_rows : planWindowRowsLog s6Step0ExitGBefore [(s6Step0ExitGRow,255),(s6Step0ExitFRow,256),(s6Step0ExitFvRow,2),(s6Step0ExitGvRow,1)] [[],[],[],[]]=
-    some (s6Step0ExitGvAfter,[s6Step0ExitGOut,s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut],(shrinkRow 777 s6Step0ExitGExtra ++ (shrinkRow 795 s6Step0ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step0ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step0ExitGvAfter [] []=some (s6Step0ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step0ExitGvBefore s6Step0ExitGvAfter s6Step0ExitGvAfter
-    s6Step0ExitGvRow s6Step0ExitGvOut 1 [] [] [] []
-    (shrinkRow 775 s6Step0ExitGvExtra) ([]) s6Step0ExitGv_Incoming s6Step0ExitGv_checked h4 s6Step0ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step0ExitFvBefore s6Step0ExitFvAfter s6Step0ExitGvAfter
-    s6Step0ExitFvRow s6Step0ExitFvOut 2 [] [(s6Step0ExitGvRow,1)] [[]] [s6Step0ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step0ExitGvExtra ++ [])) s6Step0ExitFv_Incoming s6Step0ExitFv_checked h3 s6Step0ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step0ExitFBefore s6Step0ExitFAfter s6Step0ExitGvAfter
-    s6Step0ExitFRow s6Step0ExitFOut 256 [] [(s6Step0ExitFvRow,2),(s6Step0ExitGvRow,1)] [[],[]] [s6Step0ExitFvOut,s6Step0ExitGvOut]
-    (shrinkRow 795 s6Step0ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step0ExitGvExtra ++ []))) s6Step0ExitF_Incoming s6Step0ExitF_checked h2 s6Step0ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step0ExitGBefore s6Step0ExitGAfter s6Step0ExitGvAfter
-    s6Step0ExitGRow s6Step0ExitGOut 255 [] [(s6Step0ExitFRow,256),(s6Step0ExitFvRow,2),(s6Step0ExitGvRow,1)] [[],[],[]] [s6Step0ExitFOut,s6Step0ExitFvOut,s6Step0ExitGvOut]
-    (shrinkRow 777 s6Step0ExitGExtra) ((shrinkRow 795 s6Step0ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step0ExitGvExtra ++ [])))) s6Step0ExitG_Incoming s6Step0ExitG_checked h1 s6Step0ExitG_Outgoing
+theorem s2Step17ExitGv_Outgoing : rowsOwned s2Step17ExitGvAfter [s2Step17ExitGvOut] :=
+  hmrRows_owned_drop s2Step17ExitGvAfter [s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut] 3 s2Step17ExitBank_outgoingOwned
+theorem s2Step17ExitBank_rows : planWindowRowsLog s2Step17ExitGBefore [(s2Step17ExitGRow,255),(s2Step17ExitFRow,256),(s2Step17ExitFvRow,19),(s2Step17ExitGvRow,17)] [[],[],[],[]]=
+    some (s2Step17ExitGvAfter,[s2Step17ExitGOut,s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut],(shrinkRow 769 s2Step17ExitGExtra ++ (shrinkRow 768 s2Step17ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step17ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step17ExitGvAfter [] []=some (s2Step17ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step17ExitGvBefore s2Step17ExitGvAfter s2Step17ExitGvAfter
+    s2Step17ExitGvRow s2Step17ExitGvOut 17 [] [] [] []
+    (shrinkRow 771 s2Step17ExitGvExtra) ([]) s2Step17ExitGv_Incoming s2Step17ExitGv_checked h4 s2Step17ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step17ExitFvBefore s2Step17ExitFvAfter s2Step17ExitGvAfter
+    s2Step17ExitFvRow s2Step17ExitFvOut 19 [] [(s2Step17ExitGvRow,17)] [[]] [s2Step17ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step17ExitGvExtra ++ [])) s2Step17ExitFv_Incoming s2Step17ExitFv_checked h3 s2Step17ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step17ExitFBefore s2Step17ExitFAfter s2Step17ExitGvAfter
+    s2Step17ExitFRow s2Step17ExitFOut 256 [] [(s2Step17ExitFvRow,19),(s2Step17ExitGvRow,17)] [[],[]] [s2Step17ExitFvOut,s2Step17ExitGvOut]
+    (shrinkRow 768 s2Step17ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step17ExitGvExtra ++ []))) s2Step17ExitF_Incoming s2Step17ExitF_checked h2 s2Step17ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step17ExitGBefore s2Step17ExitGAfter s2Step17ExitGvAfter
+    s2Step17ExitGRow s2Step17ExitGOut 255 [] [(s2Step17ExitFRow,256),(s2Step17ExitFvRow,19),(s2Step17ExitGvRow,17)] [[],[],[]] [s2Step17ExitFOut,s2Step17ExitFvOut,s2Step17ExitGvOut]
+    (shrinkRow 769 s2Step17ExitGExtra) ((shrinkRow 768 s2Step17ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step17ExitGvExtra ++ [])))) s2Step17ExitG_Incoming s2Step17ExitG_checked h1 s2Step17ExitG_Outgoing
   exact h0
-theorem s6Step0ExitBank_checked : compileHmrBankResizeLog .exit s6Step0ExitGBefore ⟨s6Step0ExitFRow,s6Step0ExitGRow,s6Step0ExitFvRow,s6Step0ExitGvRow⟩ ⟨256,255,2,1⟩ [[],[],[],[]]=
-    some (s6Step0ExitGvAfter,⟨s6Step0ExitFOut,s6Step0ExitGOut,s6Step0ExitFvOut,s6Step0ExitGvOut⟩,(shrinkRow 777 s6Step0ExitGExtra ++ (shrinkRow 795 s6Step0ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step0ExitGvExtra ++ []))))) := by
+theorem s2Step17ExitBank_checked : compileHmrBankResizeLog .exit s2Step17ExitGBefore ⟨s2Step17ExitFRow,s2Step17ExitGRow,s2Step17ExitFvRow,s2Step17ExitGvRow⟩ ⟨256,255,19,17⟩ [[],[],[],[]]=
+    some (s2Step17ExitGvAfter,⟨s2Step17ExitFOut,s2Step17ExitGOut,s2Step17ExitFvOut,s2Step17ExitGvOut⟩,(shrinkRow 769 s2Step17ExitGExtra ++ (shrinkRow 768 s2Step17ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step17ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step0ExitBank_rows]
+  rw [s2Step17ExitBank_rows]
   rfl
-theorem s6Step1ExitBank_incomingDistinct : ([s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step18ExitBank_incomingDistinct : ([s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1ExitBank_outgoingOwned : rowsOwned s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] := by
+theorem s2Step18ExitBank_outgoingOwned : rowsOwned s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step1ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · apply hmrLayout_owned_of_filter s2Step18ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<824) ∨ (825≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1ExitG_Incoming : rowsOwned s6Step1ExitGBefore [s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] := by
+theorem s2Step18ExitG_Incoming : rowsOwned s2Step18ExitGBefore [s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] 0 s6Step1ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] 0 s2Step18ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18ExitGBefore (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1ExitG_Outgoing : rowsOwned s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] :=
-  hmrRows_owned_drop s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] 0 s6Step1ExitBank_outgoingOwned
-theorem s6Step1ExitF_Incoming : rowsOwned s6Step1ExitFBefore [s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] := by
+theorem s2Step18ExitG_Outgoing : rowsOwned s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] :=
+  hmrRows_owned_drop s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] 0 s2Step18ExitBank_outgoingOwned
+theorem s2Step18ExitF_Incoming : rowsOwned s2Step18ExitFBefore [s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] 1 s6Step1ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] 1 s2Step18ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18ExitFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<784) ∨ (785≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1ExitF_Outgoing : rowsOwned s6Step1ExitGvAfter [s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] :=
-  hmrRows_owned_drop s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] 1 s6Step1ExitBank_outgoingOwned
-theorem s6Step1ExitFv_Incoming : rowsOwned s6Step1ExitFvBefore [s6Step1ExitFvRow,s6Step1ExitGvRow] := by
+theorem s2Step18ExitF_Outgoing : rowsOwned s2Step18ExitGvAfter [s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] :=
+  hmrRows_owned_drop s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] 1 s2Step18ExitBank_outgoingOwned
+theorem s2Step18ExitFv_Incoming : rowsOwned s2Step18ExitFvBefore [s2Step18ExitFvRow,s2Step18ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] 2 s6Step1ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] 2 s2Step18ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1ExitFv_Outgoing : rowsOwned s6Step1ExitGvAfter [s6Step1ExitFvOut,s6Step1ExitGvOut] :=
-  hmrRows_owned_drop s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] 2 s6Step1ExitBank_outgoingOwned
-theorem s6Step1ExitGv_Incoming : rowsOwned s6Step1ExitGvBefore [s6Step1ExitGvRow] := by
+theorem s2Step18ExitFv_Outgoing : rowsOwned s2Step18ExitGvAfter [s2Step18ExitFvOut,s2Step18ExitGvOut] :=
+  hmrRows_owned_drop s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] 2 s2Step18ExitBank_outgoingOwned
+theorem s2Step18ExitGv_Incoming : rowsOwned s2Step18ExitGvBefore [s2Step18ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step1ExitGRow,s6Step1ExitFRow,s6Step1ExitFvRow,s6Step1ExitGvRow] 3 s6Step1ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step1ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (859≤q ∧ q<861) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  · exact hmrRows_distinct_drop [s2Step18ExitGRow,s2Step18ExitFRow,s2Step18ExitFvRow,s2Step18ExitGvRow] 3 s2Step18ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step18ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step1ExitGv_Outgoing : rowsOwned s6Step1ExitGvAfter [s6Step1ExitGvOut] :=
-  hmrRows_owned_drop s6Step1ExitGvAfter [s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut] 3 s6Step1ExitBank_outgoingOwned
-theorem s6Step1ExitBank_rows : planWindowRowsLog s6Step1ExitGBefore [(s6Step1ExitGRow,255),(s6Step1ExitFRow,256),(s6Step1ExitFvRow,3),(s6Step1ExitGvRow,1)] [[],[],[],[]]=
-    some (s6Step1ExitGvAfter,[s6Step1ExitGOut,s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut],(shrinkRow 777 s6Step1ExitGExtra ++ (shrinkRow 795 s6Step1ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step1ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step1ExitGvAfter [] []=some (s6Step1ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step1ExitGvBefore s6Step1ExitGvAfter s6Step1ExitGvAfter
-    s6Step1ExitGvRow s6Step1ExitGvOut 1 [] [] [] []
-    (shrinkRow 775 s6Step1ExitGvExtra) ([]) s6Step1ExitGv_Incoming s6Step1ExitGv_checked h4 s6Step1ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step1ExitFvBefore s6Step1ExitFvAfter s6Step1ExitGvAfter
-    s6Step1ExitFvRow s6Step1ExitFvOut 3 [] [(s6Step1ExitGvRow,1)] [[]] [s6Step1ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step1ExitGvExtra ++ [])) s6Step1ExitFv_Incoming s6Step1ExitFv_checked h3 s6Step1ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step1ExitFBefore s6Step1ExitFAfter s6Step1ExitGvAfter
-    s6Step1ExitFRow s6Step1ExitFOut 256 [] [(s6Step1ExitFvRow,3),(s6Step1ExitGvRow,1)] [[],[]] [s6Step1ExitFvOut,s6Step1ExitGvOut]
-    (shrinkRow 795 s6Step1ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step1ExitGvExtra ++ []))) s6Step1ExitF_Incoming s6Step1ExitF_checked h2 s6Step1ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step1ExitGBefore s6Step1ExitGAfter s6Step1ExitGvAfter
-    s6Step1ExitGRow s6Step1ExitGOut 255 [] [(s6Step1ExitFRow,256),(s6Step1ExitFvRow,3),(s6Step1ExitGvRow,1)] [[],[],[]] [s6Step1ExitFOut,s6Step1ExitFvOut,s6Step1ExitGvOut]
-    (shrinkRow 777 s6Step1ExitGExtra) ((shrinkRow 795 s6Step1ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step1ExitGvExtra ++ [])))) s6Step1ExitG_Incoming s6Step1ExitG_checked h1 s6Step1ExitG_Outgoing
+theorem s2Step18ExitGv_Outgoing : rowsOwned s2Step18ExitGvAfter [s2Step18ExitGvOut] :=
+  hmrRows_owned_drop s2Step18ExitGvAfter [s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut] 3 s2Step18ExitBank_outgoingOwned
+theorem s2Step18ExitBank_rows : planWindowRowsLog s2Step18ExitGBefore [(s2Step18ExitGRow,255),(s2Step18ExitFRow,256),(s2Step18ExitFvRow,20),(s2Step18ExitGvRow,18)] [[],[],[],[]]=
+    some (s2Step18ExitGvAfter,[s2Step18ExitGOut,s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut],(shrinkRow 769 s2Step18ExitGExtra ++ (shrinkRow 768 s2Step18ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step18ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step18ExitGvAfter [] []=some (s2Step18ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step18ExitGvBefore s2Step18ExitGvAfter s2Step18ExitGvAfter
+    s2Step18ExitGvRow s2Step18ExitGvOut 18 [] [] [] []
+    (shrinkRow 771 s2Step18ExitGvExtra) ([]) s2Step18ExitGv_Incoming s2Step18ExitGv_checked h4 s2Step18ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step18ExitFvBefore s2Step18ExitFvAfter s2Step18ExitGvAfter
+    s2Step18ExitFvRow s2Step18ExitFvOut 20 [] [(s2Step18ExitGvRow,18)] [[]] [s2Step18ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step18ExitGvExtra ++ [])) s2Step18ExitFv_Incoming s2Step18ExitFv_checked h3 s2Step18ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step18ExitFBefore s2Step18ExitFAfter s2Step18ExitGvAfter
+    s2Step18ExitFRow s2Step18ExitFOut 256 [] [(s2Step18ExitFvRow,20),(s2Step18ExitGvRow,18)] [[],[]] [s2Step18ExitFvOut,s2Step18ExitGvOut]
+    (shrinkRow 768 s2Step18ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step18ExitGvExtra ++ []))) s2Step18ExitF_Incoming s2Step18ExitF_checked h2 s2Step18ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step18ExitGBefore s2Step18ExitGAfter s2Step18ExitGvAfter
+    s2Step18ExitGRow s2Step18ExitGOut 255 [] [(s2Step18ExitFRow,256),(s2Step18ExitFvRow,20),(s2Step18ExitGvRow,18)] [[],[],[]] [s2Step18ExitFOut,s2Step18ExitFvOut,s2Step18ExitGvOut]
+    (shrinkRow 769 s2Step18ExitGExtra) ((shrinkRow 768 s2Step18ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step18ExitGvExtra ++ [])))) s2Step18ExitG_Incoming s2Step18ExitG_checked h1 s2Step18ExitG_Outgoing
   exact h0
-theorem s6Step1ExitBank_checked : compileHmrBankResizeLog .exit s6Step1ExitGBefore ⟨s6Step1ExitFRow,s6Step1ExitGRow,s6Step1ExitFvRow,s6Step1ExitGvRow⟩ ⟨256,255,3,1⟩ [[],[],[],[]]=
-    some (s6Step1ExitGvAfter,⟨s6Step1ExitFOut,s6Step1ExitGOut,s6Step1ExitFvOut,s6Step1ExitGvOut⟩,(shrinkRow 777 s6Step1ExitGExtra ++ (shrinkRow 795 s6Step1ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step1ExitGvExtra ++ []))))) := by
+theorem s2Step18ExitBank_checked : compileHmrBankResizeLog .exit s2Step18ExitGBefore ⟨s2Step18ExitFRow,s2Step18ExitGRow,s2Step18ExitFvRow,s2Step18ExitGvRow⟩ ⟨256,255,20,18⟩ [[],[],[],[]]=
+    some (s2Step18ExitGvAfter,⟨s2Step18ExitFOut,s2Step18ExitGOut,s2Step18ExitFvOut,s2Step18ExitGvOut⟩,(shrinkRow 769 s2Step18ExitGExtra ++ (shrinkRow 768 s2Step18ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step18ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step1ExitBank_rows]
+  rw [s2Step18ExitBank_rows]
   rfl
-theorem s6Step2ExitBank_incomingDistinct : ([s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step19ExitBank_incomingDistinct : ([s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2ExitBank_outgoingOwned : rowsOwned s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] := by
+theorem s2Step19ExitBank_outgoingOwned : rowsOwned s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step2ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896)) rfl
+  · apply hmrLayout_owned_of_filter s2Step19ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<826) ∨ (827≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2ExitG_Incoming : rowsOwned s6Step2ExitGBefore [s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] := by
+theorem s2Step19ExitG_Incoming : rowsOwned s2Step19ExitGBefore [s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] 0 s6Step2ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] 0 s2Step19ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19ExitGBefore (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2ExitG_Outgoing : rowsOwned s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] :=
-  hmrRows_owned_drop s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] 0 s6Step2ExitBank_outgoingOwned
-theorem s6Step2ExitF_Incoming : rowsOwned s6Step2ExitFBefore [s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] := by
+theorem s2Step19ExitG_Outgoing : rowsOwned s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] :=
+  hmrRows_owned_drop s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] 0 s2Step19ExitBank_outgoingOwned
+theorem s2Step19ExitF_Incoming : rowsOwned s2Step19ExitFBefore [s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] 1 s6Step2ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] 1 s2Step19ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19ExitFBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2ExitF_Outgoing : rowsOwned s6Step2ExitGvAfter [s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] :=
-  hmrRows_owned_drop s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] 1 s6Step2ExitBank_outgoingOwned
-theorem s6Step2ExitFv_Incoming : rowsOwned s6Step2ExitFvBefore [s6Step2ExitFvRow,s6Step2ExitGvRow] := by
+theorem s2Step19ExitF_Outgoing : rowsOwned s2Step19ExitGvAfter [s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] :=
+  hmrRows_owned_drop s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] 1 s2Step19ExitBank_outgoingOwned
+theorem s2Step19ExitFv_Incoming : rowsOwned s2Step19ExitFvBefore [s2Step19ExitFvRow,s2Step19ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] 2 s6Step2ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] 2 s2Step19ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2ExitFv_Outgoing : rowsOwned s6Step2ExitGvAfter [s6Step2ExitFvOut,s6Step2ExitGvOut] :=
-  hmrRows_owned_drop s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] 2 s6Step2ExitBank_outgoingOwned
-theorem s6Step2ExitGv_Incoming : rowsOwned s6Step2ExitGvBefore [s6Step2ExitGvRow] := by
+theorem s2Step19ExitFv_Outgoing : rowsOwned s2Step19ExitGvAfter [s2Step19ExitFvOut,s2Step19ExitGvOut] :=
+  hmrRows_owned_drop s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] 2 s2Step19ExitBank_outgoingOwned
+theorem s2Step19ExitGv_Incoming : rowsOwned s2Step19ExitGvBefore [s2Step19ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step2ExitGRow,s6Step2ExitFRow,s6Step2ExitFvRow,s6Step2ExitGvRow] 3 s6Step2ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step2ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (859≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step19ExitGRow,s2Step19ExitFRow,s2Step19ExitFvRow,s2Step19ExitGvRow] 3 s2Step19ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step19ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
     decide +kernel
-theorem s6Step2ExitGv_Outgoing : rowsOwned s6Step2ExitGvAfter [s6Step2ExitGvOut] :=
-  hmrRows_owned_drop s6Step2ExitGvAfter [s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut] 3 s6Step2ExitBank_outgoingOwned
-theorem s6Step2ExitBank_rows : planWindowRowsLog s6Step2ExitGBefore [(s6Step2ExitGRow,255),(s6Step2ExitFRow,256),(s6Step2ExitFvRow,4),(s6Step2ExitGvRow,2)] [[],[],[],[]]=
-    some (s6Step2ExitGvAfter,[s6Step2ExitGOut,s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut],(shrinkRow 777 s6Step2ExitGExtra ++ (shrinkRow 795 s6Step2ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step2ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step2ExitGvAfter [] []=some (s6Step2ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step2ExitGvBefore s6Step2ExitGvAfter s6Step2ExitGvAfter
-    s6Step2ExitGvRow s6Step2ExitGvOut 2 [] [] [] []
-    (shrinkRow 775 s6Step2ExitGvExtra) ([]) s6Step2ExitGv_Incoming s6Step2ExitGv_checked h4 s6Step2ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step2ExitFvBefore s6Step2ExitFvAfter s6Step2ExitGvAfter
-    s6Step2ExitFvRow s6Step2ExitFvOut 4 [] [(s6Step2ExitGvRow,2)] [[]] [s6Step2ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step2ExitGvExtra ++ [])) s6Step2ExitFv_Incoming s6Step2ExitFv_checked h3 s6Step2ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step2ExitFBefore s6Step2ExitFAfter s6Step2ExitGvAfter
-    s6Step2ExitFRow s6Step2ExitFOut 256 [] [(s6Step2ExitFvRow,4),(s6Step2ExitGvRow,2)] [[],[]] [s6Step2ExitFvOut,s6Step2ExitGvOut]
-    (shrinkRow 795 s6Step2ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step2ExitGvExtra ++ []))) s6Step2ExitF_Incoming s6Step2ExitF_checked h2 s6Step2ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step2ExitGBefore s6Step2ExitGAfter s6Step2ExitGvAfter
-    s6Step2ExitGRow s6Step2ExitGOut 255 [] [(s6Step2ExitFRow,256),(s6Step2ExitFvRow,4),(s6Step2ExitGvRow,2)] [[],[],[]] [s6Step2ExitFOut,s6Step2ExitFvOut,s6Step2ExitGvOut]
-    (shrinkRow 777 s6Step2ExitGExtra) ((shrinkRow 795 s6Step2ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step2ExitGvExtra ++ [])))) s6Step2ExitG_Incoming s6Step2ExitG_checked h1 s6Step2ExitG_Outgoing
+theorem s2Step19ExitGv_Outgoing : rowsOwned s2Step19ExitGvAfter [s2Step19ExitGvOut] :=
+  hmrRows_owned_drop s2Step19ExitGvAfter [s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut] 3 s2Step19ExitBank_outgoingOwned
+theorem s2Step19ExitBank_rows : planWindowRowsLog s2Step19ExitGBefore [(s2Step19ExitGRow,255),(s2Step19ExitFRow,256),(s2Step19ExitFvRow,21),(s2Step19ExitGvRow,19)] [[],[],[],[]]=
+    some (s2Step19ExitGvAfter,[s2Step19ExitGOut,s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut],(shrinkRow 769 s2Step19ExitGExtra ++ (shrinkRow 768 s2Step19ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step19ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step19ExitGvAfter [] []=some (s2Step19ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step19ExitGvBefore s2Step19ExitGvAfter s2Step19ExitGvAfter
+    s2Step19ExitGvRow s2Step19ExitGvOut 19 [] [] [] []
+    (shrinkRow 771 s2Step19ExitGvExtra) ([]) s2Step19ExitGv_Incoming s2Step19ExitGv_checked h4 s2Step19ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step19ExitFvBefore s2Step19ExitFvAfter s2Step19ExitGvAfter
+    s2Step19ExitFvRow s2Step19ExitFvOut 21 [] [(s2Step19ExitGvRow,19)] [[]] [s2Step19ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step19ExitGvExtra ++ [])) s2Step19ExitFv_Incoming s2Step19ExitFv_checked h3 s2Step19ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step19ExitFBefore s2Step19ExitFAfter s2Step19ExitGvAfter
+    s2Step19ExitFRow s2Step19ExitFOut 256 [] [(s2Step19ExitFvRow,21),(s2Step19ExitGvRow,19)] [[],[]] [s2Step19ExitFvOut,s2Step19ExitGvOut]
+    (shrinkRow 768 s2Step19ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step19ExitGvExtra ++ []))) s2Step19ExitF_Incoming s2Step19ExitF_checked h2 s2Step19ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step19ExitGBefore s2Step19ExitGAfter s2Step19ExitGvAfter
+    s2Step19ExitGRow s2Step19ExitGOut 255 [] [(s2Step19ExitFRow,256),(s2Step19ExitFvRow,21),(s2Step19ExitGvRow,19)] [[],[],[]] [s2Step19ExitFOut,s2Step19ExitFvOut,s2Step19ExitGvOut]
+    (shrinkRow 769 s2Step19ExitGExtra) ((shrinkRow 768 s2Step19ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step19ExitGvExtra ++ [])))) s2Step19ExitG_Incoming s2Step19ExitG_checked h1 s2Step19ExitG_Outgoing
   exact h0
-theorem s6Step2ExitBank_checked : compileHmrBankResizeLog .exit s6Step2ExitGBefore ⟨s6Step2ExitFRow,s6Step2ExitGRow,s6Step2ExitFvRow,s6Step2ExitGvRow⟩ ⟨256,255,4,2⟩ [[],[],[],[]]=
-    some (s6Step2ExitGvAfter,⟨s6Step2ExitFOut,s6Step2ExitGOut,s6Step2ExitFvOut,s6Step2ExitGvOut⟩,(shrinkRow 777 s6Step2ExitGExtra ++ (shrinkRow 795 s6Step2ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step2ExitGvExtra ++ []))))) := by
+theorem s2Step19ExitBank_checked : compileHmrBankResizeLog .exit s2Step19ExitGBefore ⟨s2Step19ExitFRow,s2Step19ExitGRow,s2Step19ExitFvRow,s2Step19ExitGvRow⟩ ⟨256,255,21,19⟩ [[],[],[],[]]=
+    some (s2Step19ExitGvAfter,⟨s2Step19ExitFOut,s2Step19ExitGOut,s2Step19ExitFvOut,s2Step19ExitGvOut⟩,(shrinkRow 769 s2Step19ExitGExtra ++ (shrinkRow 768 s2Step19ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step19ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step2ExitBank_rows]
+  rw [s2Step19ExitBank_rows]
   rfl
-theorem s6Step3ExitBank_incomingDistinct : ([s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step20ExitBank_incomingDistinct : ([s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3ExitBank_outgoingOwned : rowsOwned s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] := by
+theorem s2Step20ExitBank_outgoingOwned : rowsOwned s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step3ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step20ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<829) ∨ (830≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3ExitG_Incoming : rowsOwned s6Step3ExitGBefore [s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] := by
+theorem s2Step20ExitG_Incoming : rowsOwned s2Step20ExitGBefore [s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] 0 s6Step3ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] 0 s2Step20ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20ExitGBefore (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3ExitG_Outgoing : rowsOwned s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] :=
-  hmrRows_owned_drop s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] 0 s6Step3ExitBank_outgoingOwned
-theorem s6Step3ExitF_Incoming : rowsOwned s6Step3ExitFBefore [s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] := by
+theorem s2Step20ExitG_Outgoing : rowsOwned s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] :=
+  hmrRows_owned_drop s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] 0 s2Step20ExitBank_outgoingOwned
+theorem s2Step20ExitF_Incoming : rowsOwned s2Step20ExitFBefore [s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] 1 s6Step3ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] 1 s2Step20ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20ExitFBefore (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3ExitF_Outgoing : rowsOwned s6Step3ExitGvAfter [s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] :=
-  hmrRows_owned_drop s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] 1 s6Step3ExitBank_outgoingOwned
-theorem s6Step3ExitFv_Incoming : rowsOwned s6Step3ExitFvBefore [s6Step3ExitFvRow,s6Step3ExitGvRow] := by
+theorem s2Step20ExitF_Outgoing : rowsOwned s2Step20ExitGvAfter [s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] :=
+  hmrRows_owned_drop s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] 1 s2Step20ExitBank_outgoingOwned
+theorem s2Step20ExitFv_Incoming : rowsOwned s2Step20ExitFvBefore [s2Step20ExitFvRow,s2Step20ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] 2 s6Step3ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] 2 s2Step20ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20ExitFvBefore (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3ExitFv_Outgoing : rowsOwned s6Step3ExitGvAfter [s6Step3ExitFvOut,s6Step3ExitGvOut] :=
-  hmrRows_owned_drop s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] 2 s6Step3ExitBank_outgoingOwned
-theorem s6Step3ExitGv_Incoming : rowsOwned s6Step3ExitGvBefore [s6Step3ExitGvRow] := by
+theorem s2Step20ExitFv_Outgoing : rowsOwned s2Step20ExitGvAfter [s2Step20ExitFvOut,s2Step20ExitGvOut] :=
+  hmrRows_owned_drop s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] 2 s2Step20ExitBank_outgoingOwned
+theorem s2Step20ExitGv_Incoming : rowsOwned s2Step20ExitGvBefore [s2Step20ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step3ExitGRow,s6Step3ExitFRow,s6Step3ExitFvRow,s6Step3ExitGvRow] 3 s6Step3ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step3ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step20ExitGRow,s2Step20ExitFRow,s2Step20ExitFvRow,s2Step20ExitGvRow] 3 s2Step20ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step20ExitGvBefore (fun q => (0≤q ∧ q<782) ∨ (785≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step3ExitGv_Outgoing : rowsOwned s6Step3ExitGvAfter [s6Step3ExitGvOut] :=
-  hmrRows_owned_drop s6Step3ExitGvAfter [s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut] 3 s6Step3ExitBank_outgoingOwned
-theorem s6Step3ExitBank_rows : planWindowRowsLog s6Step3ExitGBefore [(s6Step3ExitGRow,255),(s6Step3ExitFRow,256),(s6Step3ExitFvRow,5),(s6Step3ExitGvRow,3)] [[],[],[],[]]=
-    some (s6Step3ExitGvAfter,[s6Step3ExitGOut,s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut],(shrinkRow 777 s6Step3ExitGExtra ++ (shrinkRow 795 s6Step3ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step3ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step3ExitGvAfter [] []=some (s6Step3ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step3ExitGvBefore s6Step3ExitGvAfter s6Step3ExitGvAfter
-    s6Step3ExitGvRow s6Step3ExitGvOut 3 [] [] [] []
-    (shrinkRow 775 s6Step3ExitGvExtra) ([]) s6Step3ExitGv_Incoming s6Step3ExitGv_checked h4 s6Step3ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step3ExitFvBefore s6Step3ExitFvAfter s6Step3ExitGvAfter
-    s6Step3ExitFvRow s6Step3ExitFvOut 5 [] [(s6Step3ExitGvRow,3)] [[]] [s6Step3ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step3ExitGvExtra ++ [])) s6Step3ExitFv_Incoming s6Step3ExitFv_checked h3 s6Step3ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step3ExitFBefore s6Step3ExitFAfter s6Step3ExitGvAfter
-    s6Step3ExitFRow s6Step3ExitFOut 256 [] [(s6Step3ExitFvRow,5),(s6Step3ExitGvRow,3)] [[],[]] [s6Step3ExitFvOut,s6Step3ExitGvOut]
-    (shrinkRow 795 s6Step3ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step3ExitGvExtra ++ []))) s6Step3ExitF_Incoming s6Step3ExitF_checked h2 s6Step3ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step3ExitGBefore s6Step3ExitGAfter s6Step3ExitGvAfter
-    s6Step3ExitGRow s6Step3ExitGOut 255 [] [(s6Step3ExitFRow,256),(s6Step3ExitFvRow,5),(s6Step3ExitGvRow,3)] [[],[],[]] [s6Step3ExitFOut,s6Step3ExitFvOut,s6Step3ExitGvOut]
-    (shrinkRow 777 s6Step3ExitGExtra) ((shrinkRow 795 s6Step3ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step3ExitGvExtra ++ [])))) s6Step3ExitG_Incoming s6Step3ExitG_checked h1 s6Step3ExitG_Outgoing
+theorem s2Step20ExitGv_Outgoing : rowsOwned s2Step20ExitGvAfter [s2Step20ExitGvOut] :=
+  hmrRows_owned_drop s2Step20ExitGvAfter [s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut] 3 s2Step20ExitBank_outgoingOwned
+theorem s2Step20ExitBank_rows : planWindowRowsLog s2Step20ExitGBefore [(s2Step20ExitGRow,255),(s2Step20ExitFRow,256),(s2Step20ExitFvRow,22),(s2Step20ExitGvRow,20)] [[],[],[],[]]=
+    some (s2Step20ExitGvAfter,[s2Step20ExitGOut,s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut],(shrinkRow 769 s2Step20ExitGExtra ++ (shrinkRow 768 s2Step20ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step20ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step20ExitGvAfter [] []=some (s2Step20ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step20ExitGvBefore s2Step20ExitGvAfter s2Step20ExitGvAfter
+    s2Step20ExitGvRow s2Step20ExitGvOut 20 [] [] [] []
+    (shrinkRow 771 s2Step20ExitGvExtra) ([]) s2Step20ExitGv_Incoming s2Step20ExitGv_checked h4 s2Step20ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step20ExitFvBefore s2Step20ExitFvAfter s2Step20ExitGvAfter
+    s2Step20ExitFvRow s2Step20ExitFvOut 22 [] [(s2Step20ExitGvRow,20)] [[]] [s2Step20ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step20ExitGvExtra ++ [])) s2Step20ExitFv_Incoming s2Step20ExitFv_checked h3 s2Step20ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step20ExitFBefore s2Step20ExitFAfter s2Step20ExitGvAfter
+    s2Step20ExitFRow s2Step20ExitFOut 256 [] [(s2Step20ExitFvRow,22),(s2Step20ExitGvRow,20)] [[],[]] [s2Step20ExitFvOut,s2Step20ExitGvOut]
+    (shrinkRow 768 s2Step20ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step20ExitGvExtra ++ []))) s2Step20ExitF_Incoming s2Step20ExitF_checked h2 s2Step20ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step20ExitGBefore s2Step20ExitGAfter s2Step20ExitGvAfter
+    s2Step20ExitGRow s2Step20ExitGOut 255 [] [(s2Step20ExitFRow,256),(s2Step20ExitFvRow,22),(s2Step20ExitGvRow,20)] [[],[],[]] [s2Step20ExitFOut,s2Step20ExitFvOut,s2Step20ExitGvOut]
+    (shrinkRow 769 s2Step20ExitGExtra) ((shrinkRow 768 s2Step20ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step20ExitGvExtra ++ [])))) s2Step20ExitG_Incoming s2Step20ExitG_checked h1 s2Step20ExitG_Outgoing
   exact h0
-theorem s6Step3ExitBank_checked : compileHmrBankResizeLog .exit s6Step3ExitGBefore ⟨s6Step3ExitFRow,s6Step3ExitGRow,s6Step3ExitFvRow,s6Step3ExitGvRow⟩ ⟨256,255,5,3⟩ [[],[],[],[]]=
-    some (s6Step3ExitGvAfter,⟨s6Step3ExitFOut,s6Step3ExitGOut,s6Step3ExitFvOut,s6Step3ExitGvOut⟩,(shrinkRow 777 s6Step3ExitGExtra ++ (shrinkRow 795 s6Step3ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step3ExitGvExtra ++ []))))) := by
+theorem s2Step20ExitBank_checked : compileHmrBankResizeLog .exit s2Step20ExitGBefore ⟨s2Step20ExitFRow,s2Step20ExitGRow,s2Step20ExitFvRow,s2Step20ExitGvRow⟩ ⟨256,255,22,20⟩ [[],[],[],[]]=
+    some (s2Step20ExitGvAfter,⟨s2Step20ExitFOut,s2Step20ExitGOut,s2Step20ExitFvOut,s2Step20ExitGvOut⟩,(shrinkRow 769 s2Step20ExitGExtra ++ (shrinkRow 768 s2Step20ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step20ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step3ExitBank_rows]
+  rw [s2Step20ExitBank_rows]
   rfl
-theorem s6Step4ExitBank_incomingDistinct : ([s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step21ExitBank_incomingDistinct : ([s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4ExitBank_outgoingOwned : rowsOwned s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] := by
+theorem s2Step21ExitBank_outgoingOwned : rowsOwned s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step4ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step21ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<831) ∨ (832≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4ExitG_Incoming : rowsOwned s6Step4ExitGBefore [s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] := by
+theorem s2Step21ExitG_Incoming : rowsOwned s2Step21ExitGBefore [s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] 0 s6Step4ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] 0 s2Step21ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21ExitGBefore (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4ExitG_Outgoing : rowsOwned s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] :=
-  hmrRows_owned_drop s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] 0 s6Step4ExitBank_outgoingOwned
-theorem s6Step4ExitF_Incoming : rowsOwned s6Step4ExitFBefore [s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] := by
+theorem s2Step21ExitG_Outgoing : rowsOwned s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] :=
+  hmrRows_owned_drop s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] 0 s2Step21ExitBank_outgoingOwned
+theorem s2Step21ExitF_Incoming : rowsOwned s2Step21ExitFBefore [s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] 1 s6Step4ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] 1 s2Step21ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21ExitFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4ExitF_Outgoing : rowsOwned s6Step4ExitGvAfter [s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] :=
-  hmrRows_owned_drop s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] 1 s6Step4ExitBank_outgoingOwned
-theorem s6Step4ExitFv_Incoming : rowsOwned s6Step4ExitFvBefore [s6Step4ExitFvRow,s6Step4ExitGvRow] := by
+theorem s2Step21ExitF_Outgoing : rowsOwned s2Step21ExitGvAfter [s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] :=
+  hmrRows_owned_drop s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] 1 s2Step21ExitBank_outgoingOwned
+theorem s2Step21ExitFv_Incoming : rowsOwned s2Step21ExitFvBefore [s2Step21ExitFvRow,s2Step21ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] 2 s6Step4ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] 2 s2Step21ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4ExitFv_Outgoing : rowsOwned s6Step4ExitGvAfter [s6Step4ExitFvOut,s6Step4ExitGvOut] :=
-  hmrRows_owned_drop s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] 2 s6Step4ExitBank_outgoingOwned
-theorem s6Step4ExitGv_Incoming : rowsOwned s6Step4ExitGvBefore [s6Step4ExitGvRow] := by
+theorem s2Step21ExitFv_Outgoing : rowsOwned s2Step21ExitGvAfter [s2Step21ExitFvOut,s2Step21ExitGvOut] :=
+  hmrRows_owned_drop s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] 2 s2Step21ExitBank_outgoingOwned
+theorem s2Step21ExitGv_Incoming : rowsOwned s2Step21ExitGvBefore [s2Step21ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step4ExitGRow,s6Step4ExitFRow,s6Step4ExitFvRow,s6Step4ExitGvRow] 3 s6Step4ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step4ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step21ExitGRow,s2Step21ExitFRow,s2Step21ExitFvRow,s2Step21ExitGvRow] 3 s2Step21ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step21ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (784≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
     decide +kernel
-theorem s6Step4ExitGv_Outgoing : rowsOwned s6Step4ExitGvAfter [s6Step4ExitGvOut] :=
-  hmrRows_owned_drop s6Step4ExitGvAfter [s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut] 3 s6Step4ExitBank_outgoingOwned
-theorem s6Step4ExitBank_rows : planWindowRowsLog s6Step4ExitGBefore [(s6Step4ExitGRow,255),(s6Step4ExitFRow,256),(s6Step4ExitFvRow,6),(s6Step4ExitGvRow,4)] [[],[],[],[]]=
-    some (s6Step4ExitGvAfter,[s6Step4ExitGOut,s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut],(shrinkRow 777 s6Step4ExitGExtra ++ (shrinkRow 795 s6Step4ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step4ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step4ExitGvAfter [] []=some (s6Step4ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step4ExitGvBefore s6Step4ExitGvAfter s6Step4ExitGvAfter
-    s6Step4ExitGvRow s6Step4ExitGvOut 4 [] [] [] []
-    (shrinkRow 775 s6Step4ExitGvExtra) ([]) s6Step4ExitGv_Incoming s6Step4ExitGv_checked h4 s6Step4ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step4ExitFvBefore s6Step4ExitFvAfter s6Step4ExitGvAfter
-    s6Step4ExitFvRow s6Step4ExitFvOut 6 [] [(s6Step4ExitGvRow,4)] [[]] [s6Step4ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step4ExitGvExtra ++ [])) s6Step4ExitFv_Incoming s6Step4ExitFv_checked h3 s6Step4ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step4ExitFBefore s6Step4ExitFAfter s6Step4ExitGvAfter
-    s6Step4ExitFRow s6Step4ExitFOut 256 [] [(s6Step4ExitFvRow,6),(s6Step4ExitGvRow,4)] [[],[]] [s6Step4ExitFvOut,s6Step4ExitGvOut]
-    (shrinkRow 795 s6Step4ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step4ExitGvExtra ++ []))) s6Step4ExitF_Incoming s6Step4ExitF_checked h2 s6Step4ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step4ExitGBefore s6Step4ExitGAfter s6Step4ExitGvAfter
-    s6Step4ExitGRow s6Step4ExitGOut 255 [] [(s6Step4ExitFRow,256),(s6Step4ExitFvRow,6),(s6Step4ExitGvRow,4)] [[],[],[]] [s6Step4ExitFOut,s6Step4ExitFvOut,s6Step4ExitGvOut]
-    (shrinkRow 777 s6Step4ExitGExtra) ((shrinkRow 795 s6Step4ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step4ExitGvExtra ++ [])))) s6Step4ExitG_Incoming s6Step4ExitG_checked h1 s6Step4ExitG_Outgoing
+theorem s2Step21ExitGv_Outgoing : rowsOwned s2Step21ExitGvAfter [s2Step21ExitGvOut] :=
+  hmrRows_owned_drop s2Step21ExitGvAfter [s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut] 3 s2Step21ExitBank_outgoingOwned
+theorem s2Step21ExitBank_rows : planWindowRowsLog s2Step21ExitGBefore [(s2Step21ExitGRow,255),(s2Step21ExitFRow,256),(s2Step21ExitFvRow,23),(s2Step21ExitGvRow,21)] [[],[],[],[]]=
+    some (s2Step21ExitGvAfter,[s2Step21ExitGOut,s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut],(shrinkRow 769 s2Step21ExitGExtra ++ (shrinkRow 768 s2Step21ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step21ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step21ExitGvAfter [] []=some (s2Step21ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step21ExitGvBefore s2Step21ExitGvAfter s2Step21ExitGvAfter
+    s2Step21ExitGvRow s2Step21ExitGvOut 21 [] [] [] []
+    (shrinkRow 771 s2Step21ExitGvExtra) ([]) s2Step21ExitGv_Incoming s2Step21ExitGv_checked h4 s2Step21ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step21ExitFvBefore s2Step21ExitFvAfter s2Step21ExitGvAfter
+    s2Step21ExitFvRow s2Step21ExitFvOut 23 [] [(s2Step21ExitGvRow,21)] [[]] [s2Step21ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step21ExitGvExtra ++ [])) s2Step21ExitFv_Incoming s2Step21ExitFv_checked h3 s2Step21ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step21ExitFBefore s2Step21ExitFAfter s2Step21ExitGvAfter
+    s2Step21ExitFRow s2Step21ExitFOut 256 [] [(s2Step21ExitFvRow,23),(s2Step21ExitGvRow,21)] [[],[]] [s2Step21ExitFvOut,s2Step21ExitGvOut]
+    (shrinkRow 768 s2Step21ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step21ExitGvExtra ++ []))) s2Step21ExitF_Incoming s2Step21ExitF_checked h2 s2Step21ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step21ExitGBefore s2Step21ExitGAfter s2Step21ExitGvAfter
+    s2Step21ExitGRow s2Step21ExitGOut 255 [] [(s2Step21ExitFRow,256),(s2Step21ExitFvRow,23),(s2Step21ExitGvRow,21)] [[],[],[]] [s2Step21ExitFOut,s2Step21ExitFvOut,s2Step21ExitGvOut]
+    (shrinkRow 769 s2Step21ExitGExtra) ((shrinkRow 768 s2Step21ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step21ExitGvExtra ++ [])))) s2Step21ExitG_Incoming s2Step21ExitG_checked h1 s2Step21ExitG_Outgoing
   exact h0
-theorem s6Step4ExitBank_checked : compileHmrBankResizeLog .exit s6Step4ExitGBefore ⟨s6Step4ExitFRow,s6Step4ExitGRow,s6Step4ExitFvRow,s6Step4ExitGvRow⟩ ⟨256,255,6,4⟩ [[],[],[],[]]=
-    some (s6Step4ExitGvAfter,⟨s6Step4ExitFOut,s6Step4ExitGOut,s6Step4ExitFvOut,s6Step4ExitGvOut⟩,(shrinkRow 777 s6Step4ExitGExtra ++ (shrinkRow 795 s6Step4ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step4ExitGvExtra ++ []))))) := by
+theorem s2Step21ExitBank_checked : compileHmrBankResizeLog .exit s2Step21ExitGBefore ⟨s2Step21ExitFRow,s2Step21ExitGRow,s2Step21ExitFvRow,s2Step21ExitGvRow⟩ ⟨256,255,23,21⟩ [[],[],[],[]]=
+    some (s2Step21ExitGvAfter,⟨s2Step21ExitFOut,s2Step21ExitGOut,s2Step21ExitFvOut,s2Step21ExitGvOut⟩,(shrinkRow 769 s2Step21ExitGExtra ++ (shrinkRow 768 s2Step21ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step21ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step4ExitBank_rows]
+  rw [s2Step21ExitBank_rows]
   rfl
-theorem s6Step5ExitBank_incomingDistinct : ([s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step22ExitBank_incomingDistinct : ([s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5ExitBank_outgoingOwned : rowsOwned s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] := by
+theorem s2Step22ExitBank_outgoingOwned : rowsOwned s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step5ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step22ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<834) ∨ (835≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5ExitG_Incoming : rowsOwned s6Step5ExitGBefore [s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] := by
+theorem s2Step22ExitG_Incoming : rowsOwned s2Step22ExitGBefore [s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] 0 s6Step5ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] 0 s2Step22ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22ExitGBefore (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5ExitG_Outgoing : rowsOwned s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] :=
-  hmrRows_owned_drop s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] 0 s6Step5ExitBank_outgoingOwned
-theorem s6Step5ExitF_Incoming : rowsOwned s6Step5ExitFBefore [s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] := by
+theorem s2Step22ExitG_Outgoing : rowsOwned s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] :=
+  hmrRows_owned_drop s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] 0 s2Step22ExitBank_outgoingOwned
+theorem s2Step22ExitF_Incoming : rowsOwned s2Step22ExitFBefore [s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] 1 s6Step5ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] 1 s2Step22ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22ExitFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<784) ∨ (785≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5ExitF_Outgoing : rowsOwned s6Step5ExitGvAfter [s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] :=
-  hmrRows_owned_drop s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] 1 s6Step5ExitBank_outgoingOwned
-theorem s6Step5ExitFv_Incoming : rowsOwned s6Step5ExitFvBefore [s6Step5ExitFvRow,s6Step5ExitGvRow] := by
+theorem s2Step22ExitF_Outgoing : rowsOwned s2Step22ExitGvAfter [s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] :=
+  hmrRows_owned_drop s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] 1 s2Step22ExitBank_outgoingOwned
+theorem s2Step22ExitFv_Incoming : rowsOwned s2Step22ExitFvBefore [s2Step22ExitFvRow,s2Step22ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] 2 s6Step5ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] 2 s2Step22ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5ExitFv_Outgoing : rowsOwned s6Step5ExitGvAfter [s6Step5ExitFvOut,s6Step5ExitGvOut] :=
-  hmrRows_owned_drop s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] 2 s6Step5ExitBank_outgoingOwned
-theorem s6Step5ExitGv_Incoming : rowsOwned s6Step5ExitGvBefore [s6Step5ExitGvRow] := by
+theorem s2Step22ExitFv_Outgoing : rowsOwned s2Step22ExitGvAfter [s2Step22ExitFvOut,s2Step22ExitGvOut] :=
+  hmrRows_owned_drop s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] 2 s2Step22ExitBank_outgoingOwned
+theorem s2Step22ExitGv_Incoming : rowsOwned s2Step22ExitGvBefore [s2Step22ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step5ExitGRow,s6Step5ExitFRow,s6Step5ExitFvRow,s6Step5ExitGvRow] 3 s6Step5ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step5ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step22ExitGRow,s2Step22ExitFRow,s2Step22ExitFvRow,s2Step22ExitGvRow] 3 s2Step22ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step22ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<783) ∨ (785≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step5ExitGv_Outgoing : rowsOwned s6Step5ExitGvAfter [s6Step5ExitGvOut] :=
-  hmrRows_owned_drop s6Step5ExitGvAfter [s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut] 3 s6Step5ExitBank_outgoingOwned
-theorem s6Step5ExitBank_rows : planWindowRowsLog s6Step5ExitGBefore [(s6Step5ExitGRow,255),(s6Step5ExitFRow,256),(s6Step5ExitFvRow,7),(s6Step5ExitGvRow,5)] [[],[],[],[]]=
-    some (s6Step5ExitGvAfter,[s6Step5ExitGOut,s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut],(shrinkRow 777 s6Step5ExitGExtra ++ (shrinkRow 795 s6Step5ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step5ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step5ExitGvAfter [] []=some (s6Step5ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step5ExitGvBefore s6Step5ExitGvAfter s6Step5ExitGvAfter
-    s6Step5ExitGvRow s6Step5ExitGvOut 5 [] [] [] []
-    (shrinkRow 775 s6Step5ExitGvExtra) ([]) s6Step5ExitGv_Incoming s6Step5ExitGv_checked h4 s6Step5ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step5ExitFvBefore s6Step5ExitFvAfter s6Step5ExitGvAfter
-    s6Step5ExitFvRow s6Step5ExitFvOut 7 [] [(s6Step5ExitGvRow,5)] [[]] [s6Step5ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step5ExitGvExtra ++ [])) s6Step5ExitFv_Incoming s6Step5ExitFv_checked h3 s6Step5ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step5ExitFBefore s6Step5ExitFAfter s6Step5ExitGvAfter
-    s6Step5ExitFRow s6Step5ExitFOut 256 [] [(s6Step5ExitFvRow,7),(s6Step5ExitGvRow,5)] [[],[]] [s6Step5ExitFvOut,s6Step5ExitGvOut]
-    (shrinkRow 795 s6Step5ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step5ExitGvExtra ++ []))) s6Step5ExitF_Incoming s6Step5ExitF_checked h2 s6Step5ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step5ExitGBefore s6Step5ExitGAfter s6Step5ExitGvAfter
-    s6Step5ExitGRow s6Step5ExitGOut 255 [] [(s6Step5ExitFRow,256),(s6Step5ExitFvRow,7),(s6Step5ExitGvRow,5)] [[],[],[]] [s6Step5ExitFOut,s6Step5ExitFvOut,s6Step5ExitGvOut]
-    (shrinkRow 777 s6Step5ExitGExtra) ((shrinkRow 795 s6Step5ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step5ExitGvExtra ++ [])))) s6Step5ExitG_Incoming s6Step5ExitG_checked h1 s6Step5ExitG_Outgoing
+theorem s2Step22ExitGv_Outgoing : rowsOwned s2Step22ExitGvAfter [s2Step22ExitGvOut] :=
+  hmrRows_owned_drop s2Step22ExitGvAfter [s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut] 3 s2Step22ExitBank_outgoingOwned
+theorem s2Step22ExitBank_rows : planWindowRowsLog s2Step22ExitGBefore [(s2Step22ExitGRow,255),(s2Step22ExitFRow,256),(s2Step22ExitFvRow,24),(s2Step22ExitGvRow,22)] [[],[],[],[]]=
+    some (s2Step22ExitGvAfter,[s2Step22ExitGOut,s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut],(shrinkRow 769 s2Step22ExitGExtra ++ (shrinkRow 768 s2Step22ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step22ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step22ExitGvAfter [] []=some (s2Step22ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step22ExitGvBefore s2Step22ExitGvAfter s2Step22ExitGvAfter
+    s2Step22ExitGvRow s2Step22ExitGvOut 22 [] [] [] []
+    (shrinkRow 771 s2Step22ExitGvExtra) ([]) s2Step22ExitGv_Incoming s2Step22ExitGv_checked h4 s2Step22ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step22ExitFvBefore s2Step22ExitFvAfter s2Step22ExitGvAfter
+    s2Step22ExitFvRow s2Step22ExitFvOut 24 [] [(s2Step22ExitGvRow,22)] [[]] [s2Step22ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step22ExitGvExtra ++ [])) s2Step22ExitFv_Incoming s2Step22ExitFv_checked h3 s2Step22ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step22ExitFBefore s2Step22ExitFAfter s2Step22ExitGvAfter
+    s2Step22ExitFRow s2Step22ExitFOut 256 [] [(s2Step22ExitFvRow,24),(s2Step22ExitGvRow,22)] [[],[]] [s2Step22ExitFvOut,s2Step22ExitGvOut]
+    (shrinkRow 768 s2Step22ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step22ExitGvExtra ++ []))) s2Step22ExitF_Incoming s2Step22ExitF_checked h2 s2Step22ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step22ExitGBefore s2Step22ExitGAfter s2Step22ExitGvAfter
+    s2Step22ExitGRow s2Step22ExitGOut 255 [] [(s2Step22ExitFRow,256),(s2Step22ExitFvRow,24),(s2Step22ExitGvRow,22)] [[],[],[]] [s2Step22ExitFOut,s2Step22ExitFvOut,s2Step22ExitGvOut]
+    (shrinkRow 769 s2Step22ExitGExtra) ((shrinkRow 768 s2Step22ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step22ExitGvExtra ++ [])))) s2Step22ExitG_Incoming s2Step22ExitG_checked h1 s2Step22ExitG_Outgoing
   exact h0
-theorem s6Step5ExitBank_checked : compileHmrBankResizeLog .exit s6Step5ExitGBefore ⟨s6Step5ExitFRow,s6Step5ExitGRow,s6Step5ExitFvRow,s6Step5ExitGvRow⟩ ⟨256,255,7,5⟩ [[],[],[],[]]=
-    some (s6Step5ExitGvAfter,⟨s6Step5ExitFOut,s6Step5ExitGOut,s6Step5ExitFvOut,s6Step5ExitGvOut⟩,(shrinkRow 777 s6Step5ExitGExtra ++ (shrinkRow 795 s6Step5ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step5ExitGvExtra ++ []))))) := by
+theorem s2Step22ExitBank_checked : compileHmrBankResizeLog .exit s2Step22ExitGBefore ⟨s2Step22ExitFRow,s2Step22ExitGRow,s2Step22ExitFvRow,s2Step22ExitGvRow⟩ ⟨256,255,24,22⟩ [[],[],[],[]]=
+    some (s2Step22ExitGvAfter,⟨s2Step22ExitFOut,s2Step22ExitGOut,s2Step22ExitFvOut,s2Step22ExitGvOut⟩,(shrinkRow 769 s2Step22ExitGExtra ++ (shrinkRow 768 s2Step22ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step22ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step5ExitBank_rows]
+  rw [s2Step22ExitBank_rows]
   rfl
-theorem s6Step6ExitBank_incomingDistinct : ([s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step23ExitBank_incomingDistinct : ([s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6ExitBank_outgoingOwned : rowsOwned s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] := by
+theorem s2Step23ExitBank_outgoingOwned : rowsOwned s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step6ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step23ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<836) ∨ (837≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6ExitG_Incoming : rowsOwned s6Step6ExitGBefore [s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] := by
+theorem s2Step23ExitG_Incoming : rowsOwned s2Step23ExitGBefore [s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] 0 s6Step6ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] 0 s2Step23ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23ExitGBefore (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6ExitG_Outgoing : rowsOwned s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] :=
-  hmrRows_owned_drop s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] 0 s6Step6ExitBank_outgoingOwned
-theorem s6Step6ExitF_Incoming : rowsOwned s6Step6ExitFBefore [s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] := by
+theorem s2Step23ExitG_Outgoing : rowsOwned s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] :=
+  hmrRows_owned_drop s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] 0 s2Step23ExitBank_outgoingOwned
+theorem s2Step23ExitF_Incoming : rowsOwned s2Step23ExitFBefore [s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] 1 s6Step6ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] 1 s2Step23ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23ExitFBefore (fun q => (0≤q ∧ q<782) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6ExitF_Outgoing : rowsOwned s6Step6ExitGvAfter [s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] :=
-  hmrRows_owned_drop s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] 1 s6Step6ExitBank_outgoingOwned
-theorem s6Step6ExitFv_Incoming : rowsOwned s6Step6ExitFvBefore [s6Step6ExitFvRow,s6Step6ExitGvRow] := by
+theorem s2Step23ExitF_Outgoing : rowsOwned s2Step23ExitGvAfter [s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] :=
+  hmrRows_owned_drop s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] 1 s2Step23ExitBank_outgoingOwned
+theorem s2Step23ExitFv_Incoming : rowsOwned s2Step23ExitFvBefore [s2Step23ExitFvRow,s2Step23ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] 2 s6Step6ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] 2 s2Step23ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23ExitFvBefore (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6ExitFv_Outgoing : rowsOwned s6Step6ExitGvAfter [s6Step6ExitFvOut,s6Step6ExitGvOut] :=
-  hmrRows_owned_drop s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] 2 s6Step6ExitBank_outgoingOwned
-theorem s6Step6ExitGv_Incoming : rowsOwned s6Step6ExitGvBefore [s6Step6ExitGvRow] := by
+theorem s2Step23ExitFv_Outgoing : rowsOwned s2Step23ExitGvAfter [s2Step23ExitFvOut,s2Step23ExitGvOut] :=
+  hmrRows_owned_drop s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] 2 s2Step23ExitBank_outgoingOwned
+theorem s2Step23ExitGv_Incoming : rowsOwned s2Step23ExitGvBefore [s2Step23ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step6ExitGRow,s6Step6ExitFRow,s6Step6ExitFvRow,s6Step6ExitGvRow] 3 s6Step6ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step6ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step23ExitGRow,s2Step23ExitFRow,s2Step23ExitFvRow,s2Step23ExitGvRow] 3 s2Step23ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step23ExitGvBefore (fun q => (0≤q ∧ q<781) ∨ (783≤q ∧ q<784) ∨ (785≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
     decide +kernel
-theorem s6Step6ExitGv_Outgoing : rowsOwned s6Step6ExitGvAfter [s6Step6ExitGvOut] :=
-  hmrRows_owned_drop s6Step6ExitGvAfter [s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut] 3 s6Step6ExitBank_outgoingOwned
-theorem s6Step6ExitBank_rows : planWindowRowsLog s6Step6ExitGBefore [(s6Step6ExitGRow,255),(s6Step6ExitFRow,256),(s6Step6ExitFvRow,8),(s6Step6ExitGvRow,6)] [[],[],[],[]]=
-    some (s6Step6ExitGvAfter,[s6Step6ExitGOut,s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut],(shrinkRow 777 s6Step6ExitGExtra ++ (shrinkRow 795 s6Step6ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step6ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step6ExitGvAfter [] []=some (s6Step6ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step6ExitGvBefore s6Step6ExitGvAfter s6Step6ExitGvAfter
-    s6Step6ExitGvRow s6Step6ExitGvOut 6 [] [] [] []
-    (shrinkRow 775 s6Step6ExitGvExtra) ([]) s6Step6ExitGv_Incoming s6Step6ExitGv_checked h4 s6Step6ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step6ExitFvBefore s6Step6ExitFvAfter s6Step6ExitGvAfter
-    s6Step6ExitFvRow s6Step6ExitFvOut 8 [] [(s6Step6ExitGvRow,6)] [[]] [s6Step6ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step6ExitGvExtra ++ [])) s6Step6ExitFv_Incoming s6Step6ExitFv_checked h3 s6Step6ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step6ExitFBefore s6Step6ExitFAfter s6Step6ExitGvAfter
-    s6Step6ExitFRow s6Step6ExitFOut 256 [] [(s6Step6ExitFvRow,8),(s6Step6ExitGvRow,6)] [[],[]] [s6Step6ExitFvOut,s6Step6ExitGvOut]
-    (shrinkRow 795 s6Step6ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step6ExitGvExtra ++ []))) s6Step6ExitF_Incoming s6Step6ExitF_checked h2 s6Step6ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step6ExitGBefore s6Step6ExitGAfter s6Step6ExitGvAfter
-    s6Step6ExitGRow s6Step6ExitGOut 255 [] [(s6Step6ExitFRow,256),(s6Step6ExitFvRow,8),(s6Step6ExitGvRow,6)] [[],[],[]] [s6Step6ExitFOut,s6Step6ExitFvOut,s6Step6ExitGvOut]
-    (shrinkRow 777 s6Step6ExitGExtra) ((shrinkRow 795 s6Step6ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step6ExitGvExtra ++ [])))) s6Step6ExitG_Incoming s6Step6ExitG_checked h1 s6Step6ExitG_Outgoing
+theorem s2Step23ExitGv_Outgoing : rowsOwned s2Step23ExitGvAfter [s2Step23ExitGvOut] :=
+  hmrRows_owned_drop s2Step23ExitGvAfter [s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut] 3 s2Step23ExitBank_outgoingOwned
+theorem s2Step23ExitBank_rows : planWindowRowsLog s2Step23ExitGBefore [(s2Step23ExitGRow,255),(s2Step23ExitFRow,256),(s2Step23ExitFvRow,25),(s2Step23ExitGvRow,23)] [[],[],[],[]]=
+    some (s2Step23ExitGvAfter,[s2Step23ExitGOut,s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut],(shrinkRow 769 s2Step23ExitGExtra ++ (shrinkRow 768 s2Step23ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step23ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step23ExitGvAfter [] []=some (s2Step23ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step23ExitGvBefore s2Step23ExitGvAfter s2Step23ExitGvAfter
+    s2Step23ExitGvRow s2Step23ExitGvOut 23 [] [] [] []
+    (shrinkRow 771 s2Step23ExitGvExtra) ([]) s2Step23ExitGv_Incoming s2Step23ExitGv_checked h4 s2Step23ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step23ExitFvBefore s2Step23ExitFvAfter s2Step23ExitGvAfter
+    s2Step23ExitFvRow s2Step23ExitFvOut 25 [] [(s2Step23ExitGvRow,23)] [[]] [s2Step23ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step23ExitGvExtra ++ [])) s2Step23ExitFv_Incoming s2Step23ExitFv_checked h3 s2Step23ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step23ExitFBefore s2Step23ExitFAfter s2Step23ExitGvAfter
+    s2Step23ExitFRow s2Step23ExitFOut 256 [] [(s2Step23ExitFvRow,25),(s2Step23ExitGvRow,23)] [[],[]] [s2Step23ExitFvOut,s2Step23ExitGvOut]
+    (shrinkRow 768 s2Step23ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step23ExitGvExtra ++ []))) s2Step23ExitF_Incoming s2Step23ExitF_checked h2 s2Step23ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step23ExitGBefore s2Step23ExitGAfter s2Step23ExitGvAfter
+    s2Step23ExitGRow s2Step23ExitGOut 255 [] [(s2Step23ExitFRow,256),(s2Step23ExitFvRow,25),(s2Step23ExitGvRow,23)] [[],[],[]] [s2Step23ExitFOut,s2Step23ExitFvOut,s2Step23ExitGvOut]
+    (shrinkRow 769 s2Step23ExitGExtra) ((shrinkRow 768 s2Step23ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step23ExitGvExtra ++ [])))) s2Step23ExitG_Incoming s2Step23ExitG_checked h1 s2Step23ExitG_Outgoing
   exact h0
-theorem s6Step6ExitBank_checked : compileHmrBankResizeLog .exit s6Step6ExitGBefore ⟨s6Step6ExitFRow,s6Step6ExitGRow,s6Step6ExitFvRow,s6Step6ExitGvRow⟩ ⟨256,255,8,6⟩ [[],[],[],[]]=
-    some (s6Step6ExitGvAfter,⟨s6Step6ExitFOut,s6Step6ExitGOut,s6Step6ExitFvOut,s6Step6ExitGvOut⟩,(shrinkRow 777 s6Step6ExitGExtra ++ (shrinkRow 795 s6Step6ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step6ExitGvExtra ++ []))))) := by
+theorem s2Step23ExitBank_checked : compileHmrBankResizeLog .exit s2Step23ExitGBefore ⟨s2Step23ExitFRow,s2Step23ExitGRow,s2Step23ExitFvRow,s2Step23ExitGvRow⟩ ⟨256,255,25,23⟩ [[],[],[],[]]=
+    some (s2Step23ExitGvAfter,⟨s2Step23ExitFOut,s2Step23ExitGOut,s2Step23ExitFvOut,s2Step23ExitGvOut⟩,(shrinkRow 769 s2Step23ExitGExtra ++ (shrinkRow 768 s2Step23ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step23ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step6ExitBank_rows]
+  rw [s2Step23ExitBank_rows]
   rfl
-theorem s6Step7ExitBank_incomingDistinct : ([s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step24ExitBank_incomingDistinct : ([s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7ExitBank_outgoingOwned : rowsOwned s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] := by
+theorem s2Step24ExitBank_outgoingOwned : rowsOwned s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step7ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step24ExitGvAfter (fun q => (0≤q ∧ q<254) ∨ (255≤q ∧ q<767) ∨ (768≤q ∧ q<780) ∨ (781≤q ∧ q<782) ∨ (785≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7ExitG_Incoming : rowsOwned s6Step7ExitGBefore [s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] := by
+theorem s2Step24ExitG_Incoming : rowsOwned s2Step24ExitGBefore [s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] 0 s6Step7ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] 0 s2Step24ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24ExitGBefore (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7ExitG_Outgoing : rowsOwned s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] :=
-  hmrRows_owned_drop s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] 0 s6Step7ExitBank_outgoingOwned
-theorem s6Step7ExitF_Incoming : rowsOwned s6Step7ExitFBefore [s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] := by
+theorem s2Step24ExitG_Outgoing : rowsOwned s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] :=
+  hmrRows_owned_drop s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] 0 s2Step24ExitBank_outgoingOwned
+theorem s2Step24ExitF_Incoming : rowsOwned s2Step24ExitFBefore [s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] 1 s6Step7ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] 1 s2Step24ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24ExitFBefore (fun q => (0≤q ∧ q<254) ∨ (255≤q ∧ q<782) ∨ (784≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7ExitF_Outgoing : rowsOwned s6Step7ExitGvAfter [s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] :=
-  hmrRows_owned_drop s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] 1 s6Step7ExitBank_outgoingOwned
-theorem s6Step7ExitFv_Incoming : rowsOwned s6Step7ExitFvBefore [s6Step7ExitFvRow,s6Step7ExitGvRow] := by
+theorem s2Step24ExitF_Outgoing : rowsOwned s2Step24ExitGvAfter [s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] :=
+  hmrRows_owned_drop s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] 1 s2Step24ExitBank_outgoingOwned
+theorem s2Step24ExitFv_Incoming : rowsOwned s2Step24ExitFvBefore [s2Step24ExitFvRow,s2Step24ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] 2 s6Step7ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] 2 s2Step24ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24ExitFvBefore (fun q => (0≤q ∧ q<254) ∨ (255≤q ∧ q<767) ∨ (768≤q ∧ q<782) ∨ (785≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7ExitFv_Outgoing : rowsOwned s6Step7ExitGvAfter [s6Step7ExitFvOut,s6Step7ExitGvOut] :=
-  hmrRows_owned_drop s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] 2 s6Step7ExitBank_outgoingOwned
-theorem s6Step7ExitGv_Incoming : rowsOwned s6Step7ExitGvBefore [s6Step7ExitGvRow] := by
+theorem s2Step24ExitFv_Outgoing : rowsOwned s2Step24ExitGvAfter [s2Step24ExitFvOut,s2Step24ExitGvOut] :=
+  hmrRows_owned_drop s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] 2 s2Step24ExitBank_outgoingOwned
+theorem s2Step24ExitGv_Incoming : rowsOwned s2Step24ExitGvBefore [s2Step24ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step7ExitGRow,s6Step7ExitFRow,s6Step7ExitFvRow,s6Step7ExitGvRow] 3 s6Step7ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step7ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step24ExitGRow,s2Step24ExitFRow,s2Step24ExitFvRow,s2Step24ExitGvRow] 3 s2Step24ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step24ExitGvBefore (fun q => (0≤q ∧ q<254) ∨ (255≤q ∧ q<767) ∨ (768≤q ∧ q<782) ∨ (785≤q ∧ q<840) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step7ExitGv_Outgoing : rowsOwned s6Step7ExitGvAfter [s6Step7ExitGvOut] :=
-  hmrRows_owned_drop s6Step7ExitGvAfter [s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut] 3 s6Step7ExitBank_outgoingOwned
-theorem s6Step7ExitBank_rows : planWindowRowsLog s6Step7ExitGBefore [(s6Step7ExitGRow,255),(s6Step7ExitFRow,256),(s6Step7ExitFvRow,9),(s6Step7ExitGvRow,7)] [[],[],[],[]]=
-    some (s6Step7ExitGvAfter,[s6Step7ExitGOut,s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut],(shrinkRow 777 s6Step7ExitGExtra ++ (shrinkRow 795 s6Step7ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step7ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step7ExitGvAfter [] []=some (s6Step7ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step7ExitGvBefore s6Step7ExitGvAfter s6Step7ExitGvAfter
-    s6Step7ExitGvRow s6Step7ExitGvOut 7 [] [] [] []
-    (shrinkRow 775 s6Step7ExitGvExtra) ([]) s6Step7ExitGv_Incoming s6Step7ExitGv_checked h4 s6Step7ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step7ExitFvBefore s6Step7ExitFvAfter s6Step7ExitGvAfter
-    s6Step7ExitFvRow s6Step7ExitFvOut 9 [] [(s6Step7ExitGvRow,7)] [[]] [s6Step7ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step7ExitGvExtra ++ [])) s6Step7ExitFv_Incoming s6Step7ExitFv_checked h3 s6Step7ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step7ExitFBefore s6Step7ExitFAfter s6Step7ExitGvAfter
-    s6Step7ExitFRow s6Step7ExitFOut 256 [] [(s6Step7ExitFvRow,9),(s6Step7ExitGvRow,7)] [[],[]] [s6Step7ExitFvOut,s6Step7ExitGvOut]
-    (shrinkRow 795 s6Step7ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step7ExitGvExtra ++ []))) s6Step7ExitF_Incoming s6Step7ExitF_checked h2 s6Step7ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step7ExitGBefore s6Step7ExitGAfter s6Step7ExitGvAfter
-    s6Step7ExitGRow s6Step7ExitGOut 255 [] [(s6Step7ExitFRow,256),(s6Step7ExitFvRow,9),(s6Step7ExitGvRow,7)] [[],[],[]] [s6Step7ExitFOut,s6Step7ExitFvOut,s6Step7ExitGvOut]
-    (shrinkRow 777 s6Step7ExitGExtra) ((shrinkRow 795 s6Step7ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step7ExitGvExtra ++ [])))) s6Step7ExitG_Incoming s6Step7ExitG_checked h1 s6Step7ExitG_Outgoing
+theorem s2Step24ExitGv_Outgoing : rowsOwned s2Step24ExitGvAfter [s2Step24ExitGvOut] :=
+  hmrRows_owned_drop s2Step24ExitGvAfter [s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut] 3 s2Step24ExitBank_outgoingOwned
+theorem s2Step24ExitBank_rows : planWindowRowsLog s2Step24ExitGBefore [(s2Step24ExitGRow,254),(s2Step24ExitFRow,255),(s2Step24ExitFvRow,25),(s2Step24ExitGvRow,24)] [[],[],[],[]]=
+    some (s2Step24ExitGvAfter,[s2Step24ExitGOut,s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut],(shrinkRow 769 s2Step24ExitGExtra ++ (shrinkRow 768 s2Step24ExitFExtra ++ (shrinkRow 770 s2Step24ExitFvExtra ++ (shrinkRow 771 s2Step24ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step24ExitGvAfter [] []=some (s2Step24ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step24ExitGvBefore s2Step24ExitGvAfter s2Step24ExitGvAfter
+    s2Step24ExitGvRow s2Step24ExitGvOut 24 [] [] [] []
+    (shrinkRow 771 s2Step24ExitGvExtra) ([]) s2Step24ExitGv_Incoming s2Step24ExitGv_checked h4 s2Step24ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step24ExitFvBefore s2Step24ExitFvAfter s2Step24ExitGvAfter
+    s2Step24ExitFvRow s2Step24ExitFvOut 25 [] [(s2Step24ExitGvRow,24)] [[]] [s2Step24ExitGvOut]
+    (shrinkRow 770 s2Step24ExitFvExtra) ((shrinkRow 771 s2Step24ExitGvExtra ++ [])) s2Step24ExitFv_Incoming s2Step24ExitFv_checked h3 s2Step24ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step24ExitFBefore s2Step24ExitFAfter s2Step24ExitGvAfter
+    s2Step24ExitFRow s2Step24ExitFOut 255 [] [(s2Step24ExitFvRow,25),(s2Step24ExitGvRow,24)] [[],[]] [s2Step24ExitFvOut,s2Step24ExitGvOut]
+    (shrinkRow 768 s2Step24ExitFExtra) ((shrinkRow 770 s2Step24ExitFvExtra ++ (shrinkRow 771 s2Step24ExitGvExtra ++ []))) s2Step24ExitF_Incoming s2Step24ExitF_checked h2 s2Step24ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step24ExitGBefore s2Step24ExitGAfter s2Step24ExitGvAfter
+    s2Step24ExitGRow s2Step24ExitGOut 254 [] [(s2Step24ExitFRow,255),(s2Step24ExitFvRow,25),(s2Step24ExitGvRow,24)] [[],[],[]] [s2Step24ExitFOut,s2Step24ExitFvOut,s2Step24ExitGvOut]
+    (shrinkRow 769 s2Step24ExitGExtra) ((shrinkRow 768 s2Step24ExitFExtra ++ (shrinkRow 770 s2Step24ExitFvExtra ++ (shrinkRow 771 s2Step24ExitGvExtra ++ [])))) s2Step24ExitG_Incoming s2Step24ExitG_checked h1 s2Step24ExitG_Outgoing
   exact h0
-theorem s6Step7ExitBank_checked : compileHmrBankResizeLog .exit s6Step7ExitGBefore ⟨s6Step7ExitFRow,s6Step7ExitGRow,s6Step7ExitFvRow,s6Step7ExitGvRow⟩ ⟨256,255,9,7⟩ [[],[],[],[]]=
-    some (s6Step7ExitGvAfter,⟨s6Step7ExitFOut,s6Step7ExitGOut,s6Step7ExitFvOut,s6Step7ExitGvOut⟩,(shrinkRow 777 s6Step7ExitGExtra ++ (shrinkRow 795 s6Step7ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step7ExitGvExtra ++ []))))) := by
+theorem s2Step24ExitBank_checked : compileHmrBankResizeLog .exit s2Step24ExitGBefore ⟨s2Step24ExitFRow,s2Step24ExitGRow,s2Step24ExitFvRow,s2Step24ExitGvRow⟩ ⟨255,254,25,24⟩ [[],[],[],[]]=
+    some (s2Step24ExitGvAfter,⟨s2Step24ExitFOut,s2Step24ExitGOut,s2Step24ExitFvOut,s2Step24ExitGvOut⟩,(shrinkRow 769 s2Step24ExitGExtra ++ (shrinkRow 768 s2Step24ExitFExtra ++ (shrinkRow 770 s2Step24ExitFvExtra ++ (shrinkRow 771 s2Step24ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step7ExitBank_rows]
+  rw [s2Step24ExitBank_rows]
   rfl
-theorem s6Step8ExitBank_incomingDistinct : ([s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step25ExitBank_incomingDistinct : ([s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8ExitBank_outgoingOwned : rowsOwned s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] := by
+theorem s2Step25ExitBank_outgoingOwned : rowsOwned s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step8ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step25ExitGvAfter (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<839) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8ExitG_Incoming : rowsOwned s6Step8ExitGBefore [s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] := by
+theorem s2Step25ExitG_Incoming : rowsOwned s2Step25ExitGBefore [s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] 0 s6Step8ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] 0 s2Step25ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25ExitGBefore (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8ExitG_Outgoing : rowsOwned s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] :=
-  hmrRows_owned_drop s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] 0 s6Step8ExitBank_outgoingOwned
-theorem s6Step8ExitF_Incoming : rowsOwned s6Step8ExitFBefore [s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] := by
+theorem s2Step25ExitG_Outgoing : rowsOwned s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] :=
+  hmrRows_owned_drop s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] 0 s2Step25ExitBank_outgoingOwned
+theorem s2Step25ExitF_Incoming : rowsOwned s2Step25ExitFBefore [s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] 1 s6Step8ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] 1 s2Step25ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25ExitFBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8ExitF_Outgoing : rowsOwned s6Step8ExitGvAfter [s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] :=
-  hmrRows_owned_drop s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] 1 s6Step8ExitBank_outgoingOwned
-theorem s6Step8ExitFv_Incoming : rowsOwned s6Step8ExitFvBefore [s6Step8ExitFvRow,s6Step8ExitGvRow] := by
+theorem s2Step25ExitF_Outgoing : rowsOwned s2Step25ExitGvAfter [s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] :=
+  hmrRows_owned_drop s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] 1 s2Step25ExitBank_outgoingOwned
+theorem s2Step25ExitFv_Incoming : rowsOwned s2Step25ExitFvBefore [s2Step25ExitFvRow,s2Step25ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] 2 s6Step8ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] 2 s2Step25ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25ExitFvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8ExitFv_Outgoing : rowsOwned s6Step8ExitGvAfter [s6Step8ExitFvOut,s6Step8ExitGvOut] :=
-  hmrRows_owned_drop s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] 2 s6Step8ExitBank_outgoingOwned
-theorem s6Step8ExitGv_Incoming : rowsOwned s6Step8ExitGvBefore [s6Step8ExitGvRow] := by
+theorem s2Step25ExitFv_Outgoing : rowsOwned s2Step25ExitGvAfter [s2Step25ExitFvOut,s2Step25ExitGvOut] :=
+  hmrRows_owned_drop s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] 2 s2Step25ExitBank_outgoingOwned
+theorem s2Step25ExitGv_Incoming : rowsOwned s2Step25ExitGvBefore [s2Step25ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step8ExitGRow,s6Step8ExitFRow,s6Step8ExitFvRow,s6Step8ExitGvRow] 3 s6Step8ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step8ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<860) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step25ExitGRow,s2Step25ExitFRow,s2Step25ExitFvRow,s2Step25ExitGvRow] 3 s2Step25ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step25ExitGvBefore (fun q => (0≤q ∧ q<780) ∨ (784≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
     decide +kernel
-theorem s6Step8ExitGv_Outgoing : rowsOwned s6Step8ExitGvAfter [s6Step8ExitGvOut] :=
-  hmrRows_owned_drop s6Step8ExitGvAfter [s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut] 3 s6Step8ExitBank_outgoingOwned
-theorem s6Step8ExitBank_rows : planWindowRowsLog s6Step8ExitGBefore [(s6Step8ExitGRow,255),(s6Step8ExitFRow,256),(s6Step8ExitFvRow,10),(s6Step8ExitGvRow,8)] [[],[],[],[]]=
-    some (s6Step8ExitGvAfter,[s6Step8ExitGOut,s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut],(shrinkRow 777 s6Step8ExitGExtra ++ (shrinkRow 795 s6Step8ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step8ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step8ExitGvAfter [] []=some (s6Step8ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step8ExitGvBefore s6Step8ExitGvAfter s6Step8ExitGvAfter
-    s6Step8ExitGvRow s6Step8ExitGvOut 8 [] [] [] []
-    (shrinkRow 775 s6Step8ExitGvExtra) ([]) s6Step8ExitGv_Incoming s6Step8ExitGv_checked h4 s6Step8ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step8ExitFvBefore s6Step8ExitFvAfter s6Step8ExitGvAfter
-    s6Step8ExitFvRow s6Step8ExitFvOut 10 [] [(s6Step8ExitGvRow,8)] [[]] [s6Step8ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step8ExitGvExtra ++ [])) s6Step8ExitFv_Incoming s6Step8ExitFv_checked h3 s6Step8ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step8ExitFBefore s6Step8ExitFAfter s6Step8ExitGvAfter
-    s6Step8ExitFRow s6Step8ExitFOut 256 [] [(s6Step8ExitFvRow,10),(s6Step8ExitGvRow,8)] [[],[]] [s6Step8ExitFvOut,s6Step8ExitGvOut]
-    (shrinkRow 795 s6Step8ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step8ExitGvExtra ++ []))) s6Step8ExitF_Incoming s6Step8ExitF_checked h2 s6Step8ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step8ExitGBefore s6Step8ExitGAfter s6Step8ExitGvAfter
-    s6Step8ExitGRow s6Step8ExitGOut 255 [] [(s6Step8ExitFRow,256),(s6Step8ExitFvRow,10),(s6Step8ExitGvRow,8)] [[],[],[]] [s6Step8ExitFOut,s6Step8ExitFvOut,s6Step8ExitGvOut]
-    (shrinkRow 777 s6Step8ExitGExtra) ((shrinkRow 795 s6Step8ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step8ExitGvExtra ++ [])))) s6Step8ExitG_Incoming s6Step8ExitG_checked h1 s6Step8ExitG_Outgoing
+theorem s2Step25ExitGv_Outgoing : rowsOwned s2Step25ExitGvAfter [s2Step25ExitGvOut] :=
+  hmrRows_owned_drop s2Step25ExitGvAfter [s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut] 3 s2Step25ExitBank_outgoingOwned
+theorem s2Step25ExitBank_rows : planWindowRowsLog s2Step25ExitGBefore [(s2Step25ExitGRow,254),(s2Step25ExitFRow,255),(s2Step25ExitFvRow,26),(s2Step25ExitGvRow,25)] [[],[],[],[]]=
+    some (s2Step25ExitGvAfter,[s2Step25ExitGOut,s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut],(shrinkRow 769 s2Step25ExitGExtra ++ (shrinkRow 768 s2Step25ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step25ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step25ExitGvAfter [] []=some (s2Step25ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step25ExitGvBefore s2Step25ExitGvAfter s2Step25ExitGvAfter
+    s2Step25ExitGvRow s2Step25ExitGvOut 25 [] [] [] []
+    (shrinkRow 771 s2Step25ExitGvExtra) ([]) s2Step25ExitGv_Incoming s2Step25ExitGv_checked h4 s2Step25ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step25ExitFvBefore s2Step25ExitFvAfter s2Step25ExitGvAfter
+    s2Step25ExitFvRow s2Step25ExitFvOut 26 [] [(s2Step25ExitGvRow,25)] [[]] [s2Step25ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step25ExitGvExtra ++ [])) s2Step25ExitFv_Incoming s2Step25ExitFv_checked h3 s2Step25ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step25ExitFBefore s2Step25ExitFAfter s2Step25ExitGvAfter
+    s2Step25ExitFRow s2Step25ExitFOut 255 [] [(s2Step25ExitFvRow,26),(s2Step25ExitGvRow,25)] [[],[]] [s2Step25ExitFvOut,s2Step25ExitGvOut]
+    (shrinkRow 768 s2Step25ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step25ExitGvExtra ++ []))) s2Step25ExitF_Incoming s2Step25ExitF_checked h2 s2Step25ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step25ExitGBefore s2Step25ExitGAfter s2Step25ExitGvAfter
+    s2Step25ExitGRow s2Step25ExitGOut 254 [] [(s2Step25ExitFRow,255),(s2Step25ExitFvRow,26),(s2Step25ExitGvRow,25)] [[],[],[]] [s2Step25ExitFOut,s2Step25ExitFvOut,s2Step25ExitGvOut]
+    (shrinkRow 769 s2Step25ExitGExtra) ((shrinkRow 768 s2Step25ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step25ExitGvExtra ++ [])))) s2Step25ExitG_Incoming s2Step25ExitG_checked h1 s2Step25ExitG_Outgoing
   exact h0
-theorem s6Step8ExitBank_checked : compileHmrBankResizeLog .exit s6Step8ExitGBefore ⟨s6Step8ExitFRow,s6Step8ExitGRow,s6Step8ExitFvRow,s6Step8ExitGvRow⟩ ⟨256,255,10,8⟩ [[],[],[],[]]=
-    some (s6Step8ExitGvAfter,⟨s6Step8ExitFOut,s6Step8ExitGOut,s6Step8ExitFvOut,s6Step8ExitGvOut⟩,(shrinkRow 777 s6Step8ExitGExtra ++ (shrinkRow 795 s6Step8ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step8ExitGvExtra ++ []))))) := by
+theorem s2Step25ExitBank_checked : compileHmrBankResizeLog .exit s2Step25ExitGBefore ⟨s2Step25ExitFRow,s2Step25ExitGRow,s2Step25ExitFvRow,s2Step25ExitGvRow⟩ ⟨255,254,26,25⟩ [[],[],[],[]]=
+    some (s2Step25ExitGvAfter,⟨s2Step25ExitFOut,s2Step25ExitGOut,s2Step25ExitFvOut,s2Step25ExitGvOut⟩,(shrinkRow 769 s2Step25ExitGExtra ++ (shrinkRow 768 s2Step25ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step25ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step8ExitBank_rows]
+  rw [s2Step25ExitBank_rows]
   rfl
-theorem s6Step9ExitBank_incomingDistinct : ([s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step26ExitBank_incomingDistinct : ([s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9ExitBank_outgoingOwned : rowsOwned s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] := by
+theorem s2Step26ExitBank_outgoingOwned : rowsOwned s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step9ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step26ExitGvAfter (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<783) ∨ (784≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9ExitG_Incoming : rowsOwned s6Step9ExitGBefore [s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] := by
+theorem s2Step26ExitG_Incoming : rowsOwned s2Step26ExitGBefore [s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] 0 s6Step9ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] 0 s2Step26ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26ExitGBefore (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9ExitG_Outgoing : rowsOwned s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] :=
-  hmrRows_owned_drop s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] 0 s6Step9ExitBank_outgoingOwned
-theorem s6Step9ExitF_Incoming : rowsOwned s6Step9ExitFBefore [s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] := by
+theorem s2Step26ExitG_Outgoing : rowsOwned s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] :=
+  hmrRows_owned_drop s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] 0 s2Step26ExitBank_outgoingOwned
+theorem s2Step26ExitF_Incoming : rowsOwned s2Step26ExitFBefore [s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] 1 s6Step9ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] 1 s2Step26ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26ExitFBefore (fun q => (0≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9ExitF_Outgoing : rowsOwned s6Step9ExitGvAfter [s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] :=
-  hmrRows_owned_drop s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] 1 s6Step9ExitBank_outgoingOwned
-theorem s6Step9ExitFv_Incoming : rowsOwned s6Step9ExitFvBefore [s6Step9ExitFvRow,s6Step9ExitGvRow] := by
+theorem s2Step26ExitF_Outgoing : rowsOwned s2Step26ExitGvAfter [s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] :=
+  hmrRows_owned_drop s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] 1 s2Step26ExitBank_outgoingOwned
+theorem s2Step26ExitFv_Incoming : rowsOwned s2Step26ExitFvBefore [s2Step26ExitFvRow,s2Step26ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] 2 s6Step9ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] 2 s2Step26ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26ExitFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9ExitFv_Outgoing : rowsOwned s6Step9ExitGvAfter [s6Step9ExitFvOut,s6Step9ExitGvOut] :=
-  hmrRows_owned_drop s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] 2 s6Step9ExitBank_outgoingOwned
-theorem s6Step9ExitGv_Incoming : rowsOwned s6Step9ExitGvBefore [s6Step9ExitGvRow] := by
+theorem s2Step26ExitFv_Outgoing : rowsOwned s2Step26ExitGvAfter [s2Step26ExitFvOut,s2Step26ExitGvOut] :=
+  hmrRows_owned_drop s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] 2 s2Step26ExitBank_outgoingOwned
+theorem s2Step26ExitGv_Incoming : rowsOwned s2Step26ExitGvBefore [s2Step26ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step9ExitGRow,s6Step9ExitFRow,s6Step9ExitFvRow,s6Step9ExitGvRow] 3 s6Step9ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step9ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step26ExitGRow,s2Step26ExitFRow,s2Step26ExitFvRow,s2Step26ExitGvRow] 3 s2Step26ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step26ExitGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step9ExitGv_Outgoing : rowsOwned s6Step9ExitGvAfter [s6Step9ExitGvOut] :=
-  hmrRows_owned_drop s6Step9ExitGvAfter [s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut] 3 s6Step9ExitBank_outgoingOwned
-theorem s6Step9ExitBank_rows : planWindowRowsLog s6Step9ExitGBefore [(s6Step9ExitGRow,255),(s6Step9ExitFRow,256),(s6Step9ExitFvRow,11),(s6Step9ExitGvRow,9)] [[],[],[],[]]=
-    some (s6Step9ExitGvAfter,[s6Step9ExitGOut,s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut],(shrinkRow 777 s6Step9ExitGExtra ++ (shrinkRow 795 s6Step9ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step9ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step9ExitGvAfter [] []=some (s6Step9ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step9ExitGvBefore s6Step9ExitGvAfter s6Step9ExitGvAfter
-    s6Step9ExitGvRow s6Step9ExitGvOut 9 [] [] [] []
-    (shrinkRow 775 s6Step9ExitGvExtra) ([]) s6Step9ExitGv_Incoming s6Step9ExitGv_checked h4 s6Step9ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step9ExitFvBefore s6Step9ExitFvAfter s6Step9ExitGvAfter
-    s6Step9ExitFvRow s6Step9ExitFvOut 11 [] [(s6Step9ExitGvRow,9)] [[]] [s6Step9ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step9ExitGvExtra ++ [])) s6Step9ExitFv_Incoming s6Step9ExitFv_checked h3 s6Step9ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step9ExitFBefore s6Step9ExitFAfter s6Step9ExitGvAfter
-    s6Step9ExitFRow s6Step9ExitFOut 256 [] [(s6Step9ExitFvRow,11),(s6Step9ExitGvRow,9)] [[],[]] [s6Step9ExitFvOut,s6Step9ExitGvOut]
-    (shrinkRow 795 s6Step9ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step9ExitGvExtra ++ []))) s6Step9ExitF_Incoming s6Step9ExitF_checked h2 s6Step9ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step9ExitGBefore s6Step9ExitGAfter s6Step9ExitGvAfter
-    s6Step9ExitGRow s6Step9ExitGOut 255 [] [(s6Step9ExitFRow,256),(s6Step9ExitFvRow,11),(s6Step9ExitGvRow,9)] [[],[],[]] [s6Step9ExitFOut,s6Step9ExitFvOut,s6Step9ExitGvOut]
-    (shrinkRow 777 s6Step9ExitGExtra) ((shrinkRow 795 s6Step9ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step9ExitGvExtra ++ [])))) s6Step9ExitG_Incoming s6Step9ExitG_checked h1 s6Step9ExitG_Outgoing
+theorem s2Step26ExitGv_Outgoing : rowsOwned s2Step26ExitGvAfter [s2Step26ExitGvOut] :=
+  hmrRows_owned_drop s2Step26ExitGvAfter [s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut] 3 s2Step26ExitBank_outgoingOwned
+theorem s2Step26ExitBank_rows : planWindowRowsLog s2Step26ExitGBefore [(s2Step26ExitGRow,254),(s2Step26ExitFRow,255),(s2Step26ExitFvRow,27),(s2Step26ExitGvRow,25)] [[],[],[],[]]=
+    some (s2Step26ExitGvAfter,[s2Step26ExitGOut,s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut],(shrinkRow 769 s2Step26ExitGExtra ++ (shrinkRow 768 s2Step26ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step26ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step26ExitGvAfter [] []=some (s2Step26ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step26ExitGvBefore s2Step26ExitGvAfter s2Step26ExitGvAfter
+    s2Step26ExitGvRow s2Step26ExitGvOut 25 [] [] [] []
+    (shrinkRow 771 s2Step26ExitGvExtra) ([]) s2Step26ExitGv_Incoming s2Step26ExitGv_checked h4 s2Step26ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step26ExitFvBefore s2Step26ExitFvAfter s2Step26ExitGvAfter
+    s2Step26ExitFvRow s2Step26ExitFvOut 27 [] [(s2Step26ExitGvRow,25)] [[]] [s2Step26ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step26ExitGvExtra ++ [])) s2Step26ExitFv_Incoming s2Step26ExitFv_checked h3 s2Step26ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step26ExitFBefore s2Step26ExitFAfter s2Step26ExitGvAfter
+    s2Step26ExitFRow s2Step26ExitFOut 255 [] [(s2Step26ExitFvRow,27),(s2Step26ExitGvRow,25)] [[],[]] [s2Step26ExitFvOut,s2Step26ExitGvOut]
+    (shrinkRow 768 s2Step26ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step26ExitGvExtra ++ []))) s2Step26ExitF_Incoming s2Step26ExitF_checked h2 s2Step26ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step26ExitGBefore s2Step26ExitGAfter s2Step26ExitGvAfter
+    s2Step26ExitGRow s2Step26ExitGOut 254 [] [(s2Step26ExitFRow,255),(s2Step26ExitFvRow,27),(s2Step26ExitGvRow,25)] [[],[],[]] [s2Step26ExitFOut,s2Step26ExitFvOut,s2Step26ExitGvOut]
+    (shrinkRow 769 s2Step26ExitGExtra) ((shrinkRow 768 s2Step26ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step26ExitGvExtra ++ [])))) s2Step26ExitG_Incoming s2Step26ExitG_checked h1 s2Step26ExitG_Outgoing
   exact h0
-theorem s6Step9ExitBank_checked : compileHmrBankResizeLog .exit s6Step9ExitGBefore ⟨s6Step9ExitFRow,s6Step9ExitGRow,s6Step9ExitFvRow,s6Step9ExitGvRow⟩ ⟨256,255,11,9⟩ [[],[],[],[]]=
-    some (s6Step9ExitGvAfter,⟨s6Step9ExitFOut,s6Step9ExitGOut,s6Step9ExitFvOut,s6Step9ExitGvOut⟩,(shrinkRow 777 s6Step9ExitGExtra ++ (shrinkRow 795 s6Step9ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step9ExitGvExtra ++ []))))) := by
+theorem s2Step26ExitBank_checked : compileHmrBankResizeLog .exit s2Step26ExitGBefore ⟨s2Step26ExitFRow,s2Step26ExitGRow,s2Step26ExitFvRow,s2Step26ExitGvRow⟩ ⟨255,254,27,25⟩ [[],[],[],[]]=
+    some (s2Step26ExitGvAfter,⟨s2Step26ExitFOut,s2Step26ExitGOut,s2Step26ExitFvOut,s2Step26ExitGvOut⟩,(shrinkRow 769 s2Step26ExitGExtra ++ (shrinkRow 768 s2Step26ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step26ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step9ExitBank_rows]
+  rw [s2Step26ExitBank_rows]
   rfl
-theorem s6Step10ExitBank_incomingDistinct : ([s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step27ExitBank_incomingDistinct : ([s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10ExitBank_outgoingOwned : rowsOwned s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] := by
+theorem s2Step27ExitBank_outgoingOwned : rowsOwned s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step10ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step27ExitGvAfter (fun q => (0≤q ∧ q<253) ∨ (254≤q ∧ q<766) ∨ (767≤q ∧ q<779) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10ExitG_Incoming : rowsOwned s6Step10ExitGBefore [s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] := by
+theorem s2Step27ExitG_Incoming : rowsOwned s2Step27ExitGBefore [s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] 0 s6Step10ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] 0 s2Step27ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27ExitGBefore (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10ExitG_Outgoing : rowsOwned s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] :=
-  hmrRows_owned_drop s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] 0 s6Step10ExitBank_outgoingOwned
-theorem s6Step10ExitF_Incoming : rowsOwned s6Step10ExitFBefore [s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] := by
+theorem s2Step27ExitG_Outgoing : rowsOwned s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] :=
+  hmrRows_owned_drop s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] 0 s2Step27ExitBank_outgoingOwned
+theorem s2Step27ExitF_Incoming : rowsOwned s2Step27ExitFBefore [s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] 1 s6Step10ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] 1 s2Step27ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27ExitFBefore (fun q => (0≤q ∧ q<253) ∨ (254≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10ExitF_Outgoing : rowsOwned s6Step10ExitGvAfter [s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] :=
-  hmrRows_owned_drop s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] 1 s6Step10ExitBank_outgoingOwned
-theorem s6Step10ExitFv_Incoming : rowsOwned s6Step10ExitFvBefore [s6Step10ExitFvRow,s6Step10ExitGvRow] := by
+theorem s2Step27ExitF_Outgoing : rowsOwned s2Step27ExitGvAfter [s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] :=
+  hmrRows_owned_drop s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] 1 s2Step27ExitBank_outgoingOwned
+theorem s2Step27ExitFv_Incoming : rowsOwned s2Step27ExitFvBefore [s2Step27ExitFvRow,s2Step27ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] 2 s6Step10ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] 2 s2Step27ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27ExitFvBefore (fun q => (0≤q ∧ q<253) ∨ (254≤q ∧ q<766) ∨ (767≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10ExitFv_Outgoing : rowsOwned s6Step10ExitGvAfter [s6Step10ExitFvOut,s6Step10ExitGvOut] :=
-  hmrRows_owned_drop s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] 2 s6Step10ExitBank_outgoingOwned
-theorem s6Step10ExitGv_Incoming : rowsOwned s6Step10ExitGvBefore [s6Step10ExitGvRow] := by
+theorem s2Step27ExitFv_Outgoing : rowsOwned s2Step27ExitGvAfter [s2Step27ExitFvOut,s2Step27ExitGvOut] :=
+  hmrRows_owned_drop s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] 2 s2Step27ExitBank_outgoingOwned
+theorem s2Step27ExitGv_Incoming : rowsOwned s2Step27ExitGvBefore [s2Step27ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step10ExitGRow,s6Step10ExitFRow,s6Step10ExitFvRow,s6Step10ExitGvRow] 3 s6Step10ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step10ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step27ExitGRow,s2Step27ExitFRow,s2Step27ExitFvRow,s2Step27ExitGvRow] 3 s2Step27ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step27ExitGvBefore (fun q => (0≤q ∧ q<253) ∨ (254≤q ∧ q<766) ∨ (767≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
     decide +kernel
-theorem s6Step10ExitGv_Outgoing : rowsOwned s6Step10ExitGvAfter [s6Step10ExitGvOut] :=
-  hmrRows_owned_drop s6Step10ExitGvAfter [s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut] 3 s6Step10ExitBank_outgoingOwned
-theorem s6Step10ExitBank_rows : planWindowRowsLog s6Step10ExitGBefore [(s6Step10ExitGRow,255),(s6Step10ExitFRow,256),(s6Step10ExitFvRow,12),(s6Step10ExitGvRow,10)] [[],[],[],[]]=
-    some (s6Step10ExitGvAfter,[s6Step10ExitGOut,s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut],(shrinkRow 777 s6Step10ExitGExtra ++ (shrinkRow 795 s6Step10ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step10ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step10ExitGvAfter [] []=some (s6Step10ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step10ExitGvBefore s6Step10ExitGvAfter s6Step10ExitGvAfter
-    s6Step10ExitGvRow s6Step10ExitGvOut 10 [] [] [] []
-    (shrinkRow 775 s6Step10ExitGvExtra) ([]) s6Step10ExitGv_Incoming s6Step10ExitGv_checked h4 s6Step10ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step10ExitFvBefore s6Step10ExitFvAfter s6Step10ExitGvAfter
-    s6Step10ExitFvRow s6Step10ExitFvOut 12 [] [(s6Step10ExitGvRow,10)] [[]] [s6Step10ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step10ExitGvExtra ++ [])) s6Step10ExitFv_Incoming s6Step10ExitFv_checked h3 s6Step10ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step10ExitFBefore s6Step10ExitFAfter s6Step10ExitGvAfter
-    s6Step10ExitFRow s6Step10ExitFOut 256 [] [(s6Step10ExitFvRow,12),(s6Step10ExitGvRow,10)] [[],[]] [s6Step10ExitFvOut,s6Step10ExitGvOut]
-    (shrinkRow 795 s6Step10ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step10ExitGvExtra ++ []))) s6Step10ExitF_Incoming s6Step10ExitF_checked h2 s6Step10ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step10ExitGBefore s6Step10ExitGAfter s6Step10ExitGvAfter
-    s6Step10ExitGRow s6Step10ExitGOut 255 [] [(s6Step10ExitFRow,256),(s6Step10ExitFvRow,12),(s6Step10ExitGvRow,10)] [[],[],[]] [s6Step10ExitFOut,s6Step10ExitFvOut,s6Step10ExitGvOut]
-    (shrinkRow 777 s6Step10ExitGExtra) ((shrinkRow 795 s6Step10ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step10ExitGvExtra ++ [])))) s6Step10ExitG_Incoming s6Step10ExitG_checked h1 s6Step10ExitG_Outgoing
+theorem s2Step27ExitGv_Outgoing : rowsOwned s2Step27ExitGvAfter [s2Step27ExitGvOut] :=
+  hmrRows_owned_drop s2Step27ExitGvAfter [s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut] 3 s2Step27ExitBank_outgoingOwned
+theorem s2Step27ExitBank_rows : planWindowRowsLog s2Step27ExitGBefore [(s2Step27ExitGRow,253),(s2Step27ExitFRow,254),(s2Step27ExitFvRow,28),(s2Step27ExitGvRow,26)] [[],[],[],[]]=
+    some (s2Step27ExitGvAfter,[s2Step27ExitGOut,s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut],(shrinkRow 769 s2Step27ExitGExtra ++ (shrinkRow 768 s2Step27ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step27ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step27ExitGvAfter [] []=some (s2Step27ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step27ExitGvBefore s2Step27ExitGvAfter s2Step27ExitGvAfter
+    s2Step27ExitGvRow s2Step27ExitGvOut 26 [] [] [] []
+    (shrinkRow 771 s2Step27ExitGvExtra) ([]) s2Step27ExitGv_Incoming s2Step27ExitGv_checked h4 s2Step27ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step27ExitFvBefore s2Step27ExitFvAfter s2Step27ExitGvAfter
+    s2Step27ExitFvRow s2Step27ExitFvOut 28 [] [(s2Step27ExitGvRow,26)] [[]] [s2Step27ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step27ExitGvExtra ++ [])) s2Step27ExitFv_Incoming s2Step27ExitFv_checked h3 s2Step27ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step27ExitFBefore s2Step27ExitFAfter s2Step27ExitGvAfter
+    s2Step27ExitFRow s2Step27ExitFOut 254 [] [(s2Step27ExitFvRow,28),(s2Step27ExitGvRow,26)] [[],[]] [s2Step27ExitFvOut,s2Step27ExitGvOut]
+    (shrinkRow 768 s2Step27ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step27ExitGvExtra ++ []))) s2Step27ExitF_Incoming s2Step27ExitF_checked h2 s2Step27ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step27ExitGBefore s2Step27ExitGAfter s2Step27ExitGvAfter
+    s2Step27ExitGRow s2Step27ExitGOut 253 [] [(s2Step27ExitFRow,254),(s2Step27ExitFvRow,28),(s2Step27ExitGvRow,26)] [[],[],[]] [s2Step27ExitFOut,s2Step27ExitFvOut,s2Step27ExitGvOut]
+    (shrinkRow 769 s2Step27ExitGExtra) ((shrinkRow 768 s2Step27ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step27ExitGvExtra ++ [])))) s2Step27ExitG_Incoming s2Step27ExitG_checked h1 s2Step27ExitG_Outgoing
   exact h0
-theorem s6Step10ExitBank_checked : compileHmrBankResizeLog .exit s6Step10ExitGBefore ⟨s6Step10ExitFRow,s6Step10ExitGRow,s6Step10ExitFvRow,s6Step10ExitGvRow⟩ ⟨256,255,12,10⟩ [[],[],[],[]]=
-    some (s6Step10ExitGvAfter,⟨s6Step10ExitFOut,s6Step10ExitGOut,s6Step10ExitFvOut,s6Step10ExitGvOut⟩,(shrinkRow 777 s6Step10ExitGExtra ++ (shrinkRow 795 s6Step10ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step10ExitGvExtra ++ []))))) := by
+theorem s2Step27ExitBank_checked : compileHmrBankResizeLog .exit s2Step27ExitGBefore ⟨s2Step27ExitFRow,s2Step27ExitGRow,s2Step27ExitFvRow,s2Step27ExitGvRow⟩ ⟨254,253,28,26⟩ [[],[],[],[]]=
+    some (s2Step27ExitGvAfter,⟨s2Step27ExitFOut,s2Step27ExitGOut,s2Step27ExitFvOut,s2Step27ExitGvOut⟩,(shrinkRow 769 s2Step27ExitGExtra ++ (shrinkRow 768 s2Step27ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step27ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step10ExitBank_rows]
+  rw [s2Step27ExitBank_rows]
   rfl
-theorem s6Step11ExitBank_incomingDistinct : ([s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step28ExitBank_incomingDistinct : ([s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11ExitBank_outgoingOwned : rowsOwned s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] := by
+theorem s2Step28ExitBank_outgoingOwned : rowsOwned s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step11ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step28ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11ExitG_Incoming : rowsOwned s6Step11ExitGBefore [s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] := by
+theorem s2Step28ExitG_Incoming : rowsOwned s2Step28ExitGBefore [s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] 0 s6Step11ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] 0 s2Step28ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28ExitGBefore (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11ExitG_Outgoing : rowsOwned s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] :=
-  hmrRows_owned_drop s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] 0 s6Step11ExitBank_outgoingOwned
-theorem s6Step11ExitF_Incoming : rowsOwned s6Step11ExitFBefore [s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] := by
+theorem s2Step28ExitG_Outgoing : rowsOwned s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] :=
+  hmrRows_owned_drop s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] 0 s2Step28ExitBank_outgoingOwned
+theorem s2Step28ExitF_Incoming : rowsOwned s2Step28ExitFBefore [s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] 1 s6Step11ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] 1 s2Step28ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28ExitFBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11ExitF_Outgoing : rowsOwned s6Step11ExitGvAfter [s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] :=
-  hmrRows_owned_drop s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] 1 s6Step11ExitBank_outgoingOwned
-theorem s6Step11ExitFv_Incoming : rowsOwned s6Step11ExitFvBefore [s6Step11ExitFvRow,s6Step11ExitGvRow] := by
+theorem s2Step28ExitF_Outgoing : rowsOwned s2Step28ExitGvAfter [s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] :=
+  hmrRows_owned_drop s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] 1 s2Step28ExitBank_outgoingOwned
+theorem s2Step28ExitFv_Incoming : rowsOwned s2Step28ExitFvBefore [s2Step28ExitFvRow,s2Step28ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] 2 s6Step11ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] 2 s2Step28ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28ExitFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11ExitFv_Outgoing : rowsOwned s6Step11ExitGvAfter [s6Step11ExitFvOut,s6Step11ExitGvOut] :=
-  hmrRows_owned_drop s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] 2 s6Step11ExitBank_outgoingOwned
-theorem s6Step11ExitGv_Incoming : rowsOwned s6Step11ExitGvBefore [s6Step11ExitGvRow] := by
+theorem s2Step28ExitFv_Outgoing : rowsOwned s2Step28ExitGvAfter [s2Step28ExitFvOut,s2Step28ExitGvOut] :=
+  hmrRows_owned_drop s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] 2 s2Step28ExitBank_outgoingOwned
+theorem s2Step28ExitGv_Incoming : rowsOwned s2Step28ExitGvBefore [s2Step28ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step11ExitGRow,s6Step11ExitFRow,s6Step11ExitFvRow,s6Step11ExitGvRow] 3 s6Step11ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step11ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step28ExitGRow,s2Step28ExitFRow,s2Step28ExitFvRow,s2Step28ExitGvRow] 3 s2Step28ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step28ExitGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<841) ∨ (842≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step11ExitGv_Outgoing : rowsOwned s6Step11ExitGvAfter [s6Step11ExitGvOut] :=
-  hmrRows_owned_drop s6Step11ExitGvAfter [s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut] 3 s6Step11ExitBank_outgoingOwned
-theorem s6Step11ExitBank_rows : planWindowRowsLog s6Step11ExitGBefore [(s6Step11ExitGRow,255),(s6Step11ExitFRow,256),(s6Step11ExitFvRow,13),(s6Step11ExitGvRow,11)] [[],[],[],[]]=
-    some (s6Step11ExitGvAfter,[s6Step11ExitGOut,s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut],(shrinkRow 777 s6Step11ExitGExtra ++ (shrinkRow 795 s6Step11ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step11ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step11ExitGvAfter [] []=some (s6Step11ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step11ExitGvBefore s6Step11ExitGvAfter s6Step11ExitGvAfter
-    s6Step11ExitGvRow s6Step11ExitGvOut 11 [] [] [] []
-    (shrinkRow 775 s6Step11ExitGvExtra) ([]) s6Step11ExitGv_Incoming s6Step11ExitGv_checked h4 s6Step11ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step11ExitFvBefore s6Step11ExitFvAfter s6Step11ExitGvAfter
-    s6Step11ExitFvRow s6Step11ExitFvOut 13 [] [(s6Step11ExitGvRow,11)] [[]] [s6Step11ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step11ExitGvExtra ++ [])) s6Step11ExitFv_Incoming s6Step11ExitFv_checked h3 s6Step11ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step11ExitFBefore s6Step11ExitFAfter s6Step11ExitGvAfter
-    s6Step11ExitFRow s6Step11ExitFOut 256 [] [(s6Step11ExitFvRow,13),(s6Step11ExitGvRow,11)] [[],[]] [s6Step11ExitFvOut,s6Step11ExitGvOut]
-    (shrinkRow 795 s6Step11ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step11ExitGvExtra ++ []))) s6Step11ExitF_Incoming s6Step11ExitF_checked h2 s6Step11ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step11ExitGBefore s6Step11ExitGAfter s6Step11ExitGvAfter
-    s6Step11ExitGRow s6Step11ExitGOut 255 [] [(s6Step11ExitFRow,256),(s6Step11ExitFvRow,13),(s6Step11ExitGvRow,11)] [[],[],[]] [s6Step11ExitFOut,s6Step11ExitFvOut,s6Step11ExitGvOut]
-    (shrinkRow 777 s6Step11ExitGExtra) ((shrinkRow 795 s6Step11ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step11ExitGvExtra ++ [])))) s6Step11ExitG_Incoming s6Step11ExitG_checked h1 s6Step11ExitG_Outgoing
+theorem s2Step28ExitGv_Outgoing : rowsOwned s2Step28ExitGvAfter [s2Step28ExitGvOut] :=
+  hmrRows_owned_drop s2Step28ExitGvAfter [s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut] 3 s2Step28ExitBank_outgoingOwned
+theorem s2Step28ExitBank_rows : planWindowRowsLog s2Step28ExitGBefore [(s2Step28ExitGRow,253),(s2Step28ExitFRow,254),(s2Step28ExitFvRow,28),(s2Step28ExitGvRow,27)] [[],[],[],[]]=
+    some (s2Step28ExitGvAfter,[s2Step28ExitGOut,s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut],(shrinkRow 769 s2Step28ExitGExtra ++ (shrinkRow 768 s2Step28ExitFExtra ++ (shrinkRow 770 s2Step28ExitFvExtra ++ (shrinkRow 771 s2Step28ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step28ExitGvAfter [] []=some (s2Step28ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step28ExitGvBefore s2Step28ExitGvAfter s2Step28ExitGvAfter
+    s2Step28ExitGvRow s2Step28ExitGvOut 27 [] [] [] []
+    (shrinkRow 771 s2Step28ExitGvExtra) ([]) s2Step28ExitGv_Incoming s2Step28ExitGv_checked h4 s2Step28ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step28ExitFvBefore s2Step28ExitFvAfter s2Step28ExitGvAfter
+    s2Step28ExitFvRow s2Step28ExitFvOut 28 [] [(s2Step28ExitGvRow,27)] [[]] [s2Step28ExitGvOut]
+    (shrinkRow 770 s2Step28ExitFvExtra) ((shrinkRow 771 s2Step28ExitGvExtra ++ [])) s2Step28ExitFv_Incoming s2Step28ExitFv_checked h3 s2Step28ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step28ExitFBefore s2Step28ExitFAfter s2Step28ExitGvAfter
+    s2Step28ExitFRow s2Step28ExitFOut 254 [] [(s2Step28ExitFvRow,28),(s2Step28ExitGvRow,27)] [[],[]] [s2Step28ExitFvOut,s2Step28ExitGvOut]
+    (shrinkRow 768 s2Step28ExitFExtra) ((shrinkRow 770 s2Step28ExitFvExtra ++ (shrinkRow 771 s2Step28ExitGvExtra ++ []))) s2Step28ExitF_Incoming s2Step28ExitF_checked h2 s2Step28ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step28ExitGBefore s2Step28ExitGAfter s2Step28ExitGvAfter
+    s2Step28ExitGRow s2Step28ExitGOut 253 [] [(s2Step28ExitFRow,254),(s2Step28ExitFvRow,28),(s2Step28ExitGvRow,27)] [[],[],[]] [s2Step28ExitFOut,s2Step28ExitFvOut,s2Step28ExitGvOut]
+    (shrinkRow 769 s2Step28ExitGExtra) ((shrinkRow 768 s2Step28ExitFExtra ++ (shrinkRow 770 s2Step28ExitFvExtra ++ (shrinkRow 771 s2Step28ExitGvExtra ++ [])))) s2Step28ExitG_Incoming s2Step28ExitG_checked h1 s2Step28ExitG_Outgoing
   exact h0
-theorem s6Step11ExitBank_checked : compileHmrBankResizeLog .exit s6Step11ExitGBefore ⟨s6Step11ExitFRow,s6Step11ExitGRow,s6Step11ExitFvRow,s6Step11ExitGvRow⟩ ⟨256,255,13,11⟩ [[],[],[],[]]=
-    some (s6Step11ExitGvAfter,⟨s6Step11ExitFOut,s6Step11ExitGOut,s6Step11ExitFvOut,s6Step11ExitGvOut⟩,(shrinkRow 777 s6Step11ExitGExtra ++ (shrinkRow 795 s6Step11ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step11ExitGvExtra ++ []))))) := by
+theorem s2Step28ExitBank_checked : compileHmrBankResizeLog .exit s2Step28ExitGBefore ⟨s2Step28ExitFRow,s2Step28ExitGRow,s2Step28ExitFvRow,s2Step28ExitGvRow⟩ ⟨254,253,28,27⟩ [[],[],[],[]]=
+    some (s2Step28ExitGvAfter,⟨s2Step28ExitFOut,s2Step28ExitGOut,s2Step28ExitFvOut,s2Step28ExitGvOut⟩,(shrinkRow 769 s2Step28ExitGExtra ++ (shrinkRow 768 s2Step28ExitFExtra ++ (shrinkRow 770 s2Step28ExitFvExtra ++ (shrinkRow 771 s2Step28ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step11ExitBank_rows]
+  rw [s2Step28ExitBank_rows]
   rfl
-theorem s6Step12ExitBank_incomingDistinct : ([s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step29ExitBank_incomingDistinct : ([s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12ExitBank_outgoingOwned : rowsOwned s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] := by
+theorem s2Step29ExitBank_outgoingOwned : rowsOwned s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step12ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step29ExitGvAfter (fun q => (0≤q ∧ q<252) ∨ (253≤q ∧ q<765) ∨ (766≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12ExitG_Incoming : rowsOwned s6Step12ExitGBefore [s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] := by
+theorem s2Step29ExitG_Incoming : rowsOwned s2Step29ExitGBefore [s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] 0 s6Step12ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] 0 s2Step29ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29ExitGBefore (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12ExitG_Outgoing : rowsOwned s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] :=
-  hmrRows_owned_drop s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] 0 s6Step12ExitBank_outgoingOwned
-theorem s6Step12ExitF_Incoming : rowsOwned s6Step12ExitFBefore [s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] := by
+theorem s2Step29ExitG_Outgoing : rowsOwned s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] :=
+  hmrRows_owned_drop s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] 0 s2Step29ExitBank_outgoingOwned
+theorem s2Step29ExitF_Incoming : rowsOwned s2Step29ExitFBefore [s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] 1 s6Step12ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] 1 s2Step29ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29ExitFBefore (fun q => (0≤q ∧ q<252) ∨ (253≤q ∧ q<779) ∨ (780≤q ∧ q<785) ∨ (786≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12ExitF_Outgoing : rowsOwned s6Step12ExitGvAfter [s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] :=
-  hmrRows_owned_drop s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] 1 s6Step12ExitBank_outgoingOwned
-theorem s6Step12ExitFv_Incoming : rowsOwned s6Step12ExitFvBefore [s6Step12ExitFvRow,s6Step12ExitGvRow] := by
+theorem s2Step29ExitF_Outgoing : rowsOwned s2Step29ExitGvAfter [s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] :=
+  hmrRows_owned_drop s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] 1 s2Step29ExitBank_outgoingOwned
+theorem s2Step29ExitFv_Incoming : rowsOwned s2Step29ExitFvBefore [s2Step29ExitFvRow,s2Step29ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] 2 s6Step12ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] 2 s2Step29ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29ExitFvBefore (fun q => (0≤q ∧ q<252) ∨ (253≤q ∧ q<765) ∨ (766≤q ∧ q<779) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12ExitFv_Outgoing : rowsOwned s6Step12ExitGvAfter [s6Step12ExitFvOut,s6Step12ExitGvOut] :=
-  hmrRows_owned_drop s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] 2 s6Step12ExitBank_outgoingOwned
-theorem s6Step12ExitGv_Incoming : rowsOwned s6Step12ExitGvBefore [s6Step12ExitGvRow] := by
+theorem s2Step29ExitFv_Outgoing : rowsOwned s2Step29ExitGvAfter [s2Step29ExitFvOut,s2Step29ExitGvOut] :=
+  hmrRows_owned_drop s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] 2 s2Step29ExitBank_outgoingOwned
+theorem s2Step29ExitGv_Incoming : rowsOwned s2Step29ExitGvBefore [s2Step29ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step12ExitGRow,s6Step12ExitFRow,s6Step12ExitFvRow,s6Step12ExitGvRow] 3 s6Step12ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step12ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step29ExitGRow,s2Step29ExitFRow,s2Step29ExitFvRow,s2Step29ExitGvRow] 3 s2Step29ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step29ExitGvBefore (fun q => (0≤q ∧ q<252) ∨ (253≤q ∧ q<765) ∨ (766≤q ∧ q<779) ∨ (780≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
     decide +kernel
-theorem s6Step12ExitGv_Outgoing : rowsOwned s6Step12ExitGvAfter [s6Step12ExitGvOut] :=
-  hmrRows_owned_drop s6Step12ExitGvAfter [s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut] 3 s6Step12ExitBank_outgoingOwned
-theorem s6Step12ExitBank_rows : planWindowRowsLog s6Step12ExitGBefore [(s6Step12ExitGRow,255),(s6Step12ExitFRow,256),(s6Step12ExitFvRow,14),(s6Step12ExitGvRow,12)] [[],[],[],[]]=
-    some (s6Step12ExitGvAfter,[s6Step12ExitGOut,s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut],(shrinkRow 777 s6Step12ExitGExtra ++ (shrinkRow 795 s6Step12ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step12ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step12ExitGvAfter [] []=some (s6Step12ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step12ExitGvBefore s6Step12ExitGvAfter s6Step12ExitGvAfter
-    s6Step12ExitGvRow s6Step12ExitGvOut 12 [] [] [] []
-    (shrinkRow 775 s6Step12ExitGvExtra) ([]) s6Step12ExitGv_Incoming s6Step12ExitGv_checked h4 s6Step12ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step12ExitFvBefore s6Step12ExitFvAfter s6Step12ExitGvAfter
-    s6Step12ExitFvRow s6Step12ExitFvOut 14 [] [(s6Step12ExitGvRow,12)] [[]] [s6Step12ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step12ExitGvExtra ++ [])) s6Step12ExitFv_Incoming s6Step12ExitFv_checked h3 s6Step12ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step12ExitFBefore s6Step12ExitFAfter s6Step12ExitGvAfter
-    s6Step12ExitFRow s6Step12ExitFOut 256 [] [(s6Step12ExitFvRow,14),(s6Step12ExitGvRow,12)] [[],[]] [s6Step12ExitFvOut,s6Step12ExitGvOut]
-    (shrinkRow 795 s6Step12ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step12ExitGvExtra ++ []))) s6Step12ExitF_Incoming s6Step12ExitF_checked h2 s6Step12ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step12ExitGBefore s6Step12ExitGAfter s6Step12ExitGvAfter
-    s6Step12ExitGRow s6Step12ExitGOut 255 [] [(s6Step12ExitFRow,256),(s6Step12ExitFvRow,14),(s6Step12ExitGvRow,12)] [[],[],[]] [s6Step12ExitFOut,s6Step12ExitFvOut,s6Step12ExitGvOut]
-    (shrinkRow 777 s6Step12ExitGExtra) ((shrinkRow 795 s6Step12ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step12ExitGvExtra ++ [])))) s6Step12ExitG_Incoming s6Step12ExitG_checked h1 s6Step12ExitG_Outgoing
+theorem s2Step29ExitGv_Outgoing : rowsOwned s2Step29ExitGvAfter [s2Step29ExitGvOut] :=
+  hmrRows_owned_drop s2Step29ExitGvAfter [s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut] 3 s2Step29ExitBank_outgoingOwned
+theorem s2Step29ExitBank_rows : planWindowRowsLog s2Step29ExitGBefore [(s2Step29ExitGRow,252),(s2Step29ExitFRow,253),(s2Step29ExitFvRow,29),(s2Step29ExitGvRow,27)] [[],[],[],[]]=
+    some (s2Step29ExitGvAfter,[s2Step29ExitGOut,s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut],(shrinkRow 769 s2Step29ExitGExtra ++ (shrinkRow 768 s2Step29ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step29ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step29ExitGvAfter [] []=some (s2Step29ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step29ExitGvBefore s2Step29ExitGvAfter s2Step29ExitGvAfter
+    s2Step29ExitGvRow s2Step29ExitGvOut 27 [] [] [] []
+    (shrinkRow 771 s2Step29ExitGvExtra) ([]) s2Step29ExitGv_Incoming s2Step29ExitGv_checked h4 s2Step29ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step29ExitFvBefore s2Step29ExitFvAfter s2Step29ExitGvAfter
+    s2Step29ExitFvRow s2Step29ExitFvOut 29 [] [(s2Step29ExitGvRow,27)] [[]] [s2Step29ExitGvOut]
+    (growRow 770 []) ((shrinkRow 771 s2Step29ExitGvExtra ++ [])) s2Step29ExitFv_Incoming s2Step29ExitFv_checked h3 s2Step29ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step29ExitFBefore s2Step29ExitFAfter s2Step29ExitGvAfter
+    s2Step29ExitFRow s2Step29ExitFOut 253 [] [(s2Step29ExitFvRow,29),(s2Step29ExitGvRow,27)] [[],[]] [s2Step29ExitFvOut,s2Step29ExitGvOut]
+    (shrinkRow 768 s2Step29ExitFExtra) ((growRow 770 [] ++ (shrinkRow 771 s2Step29ExitGvExtra ++ []))) s2Step29ExitF_Incoming s2Step29ExitF_checked h2 s2Step29ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step29ExitGBefore s2Step29ExitGAfter s2Step29ExitGvAfter
+    s2Step29ExitGRow s2Step29ExitGOut 252 [] [(s2Step29ExitFRow,253),(s2Step29ExitFvRow,29),(s2Step29ExitGvRow,27)] [[],[],[]] [s2Step29ExitFOut,s2Step29ExitFvOut,s2Step29ExitGvOut]
+    (shrinkRow 769 s2Step29ExitGExtra) ((shrinkRow 768 s2Step29ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step29ExitGvExtra ++ [])))) s2Step29ExitG_Incoming s2Step29ExitG_checked h1 s2Step29ExitG_Outgoing
   exact h0
-theorem s6Step12ExitBank_checked : compileHmrBankResizeLog .exit s6Step12ExitGBefore ⟨s6Step12ExitFRow,s6Step12ExitGRow,s6Step12ExitFvRow,s6Step12ExitGvRow⟩ ⟨256,255,14,12⟩ [[],[],[],[]]=
-    some (s6Step12ExitGvAfter,⟨s6Step12ExitFOut,s6Step12ExitGOut,s6Step12ExitFvOut,s6Step12ExitGvOut⟩,(shrinkRow 777 s6Step12ExitGExtra ++ (shrinkRow 795 s6Step12ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step12ExitGvExtra ++ []))))) := by
+theorem s2Step29ExitBank_checked : compileHmrBankResizeLog .exit s2Step29ExitGBefore ⟨s2Step29ExitFRow,s2Step29ExitGRow,s2Step29ExitFvRow,s2Step29ExitGvRow⟩ ⟨253,252,29,27⟩ [[],[],[],[]]=
+    some (s2Step29ExitGvAfter,⟨s2Step29ExitFOut,s2Step29ExitGOut,s2Step29ExitFvOut,s2Step29ExitGvOut⟩,(shrinkRow 769 s2Step29ExitGExtra ++ (shrinkRow 768 s2Step29ExitFExtra ++ (growRow 770 [] ++ (shrinkRow 771 s2Step29ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step12ExitBank_rows]
+  rw [s2Step29ExitBank_rows]
   rfl
-theorem s6Step13ExitBank_incomingDistinct : ([s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step30ExitBank_incomingDistinct : ([s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13ExitBank_outgoingOwned : rowsOwned s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] := by
+theorem s2Step30ExitBank_outgoingOwned : rowsOwned s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step13ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step30ExitGvAfter (fun q => (0≤q ∧ q<779) ∨ (782≤q ∧ q<785) ∨ (787≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13ExitG_Incoming : rowsOwned s6Step13ExitGBefore [s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] := by
+theorem s2Step30ExitG_Incoming : rowsOwned s2Step30ExitGBefore [s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] 0 s6Step13ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] 0 s2Step30ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30ExitGBefore (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13ExitG_Outgoing : rowsOwned s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] :=
-  hmrRows_owned_drop s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] 0 s6Step13ExitBank_outgoingOwned
-theorem s6Step13ExitF_Incoming : rowsOwned s6Step13ExitFBefore [s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] := by
+theorem s2Step30ExitG_Outgoing : rowsOwned s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] :=
+  hmrRows_owned_drop s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] 0 s2Step30ExitBank_outgoingOwned
+theorem s2Step30ExitF_Incoming : rowsOwned s2Step30ExitFBefore [s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] 1 s6Step13ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] 1 s2Step30ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30ExitFBefore (fun q => (0≤q ∧ q<780) ∨ (781≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13ExitF_Outgoing : rowsOwned s6Step13ExitGvAfter [s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] :=
-  hmrRows_owned_drop s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] 1 s6Step13ExitBank_outgoingOwned
-theorem s6Step13ExitFv_Incoming : rowsOwned s6Step13ExitFvBefore [s6Step13ExitFvRow,s6Step13ExitGvRow] := by
+theorem s2Step30ExitF_Outgoing : rowsOwned s2Step30ExitGvAfter [s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] :=
+  hmrRows_owned_drop s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] 1 s2Step30ExitBank_outgoingOwned
+theorem s2Step30ExitFv_Incoming : rowsOwned s2Step30ExitFvBefore [s2Step30ExitFvRow,s2Step30ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] 2 s6Step13ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] 2 s2Step30ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30ExitFvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13ExitFv_Outgoing : rowsOwned s6Step13ExitGvAfter [s6Step13ExitFvOut,s6Step13ExitGvOut] :=
-  hmrRows_owned_drop s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] 2 s6Step13ExitBank_outgoingOwned
-theorem s6Step13ExitGv_Incoming : rowsOwned s6Step13ExitGvBefore [s6Step13ExitGvRow] := by
+theorem s2Step30ExitFv_Outgoing : rowsOwned s2Step30ExitGvAfter [s2Step30ExitFvOut,s2Step30ExitGvOut] :=
+  hmrRows_owned_drop s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] 2 s2Step30ExitBank_outgoingOwned
+theorem s2Step30ExitGv_Incoming : rowsOwned s2Step30ExitGvBefore [s2Step30ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step13ExitGRow,s6Step13ExitFRow,s6Step13ExitFvRow,s6Step13ExitGvRow] 3 s6Step13ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step13ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (863≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step30ExitGRow,s2Step30ExitFRow,s2Step30ExitFvRow,s2Step30ExitGvRow] 3 s2Step30ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step30ExitGvBefore (fun q => (0≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step13ExitGv_Outgoing : rowsOwned s6Step13ExitGvAfter [s6Step13ExitGvOut] :=
-  hmrRows_owned_drop s6Step13ExitGvAfter [s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut] 3 s6Step13ExitBank_outgoingOwned
-theorem s6Step13ExitBank_rows : planWindowRowsLog s6Step13ExitGBefore [(s6Step13ExitGRow,255),(s6Step13ExitFRow,256),(s6Step13ExitFvRow,15),(s6Step13ExitGvRow,13)] [[],[],[],[]]=
-    some (s6Step13ExitGvAfter,[s6Step13ExitGOut,s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut],(shrinkRow 777 s6Step13ExitGExtra ++ (shrinkRow 795 s6Step13ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step13ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step13ExitGvAfter [] []=some (s6Step13ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step13ExitGvBefore s6Step13ExitGvAfter s6Step13ExitGvAfter
-    s6Step13ExitGvRow s6Step13ExitGvOut 13 [] [] [] []
-    (shrinkRow 775 s6Step13ExitGvExtra) ([]) s6Step13ExitGv_Incoming s6Step13ExitGv_checked h4 s6Step13ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step13ExitFvBefore s6Step13ExitFvAfter s6Step13ExitGvAfter
-    s6Step13ExitFvRow s6Step13ExitFvOut 15 [] [(s6Step13ExitGvRow,13)] [[]] [s6Step13ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step13ExitGvExtra ++ [])) s6Step13ExitFv_Incoming s6Step13ExitFv_checked h3 s6Step13ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step13ExitFBefore s6Step13ExitFAfter s6Step13ExitGvAfter
-    s6Step13ExitFRow s6Step13ExitFOut 256 [] [(s6Step13ExitFvRow,15),(s6Step13ExitGvRow,13)] [[],[]] [s6Step13ExitFvOut,s6Step13ExitGvOut]
-    (shrinkRow 795 s6Step13ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step13ExitGvExtra ++ []))) s6Step13ExitF_Incoming s6Step13ExitF_checked h2 s6Step13ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step13ExitGBefore s6Step13ExitGAfter s6Step13ExitGvAfter
-    s6Step13ExitGRow s6Step13ExitGOut 255 [] [(s6Step13ExitFRow,256),(s6Step13ExitFvRow,15),(s6Step13ExitGvRow,13)] [[],[],[]] [s6Step13ExitFOut,s6Step13ExitFvOut,s6Step13ExitGvOut]
-    (shrinkRow 777 s6Step13ExitGExtra) ((shrinkRow 795 s6Step13ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step13ExitGvExtra ++ [])))) s6Step13ExitG_Incoming s6Step13ExitG_checked h1 s6Step13ExitG_Outgoing
+theorem s2Step30ExitGv_Outgoing : rowsOwned s2Step30ExitGvAfter [s2Step30ExitGvOut] :=
+  hmrRows_owned_drop s2Step30ExitGvAfter [s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut] 3 s2Step30ExitBank_outgoingOwned
+theorem s2Step30ExitBank_rows : planWindowRowsLog s2Step30ExitGBefore [(s2Step30ExitGRow,252),(s2Step30ExitFRow,253),(s2Step30ExitFvRow,29),(s2Step30ExitGvRow,28)] [[],[],[],[]]=
+    some (s2Step30ExitGvAfter,[s2Step30ExitGOut,s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut],(shrinkRow 769 s2Step30ExitGExtra ++ (shrinkRow 768 s2Step30ExitFExtra ++ (shrinkRow 770 s2Step30ExitFvExtra ++ (shrinkRow 771 s2Step30ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step30ExitGvAfter [] []=some (s2Step30ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step30ExitGvBefore s2Step30ExitGvAfter s2Step30ExitGvAfter
+    s2Step30ExitGvRow s2Step30ExitGvOut 28 [] [] [] []
+    (shrinkRow 771 s2Step30ExitGvExtra) ([]) s2Step30ExitGv_Incoming s2Step30ExitGv_checked h4 s2Step30ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step30ExitFvBefore s2Step30ExitFvAfter s2Step30ExitGvAfter
+    s2Step30ExitFvRow s2Step30ExitFvOut 29 [] [(s2Step30ExitGvRow,28)] [[]] [s2Step30ExitGvOut]
+    (shrinkRow 770 s2Step30ExitFvExtra) ((shrinkRow 771 s2Step30ExitGvExtra ++ [])) s2Step30ExitFv_Incoming s2Step30ExitFv_checked h3 s2Step30ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step30ExitFBefore s2Step30ExitFAfter s2Step30ExitGvAfter
+    s2Step30ExitFRow s2Step30ExitFOut 253 [] [(s2Step30ExitFvRow,29),(s2Step30ExitGvRow,28)] [[],[]] [s2Step30ExitFvOut,s2Step30ExitGvOut]
+    (shrinkRow 768 s2Step30ExitFExtra) ((shrinkRow 770 s2Step30ExitFvExtra ++ (shrinkRow 771 s2Step30ExitGvExtra ++ []))) s2Step30ExitF_Incoming s2Step30ExitF_checked h2 s2Step30ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step30ExitGBefore s2Step30ExitGAfter s2Step30ExitGvAfter
+    s2Step30ExitGRow s2Step30ExitGOut 252 [] [(s2Step30ExitFRow,253),(s2Step30ExitFvRow,29),(s2Step30ExitGvRow,28)] [[],[],[]] [s2Step30ExitFOut,s2Step30ExitFvOut,s2Step30ExitGvOut]
+    (shrinkRow 769 s2Step30ExitGExtra) ((shrinkRow 768 s2Step30ExitFExtra ++ (shrinkRow 770 s2Step30ExitFvExtra ++ (shrinkRow 771 s2Step30ExitGvExtra ++ [])))) s2Step30ExitG_Incoming s2Step30ExitG_checked h1 s2Step30ExitG_Outgoing
   exact h0
-theorem s6Step13ExitBank_checked : compileHmrBankResizeLog .exit s6Step13ExitGBefore ⟨s6Step13ExitFRow,s6Step13ExitGRow,s6Step13ExitFvRow,s6Step13ExitGvRow⟩ ⟨256,255,15,13⟩ [[],[],[],[]]=
-    some (s6Step13ExitGvAfter,⟨s6Step13ExitFOut,s6Step13ExitGOut,s6Step13ExitFvOut,s6Step13ExitGvOut⟩,(shrinkRow 777 s6Step13ExitGExtra ++ (shrinkRow 795 s6Step13ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step13ExitGvExtra ++ []))))) := by
+theorem s2Step30ExitBank_checked : compileHmrBankResizeLog .exit s2Step30ExitGBefore ⟨s2Step30ExitFRow,s2Step30ExitGRow,s2Step30ExitFvRow,s2Step30ExitGvRow⟩ ⟨253,252,29,28⟩ [[],[],[],[]]=
+    some (s2Step30ExitGvAfter,⟨s2Step30ExitFOut,s2Step30ExitGOut,s2Step30ExitFvOut,s2Step30ExitGvOut⟩,(shrinkRow 769 s2Step30ExitGExtra ++ (shrinkRow 768 s2Step30ExitFExtra ++ (shrinkRow 770 s2Step30ExitFvExtra ++ (shrinkRow 771 s2Step30ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step13ExitBank_rows]
+  rw [s2Step30ExitBank_rows]
   rfl
-theorem s6Step14ExitBank_incomingDistinct : ([s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow].flatMap WindowRow.wires).Nodup := by
+theorem s2Step31ExitBank_incomingDistinct : ([s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow].flatMap WindowRow.wires).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14ExitBank_outgoingOwned : rowsOwned s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] := by
+theorem s2Step31ExitBank_outgoingOwned : rowsOwned s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] := by
   constructor
   · apply hmrLayout_nodup_of_sorted
     decide +kernel
-  · apply hmrLayout_owned_of_filter s6Step14ExitGvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · apply hmrLayout_owned_of_filter s2Step31ExitGvAfter (fun q => (0≤q ∧ q<251) ∨ (252≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<789) ∨ (790≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14ExitG_Incoming : rowsOwned s6Step14ExitGBefore [s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] := by
+theorem s2Step31ExitG_Incoming : rowsOwned s2Step31ExitGBefore [s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] 0 s6Step14ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14ExitGBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] 0 s2Step31ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31ExitGBefore (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14ExitG_Outgoing : rowsOwned s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] :=
-  hmrRows_owned_drop s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] 0 s6Step14ExitBank_outgoingOwned
-theorem s6Step14ExitF_Incoming : rowsOwned s6Step14ExitFBefore [s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] := by
+theorem s2Step31ExitG_Outgoing : rowsOwned s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] :=
+  hmrRows_owned_drop s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] 0 s2Step31ExitBank_outgoingOwned
+theorem s2Step31ExitF_Incoming : rowsOwned s2Step31ExitFBefore [s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] 1 s6Step14ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14ExitFBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] 1 s2Step31ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31ExitFBefore (fun q => (0≤q ∧ q<251) ∨ (252≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14ExitF_Outgoing : rowsOwned s6Step14ExitGvAfter [s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] :=
-  hmrRows_owned_drop s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] 1 s6Step14ExitBank_outgoingOwned
-theorem s6Step14ExitFv_Incoming : rowsOwned s6Step14ExitFvBefore [s6Step14ExitFvRow,s6Step14ExitGvRow] := by
+theorem s2Step31ExitF_Outgoing : rowsOwned s2Step31ExitGvAfter [s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] :=
+  hmrRows_owned_drop s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] 1 s2Step31ExitBank_outgoingOwned
+theorem s2Step31ExitFv_Incoming : rowsOwned s2Step31ExitFvBefore [s2Step31ExitFvRow,s2Step31ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] 2 s6Step14ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14ExitFvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] 2 s2Step31ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31ExitFvBefore (fun q => (0≤q ∧ q<251) ∨ (252≤q ∧ q<781) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14ExitFv_Outgoing : rowsOwned s6Step14ExitGvAfter [s6Step14ExitFvOut,s6Step14ExitGvOut] :=
-  hmrRows_owned_drop s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] 2 s6Step14ExitBank_outgoingOwned
-theorem s6Step14ExitGv_Incoming : rowsOwned s6Step14ExitGvBefore [s6Step14ExitGvRow] := by
+theorem s2Step31ExitFv_Outgoing : rowsOwned s2Step31ExitGvAfter [s2Step31ExitFvOut,s2Step31ExitGvOut] :=
+  hmrRows_owned_drop s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] 2 s2Step31ExitBank_outgoingOwned
+theorem s2Step31ExitGv_Incoming : rowsOwned s2Step31ExitGvBefore [s2Step31ExitGvRow] := by
   constructor
-  · exact hmrRows_distinct_drop [s6Step14ExitGRow,s6Step14ExitFRow,s6Step14ExitFvRow,s6Step14ExitGvRow] 3 s6Step14ExitBank_incomingDistinct
-  · apply hmrLayout_owned_of_filter s6Step14ExitGvBefore (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<860) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  · exact hmrRows_distinct_drop [s2Step31ExitGRow,s2Step31ExitFRow,s2Step31ExitFvRow,s2Step31ExitGvRow] 3 s2Step31ExitBank_incomingDistinct
+  · apply hmrLayout_owned_of_filter s2Step31ExitGvBefore (fun q => (0≤q ∧ q<251) ∨ (252≤q ∧ q<780) ∨ (782≤q ∧ q<785) ∨ (786≤q ∧ q<787) ∨ (788≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
     decide +kernel
-theorem s6Step14ExitGv_Outgoing : rowsOwned s6Step14ExitGvAfter [s6Step14ExitGvOut] :=
-  hmrRows_owned_drop s6Step14ExitGvAfter [s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut] 3 s6Step14ExitBank_outgoingOwned
-theorem s6Step14ExitBank_rows : planWindowRowsLog s6Step14ExitGBefore [(s6Step14ExitGRow,255),(s6Step14ExitFRow,256),(s6Step14ExitFvRow,16),(s6Step14ExitGvRow,14)] [[],[],[],[]]=
-    some (s6Step14ExitGvAfter,[s6Step14ExitGOut,s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut],(shrinkRow 777 s6Step14ExitGExtra ++ (shrinkRow 795 s6Step14ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step14ExitGvExtra ++ []))))) := by
-  have h4 : planWindowRowsLog s6Step14ExitGvAfter [] []=some (s6Step14ExitGvAfter,[],[]) := rfl
-  have h3 := planWindowRowsLog_of_cons s6Step14ExitGvBefore s6Step14ExitGvAfter s6Step14ExitGvAfter
-    s6Step14ExitGvRow s6Step14ExitGvOut 14 [] [] [] []
-    (shrinkRow 775 s6Step14ExitGvExtra) ([]) s6Step14ExitGv_Incoming s6Step14ExitGv_checked h4 s6Step14ExitGv_Outgoing
-  have h2 := planWindowRowsLog_of_cons s6Step14ExitFvBefore s6Step14ExitFvAfter s6Step14ExitGvAfter
-    s6Step14ExitFvRow s6Step14ExitFvOut 16 [] [(s6Step14ExitGvRow,14)] [[]] [s6Step14ExitGvOut]
-    (growRow 776 []) ((shrinkRow 775 s6Step14ExitGvExtra ++ [])) s6Step14ExitFv_Incoming s6Step14ExitFv_checked h3 s6Step14ExitFv_Outgoing
-  have h1 := planWindowRowsLog_of_cons s6Step14ExitFBefore s6Step14ExitFAfter s6Step14ExitGvAfter
-    s6Step14ExitFRow s6Step14ExitFOut 256 [] [(s6Step14ExitFvRow,16),(s6Step14ExitGvRow,14)] [[],[]] [s6Step14ExitFvOut,s6Step14ExitGvOut]
-    (shrinkRow 795 s6Step14ExitFExtra) ((growRow 776 [] ++ (shrinkRow 775 s6Step14ExitGvExtra ++ []))) s6Step14ExitF_Incoming s6Step14ExitF_checked h2 s6Step14ExitF_Outgoing
-  have h0 := planWindowRowsLog_of_cons s6Step14ExitGBefore s6Step14ExitGAfter s6Step14ExitGvAfter
-    s6Step14ExitGRow s6Step14ExitGOut 255 [] [(s6Step14ExitFRow,256),(s6Step14ExitFvRow,16),(s6Step14ExitGvRow,14)] [[],[],[]] [s6Step14ExitFOut,s6Step14ExitFvOut,s6Step14ExitGvOut]
-    (shrinkRow 777 s6Step14ExitGExtra) ((shrinkRow 795 s6Step14ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step14ExitGvExtra ++ [])))) s6Step14ExitG_Incoming s6Step14ExitG_checked h1 s6Step14ExitG_Outgoing
+theorem s2Step31ExitGv_Outgoing : rowsOwned s2Step31ExitGvAfter [s2Step31ExitGvOut] :=
+  hmrRows_owned_drop s2Step31ExitGvAfter [s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut] 3 s2Step31ExitBank_outgoingOwned
+theorem s2Step31ExitBank_rows : planWindowRowsLog s2Step31ExitGBefore [(s2Step31ExitGRow,251),(s2Step31ExitFRow,253),(s2Step31ExitFvRow,29),(s2Step31ExitGvRow,28)] [[],[],[],[]]=
+    some (s2Step31ExitGvAfter,[s2Step31ExitGOut,s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut],(shrinkRow 769 s2Step31ExitGExtra ++ (shrinkRow 768 s2Step31ExitFExtra ++ (shrinkRow 770 s2Step31ExitFvExtra ++ (shrinkRow 771 s2Step31ExitGvExtra ++ []))))) := by
+  have h4 : planWindowRowsLog s2Step31ExitGvAfter [] []=some (s2Step31ExitGvAfter,[],[]) := rfl
+  have h3 := planWindowRowsLog_of_cons s2Step31ExitGvBefore s2Step31ExitGvAfter s2Step31ExitGvAfter
+    s2Step31ExitGvRow s2Step31ExitGvOut 28 [] [] [] []
+    (shrinkRow 771 s2Step31ExitGvExtra) ([]) s2Step31ExitGv_Incoming s2Step31ExitGv_checked h4 s2Step31ExitGv_Outgoing
+  have h2 := planWindowRowsLog_of_cons s2Step31ExitFvBefore s2Step31ExitFvAfter s2Step31ExitGvAfter
+    s2Step31ExitFvRow s2Step31ExitFvOut 29 [] [(s2Step31ExitGvRow,28)] [[]] [s2Step31ExitGvOut]
+    (shrinkRow 770 s2Step31ExitFvExtra) ((shrinkRow 771 s2Step31ExitGvExtra ++ [])) s2Step31ExitFv_Incoming s2Step31ExitFv_checked h3 s2Step31ExitFv_Outgoing
+  have h1 := planWindowRowsLog_of_cons s2Step31ExitFBefore s2Step31ExitFAfter s2Step31ExitGvAfter
+    s2Step31ExitFRow s2Step31ExitFOut 253 [] [(s2Step31ExitFvRow,29),(s2Step31ExitGvRow,28)] [[],[]] [s2Step31ExitFvOut,s2Step31ExitGvOut]
+    (shrinkRow 768 s2Step31ExitFExtra) ((shrinkRow 770 s2Step31ExitFvExtra ++ (shrinkRow 771 s2Step31ExitGvExtra ++ []))) s2Step31ExitF_Incoming s2Step31ExitF_checked h2 s2Step31ExitF_Outgoing
+  have h0 := planWindowRowsLog_of_cons s2Step31ExitGBefore s2Step31ExitGAfter s2Step31ExitGvAfter
+    s2Step31ExitGRow s2Step31ExitGOut 251 [] [(s2Step31ExitFRow,253),(s2Step31ExitFvRow,29),(s2Step31ExitGvRow,28)] [[],[],[]] [s2Step31ExitFOut,s2Step31ExitFvOut,s2Step31ExitGvOut]
+    (shrinkRow 769 s2Step31ExitGExtra) ((shrinkRow 768 s2Step31ExitFExtra ++ (shrinkRow 770 s2Step31ExitFvExtra ++ (shrinkRow 771 s2Step31ExitGvExtra ++ [])))) s2Step31ExitG_Incoming s2Step31ExitG_checked h1 s2Step31ExitG_Outgoing
   exact h0
-theorem s6Step14ExitBank_checked : compileHmrBankResizeLog .exit s6Step14ExitGBefore ⟨s6Step14ExitFRow,s6Step14ExitGRow,s6Step14ExitFvRow,s6Step14ExitGvRow⟩ ⟨256,255,16,14⟩ [[],[],[],[]]=
-    some (s6Step14ExitGvAfter,⟨s6Step14ExitFOut,s6Step14ExitGOut,s6Step14ExitFvOut,s6Step14ExitGvOut⟩,(shrinkRow 777 s6Step14ExitGExtra ++ (shrinkRow 795 s6Step14ExitFExtra ++ (growRow 776 [] ++ (shrinkRow 775 s6Step14ExitGvExtra ++ []))))) := by
+theorem s2Step31ExitBank_checked : compileHmrBankResizeLog .exit s2Step31ExitGBefore ⟨s2Step31ExitFRow,s2Step31ExitGRow,s2Step31ExitFvRow,s2Step31ExitGvRow⟩ ⟨253,251,29,28⟩ [[],[],[],[]]=
+    some (s2Step31ExitGvAfter,⟨s2Step31ExitFOut,s2Step31ExitGOut,s2Step31ExitFvOut,s2Step31ExitGvOut⟩,(shrinkRow 769 s2Step31ExitGExtra ++ (shrinkRow 768 s2Step31ExitFExtra ++ (shrinkRow 770 s2Step31ExitFvExtra ++ (shrinkRow 771 s2Step31ExitGvExtra ++ []))))) := by
   unfold compileHmrBankResizeLog
   simp only [HmrBankOrder.requests]
-  rw [s6Step14ExitBank_rows]
+  rw [s2Step31ExitBank_rows]
   rfl
 
 end ECDSAAdd.Arithmetic.Paper935

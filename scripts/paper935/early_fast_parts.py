@@ -1,4 +1,5 @@
 """Exact control checks from small guards and symbolic arena transactions."""
+from interval_predicates import compact_predicate
 from early_parts import generate_early_parts
 from control_trace import early_control_log,replay
 
@@ -18,11 +19,18 @@ def generate_fast_early_parts(stage,name,arena):
         for q in sorted(live[suffix]):
             if rs and rs[-1][1]==q:rs[-1][1]=q+1
             else:rs.append([q,q+1])
-        return ' ∨ '.join(f'({a}≤q ∧ q<{b})' for a,b in rs) or 'False'
+        return compact_predicate(' ∨ '.join(f'({a}≤q ∧ q<{b})' for a,b in rs) or 'False')
     def owned(label,A,qs):
         lines.extend([f'private theorem {name}_{label} : ({qs} : List Wire).toFinset⊆{name}{A}.live := by',
           f'  apply hmrLayout_owned_of_filter {name}{A} (fun q => {pred(A)}) rfl','  decide +kernel'])
     def liveproof(A,B,extra,empty=False):
+        if any('.any' in pred(x) for x in (A,B)):
+            if B in ('SigmaArena','OutputArena'):
+                work=str([sigma if B=='SigmaArena' else branch])
+                return [f'  · apply hmrArena_diff_of_filter_check {name}{A} {name}{B} (fun q => {pred(A)}) (fun q => {pred(B)}) {work} rfl rfl', '    decide +kernel']
+            field={'ZeroArena':'zeroWork','PositiveArena':'positiveWork','EqualityArena':'classWork','FlagArena':'flagWork','FittedArena':'recordFresh','HistoryArena':'recordFresh'}[B]
+            return [f'  · apply hmrArena_union_of_filter_check {name}{A} {name}{B} (fun q => {pred(A)}) (fun q => {pred(B)}) {name}Log.{field} rfl rfl',
+                f'    · norm_num [{name}Log,arenaWires,Finset.insert_subset_iff]', '    · decide +kernel']
         result=['  · ext q',f'    simp [{name}{B},{name}{A}'+('' if B in ('SigmaArena','OutputArena') else f',{name}Log')+',arenaWires'+extra+']']
         if not empty:result+=['    simp only [Wire] at *','    omega']
         return result

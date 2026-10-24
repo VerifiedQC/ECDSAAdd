@@ -1,5 +1,6 @@
 """Compose the two observed hybrid calls and their shared flag/carry borrows."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate, live_ranges
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
@@ -14,7 +15,10 @@ for phase in ('s2-walkA','s6-walkC'):
         base=phase[:2]+'Step'+str(t);name=base+'F4';first=base+'Add0';second=base+'Add1';H=base+'HeadFvAfter'
         swap,control=stage['retained_flags'];u,k=stage['calls'][0]['cin'],stage['calls'][0]['carry']
         a0,b0,a1,b1=first+'A',first+'B',second+'A',second+'B'
-        pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in resize['resizes'][-1]['live_after'])
+        pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in resize['resizes'][-1]['live_after']))
+        first_live={q for lo,hi in resize['resizes'][-1]['live_after'] for q in range(lo,hi)}|{u,k}
+        first_ranges=live_ranges(first_live)
+        large=max(len(first_ranges),len(resize['resizes'][-1]['live_after']))>30
         lines += [f'def {name}FlagArena : Arena := ⟨{H}.live∪{{{u}}},Finset.union_subset {H}.bounded (by norm_num [arenaWires])⟩',
                   f'theorem {name}_flag : {H}.checkBorrow 1 [{u}]=some {name}FlagArena := by',
                   '  unfold Arena.checkBorrow', '  rw [if_pos (by decide)]', '  apply hmrArena_reserve_of_live',
@@ -22,8 +26,11 @@ for phase in ('s2-walkA','s6-walkC'):
                   f'theorem {name}_carry : {name}FlagArena.checkBorrow 1 [{k}]=some {first}Arena := by',
                   '  unfold Arena.checkBorrow','  rw [if_pos (by decide)]', '  apply hmrArena_reserve_of_live',
                   '  · norm_num [arenaWires]',f'  · norm_num [{name}FlagArena,{H},arenaWires]',
+                  *([f'  · change {first}Arena.live=({H}.live∪{{{u}}})∪{{{k}}}',
+                     f'    apply hmrArena_union_pair_of_filter_check {H} {first}Arena (fun q => {pred}) (fun q => {interval_predicate(first_ranges)}) {u} {k} rfl rfl',
+                     '    · norm_num [arenaWires,Finset.insert_subset_iff]', '    · decide +kernel'] if large else [
                   '  · ext q',f'    simp only [{name}FlagArena,{H},{first}Arena,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]',
-                  '    simp only [Wire] at *','    omega',
+                  '    simp only [Wire] at *','    omega']),
                   f'theorem {name}_owned : ({swap}::{control}::(({a0}++{a1})++({b0}++{b1}))).toFinset⊆{H}.live := by',
                   f'  apply hmrLayout_owned_of_filter {H} (fun q => {pred}) rfl','  decide +kernel',
                   f'theorem {name}_distinct : ({swap}::{control}::{u}::{k}::(({a0}++{a1})++({b0}++{b1}))).Nodup := by',

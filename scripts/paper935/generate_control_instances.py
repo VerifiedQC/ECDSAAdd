@@ -1,4 +1,5 @@
 """Generate selected F7/F16 checks from observed addresses, not an allocator."""
+from interval_predicates import compact_predicate
 import gzip
 import json
 from pathlib import Path
@@ -13,7 +14,7 @@ def intervals(live):
     for q in sorted(live):
         if rs and rs[-1][1]==q:rs[-1][1]=q+1
         else:rs.append([q,q+1])
-    return ' ∨ '.join(f'({a} ≤ q ∧ q < {b})' for a,b in rs) or 'False'
+    return compact_predicate(' ∨ '.join(f'({a} ≤ q ∧ q < {b})' for a,b in rs) or 'False')
 def arena(name,live):
     return [f'def {name} : Arena :=',f'  ⟨arenaWires.filter (fun q => {intervals(live)}),Finset.filter_subset _ _⟩','']
 def lit(q,pol):return f'⟨{q},{str(pol).lower()}⟩'
@@ -85,11 +86,14 @@ for phase in ('s2-walkA','s6-walkC'):
         module='HmrSource'+phase[:2].upper()+'EarlyControl'+str(offset//8)
         early_imports.append('import ECDSAAdd.Arithmetic.Paper935.'+module)
         early=['import ECDSAAdd.Arithmetic.Paper935.HmrControlCheckParts',
+               'import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks',
                'import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition',
                'import ECDSAAdd.Arithmetic.Paper935.HmrControlDecidable','',
                'namespace ECDSAAdd.Arithmetic.Paper935','',
                'local instance '+module+'Disjoint (xs ys : List Wire) : Decidable (List.Disjoint xs ys) :=',
                '  decidable_of_iff (∀ q ∈ xs, q ∉ ys) List.disjoint_left.symm','']
+        if offset:
+            early.insert(0,'import ECDSAAdd.Arithmetic.Paper935.HmrSource'+phase[:2].upper()+'EarlyControl'+str(offset//8-1))
         for t in selected[offset:offset+8]:
             stage=next(s for s in data['stages'] if s['phase']==phase and s['step']==t)
             name=phase[:2]+('First' if t==0 else 'Step'+str(t))+'EarlyControl'

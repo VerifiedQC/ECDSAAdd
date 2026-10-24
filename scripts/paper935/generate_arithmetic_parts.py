@@ -1,5 +1,6 @@
 """Split source hybrid-addition acceptance into layout and borrow certificates."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, take
@@ -19,7 +20,7 @@ for phase in ('s2-walkA','s6-walkC'):
             for q in sorted(live):
                 if intervals and intervals[-1][1]==q: intervals[-1][1]=q+1
                 else: intervals.append([q,q+1])
-            pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in intervals)
+            pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in intervals))
             work=take(stage['events'][call['start']:call['end']])
             a,b,u,c,k=call['source'],call['target'],call['cin'],call['control'],call['carry']
             lines += [f'def {name}Arena : Arena := ⟨arenaWires.filter (fun q => {pred}),Finset.filter_subset _ _⟩',

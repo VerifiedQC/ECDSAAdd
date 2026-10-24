@@ -1,5 +1,6 @@
 """Compose the selected observed row certificates into bank transactions."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
@@ -22,7 +23,7 @@ for phase in ('s2-walkA','s6-walkC'):
             if not exit_mode: lines += [f'def {n}Out : WindowRow := ⟨{r["after"]},{r["sign"]}⟩']
         def l(xs): return '['+','.join(xs)+']'
         incoming=l([n+'Row' for n in ns]);outgoing=l([n+'Out' for n in ns])
-        pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in rows[-1]['live_after'])
+        pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in rows[-1]['live_after']))
         lines += [f'theorem {name}_incomingDistinct : ({incoming}.flatMap WindowRow.wires).Nodup := by',
                   '  apply hmrLayout_nodup_of_sorted','  decide +kernel',
                   f'theorem {name}_outgoingOwned : rowsOwned {final} {outgoing} := by',
@@ -30,7 +31,7 @@ for phase in ('s2-walkA','s6-walkC'):
                   f'  · apply hmrLayout_owned_of_filter {final} (fun q => {pred}) rfl','    decide +kernel']
         for i,(n,r) in enumerate(zip(ns,rows)):
             rs=l([x+'Row' for x in ns[i:]])
-            pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in r['live_before'])
+            pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in r['live_before']))
             lines += [f'theorem {n}_Incoming : rowsOwned {n}Before {rs} := by',
                       '  constructor',f'  · exact hmrRows_distinct_drop {incoming} {i} {name}_incomingDistinct',
                       f'  · apply hmrLayout_owned_of_filter {n}Before (fun q => {pred}) rfl','    decide +kernel',

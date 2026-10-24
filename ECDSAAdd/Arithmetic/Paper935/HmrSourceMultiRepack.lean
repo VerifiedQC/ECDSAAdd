@@ -1,4 +1,5 @@
 import ECDSAAdd.Arithmetic.Paper935.HmrRepackComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaFiniteChecks
 import ECDSAAdd.Arithmetic.Paper935.HmrSortedLayout
 namespace ECDSAAdd.Arithmetic.Paper935
 def s2Step24MultiRepackBefore : Arena := ⟨arenaWires.filter (fun q => ([(0,254),(255,767),(768,780),(781,782),(785,839),(843,844),(848,849)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true),Finset.filter_subset _ _⟩
@@ -105,12 +106,11 @@ theorem s6Step24MultiRepack_move0_reserve : s6Step24MultiRepackBefore.reserve {2
   · norm_num [s6Step24MultiRepackBefore,arenaWires]
   · rfl
 theorem s6Step24MultiRepack_move0_retire : s6Step24MultiRepackMove0Borrowed.retireSet {876}=s6Step24MultiRepackMove0After := by
-  unfold Arena.retireSet s6Step24MultiRepackMove0After
-  simp only [Arena.mk.injEq]
-  ext q
-  simp only [s6Step24MultiRepackMove0Borrowed,s6Step24MultiRepackBefore,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
-  simp only [Wire] at *
-  omega
+  apply hmrArena_retireSet_of_live s6Step24MultiRepackMove0Borrowed s6Step24MultiRepackMove0After {876}
+  change s6Step24MultiRepackMove0After.live=(s6Step24MultiRepackBefore.live∪{254})\{876}
+  apply hmrArena_update_of_filter_check s6Step24MultiRepackBefore s6Step24MultiRepackMove0After (fun q => ([(0,254),(255,511),(512,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,860),(863,866),(868,871),(872,877),(880,881),(882,884),(886,887),(888,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,511),(512,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,860),(863,866),(868,871),(872,876),(880,881),(882,884),(886,887),(888,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) [254] [876] rfl rfl
+  · norm_num [arenaWires]
+  · decide +kernel
 def s6Step24MultiRepackMove1Borrowed : Arena := ⟨s6Step24MultiRepackMove0After.live∪{511},Finset.union_subset s6Step24MultiRepackMove0After.bounded (by norm_num [arenaWires])⟩
 theorem s6Step24MultiRepack_move1_owned : 859∈s6Step24MultiRepackMove0After.live := by norm_num [s6Step24MultiRepackMove0After,arenaWires]
 theorem s6Step24MultiRepack_move1_reserve : s6Step24MultiRepackMove0After.reserve {511}=some s6Step24MultiRepackMove1Borrowed := by
@@ -119,12 +119,11 @@ theorem s6Step24MultiRepack_move1_reserve : s6Step24MultiRepackMove0After.reserv
   · norm_num [s6Step24MultiRepackMove0After,arenaWires]
   · rfl
 theorem s6Step24MultiRepack_move1_retire : s6Step24MultiRepackMove1Borrowed.retireSet {859}=s6Step24MultiRepackAfter := by
-  unfold Arena.retireSet s6Step24MultiRepackAfter
-  simp only [Arena.mk.injEq]
-  ext q
-  simp only [s6Step24MultiRepackMove1Borrowed,s6Step24MultiRepackMove0After,arenaWires,Finset.mem_sdiff,Finset.mem_union,Finset.mem_singleton,Finset.mem_filter,Finset.mem_range,List.any_cons,List.any_nil,Bool.or_eq_true,Bool.false_eq_true,or_false,decide_eq_true_eq]
-  simp only [Wire] at *
-  omega
+  apply hmrArena_retireSet_of_live s6Step24MultiRepackMove1Borrowed s6Step24MultiRepackAfter {859}
+  change s6Step24MultiRepackAfter.live=(s6Step24MultiRepackMove0After.live∪{511})\{859}
+  apply hmrArena_update_of_filter_check s6Step24MultiRepackMove0After s6Step24MultiRepackAfter (fun q => ([(0,511),(512,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,860),(863,866),(868,871),(872,876),(880,881),(882,884),(886,887),(888,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) (fun q => ([(0,781),(789,790),(793,797),(799,800),(802,803),(805,806),(813,815),(818,819),(821,824),(828,829),(830,832),(833,834),(838,840),(841,842),(843,844),(845,846),(848,849),(850,851),(852,853),(854,855),(856,859),(863,866),(868,871),(872,876),(880,881),(882,884),(886,887),(888,889),(890,891),(892,893),(895,896),(898,899),(907,909),(910,912),(927,928)] : List (Nat × Nat)).any (fun r => decide (r.1≤q ∧ q<r.2)) = true) [511] [859] rfl rfl
+  · norm_num [arenaWires]
+  · decide +kernel
 theorem s6Step24MultiRepack_checked : s6Step24MultiRepackBefore.checkRepack [(876,254),(859,511)]=some s6Step24MultiRepackAfter := by
   have tail2 : s6Step24MultiRepackAfter.checkRepack []=some s6Step24MultiRepackAfter := rfl
   have tail1 := Arena.checkRepack_cons_of_parts s6Step24MultiRepackMove0After s6Step24MultiRepackMove1Borrowed s6Step24MultiRepackAfter s6Step24MultiRepackAfter 859 511 []

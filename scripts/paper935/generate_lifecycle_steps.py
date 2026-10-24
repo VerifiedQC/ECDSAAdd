@@ -1,5 +1,6 @@
 """Connect selected complete steps to the source metadata-lifetime scheduler."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load
@@ -18,7 +19,7 @@ for phase in ('s2-walkA','s6-walkC'):
         qs=ctl['counter'];ts=ctl['timestamp'];record=ctl['record_before'];frozen=ctl['frozen'];need=ctl['record_fits'][0]['need']
         if t==498:
             stage=next(s for s in a if (s['phase'],s['step'],s['stage'])==(phase,t,'add'))
-            pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in stage['live_before'])
+            pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in stage['live_before']))
             lines += [f'theorem {name}_arm : compileHmrArmLog {before} 6 {M}=some {A} := by',
                       '  unfold compileHmrArmLog Arena.checkBorrow', '  rw [if_pos (by decide +kernel)]',
                       '  apply hmrArena_reserve_of_live',
@@ -26,7 +27,7 @@ for phase in ('s2-walkA','s6-walkC'):
                       f'  · apply hmrLayout_disjoint_of_filter {before} (fun q => {pred}) rfl', '    decide +kernel',
                       '  · ext q',f'    simp only [{A},{before},{M},HmrFreezeMetadata.wires,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,List.toFinset_append,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]',
                       '    simp only [Wire] at *','    omega']
-            postpred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in entry['resizes'][0]['live_before'])
+            postpred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in entry['resizes'][0]['live_before']))
             lines += [f'theorem {name}_timestampOwned : ({ts} : List Wire).toFinset⊆{A}.live := by',
                       f'  apply hmrLayout_owned_of_filter {A} (fun q => {postpred}) rfl','  decide +kernel',
                       f'theorem {name}_timestampApart : List.Disjoint {ts} ({front}Bank.rows.flatMap WindowRow.wires++{qs}) := by',

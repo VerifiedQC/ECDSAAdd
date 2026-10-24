@@ -4,293 +4,293 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceHeadroomParts
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceCounterPartsChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s2Step498CounterWork : List Wire := [921, 922, 923, 924, 925]
-theorem s2Step498Counter_bounded : s2Step498CounterWork.toFinset⊆arenaWires := by norm_num [s2Step498CounterWork,arenaWires,Finset.insert_subset_iff]
-def s2Step498CounterDuring : Arena := ⟨s2Step498HeadFvAfter.live∪s2Step498CounterWork.toFinset,Finset.union_subset s2Step498HeadFvAfter.bounded s2Step498Counter_bounded⟩
-theorem s2Step498Counter_apart : Disjoint s2Step498HeadFvAfter.live s2Step498CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s2Step498HeadFvAfter (fun q => (0≤q ∧ q<921)) rfl
+def s2Step16CounterWork : List Wire := [821, 822, 824, 825]
+theorem s2Step16Counter_bounded : s2Step16CounterWork.toFinset⊆arenaWires := by norm_num [s2Step16CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step16CounterDuring : Arena := ⟨s2Step16HeadFvAfter.live∪s2Step16CounterWork.toFinset,Finset.union_subset s2Step16HeadFvAfter.bounded s2Step16Counter_bounded⟩
+theorem s2Step16Counter_apart : Disjoint s2Step16HeadFvAfter.live s2Step16CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step16HeadFvAfter (fun q => (0≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Counter_owned : (914::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step498HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s2Step498HeadFvAfter (fun q => (0≤q ∧ q<921)) rfl
+theorem s2Step16Counter_owned : (816::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step16HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step16HeadFvAfter (fun q => (0≤q ∧ q<821) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Counter_borrowed : s2Step498HeadFvAfter.checkBorrow 5 s2Step498CounterWork=some s2Step498CounterDuring := by
+theorem s2Step16Counter_borrowed : s2Step16HeadFvAfter.checkBorrow 4 s2Step16CounterWork=some s2Step16CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s2Step498HeadFvAfter s2Step498CounterDuring s2Step498CounterWork.toFinset s2Step498Counter_bounded s2Step498Counter_apart rfl
-theorem s2Step498Counter_checked : compileHmrCounterStepLog s2Step498HeadFvAfter false 914 [772, 773, 774, 775, 776, 777] s2Step498CounterWork=some s2Step498CounterDuring := by
-  have owned : ∀q∈914::[772, 773, 774, 775, 776, 777],q∈s2Step498HeadFvAfter.live := fun q hq => s2Step498Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step16HeadFvAfter s2Step16CounterDuring s2Step16CounterWork.toFinset s2Step16Counter_bounded s2Step16Counter_apart rfl
+theorem s2Step16Counter_checked : compileHmrCounterStepLog s2Step16HeadFvAfter true 816 [772, 773, 774, 775, 776, 777] s2Step16CounterWork=some s2Step16CounterDuring := by
+  have owned : ∀q∈816::[772, 773, 774, 775, 776, 777],q∈s2Step16HeadFvAfter.live := fun q hq => s2Step16Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s2Step498Counter_borrowed
-def s6Step0CounterWork : List Wire := [874, 793, 927, 802]
-theorem s6Step0Counter_bounded : s6Step0CounterWork.toFinset⊆arenaWires := by norm_num [s6Step0CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step0CounterDuring : Arena := ⟨s6Step0HeadFvAfter.live∪s6Step0CounterWork.toFinset,Finset.union_subset s6Step0HeadFvAfter.bounded s6Step0Counter_bounded⟩
-theorem s6Step0Counter_apart : Disjoint s6Step0HeadFvAfter.live s6Step0CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step0HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+  exact s2Step16Counter_borrowed
+def s2Step17CounterWork : List Wire := [824, 825, 826, 827]
+theorem s2Step17Counter_bounded : s2Step17CounterWork.toFinset⊆arenaWires := by norm_num [s2Step17CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step17CounterDuring : Arena := ⟨s2Step17HeadFvAfter.live∪s2Step17CounterWork.toFinset,Finset.union_subset s2Step17HeadFvAfter.bounded s2Step17Counter_bounded⟩
+theorem s2Step17Counter_apart : Disjoint s2Step17HeadFvAfter.live s2Step17CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step17HeadFvAfter (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Counter_owned : (887::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step0HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step0HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step17Counter_owned : (819::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step17HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step17HeadFvAfter (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Counter_borrowed : s6Step0HeadFvAfter.checkBorrow 4 s6Step0CounterWork=some s6Step0CounterDuring := by
+theorem s2Step17Counter_borrowed : s2Step17HeadFvAfter.checkBorrow 4 s2Step17CounterWork=some s2Step17CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step0HeadFvAfter s6Step0CounterDuring s6Step0CounterWork.toFinset s6Step0Counter_bounded s6Step0Counter_apart rfl
-theorem s6Step0Counter_checked : compileHmrCounterStepLog s6Step0HeadFvAfter true 887 [774, 773, 772, 771, 770, 769] s6Step0CounterWork=some s6Step0CounterDuring := by
-  have owned : ∀q∈887::[774, 773, 772, 771, 770, 769],q∈s6Step0HeadFvAfter.live := fun q hq => s6Step0Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step17HeadFvAfter s2Step17CounterDuring s2Step17CounterWork.toFinset s2Step17Counter_bounded s2Step17Counter_apart rfl
+theorem s2Step17Counter_checked : compileHmrCounterStepLog s2Step17HeadFvAfter true 819 [772, 773, 774, 775, 776, 777] s2Step17CounterWork=some s2Step17CounterDuring := by
+  have owned : ∀q∈819::[772, 773, 774, 775, 776, 777],q∈s2Step17HeadFvAfter.live := fun q hq => s2Step17Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step0Counter_borrowed
-def s6Step1CounterWork : List Wire := [927, 802, 875, 779]
-theorem s6Step1Counter_bounded : s6Step1CounterWork.toFinset⊆arenaWires := by norm_num [s6Step1CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step1CounterDuring : Arena := ⟨s6Step1HeadFvAfter.live∪s6Step1CounterWork.toFinset,Finset.union_subset s6Step1HeadFvAfter.bounded s6Step1Counter_bounded⟩
-theorem s6Step1Counter_apart : Disjoint s6Step1HeadFvAfter.live s6Step1CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+  exact s2Step17Counter_borrowed
+def s2Step18CounterWork : List Wire := [826, 827, 829, 830]
+theorem s2Step18Counter_bounded : s2Step18CounterWork.toFinset⊆arenaWires := by norm_num [s2Step18CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step18CounterDuring : Arena := ⟨s2Step18HeadFvAfter.live∪s2Step18CounterWork.toFinset,Finset.union_subset s2Step18HeadFvAfter.bounded s2Step18Counter_bounded⟩
+theorem s2Step18Counter_apart : Disjoint s2Step18HeadFvAfter.live s2Step18CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step18HeadFvAfter (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Counter_owned : (768::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step1HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step1HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896)) rfl
+theorem s2Step18Counter_owned : (821::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step18HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step18HeadFvAfter (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Counter_borrowed : s6Step1HeadFvAfter.checkBorrow 4 s6Step1CounterWork=some s6Step1CounterDuring := by
+theorem s2Step18Counter_borrowed : s2Step18HeadFvAfter.checkBorrow 4 s2Step18CounterWork=some s2Step18CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step1HeadFvAfter s6Step1CounterDuring s6Step1CounterWork.toFinset s6Step1Counter_bounded s6Step1Counter_apart rfl
-theorem s6Step1Counter_checked : compileHmrCounterStepLog s6Step1HeadFvAfter true 768 [774, 773, 772, 771, 770, 769] s6Step1CounterWork=some s6Step1CounterDuring := by
-  have owned : ∀q∈768::[774, 773, 772, 771, 770, 769],q∈s6Step1HeadFvAfter.live := fun q hq => s6Step1Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step18HeadFvAfter s2Step18CounterDuring s2Step18CounterWork.toFinset s2Step18Counter_bounded s2Step18Counter_apart rfl
+theorem s2Step18Counter_checked : compileHmrCounterStepLog s2Step18HeadFvAfter true 821 [772, 773, 774, 775, 776, 777] s2Step18CounterWork=some s2Step18CounterDuring := by
+  have owned : ∀q∈821::[772, 773, 774, 775, 776, 777],q∈s2Step18HeadFvAfter.live := fun q hq => s2Step18Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step1Counter_borrowed
-def s6Step2CounterWork : List Wire := [875, 779, 868, 857]
-theorem s6Step2Counter_bounded : s6Step2CounterWork.toFinset⊆arenaWires := by norm_num [s6Step2CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step2CounterDuring : Arena := ⟨s6Step2HeadFvAfter.live∪s6Step2CounterWork.toFinset,Finset.union_subset s6Step2HeadFvAfter.bounded s6Step2Counter_bounded⟩
-theorem s6Step2Counter_apart : Disjoint s6Step2HeadFvAfter.live s6Step2CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step2HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step18Counter_borrowed
+def s2Step19CounterWork : List Wire := [829, 830, 831, 832]
+theorem s2Step19Counter_bounded : s2Step19CounterWork.toFinset⊆arenaWires := by norm_num [s2Step19CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step19CounterDuring : Arena := ⟨s2Step19HeadFvAfter.live∪s2Step19CounterWork.toFinset,Finset.union_subset s2Step19HeadFvAfter.bounded s2Step19Counter_bounded⟩
+theorem s2Step19Counter_apart : Disjoint s2Step19HeadFvAfter.live s2Step19CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step19HeadFvAfter (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Counter_owned : (874::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step2HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step2HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step19Counter_owned : (824::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step19HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step19HeadFvAfter (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Counter_borrowed : s6Step2HeadFvAfter.checkBorrow 4 s6Step2CounterWork=some s6Step2CounterDuring := by
+theorem s2Step19Counter_borrowed : s2Step19HeadFvAfter.checkBorrow 4 s2Step19CounterWork=some s2Step19CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step2HeadFvAfter s6Step2CounterDuring s6Step2CounterWork.toFinset s6Step2Counter_bounded s6Step2Counter_apart rfl
-theorem s6Step2Counter_checked : compileHmrCounterStepLog s6Step2HeadFvAfter true 874 [774, 773, 772, 771, 770, 769] s6Step2CounterWork=some s6Step2CounterDuring := by
-  have owned : ∀q∈874::[774, 773, 772, 771, 770, 769],q∈s6Step2HeadFvAfter.live := fun q hq => s6Step2Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step19HeadFvAfter s2Step19CounterDuring s2Step19CounterWork.toFinset s2Step19Counter_bounded s2Step19Counter_apart rfl
+theorem s2Step19Counter_checked : compileHmrCounterStepLog s2Step19HeadFvAfter true 824 [772, 773, 774, 775, 776, 777] s2Step19CounterWork=some s2Step19CounterDuring := by
+  have owned : ∀q∈824::[772, 773, 774, 775, 776, 777],q∈s2Step19HeadFvAfter.live := fun q hq => s2Step19Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step2Counter_borrowed
-def s6Step3CounterWork : List Wire := [868, 857, 907, 858]
-theorem s6Step3Counter_bounded : s6Step3CounterWork.toFinset⊆arenaWires := by norm_num [s6Step3CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step3CounterDuring : Arena := ⟨s6Step3HeadFvAfter.live∪s6Step3CounterWork.toFinset,Finset.union_subset s6Step3HeadFvAfter.bounded s6Step3Counter_bounded⟩
-theorem s6Step3Counter_apart : Disjoint s6Step3HeadFvAfter.live s6Step3CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step3HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step19Counter_borrowed
+def s2Step20CounterWork : List Wire := [831, 832, 834, 835]
+theorem s2Step20Counter_bounded : s2Step20CounterWork.toFinset⊆arenaWires := by norm_num [s2Step20CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step20CounterDuring : Arena := ⟨s2Step20HeadFvAfter.live∪s2Step20CounterWork.toFinset,Finset.union_subset s2Step20HeadFvAfter.bounded s2Step20Counter_bounded⟩
+theorem s2Step20Counter_apart : Disjoint s2Step20HeadFvAfter.live s2Step20CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step20HeadFvAfter (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Counter_owned : (927::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step3HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step3HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step20Counter_owned : (826::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step20HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step20HeadFvAfter (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Counter_borrowed : s6Step3HeadFvAfter.checkBorrow 4 s6Step3CounterWork=some s6Step3CounterDuring := by
+theorem s2Step20Counter_borrowed : s2Step20HeadFvAfter.checkBorrow 4 s2Step20CounterWork=some s2Step20CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step3HeadFvAfter s6Step3CounterDuring s6Step3CounterWork.toFinset s6Step3Counter_bounded s6Step3Counter_apart rfl
-theorem s6Step3Counter_checked : compileHmrCounterStepLog s6Step3HeadFvAfter true 927 [774, 773, 772, 771, 770, 769] s6Step3CounterWork=some s6Step3CounterDuring := by
-  have owned : ∀q∈927::[774, 773, 772, 771, 770, 769],q∈s6Step3HeadFvAfter.live := fun q hq => s6Step3Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step20HeadFvAfter s2Step20CounterDuring s2Step20CounterWork.toFinset s2Step20Counter_bounded s2Step20Counter_apart rfl
+theorem s2Step20Counter_checked : compileHmrCounterStepLog s2Step20HeadFvAfter true 826 [772, 773, 774, 775, 776, 777] s2Step20CounterWork=some s2Step20CounterDuring := by
+  have owned : ∀q∈826::[772, 773, 774, 775, 776, 777],q∈s2Step20HeadFvAfter.live := fun q hq => s2Step20Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step3Counter_borrowed
-def s6Step4CounterWork : List Wire := [907, 858, 908, 845]
-theorem s6Step4Counter_bounded : s6Step4CounterWork.toFinset⊆arenaWires := by norm_num [s6Step4CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step4CounterDuring : Arena := ⟨s6Step4HeadFvAfter.live∪s6Step4CounterWork.toFinset,Finset.union_subset s6Step4HeadFvAfter.bounded s6Step4Counter_bounded⟩
-theorem s6Step4Counter_apart : Disjoint s6Step4HeadFvAfter.live s6Step4CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step4HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step20Counter_borrowed
+def s2Step21CounterWork : List Wire := [834, 835, 836, 837]
+theorem s2Step21Counter_bounded : s2Step21CounterWork.toFinset⊆arenaWires := by norm_num [s2Step21CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step21CounterDuring : Arena := ⟨s2Step21HeadFvAfter.live∪s2Step21CounterWork.toFinset,Finset.union_subset s2Step21HeadFvAfter.bounded s2Step21Counter_bounded⟩
+theorem s2Step21Counter_apart : Disjoint s2Step21HeadFvAfter.live s2Step21CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step21HeadFvAfter (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Counter_owned : (875::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step4HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step4HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step21Counter_owned : (829::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step21HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step21HeadFvAfter (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Counter_borrowed : s6Step4HeadFvAfter.checkBorrow 4 s6Step4CounterWork=some s6Step4CounterDuring := by
+theorem s2Step21Counter_borrowed : s2Step21HeadFvAfter.checkBorrow 4 s2Step21CounterWork=some s2Step21CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step4HeadFvAfter s6Step4CounterDuring s6Step4CounterWork.toFinset s6Step4Counter_bounded s6Step4Counter_apart rfl
-theorem s6Step4Counter_checked : compileHmrCounterStepLog s6Step4HeadFvAfter true 875 [774, 773, 772, 771, 770, 769] s6Step4CounterWork=some s6Step4CounterDuring := by
-  have owned : ∀q∈875::[774, 773, 772, 771, 770, 769],q∈s6Step4HeadFvAfter.live := fun q hq => s6Step4Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step21HeadFvAfter s2Step21CounterDuring s2Step21CounterWork.toFinset s2Step21Counter_bounded s2Step21Counter_apart rfl
+theorem s2Step21Counter_checked : compileHmrCounterStepLog s2Step21HeadFvAfter true 829 [772, 773, 774, 775, 776, 777] s2Step21CounterWork=some s2Step21CounterDuring := by
+  have owned : ∀q∈829::[772, 773, 774, 775, 776, 777],q∈s2Step21HeadFvAfter.live := fun q hq => s2Step21Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step4Counter_borrowed
-def s6Step5CounterWork : List Wire := [908, 845, 890, 805]
-theorem s6Step5Counter_bounded : s6Step5CounterWork.toFinset⊆arenaWires := by norm_num [s6Step5CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step5CounterDuring : Arena := ⟨s6Step5HeadFvAfter.live∪s6Step5CounterWork.toFinset,Finset.union_subset s6Step5HeadFvAfter.bounded s6Step5Counter_bounded⟩
-theorem s6Step5Counter_apart : Disjoint s6Step5HeadFvAfter.live s6Step5CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step5HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step21Counter_borrowed
+def s2Step22CounterWork : List Wire := [836, 837, 839, 840]
+theorem s2Step22Counter_bounded : s2Step22CounterWork.toFinset⊆arenaWires := by norm_num [s2Step22CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step22CounterDuring : Arena := ⟨s2Step22HeadFvAfter.live∪s2Step22CounterWork.toFinset,Finset.union_subset s2Step22HeadFvAfter.bounded s2Step22Counter_bounded⟩
+theorem s2Step22Counter_apart : Disjoint s2Step22HeadFvAfter.live s2Step22CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step22HeadFvAfter (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Counter_owned : (868::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step5HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step5HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step22Counter_owned : (831::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step22HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step22HeadFvAfter (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Counter_borrowed : s6Step5HeadFvAfter.checkBorrow 4 s6Step5CounterWork=some s6Step5CounterDuring := by
+theorem s2Step22Counter_borrowed : s2Step22HeadFvAfter.checkBorrow 4 s2Step22CounterWork=some s2Step22CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step5HeadFvAfter s6Step5CounterDuring s6Step5CounterWork.toFinset s6Step5Counter_bounded s6Step5Counter_apart rfl
-theorem s6Step5Counter_checked : compileHmrCounterStepLog s6Step5HeadFvAfter true 868 [774, 773, 772, 771, 770, 769] s6Step5CounterWork=some s6Step5CounterDuring := by
-  have owned : ∀q∈868::[774, 773, 772, 771, 770, 769],q∈s6Step5HeadFvAfter.live := fun q hq => s6Step5Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step22HeadFvAfter s2Step22CounterDuring s2Step22CounterWork.toFinset s2Step22Counter_bounded s2Step22Counter_apart rfl
+theorem s2Step22Counter_checked : compileHmrCounterStepLog s2Step22HeadFvAfter true 831 [772, 773, 774, 775, 776, 777] s2Step22CounterWork=some s2Step22CounterDuring := by
+  have owned : ∀q∈831::[772, 773, 774, 775, 776, 777],q∈s2Step22HeadFvAfter.live := fun q hq => s2Step22Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step5Counter_borrowed
-def s6Step6CounterWork : List Wire := [890, 805, 873, 796]
-theorem s6Step6Counter_bounded : s6Step6CounterWork.toFinset⊆arenaWires := by norm_num [s6Step6CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step6CounterDuring : Arena := ⟨s6Step6HeadFvAfter.live∪s6Step6CounterWork.toFinset,Finset.union_subset s6Step6HeadFvAfter.bounded s6Step6Counter_bounded⟩
-theorem s6Step6Counter_apart : Disjoint s6Step6HeadFvAfter.live s6Step6CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step6HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step22Counter_borrowed
+def s2Step23CounterWork : List Wire := [839, 840, 841, 842]
+theorem s2Step23Counter_bounded : s2Step23CounterWork.toFinset⊆arenaWires := by norm_num [s2Step23CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step23CounterDuring : Arena := ⟨s2Step23HeadFvAfter.live∪s2Step23CounterWork.toFinset,Finset.union_subset s2Step23HeadFvAfter.bounded s2Step23Counter_bounded⟩
+theorem s2Step23Counter_apart : Disjoint s2Step23HeadFvAfter.live s2Step23CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step23HeadFvAfter (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Counter_owned : (907::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step6HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step6HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step23Counter_owned : (834::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step23HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step23HeadFvAfter (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Counter_borrowed : s6Step6HeadFvAfter.checkBorrow 4 s6Step6CounterWork=some s6Step6CounterDuring := by
+theorem s2Step23Counter_borrowed : s2Step23HeadFvAfter.checkBorrow 4 s2Step23CounterWork=some s2Step23CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step6HeadFvAfter s6Step6CounterDuring s6Step6CounterWork.toFinset s6Step6Counter_bounded s6Step6Counter_apart rfl
-theorem s6Step6Counter_checked : compileHmrCounterStepLog s6Step6HeadFvAfter true 907 [774, 773, 772, 771, 770, 769] s6Step6CounterWork=some s6Step6CounterDuring := by
-  have owned : ∀q∈907::[774, 773, 772, 771, 770, 769],q∈s6Step6HeadFvAfter.live := fun q hq => s6Step6Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step23HeadFvAfter s2Step23CounterDuring s2Step23CounterWork.toFinset s2Step23Counter_bounded s2Step23Counter_apart rfl
+theorem s2Step23Counter_checked : compileHmrCounterStepLog s2Step23HeadFvAfter true 834 [772, 773, 774, 775, 776, 777] s2Step23CounterWork=some s2Step23CounterDuring := by
+  have owned : ∀q∈834::[772, 773, 774, 775, 776, 777],q∈s2Step23HeadFvAfter.live := fun q hq => s2Step23Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step6Counter_borrowed
-def s6Step7CounterWork : List Wire := [873, 796, 863, 856]
-theorem s6Step7Counter_bounded : s6Step7CounterWork.toFinset⊆arenaWires := by norm_num [s6Step7CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step7CounterDuring : Arena := ⟨s6Step7HeadFvAfter.live∪s6Step7CounterWork.toFinset,Finset.union_subset s6Step7HeadFvAfter.bounded s6Step7Counter_bounded⟩
-theorem s6Step7Counter_apart : Disjoint s6Step7HeadFvAfter.live s6Step7CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step7HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step23Counter_borrowed
+def s2Step24CounterWork : List Wire := [841, 842, 844, 845]
+theorem s2Step24Counter_bounded : s2Step24CounterWork.toFinset⊆arenaWires := by norm_num [s2Step24CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step24CounterDuring : Arena := ⟨s2Step24HeadFvAfter.live∪s2Step24CounterWork.toFinset,Finset.union_subset s2Step24HeadFvAfter.bounded s2Step24Counter_bounded⟩
+theorem s2Step24Counter_apart : Disjoint s2Step24HeadFvAfter.live s2Step24CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step24HeadFvAfter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Counter_owned : (908::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step7HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step7HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step24Counter_owned : (836::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step24HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step24HeadFvAfter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Counter_borrowed : s6Step7HeadFvAfter.checkBorrow 4 s6Step7CounterWork=some s6Step7CounterDuring := by
+theorem s2Step24Counter_borrowed : s2Step24HeadFvAfter.checkBorrow 4 s2Step24CounterWork=some s2Step24CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step7HeadFvAfter s6Step7CounterDuring s6Step7CounterWork.toFinset s6Step7Counter_bounded s6Step7Counter_apart rfl
-theorem s6Step7Counter_checked : compileHmrCounterStepLog s6Step7HeadFvAfter true 908 [774, 773, 772, 771, 770, 769] s6Step7CounterWork=some s6Step7CounterDuring := by
-  have owned : ∀q∈908::[774, 773, 772, 771, 770, 769],q∈s6Step7HeadFvAfter.live := fun q hq => s6Step7Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step24HeadFvAfter s2Step24CounterDuring s2Step24CounterWork.toFinset s2Step24Counter_bounded s2Step24Counter_apart rfl
+theorem s2Step24Counter_checked : compileHmrCounterStepLog s2Step24HeadFvAfter true 836 [772, 773, 774, 775, 776, 777] s2Step24CounterWork=some s2Step24CounterDuring := by
+  have owned : ∀q∈836::[772, 773, 774, 775, 776, 777],q∈s2Step24HeadFvAfter.live := fun q hq => s2Step24Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step7Counter_borrowed
-def s6Step8CounterWork : List Wire := [863, 856, 823, 865]
-theorem s6Step8Counter_bounded : s6Step8CounterWork.toFinset⊆arenaWires := by norm_num [s6Step8CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step8CounterDuring : Arena := ⟨s6Step8HeadFvAfter.live∪s6Step8CounterWork.toFinset,Finset.union_subset s6Step8HeadFvAfter.bounded s6Step8Counter_bounded⟩
-theorem s6Step8Counter_apart : Disjoint s6Step8HeadFvAfter.live s6Step8CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step8HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step24Counter_borrowed
+def s2Step25CounterWork : List Wire := [783, 782, 841, 842]
+theorem s2Step25Counter_bounded : s2Step25CounterWork.toFinset⊆arenaWires := by norm_num [s2Step25CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step25CounterDuring : Arena := ⟨s2Step25HeadFvAfter.live∪s2Step25CounterWork.toFinset,Finset.union_subset s2Step25HeadFvAfter.bounded s2Step25Counter_bounded⟩
+theorem s2Step25Counter_apart : Disjoint s2Step25HeadFvAfter.live s2Step25CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step25HeadFvAfter (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Counter_owned : (890::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step8HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step8HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step25Counter_owned : (779::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step25HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step25HeadFvAfter (fun q => (0≤q ∧ q<782) ∨ (784≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Counter_borrowed : s6Step8HeadFvAfter.checkBorrow 4 s6Step8CounterWork=some s6Step8CounterDuring := by
+theorem s2Step25Counter_borrowed : s2Step25HeadFvAfter.checkBorrow 4 s2Step25CounterWork=some s2Step25CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step8HeadFvAfter s6Step8CounterDuring s6Step8CounterWork.toFinset s6Step8Counter_bounded s6Step8Counter_apart rfl
-theorem s6Step8Counter_checked : compileHmrCounterStepLog s6Step8HeadFvAfter true 890 [774, 773, 772, 771, 770, 769] s6Step8CounterWork=some s6Step8CounterDuring := by
-  have owned : ∀q∈890::[774, 773, 772, 771, 770, 769],q∈s6Step8HeadFvAfter.live := fun q hq => s6Step8Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step25HeadFvAfter s2Step25CounterDuring s2Step25CounterWork.toFinset s2Step25Counter_bounded s2Step25Counter_apart rfl
+theorem s2Step25Counter_checked : compileHmrCounterStepLog s2Step25HeadFvAfter true 779 [772, 773, 774, 775, 776, 777] s2Step25CounterWork=some s2Step25CounterDuring := by
+  have owned : ∀q∈779::[772, 773, 774, 775, 776, 777],q∈s2Step25HeadFvAfter.live := fun q hq => s2Step25Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step8Counter_borrowed
-def s6Step9CounterWork : List Wire := [823, 865, 880, 789]
-theorem s6Step9Counter_bounded : s6Step9CounterWork.toFinset⊆arenaWires := by norm_num [s6Step9CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step9CounterDuring : Arena := ⟨s6Step9HeadFvAfter.live∪s6Step9CounterWork.toFinset,Finset.union_subset s6Step9HeadFvAfter.bounded s6Step9Counter_bounded⟩
-theorem s6Step9Counter_apart : Disjoint s6Step9HeadFvAfter.live s6Step9CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step9HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step25Counter_borrowed
+def s2Step26CounterWork : List Wire := [841, 842, 844, 845]
+theorem s2Step26Counter_bounded : s2Step26CounterWork.toFinset⊆arenaWires := by norm_num [s2Step26CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step26CounterDuring : Arena := ⟨s2Step26HeadFvAfter.live∪s2Step26CounterWork.toFinset,Finset.union_subset s2Step26HeadFvAfter.bounded s2Step26Counter_bounded⟩
+theorem s2Step26Counter_apart : Disjoint s2Step26HeadFvAfter.live s2Step26CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step26HeadFvAfter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Counter_owned : (873::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step9HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step9HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step26Counter_owned : (840::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step26HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step26HeadFvAfter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Counter_borrowed : s6Step9HeadFvAfter.checkBorrow 4 s6Step9CounterWork=some s6Step9CounterDuring := by
+theorem s2Step26Counter_borrowed : s2Step26HeadFvAfter.checkBorrow 4 s2Step26CounterWork=some s2Step26CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step9HeadFvAfter s6Step9CounterDuring s6Step9CounterWork.toFinset s6Step9Counter_bounded s6Step9Counter_apart rfl
-theorem s6Step9Counter_checked : compileHmrCounterStepLog s6Step9HeadFvAfter true 873 [774, 773, 772, 771, 770, 769] s6Step9CounterWork=some s6Step9CounterDuring := by
-  have owned : ∀q∈873::[774, 773, 772, 771, 770, 769],q∈s6Step9HeadFvAfter.live := fun q hq => s6Step9Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step26HeadFvAfter s2Step26CounterDuring s2Step26CounterWork.toFinset s2Step26Counter_bounded s2Step26Counter_apart rfl
+theorem s2Step26Counter_checked : compileHmrCounterStepLog s2Step26HeadFvAfter true 840 [772, 773, 774, 775, 776, 777] s2Step26CounterWork=some s2Step26CounterDuring := by
+  have owned : ∀q∈840::[772, 773, 774, 775, 776, 777],q∈s2Step26HeadFvAfter.live := fun q hq => s2Step26Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step9Counter_borrowed
-def s6Step10CounterWork : List Wire := [880, 789, 864, 818]
-theorem s6Step10Counter_bounded : s6Step10CounterWork.toFinset⊆arenaWires := by norm_num [s6Step10CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step10CounterDuring : Arena := ⟨s6Step10HeadFvAfter.live∪s6Step10CounterWork.toFinset,Finset.union_subset s6Step10HeadFvAfter.bounded s6Step10Counter_bounded⟩
-theorem s6Step10Counter_apart : Disjoint s6Step10HeadFvAfter.live s6Step10CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step10HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step26Counter_borrowed
+def s2Step27CounterWork : List Wire := [844, 845, 846, 847]
+theorem s2Step27Counter_bounded : s2Step27CounterWork.toFinset⊆arenaWires := by norm_num [s2Step27CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step27CounterDuring : Arena := ⟨s2Step27HeadFvAfter.live∪s2Step27CounterWork.toFinset,Finset.union_subset s2Step27HeadFvAfter.bounded s2Step27Counter_bounded⟩
+theorem s2Step27Counter_apart : Disjoint s2Step27HeadFvAfter.live s2Step27CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step27HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Counter_owned : (863::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step10HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step10HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step27Counter_owned : (783::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step27HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step27HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Counter_borrowed : s6Step10HeadFvAfter.checkBorrow 4 s6Step10CounterWork=some s6Step10CounterDuring := by
+theorem s2Step27Counter_borrowed : s2Step27HeadFvAfter.checkBorrow 4 s2Step27CounterWork=some s2Step27CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step10HeadFvAfter s6Step10CounterDuring s6Step10CounterWork.toFinset s6Step10Counter_bounded s6Step10Counter_apart rfl
-theorem s6Step10Counter_checked : compileHmrCounterStepLog s6Step10HeadFvAfter true 863 [774, 773, 772, 771, 770, 769] s6Step10CounterWork=some s6Step10CounterDuring := by
-  have owned : ∀q∈863::[774, 773, 772, 771, 770, 769],q∈s6Step10HeadFvAfter.live := fun q hq => s6Step10Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step27HeadFvAfter s2Step27CounterDuring s2Step27CounterWork.toFinset s2Step27Counter_bounded s2Step27Counter_apart rfl
+theorem s2Step27Counter_checked : compileHmrCounterStepLog s2Step27HeadFvAfter true 783 [772, 773, 774, 775, 776, 777] s2Step27CounterWork=some s2Step27CounterDuring := by
+  have owned : ∀q∈783::[772, 773, 774, 775, 776, 777],q∈s2Step27HeadFvAfter.live := fun q hq => s2Step27Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step10Counter_borrowed
-def s6Step11CounterWork : List Wire := [864, 818, 828, 892]
-theorem s6Step11Counter_bounded : s6Step11CounterWork.toFinset⊆arenaWires := by norm_num [s6Step11CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step11CounterDuring : Arena := ⟨s6Step11HeadFvAfter.live∪s6Step11CounterWork.toFinset,Finset.union_subset s6Step11HeadFvAfter.bounded s6Step11Counter_bounded⟩
-theorem s6Step11Counter_apart : Disjoint s6Step11HeadFvAfter.live s6Step11CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step11HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step27Counter_borrowed
+def s2Step28CounterWork : List Wire := [844, 845, 846, 847]
+theorem s2Step28Counter_bounded : s2Step28CounterWork.toFinset⊆arenaWires := by norm_num [s2Step28CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step28CounterDuring : Arena := ⟨s2Step28HeadFvAfter.live∪s2Step28CounterWork.toFinset,Finset.union_subset s2Step28HeadFvAfter.bounded s2Step28Counter_bounded⟩
+theorem s2Step28Counter_apart : Disjoint s2Step28HeadFvAfter.live s2Step28CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step28HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Counter_owned : (823::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step11HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step11HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step28Counter_owned : (787::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step28HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step28HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Counter_borrowed : s6Step11HeadFvAfter.checkBorrow 4 s6Step11CounterWork=some s6Step11CounterDuring := by
+theorem s2Step28Counter_borrowed : s2Step28HeadFvAfter.checkBorrow 4 s2Step28CounterWork=some s2Step28CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step11HeadFvAfter s6Step11CounterDuring s6Step11CounterWork.toFinset s6Step11Counter_bounded s6Step11Counter_apart rfl
-theorem s6Step11Counter_checked : compileHmrCounterStepLog s6Step11HeadFvAfter true 823 [774, 773, 772, 771, 770, 769] s6Step11CounterWork=some s6Step11CounterDuring := by
-  have owned : ∀q∈823::[774, 773, 772, 771, 770, 769],q∈s6Step11HeadFvAfter.live := fun q hq => s6Step11Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step28HeadFvAfter s2Step28CounterDuring s2Step28CounterWork.toFinset s2Step28Counter_bounded s2Step28Counter_apart rfl
+theorem s2Step28Counter_checked : compileHmrCounterStepLog s2Step28HeadFvAfter true 787 [772, 773, 774, 775, 776, 777] s2Step28CounterWork=some s2Step28CounterDuring := by
+  have owned : ∀q∈787::[772, 773, 774, 775, 776, 777],q∈s2Step28HeadFvAfter.live := fun q hq => s2Step28Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step11Counter_borrowed
-def s6Step12CounterWork : List Wire := [828, 892, 822, 882]
-theorem s6Step12Counter_bounded : s6Step12CounterWork.toFinset⊆arenaWires := by norm_num [s6Step12CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step12CounterDuring : Arena := ⟨s6Step12HeadFvAfter.live∪s6Step12CounterWork.toFinset,Finset.union_subset s6Step12HeadFvAfter.bounded s6Step12Counter_bounded⟩
-theorem s6Step12Counter_apart : Disjoint s6Step12HeadFvAfter.live s6Step12CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step12HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step28Counter_borrowed
+def s2Step29CounterWork : List Wire := [844, 845, 846, 847]
+theorem s2Step29Counter_bounded : s2Step29CounterWork.toFinset⊆arenaWires := by norm_num [s2Step29CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step29CounterDuring : Arena := ⟨s2Step29HeadFvAfter.live∪s2Step29CounterWork.toFinset,Finset.union_subset s2Step29HeadFvAfter.bounded s2Step29Counter_bounded⟩
+theorem s2Step29Counter_apart : Disjoint s2Step29HeadFvAfter.live s2Step29CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step29HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Counter_owned : (880::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step12HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step12HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step29Counter_owned : (778::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step29HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step29HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Counter_borrowed : s6Step12HeadFvAfter.checkBorrow 4 s6Step12CounterWork=some s6Step12CounterDuring := by
+theorem s2Step29Counter_borrowed : s2Step29HeadFvAfter.checkBorrow 4 s2Step29CounterWork=some s2Step29CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step12HeadFvAfter s6Step12CounterDuring s6Step12CounterWork.toFinset s6Step12Counter_bounded s6Step12Counter_apart rfl
-theorem s6Step12Counter_checked : compileHmrCounterStepLog s6Step12HeadFvAfter true 880 [774, 773, 772, 771, 770, 769] s6Step12CounterWork=some s6Step12CounterDuring := by
-  have owned : ∀q∈880::[774, 773, 772, 771, 770, 769],q∈s6Step12HeadFvAfter.live := fun q hq => s6Step12Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step29HeadFvAfter s2Step29CounterDuring s2Step29CounterWork.toFinset s2Step29Counter_bounded s2Step29Counter_apart rfl
+theorem s2Step29Counter_checked : compileHmrCounterStepLog s2Step29HeadFvAfter true 778 [772, 773, 774, 775, 776, 777] s2Step29CounterWork=some s2Step29CounterDuring := by
+  have owned : ∀q∈778::[772, 773, 774, 775, 776, 777],q∈s2Step29HeadFvAfter.live := fun q hq => s2Step29Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step12Counter_borrowed
-def s6Step13CounterWork : List Wire := [822, 882, 780, 833]
-theorem s6Step13Counter_bounded : s6Step13CounterWork.toFinset⊆arenaWires := by norm_num [s6Step13CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step13CounterDuring : Arena := ⟨s6Step13HeadFvAfter.live∪s6Step13CounterWork.toFinset,Finset.union_subset s6Step13HeadFvAfter.bounded s6Step13Counter_bounded⟩
-theorem s6Step13Counter_apart : Disjoint s6Step13HeadFvAfter.live s6Step13CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step13HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step29Counter_borrowed
+def s2Step30CounterWork : List Wire := [844, 845, 846, 847]
+theorem s2Step30Counter_bounded : s2Step30CounterWork.toFinset⊆arenaWires := by norm_num [s2Step30CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step30CounterDuring : Arena := ⟨s2Step30HeadFvAfter.live∪s2Step30CounterWork.toFinset,Finset.union_subset s2Step30HeadFvAfter.bounded s2Step30Counter_bounded⟩
+theorem s2Step30Counter_apart : Disjoint s2Step30HeadFvAfter.live s2Step30CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step30HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Counter_owned : (864::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step13HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step13HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step30Counter_owned : (789::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step30HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step30HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Counter_borrowed : s6Step13HeadFvAfter.checkBorrow 4 s6Step13CounterWork=some s6Step13CounterDuring := by
+theorem s2Step30Counter_borrowed : s2Step30HeadFvAfter.checkBorrow 4 s2Step30CounterWork=some s2Step30CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step13HeadFvAfter s6Step13CounterDuring s6Step13CounterWork.toFinset s6Step13Counter_bounded s6Step13Counter_apart rfl
-theorem s6Step13Counter_checked : compileHmrCounterStepLog s6Step13HeadFvAfter true 864 [774, 773, 772, 771, 770, 769] s6Step13CounterWork=some s6Step13CounterDuring := by
-  have owned : ∀q∈864::[774, 773, 772, 771, 770, 769],q∈s6Step13HeadFvAfter.live := fun q hq => s6Step13Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step30HeadFvAfter s2Step30CounterDuring s2Step30CounterWork.toFinset s2Step30Counter_bounded s2Step30Counter_apart rfl
+theorem s2Step30Counter_checked : compileHmrCounterStepLog s2Step30HeadFvAfter true 789 [772, 773, 774, 775, 776, 777] s2Step30CounterWork=some s2Step30CounterDuring := by
+  have owned : ∀q∈789::[772, 773, 774, 775, 776, 777],q∈s2Step30HeadFvAfter.live := fun q hq => s2Step30Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step13Counter_borrowed
-def s6Step14CounterWork : List Wire := [780, 833, 888, 886]
-theorem s6Step14Counter_bounded : s6Step14CounterWork.toFinset⊆arenaWires := by norm_num [s6Step14CounterWork,arenaWires,Finset.insert_subset_iff]
-def s6Step14CounterDuring : Arena := ⟨s6Step14HeadFvAfter.live∪s6Step14CounterWork.toFinset,Finset.union_subset s6Step14HeadFvAfter.bounded s6Step14Counter_bounded⟩
-theorem s6Step14Counter_apart : Disjoint s6Step14HeadFvAfter.live s6Step14CounterWork.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step14HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+  exact s2Step30Counter_borrowed
+def s2Step31CounterWork : List Wire := [844, 845, 846, 847]
+theorem s2Step31Counter_bounded : s2Step31CounterWork.toFinset⊆arenaWires := by norm_num [s2Step31CounterWork,arenaWires,Finset.insert_subset_iff]
+def s2Step31CounterDuring : Arena := ⟨s2Step31HeadFvAfter.live∪s2Step31CounterWork.toFinset,Finset.union_subset s2Step31HeadFvAfter.bounded s2Step31Counter_bounded⟩
+theorem s2Step31Counter_apart : Disjoint s2Step31HeadFvAfter.live s2Step31CounterWork.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step31HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Counter_owned : (828::[774, 773, 772, 771, 770, 769] : List Wire).toFinset⊆s6Step14HeadFvAfter.live := by
-  apply hmrLayout_owned_of_filter s6Step14HeadFvAfter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step31Counter_owned : (786::[772, 773, 774, 775, 776, 777] : List Wire).toFinset⊆s2Step31HeadFvAfter.live := by
+  apply hmrLayout_owned_of_filter s2Step31HeadFvAfter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Counter_borrowed : s6Step14HeadFvAfter.checkBorrow 4 s6Step14CounterWork=some s6Step14CounterDuring := by
+theorem s2Step31Counter_borrowed : s2Step31HeadFvAfter.checkBorrow 4 s2Step31CounterWork=some s2Step31CounterDuring := by
   unfold Arena.checkBorrow
   rw [if_pos (by decide +kernel)]
-  exact hmrArena_reserve_of_live s6Step14HeadFvAfter s6Step14CounterDuring s6Step14CounterWork.toFinset s6Step14Counter_bounded s6Step14Counter_apart rfl
-theorem s6Step14Counter_checked : compileHmrCounterStepLog s6Step14HeadFvAfter true 828 [774, 773, 772, 771, 770, 769] s6Step14CounterWork=some s6Step14CounterDuring := by
-  have owned : ∀q∈828::[774, 773, 772, 771, 770, 769],q∈s6Step14HeadFvAfter.live := fun q hq => s6Step14Counter_owned (List.mem_toFinset.mpr hq)
+  exact hmrArena_reserve_of_live s2Step31HeadFvAfter s2Step31CounterDuring s2Step31CounterWork.toFinset s2Step31Counter_bounded s2Step31Counter_apart rfl
+theorem s2Step31Counter_checked : compileHmrCounterStepLog s2Step31HeadFvAfter true 786 [772, 773, 774, 775, 776, 777] s2Step31CounterWork=some s2Step31CounterDuring := by
+  have owned : ∀q∈786::[772, 773, 774, 775, 776, 777],q∈s2Step31HeadFvAfter.live := fun q hq => s2Step31Counter_owned (List.mem_toFinset.mpr hq)
   unfold compileHmrCounterStepLog
   rw [if_pos (And.intro (by decide) (And.intro (by decide) owned))]
-  exact s6Step14Counter_borrowed
+  exact s2Step31Counter_borrowed
 
 end ECDSAAdd.Arithmetic.Paper935

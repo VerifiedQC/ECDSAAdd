@@ -1,5 +1,6 @@
 """Assemble selected complete source arithmetic fronts from checked transactions."""
 import sys
+from interval_predicates import compact_predicate, interval_predicate
 from generated_chunks import write_step_chunks
 from certificate_steps import CERTIFICATE_STEPS
 from front_trace import ROOT, load, front_log
@@ -39,9 +40,13 @@ for phase in ('s2-walkA','s6-walkC'):
                   f'theorem {name}_branch : {name}SigmaArena.checkBorrow 1 [{branch}]=some {V} := by',
                   '  unfold Arena.checkBorrow','  rw [if_pos (by decide)]','  apply hmrArena_reserve_of_live',
                   '  · norm_num [arenaWires]',f'  · norm_num [{name}SigmaArena,{B},arenaWires]',
+                  *([f'  · change {V}.live=({B}.live∪{{{sigma}}})∪{{{branch}}}',
+                     f'    apply hmrArena_union_pair_of_filter_check {B} {V} (fun q => {interval_predicate(entry["resizes"][3]["live_after"])}) (fun q => {interval_predicate(entry["resizes"][4]["live_before"])}) {sigma} {branch} rfl rfl',
+                     '    · norm_num [arenaWires,Finset.insert_subset_iff]', '    · decide +kernel']
+                    if max(len(entry['resizes'][3]['live_after']),len(entry['resizes'][4]['live_before']))>30 else [
                   '  · ext q',f'    simp only [{name}SigmaArena,{B},{V},arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,Finset.mem_singleton,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]',
-                  '    simp only [Wire] at *','    omega']
-        meta=qs+([] if t<498 else [frozen]);pred=' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in entry['resizes'][0]['live_before'])
+                  '    simp only [Wire] at *','    omega'])]
+        meta=qs+([] if t<498 else [frozen]);pred=compact_predicate(' ∨ '.join(f'({lo}≤q ∧ q<{hi})' for lo,hi in entry['resizes'][0]['live_before']))
         lines += [f'theorem {name}_entry : HmrFrontEntryValid {A} {name}Bank {fgw} {vw} {ew} {early} {frozen} {qs} := by',
                   f'  have nd : ({meta}++({name}Bank.rows.flatMap WindowRow.wires)).Nodup := by',
                   '    apply hmrLayout_nodup_of_sorted','    decide +kernel',

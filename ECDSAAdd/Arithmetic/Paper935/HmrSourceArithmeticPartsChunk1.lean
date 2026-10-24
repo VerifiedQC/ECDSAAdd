@@ -2,1061 +2,1061 @@ import ECDSAAdd.Arithmetic.Paper935.HmrArithmeticComposition
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceArithmeticPartsChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-def s2Step498Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<923)),Finset.filter_subset _ _⟩
-def s2Step498Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 901, 918, 768]
-def s2Step498Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 845, 917, 769]
-def s2Step498Add0Work : List Wire := [923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
-theorem s2Step498Add0_bounded : s2Step498Add0Work.toFinset⊆arenaWires := by
-  have h : s2Step498Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+def s2Step16Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)),Finset.filter_subset _ _⟩
+def s2Step16Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 784, 768]
+def s2Step16Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783, 782, 769]
+def s2Step16Add0Work : List Wire := [824, 825, 826, 827, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step16Add0_bounded : s2Step16Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step16Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s2Step498Add0During : Arena := ⟨s2Step498Add0Arena.live∪s2Step498Add0Work.toFinset,Finset.union_subset s2Step498Add0Arena.bounded s2Step498Add0_bounded⟩
-theorem s2Step498Add0_distinct : (921::916::922::(s2Step498Add0A++s2Step498Add0B)).Nodup := by
+def s2Step16Add0During : Arena := ⟨s2Step16Add0Arena.live∪s2Step16Add0Work.toFinset,Finset.union_subset s2Step16Add0Arena.bounded s2Step16Add0_bounded⟩
+theorem s2Step16Add0_distinct : (821::781::822::(s2Step16Add0A++s2Step16Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498Add0_owned : (921::916::922::(s2Step498Add0A++s2Step498Add0B)).toFinset⊆s2Step498Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s2Step498Add0Arena (fun q => (0≤q ∧ q<923)) rfl
+theorem s2Step16Add0_owned : (821::781::822::(s2Step16Add0A++s2Step16Add0B)).toFinset⊆s2Step16Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step16Add0Arena (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Add0_apart : Disjoint s2Step498Add0Arena.live s2Step498Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s2Step498Add0Arena (fun q => (0≤q ∧ q<923)) rfl
+theorem s2Step16Add0_apart : Disjoint s2Step16Add0Arena.live s2Step16Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step16Add0Arena (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Add0_card : s2Step498Add0Arena.live.card=923 := by
+theorem s2Step16Add0_card : s2Step16Add0Arena.live.card=825 := by
   decide +kernel
-theorem s2Step498Add0_borrowed : s2Step498Add0Arena.checkBorrow (hmrHybridCount s2Step498Add0Arena s2Step498Add0B.length) s2Step498Add0Work=some s2Step498Add0During := by
-  have len : s2Step498Add0Work.length=hmrHybridCount s2Step498Add0Arena s2Step498Add0B.length := by
-    rw [hmrHybridCount,s2Step498Add0_card]
+theorem s2Step16Add0_borrowed : s2Step16Add0Arena.checkBorrow (hmrHybridCount s2Step16Add0Arena s2Step16Add0B.length) s2Step16Add0Work=some s2Step16Add0During := by
+  have len : s2Step16Add0Work.length=hmrHybridCount s2Step16Add0Arena s2Step16Add0B.length := by
+    rw [hmrHybridCount,s2Step16Add0_card]
     decide +kernel
-  have nd : s2Step498Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step16Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s2Step498Add0Arena s2Step498Add0During s2Step498Add0Work.toFinset s2Step498Add0_bounded s2Step498Add0_apart rfl
-theorem s2Step498Add0_checked : compileHmrHybridCinLog s2Step498Add0Arena 916 921 922 s2Step498Add0A s2Step498Add0B s2Step498Add0Work=some s2Step498Add0During := by
-  exact compileHmrHybridCinLog_of_parts s2Step498Add0Arena s2Step498Add0During 916 921 922 s2Step498Add0A s2Step498Add0B s2Step498Add0Work
-    (by decide +kernel) (by decide +kernel) s2Step498Add0_distinct
-    (fun q hq => s2Step498Add0_owned (List.mem_toFinset.mpr hq)) s2Step498Add0_borrowed
-def s2Step498Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<923)),Finset.filter_subset _ _⟩
-def s2Step498Add1A : List Wire := [255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240, 239, 238, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 225, 224, 223, 222, 221, 220, 219, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205, 204, 203, 202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 170, 169, 168, 167, 166, 165, 164, 163, 162, 161, 160, 159, 158, 157, 156, 155, 154, 153, 152, 151, 150, 149, 148, 147, 146, 145, 144, 143, 142, 141, 140, 139, 138, 137, 136, 135, 134, 133, 132, 131, 130, 129, 128, 127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 821, 832, 896, 882, 903, 819, 826, 831, 805, 835, 803, 785, 877, 915, 810, 809, 840, 867, 825, 851, 787, 817, 788, 804, 794, 778, 798, 822, 814, 816, 891, 797, 781, 791, 920, 770]
-def s2Step498Add1B : List Wire := [767, 766, 765, 764, 763, 762, 761, 760, 759, 758, 757, 756, 755, 754, 753, 752, 751, 750, 749, 748, 747, 746, 745, 744, 743, 742, 741, 740, 739, 738, 736, 737, 735, 734, 733, 731, 732, 730, 729, 728, 727, 726, 725, 724, 722, 723, 720, 721, 719, 718, 717, 716, 715, 714, 713, 712, 711, 710, 709, 708, 707, 706, 705, 704, 703, 702, 701, 700, 699, 698, 697, 696, 695, 694, 693, 692, 691, 690, 689, 688, 687, 686, 685, 684, 683, 681, 682, 680, 679, 678, 677, 675, 676, 674, 673, 672, 671, 670, 669, 668, 667, 665, 666, 664, 662, 663, 660, 661, 659, 658, 657, 656, 655, 654, 653, 652, 651, 650, 649, 647, 648, 646, 645, 644, 643, 641, 642, 640, 639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 622, 623, 621, 620, 619, 618, 617, 616, 615, 614, 613, 611, 612, 609, 610, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 597, 598, 596, 595, 594, 593, 592, 591, 590, 589, 588, 587, 586, 585, 584, 582, 583, 581, 579, 580, 578, 577, 576, 575, 573, 574, 572, 571, 570, 569, 568, 567, 566, 565, 564, 563, 562, 561, 560, 559, 558, 556, 557, 555, 554, 553, 552, 551, 550, 549, 548, 547, 546, 545, 544, 543, 542, 541, 540, 539, 538, 536, 537, 820, 780, 847, 783, 796, 789, 842, 802, 907, 846, 800, 837, 811, 782, 824, 792, 799, 836, 834, 841, 807, 830, 793, 779, 829, 815, 885, 806, 894, 784, 913, 808, 801, 790, 919, 771]
-def s2Step498Add1Work : List Wire := [923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
-theorem s2Step498Add1_bounded : s2Step498Add1Work.toFinset⊆arenaWires := by
-  have h : s2Step498Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step16Add0Arena s2Step16Add0During s2Step16Add0Work.toFinset s2Step16Add0_bounded s2Step16Add0_apart rfl
+theorem s2Step16Add0_checked : compileHmrHybridCinLog s2Step16Add0Arena 781 821 822 s2Step16Add0A s2Step16Add0B s2Step16Add0Work=some s2Step16Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step16Add0Arena s2Step16Add0During 781 821 822 s2Step16Add0A s2Step16Add0B s2Step16Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step16Add0_distinct
+    (fun q hq => s2Step16Add0_owned (List.mem_toFinset.mpr hq)) s2Step16Add0_borrowed
+def s2Step16Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)),Finset.filter_subset _ _⟩
+def s2Step16Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 770]
+def s2Step16Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 780, 819, 771]
+def s2Step16Add1Work : List Wire := [824, 825, 826, 827, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842]
+theorem s2Step16Add1_bounded : s2Step16Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step16Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s2Step498Add1During : Arena := ⟨s2Step498Add1Arena.live∪s2Step498Add1Work.toFinset,Finset.union_subset s2Step498Add1Arena.bounded s2Step498Add1_bounded⟩
-theorem s2Step498Add1_distinct : (921::916::922::(s2Step498Add1A++s2Step498Add1B)).Nodup := by
+def s2Step16Add1During : Arena := ⟨s2Step16Add1Arena.live∪s2Step16Add1Work.toFinset,Finset.union_subset s2Step16Add1Arena.bounded s2Step16Add1_bounded⟩
+theorem s2Step16Add1_distinct : (821::781::822::(s2Step16Add1A++s2Step16Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s2Step498Add1_owned : (921::916::922::(s2Step498Add1A++s2Step498Add1B)).toFinset⊆s2Step498Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s2Step498Add1Arena (fun q => (0≤q ∧ q<923)) rfl
+theorem s2Step16Add1_owned : (821::781::822::(s2Step16Add1A++s2Step16Add1B)).toFinset⊆s2Step16Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step16Add1Arena (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Add1_apart : Disjoint s2Step498Add1Arena.live s2Step498Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s2Step498Add1Arena (fun q => (0≤q ∧ q<923)) rfl
+theorem s2Step16Add1_apart : Disjoint s2Step16Add1Arena.live s2Step16Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step16Add1Arena (fun q => (0≤q ∧ q<824) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s2Step498Add1_card : s2Step498Add1Arena.live.card=923 := by
+theorem s2Step16Add1_card : s2Step16Add1Arena.live.card=825 := by
   decide +kernel
-theorem s2Step498Add1_borrowed : s2Step498Add1Arena.checkBorrow (hmrHybridCount s2Step498Add1Arena s2Step498Add1B.length) s2Step498Add1Work=some s2Step498Add1During := by
-  have len : s2Step498Add1Work.length=hmrHybridCount s2Step498Add1Arena s2Step498Add1B.length := by
-    rw [hmrHybridCount,s2Step498Add1_card]
+theorem s2Step16Add1_borrowed : s2Step16Add1Arena.checkBorrow (hmrHybridCount s2Step16Add1Arena s2Step16Add1B.length) s2Step16Add1Work=some s2Step16Add1During := by
+  have len : s2Step16Add1Work.length=hmrHybridCount s2Step16Add1Arena s2Step16Add1B.length := by
+    rw [hmrHybridCount,s2Step16Add1_card]
     decide +kernel
-  have nd : s2Step498Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step16Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s2Step498Add1Arena s2Step498Add1During s2Step498Add1Work.toFinset s2Step498Add1_bounded s2Step498Add1_apart rfl
-theorem s2Step498Add1_checked : compileHmrHybridCinLog s2Step498Add1Arena 916 921 922 s2Step498Add1A s2Step498Add1B s2Step498Add1Work=some s2Step498Add1During := by
-  exact compileHmrHybridCinLog_of_parts s2Step498Add1Arena s2Step498Add1During 916 921 922 s2Step498Add1A s2Step498Add1B s2Step498Add1Work
-    (by decide +kernel) (by decide +kernel) s2Step498Add1_distinct
-    (fun q hq => s2Step498Add1_owned (List.mem_toFinset.mpr hq)) s2Step498Add1_borrowed
-def s6Step0Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807, 795]
-def s6Step0Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 862, 777]
-def s6Step0Add0Work : List Wire := [927, 802, 875, 779, 868, 857, 907, 895, 858, 908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step0Add0_bounded : s6Step0Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step0Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step16Add1Arena s2Step16Add1During s2Step16Add1Work.toFinset s2Step16Add1_bounded s2Step16Add1_apart rfl
+theorem s2Step16Add1_checked : compileHmrHybridCinLog s2Step16Add1Arena 781 821 822 s2Step16Add1A s2Step16Add1B s2Step16Add1Work=some s2Step16Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step16Add1Arena s2Step16Add1During 781 821 822 s2Step16Add1A s2Step16Add1B s2Step16Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step16Add1_distinct
+    (fun q hq => s2Step16Add1_owned (List.mem_toFinset.mpr hq)) s2Step16Add1_borrowed
+def s2Step17Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)),Finset.filter_subset _ _⟩
+def s2Step17Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 782, 768]
+def s2Step17Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 781, 783, 769]
+def s2Step17Add0Work : List Wire := [826, 827, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step17Add0_bounded : s2Step17Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step17Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step0Add0During : Arena := ⟨s6Step0Add0Arena.live∪s6Step0Add0Work.toFinset,Finset.union_subset s6Step0Add0Arena.bounded s6Step0Add0_bounded⟩
-theorem s6Step0Add0_distinct : (874::813::793::(s6Step0Add0A++s6Step0Add0B)).Nodup := by
+def s2Step17Add0During : Arena := ⟨s2Step17Add0Arena.live∪s2Step17Add0Work.toFinset,Finset.union_subset s2Step17Add0Arena.bounded s2Step17Add0_bounded⟩
+theorem s2Step17Add0_distinct : (824::784::825::(s2Step17Add0A++s2Step17Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0Add0_owned : (874::813::793::(s6Step0Add0A++s6Step0Add0B)).toFinset⊆s6Step0Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step0Add0Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step17Add0_owned : (824::784::825::(s2Step17Add0A++s2Step17Add0B)).toFinset⊆s2Step17Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step17Add0Arena (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Add0_apart : Disjoint s6Step0Add0Arena.live s6Step0Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step0Add0Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step17Add0_apart : Disjoint s2Step17Add0Arena.live s2Step17Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step17Add0Arena (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Add0_card : s6Step0Add0Arena.live.card=788 := by
+theorem s2Step17Add0_card : s2Step17Add0Arena.live.card=827 := by
   decide +kernel
-theorem s6Step0Add0_borrowed : s6Step0Add0Arena.checkBorrow (hmrHybridCount s6Step0Add0Arena s6Step0Add0B.length) s6Step0Add0Work=some s6Step0Add0During := by
-  have len : s6Step0Add0Work.length=hmrHybridCount s6Step0Add0Arena s6Step0Add0B.length := by
-    rw [hmrHybridCount,s6Step0Add0_card]
+theorem s2Step17Add0_borrowed : s2Step17Add0Arena.checkBorrow (hmrHybridCount s2Step17Add0Arena s2Step17Add0B.length) s2Step17Add0Work=some s2Step17Add0During := by
+  have len : s2Step17Add0Work.length=hmrHybridCount s2Step17Add0Arena s2Step17Add0B.length := by
+    rw [hmrHybridCount,s2Step17Add0_card]
     decide +kernel
-  have nd : s6Step0Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step17Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step0Add0Arena s6Step0Add0During s6Step0Add0Work.toFinset s6Step0Add0_bounded s6Step0Add0_apart rfl
-theorem s6Step0Add0_checked : compileHmrHybridCinLog s6Step0Add0Arena 813 874 793 s6Step0Add0A s6Step0Add0B s6Step0Add0Work=some s6Step0Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step0Add0Arena s6Step0Add0During 813 874 793 s6Step0Add0A s6Step0Add0B s6Step0Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step0Add0_distinct
-    (fun q hq => s6Step0Add0_owned (List.mem_toFinset.mpr hq)) s6Step0Add0_borrowed
-def s6Step0Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)),Finset.filter_subset _ _⟩
-def s6Step0Add1A : List Wire := [768, 876, 776]
-def s6Step0Add1B : List Wire := [859, 860, 775]
-def s6Step0Add1Work : List Wire := [927, 802]
-theorem s6Step0Add1_bounded : s6Step0Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step0Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step17Add0Arena s2Step17Add0During s2Step17Add0Work.toFinset s2Step17Add0_bounded s2Step17Add0_apart rfl
+theorem s2Step17Add0_checked : compileHmrHybridCinLog s2Step17Add0Arena 784 824 825 s2Step17Add0A s2Step17Add0B s2Step17Add0Work=some s2Step17Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step17Add0Arena s2Step17Add0During 784 824 825 s2Step17Add0A s2Step17Add0B s2Step17Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step17Add0_distinct
+    (fun q hq => s2Step17Add0_owned (List.mem_toFinset.mpr hq)) s2Step17Add0_borrowed
+def s2Step17Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)),Finset.filter_subset _ _⟩
+def s2Step17Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 770]
+def s2Step17Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 780, 821, 771]
+def s2Step17Add1Work : List Wire := [826, 827, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845]
+theorem s2Step17Add1_bounded : s2Step17Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step17Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step0Add1During : Arena := ⟨s6Step0Add1Arena.live∪s6Step0Add1Work.toFinset,Finset.union_subset s6Step0Add1Arena.bounded s6Step0Add1_bounded⟩
-theorem s6Step0Add1_distinct : (874::813::793::(s6Step0Add1A++s6Step0Add1B)).Nodup := by
+def s2Step17Add1During : Arena := ⟨s2Step17Add1Arena.live∪s2Step17Add1Work.toFinset,Finset.union_subset s2Step17Add1Arena.bounded s2Step17Add1_bounded⟩
+theorem s2Step17Add1_distinct : (824::784::825::(s2Step17Add1A++s2Step17Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step0Add1_owned : (874::813::793::(s6Step0Add1A++s6Step0Add1B)).toFinset⊆s6Step0Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step0Add1Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step17Add1_owned : (824::784::825::(s2Step17Add1A++s2Step17Add1B)).toFinset⊆s2Step17Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step17Add1Arena (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Add1_apart : Disjoint s6Step0Add1Arena.live s6Step0Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step0Add1Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888)) rfl
+theorem s2Step17Add1_apart : Disjoint s2Step17Add1Arena.live s2Step17Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step17Add1Arena (fun q => (0≤q ∧ q<826) ∨ (828≤q ∧ q<829)) rfl
   decide +kernel
-theorem s6Step0Add1_card : s6Step0Add1Arena.live.card=788 := by
+theorem s2Step17Add1_card : s2Step17Add1Arena.live.card=827 := by
   decide +kernel
-theorem s6Step0Add1_borrowed : s6Step0Add1Arena.checkBorrow (hmrHybridCount s6Step0Add1Arena s6Step0Add1B.length) s6Step0Add1Work=some s6Step0Add1During := by
-  have len : s6Step0Add1Work.length=hmrHybridCount s6Step0Add1Arena s6Step0Add1B.length := by
-    rw [hmrHybridCount,s6Step0Add1_card]
+theorem s2Step17Add1_borrowed : s2Step17Add1Arena.checkBorrow (hmrHybridCount s2Step17Add1Arena s2Step17Add1B.length) s2Step17Add1Work=some s2Step17Add1During := by
+  have len : s2Step17Add1Work.length=hmrHybridCount s2Step17Add1Arena s2Step17Add1B.length := by
+    rw [hmrHybridCount,s2Step17Add1_card]
     decide +kernel
-  have nd : s6Step0Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step17Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step0Add1Arena s6Step0Add1During s6Step0Add1Work.toFinset s6Step0Add1_bounded s6Step0Add1_apart rfl
-theorem s6Step0Add1_checked : compileHmrHybridCinLog s6Step0Add1Arena 813 874 793 s6Step0Add1A s6Step0Add1B s6Step0Add1Work=some s6Step0Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step0Add1Arena s6Step0Add1During 813 874 793 s6Step0Add1A s6Step0Add1B s6Step0Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step0Add1_distinct
-    (fun q hq => s6Step0Add1_owned (List.mem_toFinset.mpr hq)) s6Step0Add1_borrowed
-def s6Step1Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step1Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862, 795]
-def s6Step1Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807, 777]
-def s6Step1Add0Work : List Wire := [875, 779, 868, 857, 907, 858, 908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step1Add0_bounded : s6Step1Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step1Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step17Add1Arena s2Step17Add1During s2Step17Add1Work.toFinset s2Step17Add1_bounded s2Step17Add1_apart rfl
+theorem s2Step17Add1_checked : compileHmrHybridCinLog s2Step17Add1Arena 784 824 825 s2Step17Add1A s2Step17Add1B s2Step17Add1Work=some s2Step17Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step17Add1Arena s2Step17Add1During 784 824 825 s2Step17Add1A s2Step17Add1B s2Step17Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step17Add1_distinct
+    (fun q hq => s2Step17Add1_owned (List.mem_toFinset.mpr hq)) s2Step17Add1_borrowed
+def s2Step18Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)),Finset.filter_subset _ _⟩
+def s2Step18Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 783, 768]
+def s2Step18Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 784, 781, 769]
+def s2Step18Add0Work : List Wire := [829, 830, 831, 832, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step18Add0_bounded : s2Step18Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step18Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step1Add0During : Arena := ⟨s6Step1Add0Arena.live∪s6Step1Add0Work.toFinset,Finset.union_subset s6Step1Add0Arena.bounded s6Step1Add0_bounded⟩
-theorem s6Step1Add0_distinct : (927::860::802::(s6Step1Add0A++s6Step1Add0B)).Nodup := by
+def s2Step18Add0During : Arena := ⟨s2Step18Add0Arena.live∪s2Step18Add0Work.toFinset,Finset.union_subset s2Step18Add0Arena.bounded s2Step18Add0_bounded⟩
+theorem s2Step18Add0_distinct : (826::782::827::(s2Step18Add0A++s2Step18Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1Add0_owned : (927::860::802::(s6Step1Add0A++s6Step1Add0B)).toFinset⊆s6Step1Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step1Add0Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step18Add0_owned : (826::782::827::(s2Step18Add0A++s2Step18Add0B)).toFinset⊆s2Step18Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step18Add0Arena (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Add0_apart : Disjoint s6Step1Add0Arena.live s6Step1Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step1Add0Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step18Add0_apart : Disjoint s2Step18Add0Arena.live s2Step18Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step18Add0Arena (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Add0_card : s6Step1Add0Arena.live.card=791 := by
+theorem s2Step18Add0_card : s2Step18Add0Arena.live.card=830 := by
   decide +kernel
-theorem s6Step1Add0_borrowed : s6Step1Add0Arena.checkBorrow (hmrHybridCount s6Step1Add0Arena s6Step1Add0B.length) s6Step1Add0Work=some s6Step1Add0During := by
-  have len : s6Step1Add0Work.length=hmrHybridCount s6Step1Add0Arena s6Step1Add0B.length := by
-    rw [hmrHybridCount,s6Step1Add0_card]
+theorem s2Step18Add0_borrowed : s2Step18Add0Arena.checkBorrow (hmrHybridCount s2Step18Add0Arena s2Step18Add0B.length) s2Step18Add0Work=some s2Step18Add0During := by
+  have len : s2Step18Add0Work.length=hmrHybridCount s2Step18Add0Arena s2Step18Add0B.length := by
+    rw [hmrHybridCount,s2Step18Add0_card]
     decide +kernel
-  have nd : s6Step1Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step18Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step1Add0Arena s6Step1Add0During s6Step1Add0Work.toFinset s6Step1Add0_bounded s6Step1Add0_apart rfl
-theorem s6Step1Add0_checked : compileHmrHybridCinLog s6Step1Add0Arena 860 927 802 s6Step1Add0A s6Step1Add0B s6Step1Add0Work=some s6Step1Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step1Add0Arena s6Step1Add0During 860 927 802 s6Step1Add0A s6Step1Add0B s6Step1Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step1Add0_distinct
-    (fun q hq => s6Step1Add0_owned (List.mem_toFinset.mpr hq)) s6Step1Add0_borrowed
-def s6Step1Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step1Add1A : List Wire := [255, 876, 793, 776]
-def s6Step1Add1B : List Wire := [859, 887, 874, 775]
-def s6Step1Add1Work : List Wire := [875, 779, 868]
-theorem s6Step1Add1_bounded : s6Step1Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step1Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step18Add0Arena s2Step18Add0During s2Step18Add0Work.toFinset s2Step18Add0_bounded s2Step18Add0_apart rfl
+theorem s2Step18Add0_checked : compileHmrHybridCinLog s2Step18Add0Arena 782 826 827 s2Step18Add0A s2Step18Add0B s2Step18Add0Work=some s2Step18Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step18Add0Arena s2Step18Add0During 782 826 827 s2Step18Add0A s2Step18Add0B s2Step18Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step18Add0_distinct
+    (fun q hq => s2Step18Add0_owned (List.mem_toFinset.mpr hq)) s2Step18Add0_borrowed
+def s2Step18Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)),Finset.filter_subset _ _⟩
+def s2Step18Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 770]
+def s2Step18Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 780, 824, 771]
+def s2Step18Add1Work : List Wire := [829, 830, 831, 832, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849]
+theorem s2Step18Add1_bounded : s2Step18Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step18Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step1Add1During : Arena := ⟨s6Step1Add1Arena.live∪s6Step1Add1Work.toFinset,Finset.union_subset s6Step1Add1Arena.bounded s6Step1Add1_bounded⟩
-theorem s6Step1Add1_distinct : (927::860::802::(s6Step1Add1A++s6Step1Add1B)).Nodup := by
+def s2Step18Add1During : Arena := ⟨s2Step18Add1Arena.live∪s2Step18Add1Work.toFinset,Finset.union_subset s2Step18Add1Arena.bounded s2Step18Add1_bounded⟩
+theorem s2Step18Add1_distinct : (826::782::827::(s2Step18Add1A++s2Step18Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step1Add1_owned : (927::860::802::(s6Step1Add1A++s6Step1Add1B)).toFinset⊆s6Step1Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step1Add1Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step18Add1_owned : (826::782::827::(s2Step18Add1A++s2Step18Add1B)).toFinset⊆s2Step18Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step18Add1Arena (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Add1_apart : Disjoint s6Step1Add1Arena.live s6Step1Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step1Add1Arena (fun q => (0≤q ∧ q<778) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<875) ∨ (876≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step18Add1_apart : Disjoint s2Step18Add1Arena.live s2Step18Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step18Add1Arena (fun q => (0≤q ∧ q<829) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step1Add1_card : s6Step1Add1Arena.live.card=791 := by
+theorem s2Step18Add1_card : s2Step18Add1Arena.live.card=830 := by
   decide +kernel
-theorem s6Step1Add1_borrowed : s6Step1Add1Arena.checkBorrow (hmrHybridCount s6Step1Add1Arena s6Step1Add1B.length) s6Step1Add1Work=some s6Step1Add1During := by
-  have len : s6Step1Add1Work.length=hmrHybridCount s6Step1Add1Arena s6Step1Add1B.length := by
-    rw [hmrHybridCount,s6Step1Add1_card]
+theorem s2Step18Add1_borrowed : s2Step18Add1Arena.checkBorrow (hmrHybridCount s2Step18Add1Arena s2Step18Add1B.length) s2Step18Add1Work=some s2Step18Add1During := by
+  have len : s2Step18Add1Work.length=hmrHybridCount s2Step18Add1Arena s2Step18Add1B.length := by
+    rw [hmrHybridCount,s2Step18Add1_card]
     decide +kernel
-  have nd : s6Step1Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step18Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step1Add1Arena s6Step1Add1During s6Step1Add1Work.toFinset s6Step1Add1_bounded s6Step1Add1_apart rfl
-theorem s6Step1Add1_checked : compileHmrHybridCinLog s6Step1Add1Arena 860 927 802 s6Step1Add1A s6Step1Add1B s6Step1Add1Work=some s6Step1Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step1Add1Arena s6Step1Add1During 860 927 802 s6Step1Add1A s6Step1Add1B s6Step1Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step1Add1_distinct
-    (fun q hq => s6Step1Add1_owned (List.mem_toFinset.mpr hq)) s6Step1Add1_borrowed
-def s6Step2Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step2Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807, 795]
-def s6Step2Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813, 777]
-def s6Step2Add0Work : List Wire := [868, 857, 907, 858, 908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step2Add0_bounded : s6Step2Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step2Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step18Add1Arena s2Step18Add1During s2Step18Add1Work.toFinset s2Step18Add1_bounded s2Step18Add1_apart rfl
+theorem s2Step18Add1_checked : compileHmrHybridCinLog s2Step18Add1Arena 782 826 827 s2Step18Add1A s2Step18Add1B s2Step18Add1Work=some s2Step18Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step18Add1Arena s2Step18Add1During 782 826 827 s2Step18Add1A s2Step18Add1B s2Step18Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step18Add1_distinct
+    (fun q hq => s2Step18Add1_owned (List.mem_toFinset.mpr hq)) s2Step18Add1_borrowed
+def s2Step19Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)),Finset.filter_subset _ _⟩
+def s2Step19Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 781, 768]
+def s2Step19Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 782, 784, 769]
+def s2Step19Add0Work : List Wire := [831, 832, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step19Add0_bounded : s2Step19Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step19Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step2Add0During : Arena := ⟨s6Step2Add0Arena.live∪s6Step2Add0Work.toFinset,Finset.union_subset s6Step2Add0Arena.bounded s6Step2Add0_bounded⟩
-theorem s6Step2Add0_distinct : (875::862::779::(s6Step2Add0A++s6Step2Add0B)).Nodup := by
+def s2Step19Add0During : Arena := ⟨s2Step19Add0Arena.live∪s2Step19Add0Work.toFinset,Finset.union_subset s2Step19Add0Arena.bounded s2Step19Add0_bounded⟩
+theorem s2Step19Add0_distinct : (829::783::830::(s2Step19Add0A++s2Step19Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2Add0_owned : (875::862::779::(s6Step2Add0A++s6Step2Add0B)).toFinset⊆s6Step2Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step2Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step19Add0_owned : (829::783::830::(s2Step19Add0A++s2Step19Add0B)).toFinset⊆s2Step19Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step19Add0Arena (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Add0_apart : Disjoint s6Step2Add0Arena.live s6Step2Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step2Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step19Add0_apart : Disjoint s2Step19Add0Arena.live s2Step19Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step19Add0Arena (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Add0_card : s6Step2Add0Arena.live.card=793 := by
+theorem s2Step19Add0_card : s2Step19Add0Arena.live.card=832 := by
   decide +kernel
-theorem s6Step2Add0_borrowed : s6Step2Add0Arena.checkBorrow (hmrHybridCount s6Step2Add0Arena s6Step2Add0B.length) s6Step2Add0Work=some s6Step2Add0During := by
-  have len : s6Step2Add0Work.length=hmrHybridCount s6Step2Add0Arena s6Step2Add0B.length := by
-    rw [hmrHybridCount,s6Step2Add0_card]
+theorem s2Step19Add0_borrowed : s2Step19Add0Arena.checkBorrow (hmrHybridCount s2Step19Add0Arena s2Step19Add0B.length) s2Step19Add0Work=some s2Step19Add0During := by
+  have len : s2Step19Add0Work.length=hmrHybridCount s2Step19Add0Arena s2Step19Add0B.length := by
+    rw [hmrHybridCount,s2Step19Add0_card]
     decide +kernel
-  have nd : s6Step2Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step19Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step2Add0Arena s6Step2Add0During s6Step2Add0Work.toFinset s6Step2Add0_bounded s6Step2Add0_apart rfl
-theorem s6Step2Add0_checked : compileHmrHybridCinLog s6Step2Add0Arena 862 875 779 s6Step2Add0A s6Step2Add0B s6Step2Add0Work=some s6Step2Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step2Add0Arena s6Step2Add0During 862 875 779 s6Step2Add0A s6Step2Add0B s6Step2Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step2Add0_distinct
-    (fun q hq => s6Step2Add0_owned (List.mem_toFinset.mpr hq)) s6Step2Add0_borrowed
-def s6Step2Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step2Add1A : List Wire := [255, 876, 793, 802, 776]
-def s6Step2Add1B : List Wire := [859, 768, 887, 927, 775]
-def s6Step2Add1Work : List Wire := [868, 857, 907, 858]
-theorem s6Step2Add1_bounded : s6Step2Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step2Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step19Add0Arena s2Step19Add0During s2Step19Add0Work.toFinset s2Step19Add0_bounded s2Step19Add0_apart rfl
+theorem s2Step19Add0_checked : compileHmrHybridCinLog s2Step19Add0Arena 783 829 830 s2Step19Add0A s2Step19Add0B s2Step19Add0Work=some s2Step19Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step19Add0Arena s2Step19Add0During 783 829 830 s2Step19Add0A s2Step19Add0B s2Step19Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step19Add0_distinct
+    (fun q hq => s2Step19Add0_owned (List.mem_toFinset.mpr hq)) s2Step19Add0_borrowed
+def s2Step19Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)),Finset.filter_subset _ _⟩
+def s2Step19Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 770]
+def s2Step19Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 780, 826, 771]
+def s2Step19Add1Work : List Wire := [831, 832, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852]
+theorem s2Step19Add1_bounded : s2Step19Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step19Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step2Add1During : Arena := ⟨s6Step2Add1Arena.live∪s6Step2Add1Work.toFinset,Finset.union_subset s6Step2Add1Arena.bounded s6Step2Add1_bounded⟩
-theorem s6Step2Add1_distinct : (875::862::779::(s6Step2Add1A++s6Step2Add1B)).Nodup := by
+def s2Step19Add1During : Arena := ⟨s2Step19Add1Arena.live∪s2Step19Add1Work.toFinset,Finset.union_subset s2Step19Add1Arena.bounded s2Step19Add1_bounded⟩
+theorem s2Step19Add1_distinct : (829::783::830::(s2Step19Add1A++s2Step19Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step2Add1_owned : (875::862::779::(s6Step2Add1A++s6Step2Add1B)).toFinset⊆s6Step2Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step2Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step19Add1_owned : (829::783::830::(s2Step19Add1A++s2Step19Add1B)).toFinset⊆s2Step19Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step19Add1Arena (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Add1_apart : Disjoint s6Step2Add1Arena.live s6Step2Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step2Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step19Add1_apart : Disjoint s2Step19Add1Arena.live s2Step19Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step19Add1Arena (fun q => (0≤q ∧ q<831) ∨ (833≤q ∧ q<834)) rfl
   decide +kernel
-theorem s6Step2Add1_card : s6Step2Add1Arena.live.card=793 := by
+theorem s2Step19Add1_card : s2Step19Add1Arena.live.card=832 := by
   decide +kernel
-theorem s6Step2Add1_borrowed : s6Step2Add1Arena.checkBorrow (hmrHybridCount s6Step2Add1Arena s6Step2Add1B.length) s6Step2Add1Work=some s6Step2Add1During := by
-  have len : s6Step2Add1Work.length=hmrHybridCount s6Step2Add1Arena s6Step2Add1B.length := by
-    rw [hmrHybridCount,s6Step2Add1_card]
+theorem s2Step19Add1_borrowed : s2Step19Add1Arena.checkBorrow (hmrHybridCount s2Step19Add1Arena s2Step19Add1B.length) s2Step19Add1Work=some s2Step19Add1During := by
+  have len : s2Step19Add1Work.length=hmrHybridCount s2Step19Add1Arena s2Step19Add1B.length := by
+    rw [hmrHybridCount,s2Step19Add1_card]
     decide +kernel
-  have nd : s6Step2Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step19Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step2Add1Arena s6Step2Add1During s6Step2Add1Work.toFinset s6Step2Add1_bounded s6Step2Add1_apart rfl
-theorem s6Step2Add1_checked : compileHmrHybridCinLog s6Step2Add1Arena 862 875 779 s6Step2Add1A s6Step2Add1B s6Step2Add1Work=some s6Step2Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step2Add1Arena s6Step2Add1During 862 875 779 s6Step2Add1A s6Step2Add1B s6Step2Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step2Add1_distinct
-    (fun q hq => s6Step2Add1_owned (List.mem_toFinset.mpr hq)) s6Step2Add1_borrowed
-def s6Step3Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813, 795]
-def s6Step3Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860, 777]
-def s6Step3Add0Work : List Wire := [907, 858, 908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step3Add0_bounded : s6Step3Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step3Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step19Add1Arena s2Step19Add1During s2Step19Add1Work.toFinset s2Step19Add1_bounded s2Step19Add1_apart rfl
+theorem s2Step19Add1_checked : compileHmrHybridCinLog s2Step19Add1Arena 783 829 830 s2Step19Add1A s2Step19Add1B s2Step19Add1Work=some s2Step19Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step19Add1Arena s2Step19Add1During 783 829 830 s2Step19Add1A s2Step19Add1B s2Step19Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step19Add1_distinct
+    (fun q hq => s2Step19Add1_owned (List.mem_toFinset.mpr hq)) s2Step19Add1_borrowed
+def s2Step20Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)),Finset.filter_subset _ _⟩
+def s2Step20Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 784, 768]
+def s2Step20Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783, 782, 769]
+def s2Step20Add0Work : List Wire := [834, 835, 836, 837, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step20Add0_bounded : s2Step20Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step20Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step3Add0During : Arena := ⟨s6Step3Add0Arena.live∪s6Step3Add0Work.toFinset,Finset.union_subset s6Step3Add0Arena.bounded s6Step3Add0_bounded⟩
-theorem s6Step3Add0_distinct : (868::807::857::(s6Step3Add0A++s6Step3Add0B)).Nodup := by
+def s2Step20Add0During : Arena := ⟨s2Step20Add0Arena.live∪s2Step20Add0Work.toFinset,Finset.union_subset s2Step20Add0Arena.bounded s2Step20Add0_bounded⟩
+theorem s2Step20Add0_distinct : (831::781::832::(s2Step20Add0A++s2Step20Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3Add0_owned : (868::807::857::(s6Step3Add0A++s6Step3Add0B)).toFinset⊆s6Step3Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step3Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step20Add0_owned : (831::781::832::(s2Step20Add0A++s2Step20Add0B)).toFinset⊆s2Step20Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step20Add0Arena (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Add0_apart : Disjoint s6Step3Add0Arena.live s6Step3Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step3Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step20Add0_apart : Disjoint s2Step20Add0Arena.live s2Step20Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step20Add0Arena (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Add0_card : s6Step3Add0Arena.live.card=795 := by
+theorem s2Step20Add0_card : s2Step20Add0Arena.live.card=835 := by
   decide +kernel
-theorem s6Step3Add0_borrowed : s6Step3Add0Arena.checkBorrow (hmrHybridCount s6Step3Add0Arena s6Step3Add0B.length) s6Step3Add0Work=some s6Step3Add0During := by
-  have len : s6Step3Add0Work.length=hmrHybridCount s6Step3Add0Arena s6Step3Add0B.length := by
-    rw [hmrHybridCount,s6Step3Add0_card]
+theorem s2Step20Add0_borrowed : s2Step20Add0Arena.checkBorrow (hmrHybridCount s2Step20Add0Arena s2Step20Add0B.length) s2Step20Add0Work=some s2Step20Add0During := by
+  have len : s2Step20Add0Work.length=hmrHybridCount s2Step20Add0Arena s2Step20Add0B.length := by
+    rw [hmrHybridCount,s2Step20Add0_card]
     decide +kernel
-  have nd : s6Step3Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step20Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step3Add0Arena s6Step3Add0During s6Step3Add0Work.toFinset s6Step3Add0_bounded s6Step3Add0_apart rfl
-theorem s6Step3Add0_checked : compileHmrHybridCinLog s6Step3Add0Arena 807 868 857 s6Step3Add0A s6Step3Add0B s6Step3Add0Work=some s6Step3Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step3Add0Arena s6Step3Add0During 807 868 857 s6Step3Add0A s6Step3Add0B s6Step3Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step3Add0_distinct
-    (fun q hq => s6Step3Add0_owned (List.mem_toFinset.mpr hq)) s6Step3Add0_borrowed
-def s6Step3Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step3Add1A : List Wire := [255, 876, 793, 802, 779, 776]
-def s6Step3Add1B : List Wire := [859, 768, 874, 887, 875, 775]
-def s6Step3Add1Work : List Wire := [907, 858, 908, 845, 890]
-theorem s6Step3Add1_bounded : s6Step3Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step3Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step20Add0Arena s2Step20Add0During s2Step20Add0Work.toFinset s2Step20Add0_bounded s2Step20Add0_apart rfl
+theorem s2Step20Add0_checked : compileHmrHybridCinLog s2Step20Add0Arena 781 831 832 s2Step20Add0A s2Step20Add0B s2Step20Add0Work=some s2Step20Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step20Add0Arena s2Step20Add0During 781 831 832 s2Step20Add0A s2Step20Add0B s2Step20Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step20Add0_distinct
+    (fun q hq => s2Step20Add0_owned (List.mem_toFinset.mpr hq)) s2Step20Add0_borrowed
+def s2Step20Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)),Finset.filter_subset _ _⟩
+def s2Step20Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 770]
+def s2Step20Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 780, 829, 771]
+def s2Step20Add1Work : List Wire := [834, 835, 836, 837, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856]
+theorem s2Step20Add1_bounded : s2Step20Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step20Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step3Add1During : Arena := ⟨s6Step3Add1Arena.live∪s6Step3Add1Work.toFinset,Finset.union_subset s6Step3Add1Arena.bounded s6Step3Add1_bounded⟩
-theorem s6Step3Add1_distinct : (868::807::857::(s6Step3Add1A++s6Step3Add1B)).Nodup := by
+def s2Step20Add1During : Arena := ⟨s2Step20Add1Arena.live∪s2Step20Add1Work.toFinset,Finset.union_subset s2Step20Add1Arena.bounded s2Step20Add1_bounded⟩
+theorem s2Step20Add1_distinct : (831::781::832::(s2Step20Add1A++s2Step20Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step3Add1_owned : (868::807::857::(s6Step3Add1A++s6Step3Add1B)).toFinset⊆s6Step3Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step3Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step20Add1_owned : (831::781::832::(s2Step20Add1A++s2Step20Add1B)).toFinset⊆s2Step20Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step20Add1Arena (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Add1_apart : Disjoint s6Step3Add1Arena.live s6Step3Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step3Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<858) ∨ (859≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step20Add1_apart : Disjoint s2Step20Add1Arena.live s2Step20Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step20Add1Arena (fun q => (0≤q ∧ q<834) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step3Add1_card : s6Step3Add1Arena.live.card=795 := by
+theorem s2Step20Add1_card : s2Step20Add1Arena.live.card=835 := by
   decide +kernel
-theorem s6Step3Add1_borrowed : s6Step3Add1Arena.checkBorrow (hmrHybridCount s6Step3Add1Arena s6Step3Add1B.length) s6Step3Add1Work=some s6Step3Add1During := by
-  have len : s6Step3Add1Work.length=hmrHybridCount s6Step3Add1Arena s6Step3Add1B.length := by
-    rw [hmrHybridCount,s6Step3Add1_card]
+theorem s2Step20Add1_borrowed : s2Step20Add1Arena.checkBorrow (hmrHybridCount s2Step20Add1Arena s2Step20Add1B.length) s2Step20Add1Work=some s2Step20Add1During := by
+  have len : s2Step20Add1Work.length=hmrHybridCount s2Step20Add1Arena s2Step20Add1B.length := by
+    rw [hmrHybridCount,s2Step20Add1_card]
     decide +kernel
-  have nd : s6Step3Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step20Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step3Add1Arena s6Step3Add1During s6Step3Add1Work.toFinset s6Step3Add1_bounded s6Step3Add1_apart rfl
-theorem s6Step3Add1_checked : compileHmrHybridCinLog s6Step3Add1Arena 807 868 857 s6Step3Add1A s6Step3Add1B s6Step3Add1Work=some s6Step3Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step3Add1Arena s6Step3Add1During 807 868 857 s6Step3Add1A s6Step3Add1B s6Step3Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step3Add1_distinct
-    (fun q hq => s6Step3Add1_owned (List.mem_toFinset.mpr hq)) s6Step3Add1_borrowed
-def s6Step4Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860, 795]
-def s6Step4Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862, 777]
-def s6Step4Add0Work : List Wire := [908, 845, 890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step4Add0_bounded : s6Step4Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step4Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step20Add1Arena s2Step20Add1During s2Step20Add1Work.toFinset s2Step20Add1_bounded s2Step20Add1_apart rfl
+theorem s2Step20Add1_checked : compileHmrHybridCinLog s2Step20Add1Arena 781 831 832 s2Step20Add1A s2Step20Add1B s2Step20Add1Work=some s2Step20Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step20Add1Arena s2Step20Add1During 781 831 832 s2Step20Add1A s2Step20Add1B s2Step20Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step20Add1_distinct
+    (fun q hq => s2Step20Add1_owned (List.mem_toFinset.mpr hq)) s2Step20Add1_borrowed
+def s2Step21Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)),Finset.filter_subset _ _⟩
+def s2Step21Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 782, 768]
+def s2Step21Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 781, 783, 769]
+def s2Step21Add0Work : List Wire := [836, 837, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step21Add0_bounded : s2Step21Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step21Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step4Add0During : Arena := ⟨s6Step4Add0Arena.live∪s6Step4Add0Work.toFinset,Finset.union_subset s6Step4Add0Arena.bounded s6Step4Add0_bounded⟩
-theorem s6Step4Add0_distinct : (907::813::858::(s6Step4Add0A++s6Step4Add0B)).Nodup := by
+def s2Step21Add0During : Arena := ⟨s2Step21Add0Arena.live∪s2Step21Add0Work.toFinset,Finset.union_subset s2Step21Add0Arena.bounded s2Step21Add0_bounded⟩
+theorem s2Step21Add0_distinct : (834::784::835::(s2Step21Add0A++s2Step21Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4Add0_owned : (907::813::858::(s6Step4Add0A++s6Step4Add0B)).toFinset⊆s6Step4Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step4Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step21Add0_owned : (834::784::835::(s2Step21Add0A++s2Step21Add0B)).toFinset⊆s2Step21Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step21Add0Arena (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Add0_apart : Disjoint s6Step4Add0Arena.live s6Step4Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step4Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step21Add0_apart : Disjoint s2Step21Add0Arena.live s2Step21Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step21Add0Arena (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Add0_card : s6Step4Add0Arena.live.card=797 := by
+theorem s2Step21Add0_card : s2Step21Add0Arena.live.card=837 := by
   decide +kernel
-theorem s6Step4Add0_borrowed : s6Step4Add0Arena.checkBorrow (hmrHybridCount s6Step4Add0Arena s6Step4Add0B.length) s6Step4Add0Work=some s6Step4Add0During := by
-  have len : s6Step4Add0Work.length=hmrHybridCount s6Step4Add0Arena s6Step4Add0B.length := by
-    rw [hmrHybridCount,s6Step4Add0_card]
+theorem s2Step21Add0_borrowed : s2Step21Add0Arena.checkBorrow (hmrHybridCount s2Step21Add0Arena s2Step21Add0B.length) s2Step21Add0Work=some s2Step21Add0During := by
+  have len : s2Step21Add0Work.length=hmrHybridCount s2Step21Add0Arena s2Step21Add0B.length := by
+    rw [hmrHybridCount,s2Step21Add0_card]
     decide +kernel
-  have nd : s6Step4Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step21Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step4Add0Arena s6Step4Add0During s6Step4Add0Work.toFinset s6Step4Add0_bounded s6Step4Add0_apart rfl
-theorem s6Step4Add0_checked : compileHmrHybridCinLog s6Step4Add0Arena 813 907 858 s6Step4Add0A s6Step4Add0B s6Step4Add0Work=some s6Step4Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step4Add0Arena s6Step4Add0During 813 907 858 s6Step4Add0A s6Step4Add0B s6Step4Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step4Add0_distinct
-    (fun q hq => s6Step4Add0_owned (List.mem_toFinset.mpr hq)) s6Step4Add0_borrowed
-def s6Step4Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step4Add1A : List Wire := [255, 876, 793, 802, 779, 857, 776]
-def s6Step4Add1B : List Wire := [859, 768, 874, 927, 887, 868, 775]
-def s6Step4Add1Work : List Wire := [908, 845, 890, 805, 873, 796]
-theorem s6Step4Add1_bounded : s6Step4Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step4Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step21Add0Arena s2Step21Add0During s2Step21Add0Work.toFinset s2Step21Add0_bounded s2Step21Add0_apart rfl
+theorem s2Step21Add0_checked : compileHmrHybridCinLog s2Step21Add0Arena 784 834 835 s2Step21Add0A s2Step21Add0B s2Step21Add0Work=some s2Step21Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step21Add0Arena s2Step21Add0During 784 834 835 s2Step21Add0A s2Step21Add0B s2Step21Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step21Add0_distinct
+    (fun q hq => s2Step21Add0_owned (List.mem_toFinset.mpr hq)) s2Step21Add0_borrowed
+def s2Step21Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)),Finset.filter_subset _ _⟩
+def s2Step21Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 770]
+def s2Step21Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 780, 831, 771]
+def s2Step21Add1Work : List Wire := [836, 837, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859]
+theorem s2Step21Add1_bounded : s2Step21Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step21Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step4Add1During : Arena := ⟨s6Step4Add1Arena.live∪s6Step4Add1Work.toFinset,Finset.union_subset s6Step4Add1Arena.bounded s6Step4Add1_bounded⟩
-theorem s6Step4Add1_distinct : (907::813::858::(s6Step4Add1A++s6Step4Add1B)).Nodup := by
+def s2Step21Add1During : Arena := ⟨s2Step21Add1Arena.live∪s2Step21Add1Work.toFinset,Finset.union_subset s2Step21Add1Arena.bounded s2Step21Add1_bounded⟩
+theorem s2Step21Add1_distinct : (834::784::835::(s2Step21Add1A++s2Step21Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step4Add1_owned : (907::813::858::(s6Step4Add1A++s6Step4Add1B)).toFinset⊆s6Step4Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step4Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step21Add1_owned : (834::784::835::(s2Step21Add1A++s2Step21Add1B)).toFinset⊆s2Step21Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step21Add1Arena (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Add1_apart : Disjoint s6Step4Add1Arena.live s6Step4Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step4Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<908) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step21Add1_apart : Disjoint s2Step21Add1Arena.live s2Step21Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step21Add1Arena (fun q => (0≤q ∧ q<836) ∨ (838≤q ∧ q<839)) rfl
   decide +kernel
-theorem s6Step4Add1_card : s6Step4Add1Arena.live.card=797 := by
+theorem s2Step21Add1_card : s2Step21Add1Arena.live.card=837 := by
   decide +kernel
-theorem s6Step4Add1_borrowed : s6Step4Add1Arena.checkBorrow (hmrHybridCount s6Step4Add1Arena s6Step4Add1B.length) s6Step4Add1Work=some s6Step4Add1During := by
-  have len : s6Step4Add1Work.length=hmrHybridCount s6Step4Add1Arena s6Step4Add1B.length := by
-    rw [hmrHybridCount,s6Step4Add1_card]
+theorem s2Step21Add1_borrowed : s2Step21Add1Arena.checkBorrow (hmrHybridCount s2Step21Add1Arena s2Step21Add1B.length) s2Step21Add1Work=some s2Step21Add1During := by
+  have len : s2Step21Add1Work.length=hmrHybridCount s2Step21Add1Arena s2Step21Add1B.length := by
+    rw [hmrHybridCount,s2Step21Add1_card]
     decide +kernel
-  have nd : s6Step4Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step21Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step4Add1Arena s6Step4Add1During s6Step4Add1Work.toFinset s6Step4Add1_bounded s6Step4Add1_apart rfl
-theorem s6Step4Add1_checked : compileHmrHybridCinLog s6Step4Add1Arena 813 907 858 s6Step4Add1A s6Step4Add1B s6Step4Add1Work=some s6Step4Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step4Add1Arena s6Step4Add1During 813 907 858 s6Step4Add1A s6Step4Add1B s6Step4Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step4Add1_distinct
-    (fun q hq => s6Step4Add1_owned (List.mem_toFinset.mpr hq)) s6Step4Add1_borrowed
-def s6Step5Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862, 795]
-def s6Step5Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807, 777]
-def s6Step5Add0Work : List Wire := [890, 805, 873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step5Add0_bounded : s6Step5Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step5Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step21Add1Arena s2Step21Add1During s2Step21Add1Work.toFinset s2Step21Add1_bounded s2Step21Add1_apart rfl
+theorem s2Step21Add1_checked : compileHmrHybridCinLog s2Step21Add1Arena 784 834 835 s2Step21Add1A s2Step21Add1B s2Step21Add1Work=some s2Step21Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step21Add1Arena s2Step21Add1During 784 834 835 s2Step21Add1A s2Step21Add1B s2Step21Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step21Add1_distinct
+    (fun q hq => s2Step21Add1_owned (List.mem_toFinset.mpr hq)) s2Step21Add1_borrowed
+def s2Step22Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)),Finset.filter_subset _ _⟩
+def s2Step22Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 783, 768]
+def s2Step22Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 784, 781, 769]
+def s2Step22Add0Work : List Wire := [839, 840, 841, 842, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step22Add0_bounded : s2Step22Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step22Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step5Add0During : Arena := ⟨s6Step5Add0Arena.live∪s6Step5Add0Work.toFinset,Finset.union_subset s6Step5Add0Arena.bounded s6Step5Add0_bounded⟩
-theorem s6Step5Add0_distinct : (908::860::845::(s6Step5Add0A++s6Step5Add0B)).Nodup := by
+def s2Step22Add0During : Arena := ⟨s2Step22Add0Arena.live∪s2Step22Add0Work.toFinset,Finset.union_subset s2Step22Add0Arena.bounded s2Step22Add0_bounded⟩
+theorem s2Step22Add0_distinct : (836::782::837::(s2Step22Add0A++s2Step22Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5Add0_owned : (908::860::845::(s6Step5Add0A++s6Step5Add0B)).toFinset⊆s6Step5Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step5Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step22Add0_owned : (836::782::837::(s2Step22Add0A++s2Step22Add0B)).toFinset⊆s2Step22Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step22Add0Arena (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Add0_apart : Disjoint s6Step5Add0Arena.live s6Step5Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step5Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step22Add0_apart : Disjoint s2Step22Add0Arena.live s2Step22Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step22Add0Arena (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Add0_card : s6Step5Add0Arena.live.card=799 := by
+theorem s2Step22Add0_card : s2Step22Add0Arena.live.card=840 := by
   decide +kernel
-theorem s6Step5Add0_borrowed : s6Step5Add0Arena.checkBorrow (hmrHybridCount s6Step5Add0Arena s6Step5Add0B.length) s6Step5Add0Work=some s6Step5Add0During := by
-  have len : s6Step5Add0Work.length=hmrHybridCount s6Step5Add0Arena s6Step5Add0B.length := by
-    rw [hmrHybridCount,s6Step5Add0_card]
+theorem s2Step22Add0_borrowed : s2Step22Add0Arena.checkBorrow (hmrHybridCount s2Step22Add0Arena s2Step22Add0B.length) s2Step22Add0Work=some s2Step22Add0During := by
+  have len : s2Step22Add0Work.length=hmrHybridCount s2Step22Add0Arena s2Step22Add0B.length := by
+    rw [hmrHybridCount,s2Step22Add0_card]
     decide +kernel
-  have nd : s6Step5Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step22Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step5Add0Arena s6Step5Add0During s6Step5Add0Work.toFinset s6Step5Add0_bounded s6Step5Add0_apart rfl
-theorem s6Step5Add0_checked : compileHmrHybridCinLog s6Step5Add0Arena 860 908 845 s6Step5Add0A s6Step5Add0B s6Step5Add0Work=some s6Step5Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step5Add0Arena s6Step5Add0During 860 908 845 s6Step5Add0A s6Step5Add0B s6Step5Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step5Add0_distinct
-    (fun q hq => s6Step5Add0_owned (List.mem_toFinset.mpr hq)) s6Step5Add0_borrowed
-def s6Step5Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step5Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 776]
-def s6Step5Add1B : List Wire := [859, 768, 874, 927, 875, 887, 907, 775]
-def s6Step5Add1Work : List Wire := [890, 805, 873, 796, 863, 856, 823]
-theorem s6Step5Add1_bounded : s6Step5Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step5Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step22Add0Arena s2Step22Add0During s2Step22Add0Work.toFinset s2Step22Add0_bounded s2Step22Add0_apart rfl
+theorem s2Step22Add0_checked : compileHmrHybridCinLog s2Step22Add0Arena 782 836 837 s2Step22Add0A s2Step22Add0B s2Step22Add0Work=some s2Step22Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step22Add0Arena s2Step22Add0During 782 836 837 s2Step22Add0A s2Step22Add0B s2Step22Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step22Add0_distinct
+    (fun q hq => s2Step22Add0_owned (List.mem_toFinset.mpr hq)) s2Step22Add0_borrowed
+def s2Step22Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)),Finset.filter_subset _ _⟩
+def s2Step22Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 770]
+def s2Step22Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 780, 834, 771]
+def s2Step22Add1Work : List Wire := [839, 840, 841, 842, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863]
+theorem s2Step22Add1_bounded : s2Step22Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step22Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step5Add1During : Arena := ⟨s6Step5Add1Arena.live∪s6Step5Add1Work.toFinset,Finset.union_subset s6Step5Add1Arena.bounded s6Step5Add1_bounded⟩
-theorem s6Step5Add1_distinct : (908::860::845::(s6Step5Add1A++s6Step5Add1B)).Nodup := by
+def s2Step22Add1During : Arena := ⟨s2Step22Add1Arena.live∪s2Step22Add1Work.toFinset,Finset.union_subset s2Step22Add1Arena.bounded s2Step22Add1_bounded⟩
+theorem s2Step22Add1_distinct : (836::782::837::(s2Step22Add1A++s2Step22Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step5Add1_owned : (908::860::845::(s6Step5Add1A++s6Step5Add1B)).toFinset⊆s6Step5Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step5Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step22Add1_owned : (836::782::837::(s2Step22Add1A++s2Step22Add1B)).toFinset⊆s2Step22Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step22Add1Arena (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Add1_apart : Disjoint s6Step5Add1Arena.live s6Step5Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step5Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step22Add1_apart : Disjoint s2Step22Add1Arena.live s2Step22Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step22Add1Arena (fun q => (0≤q ∧ q<839) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step5Add1_card : s6Step5Add1Arena.live.card=799 := by
+theorem s2Step22Add1_card : s2Step22Add1Arena.live.card=840 := by
   decide +kernel
-theorem s6Step5Add1_borrowed : s6Step5Add1Arena.checkBorrow (hmrHybridCount s6Step5Add1Arena s6Step5Add1B.length) s6Step5Add1Work=some s6Step5Add1During := by
-  have len : s6Step5Add1Work.length=hmrHybridCount s6Step5Add1Arena s6Step5Add1B.length := by
-    rw [hmrHybridCount,s6Step5Add1_card]
+theorem s2Step22Add1_borrowed : s2Step22Add1Arena.checkBorrow (hmrHybridCount s2Step22Add1Arena s2Step22Add1B.length) s2Step22Add1Work=some s2Step22Add1During := by
+  have len : s2Step22Add1Work.length=hmrHybridCount s2Step22Add1Arena s2Step22Add1B.length := by
+    rw [hmrHybridCount,s2Step22Add1_card]
     decide +kernel
-  have nd : s6Step5Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step22Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step5Add1Arena s6Step5Add1During s6Step5Add1Work.toFinset s6Step5Add1_bounded s6Step5Add1_apart rfl
-theorem s6Step5Add1_checked : compileHmrHybridCinLog s6Step5Add1Arena 860 908 845 s6Step5Add1A s6Step5Add1B s6Step5Add1Work=some s6Step5Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step5Add1Arena s6Step5Add1During 860 908 845 s6Step5Add1A s6Step5Add1B s6Step5Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step5Add1_distinct
-    (fun q hq => s6Step5Add1_owned (List.mem_toFinset.mpr hq)) s6Step5Add1_borrowed
-def s6Step6Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807, 795]
-def s6Step6Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813, 777]
-def s6Step6Add0Work : List Wire := [873, 796, 863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step6Add0_bounded : s6Step6Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step6Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step22Add1Arena s2Step22Add1During s2Step22Add1Work.toFinset s2Step22Add1_bounded s2Step22Add1_apart rfl
+theorem s2Step22Add1_checked : compileHmrHybridCinLog s2Step22Add1Arena 782 836 837 s2Step22Add1A s2Step22Add1B s2Step22Add1Work=some s2Step22Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step22Add1Arena s2Step22Add1During 782 836 837 s2Step22Add1A s2Step22Add1B s2Step22Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step22Add1_distinct
+    (fun q hq => s2Step22Add1_owned (List.mem_toFinset.mpr hq)) s2Step22Add1_borrowed
+def s2Step23Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)),Finset.filter_subset _ _⟩
+def s2Step23Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 781, 768]
+def s2Step23Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 782, 784, 769]
+def s2Step23Add0Work : List Wire := [841, 842, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step23Add0_bounded : s2Step23Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step23Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step6Add0During : Arena := ⟨s6Step6Add0Arena.live∪s6Step6Add0Work.toFinset,Finset.union_subset s6Step6Add0Arena.bounded s6Step6Add0_bounded⟩
-theorem s6Step6Add0_distinct : (890::862::805::(s6Step6Add0A++s6Step6Add0B)).Nodup := by
+def s2Step23Add0During : Arena := ⟨s2Step23Add0Arena.live∪s2Step23Add0Work.toFinset,Finset.union_subset s2Step23Add0Arena.bounded s2Step23Add0_bounded⟩
+theorem s2Step23Add0_distinct : (839::783::840::(s2Step23Add0A++s2Step23Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6Add0_owned : (890::862::805::(s6Step6Add0A++s6Step6Add0B)).toFinset⊆s6Step6Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step6Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step23Add0_owned : (839::783::840::(s2Step23Add0A++s2Step23Add0B)).toFinset⊆s2Step23Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step23Add0Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Add0_apart : Disjoint s6Step6Add0Arena.live s6Step6Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step6Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step23Add0_apart : Disjoint s2Step23Add0Arena.live s2Step23Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step23Add0Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Add0_card : s6Step6Add0Arena.live.card=801 := by
+theorem s2Step23Add0_card : s2Step23Add0Arena.live.card=842 := by
   decide +kernel
-theorem s6Step6Add0_borrowed : s6Step6Add0Arena.checkBorrow (hmrHybridCount s6Step6Add0Arena s6Step6Add0B.length) s6Step6Add0Work=some s6Step6Add0During := by
-  have len : s6Step6Add0Work.length=hmrHybridCount s6Step6Add0Arena s6Step6Add0B.length := by
-    rw [hmrHybridCount,s6Step6Add0_card]
+theorem s2Step23Add0_borrowed : s2Step23Add0Arena.checkBorrow (hmrHybridCount s2Step23Add0Arena s2Step23Add0B.length) s2Step23Add0Work=some s2Step23Add0During := by
+  have len : s2Step23Add0Work.length=hmrHybridCount s2Step23Add0Arena s2Step23Add0B.length := by
+    rw [hmrHybridCount,s2Step23Add0_card]
     decide +kernel
-  have nd : s6Step6Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step23Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step6Add0Arena s6Step6Add0During s6Step6Add0Work.toFinset s6Step6Add0_bounded s6Step6Add0_apart rfl
-theorem s6Step6Add0_checked : compileHmrHybridCinLog s6Step6Add0Arena 862 890 805 s6Step6Add0A s6Step6Add0B s6Step6Add0Work=some s6Step6Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step6Add0Arena s6Step6Add0During 862 890 805 s6Step6Add0A s6Step6Add0B s6Step6Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step6Add0_distinct
-    (fun q hq => s6Step6Add0_owned (List.mem_toFinset.mpr hq)) s6Step6Add0_borrowed
-def s6Step6Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step6Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 776]
-def s6Step6Add1B : List Wire := [859, 768, 874, 927, 875, 868, 887, 908, 775]
-def s6Step6Add1Work : List Wire := [873, 796, 863, 856, 823, 865, 880, 789]
-theorem s6Step6Add1_bounded : s6Step6Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step6Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step23Add0Arena s2Step23Add0During s2Step23Add0Work.toFinset s2Step23Add0_bounded s2Step23Add0_apart rfl
+theorem s2Step23Add0_checked : compileHmrHybridCinLog s2Step23Add0Arena 783 839 840 s2Step23Add0A s2Step23Add0B s2Step23Add0Work=some s2Step23Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step23Add0Arena s2Step23Add0During 783 839 840 s2Step23Add0A s2Step23Add0B s2Step23Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step23Add0_distinct
+    (fun q hq => s2Step23Add0_owned (List.mem_toFinset.mpr hq)) s2Step23Add0_borrowed
+def s2Step23Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)),Finset.filter_subset _ _⟩
+def s2Step23Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 770]
+def s2Step23Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 780, 836, 771]
+def s2Step23Add1Work : List Wire := [841, 842, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866]
+theorem s2Step23Add1_bounded : s2Step23Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step23Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step6Add1During : Arena := ⟨s6Step6Add1Arena.live∪s6Step6Add1Work.toFinset,Finset.union_subset s6Step6Add1Arena.bounded s6Step6Add1_bounded⟩
-theorem s6Step6Add1_distinct : (890::862::805::(s6Step6Add1A++s6Step6Add1B)).Nodup := by
+def s2Step23Add1During : Arena := ⟨s2Step23Add1Arena.live∪s2Step23Add1Work.toFinset,Finset.union_subset s2Step23Add1Arena.bounded s2Step23Add1_bounded⟩
+theorem s2Step23Add1_distinct : (839::783::840::(s2Step23Add1A++s2Step23Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step6Add1_owned : (890::862::805::(s6Step6Add1A++s6Step6Add1B)).toFinset⊆s6Step6Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step6Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step23Add1_owned : (839::783::840::(s2Step23Add1A++s2Step23Add1B)).toFinset⊆s2Step23Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step23Add1Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Add1_apart : Disjoint s6Step6Add1Arena.live s6Step6Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step6Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<796) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (874≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step23Add1_apart : Disjoint s2Step23Add1Arena.live s2Step23Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step23Add1Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844)) rfl
   decide +kernel
-theorem s6Step6Add1_card : s6Step6Add1Arena.live.card=801 := by
+theorem s2Step23Add1_card : s2Step23Add1Arena.live.card=842 := by
   decide +kernel
-theorem s6Step6Add1_borrowed : s6Step6Add1Arena.checkBorrow (hmrHybridCount s6Step6Add1Arena s6Step6Add1B.length) s6Step6Add1Work=some s6Step6Add1During := by
-  have len : s6Step6Add1Work.length=hmrHybridCount s6Step6Add1Arena s6Step6Add1B.length := by
-    rw [hmrHybridCount,s6Step6Add1_card]
+theorem s2Step23Add1_borrowed : s2Step23Add1Arena.checkBorrow (hmrHybridCount s2Step23Add1Arena s2Step23Add1B.length) s2Step23Add1Work=some s2Step23Add1During := by
+  have len : s2Step23Add1Work.length=hmrHybridCount s2Step23Add1Arena s2Step23Add1B.length := by
+    rw [hmrHybridCount,s2Step23Add1_card]
     decide +kernel
-  have nd : s6Step6Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step23Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step6Add1Arena s6Step6Add1During s6Step6Add1Work.toFinset s6Step6Add1_bounded s6Step6Add1_apart rfl
-theorem s6Step6Add1_checked : compileHmrHybridCinLog s6Step6Add1Arena 862 890 805 s6Step6Add1A s6Step6Add1B s6Step6Add1Work=some s6Step6Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step6Add1Arena s6Step6Add1During 862 890 805 s6Step6Add1A s6Step6Add1B s6Step6Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step6Add1_distinct
-    (fun q hq => s6Step6Add1_owned (List.mem_toFinset.mpr hq)) s6Step6Add1_borrowed
-def s6Step7Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813, 795]
-def s6Step7Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860, 777]
-def s6Step7Add0Work : List Wire := [863, 856, 823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step7Add0_bounded : s6Step7Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step7Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step23Add1Arena s2Step23Add1During s2Step23Add1Work.toFinset s2Step23Add1_bounded s2Step23Add1_apart rfl
+theorem s2Step23Add1_checked : compileHmrHybridCinLog s2Step23Add1Arena 783 839 840 s2Step23Add1A s2Step23Add1B s2Step23Add1Work=some s2Step23Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step23Add1Arena s2Step23Add1During 783 839 840 s2Step23Add1A s2Step23Add1B s2Step23Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step23Add1_distinct
+    (fun q hq => s2Step23Add1_owned (List.mem_toFinset.mpr hq)) s2Step23Add1_borrowed
+def s2Step24Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)),Finset.filter_subset _ _⟩
+def s2Step24Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 784, 768]
+def s2Step24Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 783, 782, 769]
+def s2Step24Add0Work : List Wire := [844, 845, 846, 847, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step24Add0_bounded : s2Step24Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step24Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step7Add0During : Arena := ⟨s6Step7Add0Arena.live∪s6Step7Add0Work.toFinset,Finset.union_subset s6Step7Add0Arena.bounded s6Step7Add0_bounded⟩
-theorem s6Step7Add0_distinct : (873::807::796::(s6Step7Add0A++s6Step7Add0B)).Nodup := by
+def s2Step24Add0During : Arena := ⟨s2Step24Add0Arena.live∪s2Step24Add0Work.toFinset,Finset.union_subset s2Step24Add0Arena.bounded s2Step24Add0_bounded⟩
+theorem s2Step24Add0_distinct : (841::781::842::(s2Step24Add0A++s2Step24Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7Add0_owned : (873::807::796::(s6Step7Add0A++s6Step7Add0B)).toFinset⊆s6Step7Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step7Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step24Add0_owned : (841::781::842::(s2Step24Add0A++s2Step24Add0B)).toFinset⊆s2Step24Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step24Add0Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Add0_apart : Disjoint s6Step7Add0Arena.live s6Step7Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step7Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step24Add0_apart : Disjoint s2Step24Add0Arena.live s2Step24Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step24Add0Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Add0_card : s6Step7Add0Arena.live.card=803 := by
+theorem s2Step24Add0_card : s2Step24Add0Arena.live.card=845 := by
   decide +kernel
-theorem s6Step7Add0_borrowed : s6Step7Add0Arena.checkBorrow (hmrHybridCount s6Step7Add0Arena s6Step7Add0B.length) s6Step7Add0Work=some s6Step7Add0During := by
-  have len : s6Step7Add0Work.length=hmrHybridCount s6Step7Add0Arena s6Step7Add0B.length := by
-    rw [hmrHybridCount,s6Step7Add0_card]
+theorem s2Step24Add0_borrowed : s2Step24Add0Arena.checkBorrow (hmrHybridCount s2Step24Add0Arena s2Step24Add0B.length) s2Step24Add0Work=some s2Step24Add0During := by
+  have len : s2Step24Add0Work.length=hmrHybridCount s2Step24Add0Arena s2Step24Add0B.length := by
+    rw [hmrHybridCount,s2Step24Add0_card]
     decide +kernel
-  have nd : s6Step7Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step24Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step7Add0Arena s6Step7Add0During s6Step7Add0Work.toFinset s6Step7Add0_bounded s6Step7Add0_apart rfl
-theorem s6Step7Add0_checked : compileHmrHybridCinLog s6Step7Add0Arena 807 873 796 s6Step7Add0A s6Step7Add0B s6Step7Add0Work=some s6Step7Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step7Add0Arena s6Step7Add0During 807 873 796 s6Step7Add0A s6Step7Add0B s6Step7Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step7Add0_distinct
-    (fun q hq => s6Step7Add0_owned (List.mem_toFinset.mpr hq)) s6Step7Add0_borrowed
-def s6Step7Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step7Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 776]
-def s6Step7Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 887, 890, 775]
-def s6Step7Add1Work : List Wire := [863, 856, 823, 865, 880, 789, 864, 818, 828]
-theorem s6Step7Add1_bounded : s6Step7Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step7Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step24Add0Arena s2Step24Add0During s2Step24Add0Work.toFinset s2Step24Add0_bounded s2Step24Add0_apart rfl
+theorem s2Step24Add0_checked : compileHmrHybridCinLog s2Step24Add0Arena 781 841 842 s2Step24Add0A s2Step24Add0B s2Step24Add0Work=some s2Step24Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step24Add0Arena s2Step24Add0During 781 841 842 s2Step24Add0A s2Step24Add0B s2Step24Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step24Add0_distinct
+    (fun q hq => s2Step24Add0_owned (List.mem_toFinset.mpr hq)) s2Step24Add0_borrowed
+def s2Step24Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)),Finset.filter_subset _ _⟩
+def s2Step24Add1A : List Wire := [255, 785, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 840, 770]
+def s2Step24Add1B : List Wire := [779, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 780, 839, 771]
+def s2Step24Add1Work : List Wire := [844, 845, 846, 847, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870]
+theorem s2Step24Add1_bounded : s2Step24Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step24Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step7Add1During : Arena := ⟨s6Step7Add1Arena.live∪s6Step7Add1Work.toFinset,Finset.union_subset s6Step7Add1Arena.bounded s6Step7Add1_bounded⟩
-theorem s6Step7Add1_distinct : (873::807::796::(s6Step7Add1A++s6Step7Add1B)).Nodup := by
+def s2Step24Add1During : Arena := ⟨s2Step24Add1Arena.live∪s2Step24Add1Work.toFinset,Finset.union_subset s2Step24Add1Arena.bounded s2Step24Add1_bounded⟩
+theorem s2Step24Add1_distinct : (841::781::842::(s2Step24Add1A++s2Step24Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step7Add1_owned : (873::807::796::(s6Step7Add1A++s6Step7Add1B)).toFinset⊆s6Step7Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step7Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step24Add1_owned : (841::781::842::(s2Step24Add1A++s2Step24Add1B)).toFinset⊆s2Step24Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step24Add1Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Add1_apart : Disjoint s6Step7Add1Arena.live s6Step7Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step7Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (857≤q ∧ q<861) ∨ (862≤q ∧ q<863) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step24Add1_apart : Disjoint s2Step24Add1Arena.live s2Step24Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step24Add1Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step7Add1_card : s6Step7Add1Arena.live.card=803 := by
+theorem s2Step24Add1_card : s2Step24Add1Arena.live.card=845 := by
   decide +kernel
-theorem s6Step7Add1_borrowed : s6Step7Add1Arena.checkBorrow (hmrHybridCount s6Step7Add1Arena s6Step7Add1B.length) s6Step7Add1Work=some s6Step7Add1During := by
-  have len : s6Step7Add1Work.length=hmrHybridCount s6Step7Add1Arena s6Step7Add1B.length := by
-    rw [hmrHybridCount,s6Step7Add1_card]
+theorem s2Step24Add1_borrowed : s2Step24Add1Arena.checkBorrow (hmrHybridCount s2Step24Add1Arena s2Step24Add1B.length) s2Step24Add1Work=some s2Step24Add1During := by
+  have len : s2Step24Add1Work.length=hmrHybridCount s2Step24Add1Arena s2Step24Add1B.length := by
+    rw [hmrHybridCount,s2Step24Add1_card]
     decide +kernel
-  have nd : s6Step7Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step24Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step7Add1Arena s6Step7Add1During s6Step7Add1Work.toFinset s6Step7Add1_bounded s6Step7Add1_apart rfl
-theorem s6Step7Add1_checked : compileHmrHybridCinLog s6Step7Add1Arena 807 873 796 s6Step7Add1A s6Step7Add1B s6Step7Add1Work=some s6Step7Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step7Add1Arena s6Step7Add1During 807 873 796 s6Step7Add1A s6Step7Add1B s6Step7Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step7Add1_distinct
-    (fun q hq => s6Step7Add1_owned (List.mem_toFinset.mpr hq)) s6Step7Add1_borrowed
-def s6Step8Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860, 795]
-def s6Step8Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862, 777]
-def s6Step8Add0Work : List Wire := [823, 865, 880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step8Add0_bounded : s6Step8Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step8Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step24Add1Arena s2Step24Add1During s2Step24Add1Work.toFinset s2Step24Add1_bounded s2Step24Add1_apart rfl
+theorem s2Step24Add1_checked : compileHmrHybridCinLog s2Step24Add1Arena 781 841 842 s2Step24Add1A s2Step24Add1B s2Step24Add1Work=some s2Step24Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step24Add1Arena s2Step24Add1During 781 841 842 s2Step24Add1A s2Step24Add1B s2Step24Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step24Add1_distinct
+    (fun q hq => s2Step24Add1_owned (List.mem_toFinset.mpr hq)) s2Step24Add1_borrowed
+def s2Step25Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)),Finset.filter_subset _ _⟩
+def s2Step25Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 839, 768]
+def s2Step25Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 781, 780, 769]
+def s2Step25Add0Work : List Wire := [841, 842, 844, 845, 846, 847, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step25Add0_bounded : s2Step25Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step25Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step8Add0During : Arena := ⟨s6Step8Add0Arena.live∪s6Step8Add0Work.toFinset,Finset.union_subset s6Step8Add0Arena.bounded s6Step8Add0_bounded⟩
-theorem s6Step8Add0_distinct : (863::813::856::(s6Step8Add0A++s6Step8Add0B)).Nodup := by
+def s2Step25Add0During : Arena := ⟨s2Step25Add0Arena.live∪s2Step25Add0Work.toFinset,Finset.union_subset s2Step25Add0Arena.bounded s2Step25Add0_bounded⟩
+theorem s2Step25Add0_distinct : (783::785::782::(s2Step25Add0A++s2Step25Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8Add0_owned : (863::813::856::(s6Step8Add0A++s6Step8Add0B)).toFinset⊆s6Step8Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step8Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step25Add0_owned : (783::785::782::(s2Step25Add0A++s2Step25Add0B)).toFinset⊆s2Step25Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step25Add0Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Add0_apart : Disjoint s6Step8Add0Arena.live s6Step8Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step8Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step25Add0_apart : Disjoint s2Step25Add0Arena.live s2Step25Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step25Add0Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Add0_card : s6Step8Add0Arena.live.card=805 := by
+theorem s2Step25Add0_card : s2Step25Add0Arena.live.card=843 := by
   decide +kernel
-theorem s6Step8Add0_borrowed : s6Step8Add0Arena.checkBorrow (hmrHybridCount s6Step8Add0Arena s6Step8Add0B.length) s6Step8Add0Work=some s6Step8Add0During := by
-  have len : s6Step8Add0Work.length=hmrHybridCount s6Step8Add0Arena s6Step8Add0B.length := by
-    rw [hmrHybridCount,s6Step8Add0_card]
+theorem s2Step25Add0_borrowed : s2Step25Add0Arena.checkBorrow (hmrHybridCount s2Step25Add0Arena s2Step25Add0B.length) s2Step25Add0Work=some s2Step25Add0During := by
+  have len : s2Step25Add0Work.length=hmrHybridCount s2Step25Add0Arena s2Step25Add0B.length := by
+    rw [hmrHybridCount,s2Step25Add0_card]
     decide +kernel
-  have nd : s6Step8Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step25Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step8Add0Arena s6Step8Add0During s6Step8Add0Work.toFinset s6Step8Add0_bounded s6Step8Add0_apart rfl
-theorem s6Step8Add0_checked : compileHmrHybridCinLog s6Step8Add0Arena 813 863 856 s6Step8Add0A s6Step8Add0B s6Step8Add0Work=some s6Step8Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step8Add0Arena s6Step8Add0During 813 863 856 s6Step8Add0A s6Step8Add0B s6Step8Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step8Add0_distinct
-    (fun q hq => s6Step8Add0_owned (List.mem_toFinset.mpr hq)) s6Step8Add0_borrowed
-def s6Step8Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step8Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 776]
-def s6Step8Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 887, 873, 775]
-def s6Step8Add1Work : List Wire := [823, 865, 880, 789, 864, 818, 828, 892, 870, 822]
-theorem s6Step8Add1_bounded : s6Step8Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step8Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step25Add0Arena s2Step25Add0During s2Step25Add0Work.toFinset s2Step25Add0_bounded s2Step25Add0_apart rfl
+theorem s2Step25Add0_checked : compileHmrHybridCinLog s2Step25Add0Arena 785 783 782 s2Step25Add0A s2Step25Add0B s2Step25Add0Work=some s2Step25Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step25Add0Arena s2Step25Add0During 785 783 782 s2Step25Add0A s2Step25Add0B s2Step25Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step25Add0_distinct
+    (fun q hq => s2Step25Add0_owned (List.mem_toFinset.mpr hq)) s2Step25Add0_borrowed
+def s2Step25Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)),Finset.filter_subset _ _⟩
+def s2Step25Add1A : List Wire := [255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 770]
+def s2Step25Add1B : List Wire := [767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 771]
+def s2Step25Add1Work : List Wire := [841, 842, 844, 845, 846, 847, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868]
+theorem s2Step25Add1_bounded : s2Step25Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step25Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step8Add1During : Arena := ⟨s6Step8Add1Arena.live∪s6Step8Add1Work.toFinset,Finset.union_subset s6Step8Add1Arena.bounded s6Step8Add1_bounded⟩
-theorem s6Step8Add1_distinct : (863::813::856::(s6Step8Add1A++s6Step8Add1B)).Nodup := by
+def s2Step25Add1During : Arena := ⟨s2Step25Add1Arena.live∪s2Step25Add1Work.toFinset,Finset.union_subset s2Step25Add1Arena.bounded s2Step25Add1_bounded⟩
+theorem s2Step25Add1_distinct : (783::785::782::(s2Step25Add1A++s2Step25Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step8Add1_owned : (863::813::856::(s6Step8Add1A++s6Step8Add1B)).toFinset⊆s6Step8Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step8Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step25Add1_owned : (783::785::782::(s2Step25Add1A++s2Step25Add1B)).toFinset⊆s2Step25Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step25Add1Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Add1_apart : Disjoint s6Step8Add1Arena.live s6Step8Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step8Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step25Add1_apart : Disjoint s2Step25Add1Arena.live s2Step25Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step25Add1Arena (fun q => (0≤q ∧ q<841) ∨ (843≤q ∧ q<844) ∨ (848≤q ∧ q<849)) rfl
   decide +kernel
-theorem s6Step8Add1_card : s6Step8Add1Arena.live.card=805 := by
+theorem s2Step25Add1_card : s2Step25Add1Arena.live.card=843 := by
   decide +kernel
-theorem s6Step8Add1_borrowed : s6Step8Add1Arena.checkBorrow (hmrHybridCount s6Step8Add1Arena s6Step8Add1B.length) s6Step8Add1Work=some s6Step8Add1During := by
-  have len : s6Step8Add1Work.length=hmrHybridCount s6Step8Add1Arena s6Step8Add1B.length := by
-    rw [hmrHybridCount,s6Step8Add1_card]
+theorem s2Step25Add1_borrowed : s2Step25Add1Arena.checkBorrow (hmrHybridCount s2Step25Add1Arena s2Step25Add1B.length) s2Step25Add1Work=some s2Step25Add1During := by
+  have len : s2Step25Add1Work.length=hmrHybridCount s2Step25Add1Arena s2Step25Add1B.length := by
+    rw [hmrHybridCount,s2Step25Add1_card]
     decide +kernel
-  have nd : s6Step8Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step25Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step8Add1Arena s6Step8Add1During s6Step8Add1Work.toFinset s6Step8Add1_bounded s6Step8Add1_apart rfl
-theorem s6Step8Add1_checked : compileHmrHybridCinLog s6Step8Add1Arena 813 863 856 s6Step8Add1A s6Step8Add1B s6Step8Add1Work=some s6Step8Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step8Add1Arena s6Step8Add1During 813 863 856 s6Step8Add1A s6Step8Add1B s6Step8Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step8Add1_distinct
-    (fun q hq => s6Step8Add1_owned (List.mem_toFinset.mpr hq)) s6Step8Add1_borrowed
-def s6Step9Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862, 795]
-def s6Step9Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807, 777]
-def s6Step9Add0Work : List Wire := [880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step9Add0_bounded : s6Step9Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step9Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step25Add1Arena s2Step25Add1During s2Step25Add1Work.toFinset s2Step25Add1_bounded s2Step25Add1_apart rfl
+theorem s2Step25Add1_checked : compileHmrHybridCinLog s2Step25Add1Arena 785 783 782 s2Step25Add1A s2Step25Add1B s2Step25Add1Work=some s2Step25Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step25Add1Arena s2Step25Add1During 785 783 782 s2Step25Add1A s2Step25Add1B s2Step25Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step25Add1_distinct
+    (fun q hq => s2Step25Add1_owned (List.mem_toFinset.mpr hq)) s2Step25Add1_borrowed
+def s2Step26Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)),Finset.filter_subset _ _⟩
+def s2Step26Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 780, 768]
+def s2Step26Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 785, 781, 769]
+def s2Step26Add0Work : List Wire := [844, 845, 846, 847, 849, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step26Add0_bounded : s2Step26Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step26Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step9Add0During : Arena := ⟨s6Step9Add0Arena.live∪s6Step9Add0Work.toFinset,Finset.union_subset s6Step9Add0Arena.bounded s6Step9Add0_bounded⟩
-theorem s6Step9Add0_distinct : (823::860::865::(s6Step9Add0A++s6Step9Add0B)).Nodup := by
+def s2Step26Add0During : Arena := ⟨s2Step26Add0Arena.live∪s2Step26Add0Work.toFinset,Finset.union_subset s2Step26Add0Arena.bounded s2Step26Add0_bounded⟩
+theorem s2Step26Add0_distinct : (841::839::842::(s2Step26Add0A++s2Step26Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9Add0_owned : (823::860::865::(s6Step9Add0A++s6Step9Add0B)).toFinset⊆s6Step9Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step9Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step26Add0_owned : (841::839::842::(s2Step26Add0A++s2Step26Add0B)).toFinset⊆s2Step26Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step26Add0Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Add0_apart : Disjoint s6Step9Add0Arena.live s6Step9Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step9Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step26Add0_apart : Disjoint s2Step26Add0Arena.live s2Step26Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step26Add0Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Add0_card : s6Step9Add0Arena.live.card=807 := by
+theorem s2Step26Add0_card : s2Step26Add0Arena.live.card=846 := by
   decide +kernel
-theorem s6Step9Add0_borrowed : s6Step9Add0Arena.checkBorrow (hmrHybridCount s6Step9Add0Arena s6Step9Add0B.length) s6Step9Add0Work=some s6Step9Add0During := by
-  have len : s6Step9Add0Work.length=hmrHybridCount s6Step9Add0Arena s6Step9Add0B.length := by
-    rw [hmrHybridCount,s6Step9Add0_card]
+theorem s2Step26Add0_borrowed : s2Step26Add0Arena.checkBorrow (hmrHybridCount s2Step26Add0Arena s2Step26Add0B.length) s2Step26Add0Work=some s2Step26Add0During := by
+  have len : s2Step26Add0Work.length=hmrHybridCount s2Step26Add0Arena s2Step26Add0B.length := by
+    rw [hmrHybridCount,s2Step26Add0_card]
     decide +kernel
-  have nd : s6Step9Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step26Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step9Add0Arena s6Step9Add0During s6Step9Add0Work.toFinset s6Step9Add0_bounded s6Step9Add0_apart rfl
-theorem s6Step9Add0_checked : compileHmrHybridCinLog s6Step9Add0Arena 860 823 865 s6Step9Add0A s6Step9Add0B s6Step9Add0Work=some s6Step9Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step9Add0Arena s6Step9Add0During 860 823 865 s6Step9Add0A s6Step9Add0B s6Step9Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step9Add0_distinct
-    (fun q hq => s6Step9Add0_owned (List.mem_toFinset.mpr hq)) s6Step9Add0_borrowed
-def s6Step9Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step9Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 776]
-def s6Step9Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 887, 863, 775]
-def s6Step9Add1Work : List Wire := [880, 789, 864, 818, 828, 892, 870, 822, 882, 780, 833]
-theorem s6Step9Add1_bounded : s6Step9Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step9Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step26Add0Arena s2Step26Add0During s2Step26Add0Work.toFinset s2Step26Add0_bounded s2Step26Add0_apart rfl
+theorem s2Step26Add0_checked : compileHmrHybridCinLog s2Step26Add0Arena 839 841 842 s2Step26Add0A s2Step26Add0B s2Step26Add0Work=some s2Step26Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step26Add0Arena s2Step26Add0During 839 841 842 s2Step26Add0A s2Step26Add0B s2Step26Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step26Add0_distinct
+    (fun q hq => s2Step26Add0_owned (List.mem_toFinset.mpr hq)) s2Step26Add0_borrowed
+def s2Step26Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)),Finset.filter_subset _ _⟩
+def s2Step26Add1A : List Wire := [255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 770]
+def s2Step26Add1B : List Wire := [767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 779, 783, 771]
+def s2Step26Add1Work : List Wire := [844, 845, 846, 847, 849, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872]
+theorem s2Step26Add1_bounded : s2Step26Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step26Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step9Add1During : Arena := ⟨s6Step9Add1Arena.live∪s6Step9Add1Work.toFinset,Finset.union_subset s6Step9Add1Arena.bounded s6Step9Add1_bounded⟩
-theorem s6Step9Add1_distinct : (823::860::865::(s6Step9Add1A++s6Step9Add1B)).Nodup := by
+def s2Step26Add1During : Arena := ⟨s2Step26Add1Arena.live∪s2Step26Add1Work.toFinset,Finset.union_subset s2Step26Add1Arena.bounded s2Step26Add1_bounded⟩
+theorem s2Step26Add1_distinct : (841::839::842::(s2Step26Add1A++s2Step26Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step9Add1_owned : (823::860::865::(s6Step9Add1A++s6Step9Add1B)).toFinset⊆s6Step9Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step9Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step26Add1_owned : (841::839::842::(s2Step26Add1A++s2Step26Add1B)).toFinset⊆s2Step26Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step26Add1Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Add1_apart : Disjoint s6Step9Add1Arena.live s6Step9Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step9Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (873≤q ∧ q<877) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step26Add1_apart : Disjoint s2Step26Add1Arena.live s2Step26Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step26Add1Arena (fun q => (0≤q ∧ q<844) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step9Add1_card : s6Step9Add1Arena.live.card=807 := by
+theorem s2Step26Add1_card : s2Step26Add1Arena.live.card=846 := by
   decide +kernel
-theorem s6Step9Add1_borrowed : s6Step9Add1Arena.checkBorrow (hmrHybridCount s6Step9Add1Arena s6Step9Add1B.length) s6Step9Add1Work=some s6Step9Add1During := by
-  have len : s6Step9Add1Work.length=hmrHybridCount s6Step9Add1Arena s6Step9Add1B.length := by
-    rw [hmrHybridCount,s6Step9Add1_card]
+theorem s2Step26Add1_borrowed : s2Step26Add1Arena.checkBorrow (hmrHybridCount s2Step26Add1Arena s2Step26Add1B.length) s2Step26Add1Work=some s2Step26Add1During := by
+  have len : s2Step26Add1Work.length=hmrHybridCount s2Step26Add1Arena s2Step26Add1B.length := by
+    rw [hmrHybridCount,s2Step26Add1_card]
     decide +kernel
-  have nd : s6Step9Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step26Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step9Add1Arena s6Step9Add1During s6Step9Add1Work.toFinset s6Step9Add1_bounded s6Step9Add1_apart rfl
-theorem s6Step9Add1_checked : compileHmrHybridCinLog s6Step9Add1Arena 860 823 865 s6Step9Add1A s6Step9Add1B s6Step9Add1Work=some s6Step9Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step9Add1Arena s6Step9Add1During 860 823 865 s6Step9Add1A s6Step9Add1B s6Step9Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step9Add1_distinct
-    (fun q hq => s6Step9Add1_owned (List.mem_toFinset.mpr hq)) s6Step9Add1_borrowed
-def s6Step10Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807, 795]
-def s6Step10Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813, 777]
-def s6Step10Add0Work : List Wire := [864, 818, 828, 892, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step10Add0_bounded : s6Step10Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step10Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step26Add1Arena s2Step26Add1During s2Step26Add1Work.toFinset s2Step26Add1_bounded s2Step26Add1_apart rfl
+theorem s2Step26Add1_checked : compileHmrHybridCinLog s2Step26Add1Arena 839 841 842 s2Step26Add1A s2Step26Add1B s2Step26Add1Work=some s2Step26Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step26Add1Arena s2Step26Add1During 839 841 842 s2Step26Add1A s2Step26Add1B s2Step26Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step26Add1_distinct
+    (fun q hq => s2Step26Add1_owned (List.mem_toFinset.mpr hq)) s2Step26Add1_borrowed
+def s2Step27Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)),Finset.filter_subset _ _⟩
+def s2Step27Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 781, 768]
+def s2Step27Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 839, 785, 769]
+def s2Step27Add0Work : List Wire := [846, 847, 849, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step27Add0_bounded : s2Step27Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step27Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step10Add0During : Arena := ⟨s6Step10Add0Arena.live∪s6Step10Add0Work.toFinset,Finset.union_subset s6Step10Add0Arena.bounded s6Step10Add0_bounded⟩
-theorem s6Step10Add0_distinct : (880::862::789::(s6Step10Add0A++s6Step10Add0B)).Nodup := by
+def s2Step27Add0During : Arena := ⟨s2Step27Add0Arena.live∪s2Step27Add0Work.toFinset,Finset.union_subset s2Step27Add0Arena.bounded s2Step27Add0_bounded⟩
+theorem s2Step27Add0_distinct : (844::780::845::(s2Step27Add0A++s2Step27Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10Add0_owned : (880::862::789::(s6Step10Add0A++s6Step10Add0B)).toFinset⊆s6Step10Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step10Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step27Add0_owned : (844::780::845::(s2Step27Add0A++s2Step27Add0B)).toFinset⊆s2Step27Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step27Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Add0_apart : Disjoint s6Step10Add0Arena.live s6Step10Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step10Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step27Add0_apart : Disjoint s2Step27Add0Arena.live s2Step27Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step27Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Add0_card : s6Step10Add0Arena.live.card=810 := by
+theorem s2Step27Add0_card : s2Step27Add0Arena.live.card=848 := by
   decide +kernel
-theorem s6Step10Add0_borrowed : s6Step10Add0Arena.checkBorrow (hmrHybridCount s6Step10Add0Arena s6Step10Add0B.length) s6Step10Add0Work=some s6Step10Add0During := by
-  have len : s6Step10Add0Work.length=hmrHybridCount s6Step10Add0Arena s6Step10Add0B.length := by
-    rw [hmrHybridCount,s6Step10Add0_card]
+theorem s2Step27Add0_borrowed : s2Step27Add0Arena.checkBorrow (hmrHybridCount s2Step27Add0Arena s2Step27Add0B.length) s2Step27Add0Work=some s2Step27Add0During := by
+  have len : s2Step27Add0Work.length=hmrHybridCount s2Step27Add0Arena s2Step27Add0B.length := by
+    rw [hmrHybridCount,s2Step27Add0_card]
     decide +kernel
-  have nd : s6Step10Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step27Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step10Add0Arena s6Step10Add0During s6Step10Add0Work.toFinset s6Step10Add0_bounded s6Step10Add0_apart rfl
-theorem s6Step10Add0_checked : compileHmrHybridCinLog s6Step10Add0Arena 862 880 789 s6Step10Add0A s6Step10Add0B s6Step10Add0Work=some s6Step10Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step10Add0Arena s6Step10Add0During 862 880 789 s6Step10Add0A s6Step10Add0B s6Step10Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step10Add0_distinct
-    (fun q hq => s6Step10Add0_owned (List.mem_toFinset.mpr hq)) s6Step10Add0_borrowed
-def s6Step10Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step10Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 776]
-def s6Step10Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 887, 823, 775]
-def s6Step10Add1Work : List Wire := [864, 818, 828, 892, 822, 882, 780, 833, 872, 888, 886, 778]
-theorem s6Step10Add1_bounded : s6Step10Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step10Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step27Add0Arena s2Step27Add0During s2Step27Add0Work.toFinset s2Step27Add0_bounded s2Step27Add0_apart rfl
+theorem s2Step27Add0_checked : compileHmrHybridCinLog s2Step27Add0Arena 780 844 845 s2Step27Add0A s2Step27Add0B s2Step27Add0Work=some s2Step27Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step27Add0Arena s2Step27Add0During 780 844 845 s2Step27Add0A s2Step27Add0B s2Step27Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step27Add0_distinct
+    (fun q hq => s2Step27Add0_owned (List.mem_toFinset.mpr hq)) s2Step27Add0_borrowed
+def s2Step27Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)),Finset.filter_subset _ _⟩
+def s2Step27Add1A : List Wire := [255, 254, 787, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 770]
+def s2Step27Add1B : List Wire := [767, 778, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 779, 841, 771]
+def s2Step27Add1Work : List Wire := [846, 847, 849, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875]
+theorem s2Step27Add1_bounded : s2Step27Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step27Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step10Add1During : Arena := ⟨s6Step10Add1Arena.live∪s6Step10Add1Work.toFinset,Finset.union_subset s6Step10Add1Arena.bounded s6Step10Add1_bounded⟩
-theorem s6Step10Add1_distinct : (880::862::789::(s6Step10Add1A++s6Step10Add1B)).Nodup := by
+def s2Step27Add1During : Arena := ⟨s2Step27Add1Arena.live∪s2Step27Add1Work.toFinset,Finset.union_subset s2Step27Add1Arena.bounded s2Step27Add1_bounded⟩
+theorem s2Step27Add1_distinct : (844::780::845::(s2Step27Add1A++s2Step27Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step10Add1_owned : (880::862::789::(s6Step10Add1A++s6Step10Add1B)).toFinset⊆s6Step10Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step10Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step27Add1_owned : (844::780::845::(s2Step27Add1A++s2Step27Add1B)).toFinset⊆s2Step27Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step27Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Add1_apart : Disjoint s6Step10Add1Arena.live s6Step10Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step10Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<864) ∨ (865≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step27Add1_apart : Disjoint s2Step27Add1Arena.live s2Step27Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step27Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851)) rfl
   decide +kernel
-theorem s6Step10Add1_card : s6Step10Add1Arena.live.card=810 := by
+theorem s2Step27Add1_card : s2Step27Add1Arena.live.card=848 := by
   decide +kernel
-theorem s6Step10Add1_borrowed : s6Step10Add1Arena.checkBorrow (hmrHybridCount s6Step10Add1Arena s6Step10Add1B.length) s6Step10Add1Work=some s6Step10Add1During := by
-  have len : s6Step10Add1Work.length=hmrHybridCount s6Step10Add1Arena s6Step10Add1B.length := by
-    rw [hmrHybridCount,s6Step10Add1_card]
+theorem s2Step27Add1_borrowed : s2Step27Add1Arena.checkBorrow (hmrHybridCount s2Step27Add1Arena s2Step27Add1B.length) s2Step27Add1Work=some s2Step27Add1During := by
+  have len : s2Step27Add1Work.length=hmrHybridCount s2Step27Add1Arena s2Step27Add1B.length := by
+    rw [hmrHybridCount,s2Step27Add1_card]
     decide +kernel
-  have nd : s6Step10Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step27Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step10Add1Arena s6Step10Add1During s6Step10Add1Work.toFinset s6Step10Add1_bounded s6Step10Add1_apart rfl
-theorem s6Step10Add1_checked : compileHmrHybridCinLog s6Step10Add1Arena 862 880 789 s6Step10Add1A s6Step10Add1B s6Step10Add1Work=some s6Step10Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step10Add1Arena s6Step10Add1During 862 880 789 s6Step10Add1A s6Step10Add1B s6Step10Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step10Add1_distinct
-    (fun q hq => s6Step10Add1_owned (List.mem_toFinset.mpr hq)) s6Step10Add1_borrowed
-def s6Step11Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 813, 795]
-def s6Step11Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 862, 860, 777]
-def s6Step11Add0Work : List Wire := [828, 892, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step11Add0_bounded : s6Step11Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step11Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step27Add1Arena s2Step27Add1During s2Step27Add1Work.toFinset s2Step27Add1_bounded s2Step27Add1_apart rfl
+theorem s2Step27Add1_checked : compileHmrHybridCinLog s2Step27Add1Arena 780 844 845 s2Step27Add1A s2Step27Add1B s2Step27Add1Work=some s2Step27Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step27Add1Arena s2Step27Add1During 780 844 845 s2Step27Add1A s2Step27Add1B s2Step27Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step27Add1_distinct
+    (fun q hq => s2Step27Add1_owned (List.mem_toFinset.mpr hq)) s2Step27Add1_borrowed
+def s2Step28Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)),Finset.filter_subset _ _⟩
+def s2Step28Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 781, 768]
+def s2Step28Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 780, 841, 769]
+def s2Step28Add0Work : List Wire := [846, 847, 849, 851, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step28Add0_bounded : s2Step28Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step28Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step11Add0During : Arena := ⟨s6Step11Add0Arena.live∪s6Step11Add0Work.toFinset,Finset.union_subset s6Step11Add0Arena.bounded s6Step11Add0_bounded⟩
-theorem s6Step11Add0_distinct : (864::807::818::(s6Step11Add0A++s6Step11Add0B)).Nodup := by
+def s2Step28Add0During : Arena := ⟨s2Step28Add0Arena.live∪s2Step28Add0Work.toFinset,Finset.union_subset s2Step28Add0Arena.bounded s2Step28Add0_bounded⟩
+theorem s2Step28Add0_distinct : (844::779::845::(s2Step28Add0A++s2Step28Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11Add0_owned : (864::807::818::(s6Step11Add0A++s6Step11Add0B)).toFinset⊆s6Step11Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step11Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step28Add0_owned : (844::779::845::(s2Step28Add0A++s2Step28Add0B)).toFinset⊆s2Step28Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step28Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Add0_apart : Disjoint s6Step11Add0Arena.live s6Step11Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step11Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step28Add0_apart : Disjoint s2Step28Add0Arena.live s2Step28Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step28Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Add0_card : s6Step11Add0Arena.live.card=812 := by
+theorem s2Step28Add0_card : s2Step28Add0Arena.live.card=849 := by
   decide +kernel
-theorem s6Step11Add0_borrowed : s6Step11Add0Arena.checkBorrow (hmrHybridCount s6Step11Add0Arena s6Step11Add0B.length) s6Step11Add0Work=some s6Step11Add0During := by
-  have len : s6Step11Add0Work.length=hmrHybridCount s6Step11Add0Arena s6Step11Add0B.length := by
-    rw [hmrHybridCount,s6Step11Add0_card]
+theorem s2Step28Add0_borrowed : s2Step28Add0Arena.checkBorrow (hmrHybridCount s2Step28Add0Arena s2Step28Add0B.length) s2Step28Add0Work=some s2Step28Add0During := by
+  have len : s2Step28Add0Work.length=hmrHybridCount s2Step28Add0Arena s2Step28Add0B.length := by
+    rw [hmrHybridCount,s2Step28Add0_card]
     decide +kernel
-  have nd : s6Step11Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step28Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step11Add0Arena s6Step11Add0During s6Step11Add0Work.toFinset s6Step11Add0_bounded s6Step11Add0_apart rfl
-theorem s6Step11Add0_checked : compileHmrHybridCinLog s6Step11Add0Arena 807 864 818 s6Step11Add0A s6Step11Add0B s6Step11Add0Work=some s6Step11Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step11Add0Arena s6Step11Add0During 807 864 818 s6Step11Add0A s6Step11Add0B s6Step11Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step11Add0_distinct
-    (fun q hq => s6Step11Add0_owned (List.mem_toFinset.mpr hq)) s6Step11Add0_borrowed
-def s6Step11Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step11Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 776]
-def s6Step11Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 887, 880, 775]
-def s6Step11Add1Work : List Wire := [828, 892, 822, 882, 780, 833, 872, 888, 886, 778, 838, 883, 814]
-theorem s6Step11Add1_bounded : s6Step11Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step11Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step28Add0Arena s2Step28Add0During s2Step28Add0Work.toFinset s2Step28Add0_bounded s2Step28Add0_apart rfl
+theorem s2Step28Add0_checked : compileHmrHybridCinLog s2Step28Add0Arena 779 844 845 s2Step28Add0A s2Step28Add0B s2Step28Add0Work=some s2Step28Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step28Add0Arena s2Step28Add0During 779 844 845 s2Step28Add0A s2Step28Add0B s2Step28Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step28Add0_distinct
+    (fun q hq => s2Step28Add0_owned (List.mem_toFinset.mpr hq)) s2Step28Add0_borrowed
+def s2Step28Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)),Finset.filter_subset _ _⟩
+def s2Step28Add1A : List Wire := [255, 254, 253, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 785, 770]
+def s2Step28Add1B : List Wire := [767, 766, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 839, 771]
+def s2Step28Add1Work : List Wire := [846, 847, 849, 851, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877]
+theorem s2Step28Add1_bounded : s2Step28Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step28Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step11Add1During : Arena := ⟨s6Step11Add1Arena.live∪s6Step11Add1Work.toFinset,Finset.union_subset s6Step11Add1Arena.bounded s6Step11Add1_bounded⟩
-theorem s6Step11Add1_distinct : (864::807::818::(s6Step11Add1A++s6Step11Add1B)).Nodup := by
+def s2Step28Add1During : Arena := ⟨s2Step28Add1Arena.live∪s2Step28Add1Work.toFinset,Finset.union_subset s2Step28Add1Arena.bounded s2Step28Add1_bounded⟩
+theorem s2Step28Add1_distinct : (844::779::845::(s2Step28Add1A++s2Step28Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step11Add1_owned : (864::807::818::(s6Step11Add1A++s6Step11Add1B)).toFinset⊆s6Step11Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step11Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step28Add1_owned : (844::779::845::(s2Step28Add1A++s2Step28Add1B)).toFinset⊆s2Step28Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step28Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Add1_apart : Disjoint s6Step11Add1Arena.live s6Step11Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step11Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (873≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step28Add1_apart : Disjoint s2Step28Add1Arena.live s2Step28Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step28Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step11Add1_card : s6Step11Add1Arena.live.card=812 := by
+theorem s2Step28Add1_card : s2Step28Add1Arena.live.card=849 := by
   decide +kernel
-theorem s6Step11Add1_borrowed : s6Step11Add1Arena.checkBorrow (hmrHybridCount s6Step11Add1Arena s6Step11Add1B.length) s6Step11Add1Work=some s6Step11Add1During := by
-  have len : s6Step11Add1Work.length=hmrHybridCount s6Step11Add1Arena s6Step11Add1B.length := by
-    rw [hmrHybridCount,s6Step11Add1_card]
+theorem s2Step28Add1_borrowed : s2Step28Add1Arena.checkBorrow (hmrHybridCount s2Step28Add1Arena s2Step28Add1B.length) s2Step28Add1Work=some s2Step28Add1During := by
+  have len : s2Step28Add1Work.length=hmrHybridCount s2Step28Add1Arena s2Step28Add1B.length := by
+    rw [hmrHybridCount,s2Step28Add1_card]
     decide +kernel
-  have nd : s6Step11Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step28Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step11Add1Arena s6Step11Add1During s6Step11Add1Work.toFinset s6Step11Add1_bounded s6Step11Add1_apart rfl
-theorem s6Step11Add1_checked : compileHmrHybridCinLog s6Step11Add1Arena 807 864 818 s6Step11Add1A s6Step11Add1B s6Step11Add1Work=some s6Step11Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step11Add1Arena s6Step11Add1During 807 864 818 s6Step11Add1A s6Step11Add1B s6Step11Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step11Add1_distinct
-    (fun q hq => s6Step11Add1_owned (List.mem_toFinset.mpr hq)) s6Step11Add1_borrowed
-def s6Step12Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 860, 795]
-def s6Step12Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 807, 862, 777]
-def s6Step12Add0Work : List Wire := [822, 882, 780, 833, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step12Add0_bounded : s6Step12Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step12Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step28Add1Arena s2Step28Add1During s2Step28Add1Work.toFinset s2Step28Add1_bounded s2Step28Add1_apart rfl
+theorem s2Step28Add1_checked : compileHmrHybridCinLog s2Step28Add1Arena 779 844 845 s2Step28Add1A s2Step28Add1B s2Step28Add1Work=some s2Step28Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step28Add1Arena s2Step28Add1During 779 844 845 s2Step28Add1A s2Step28Add1B s2Step28Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step28Add1_distinct
+    (fun q hq => s2Step28Add1_owned (List.mem_toFinset.mpr hq)) s2Step28Add1_borrowed
+def s2Step29Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)),Finset.filter_subset _ _⟩
+def s2Step29Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 781, 768]
+def s2Step29Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 779, 785, 769]
+def s2Step29Add0Work : List Wire := [846, 847, 849, 851, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step29Add0_bounded : s2Step29Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step29Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step12Add0During : Arena := ⟨s6Step12Add0Arena.live∪s6Step12Add0Work.toFinset,Finset.union_subset s6Step12Add0Arena.bounded s6Step12Add0_bounded⟩
-theorem s6Step12Add0_distinct : (828::813::892::(s6Step12Add0A++s6Step12Add0B)).Nodup := by
+def s2Step29Add0During : Arena := ⟨s2Step29Add0Arena.live∪s2Step29Add0Work.toFinset,Finset.union_subset s2Step29Add0Arena.bounded s2Step29Add0_bounded⟩
+theorem s2Step29Add0_distinct : (844::839::845::(s2Step29Add0A++s2Step29Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12Add0_owned : (828::813::892::(s6Step12Add0A++s6Step12Add0B)).toFinset⊆s6Step12Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step12Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step29Add0_owned : (844::839::845::(s2Step29Add0A++s2Step29Add0B)).toFinset⊆s2Step29Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step29Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Add0_apart : Disjoint s6Step12Add0Arena.live s6Step12Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step12Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step29Add0_apart : Disjoint s2Step29Add0Arena.live s2Step29Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step29Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Add0_card : s6Step12Add0Arena.live.card=815 := by
+theorem s2Step29Add0_card : s2Step29Add0Arena.live.card=849 := by
   decide +kernel
-theorem s6Step12Add0_borrowed : s6Step12Add0Arena.checkBorrow (hmrHybridCount s6Step12Add0Arena s6Step12Add0B.length) s6Step12Add0Work=some s6Step12Add0During := by
-  have len : s6Step12Add0Work.length=hmrHybridCount s6Step12Add0Arena s6Step12Add0B.length := by
-    rw [hmrHybridCount,s6Step12Add0_card]
+theorem s2Step29Add0_borrowed : s2Step29Add0Arena.checkBorrow (hmrHybridCount s2Step29Add0Arena s2Step29Add0B.length) s2Step29Add0Work=some s2Step29Add0During := by
+  have len : s2Step29Add0Work.length=hmrHybridCount s2Step29Add0Arena s2Step29Add0B.length := by
+    rw [hmrHybridCount,s2Step29Add0_card]
     decide +kernel
-  have nd : s6Step12Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step29Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step12Add0Arena s6Step12Add0During s6Step12Add0Work.toFinset s6Step12Add0_bounded s6Step12Add0_apart rfl
-theorem s6Step12Add0_checked : compileHmrHybridCinLog s6Step12Add0Arena 813 828 892 s6Step12Add0A s6Step12Add0B s6Step12Add0Work=some s6Step12Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step12Add0Arena s6Step12Add0During 813 828 892 s6Step12Add0A s6Step12Add0B s6Step12Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step12Add0_distinct
-    (fun q hq => s6Step12Add0_owned (List.mem_toFinset.mpr hq)) s6Step12Add0_borrowed
-def s6Step12Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step12Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 776]
-def s6Step12Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 887, 864, 775]
-def s6Step12Add1Work : List Wire := [822, 882, 780, 833, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831]
-theorem s6Step12Add1_bounded : s6Step12Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step12Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step29Add0Arena s2Step29Add0During s2Step29Add0Work.toFinset s2Step29Add0_bounded s2Step29Add0_apart rfl
+theorem s2Step29Add0_checked : compileHmrHybridCinLog s2Step29Add0Arena 839 844 845 s2Step29Add0A s2Step29Add0B s2Step29Add0Work=some s2Step29Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step29Add0Arena s2Step29Add0During 839 844 845 s2Step29Add0A s2Step29Add0B s2Step29Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step29Add0_distinct
+    (fun q hq => s2Step29Add0_owned (List.mem_toFinset.mpr hq)) s2Step29Add0_borrowed
+def s2Step29Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)),Finset.filter_subset _ _⟩
+def s2Step29Add1A : List Wire := [255, 254, 253, 789, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 770]
+def s2Step29Add1B : List Wire := [767, 766, 786, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 787, 780, 771]
+def s2Step29Add1Work : List Wire := [846, 847, 849, 851, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877]
+theorem s2Step29Add1_bounded : s2Step29Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step29Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step12Add1During : Arena := ⟨s6Step12Add1Arena.live∪s6Step12Add1Work.toFinset,Finset.union_subset s6Step12Add1Arena.bounded s6Step12Add1_bounded⟩
-theorem s6Step12Add1_distinct : (828::813::892::(s6Step12Add1A++s6Step12Add1B)).Nodup := by
+def s2Step29Add1During : Arena := ⟨s2Step29Add1Arena.live∪s2Step29Add1Work.toFinset,Finset.union_subset s2Step29Add1Arena.bounded s2Step29Add1_bounded⟩
+theorem s2Step29Add1_distinct : (844::839::845::(s2Step29Add1A++s2Step29Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step12Add1_owned : (828::813::892::(s6Step12Add1A++s6Step12Add1B)).toFinset⊆s6Step12Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step12Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step29Add1_owned : (844::839::845::(s2Step29Add1A++s2Step29Add1B)).toFinset⊆s2Step29Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step29Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Add1_apart : Disjoint s6Step12Add1Arena.live s6Step12Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step12Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (823≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step29Add1_apart : Disjoint s2Step29Add1Arena.live s2Step29Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step29Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<853)) rfl
   decide +kernel
-theorem s6Step12Add1_card : s6Step12Add1Arena.live.card=815 := by
+theorem s2Step29Add1_card : s2Step29Add1Arena.live.card=849 := by
   decide +kernel
-theorem s6Step12Add1_borrowed : s6Step12Add1Arena.checkBorrow (hmrHybridCount s6Step12Add1Arena s6Step12Add1B.length) s6Step12Add1Work=some s6Step12Add1During := by
-  have len : s6Step12Add1Work.length=hmrHybridCount s6Step12Add1Arena s6Step12Add1B.length := by
-    rw [hmrHybridCount,s6Step12Add1_card]
+theorem s2Step29Add1_borrowed : s2Step29Add1Arena.checkBorrow (hmrHybridCount s2Step29Add1Arena s2Step29Add1B.length) s2Step29Add1Work=some s2Step29Add1During := by
+  have len : s2Step29Add1Work.length=hmrHybridCount s2Step29Add1Arena s2Step29Add1B.length := by
+    rw [hmrHybridCount,s2Step29Add1_card]
     decide +kernel
-  have nd : s6Step12Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step29Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step12Add1Arena s6Step12Add1During s6Step12Add1Work.toFinset s6Step12Add1_bounded s6Step12Add1_apart rfl
-theorem s6Step12Add1_checked : compileHmrHybridCinLog s6Step12Add1Arena 813 828 892 s6Step12Add1A s6Step12Add1B s6Step12Add1Work=some s6Step12Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step12Add1Arena s6Step12Add1During 813 828 892 s6Step12Add1A s6Step12Add1B s6Step12Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step12Add1_distinct
-    (fun q hq => s6Step12Add1_owned (List.mem_toFinset.mpr hq)) s6Step12Add1_borrowed
-def s6Step13Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 862, 795]
-def s6Step13Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 813, 807, 777]
-def s6Step13Add0Work : List Wire := [780, 833, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step13Add0_bounded : s6Step13Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step13Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step29Add1Arena s2Step29Add1During s2Step29Add1Work.toFinset s2Step29Add1_bounded s2Step29Add1_apart rfl
+theorem s2Step29Add1_checked : compileHmrHybridCinLog s2Step29Add1Arena 839 844 845 s2Step29Add1A s2Step29Add1B s2Step29Add1Work=some s2Step29Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step29Add1Arena s2Step29Add1During 839 844 845 s2Step29Add1A s2Step29Add1B s2Step29Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step29Add1_distinct
+    (fun q hq => s2Step29Add1_owned (List.mem_toFinset.mpr hq)) s2Step29Add1_borrowed
+def s2Step30Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)),Finset.filter_subset _ _⟩
+def s2Step30Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 781, 768]
+def s2Step30Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 839, 780, 769]
+def s2Step30Add0Work : List Wire := [846, 847, 849, 851, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step30Add0_bounded : s2Step30Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step30Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step13Add0During : Arena := ⟨s6Step13Add0Arena.live∪s6Step13Add0Work.toFinset,Finset.union_subset s6Step13Add0Arena.bounded s6Step13Add0_bounded⟩
-theorem s6Step13Add0_distinct : (822::860::882::(s6Step13Add0A++s6Step13Add0B)).Nodup := by
+def s2Step30Add0During : Arena := ⟨s2Step30Add0Arena.live∪s2Step30Add0Work.toFinset,Finset.union_subset s2Step30Add0Arena.bounded s2Step30Add0_bounded⟩
+theorem s2Step30Add0_distinct : (844::787::845::(s2Step30Add0A++s2Step30Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13Add0_owned : (822::860::882::(s6Step13Add0A++s6Step13Add0B)).toFinset⊆s6Step13Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step13Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step30Add0_owned : (844::787::845::(s2Step30Add0A++s2Step30Add0B)).toFinset⊆s2Step30Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step30Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Add0_apart : Disjoint s6Step13Add0Arena.live s6Step13Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step13Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step30Add0_apart : Disjoint s2Step30Add0Arena.live s2Step30Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step30Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Add0_card : s6Step13Add0Arena.live.card=817 := by
+theorem s2Step30Add0_card : s2Step30Add0Arena.live.card=850 := by
   decide +kernel
-theorem s6Step13Add0_borrowed : s6Step13Add0Arena.checkBorrow (hmrHybridCount s6Step13Add0Arena s6Step13Add0B.length) s6Step13Add0Work=some s6Step13Add0During := by
-  have len : s6Step13Add0Work.length=hmrHybridCount s6Step13Add0Arena s6Step13Add0B.length := by
-    rw [hmrHybridCount,s6Step13Add0_card]
+theorem s2Step30Add0_borrowed : s2Step30Add0Arena.checkBorrow (hmrHybridCount s2Step30Add0Arena s2Step30Add0B.length) s2Step30Add0Work=some s2Step30Add0During := by
+  have len : s2Step30Add0Work.length=hmrHybridCount s2Step30Add0Arena s2Step30Add0B.length := by
+    rw [hmrHybridCount,s2Step30Add0_card]
     decide +kernel
-  have nd : s6Step13Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step30Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step13Add0Arena s6Step13Add0During s6Step13Add0Work.toFinset s6Step13Add0_bounded s6Step13Add0_apart rfl
-theorem s6Step13Add0_checked : compileHmrHybridCinLog s6Step13Add0Arena 860 822 882 s6Step13Add0A s6Step13Add0B s6Step13Add0Work=some s6Step13Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step13Add0Arena s6Step13Add0During 860 822 882 s6Step13Add0A s6Step13Add0B s6Step13Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step13Add0_distinct
-    (fun q hq => s6Step13Add0_owned (List.mem_toFinset.mpr hq)) s6Step13Add0_borrowed
-def s6Step13Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step13Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892, 776]
-def s6Step13Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 887, 828, 775]
-def s6Step13Add1Work : List Wire := [780, 833, 888, 886, 778, 838, 883, 814, 821, 869, 843, 831, 854, 830, 898]
-theorem s6Step13Add1_bounded : s6Step13Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step13Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step30Add0Arena s2Step30Add0During s2Step30Add0Work.toFinset s2Step30Add0_bounded s2Step30Add0_apart rfl
+theorem s2Step30Add0_checked : compileHmrHybridCinLog s2Step30Add0Arena 787 844 845 s2Step30Add0A s2Step30Add0B s2Step30Add0Work=some s2Step30Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step30Add0Arena s2Step30Add0During 787 844 845 s2Step30Add0A s2Step30Add0B s2Step30Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step30Add0_distinct
+    (fun q hq => s2Step30Add0_owned (List.mem_toFinset.mpr hq)) s2Step30Add0_borrowed
+def s2Step30Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)),Finset.filter_subset _ _⟩
+def s2Step30Add1A : List Wire := [255, 254, 253, 252, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 785, 770]
+def s2Step30Add1B : List Wire := [767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 786, 779, 771]
+def s2Step30Add1Work : List Wire := [846, 847, 849, 851, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879]
+theorem s2Step30Add1_bounded : s2Step30Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step30Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step13Add1During : Arena := ⟨s6Step13Add1Arena.live∪s6Step13Add1Work.toFinset,Finset.union_subset s6Step13Add1Arena.bounded s6Step13Add1_bounded⟩
-theorem s6Step13Add1_distinct : (822::860::882::(s6Step13Add1A++s6Step13Add1B)).Nodup := by
+def s2Step30Add1During : Arena := ⟨s2Step30Add1Arena.live∪s2Step30Add1Work.toFinset,Finset.union_subset s2Step30Add1Arena.bounded s2Step30Add1_bounded⟩
+theorem s2Step30Add1_distinct : (844::787::845::(s2Step30Add1A++s2Step30Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step13Add1_owned : (822::860::882::(s6Step13Add1A++s6Step13Add1B)).toFinset⊆s6Step13Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step13Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step30Add1_owned : (844::787::845::(s2Step30Add1A++s2Step30Add1B)).toFinset⊆s2Step30Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step30Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Add1_apart : Disjoint s6Step13Add1Arena.live s6Step13Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step13Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<780) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<883) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step30Add1_apart : Disjoint s2Step30Add1Arena.live s2Step30Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step30Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step13Add1_card : s6Step13Add1Arena.live.card=817 := by
+theorem s2Step30Add1_card : s2Step30Add1Arena.live.card=850 := by
   decide +kernel
-theorem s6Step13Add1_borrowed : s6Step13Add1Arena.checkBorrow (hmrHybridCount s6Step13Add1Arena s6Step13Add1B.length) s6Step13Add1Work=some s6Step13Add1During := by
-  have len : s6Step13Add1Work.length=hmrHybridCount s6Step13Add1Arena s6Step13Add1B.length := by
-    rw [hmrHybridCount,s6Step13Add1_card]
+theorem s2Step30Add1_borrowed : s2Step30Add1Arena.checkBorrow (hmrHybridCount s2Step30Add1Arena s2Step30Add1B.length) s2Step30Add1Work=some s2Step30Add1During := by
+  have len : s2Step30Add1Work.length=hmrHybridCount s2Step30Add1Arena s2Step30Add1B.length := by
+    rw [hmrHybridCount,s2Step30Add1_card]
     decide +kernel
-  have nd : s6Step13Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step30Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step13Add1Arena s6Step13Add1During s6Step13Add1Work.toFinset s6Step13Add1_bounded s6Step13Add1_apart rfl
-theorem s6Step13Add1_checked : compileHmrHybridCinLog s6Step13Add1Arena 860 822 882 s6Step13Add1A s6Step13Add1B s6Step13Add1Work=some s6Step13Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step13Add1Arena s6Step13Add1During 860 822 882 s6Step13Add1A s6Step13Add1B s6Step13Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step13Add1_distinct
-    (fun q hq => s6Step13Add1_owned (List.mem_toFinset.mpr hq)) s6Step13Add1_borrowed
-def s6Step14Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14Add0A : List Wire := [256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 807, 795]
-def s6Step14Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 860, 813, 777]
-def s6Step14Add0Work : List Wire := [888, 886, 778, 838, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839, 794, 850, 911, 881, 853, 867, 786, 910, 877, 855, 803, 922, 799, 879, 827, 784, 901, 917, 835, 851, 861, 878, 785, 781, 921, 866, 837, 829, 788, 889, 871, 891, 846, 913, 806, 824, 902, 783, 919, 884, 847, 903, 885, 791, 840, 844, 825, 836, 904, 810, 924, 893, 894, 826, 923, 809, 897, 912, 817, 804, 812, 834, 900, 909, 905, 915, 932, 906, 899, 926, 787, 792, 849, 811, 925, 801, 815, 816, 819, 920, 842, 798, 808, 820, 896, 790, 914, 916, 800, 918, 797, 832, 928, 930, 931, 782, 933, 929, 934]
-theorem s6Step14Add0_bounded : s6Step14Add0Work.toFinset⊆arenaWires := by
-  have h : s6Step14Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step30Add1Arena s2Step30Add1During s2Step30Add1Work.toFinset s2Step30Add1_bounded s2Step30Add1_apart rfl
+theorem s2Step30Add1_checked : compileHmrHybridCinLog s2Step30Add1Arena 787 844 845 s2Step30Add1A s2Step30Add1B s2Step30Add1Work=some s2Step30Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step30Add1Arena s2Step30Add1During 787 844 845 s2Step30Add1A s2Step30Add1B s2Step30Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step30Add1_distinct
+    (fun q hq => s2Step30Add1_owned (List.mem_toFinset.mpr hq)) s2Step30Add1_borrowed
+def s2Step31Add0Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)),Finset.filter_subset _ _⟩
+def s2Step31Add0A : List Wire := [512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 781, 768]
+def s2Step31Add0B : List Wire := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 787, 785, 769]
+def s2Step31Add0Work : List Wire := [846, 847, 849, 851, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934]
+theorem s2Step31Add0_bounded : s2Step31Add0Work.toFinset⊆arenaWires := by
+  have h : s2Step31Add0Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step14Add0During : Arena := ⟨s6Step14Add0Arena.live∪s6Step14Add0Work.toFinset,Finset.union_subset s6Step14Add0Arena.bounded s6Step14Add0_bounded⟩
-theorem s6Step14Add0_distinct : (780::862::833::(s6Step14Add0A++s6Step14Add0B)).Nodup := by
+def s2Step31Add0During : Arena := ⟨s2Step31Add0Arena.live∪s2Step31Add0Work.toFinset,Finset.union_subset s2Step31Add0Arena.bounded s2Step31Add0_bounded⟩
+theorem s2Step31Add0_distinct : (844::779::845::(s2Step31Add0A++s2Step31Add0B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14Add0_owned : (780::862::833::(s6Step14Add0A++s6Step14Add0B)).toFinset⊆s6Step14Add0Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step14Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step31Add0_owned : (844::779::845::(s2Step31Add0A++s2Step31Add0B)).toFinset⊆s2Step31Add0Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step31Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Add0_apart : Disjoint s6Step14Add0Arena.live s6Step14Add0Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step14Add0Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step31Add0_apart : Disjoint s2Step31Add0Arena.live s2Step31Add0Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step31Add0Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Add0_card : s6Step14Add0Arena.live.card=820 := by
+theorem s2Step31Add0_card : s2Step31Add0Arena.live.card=850 := by
   decide +kernel
-theorem s6Step14Add0_borrowed : s6Step14Add0Arena.checkBorrow (hmrHybridCount s6Step14Add0Arena s6Step14Add0B.length) s6Step14Add0Work=some s6Step14Add0During := by
-  have len : s6Step14Add0Work.length=hmrHybridCount s6Step14Add0Arena s6Step14Add0B.length := by
-    rw [hmrHybridCount,s6Step14Add0_card]
+theorem s2Step31Add0_borrowed : s2Step31Add0Arena.checkBorrow (hmrHybridCount s2Step31Add0Arena s2Step31Add0B.length) s2Step31Add0Work=some s2Step31Add0During := by
+  have len : s2Step31Add0Work.length=hmrHybridCount s2Step31Add0Arena s2Step31Add0B.length := by
+    rw [hmrHybridCount,s2Step31Add0_card]
     decide +kernel
-  have nd : s6Step14Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step31Add0Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step14Add0Arena s6Step14Add0During s6Step14Add0Work.toFinset s6Step14Add0_bounded s6Step14Add0_apart rfl
-theorem s6Step14Add0_checked : compileHmrHybridCinLog s6Step14Add0Arena 862 780 833 s6Step14Add0A s6Step14Add0B s6Step14Add0Work=some s6Step14Add0During := by
-  exact compileHmrHybridCinLog_of_parts s6Step14Add0Arena s6Step14Add0During 862 780 833 s6Step14Add0A s6Step14Add0B s6Step14Add0Work
-    (by decide +kernel) (by decide +kernel) s6Step14Add0_distinct
-    (fun q hq => s6Step14Add0_owned (List.mem_toFinset.mpr hq)) s6Step14Add0_borrowed
-def s6Step14Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)),Finset.filter_subset _ _⟩
-def s6Step14Add1A : List Wire := [255, 876, 793, 802, 779, 857, 858, 845, 805, 796, 856, 865, 789, 818, 892, 882, 776]
-def s6Step14Add1B : List Wire := [859, 768, 874, 927, 875, 868, 907, 908, 890, 873, 863, 823, 880, 864, 887, 822, 775]
-def s6Step14Add1Work : List Wire := [888, 886, 778, 838, 814, 821, 869, 843, 831, 854, 830, 898, 848, 852, 841, 839]
-theorem s6Step14Add1_bounded : s6Step14Add1Work.toFinset⊆arenaWires := by
-  have h : s6Step14Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
+  exact hmrArena_reserve_of_live s2Step31Add0Arena s2Step31Add0During s2Step31Add0Work.toFinset s2Step31Add0_bounded s2Step31Add0_apart rfl
+theorem s2Step31Add0_checked : compileHmrHybridCinLog s2Step31Add0Arena 779 844 845 s2Step31Add0A s2Step31Add0B s2Step31Add0Work=some s2Step31Add0During := by
+  exact compileHmrHybridCinLog_of_parts s2Step31Add0Arena s2Step31Add0During 779 844 845 s2Step31Add0A s2Step31Add0B s2Step31Add0Work
+    (by decide +kernel) (by decide +kernel) s2Step31Add0_distinct
+    (fun q hq => s2Step31Add0_owned (List.mem_toFinset.mpr hq)) s2Step31Add0_borrowed
+def s2Step31Add1Arena : Arena := ⟨arenaWires.filter (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)),Finset.filter_subset _ _⟩
+def s2Step31Add1A : List Wire := [255, 254, 253, 252, 791, 793, 796, 798, 800, 802, 804, 806, 808, 810, 812, 815, 817, 820, 822, 825, 827, 830, 832, 835, 837, 784, 782, 842, 841, 780, 770]
+def s2Step31Add1B : List Wire := [767, 766, 765, 788, 790, 792, 794, 797, 799, 801, 803, 805, 807, 809, 811, 814, 816, 819, 821, 824, 826, 829, 831, 834, 836, 840, 783, 778, 789, 839, 771]
+def s2Step31Add1Work : List Wire := [846, 847, 849, 851, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879]
+theorem s2Step31Add1_bounded : s2Step31Add1Work.toFinset⊆arenaWires := by
+  have h : s2Step31Add1Work.all (fun q => decide (q<935))=true := by decide +kernel
   intro q hq
   have lt := of_decide_eq_true (List.all_eq_true.mp h q (List.mem_toFinset.mp hq))
   simpa [arenaWires] using lt
-def s6Step14Add1During : Arena := ⟨s6Step14Add1Arena.live∪s6Step14Add1Work.toFinset,Finset.union_subset s6Step14Add1Arena.bounded s6Step14Add1_bounded⟩
-theorem s6Step14Add1_distinct : (780::862::833::(s6Step14Add1A++s6Step14Add1B)).Nodup := by
+def s2Step31Add1During : Arena := ⟨s2Step31Add1Arena.live∪s2Step31Add1Work.toFinset,Finset.union_subset s2Step31Add1Arena.bounded s2Step31Add1_bounded⟩
+theorem s2Step31Add1_distinct : (844::779::845::(s2Step31Add1A++s2Step31Add1B)).Nodup := by
   apply hmrLayout_nodup_of_sorted
   decide +kernel
-theorem s6Step14Add1_owned : (780::862::833::(s6Step14Add1A++s6Step14Add1B)).toFinset⊆s6Step14Add1Arena.live := by
-  apply hmrLayout_owned_of_filter s6Step14Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step31Add1_owned : (844::779::845::(s2Step31Add1A++s2Step31Add1B)).toFinset⊆s2Step31Add1Arena.live := by
+  apply hmrLayout_owned_of_filter s2Step31Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Add1_apart : Disjoint s6Step14Add1Arena.live s6Step14Add1Work.toFinset := by
-  apply hmrLayout_disjoint_of_filter s6Step14Add1Arena (fun q => (0≤q ∧ q<778) ∨ (779≤q ∧ q<781) ∨ (789≤q ∧ q<790) ∨ (793≤q ∧ q<794) ∨ (795≤q ∧ q<797) ∨ (802≤q ∧ q<803) ∨ (805≤q ∧ q<806) ∨ (807≤q ∧ q<808) ∨ (813≤q ∧ q<814) ∨ (818≤q ∧ q<819) ∨ (822≤q ∧ q<824) ∨ (828≤q ∧ q<829) ∨ (833≤q ∧ q<834) ∨ (845≤q ∧ q<846) ∨ (856≤q ∧ q<861) ∨ (862≤q ∧ q<866) ∨ (868≤q ∧ q<869) ∨ (870≤q ∧ q<871) ∨ (872≤q ∧ q<877) ∨ (880≤q ∧ q<881) ∨ (882≤q ∧ q<884) ∨ (887≤q ∧ q<888) ∨ (890≤q ∧ q<891) ∨ (892≤q ∧ q<893) ∨ (895≤q ∧ q<896) ∨ (907≤q ∧ q<909) ∨ (927≤q ∧ q<928)) rfl
+theorem s2Step31Add1_apart : Disjoint s2Step31Add1Arena.live s2Step31Add1Work.toFinset := by
+  apply hmrLayout_disjoint_of_filter s2Step31Add1Arena (fun q => (0≤q ∧ q<846) ∨ (848≤q ∧ q<849) ∨ (850≤q ∧ q<851) ∨ (852≤q ∧ q<854)) rfl
   decide +kernel
-theorem s6Step14Add1_card : s6Step14Add1Arena.live.card=820 := by
+theorem s2Step31Add1_card : s2Step31Add1Arena.live.card=850 := by
   decide +kernel
-theorem s6Step14Add1_borrowed : s6Step14Add1Arena.checkBorrow (hmrHybridCount s6Step14Add1Arena s6Step14Add1B.length) s6Step14Add1Work=some s6Step14Add1During := by
-  have len : s6Step14Add1Work.length=hmrHybridCount s6Step14Add1Arena s6Step14Add1B.length := by
-    rw [hmrHybridCount,s6Step14Add1_card]
+theorem s2Step31Add1_borrowed : s2Step31Add1Arena.checkBorrow (hmrHybridCount s2Step31Add1Arena s2Step31Add1B.length) s2Step31Add1Work=some s2Step31Add1During := by
+  have len : s2Step31Add1Work.length=hmrHybridCount s2Step31Add1Arena s2Step31Add1B.length := by
+    rw [hmrHybridCount,s2Step31Add1_card]
     decide +kernel
-  have nd : s6Step14Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
+  have nd : s2Step31Add1Work.Nodup := by apply hmrLayout_nodup_of_sorted; decide +kernel
   unfold Arena.checkBorrow
   rw [if_pos (And.intro len nd)]
-  exact hmrArena_reserve_of_live s6Step14Add1Arena s6Step14Add1During s6Step14Add1Work.toFinset s6Step14Add1_bounded s6Step14Add1_apart rfl
-theorem s6Step14Add1_checked : compileHmrHybridCinLog s6Step14Add1Arena 862 780 833 s6Step14Add1A s6Step14Add1B s6Step14Add1Work=some s6Step14Add1During := by
-  exact compileHmrHybridCinLog_of_parts s6Step14Add1Arena s6Step14Add1During 862 780 833 s6Step14Add1A s6Step14Add1B s6Step14Add1Work
-    (by decide +kernel) (by decide +kernel) s6Step14Add1_distinct
-    (fun q hq => s6Step14Add1_owned (List.mem_toFinset.mpr hq)) s6Step14Add1_borrowed
+  exact hmrArena_reserve_of_live s2Step31Add1Arena s2Step31Add1During s2Step31Add1Work.toFinset s2Step31Add1_bounded s2Step31Add1_apart rfl
+theorem s2Step31Add1_checked : compileHmrHybridCinLog s2Step31Add1Arena 779 844 845 s2Step31Add1A s2Step31Add1B s2Step31Add1Work=some s2Step31Add1During := by
+  exact compileHmrHybridCinLog_of_parts s2Step31Add1Arena s2Step31Add1During 779 844 845 s2Step31Add1A s2Step31Add1B s2Step31Add1Work
+    (by decide +kernel) (by decide +kernel) s2Step31Add1_distinct
+    (fun q hq => s2Step31Add1_owned (List.mem_toFinset.mpr hq)) s2Step31Add1_borrowed
 
 end ECDSAAdd.Arithmetic.Paper935

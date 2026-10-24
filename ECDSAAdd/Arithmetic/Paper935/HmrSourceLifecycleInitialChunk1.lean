@@ -4,107 +4,84 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepRun
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitialChunk0
 
 namespace ECDSAAdd.Arithmetic.Paper935
-theorem s2Step498Lifecycle_arm : compileHmrArmLog s2ArmBoundaryArena 6 s2ArmBoundaryMetadata=some s2Step498EntryFBefore := by
-  unfold compileHmrArmLog Arena.checkBorrow
-  rw [if_pos (by decide +kernel)]
-  apply hmrArena_reserve_of_live
-  · norm_num [s2ArmBoundaryMetadata,HmrFreezeMetadata.wires,arenaWires,Finset.insert_subset_iff]
-  · apply hmrLayout_disjoint_of_filter s2ArmBoundaryArena (fun q => (0≤q ∧ q<786) ∨ (787≤q ∧ q<812) ∨ (813≤q ∧ q<827) ∨ (828≤q ∧ q<839) ∨ (840≤q ∧ q<844) ∨ (845≤q ∧ q<849) ∨ (850≤q ∧ q<879) ∨ (880≤q ∧ q<901) ∨ (902≤q ∧ q<914) ∨ (915≤q ∧ q<916)) rfl
-    decide +kernel
-  · ext q
-    simp only [s2Step498EntryFBefore,s2ArmBoundaryArena,s2ArmBoundaryMetadata,HmrFreezeMetadata.wires,arenaWires,Finset.mem_filter,Finset.mem_range,Finset.mem_union,List.toFinset_append,List.toFinset_cons,List.toFinset_nil,Finset.mem_insert,Finset.notMem_empty,or_false]
-    simp only [Wire] at *
-    omega
-theorem s2Step498Lifecycle_timestampOwned : ([827, 786, 812, 839, 849, 844] : List Wire).toFinset⊆s2Step498EntryFBefore.live := by
-  apply hmrLayout_owned_of_filter s2Step498EntryFBefore (fun q => (0≤q ∧ q<879) ∨ (880≤q ∧ q<901) ∨ (902≤q ∧ q<916)) rfl
-  decide +kernel
-theorem s2Step498Lifecycle_timestampApart : List.Disjoint [827, 786, 812, 839, 849, 844] (s2Step498FrontBank.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777]) := by
-  have nd : ([827, 786, 812, 839, 849, 844]++(s2Step498FrontBank.rows.flatMap WindowRow.wires++[772, 773, 774, 775, 776, 777])).Nodup := by
-    apply hmrLayout_nodup_of_sorted
-    decide +kernel
-  exact (List.nodup_append'.mp nd).2.2
-theorem s2Step498Lifecycle_chronological : (compileHmrChronologicalStepLog s2Step498EntryFBefore s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ 914 [772, 773, 774, 775, 776, 777] [827, 786, 812, 839, 849, 844] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 1 60 s2Step498CompleteLog).map (fun _ => true)=some true := by
-  unfold compileHmrChronologicalStepLog
-  rw [if_pos (And.intro s2Step498Lifecycle_timestampOwned (And.intro s2Step498Lifecycle_timestampApart (by decide +kernel)))]
-  exact s2Step498Complete_checked
-theorem s2Step498Lifecycle_checked : (compileHmrSourceStepLog s2ArmBoundaryArena s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 6 498 498 60 none (.arm s2ArmBoundaryMetadata s2Step498CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step498Lifecycle_chronological
-  have result := compileHmrSourceStepLog_of_arm s2ArmBoundaryArena s2Step498EntryFBefore s2Step498FrontBank 25 266 ⟨24,24,267,266⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853, 854, 855, 857, 859, 858, 861, 856, 860, 863, 862, 864, 865, 866, 869, 871, 870, 868, 872, 875, 874, 873, 876, 880, 878, 881, 884, 883, 887, 886, 889, 888, 890, 892, 893, 897, 895, 898, 899, 900, 902, 906, 905, 904, 909, 910, 908, 911, 912] 6 498 60 s2ArmBoundaryMetadata s2Step498CompleteLog P s2Step498Lifecycle_arm hp
-  rw [result]
-  rfl
-theorem s6Step0Lifecycle_checked : (compileHmrSourceStepLog s6Step0EntryFBefore s6Step0FrontBank 256 1 ⟨256,255,2,1⟩ [774, 773, 772, 771, 770, 769] [] 6 498 0 1 none (.early s6Step0CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step0Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 0<498)]
+theorem s2Step16Lifecycle_checked : (compileHmrSourceStepLog s2Step16EntryFBefore s2Step16FrontBank 256 17 ⟨256,255,18,16⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 6 498 16 5 none (.early s2Step16CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step16Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 16<498)]
   rw [hp]
   rfl
-theorem s6Step1Lifecycle_checked : (compileHmrSourceStepLog s6Step1EntryFBefore s6Step1FrontBank 256 2 ⟨256,255,3,1⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 1 1 none (.early s6Step1CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step1Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 1<498)]
+theorem s2Step17Lifecycle_checked : (compileHmrSourceStepLog s2Step17EntryFBefore s2Step17FrontBank 256 18 ⟨256,255,19,17⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828] 6 498 17 6 none (.early s2Step17CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step17Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 17<498)]
   rw [hp]
   rfl
-theorem s6Step2Lifecycle_checked : (compileHmrSourceStepLog s6Step2EntryFBefore s6Step2FrontBank 256 3 ⟨256,255,4,2⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 2 1 none (.early s6Step2CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step2Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 2<498)]
+theorem s2Step18Lifecycle_checked : (compileHmrSourceStepLog s2Step18EntryFBefore s2Step18FrontBank 256 19 ⟨256,255,20,18⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 6 498 18 6 none (.early s2Step18CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step18Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 18<498)]
   rw [hp]
   rfl
-theorem s6Step3Lifecycle_checked : (compileHmrSourceStepLog s6Step3EntryFBefore s6Step3FrontBank 256 4 ⟨256,255,5,3⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 3 1 none (.early s6Step3CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step3Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 3<498)]
+theorem s2Step19Lifecycle_checked : (compileHmrSourceStepLog s2Step19EntryFBefore s2Step19FrontBank 256 20 ⟨256,255,21,19⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833] 6 498 19 7 none (.early s2Step19CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step19Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 19<498)]
   rw [hp]
   rfl
-theorem s6Step4Lifecycle_checked : (compileHmrSourceStepLog s6Step4EntryFBefore s6Step4FrontBank 256 5 ⟨256,255,6,4⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 4 1 none (.early s6Step4CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step4Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 4<498)]
+theorem s2Step20Lifecycle_checked : (compileHmrSourceStepLog s2Step20EntryFBefore s2Step20FrontBank 256 21 ⟨256,255,22,20⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 6 498 20 7 none (.early s2Step20CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step20Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 20<498)]
   rw [hp]
   rfl
-theorem s6Step5Lifecycle_checked : (compileHmrSourceStepLog s6Step5EntryFBefore s6Step5FrontBank 256 6 ⟨256,255,7,5⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 5 1 none (.early s6Step5CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step5Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 5<498)]
+theorem s2Step21Lifecycle_checked : (compileHmrSourceStepLog s2Step21EntryFBefore s2Step21FrontBank 256 22 ⟨256,255,23,21⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838] 6 498 21 8 none (.early s2Step21CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step21Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 21<498)]
   rw [hp]
   rfl
-theorem s6Step6Lifecycle_checked : (compileHmrSourceStepLog s6Step6EntryFBefore s6Step6FrontBank 256 7 ⟨256,255,8,6⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 6 1 none (.early s6Step6CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step6Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 6<498)]
+theorem s2Step22Lifecycle_checked : (compileHmrSourceStepLog s2Step22EntryFBefore s2Step22FrontBank 256 23 ⟨256,255,24,22⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 6 498 22 8 none (.early s2Step22CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step22Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 22<498)]
   rw [hp]
   rfl
-theorem s6Step7Lifecycle_checked : (compileHmrSourceStepLog s6Step7EntryFBefore s6Step7FrontBank 256 8 ⟨256,255,9,7⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 7 1 none (.early s6Step7CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step7Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 7<498)]
+theorem s2Step23Lifecycle_checked : (compileHmrSourceStepLog s2Step23EntryFBefore s2Step23FrontBank 256 24 ⟨256,255,25,23⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843] 6 498 23 9 none (.early s2Step23CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step23Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 23<498)]
   rw [hp]
   rfl
-theorem s6Step8Lifecycle_checked : (compileHmrSourceStepLog s6Step8EntryFBefore s6Step8FrontBank 256 9 ⟨256,255,10,8⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 8 1 none (.early s6Step8CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step8Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 8<498)]
+theorem s2Step24Lifecycle_checked : (compileHmrSourceStepLog s2Step24EntryFBefore s2Step24FrontBank 256 25 ⟨255,254,25,24⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 6 498 24 9 none (.early s2Step24CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step24Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 24<498)]
   rw [hp]
   rfl
-theorem s6Step9Lifecycle_checked : (compileHmrSourceStepLog s6Step9EntryFBefore s6Step9FrontBank 256 10 ⟨256,255,11,9⟩ [774, 773, 772, 771, 770, 769] [895] 6 498 9 2 none (.early s6Step9CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step9Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 9<498)]
+theorem s2Step25Lifecycle_checked : (compileHmrSourceStepLog s2Step25EntryFBefore s2Step25FrontBank 255 25 ⟨255,254,26,25⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848] 6 498 25 10 none (.early s2Step25CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step25Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 25<498)]
   rw [hp]
   rfl
-theorem s6Step10Lifecycle_checked : (compileHmrSourceStepLog s6Step10EntryFBefore s6Step10FrontBank 256 11 ⟨256,255,12,10⟩ [774, 773, 772, 771, 770, 769] [895, 870] 6 498 10 2 none (.early s6Step10CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step10Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 10<498)]
+theorem s2Step26Lifecycle_checked : (compileHmrSourceStepLog s2Step26EntryFBefore s2Step26FrontBank 255 26 ⟨255,254,27,25⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 6 498 26 10 none (.early s2Step26CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step26Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 26<498)]
   rw [hp]
   rfl
-theorem s6Step11Lifecycle_checked : (compileHmrSourceStepLog s6Step11EntryFBefore s6Step11FrontBank 256 12 ⟨256,255,13,11⟩ [774, 773, 772, 771, 770, 769] [895, 870] 6 498 11 3 none (.early s6Step11CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step11Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 11<498)]
+theorem s2Step27Lifecycle_checked : (compileHmrSourceStepLog s2Step27EntryFBefore s2Step27FrontBank 255 27 ⟨254,253,28,26⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850] 6 498 27 11 none (.early s2Step27CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step27Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 27<498)]
   rw [hp]
   rfl
-theorem s6Step12Lifecycle_checked : (compileHmrSourceStepLog s6Step12EntryFBefore s6Step12FrontBank 256 13 ⟨256,255,14,12⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872] 6 498 12 3 none (.early s6Step12CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step12Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 12<498)]
+theorem s2Step28Lifecycle_checked : (compileHmrSourceStepLog s2Step28EntryFBefore s2Step28FrontBank 254 28 ⟨254,253,28,27⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 6 498 28 11 none (.early s2Step28CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step28Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 28<498)]
   rw [hp]
   rfl
-theorem s6Step13Lifecycle_checked : (compileHmrSourceStepLog s6Step13EntryFBefore s6Step13FrontBank 256 14 ⟨256,255,15,13⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872] 6 498 13 4 none (.early s6Step13CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step13Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 13<498)]
+theorem s2Step29Lifecycle_checked : (compileHmrSourceStepLog s2Step29EntryFBefore s2Step29FrontBank 254 28 ⟨253,252,29,27⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852] 6 498 29 12 none (.early s2Step29CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step29Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 29<498)]
   rw [hp]
   rfl
-theorem s6Step14Lifecycle_checked : (compileHmrSourceStepLog s6Step14EntryFBefore s6Step14FrontBank 256 15 ⟨256,255,16,14⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883] 6 498 14 4 none (.early s6Step14CompleteLog)).map (fun _ => true)=some true := by
-  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s6Step14Complete_checked
-  simp only [compileHmrSourceStepLog,if_pos (by decide : 14<498)]
+theorem s2Step30Lifecycle_checked : (compileHmrSourceStepLog s2Step30EntryFBefore s2Step30FrontBank 253 29 ⟨253,252,29,28⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 6 498 30 12 none (.early s2Step30CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step30Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 30<498)]
+  rw [hp]
+  rfl
+theorem s2Step31Lifecycle_checked : (compileHmrSourceStepLog s2Step31EntryFBefore s2Step31FrontBank 253 29 ⟨253,251,29,28⟩ [772, 773, 774, 775, 776, 777] [795, 813, 818, 823, 828, 833, 838, 843, 848, 850, 852, 853] 6 498 31 13 none (.early s2Step31CompleteLog)).map (fun _ => true)=some true := by
+  obtain ⟨P,hp,_⟩ := Option.map_eq_some_iff.mp s2Step31Complete_checked
+  simp only [compileHmrSourceStepLog,if_pos (by decide : 31<498)]
   rw [hp]
   rfl
 

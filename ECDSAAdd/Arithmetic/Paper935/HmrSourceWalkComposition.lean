@@ -49,4 +49,33 @@ theorem compileHmrSourceWalk_append (counter : List Wire) (width tmin : Nat)
       simp only [List.cons_append, compileHmrSourceWalk, headChecked, Bind.bind, Option.bind,
         joined, pure, Pure.pure, HmrSourceWalkPlan.append]
 
+
+/-- Appending a checked suffix preserves its final outputArena. -/
+theorem HmrSourceWalkPlan.append_outputArena (P Q : HmrSourceWalkPlan) :
+    (P.append Q).outputArena=Q.outputArena := by
+  induction P with
+  | done => rfl
+  | step head tail ih => exact ih
+
+/-- Appending a checked suffix preserves its final bank. -/
+theorem HmrSourceWalkPlan.append_bank (P Q : HmrSourceWalkPlan) :
+    (P.append Q).bank=Q.bank := by
+  induction P with
+  | done => rfl
+  | step head tail ih => exact ih
+
+/-- Appending a checked suffix preserves its final record. -/
+theorem HmrSourceWalkPlan.append_record (P Q : HmrSourceWalkPlan) :
+    (P.append Q).record=Q.record := by
+  induction P with
+  | done => rfl
+  | step head tail ih => exact ih
+
+/-- Appending a checked suffix preserves its final metadata. -/
+theorem HmrSourceWalkPlan.append_metadata (P Q : HmrSourceWalkPlan) :
+    (P.append Q).metadata=Q.metadata := by
+  induction P with
+  | done => rfl
+  | step head tail ih => exact ih
+
 end ECDSAAdd.Arithmetic.Paper935
