@@ -119,3 +119,10 @@ Builder allocated、HomePool home_free、差集 walk_live 分别记录。
 s2 输出 A 仍在 Builder allocated 内，却在 walk 的 home_free 内。
 因此 walk_live 不是调用的完整宿主所有权。分配成功也不证明清零，
 不证明该布局与 Lean walk 出口相同，不证明输入规则成立。
+
+Lamport 在 f66c33b2 确认端口数据和 unpark 定义，并要求补自动对照与
+独立后快照绑定。`scripts/paper935/check_hmr_call_ports.py` 已加入验证脚本，
+逐项检查角色、行顺序、宿主、前后分配及后续边界不变性。
+`s2HmrExportedAfterSeam` / `s6HmrExportedAfterSeam` 独立编码导出后的集合；
+`*_matches_export` 证明 reserve 返回值与它们的 live 集合相等。
+这项数据核对不是六个等待签名的可行性确认。

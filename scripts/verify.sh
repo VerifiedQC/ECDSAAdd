@@ -3,6 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 scripts/paper935/generate_schedule.py --check
 python3 scripts/paper935/check_fused_repack.py
+python3 scripts/paper935/check_hmr_call_ports.py
 lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
 
 # Report and check only the public proof entry points.
@@ -4019,6 +4020,10 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve_eq
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam_matches_export
 LEAN
 )
 task_axiom_lean_rc=$?

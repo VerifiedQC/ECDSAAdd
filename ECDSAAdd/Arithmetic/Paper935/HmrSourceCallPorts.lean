@@ -141,4 +141,38 @@ theorem s6HmrSeam_reserve_eq :
       some s6HmrAfterSeam :=
   Option.eq_some_of_isSome (Option.isSome_iff_exists.mpr s6HmrSeam_reserve)
 
+
+private theorem reserve_live_eq (A B : Arena) (qs : Finset Wire)
+    (h : A.reserve qs = some B) : B.live = A.live ∪ qs := by
+  unfold Arena.reserve at h
+  split at h
+  next => cases h; rfl
+  next => simp at h
+
+/-- Independent transcription of exported after_allocated, not defined by reserve. -/
+def s2HmrExportedAfterSeam : Arena :=
+  ⟨arenaWires \ {921, 923, 924, 927, 928, 930, 931, 932, 933, 934}, Finset.sdiff_subset⟩
+
+theorem s2HmrAfterSeam_matches_export :
+    s2HmrAfterSeam.live = s2HmrExportedAfterSeam.live := by
+  rw [reserve_live_eq _ _ _ s2HmrSeam_reserve_eq]
+  ext q
+  dsimp [Wire] at q
+  simp [s2HmrBeforeSeam, s2HmrExportedAfterSeam, s2HmrSeamPorts, arenaWires]
+  dsimp [Wire] at *
+  omega
+
+/-- Independent transcription of exported after_allocated, not defined by reserve. -/
+def s6HmrExportedAfterSeam : Arena :=
+  ⟨arenaWires \ {782, 790, 800, 832, 916, 928, 929, 931, 933, 934}, Finset.sdiff_subset⟩
+
+theorem s6HmrAfterSeam_matches_export :
+    s6HmrAfterSeam.live = s6HmrExportedAfterSeam.live := by
+  rw [reserve_live_eq _ _ _ s6HmrSeam_reserve_eq]
+  ext q
+  dsimp [Wire] at q
+  simp [s6HmrBeforeSeam, s6HmrExportedAfterSeam, s6HmrSeamPorts, arenaWires]
+  dsimp [Wire] at *
+  omega
+
 end ECDSAAdd.Arithmetic.Paper935
