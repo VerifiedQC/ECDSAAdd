@@ -4046,3 +4046,6 @@ for name,body in entries:
  assert names<=allowed,(name,names)
 print('All',len(actual),'public entry-point axiom audits passed the exact whitelist.')
 PY
+
+# Separate temporary proof audit; never widen the strict table above.
+bash scripts/verify_waiting.sh

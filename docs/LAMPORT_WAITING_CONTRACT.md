@@ -1,6 +1,9 @@
 # 待 Lamport 确认的证明接口
 
-状态：签名提案，尚未获得生产方确认。此文件不提供证明。
+状态更新：A 组 unpark2 / unparkRule2 已获 d55887e4、db355cbb 确认。
+两条实际证明缺口与独立审计见 [WAITING_PROOF_AUDIT.md](WAITING_PROOF_AUDIT.md)。
+B 组因 eade25d0 的临时 w 支持范围缺口，须先修正布局并确认收窄签名。
+下文保留原始提案和历次核对，不代表这些历史状态仍有效。
 
 owner 在 Raft 消息 d8ec4d8a 允许把实际等待项集中为 `sorry`，并在
 59d00327 要求 Lamport 先确认这些证明可实现。只有确认后的条目才进入
