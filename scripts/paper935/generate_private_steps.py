@@ -80,7 +80,7 @@ def main():
  from private_step_prefix import prefix_outputs
  from private_certificate_manifest import manifest_for, verify_manifest
  outputs={}
- for t in range(64,320):
+ for t in range(64,352):
   decls=components(t)
   for p in ('s2','s6'):
    outputs[f'HmrSource{p.upper()}PrivateStep{t}']=step_output(p,t,decls)
