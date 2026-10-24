@@ -27,7 +27,7 @@ for name, body in actual:
     assert directmap[name] <= set(waiting), (name, 'unregistered admitted proof', directmap[name])
     assert ('sorryAx' in axioms) == bool(directmap[name]), (name, 'unattributed admission')
     assert directmap[name] <= depmap[name], (name, 'missing waiting dependency')
-for suffix in ('unparkRecords2', 'unparkPre2', 'unparkPhaseDebt2'):
+for suffix in ('unparkRecords2', 'unparkPre2', 'unparkPhaseDebt2', 'forward2Prefix', 'forward2Tail', 'forward2Legal', 'forward2PhaseDebt', 'forward6Prefix', 'forward6Tail', 'forward6Legal', 'forward6PhaseDebt', 'eraseRecords6', 'erasePre6', 'erasePhaseDebt6'):
     name = 'ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.' + suffix
     assert 'sorryAx' not in axiommap[name], (name, 'admitted data definition')
 print('Temporary audit: entry | waiting proof dependencies | sorryAx')

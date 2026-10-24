@@ -1,3 +1,11 @@
+# 当前接口确认（优先于下方历史记录）
+
+B 组已获 Lamport f27cd75c 精确确认，Dirac e4e2de48 允许登记等待证明。
+前向采用 be93ebba 的语义前缀方案：显式实际前缀/后缀、完整状态语义相等、
+测量计数相等；不再要求旧列表等式。实际程序来自 PR216。
+当前数据、18 条具名义务与两张审计表见 WAITING_PROOF_AUDIT.md。
+所有集成任务仍等待 owner approve-start；本文件的历史“未确认”描述仅作记录。
+
 # 待 Lamport 确认的证明接口
 
 状态更新：A 组 unpark2 / unparkRule2 已获 d55887e4、db355cbb 确认。

@@ -1,60 +1,50 @@
 # 临时等待证明
 
-本入口是有假设的临时接口，不是完成的电路证明。
+本入口是有假设的接口准备，不是完成的电路证明，也不启动三个集成任务。
 
-## 已固定的数据
+## 数据与确认
 
-Lamport 在 d55887e4 确认可实现性，在 db355cbb 给出 A 组数据定义。
-Dirac 在 4edc5f50 允许先落 A 组，在 c04f36f4 要求只暂缺 Prop 证明。
-布局和程序使用 PR215 的 `s2HmrSourceLayout`、`s2HmrSourceUnpark`。
+A 组确认：Lamport d55887e4、db355cbb。B 组精确确认：f27cd75c。
+Dirac 的接口决定 be93ebba 与准入 e4e2de48 允许本次更新。
+实际程序来自 PR216 的 s2ForwardProgram、s6ForwardProgram、s6EraseProgram。
+所有程序、布局、前缀、后缀、游标、pre、records 与 phaseDebt 都是显式定义。
 
-`unparkRecords2 tape start cursor` 是 `start ≤ cursor`。
-解释器支持短或空 tape，缺位按 false 读取。条件不要求 tape 长度。
-`unparkPre2` 明确包含原始 `HmrRowMulPre`、记录条件和 `HmrUnparkBoundary`。
-它不包含目标执行结论。`unparkPhaseDebt2` 明确定义为 false。
-这仅表示 U2 保持当前相位，不表示此前 K2 的相位债已清偿。
+前向 actualPrefix/scanAndHalves 由实际 Uses.take 2/drop 2 实例化。
+程序分解直接证明。actualPrefix 与旧 lift/fold 要求完整状态语义相等，
+并单独要求测量计数相等，保证后缀的游标一致；不要求两个门列表相等。
+合法游标分别是源程序起点 53734、422703。对应起点的合法性直接证明。
 
-记录条件可满足、实际累计游标满足该条件、程序记录合法性和输入规则的
-打包都已有证明。程序、布局、pre、phaseDebt、records 都不由 sorry 生成。
+逆乘的 pre 包含原始 HmrRowMulPre，以及存在 start 的 records 和
+HmrEraseBoundary。records 固定 start=422703、cursor=620345，实际起点
+可满足该条件。eraseRule6.accepts 直接封装这些前提。
 
-## 两条等待义务
+三个执行导出的相位债是 xor 初始相位 执行后相位。它们只提供恒等式，
+不提供跨调用抵消、整体相干性或误差界。A 组 unpark 的相位债仍为 false，
+只表示恢复当前相位，不清偿此前 K2 的相位债。
 
-唯一允许出现 sorry 的文件是
-`ECDSAAdd/Arithmetic/Paper935/WaitingOnProducer.lean`。
-两条均由 task #50 的 Lamport 交付，确认依据为 d55887e4 / db355cbb，
-消费方为 PR215。
+## 等待项与边界
 
-| 等待定理 | 尚缺证明 |
-|---|---|
-| `WaitingOnProducer.unpark2_support` | 实际程序的物理支持范围 |
-| `WaitingOnProducer.unpark2_run` | 逆 fold 和逆 lift 的状态、清零和相位结论 |
+唯一允许 sorry 的文件是 WaitingOnProducer.lean。共有 18 条具名 Prop 义务：
 
-`unpark2` 用显式数据和上述定理组装。`unparkRule2.accepts` 直接构造前提。
-二者均未整条 sorry，但都依赖这两条等待证明。
+| 项目 | 数量 | 生产方 |
+|---|---:|---|
+| unpark2 的 support、run | 2 | task #50 |
+| forward2/forward6 各自 prefix_run、prefix_measurements、wellFormed、support、run | 10 | task #49 |
+| erase6 的 wellFormed、support、run | 3 | task #49 / task #50 |
+| 三个程序各自 releaseZero | 3 | task #49 / task #50 |
+
+每条定理注释记录确认消息、程序名和消费方 PR215。结构本身不整条 sorry。
+每个 releaseZero 对实际 Lifecycle 全称量化，状态使用实际程序 take n
+执行后的状态。共覆盖三处各 498 次释放，不拆成 1494 条假设。
+它不从最终 scratch 清零推出，不使用任意 stateAt，也不把 R 当作 reset。
 
 ## 两张审计表
 
-`verify.sh` 先运行原有严格构建和 3861 个精确公理入口。
-严格根模块不导入等待文件。白名单仍只有 propext、Classical.choice、Quot.sound。
+严格入口保持原白名单 propext、Classical.choice、Quot.sound。
+根模块不导入等待文件。合入 PR216 数据后严格登记为 3942 条。
+临时入口独立运行，共 46 条，其中 18 条登记为等待 Prop 证明。
+Lean 检查登记类型并遍历真实依赖；Python 拒绝未登记的 admission、缺失
+或重复入口及额外公理。14 个显式数据定义必须不依赖 sorryAx。
+临时表通过只表示假设边界可追踪，不能记作严格电路证明完成。
 
-之后 `verify_waiting.sh` 单独构建等待模块，运行 10 个临时入口。
-此表额外允许 sorryAx。Lean 检查两条登记等待项的类型确实是 Prop，
-并遍历每个入口的实际常量依赖，打印等待项及直接使用 sorryAx 的声明。
-Python 校验拒绝未登记的 admitted 声明、缺失或重复入口、额外公理，
-并确认三个数据定义不依赖 sorryAx。
-
-临时表中：六个数据或已证明的辅助入口不依赖 sorryAx；两条等待定理
-各依赖自身；两个组装接口均依赖两条等待定理。
-不能把临时表通过写成严格正确性证明完成。
-
-## 尚未落地的四项
-
-forward2、forward6、erase6、eraseRule6 尚未建立等待声明。
-H2/H6/R6 必须先有无 sorry 的实际程序生成定义。
-Lamport 在 eade25d0 发现 `_fold_stage` 临时 w 超出旧布局支持范围，
-Dirac 在 aee144ad 批准修正；须先捕获 w 的实际地址、借还和零态条件，
-布局已加入实际 w，且借还定理保留显式零态前提；B 组仍须确认收窄签名。
-A 组 unpark 不调用 `_halve_out`。扩大的 scratch 使其前提明确要求 w 为零，
-但 U2 门流没有变化，未新增语义等待条目。
-
-三个集成任务仍需 owner 批准启动。这里不宣称整机正确性、≤935 或数值误差界。
+K2/K6/J 的恢复、实际三调用绑定、整机 ≤935 与具体误差接入仍未完成。
