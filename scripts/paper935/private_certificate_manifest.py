@@ -26,7 +26,7 @@ def manifest_for(outputs):
 
 def verify_manifest(ROOT,outputs,manifest):
  base=ROOT/'ECDSAAdd/Arithmetic/Paper935'
- actualproofs=[]
+ actualproofs=[]; actualdefs=[]
  expected_files=set(manifest['files'])
  actual_files={p.name for p in base.glob('HmrSource*Private*.lean')}
  assert actual_files==expected_files,'Unexpected private-certificate module set'
@@ -35,8 +35,9 @@ def verify_manifest(ROOT,outputs,manifest):
   assert text==outputs[Path(filename).stem],f'Stale generated private certificate {filename}'
   assert public_declarations(text)==expected,f'Public interface mismatch {filename}'
   actualproofs += ['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected if d['kind']=='theorem']
- assert len(actualproofs)==len(set(actualproofs))
+  actualdefs += ['ECDSAAdd.Arithmetic.Paper935.'+d['name'] for d in expected if d['kind']=='def']
+ assert len(actualproofs+actualdefs)==len(set(actualproofs+actualdefs))
  entries=re.findall(r'^#print axioms (.+)$',(ROOT/'scripts/verify.sh').read_text(),re.M)
  baseline=''.join('#print axioms '+name+'\n' for name in entries[:BASELINE_COUNT])
  assert hashlib.sha256(baseline.encode()).hexdigest()==BASELINE_SHA256,'Existing audit registry changed'
- assert entries[BASELINE_COUNT:]==sorted(actualproofs),'New public proofs and appended audit registry differ'
+ assert entries[BASELINE_COUNT:]==sorted(actualproofs)+sorted(actualdefs),'New public declarations and appended audit registry differ'
