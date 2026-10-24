@@ -572,6 +572,7 @@ import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixLayout
 
 import ECDSAAdd.Arithmetic.Paper935.HmrSignLifecycle
 import ECDSAAdd.Arithmetic.Paper935.HmrSignValue
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceThreeCall
 
 import ECDSAAdd.Arithmetic.Paper935.HmrCachedDecoder
 import ECDSAAdd.Arithmetic.Paper935.HmrCachedDecoderRelease
@@ -1029,15 +1030,9 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceFragmentedControl
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix96
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix128
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix160
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix192
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix224
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix256
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix288
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix320
-
 import ECDSAAdd.Arithmetic.Paper935.HmrSourcePrivatePrefix352
