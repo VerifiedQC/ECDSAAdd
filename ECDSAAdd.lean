@@ -530,6 +530,37 @@ import ECDSAAdd.Arithmetic.Paper935.HmrFlagCell
 import ECDSAAdd.Arithmetic.Paper935.HmrFlagChain
 import ECDSAAdd.Arithmetic.Paper935.HmrFlags
 import ECDSAAdd.Arithmetic.Paper935.FusedSourceRepack
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaCensus
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaLog
+
+import ECDSAAdd.Arithmetic.Paper935.ArenaLogIntervals
+import ECDSAAdd.Arithmetic.Paper935.FusedSymbolicBudget
+
+import ECDSAAdd.Arithmetic.Paper935.FusedEmpiricalBudget
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedExecution
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedInverse
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacementViews
+
+import ECDSAAdd.Arithmetic.Paper935.FusedPlacedBorrow
+
+import ECDSAAdd.Arithmetic.Paper935.FusedSignedPlacement
+
+import ECDSAAdd.Arithmetic.Paper935.FusedRepackedInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulSpec
+import ECDSAAdd.Arithmetic.Paper935.HmrRowMulConsumer
+import ECDSAAdd.Arithmetic.Paper935.HmrArenaSchedule
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecyclePhase
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
+
+import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleFrame
+
+import ECDSAAdd.Arithmetic.Paper935.HmrGoodInput
 import ECDSAAdd.Arithmetic.Paper935.HmrCachedDecoder
 import ECDSAAdd.Arithmetic.Paper935.HmrCachedDecoderRelease
 import ECDSAAdd.Arithmetic.Paper935.HmrDecoderAliased

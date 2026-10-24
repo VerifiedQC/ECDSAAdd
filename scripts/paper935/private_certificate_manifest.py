@@ -1,8 +1,10 @@
 """Check generated public declarations and the exact additive audit registry."""
 import hashlib,json,re
 from pathlib import Path
-BASELINE_COUNT=23575
-BASELINE_SHA256='5947d8e8bda092b8e062bb47fd01f8d1547cd251082b7881a0b41b2dd11ec53c'
+# Prefixes include the 138 main 61311f7 entries inserted before PR entries.
+# Hash the complete merged prefix directly; no entries are excluded.
+BASELINE_COUNT=23713
+BASELINE_SHA256='1ad9ee01295917e1c4149834096836ee3fcf5f2deecedfcb8eabd73007ebb48b'
 PUBLIC=re.compile(r'^(?:(?:noncomputable|local)\s+)?(def|theorem|lemma|abbrev|instance|structure|inductive|opaque|axiom)\s+([\w.]+)',re.M)
 
 def public_declarations(text):
@@ -44,6 +46,6 @@ def verify_manifest(ROOT,outputs,manifest):
  entries=re.findall(r'^#print axioms (.+)$',(ROOT/'scripts/verify.sh').read_text(),re.M)
  baseline=''.join('#print axioms '+name+'\n' for name in entries[:BASELINE_COUNT])
  assert hashlib.sha256(baseline.encode()).hexdigest()==BASELINE_SHA256,'Existing audit registry changed'
- assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:23755]).encode()).hexdigest()=='bee4f7480a2927d85e6a895f1ee8b52ab6840f3c13604fb93a5ac170cca33411','96-step audit registry changed'
- assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24029]).encode()).hexdigest()=='a81d8dab37afc858339a5f11a38c1e3d9d59b1e2931af7e80742a5042f38626d','Corrected 96-step registry changed'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:23893]).encode()).hexdigest()=='6e2a096b8dccbf7864a8441984a1ccbb228ae2192c683fd6dbc3ec532a2129ba','96-step audit registry changed'
+ assert hashlib.sha256(''.join('#print axioms '+name+'\n' for name in entries[:24167]).encode()).hexdigest()=='d5780092d5afe42a5a830299e5ea66a1c0d14e9568bbd4c12ef5d0e578a72781','Corrected 96-step registry changed'
  assert entries[BASELINE_COUNT:]==sorted(checkpoint_proofs[96])+sorted(old_defs)+sorted(checkpoint_proofs[128]),'New public declarations and appended audit registry differ'
