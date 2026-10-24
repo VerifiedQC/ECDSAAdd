@@ -799,3 +799,20 @@ and 180 theorems) bring the prepared audit registry to 26018 entries.
 The full build and exact public axiom audit passed; the PR description records
 the complete verification and first-build costs. There remain 309 forward steps,
 the reverse program, phase cancellation and the whole-program resource theorem.
+
+### 256-step source checkpoint
+
+This generated extension adds source steps 224–255 for both walks as two new
+16-step segments per walk, joined to the checked 224-step prefix. All previous
+0–223 Lean modules remain unchanged. The manifest contains 426 modules and locks
+the complete 26018-entry registry prefix; another 454 declarations (274 definitions
+and 180 theorems) bring the audited registry to 26472 entries.
+
+Full verification passed: 5602 build jobs and all 26472 exact public axiom
+audits, in 2175.481 seconds (36.26 minutes). The first incremental build took
+1253.955 seconds and the three-process audit took 790.520 seconds. Batch size
+remains 2000; output retains registry order and the whitelist/parser are unchanged.
+The runner was committed separately from this proof extension.
+
+The remaining work includes 277 forward steps, the reverse program, phase
+cancellation and the whole-program resource theorem.
