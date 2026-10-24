@@ -832,3 +832,20 @@ check took 117.387 seconds. No separate pre-warm or targeted build preceded it.
 
 The remaining work includes 245 forward steps, the reverse program, phase
 cancellation and the whole-program resource theorem.
+
+### 320-step source checkpoint
+
+This generated extension adds source steps 288–319 for both walks as two new
+16-step segments per walk, joined to the checked 288-step prefix. All previous
+0–287 Lean modules remain unchanged. The manifest contains 568 modules and locks
+the complete 26926-entry registry prefix; another 454 declarations (274 definitions
+and 180 theorems) bring the audited registry to 27380 entries.
+
+Full verification passed: 5744 build jobs and all 27380 exact public axiom
+audits, in 2587.269 seconds (43.12 minutes). The first incremental build took
+1343.784 seconds and the three-process audit took 1089.042 seconds. Source
+certificate checking took 132.835 seconds. No separate pre-warm or targeted
+build preceded this complete run.
+
+The remaining work includes 213 forward steps, the reverse program, phase
+cancellation and the whole-program resource theorem.
