@@ -3991,6 +3991,34 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.HmrCallBinding
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_pre_of_not_bad
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmr_reached_call_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.top
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.tq
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.clean3
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceUnpark
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve_eq
 LEAN
 )
 task_axiom_lean_rc=$?

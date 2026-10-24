@@ -86,8 +86,9 @@ InputRule 中的 `records` 不能恒假。ForwardSpec 中的 `legalCursor`
 
 | 字段 | 需要的数据与证据 |
 |---|---|
-| carry、flag、top、tq | 每个角色的有序实际端口；不能只提供一个集合。 |
-| clean3 | 三个有序端口及长度证明。 |
+| flag | seam 模式唯一已分配的单比特端口。 |
+| carry、top、tq | 显式为 None；不虚构地址。 |
+| clean3 | seam 模式为空列表。 |
 | anc | 24 个有序端口、长度证明；fold carry 使用 anc[0]。 |
 | 角色分离 | 实际构造需要的端口互异、与输入/输出数据的分离条件。不能未经核对要求多余分离。 |
 | arena | 每次实际借用成功的返回值、所有权及调用前的清零条件。 |
@@ -101,3 +102,20 @@ anc[0]。已有 unpark 逆 fold→逆 lift 的局部证明可以复用，但不�
 K2/K6/J 尚未固定。不能为这些变量增加任意全局恢复承诺。
 原始输入规则前提缺失属于接口错误，已经修正；它不是可转移给生产方
 的等待义务。只有后续得到准确签名确认，才能添加等待声明。
+
+## seam 修正与数据来源
+
+Lamport 在 ff1b18b1 撤回通用 ma 的 clean3=3 要求；Dirac 在 bc285474
+确认 seam 接口。固定源码 engine.py:2907–2938 分配 flag 和 anc，
+circuit.py:126、179 两次调用 mm.on(..., seam=True)。
+engine.py:3312–3335 指定 fold 使用 anc[0]，unpark 借用被测 y 字。
+
+`scripts/extract_hmr_call_ports.py` 直接运行固定 circuit.py，输出
+`data/hmr-call-ports.json`。它记录 s2 forward/unpark、s6 forward/erase
+的有序端口，以及两次 seam 分配前后的 Builder 占用集合。导出在
+逆乘入口停止；不声称执行了完整逆程。两次重复导出逐字节一致。
+
+Builder allocated、HomePool home_free、差集 walk_live 分别记录。
+s2 输出 A 仍在 Builder allocated 内，却在 walk 的 home_free 内。
+因此 walk_live 不是调用的完整宿主所有权。分配成功也不证明清零，
+不证明该布局与 Lean walk 出口相同，不证明输入规则成立。
