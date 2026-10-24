@@ -63,6 +63,6 @@ def checkpoint_outputs(ROOT, end):
 
 def prefix_outputs(ROOT):
  result={}
- for end in (96,128,160):
+ for end in (96,128,160,192):
   result.update(checkpoint_outputs(ROOT,end))
  return result

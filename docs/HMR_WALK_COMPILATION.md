@@ -769,3 +769,21 @@ complete merged prefixes (23748, 23928, 24202 and 24656 entries), without
 filtering. The preceding full 25075-entry verification and the new merge's
 incremental checks are reported separately; this merge does not change any of
 the 160-step Lean certificate modules.
+
+### 192-step source checkpoint
+
+The next extension appends actual source steps 160–191 for both walks, retaining
+all previous 0–159 Lean modules unchanged. Each walk adds two 16-step segments
+and joins them to the checked 160-step prefix. Every adjacent arena, row-bank,
+history and metadata boundary uses the same exact compiler interface.
+
+The manifest covers 284 private-certificate modules and freezes all 25110 prior
+audit commands by hash. It appends 454 public declarations (274 definitions and
+180 theorems), for 25564 total. The source checker regenerates the new modules;
+the log equality composes the 160-step binding with the two new source blocks.
+No proof, recursion or stack limit is increased. Verification and its build cost
+are reported in the PR description before publication.
+
+This remains a forward-prefix certificate: 341 forward steps, the actual reverse
+program, record-phase cancellation and the whole-program resource theorem remain
+outstanding. It does not establish the whole 935-qubit point-addition bound.
