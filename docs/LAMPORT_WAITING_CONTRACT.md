@@ -1,6 +1,17 @@
+# 当前接口确认（优先于下方历史记录）
+
+B 组已获 Lamport f27cd75c 精确确认，Dirac e4e2de48 允许登记等待证明。
+前向采用 be93ebba 的语义前缀方案：显式实际前缀/后缀、完整状态语义相等、
+测量计数相等；不再要求旧列表等式。实际程序来自 PR216。
+当前数据、18 条具名义务与两张审计表见 WAITING_PROOF_AUDIT.md。
+所有集成任务仍等待 owner approve-start；本文件的历史“未确认”描述仅作记录。
+
 # 待 Lamport 确认的证明接口
 
-状态：签名提案，尚未获得生产方确认。此文件不提供证明。
+状态更新：A 组 unpark2 / unparkRule2 已获 d55887e4、db355cbb 确认。
+两条实际证明缺口与独立审计见 [WAITING_PROOF_AUDIT.md](WAITING_PROOF_AUDIT.md)。
+B 组因 eade25d0 的临时 w 支持范围缺口，须先修正布局并确认收窄签名。
+下文保留原始提案和历次核对，不代表这些历史状态仍有效。
 
 owner 在 Raft 消息 d8ec4d8a 允许把实际等待项集中为 `sorry`，并在
 59d00327 要求 Lamport 先确认这些证明可实现。只有确认后的条目才进入
@@ -86,8 +97,9 @@ InputRule 中的 `records` 不能恒假。ForwardSpec 中的 `legalCursor`
 
 | 字段 | 需要的数据与证据 |
 |---|---|
-| carry、flag、top、tq | 每个角色的有序实际端口；不能只提供一个集合。 |
-| clean3 | 三个有序端口及长度证明。 |
+| flag | seam 模式唯一已分配的单比特端口。 |
+| carry、top、tq | 显式为 None；不虚构地址。 |
+| clean3 | seam 模式为空列表。 |
 | anc | 24 个有序端口、长度证明；fold carry 使用 anc[0]。 |
 | 角色分离 | 实际构造需要的端口互异、与输入/输出数据的分离条件。不能未经核对要求多余分离。 |
 | arena | 每次实际借用成功的返回值、所有权及调用前的清零条件。 |
@@ -101,3 +113,49 @@ anc[0]。已有 unpark 逆 fold→逆 lift 的局部证明可以复用，但不�
 K2/K6/J 尚未固定。不能为这些变量增加任意全局恢复承诺。
 原始输入规则前提缺失属于接口错误，已经修正；它不是可转移给生产方
 的等待义务。只有后续得到准确签名确认，才能添加等待声明。
+
+## seam 修正与数据来源
+
+Lamport 在 ff1b18b1 撤回通用 ma 的 clean3=3 要求；Dirac 在 bc285474
+确认 seam 接口。固定源码 engine.py:2907–2938 分配 flag 和 anc，
+circuit.py:126、179 两次调用 mm.on(..., seam=True)。
+engine.py:3312–3335 指定 fold 使用 anc[0]，unpark 借用被测 y 字。
+
+`scripts/extract_hmr_call_ports.py` 直接运行固定 circuit.py，输出
+`data/hmr-call-ports.json`。它记录 s2 forward/unpark、s6 forward/erase
+的有序端口，以及两次 seam 分配前后的 Builder 占用集合。导出器在生成 s6 逆乘门流后停止；不生成后续 closer_inv，也不证明实际量子执行。两次重复导出逐字节一致。
+
+Builder allocated、HomePool home_free、差集 walk_live 分别记录。
+s2 输出 A 仍在 Builder allocated 内，却在 walk 的 home_free 内。
+因此 walk_live 不是调用的完整宿主所有权。分配成功也不证明清零，
+不证明该布局与 Lean walk 出口相同，不证明输入规则成立。
+
+Lamport 在 f66c33b2 确认端口数据和 unpark 定义，并要求补自动对照与
+独立后快照绑定。`scripts/paper935/check_hmr_call_ports.py` 已加入验证脚本，
+逐项检查角色、行顺序、宿主、前后分配及后续边界不变性。
+`s2HmrExportedAfterSeam` / `s6HmrExportedAfterSeam` 独立编码导出后的集合；
+`*_matches_export` 证明 reserve 返回值与它们的 live 集合相等。
+这项数据核对不是六个等待签名的可行性确认。
+
+## 无条件 fold 临时线（eade25d0 / 2cc0c1f2）
+
+固定源码 engine.py:3200–3246 在 `_fold_stage` 中临时分配 w，并通过
+`recycle` 发出 R。s2 的实际地址为804，s6为856。三个 row_mul 调用
+各捕获498次借还（256次扫描内的 fold 加242次固定缩放 fold），分别为
+halve / halve / double。每次均复用同一地址。
+
+导出 JSON 的 `fold_temporary` 包含每次分配和释放的源操作位置、地址、
+模式及前后分配数量。位置是 row_mul 内从0开始的源操作序号，包含 R
+和 SWAP；不是展开后的 Lean 程序偏移。导出器检查每次前后的完整
+Builder 分配集合相等。调用开始时有894个已分配地址，w在集合外。
+这与 mm.on 后、closer 前的925个地址属于不同边界。
+
+`L2/L6.flags` 现在额外包含对应 w，因此 scratch 的清零前提也明确包含 w。
+ma 的角色仍然只有 flag 和 anc[24]；w不是假造的 ma 字段。
+`HmrCallArena` 独立转录调用边界的分配集合。
+`HmrFoldTemporary_reserve` 证明可借入该地址；`HmrFoldTemporary_return`
+只有在调用者提供释放前 `state w = false` 的证据时，才证明归还后
+恢复原分配集合。源 R 事件不提供零态证明，不能当成 Lean reset。
+
+检查器逐项核对 w、调用集合、三组借还事件和操作位置的范围及顺序。
+完整源门流到 Lean 的对应及所有释放前零态证据仍由 task #49/#50 提供。

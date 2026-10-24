@@ -6,12 +6,19 @@ python3 scripts/run_verification_phase.py rowmul-source "${ECDSA_SOURCE_PYTHON:-
 python3 scripts/run_verification_phase.py source-certificates python3 scripts/paper935/check_fused_repack.py
 python3 scripts/run_verification_phase.py empirical-count-check python3 scripts/sample_b5.py --check --output data/b5-empirical.json
 python3 scripts/run_verification_phase.py empirical-count-tests python3 tests/test_sample_b5.py
+python3 scripts/run_verification_phase.py call-ports python3 scripts/paper935/check_hmr_call_ports.py
+python3 scripts/run_verification_phase.py lifecycle-source "${ECDSA_SOURCE_PYTHON:-python3}" scripts/paper935/generate_lifecycle.py --check
 python3 scripts/run_verification_phase.py build lake --wfail build ECDSAAdd ECDSAAdd.Arithmetic.RecordedRailApplyProof ECDSAAdd.Arithmetic.RecordedRailApplyResources ECDSAAdd.Arithmetic.NativeFirstDirectCallerSupport ECDSAAdd.Arithmetic.TerminalParityOldSupport ECDSAAdd.Arithmetic.TerminalMappedFieldPoolRestore ECDSAAdd.Arithmetic.NearestLiftMath ECDSAAdd.Arithmetic.FusedInversePackedProof
+
+# Build the separate waiting module so its four discharged proofs can be audited
+# strictly below. The strict root still does not import this module.
+lake build ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer
 
 # Report and check only the public proof entry points.
 set +e
 axioms=$(python3 scripts/run_verification_phase.py axiom-audit python3 scripts/audit_public_entries.py <<'LEAN'
 import ECDSAAdd
+import ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer
 import ECDSAAdd.Arithmetic.KnownOutputCarry
 import ECDSAAdd.Arithmetic.KnownOutputAdder
 import ECDSAAdd.Arithmetic.NativeFirstKnownProgram
@@ -4053,6 +4060,195 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_cx_same_target
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_record_corrections
 #print axioms ECDSAAdd.Arithmetic.Paper935.rowMul_measure_fusion
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.top
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.tq
+#print axioms ECDSAAdd.Arithmetic.Paper935.HmrSeamPorts.clean3
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceY
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceOut
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceRow_length
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeamPorts_foldCarry
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSourceLayout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrBeforeSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSourceUnpark
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrSeam_reserve_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrExportedAfterSeam
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrAfterSeam_matches_export
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrCallArena
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_reserve
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6HmrFoldTemporary_return
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixAtomEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixPairSwap_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulPrefixEq_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulSourcePrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.rowMulLegacyPrefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2ForwardPrefix_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6ForwardPrefix_layout
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_prefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_prefix_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Literal
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Sizes
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Starts
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_partition
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_capacity
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Cells
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Input
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Top
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Forward
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Erase
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_cells_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_geometry
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_cells_top
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_top_distinct
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_physical
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.Sign24Ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Saved
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_saved_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_cells_bounds
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_comparator_clean
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_last_ready
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_phase
+#print axioms ECDSAAdd.Arithmetic.Paper935.Sign24Keeper
+#print axioms ECDSAAdd.Arithmetic.Paper935.Sign24Invariant
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_prefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_preserves_keeper
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_input_inactive
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_invariant
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_last_invariant
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_erase_invariant
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_prefix_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_all_forward_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_reverse_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Word
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_carry
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_conservation
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Prefix
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24PartialLiteral
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Prefix_control
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Prefix_conservation
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24_forward_word
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.sign24Program_roundtrip_reverse
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindowMap
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindowMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.signPayload
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindow
+#print axioms ECDSAAdd.Arithmetic.Paper935.SignReady
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindow_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.signFan_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindow_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore_support
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindow_contract
+#print axioms ECDSAAdd.Arithmetic.Paper935.signWindow_high_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignFix
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignFix_roundtrip
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignFix_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceSign
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceSign
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceCorrection
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceUnsign
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceDemolished
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGapStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGapEnd
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGapStart
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGapEnd
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_measurements
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceDemolished_eq
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_demolished
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_cursor
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_cursor
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_row_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_row_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_row_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_row_frame
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceCorrection_writes
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceCorrection_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_wellFormed
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_injective
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_rowSign_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_rowSign_outside
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_pool
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_pool
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceSign_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceSign_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceUnsign_run
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceSign_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceSign_cleanup
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_basis
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_pool
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceGap_anc
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceGap_basis_of_anc
+#print axioms ECDSAAdd.Arithmetic.Paper935.signCore_value
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignCore_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.placedSignFix_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_output
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SignMap_control
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SignMap_control
+#print axioms ECDSAAdd.Arithmetic.Paper935.s2SourceSign_of_good
+#print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceSign_of_good
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoder_counts
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderCompute_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.hmrDecoderRelease_run
@@ -27547,3 +27743,6 @@ for name,body in entries:
  assert names<=allowed,(name,names)
 print('All',len(actual),'public entry-point axiom audits passed the exact whitelist.')
 PY
+
+# Separate temporary proof audit; never widen the strict table above.
+bash scripts/verify_waiting.sh
