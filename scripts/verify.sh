@@ -3905,6 +3905,44 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_valid
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_ready
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SourceRepack_live
+#print axioms ECDSAAdd.Arithmetic.Paper935.liveCensus
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.censusPeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_append
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_stages
+#print axioms ECDSAAdd.Arithmetic.Paper935.livePeak_le_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.census_disjoint
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.release_card
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.withinBudget_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_census
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.borrowMany_withinBudget_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.Arena.reserve_release_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaChain_peak
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction
+#print axioms ECDSAAdd.Arithmetic.Paper935.ArenaLogAction.execute
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaLog_iff
+#print axioms ECDSAAdd.Arithmetic.Paper935.ValidArenaLog.length
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_exact
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaPeak_bound
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_reserve_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaLog_release_valid
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet
+#print axioms ECDSAAdd.Arithmetic.Paper935.arenaIntervalSet_mem
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_sound
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkArenaStage_complete
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak
+#print axioms ECDSAAdd.Arithmetic.Paper935.checkedArenaStagePeak_sound
 LEAN
 )
 task_axiom_lean_rc=$?
