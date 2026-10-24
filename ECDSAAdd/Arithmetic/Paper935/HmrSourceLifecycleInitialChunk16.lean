@@ -1,0 +1,29 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryPartsChunk7
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceEntryPartsChunk8
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitialChunk7
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceFrontInitialChunk8
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitialChunk7
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitialChunk8
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepCompiler
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk7
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepInitialChunk8
+import ECDSAAdd.Arithmetic.Paper935.HmrStepComposition
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceArmInitial
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceStepRun
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceLifecycleInitialChunk15
+
+namespace ECDSAAdd.Arithmetic.Paper935
+def s6Step61LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6Step61EntryFBefore s6Step61FrontBank 239 44 ⟨238,237,44,43⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 61 25 none (.early s6Step61CompleteLog)) s6Step61Lifecycle_checked
+theorem s6Step61Lifecycle_plan_checked : compileHmrSourceStepLog s6Step61EntryFBefore s6Step61FrontBank 239 44 ⟨238,237,44,43⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 61 25 none (.early s6Step61CompleteLog)=some s6Step61LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s6Step61EntryFBefore s6Step61FrontBank 239 44 ⟨238,237,44,43⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 61 25 none (.early s6Step61CompleteLog)) s6Step61Lifecycle_checked
+def s6Step62LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6Step62EntryFBefore s6Step62FrontBank 238 44 ⟨237,237,45,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 62 26 none (.early s6Step62CompleteLog)) s6Step62Lifecycle_checked
+theorem s6Step62Lifecycle_plan_checked : compileHmrSourceStepLog s6Step62EntryFBefore s6Step62FrontBank 238 44 ⟨237,237,45,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 62 26 none (.early s6Step62CompleteLog)=some s6Step62LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s6Step62EntryFBefore s6Step62FrontBank 238 44 ⟨237,237,45,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871] 6 498 62 26 none (.early s6Step62CompleteLog)) s6Step62Lifecycle_checked
+def s6Step63LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6Step63EntryFBefore s6Step63FrontBank 237 45 ⟨237,237,46,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913] 6 498 63 27 none (.early s6Step63CompleteLog)) s6Step63Lifecycle_checked
+theorem s6Step63Lifecycle_plan_checked : compileHmrSourceStepLog s6Step63EntryFBefore s6Step63FrontBank 237 45 ⟨237,237,46,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913] 6 498 63 27 none (.early s6Step63CompleteLog)=some s6Step63LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s6Step63EntryFBefore s6Step63FrontBank 237 45 ⟨237,237,46,44⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913] 6 498 63 27 none (.early s6Step63CompleteLog)) s6Step63Lifecycle_checked
+def s6Step498LifecyclePlan : HmrSourceStepPlan := hmrAcceptedPlan (compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)) s6Step498Lifecycle_checked
+theorem s6Step498Lifecycle_plan_checked : compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)=some s6Step498LifecyclePlan :=
+  hmrAcceptedPlan_checked (compileHmrSourceStepLog s6ArmBoundaryArena s6Step498FrontBank 25 266 ⟨24,24,267,266⟩ [774, 773, 772, 771, 770, 769] [895, 870, 872, 883, 831, 852, 911, 910, 799, 827, 901, 917, 835, 851, 878, 781, 785, 866, 861, 921, 829, 837, 788, 889, 871, 913, 824, 806, 846, 902, 884, 919, 783, 847, 840, 885, 844, 904, 836, 893, 924, 826, 894, 923, 897, 912, 834, 804, 900, 909, 905, 932, 787, 926, 899, 811, 925, 849, 801, 815] 6 498 498 60 none (.arm s6ArmBoundaryMetadata s6Step498CompleteLog)) s6Step498Lifecycle_checked
+
+end ECDSAAdd.Arithmetic.Paper935
