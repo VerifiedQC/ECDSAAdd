@@ -575,3 +575,6 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSignValue
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceThreeCall
 
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceAgreement
+
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceDataFacts
+import ECDSAAdd.Arithmetic.Paper935.HmrUnparkData
