@@ -20,7 +20,7 @@ private theorem zero_encoded : encodes false (0 : Point) (fun _ => false) := by
 theorem dirty_wire_rejected :
     ¬ Triple (encodes false (0 : Point)) [.X 514] (encodes false 0) := by
   intro h
-  have hz := (h ⟨false, fun _ => false⟩ [] zero_encoded).2.2.2 514 (by omega)
+  have hz := (h ⟨false, fun _ => false⟩ [] zero_encoded).2.2.2 514 (by decide)
   simp [run, writeBit] at hz
 
 /-- Basis restoration alone is insufficient; measurement phase must cancel. -/
