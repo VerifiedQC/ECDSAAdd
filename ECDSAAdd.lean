@@ -587,3 +587,5 @@ import ECDSAAdd.Baselines.NormalizedEntries
 
 import ECDSAAdd.Arithmetic.DialogPhysical
 import ECDSAAdd.Baselines.MemoizedPrograms
+
+import ECDSAAdd.Baselines.ValueWalkPhysical

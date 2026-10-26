@@ -4442,6 +4442,21 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Baselines.cachedGeneric_eq
 #print axioms ECDSAAdd.Baselines.cachedFinite_eq
 #print axioms ECDSAAdd.Baselines.cachedGenerator_eq
+#print axioms ECDSAAdd.Arithmetic.squareRow_physical
+#print axioms ECDSAAdd.Arithmetic.triangularSquares_physical
+#print axioms ECDSAAdd.Arithmetic.karatsubaSquares_physical
+#print axioms ECDSAAdd.Arithmetic.shiftedSource_count_le
+#print axioms ECDSAAdd.Arithmetic.squareFolds_physical
+#print axioms ECDSAAdd.Arithmetic.squareReductions_physical
+#print axioms ECDSAAdd.Arithmetic.modInPlace_physical
+#print axioms ECDSAAdd.Arithmetic.squareSub_physical
+#print axioms ECDSAAdd.Arithmetic.valueWalkConstant_physical
+#print axioms ECDSAAdd.Arithmetic.valueWalkSquare_physical
+#print axioms ECDSAAdd.Arithmetic.valueWalkNegate_physical
+#print axioms ECDSAAdd.Arithmetic.valueWalkGeneric_physical
+#print axioms ECDSAAdd.Arithmetic.valueWalkFinite_physical
+#print axioms ECDSAAdd.Baselines.valueWalk_physical
+#print axioms ECDSAAdd.Baselines.normalizedValueWalk_physical
 LEAN
 )
 task_axiom_lean_rc=$?
