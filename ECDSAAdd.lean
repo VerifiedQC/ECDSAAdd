@@ -584,3 +584,6 @@ import ECDSAAdd.Challenge.Contract
 import ECDSAAdd.Baselines.Qubits
 
 import ECDSAAdd.Baselines.NormalizedEntries
+
+import ECDSAAdd.Arithmetic.DialogPhysical
+import ECDSAAdd.Baselines.MemoizedPrograms
