@@ -580,3 +580,7 @@ import ECDSAAdd.Arithmetic.Paper935.HmrSourceDataFacts
 import ECDSAAdd.Arithmetic.Paper935.HmrUnparkData
 
 import ECDSAAdd.Challenge.Contract
+
+import ECDSAAdd.Baselines.Qubits
+
+import ECDSAAdd.Baselines.NormalizedEntries
