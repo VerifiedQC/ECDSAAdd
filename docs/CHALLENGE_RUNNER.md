@@ -12,6 +12,14 @@ older. Benchmark, worker verification and development validation check this
 selected interpreter before starting work and pass it to source replay. Lean
 and Lake must match `lean-toolchain`.
 
+`ECDSA_PAPER_SOURCE` must explicitly name the external circuit-source Git
+checkout at `64b5a13aa249f1360846657392e6c66817b26d0f`. No directory default is
+used. All three entry scripts verify the directory and exact HEAD before work;
+row-multiplication and lifecycle replay use the same resolver. Set this variable
+in the isolated build worker too. The source checkout is an evaluator-managed
+external dependency, not entrant input. Source replay additionally checks the
+captured generated data against the committed manifests.
+
 ## Source boundary
 
 Only `ECDSAAdd/Submission/Entrant/` is editable. Run the evaluator-owned

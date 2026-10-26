@@ -5,6 +5,7 @@
 # worker processes and freeze its outputs before returning success.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/challenge/python-version.sh"
+"$challenge_python" "$(dirname "${BASH_SOURCE[0]}")/paper935/source_root.py"
 : "${CANDIDATE:?runner must set CANDIDATE}"
 : "${TRUSTED_REPO:?runner must set TRUSTED_REPO}"
 : "${TRUSTED_TREE:?runner must set TRUSTED_TREE}"

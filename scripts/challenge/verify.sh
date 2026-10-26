@@ -2,6 +2,7 @@
 # Protected worker script. Invoke only in an isolated candidate build worker.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/python-version.sh"
+"$challenge_python" "$(dirname "${BASH_SOURCE[0]}")/../paper935/source_root.py"
 : "${ECDSAADD_ROOT:=$(git rev-parse --show-toplevel)}"
 export ECDSAADD_ROOT
 cd "$ECDSAADD_ROOT"
