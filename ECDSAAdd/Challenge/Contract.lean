@@ -66,6 +66,17 @@ def Within (bounds limits : Bounds) : Prop :=
   bounds.toffoli ≤ limits.toffoli ∧ bounds.measurements ≤ limits.measurements ∧
   bounds.qubits ≤ limits.qubits ∧ bounds.gateSlots ≤ limits.gateSlots
 
+theorem qubits_ge_io (p : Program) : 514 ≤ qubits p := by
+  have h := Finset.card_le_card (Finset.subset_union_left : ioWires ⊆ ioWires ∪ wires p)
+  simpa [ioWires, qubits] using h
+
+@[simp] theorem qubits_empty : qubits [] = 514 := by
+  simp [qubits, ioWires, wires]
+
+@[simp] theorem gateSlots_append (p q : Program) :
+    gateSlots (p ++ q) = gateSlots p + gateSlots q := by
+  simp [gateSlots]
+
 theorem Certificate.phase_restored {entry bounds} (h : Certificate entry bounds)
     (C : Point) (b : Bool) (R : Point) (s : State) (m : List Bool)
     (hs : encodes b R s.basis) : (run (entry C) m s).phase = s.phase :=
