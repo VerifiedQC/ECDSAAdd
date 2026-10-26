@@ -23,18 +23,11 @@ elab "#waiting_dependencies " n:ident : command => do
   let name := n.getId
   unless (env.find? name).isSome do throwError "Missing audit entry {name}"
   let targets := [
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_run,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_run,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_releaseZero,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_run,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_releaseZero,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_wellFormed,
-    `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_support,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_run,
     `ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_releaseZero]
   let deps := waitingDependencies env targets false [name]
@@ -48,7 +41,6 @@ elab "#waiting_prop " n:ident : command => do
   let some info := env.find? n.getId | throwError "Missing proof"
   let isProof ← liftTermElabM <| Meta.isProp info.type
   unless isProof do throwError "Waiting entry must have a Prop type: {n.getId}"
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unpark2_run
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRecords2
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRecords2
@@ -71,16 +63,10 @@ elab "#waiting_prop " n:ident : command => do
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRule2
 #waiting_dependencies ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.unparkRule2
 
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_wellFormed
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_run
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2_releaseZero
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_wellFormed
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_run
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward6_releaseZero
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_wellFormed
-#waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_support
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_run
 #waiting_prop ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.erase6_releaseZero
 #print axioms ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.forward2Prefix

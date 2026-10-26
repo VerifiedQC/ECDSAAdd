@@ -1,3 +1,5 @@
+import ECDSAAdd.Arithmetic.Paper935.HmrSourceDataFacts
+import ECDSAAdd.Arithmetic.Paper935.HmrUnparkData
 import ECDSAAdd.Arithmetic.Paper935.HmrRowMulPrefixLayout
 import ECDSAAdd.Arithmetic.Paper935.HmrSourceCallPorts
 import ECDSAAdd.Arithmetic.Paper935.HmrLifecycleInput
@@ -37,13 +39,10 @@ theorem unpark2_wellFormed (cursor : Nat) :
   unfold s2HmrSourceUnpark
   exact embedRecorded_wellFormed _ _
 
-/-- TEMPORARY proof obligation. Producer: task #50, Lamport.
-Feasibility confirmation: d55887e4; data clarification: db355cbb.
-Consumer: PR215. Replace with the physical placement/support proof.
-No program, layout or predicate is produced by this admission. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem unpark2_support :
     recordedWires s2HmrSourceUnpark ⊆ s2HmrSourceLayout.support := by
-  sorry
+  exact s2Unpark_support_checked
 
 /-- TEMPORARY proof obligation. Producer: task #50, Lamport.
 Feasibility confirmation: d55887e4; data clarification: db355cbb.
@@ -60,8 +59,8 @@ theorem unpark2_run (call : FusedCall) (original current : State)
     result.phase = xor current.phase (unparkPhaseDebt2 tape cursor current) := by
   sorry
 
-/-- Assembly only: all data fields are explicit and only the two named Prop
-obligations above are admitted. Producer task #50; d55887e4; consumer PR215. -/
+/-- Assembly only: all data fields are explicit; support is proved and the named
+run obligation above remains admitted. Producer task #50; d55887e4; consumer PR215. -/
 def unpark2 : HmrRowUnparkSpec s2HmrSourceLayout s2HmrSourceUnpark where
   pre := unparkPre2
   wellFormed := fun _call _original _tape cursor _current _pre =>
@@ -121,18 +120,14 @@ theorem forward2_prefix_measurements : recordedMeasurementCount forward2Prefix =
   rw [s2ForwardPrefix_layout] at h
   exact h
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem forward2_wellFormed (cursor : Nat) (_legal : forward2Legal cursor) :
     RecordedWellFormedAt cursor s2ForwardProgram := by
-  sorry
+  exact s2Forward_wellFormed_checked cursor
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem forward2_support : recordedWires s2ForwardProgram ⊆ s2HmrSourceLayout.support := by
-  sorry
+  exact s2Forward_support_checked
 
 /-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
 confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
@@ -203,18 +198,14 @@ theorem forward6_prefix_measurements : recordedMeasurementCount forward6Prefix =
   rw [s6ForwardPrefix_layout] at h
   exact h
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem forward6_wellFormed (cursor : Nat) (_legal : forward6Legal cursor) :
     RecordedWellFormedAt cursor s6ForwardProgram := by
-  sorry
+  exact s6Forward_wellFormed_checked cursor
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem forward6_support : recordedWires s6ForwardProgram ⊆ s6HmrSourceLayout.support := by
-  sorry
+  exact s6Forward_support_checked
 
 /-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
 confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
@@ -267,19 +258,15 @@ def erasePhaseDebt6 (tape : List Bool) (cursor : Nat) (s : State) : Bool :=
 theorem eraseRecords6_actual (tape : List Bool) :
     eraseRecords6 tape s6ForwardMeasurementStart s6EraseMeasurementStart := ⟨rfl, rfl⟩
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem erase6_wellFormed (call : FusedCall) (original : State)
     (tape : List Bool) (cursor : Nat) (s : State) (_pre : erasePre6 call original tape cursor s) :
     RecordedWellFormedAt cursor s6EraseProgram := by
-  sorry
+  exact s6Erase_wellFormed_checked cursor
 
-/-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
-confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/
-s6EraseProgram; semantic-prefix directive be93ebba; consumer PR215. -/
+/-- Discharged by finite source-template and layout data certificates. -/
 theorem erase6_support : recordedWires s6EraseProgram ⊆ s6HmrSourceLayout.support := by
-  sorry
+  exact s6Erase_support_checked
 
 /-- TEMPORARY Prop proof. Producer Lamport, tasks #49/#50; exact feasibility
 confirmation d55887e4 + f27cd75c; PR216 s2ForwardProgram/s6ForwardProgram/

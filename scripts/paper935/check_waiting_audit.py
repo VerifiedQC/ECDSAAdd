@@ -30,6 +30,11 @@ for name, body in actual:
 for suffix in ('unparkRecords2', 'unparkPre2', 'unparkPhaseDebt2', 'forward2Prefix', 'forward2Tail', 'forward2Legal', 'forward2PhaseDebt', 'forward6Prefix', 'forward6Tail', 'forward6Legal', 'forward6PhaseDebt', 'eraseRecords6', 'erasePre6', 'erasePhaseDebt6'):
     name = 'ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.' + suffix
     assert 'sorryAx' not in axiommap[name], (name, 'admitted data definition')
+# Discharged finite facts must stay free of every admission.
+for suffix in ("unpark2_support", "forward2_support", "forward6_support", "erase6_support",
+               "forward2_wellFormed", "forward6_wellFormed", "erase6_wellFormed"):
+    name = 'ECDSAAdd.Arithmetic.Paper935.WaitingOnProducer.' + suffix
+    assert 'sorryAx' not in axiommap[name], (name, 'regressed finite data proof')
 print('Temporary audit: entry | waiting proof dependencies | sorryAx')
 for name in entries:
     print(name + ' | ' + ','.join(sorted(depmap[name])) + ' | ' + str('sorryAx' in axiommap[name]))
