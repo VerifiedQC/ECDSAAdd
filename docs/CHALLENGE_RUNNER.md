@@ -4,6 +4,14 @@ This draft certifies controlled secp256k1 point addition in the signed-basis,
 fixed-record model. It does not establish quantum-channel correctness or hardware
 costs. Classical precomputation on the public addend is permitted.
 
+## Runtime requirement
+
+Python **3.10 or newer** is required, including pinned circuit-source replay.
+Set `ECDSA_SOURCE_PYTHON=/absolute/path/to/python3` if the default interpreter is
+older. Benchmark, worker verification and development validation check this
+selected interpreter before starting work and pass it to source replay. Lean
+and Lake must match `lean-toolchain`.
+
 ## Source boundary
 
 Only `ECDSAAdd/Submission/Entrant/` is editable. Run the evaluator-owned
