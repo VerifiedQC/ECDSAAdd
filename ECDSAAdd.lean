@@ -593,4 +593,11 @@ import ECDSAAdd.Baselines.ValueWalkPhysical
 import ECDSAAdd.Arithmetic.DirectZeroPhysical
 import ECDSAAdd.Arithmetic.NativeKnownPhysical
 
+import ECDSAAdd.Arithmetic.PhysicalGateCheck
+import ECDSAAdd.Arithmetic.CompactWalkPhysical
+import ECDSAAdd.Arithmetic.LiteralConstPhysical
+import ECDSAAdd.Arithmetic.BalancedConvertPhysical
+import ECDSAAdd.Arithmetic.FixedFieldPhysical
+import ECDSAAdd.Arithmetic.SelectedCellPhysical
+import ECDSAAdd.Arithmetic.MappedFieldPhysical
 import ECDSAAdd.Baselines.ValueWalkCertificate
