@@ -592,3 +592,5 @@ import ECDSAAdd.Baselines.ValueWalkPhysical
 
 import ECDSAAdd.Arithmetic.DirectZeroPhysical
 import ECDSAAdd.Arithmetic.NativeKnownPhysical
+
+import ECDSAAdd.Baselines.ValueWalkCertificate
