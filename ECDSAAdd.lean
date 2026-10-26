@@ -589,3 +589,6 @@ import ECDSAAdd.Arithmetic.DialogPhysical
 import ECDSAAdd.Baselines.MemoizedPrograms
 
 import ECDSAAdd.Baselines.ValueWalkPhysical
+
+import ECDSAAdd.Arithmetic.DirectZeroPhysical
+import ECDSAAdd.Arithmetic.NativeKnownPhysical
