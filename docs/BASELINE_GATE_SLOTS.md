@@ -29,5 +29,31 @@ module, invokes the protected kernel-based judge, and checks all reported bounds
 The protected controller still requires a deployment-supplied isolated builder;
 local acceptance is not a production sandbox certification.
 
-Skywalk's uniform slot bound remains in progress. No Skywalk Certificate or
-935-qubit claim follows from this delivery.
+Skywalk also has a complete certificate for every public addend, including
+infinity. Its uniform bounds are:
+
+| Metric | Uniform upper bound |
+| --- | ---: |
+| Toffoli instructions | 2,217,386 |
+| Measurements | 1,557,928 |
+| Distinct wires, including fixed I/O | 1,899 |
+| Total syntax slots | 47,000,000 |
+
+The slot bound composes the native first step, 511 compressed integer steps in
+each direction, history codecs, selected field replay, measured squaring,
+recovery, classification, and corner handling. It includes both correction
+lists for every measurement. In particular, the field segment is bounded by
+14,100,000 slots, each wrapped arithmetic call by 20,600,000, and measured
+squaring by 5,000,000. The whole-program theorem is
+`normalizedSkywalk_gateSlots_le`; `skywalkCertificate` also consumes the
+independently proved physical-gate legality theorem.
+
+These are conservative syntax-slot bounds, not exact scores or peak-live-wire
+bounds. They do not establish a 935-qubit circuit. The default reference Entrant
+remains ValueWalk; the Skywalk certificate can be selected instead without
+changing the protected contract.
+
+`skywalk_acceptance.py` compiles the Skywalk certificate as an alternative Entrant
+in an organizer-created temporary overlay. It independently replays that module
+and requires the unchanged protected judge to accept all four declared bounds.
+The default ValueWalk Entrant is not modified by this regression.
