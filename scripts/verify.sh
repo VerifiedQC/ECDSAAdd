@@ -4384,6 +4384,31 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Baselines.io_subset_dialog
 #print axioms ECDSAAdd.Baselines.skywalk_qubits
 #print axioms ECDSAAdd.Baselines.valueWalk_qubits
+#print axioms ECDSAAdd.Baselines.normalizeCorrection
+#print axioms ECDSAAdd.Baselines.normalizeInstr
+#print axioms ECDSAAdd.Baselines.normalizeProgram
+#print axioms ECDSAAdd.Baselines.normalizeCorrection_valid
+#print axioms ECDSAAdd.Baselines.normalizeInstr_valid
+#print axioms ECDSAAdd.Baselines.normalize_correct
+#print axioms ECDSAAdd.Baselines.normalize_run
+#print axioms ECDSAAdd.Baselines.normalize_slots
+#print axioms ECDSAAdd.Baselines.normalize_measurements
+#print axioms ECDSAAdd.Baselines.repeatedControls
+#print axioms ECDSAAdd.Baselines.normalize_toffoli_exact
+#print axioms ECDSAAdd.Baselines.normalize_toffoli
+#print axioms ECDSAAdd.Baselines.normalize_correctionWires
+#print axioms ECDSAAdd.Baselines.normalize_wires
+#print axioms ECDSAAdd.Baselines.normalize_physical
+#print axioms ECDSAAdd.Baselines.normalize_qubits
+#print axioms ECDSAAdd.Baselines.normalize_triple
+#print axioms ECDSAAdd.Baselines.normalizedSkywalk
+#print axioms ECDSAAdd.Baselines.normalizedValueWalk
+#print axioms ECDSAAdd.Baselines.normalizedSkywalk_correct
+#print axioms ECDSAAdd.Baselines.normalizedValueWalk_correct
+#print axioms ECDSAAdd.Baselines.normalizedSkywalk_toffoli_exact
+#print axioms ECDSAAdd.Baselines.normalizedValueWalk_toffoli_exact
+#print axioms ECDSAAdd.Baselines.normalizedSkywalk_qubits
+#print axioms ECDSAAdd.Baselines.normalizedValueWalk_qubits
 LEAN
 )
 task_axiom_lean_rc=$?
