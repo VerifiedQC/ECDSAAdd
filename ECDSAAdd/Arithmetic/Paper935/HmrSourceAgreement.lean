@@ -72,7 +72,8 @@ theorem hmrSource_recordedAgreement (input output : X → BasisState) (bad : Fin
 
 /-- Conditional quantum error for the SAME program and original-label bad set.
 The circuit equality prevents substituting an unrelated legal circuit. The
-empirical population bounds remain assumptions, never inferred from counts. -/
+empirical population bounds remain assumptions, never inferred from counts.
+See `docs/ASSUMPTIONS_B5.md` for both empirical-bound and input-law assumptions. -/
 theorem hmrSource_empirical_error {n l : Nat} (c : Circuit n 0 l)
     (program_eq : c.program = hmrSourceThreeCall J)
     (ι : X ↪ Bits n) (idealOp : X ≃ X) (μ : InputLaw X)
