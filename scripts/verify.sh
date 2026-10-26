@@ -4360,6 +4360,30 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SupportList
 #print axioms ECDSAAdd.Arithmetic.Paper935.s2SupportList_mem
 #print axioms ECDSAAdd.Arithmetic.Paper935.s6SupportList_mem
+#print axioms ECDSAAdd.Baselines.skywalk
+#print axioms ECDSAAdd.Baselines.valueWalk
+#print axioms ECDSAAdd.Baselines.skywalk_correct
+#print axioms ECDSAAdd.Baselines.valueWalk_correct
+#print axioms ECDSAAdd.Baselines.skywalk_toffoli
+#print axioms ECDSAAdd.Baselines.skywalk_measurements
+#print axioms ECDSAAdd.Baselines.valueWalk_toffoli
+#print axioms ECDSAAdd.Baselines.valueWalk_measurements
+#print axioms ECDSAAdd.Baselines.point_wire_lt
+#print axioms ECDSAAdd.Baselines.dialog_support_partition
+#print axioms ECDSAAdd.Baselines.fixed_correct
+#print axioms ECDSAAdd.Baselines.layout
+#print axioms ECDSAAdd.Baselines.layout_control
+#print axioms ECDSAAdd.Baselines.layout_point
+#print axioms ECDSAAdd.Baselines.layout_widths
+#print axioms ECDSAAdd.Baselines.core_wires
+#print axioms ECDSAAdd.Baselines.layout_nodup
+#print axioms ECDSAAdd.Baselines.work_lower
+#print axioms ECDSAAdd.Baselines.point_wires
+#print axioms ECDSAAdd.Baselines.io_partition
+#print axioms ECDSAAdd.Baselines.io_subset_sites
+#print axioms ECDSAAdd.Baselines.io_subset_dialog
+#print axioms ECDSAAdd.Baselines.skywalk_qubits
+#print axioms ECDSAAdd.Baselines.valueWalk_qubits
 LEAN
 )
 task_axiom_lean_rc=$?
