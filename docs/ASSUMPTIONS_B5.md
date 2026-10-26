@@ -17,7 +17,13 @@ Dependent conditional theorems (namespace `ECDSAAdd.Arithmetic.Paper935`):
 `empirical_calls_good` gives enabled modeled calls' numerical predicates on
 good labels; `empirical_error` gives `2 * sqrt(b.bounds.total)` with additional
 `RecordedAgreement`, `total < 1`, normalization and amplitude-law matching.
-The structure and these three theorems require a supplied `EmpiricalBudget`.
+`hmrSource_empirical_error` gives the same symbolic `2 * sqrt(b.bounds.total)`
+bound for the source-shaped three-call program, additionally requiring the
+producer/caller execution conditions, complete output basis equality, total
+phase-debt cancellation and equality with the typed circuit program. It depends
+on both assumptions in this file; it supplies no numerical population bound
+and does not certify the sampler or a complete point-addition instance.
+The structure and these four theorems require a supplied `EmpiricalBudget`.
 `EmpiricalBudget.observedRate` is descriptive only. Existing `fused_nine_mass`,
 `fusedExactBounds_total`, `fused_error_exact` and `hmr_pre_of_not_bad` remain
 unchanged: they do not depend on empirical observations. The physical consumer
