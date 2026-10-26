@@ -1,4 +1,5 @@
 import ECDSAAdd.Framework.Hoare
+import ECDSAAdd.Math.BitcoinPrimes
 
 /-! Protected challenge contract. Signed basis states and fixed measurement
 records only; this is not a quantum-channel or hardware claim. -/
