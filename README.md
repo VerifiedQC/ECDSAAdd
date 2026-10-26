@@ -1,5 +1,7 @@
 # ECDSAAdd
 
+> **Challenge:** 受控点加的形式化验证 challenge 见 [docs/CHALLENGE.md](docs/CHALLENGE.md)（与 Eigen Labs 合作，Apache 2.0）。
+
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](docs/PROOF_SCOPE.md)。
 
 在 Lean 中证明 Bitcoin/secp256k1 点加程序的 monomial 行为与资源计数。
