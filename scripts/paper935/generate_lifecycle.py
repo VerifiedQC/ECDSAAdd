@@ -1,7 +1,6 @@
 """Generate actual K2/K6 gap programs; --check replays the pinned source."""
 import argparse
 import json
-import os
 from pathlib import Path
 from capture_lifecycle import capture
 from generate_row_mul import chunked
@@ -67,9 +66,15 @@ def render(data):
     return {DEST:text,MANIFEST:json.dumps(data,indent=2)+'\n'}
 
 
+from source_root import pinned_source
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--source',default=os.environ.get('ECDSA_PAPER_SOURCE',str(ROOT.parent/'sources/uncompute')));p.add_argument('--check',action='store_true');a=p.parse_args()
-    files=render(capture(a.source))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--check',action='store_true');a=p.parse_args()
+    try:
+        source = pinned_source()
+    except ValueError as exc:
+        p.error(str(exc))
+    files=render(capture(source))
     for path,text in files.items():
         if a.check:
             assert path.read_text()==text, f'Source lifecycle mismatch: {path}'

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+bash scripts/challenge/validate.sh
 python3 scripts/paper935/generate_schedule.py --check
 "${ECDSA_SOURCE_PYTHON:-python3}" scripts/paper935/generate_row_mul.py --check
 python3 scripts/paper935/check_fused_repack.py

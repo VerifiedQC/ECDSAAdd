@@ -1,5 +1,5 @@
 """Data-only programs; --check replays every pinned source operation."""
-import argparse,json,os
+import argparse,json
 from pathlib import Path
 from capture_row_mul import capture
 ROOT=Path(__file__).resolve().parents[2]
@@ -118,9 +118,15 @@ def rowMulInstantiate (ports : Array Wire) (start : Nat)
     files[ROOT/'scripts/paper935/row_mul_source_manifest.json']=json.dumps(manifest,indent=2,sort_keys=True)+'\n'
     return files
 
+from source_root import pinned_source
+
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=Path(os.environ.get('ECDSA_PAPER_SOURCE',ROOT.parent/'uncompute-paper')));p.add_argument('--check',action='store_true');a=p.parse_args()
-    files=render(capture(a.source))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--check',action='store_true');a=p.parse_args()
+    try:
+        source = pinned_source()
+    except ValueError as exc:
+        p.error(str(exc))
+    files=render(capture(source))
     for path,body in files.items():
         if a.check:assert path.read_text()==body,f'Generated source mismatch: {path}'
         else:path.write_text(body)
