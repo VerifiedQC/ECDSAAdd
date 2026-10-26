@@ -20,6 +20,12 @@ def pinned_source():
         raise ValueError('ECDSA_PAPER_SOURCE must be a Git checkout at ' + PIN) from exc
     if head != PIN:
         raise ValueError(f'ECDSA_PAPER_SOURCE HEAD must be {PIN}, found {head}')
+    dirty = subprocess.check_output(
+        ['git', '-c', 'core.fsmonitor=false', '-C', str(root),
+         'status', '--porcelain', '--untracked-files=all'],
+        env=env, text=True, stderr=subprocess.PIPE)
+    if dirty:
+        raise ValueError('ECDSA_PAPER_SOURCE working tree must be clean (including untracked files)')
     return root
 
 if __name__ == '__main__':

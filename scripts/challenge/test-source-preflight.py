@@ -32,6 +32,26 @@ class Preflight(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'HEAD must be'):
                     resolver.pinned_source()
 
+    def test_correct_head_dirty_worktree(self):
+        with tempfile.TemporaryDirectory() as root:
+            subprocess.run(['git','init','-q',root],check=True)
+            tracked = Path(root)/'engine.py'
+            tracked.write_text('original\n')
+            subprocess.run(['git','-C',root,'add','engine.py'],check=True)
+            subprocess.run(['git','-C',root,'-c','user.name=Test','-c','user.email=test@example.test',
+                            'commit','-q','-m','pinned fixture'],check=True)
+            pin = subprocess.check_output(['git','-C',root,'rev-parse','HEAD'],text=True).strip()
+            with patch.dict(os.environ, ECDSA_PAPER_SOURCE=root), patch.object(resolver, 'PIN', pin):
+                self.assertEqual(resolver.pinned_source(),Path(root).resolve())
+                tracked.write_text('modified while HEAD stays pinned\n')
+                self.assertEqual(subprocess.check_output(['git','-C',root,'rev-parse','HEAD'],text=True).strip(),pin)
+                with self.assertRaisesRegex(ValueError, 'working tree must be clean'):
+                    resolver.pinned_source()
+                tracked.write_text('original\n')
+                (Path(root)/'extra.py').write_text('untracked\n')
+                with self.assertRaisesRegex(ValueError, 'working tree must be clean'):
+                    resolver.pinned_source()
+
     def test_all_entries_check_source_before_build(self):
         for relative in ('scripts/benchmark.sh','scripts/challenge/validate.sh','scripts/challenge/verify.sh'):
             env = os.environ.copy()
