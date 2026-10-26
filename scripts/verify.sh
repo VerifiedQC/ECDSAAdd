@@ -4409,6 +4409,39 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Baselines.normalizedValueWalk_toffoli_exact
 #print axioms ECDSAAdd.Baselines.normalizedSkywalk_qubits
 #print axioms ECDSAAdd.Baselines.normalizedValueWalk_qubits
+#print axioms ECDSAAdd.Arithmetic.cswap_physical
+#print axioms ECDSAAdd.Arithmetic.shifts_physical
+#print axioms ECDSAAdd.Arithmetic.inplaceArithmetic_physical
+#print axioms ECDSAAdd.Arithmetic.roundSwap_physical
+#print axioms ECDSAAdd.Arithmetic.valueBodies_physical
+#print axioms ECDSAAdd.Arithmetic.fullAdder_physical
+#print axioms ECDSAAdd.Arithmetic.rippleAdder_physical
+#print axioms ECDSAAdd.Arithmetic.add_physical
+#print axioms ECDSAAdd.Arithmetic.counterXor_physical
+#print axioms ECDSAAdd.Arithmetic.counters_physical
+#print axioms ECDSAAdd.Arithmetic.compareLtConst_physical
+#print axioms ECDSAAdd.Arithmetic.counterActiveXor_physical
+#print axioms ECDSAAdd.Arithmetic.recordRound_physical
+#print axioms ECDSAAdd.Arithmetic.loadActive_physical
+#print axioms ECDSAAdd.Arithmetic.valueRounds_physical
+#print axioms ECDSAAdd.Arithmetic.valueLoops_physical
+#print axioms ECDSAAdd.Arithmetic.maskedSubConst_physical
+#print axioms ECDSAAdd.Arithmetic.controlledUnary_physical
+#print axioms ECDSAAdd.Arithmetic.replayCells_physical
+#print axioms ECDSAAdd.Arithmetic.replayLoops_physical
+#print axioms ECDSAAdd.Arithmetic.safeDivisor_physical
+#print axioms ECDSAAdd.Arithmetic.dialogLoad_physical
+#print axioms ECDSAAdd.Arithmetic.exchangeRegisters_physical
+#print axioms ECDSAAdd.Arithmetic.dialogs_physical
+#print axioms ECDSAAdd.Baselines.cachedWireFn
+#print axioms ECDSAAdd.Baselines.cachedWireFn_eq
+#print axioms ECDSAAdd.Baselines.cachedArithmetic
+#print axioms ECDSAAdd.Baselines.cachedArithmetic_eq
+#print axioms ECDSAAdd.Baselines.cachedGeneric
+#print axioms ECDSAAdd.Baselines.cachedFinite
+#print axioms ECDSAAdd.Baselines.cachedGeneric_eq
+#print axioms ECDSAAdd.Baselines.cachedFinite_eq
+#print axioms ECDSAAdd.Baselines.cachedGenerator_eq
 LEAN
 )
 task_axiom_lean_rc=$?
