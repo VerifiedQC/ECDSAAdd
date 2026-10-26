@@ -4457,6 +4457,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Arithmetic.valueWalkFinite_physical
 #print axioms ECDSAAdd.Baselines.valueWalk_physical
 #print axioms ECDSAAdd.Baselines.normalizedValueWalk_physical
+#print axioms ECDSAAdd.Arithmetic.zeroSeeded_physical
+#print axioms ECDSAAdd.Arithmetic.directZero_physical
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.adds_physical
+#print axioms ECDSAAdd.Arithmetic.NativeFirstDirect.programs_physical
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.xorBit_physical
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.prepare_physical
+#print axioms ECDSAAdd.Arithmetic.KnownOutputAdder.program_physical
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.hReceiver_physical
+#print axioms ECDSAAdd.Arithmetic.NativeFirstKnown.inverse_physical
 LEAN
 )
 task_axiom_lean_rc=$?
