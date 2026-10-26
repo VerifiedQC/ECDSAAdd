@@ -10,8 +10,10 @@ bash -n scripts/benchmark.sh scripts/challenge/verify.sh
 "$challenge_python" scripts/challenge/test-runner-boundary.py
 "$challenge_python" scripts/challenge/test-source-preflight.py
 "$challenge_python" scripts/challenge/check-layers.py
-lake --wfail build ECDSAAdd.Challenge.Regression ECDSAAdd.Judge.Main
+lake --wfail build ECDSAAdd.Challenge.Regression ECDSAAdd.Judge.Main ECDSAAdd.Submission.Entrant.Main
 "$challenge_python" scripts/challenge/gate.py --replay ECDSAAdd.Challenge
 "$challenge_python" scripts/challenge/gate.py --replay ECDSAAdd.Judge
 "$challenge_python" scripts/challenge/judge_regressions.py
 lake env lean scripts/challenge/audit.lean
+
+"$challenge_python" scripts/challenge/valuewalk_acceptance.py

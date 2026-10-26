@@ -600,3 +600,4 @@ import ECDSAAdd.Arithmetic.BalancedConvertPhysical
 import ECDSAAdd.Arithmetic.FixedFieldPhysical
 import ECDSAAdd.Arithmetic.SelectedCellPhysical
 import ECDSAAdd.Arithmetic.MappedFieldPhysical
+import ECDSAAdd.Baselines.ValueWalkCertificate
