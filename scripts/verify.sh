@@ -4549,6 +4549,15 @@ import ECDSAAdd.Arithmetic.CompactIntegratedAudit
 #print axioms ECDSAAdd.Baselines.valueWalkFinite_gateSlots_le
 #print axioms ECDSAAdd.Baselines.normalizedValueWalk_gateSlots_le
 #print axioms ECDSAAdd.Baselines.valueWalkCertificate
+#print axioms ECDSAAdd.Arithmetic.mappedClear_physical
+#print axioms ECDSAAdd.Arithmetic.mappedKernel_physical
+#print axioms ECDSAAdd.Arithmetic.mappedControlled_physical
+#print axioms ECDSAAdd.Arithmetic.gatePhysical_rename_support
+#print axioms ECDSAAdd.Arithmetic.pointCompressedArithmetic_physical
+#print axioms ECDSAAdd.Arithmetic.skywalkGeneric_physical
+#print axioms ECDSAAdd.Arithmetic.skywalkFinite_physical
+#print axioms ECDSAAdd.Baselines.skywalk_physical
+#print axioms ECDSAAdd.Baselines.normalizedSkywalk_physical
 LEAN
 )
 task_axiom_lean_rc=$?
