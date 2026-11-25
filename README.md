@@ -1,6 +1,40 @@
-# ECDSAAdd
+# ecdsa.fail Lean — Lean 4 Point-Addition Challenge
 
+> **Goal.** Build and formally verify in Lean 4 the cheapest quantum circuit that performs in-place controlled point addition on **secp256k1**, scored by the product of **Toffoli upper bound × static qubit upper bound** (`score = qubits * toffoli`, lower is better).
+>
 > **Challenge:** 受控点加的形式化验证 challenge 见 [docs/CHALLENGE.md](docs/CHALLENGE.md)（与 Eigen Labs 合作，Apache 2.0）。
+
+## Benchmark Contract
+
+- **Track**: `lean` (`schemaVersion: 2`)
+- **Editable path**: `ECDSAAdd/Submission/Entrant` (entry module: `ECDSAAdd/Submission/Entrant/Main.lean` in namespace `ECDSAAdd.Entrant`)
+- **Protected contract**: `ECDSAAdd/Challenge/Contract.lean` (`ECDSAAdd.Challenge.Certificate`)
+- **Protected kernel judge**: `ECDSAAdd/Judge/Main.lean` + `scripts/challenge/judge.lean` + `scripts/challenge/gate.py`
+- **Score file**: `scripts/score.json`
+- **Scoring formula**:
+
+  $$\text{score} = \text{bounds.qubits} \times \text{bounds.toffoli}$$
+
+  where `bounds.toffoli` is the certified uniform upper bound on `ECDSAAdd.toffoliCount (entry C)` and `bounds.qubits` is the certified uniform upper bound on `ECDSAAdd.Challenge.qubits (entry C)` (`(ioWires ∪ wires (entry C)).card`) over all classical secp256k1 addends `C : Point` (including infinity). Lower is better (`direction: "-"`).
+
+### Baseline Numbers
+
+| Entry | Toffoli ≤ | Measurements ≤ | Qubits ≤ | Syntax slots ≤ | Score (`Q × T` ≤) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `Skywalk` (normalized, default baseline) | 2,217,386 | 1,557,928 | 1,899 | 47,000,000 | 4,210,816,014 |
+| `ValueWalk` (normalized) | 6,286,806 | 3,779,274 | 3,134 | 61,000,000 | 19,702,850,004 |
+
+### Solver Workflow (`--track lean`)
+
+```bash
+yukon setup --track lean
+yukon run --track lean
+yukon submit --track lean
+```
+
+`yukon switch lean` updates local Yukon track selection only and preserves your Git branch, `HEAD`, index, and worktree.
+
+---
 
 证明语义、输入前提及未覆盖的结论统一见[证明范围说明](docs/PROOF_SCOPE.md)。
 
