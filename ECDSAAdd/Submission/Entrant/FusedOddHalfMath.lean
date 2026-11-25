@@ -95,4 +95,16 @@ the offset on the left is still part of the exact predicate. -/
   by_cases hn : F<0
   all_goals cases negate <;> simp [magnitude,viewed,hn] <;> omega
 
+theorem secp_modulus : (2^256:Int)-(2^32+977)=2*Arithmetic.BalancedField.q+1 := by
+  norm_num [Arithmetic.BalancedField.q,ECDSAAdd.p]
+
+theorem secp_even : (2^256:Int)%2=0 := by norm_num
+
+theorem secp_bias : (2^255:Int)-Arithmetic.BalancedField.q-1=2^31+488 := by
+  norm_num [Arithmetic.BalancedField.q,ECDSAAdd.p]
+
+theorem secp_fused_eq_fold (S : Int) :
+    fused (2^256) (2^32+977) S = fold Arithmetic.BalancedField.q S :=
+  fused_eq_fold _ _ _ _ secp_modulus secp_even
+
 end ECDSAAdd.Entrant.FusedOddHalf

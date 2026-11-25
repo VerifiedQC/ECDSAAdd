@@ -46,6 +46,8 @@ The current ordinary cell has exact T=256+255+255+251=1017: raw addition, fold, 
 
 ## Validation
 
-`check_fused_odd.py` exhausts both signs and every legal input pair for seven small moduli, then checks 20,098 secp256k1 boundary/random cases. It checks the exact output, output range, recovered parity, sign relation, and biased comparison, and records failures if the bias is omitted. These tests support development; Lean proofs establish the stated general identities.
+An external development check (results recorded in the PR) exhausts both signs and every legal input pair for seven small moduli, then checks 20,098 secp256k1 boundary/random cases. It checks the exact output, output range, recovered parity, sign relation, and biased comparison, and records failures if the bias is omitted. These tests support development; Lean proofs establish the stated general identities.
+
+`secp_modulus`, `secp_even`, `secp_bias` and `secp_fused_eq_fold` instantiate the constants. An actual P1Life binding module will be added with the circuit when its import cache is ready.
 
 Targeted Lean validation uses Lean4.28.0 and warningAsError=true. Only Entrant files are added; protected sources, entry and bounds remain unchanged. Full incumbent evaluation is tracked separately by the task owner.
